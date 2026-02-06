@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Apply Geist font to all elements */
+* {
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Improved spacing and typography */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Consistent font styling for all text elements */
+p, span, div, a, button, input, textarea, select, label {
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Consistent base font size - minimum readable size */
+body {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Standard text sizes - consistent across app, minimum readable */
+.text-xs {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.text-sm {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-base {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.text-lg {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.text-xl {
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+/* Ensure buttons and interactive elements are readable */
+button, a, input, select, textarea {
+  font-size: 14px;
+  min-height: 36px;
+}
+
+/* Thinner font weight for specific elements */
+.text-thin, .font-thin {
+  font-weight: 300;
+}
+
+/* Normal font weight (default) */
+.text-normal, .font-normal {
+  font-weight: 400;
+}
+
+/* Medium font weight */
+.text-medium, .font-medium {
+  font-weight: 500;
+}
+
+/* Semibold font weight */
+.text-semibold, .font-semibold {
+  font-weight: 600;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Better focus states */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid rgb(34 197 94);
+  outline-offset: 2px;
+}
+
+/* Improved image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Subtle shadows for depth */
+.shadow-subtle {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.shadow-subtle-hover:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Leaflet map styles */
+.leaflet-container {
+  background-color: #1f2937 !important;
+}
+
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}

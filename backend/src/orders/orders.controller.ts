@@ -1,0 +1,47 @@
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { OrdersService } from './orders.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+
+@Controller('orders')
+@UseGuards(JwtAuthGuard)
+export class OrdersController {
+  constructor(private ordersService: OrdersService) {}
+
+  @Post()
+  async create(@Body() body: any, @Request() req: any) {
+    return this.ordersService.create(req.user.id, body);
+  }
+
+  @Get()
+  async findAll(@Request() req: any) {
+    return this.ordersService.findAllByBuyer(req.user.id);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string, @Request() req: any) {
+    return this.ordersService.findOne(id, req.user.id);
+  }
+
+  @Post(':id/pay')
+  async initiatePayment(
+    @Param('id') id: string,
+    @Body() body: { paymentMethod: string; transactionId?: string },
+    @Request() req: any,
+  ) {
+    return this.ordersService.initiatePayment(id, req.user.id, body);
+  }
+
+  // Admin endpoints
+  @Get('admin/all')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async getAllOrders(
+    @Query('status') status?: string,
+    @Query('buyerId') buyerId?: string,
+    @Query('estateId') estateId?: string,
+  ) {
+    return this.ordersService.findAll({ status, buyerId, estateId });
+  }
+}

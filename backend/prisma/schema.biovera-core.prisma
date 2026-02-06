@@ -1,0 +1,483 @@
+// ============================================
+// BIOVERA CORE SCHEMA - Complete Traceability
+// ============================================
+// This schema ensures complete traceability from seed to Hamburg retail
+// Every apple in Hamburg can be traced back to the seed planted 6 months ago
+
+// ============================================
+// FARMER & PROFILE
+// ============================================
+
+model FarmerProfile {
+  id String @id @default(uuid())
+  
+  // Link to User
+  userId String @unique
+  user   User   @relation("FarmerProfile", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Partner Status
+  isVeraPartner Boolean @default(false) // Partner gets seed discount
+  partnerCode   String? @unique // Unique partner identifier
+  partnerSince  DateTime? // When they became a partner
+  
+  // Trust Score History
+  trustScoreHistory TrustScoreHistory[]
+  currentTrustScore Float @default(100.0) // Current trust score (0-100)
+  
+  // Financial Summary
+  totalEarnings    Float @default(0.0)
+  totalBonusEarned Float @default(0.0) // Vera Bonus accumulated
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([isVeraPartner])
+  @@index([partnerCode])
+  @@map("farmer_profiles")
+}
+
+model TrustScoreHistory {
+  id String @id @default(uuid())
+  
+  // Link to Farmer
+  farmerProfileId String
+  farmerProfile   FarmerProfile @relation(fields: [farmerProfileId], references: [id], onDelete: Cascade)
+  
+  // Score Change
+  previousScore Float
+  newScore      Float
+  change        Float // positive or negative
+  
+  // Reason
+  reason        String // "Late delivery", "Temperature violation", "Quality bonus", etc.
+  relatedBatchId String? // If related to specific batch
+  relatedOrderId String? // If related to specific order
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  createdBy String? // Admin who made the change (if manual)
+  
+  @@index([farmerProfileId])
+  @@index([createdAt])
+  @@map("trust_score_history")
+}
+
+// ============================================
+// SEED INVENTORY (Complete Seed Tracking)
+// ============================================
+
+model SeedInventory {
+  id String @id @default(uuid())
+  
+  // Seed Identification
+  batchNumber    String @unique // Human-readable: SEED-2024-001
+  serialNumber   String @unique // Unique serial for barcode scanning
+  seedType       String // "Apple", "Wheat", etc.
+  variety         String? // "Golden Delicious", "Red Delicious", etc.
+  
+  // Pricing
+  standardPrice  Float // Full price for free market
+  partnerPrice   Float // Discounted price for Vera Partners
+  margin         Float // Platform margin (standardPrice - partnerPrice)
+  
+  // Inventory Status
+  totalQuantity  Float // Total quantity in batch (kg)
+  availableQuantity Float // Available quantity
+  reservedQuantity  Float @default(0.0) // Reserved for orders
+  
+  // Assignment
+  assignedToFarmerId String? // Farmer who received this seed
+  assignedToEstateId String? // Estate where seed was planted
+  assignedAt         DateTime? // When seed was assigned
+  
+  // Planting Tracking
+  plantedAt      DateTime? // When seed was actually planted
+  plantedParcelId String? // Parcel where seed was planted
+  parcel         Parcel?  @relation("SeedParcel", fields: [plantedParcelId], references: [id])
+  
+  // Traceability Chain
+  seedAssignments SeedAssignment[] // All assignments of this seed batch
+  batches         Batch[] // Products grown from this seed
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime? // Seed expiration date
+  
+  @@index([batchNumber])
+  @@index([serialNumber])
+  @@index([assignedToFarmerId])
+  @@index([assignedToEstateId])
+  @@index([seedType])
+  @@map("seed_inventory")
+}
+
+model SeedAssignment {
+  id String @id @default(uuid())
+  
+  // Seed Batch
+  seedInventoryId String
+  seedInventory   SeedInventory @relation(fields: [seedInventoryId], references: [id], onDelete: Cascade)
+  
+  // Assignment Details
+  assignedToFarmerId String
+  assignedToEstateId String
+  assignedQuantity    Float // Quantity assigned
+  
+  // Assignment Type
+  assignmentType String // "PURCHASE", "LOAN", "TRIAL"
+  
+  // Pricing Applied
+  pricePerUnit   Float // Price at time of assignment
+  totalPrice     Float
+  isPartnerPrice Boolean @default(false) // Whether partner discount was applied
+  
+  // Payment Status
+  paymentStatus String @default("PENDING") // "PENDING", "PAID", "DEFERRED"
+  paidAt       DateTime?
+  
+  // Metadata
+  assignedAt DateTime @default(now())
+  assignedBy String? // Admin who made assignment
+  
+  @@index([seedInventoryId])
+  @@index([assignedToFarmerId])
+  @@index([assignedToEstateId])
+  @@map("seed_assignments")
+}
+
+// ============================================
+// COMPLIANCE LOG (Offline-Ready)
+// ============================================
+
+model ComplianceLog {
+  id String @id @default(uuid())
+  
+  // Link to Farmer & Estate
+  farmerId String
+  farmer   User   @relation("ComplianceLogs", fields: [farmerId], references: [id])
+  estateId String
+  estate   Estate @relation("ComplianceLogs", fields: [estateId], references: [id])
+  parcelId String?
+  parcel   Parcel? @relation("ComplianceLogs", fields: [parcelId], references: [id])
+  
+  // Entry Type
+  entryType String // "PRSKANJE", "SETVA", "BERBA", "FERTILIZER_SCAN"
+  
+  // Barcode Data
+  scannedBarcode String // Barcode of fertilizer/seed/packaging
+  barcodeType    String // "FERTILIZER", "SEED", "PACKAGING"
+  
+  // Compliance Check
+  isCompliant    Boolean // Passed Bio-White-List check
+  complianceStatus String // "APPROVED", "BLOCKED", "PENDING"
+  blockedReason   String? // If blocked, reason
+  
+  // GPS Coordinates
+  gpsLatitude  Float
+  gpsLongitude Float
+  gpsAccuracy  Float? // GPS accuracy in meters
+  isWithinFarm Boolean // Whether GPS is within farm boundaries
+  
+  // Photos
+  photos String[] // Array of photo URLs from field
+  
+  // Device Info (Security)
+  deviceFingerprint String // Unique device ID
+  deviceTimestamp   DateTime // Device timestamp (may differ from server)
+  
+  // Offline Support
+  synced      Boolean @default(false) // Whether synced to server
+  syncedAt    DateTime? // When synced
+  offlineId   String? // Local ID used before sync
+  
+  // Related Data
+  relatedSeedInventoryId String? // If related to seed scan
+  relatedBatchId         String? // If related to harvest batch
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  networkTimestamp DateTime @default(now()) // Server timestamp
+  
+  @@index([farmerId])
+  @@index([estateId])
+  @@index([parcelId])
+  @@index([scannedBarcode])
+  @@index([isCompliant])
+  @@index([synced])
+  @@index([createdAt])
+  @@index([entryType])
+  @@map("compliance_logs")
+}
+
+// ============================================
+// INSURANCE POLICY
+// ============================================
+
+model InsurancePolicy {
+  id String @id @default(uuid())
+  
+  // Policy Identification
+  policyNumber String @unique
+  policyType   String // "CROP", "WEATHER", "TRANSPORT", "COMPREHENSIVE"
+  
+  // Coverage
+  farmerId String
+  farmer   User   @relation("InsurancePolicies", fields: [farmerId], references: [id])
+  estateId String?
+  estate   Estate? @relation("InsurancePolicies", fields: [estateId], references: [id])
+  parcelId String?
+  parcel   Parcel? @relation("InsurancePolicies", fields: [parcelId], references: [id])
+  
+  // Coverage Details
+  coverageAmount Float // Total coverage amount
+  coverageStart  DateTime
+  coverageEnd    DateTime
+  isActive       Boolean @default(true)
+  
+  // Commission
+  commissionRate Float // Platform commission (e.g., 0.05 for 5%)
+  commissionAmount Float // Calculated commission
+  
+  // Claims
+  claims InsuranceClaim[]
+  
+  // Related Seed/Order
+  relatedSeedInventoryId String? // If insurance purchased with seed
+  relatedOrderId         String? // If insurance for specific order
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([farmerId])
+  @@index([estateId])
+  @@index([parcelId])
+  @@index([policyNumber])
+  @@index([isActive])
+  @@index([coverageStart, coverageEnd])
+  @@map("insurance_policies")
+}
+
+model InsuranceClaim {
+  id String @id @default(uuid())
+  
+  // Policy
+  insurancePolicyId String
+  insurancePolicy   InsurancePolicy @relation(fields: [insurancePolicyId], references: [id], onDelete: Cascade)
+  
+  // Claim Details
+  claimNumber String @unique
+  claimType   String // "WEATHER", "DISEASE", "THEFT", etc.
+  claimAmount Float
+  status      String @default("PENDING") // "PENDING", "APPROVED", "REJECTED", "PAID"
+  
+  // Evidence
+  photos      String[] // Photos as evidence
+  description String
+  
+  // Processing
+  approvedAt DateTime?
+  paidAt     DateTime?
+  rejectedAt DateTime?
+  rejectionReason String?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([insurancePolicyId])
+  @@index([claimNumber])
+  @@index([status])
+  @@map("insurance_claims")
+}
+
+// ============================================
+// SHIPMENT & PRODUCT (Complete Journey)
+// ============================================
+
+model Shipment {
+  id String @id @default(uuid())
+  
+  // Shipment Identification
+  shipmentNumber String @unique // SHIP-2024-001
+  qrCodeId       String @unique // QR code for public tracking
+  
+  // Origin
+  farmerId String
+  farmer   User   @relation("Shipments", fields: [farmerId], references: [id])
+  estateId String
+  estate   Estate @relation("Shipments", fields: [estateId], references: [id])
+  
+  // Seed Traceability (CRITICAL: Link to seed)
+  seedInventoryId String // Seed that was planted
+  seedInventory   SeedInventory @relation("ShipmentSeeds", fields: [seedInventoryId], references: [id])
+  
+  // Product Details
+  productName String // "Bio Apfel", "Bio Wheat", etc.
+  quantity    Float
+  unit        String // "kg", "box", "pallet"
+  
+  // Journey Status
+  status String @default("PACKED") // "PACKED", "IN_TRANSIT", "AT_HUB", "DELIVERED", "IN_RETAIL"
+  
+  // Location Tracking
+  currentLocation String? // Current location name
+  currentHubId    String? // If at hub
+  currentHub      Hub?    @relation("ShipmentHubs", fields: [currentHubId], references: [id])
+  
+  // Transport
+  logisticsPartnerId String? // Logistics company
+  driverId           String? // Driver assigned
+  vehiclePlate       String? // Vehicle license plate
+  
+  // Timeline
+  harvestedAt  DateTime // When harvested
+  packedAt     DateTime? // When packed
+  shippedAt    DateTime? // When shipped
+  arrivedAtHub DateTime? // When arrived at hub
+  deliveredAt  DateTime? // When delivered to retail
+  
+  // Quality & Compliance
+  qualityEntryId String? // Link to quality entry
+  compliancePhotos String[] // Compliance photos
+  
+  // Vera Bonus Calculation
+  veraBonusEligible Boolean @default(false) // Whether eligible for bonus
+  veraBonusAmount   Float @default(0.0) // Calculated bonus amount
+  veraBonusPaid     Boolean @default(false) // Whether bonus was paid
+  veraBonusPaidAt   DateTime? // When bonus was paid
+  
+  // Financial
+  basePrice      Float // Base price to farmer
+  transportCost  Float // Transport cost
+  finalPrice     Float // Final price (base + bonus - costs)
+  
+  // Traceability Chain
+  locationLogs LocationLog[] // All location changes
+  temperatureLogs TemperatureLog[] // Temperature tracking
+  batches      Batch[] // Related batches
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([shipmentNumber])
+  @@index([qrCodeId])
+  @@index([farmerId])
+  @@index([estateId])
+  @@index([seedInventoryId]) // CRITICAL: For seed-to-product traceability
+  @@index([status])
+  @@index([harvestedAt])
+  @@map("shipments")
+}
+
+model Product {
+  id String @id @default(uuid())
+  
+  // Product Identification
+  productCode String @unique // Product SKU
+  qrCodeId    String @unique // QR code for public verification
+  
+  // Link to Shipment
+  shipmentId String
+  shipment   Shipment @relation("Products", fields: [shipmentId], references: [id], onDelete: Cascade)
+  
+  // Link to Batch (if exists)
+  batchId String?
+  batch   Batch? @relation("ProductBatches", fields: [batchId], references: [id])
+  
+  // Product Details
+  productName String
+  quantity    Float
+  unit        String
+  
+  // Current Status
+  status String @default("IN_WAREHOUSE") // "IN_WAREHOUSE", "IN_TRANSIT", "IN_RETAIL", "SOLD", "EXPIRED"
+  
+  // Location
+  currentRetailLocation String? // Retail store location
+  currentRetailChain    String? // "Rewe", "Edeka", etc.
+  
+  // Traceability (Complete Chain)
+  seedInventoryId String // CRITICAL: Link to original seed
+  seedInventory   SeedInventory @relation("ProductSeeds", fields: [seedInventoryId], references: [id])
+  
+  // Public Profile Data (for QR code page)
+  publicProfileData Json // {farmerName, location, harvestDate, journey, etc.}
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  soldAt    DateTime? // When sold to consumer
+  
+  @@index([productCode])
+  @@index([qrCodeId])
+  @@index([shipmentId])
+  @@index([batchId])
+  @@index([seedInventoryId]) // CRITICAL: For traceability
+  @@index([status])
+  @@map("products")
+}
+
+// ============================================
+// TRACEABILITY VIEW (PostgreSQL View)
+// ============================================
+// This view provides complete traceability from seed to retail
+
+// Note: Views are created via SQL migration, not Prisma schema
+// Example SQL:
+/*
+CREATE VIEW seed_to_retail_traceability AS
+SELECT 
+  si.batch_number as seed_batch,
+  si.serial_number as seed_serial,
+  si.seed_type,
+  si.variety,
+  f.user_id as farmer_id,
+  f.is_vera_partner,
+  s.shipment_number,
+  s.qr_code_id as shipment_qr,
+  s.harvested_at,
+  s.status as shipment_status,
+  p.product_code,
+  p.qr_code_id as product_qr,
+  p.status as product_status,
+  p.current_retail_location,
+  p.current_retail_chain,
+  p.sold_at
+FROM seed_inventory si
+JOIN shipments s ON s.seed_inventory_id = si.id
+JOIN products p ON p.shipment_id = s.id AND p.seed_inventory_id = si.id
+JOIN farmer_profiles f ON s.farmer_id = f.user_id
+WHERE p.status IN ('IN_RETAIL', 'SOLD');
+*/
+
+// ============================================
+// RELATIONS TO EXISTING MODELS
+// ============================================
+// These relations need to be added to existing models:
+
+// Add to User model:
+// farmerProfile FarmerProfile? @relation("FarmerProfile")
+// complianceLogs ComplianceLog[] @relation("ComplianceLogs")
+// insurancePolicies InsurancePolicy[] @relation("InsurancePolicies")
+// shipments Shipment[] @relation("Shipments")
+
+// Add to Estate model:
+// complianceLogs ComplianceLog[] @relation("ComplianceLogs")
+// insurancePolicies InsurancePolicy[] @relation("InsurancePolicies")
+// shipments Shipment[] @relation("Shipments")
+
+// Add to Parcel model:
+// seedInventory SeedInventory? @relation("SeedParcel")
+// complianceLogs ComplianceLog[] @relation("ComplianceLogs")
+// insurancePolicies InsurancePolicy[] @relation("InsurancePolicies")
+
+// Add to Hub model:
+// shipments Shipment[] @relation("ShipmentHubs")
+
+// Add to Batch model:
+// products Product[] @relation("ProductBatches")

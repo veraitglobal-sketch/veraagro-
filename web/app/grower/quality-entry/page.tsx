@@ -1,0 +1,389 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import SidebarLayout from '@/components/SidebarLayout';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/lib/auth';
+
+const navItems = [
+  { href: '/grower', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
+  { href: '/grower/portal', label: 'Mission Tracker', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg> },
+  { href: '/grower/batches', label: 'My Batches', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
+  { href: '/grower/materials', label: 'Materials', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
+  { href: '/grower/quality-entry', label: 'Quality Entry', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+  { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+];
+
+export default function QualityEntryPage() {
+  const { user } = useAuth();
+  const [selectedBatch, setSelectedBatch] = useState<string>('');
+  const [formData, setFormData] = useState({
+    weatherTemperature: '',
+    weatherHumidity: '',
+    cloudCover: 'clear' as 'clear' | 'partly_cloudy' | 'cloudy' | 'overcast',
+    preCoolingStartTime: '',
+    visualGradePhotos: [] as string[], // Base64 or URLs
+    standardConfirmation: false,
+    notes: '',
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const setFileInputRef = (index: number) => (el: HTMLInputElement | null) => {
+    fileInputRefs.current[index] = el;
+  };
+
+  // Mock batches - in production, fetch from API
+  const [batches] = useState([
+    { id: 'BATCH-001', batchId: 'BATCH-2024-001', productName: 'Raspberry', quantity: 500, unit: 'kg' },
+    { id: 'BATCH-002', batchId: 'BATCH-2024-002', productName: 'Blackberry', quantity: 300, unit: 'kg' },
+  ]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handlePhotoUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Photo size must be less than 10MB');
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setFormData(prev => {
+        const newPhotos = [...prev.visualGradePhotos];
+        newPhotos[index] = base64;
+        return { ...prev, visualGradePhotos: newPhotos };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+
+    // Validation
+    if (!selectedBatch) {
+      setError('Please select a batch');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.standardConfirmation) {
+      setError('You must confirm that Bio Vera packaging, film, and labels are applied according to the protocol.');
+      setSubmitting(false);
+      return;
+    }
+
+    if (formData.visualGradePhotos.length !== 3) {
+      setError('You must upload exactly 3 photos (top, middle, bottom crates)');
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/quality-entry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          batchId: selectedBatch,
+          preCoolingStartTime: new Date(formData.preCoolingStartTime).toISOString(),
+          weatherAtHarvest: {
+            temperature: parseFloat(formData.weatherTemperature),
+            humidity: parseFloat(formData.weatherHumidity),
+            cloudCover: formData.cloudCover,
+          },
+          visualGradePhotos: formData.visualGradePhotos,
+          standardConfirmation: formData.standardConfirmation,
+          notes: formData.notes,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit quality entry');
+      }
+
+      setSuccess(true);
+      // Reset form
+      setTimeout(() => {
+        setFormData({
+          weatherTemperature: '',
+          weatherHumidity: '',
+          cloudCover: 'clear',
+          preCoolingStartTime: '',
+          visualGradePhotos: [],
+          standardConfirmation: false,
+          notes: '',
+        });
+        setSelectedBatch('');
+        setSuccess(false);
+      }, 3000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit quality entry');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <SidebarLayout title="Quality Entry" navItems={navItems}>
+      <div className="space-y-6">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 bg-red-50 border border-red-200 rounded-lg"
+          >
+            <p className="text-sm text-red-800">{error}</p>
+          </motion.div>
+        )}
+
+        {success && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 bg-green-50 border border-green-200 rounded-lg"
+          >
+            <p className="text-sm text-green-800">
+              ✓ Quality entry submitted successfully! Shipment can now be created.
+            </p>
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Farmer's Quality Entry</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Complete this form before creating a shipment. All fields are mandatory.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Batch Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Batch *
+              </label>
+              <select
+                value={selectedBatch}
+                onChange={(e) => setSelectedBatch(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">-- Select Batch --</option>
+                {batches.map((batch) => (
+                  <option key={batch.id} value={batch.id}>
+                    {batch.batchId} - {batch.productName} ({batch.quantity} {batch.unit})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Weather at Harvest */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Weather at Harvest</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Temperature (°C) *
+                  </label>
+                  <input
+                    type="number"
+                    name="weatherTemperature"
+                    value={formData.weatherTemperature}
+                    onChange={handleInputChange}
+                    required
+                    min="-20"
+                    max="50"
+                    step="0.1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="e.g., 22.5"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Humidity (%) *
+                  </label>
+                  <input
+                    type="number"
+                    name="weatherHumidity"
+                    value={formData.weatherHumidity}
+                    onChange={handleInputChange}
+                    required
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="e.g., 65"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Cloud Cover *
+                  </label>
+                  <select
+                    name="cloudCover"
+                    value={formData.cloudCover}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="clear">Clear</option>
+                    <option value="partly_cloudy">Partly Cloudy</option>
+                    <option value="cloudy">Cloudy</option>
+                    <option value="overcast">Overcast</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Pre-cooling Start Time */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Pre-cooling Start Time</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Exact Minute Fruit Entered Cold Storage *
+                </label>
+                <input
+                  type="datetime-local"
+                  name="preCoolingStartTime"
+                  value={formData.preCoolingStartTime}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Visual Grade Photos */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Visual Grade Photos</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Upload 3 high-resolution photos: top crate, middle crate, and bottom crate.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {['Top Crate', 'Middle Crate', 'Bottom Crate'].map((label, index) => (
+                  <div key={index} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {label} *
+                    </label>
+                    <div className="relative">
+                      <input
+                        ref={setFileInputRef(index)}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handlePhotoUpload(index, e)}
+                        className="hidden"
+                        id={`photo-${index}`}
+                      />
+                      <label
+                        htmlFor={`photo-${index}`}
+                        className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-center"
+                      >
+                        {formData.visualGradePhotos[index] ? (
+                          <div className="space-y-2">
+                            <svg className="w-8 h-8 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <p className="text-sm text-green-600">Photo uploaded</p>
+                            <img
+                              src={formData.visualGradePhotos[index]}
+                              alt={label}
+                              className="w-full h-32 object-cover rounded mt-2"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <svg className="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p className="text-sm text-gray-500">Click to upload</p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Standard Confirmation */}
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="standardConfirmation"
+                    name="standardConfirmation"
+                    type="checkbox"
+                    checked={formData.standardConfirmation}
+                    onChange={handleInputChange}
+                    required
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor="standardConfirmation" className="font-medium text-gray-700">
+                    Standard Confirmation *
+                  </label>
+                  <p className="text-gray-600 mt-1">
+                    I confirm that the Bio Vera packaging, film, and labels are applied according to the protocol.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Additional Notes (Optional)
+              </label>
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Any additional information..."
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="border-t border-gray-200 pt-6">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {submitting ? 'Submitting...' : 'Submit Quality Entry'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    </SidebarLayout>
+  );
+}

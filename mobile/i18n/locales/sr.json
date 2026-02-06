@@ -1,0 +1,134 @@
+{
+  "marketplace": {
+    "tagline": "BIO-Ready sertifikovana hrana sa digitalnim dokazom",
+    "searchTitle": "Šta želiš danas?",
+    "searchPlaceholder": "Pretraži proizvode...",
+    "categories": {
+      "title": "Kategorije",
+      "fruits": "Voće",
+      "vegetables": "Povrće",
+      "grains": "Žitarice"
+    },
+    "premium": {
+      "title": "Bio Vera Premium"
+    },
+    "daysInConversion": "dana u konverziji",
+    "viewHistory": "Vidi istoriju njive",
+    "becomeProducer": {
+      "title": "Postani Bio Vera Proizvođač",
+      "description": "Pridruži se našoj mreži sertifikovanih proizvođača",
+      "button": "Prijava za partnere",
+      "link": "Saznaj više →"
+    },
+    "buyerOptions": {
+      "title": "Već si kupac?",
+      "login": "Prijavi se",
+      "guest": "Nastavi kao gost"
+    }
+  },
+  "partnerLogin": {
+    "subtitle": "Pristup isključivo za proizvođače",
+    "partnerCode": "Partner Code",
+    "partnerCodePlaceholder": "Unesi svoj Partner Code",
+    "password": "Lozinka",
+    "passwordPlaceholder": "Unesi lozinku",
+    "button": "Prijavi se",
+    "loading": "Prijavljivanje...",
+    "fillAllFields": "Popuni sva polja",
+    "failed": "Prijava neuspešna",
+    "notProducer": "Ovaj nalog nije proizvođač",
+    "backToMarketplace": "Nazad na marketplace"
+  },
+  "buyerLogin": {
+    "subtitle": "Kupovina BIO-Ready proizvoda",
+    "email": "Email",
+    "password": "Lozinka",
+    "login": "Prijavi se",
+    "loading": "Prijavljivanje...",
+    "fillAllFields": "Popuni sva polja",
+    "failed": "Prijava neuspešna",
+    "or": "ili",
+    "googleLogin": "Prijavi se sa Google",
+    "continueAsGuest": "Nastavi kao gost",
+    "back": "Nazad",
+    "googleComingSoon": "Google prijava uskoro"
+  },
+  "producer": {
+    "tabs": {
+      "dashboard": "Početna",
+      "estates": "Njive",
+      "scanner": "Skeniraj",
+      "growthJournal": "Dnevnik"
+    },
+    "dashboard": {
+      "welcome": "Dobrodošli",
+      "partnerCode": "Partner Code",
+      "conversionProgress": "Napredak konverzije",
+      "days": "dana",
+      "daysRemaining": "Preostalo dana",
+      "activeEstates": "Aktivne njive",
+      "parcels": "parcela",
+      "quickActions": "Brze akcije",
+      "scanSeed": "Skeniraj seme",
+      "addEvidence": "Dodaj dokaz rasta"
+    }
+  },
+  "buyer": {
+    "tabs": {
+      "shop": "Prodavnica",
+      "orders": "Porudžbine",
+      "veraStandard": "Bio Vera Standard",
+      "profile": "Profil"
+    },
+    "shop": {
+      "title": "Bio Vera Marketplace",
+      "subtitle": "BIO-Ready sertifikovana hrana",
+      "veraTrust": "Bio Vera Trust",
+      "addToCart": "Dodaj u korpu",
+      "viewHistory": "Vidi istoriju"
+    },
+    "orders": {
+      "title": "Moje Porudžbine",
+      "empty": "Nemate porudžbina",
+      "list": "Lista porudžbina"
+    },
+    "veraStandard": {
+      "title": "Bio Vera Standard",
+      "description": "Naš standard garantuje neoborive digitalne dokaze za svaki proizvod.",
+      "requirements": {
+        "title": "Zahtevi za sertifikaciju:",
+        "gps": "GPS praćenje granica njive",
+        "images": "Hronološke slike rasta",
+        "lab": "Laboratorijski nalazi",
+        "duration": "3 godine kontinuiranog praćenja"
+      }
+    },
+    "profile": {
+      "title": "Moj Profil",
+      "deliveryAddress": "Adresa za dostavu",
+      "addAddress": "Dodaj adresu",
+      "purchaseHistory": "Istorija kupovine",
+      "viewOrders": "Vidi porudžbine",
+      "logout": "Odjavi se"
+    }
+  },
+  "producer": {
+    "scanner": {
+      "title": "Skeniraj QR Kod",
+      "description": "Skeniraj QR kod sa vreće semena da započneš proces setve"
+    },
+    "estates": {
+      "title": "Moje Njive",
+      "empty": "Nemate još registrovanih njiva",
+      "createNew": "Kreiraj novu njivu",
+      "list": "Lista njiva"
+    },
+    "growthJournal": {
+      "title": "Dnevnik Rasta",
+      "empty": "Nemate još unosa u dnevnik",
+      "list": "Lista unosa"
+    }
+  },
+  "error": "Greška",
+  "info": "Informacija"
+}

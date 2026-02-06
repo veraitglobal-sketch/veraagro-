@@ -1,0 +1,563 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import SidebarLayout from '@/components/SidebarLayout';
+import AuthGuard from '@/components/AuthGuard';
+import { usersAPI } from '@/lib/api';
+import { motion } from 'framer-motion';
+import { Users, Plus, Edit2, Trash2, Search, Filter } from 'lucide-react';
+import { getAdminNavItems } from '@/lib/admin-nav';
+
+interface User {
+  id: string;
+  partnerCode: string;
+  email?: string;
+  phone?: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+  status: string;
+  createdAt: string;
+  _count?: {
+    estates: number;
+  };
+}
+
+export default function UsersManagementPage() {
+  const adminNavItems = getAdminNavItems();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    loadUsers();
+  }, [roleFilter, statusFilter, search]);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const filters: any = {};
+      if (roleFilter) filters.role = roleFilter;
+      if (statusFilter) filters.status = statusFilter;
+      if (search) filters.search = search;
+      
+      const data = await usersAPI.getAll(filters);
+      setUsers(data);
+    } catch (err: any) {
+      console.error('Error loading users:', err);
+      setError(err.message || 'Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    
+    try {
+      await usersAPI.delete(id);
+      loadUsers();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete user');
+    }
+  };
+
+  const [formData, setFormData] = useState({
+    partnerCode: '',
+    email: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+    roles: [] as string[],
+    status: 'PENDING_VERIFICATION' as string,
+  });
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await usersAPI.create({
+        ...formData,
+        password: formData.password,
+        roles: formData.roles.length > 0 ? formData.roles : undefined,
+      });
+      setShowCreateModal(false);
+      resetForm();
+      loadUsers();
+    } catch (err: any) {
+      alert(err.message || 'Failed to create user');
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    
+    try {
+      await usersAPI.update(editingUser.id, {
+        email: formData.email || undefined,
+        phone: formData.phone || undefined,
+        firstName: formData.firstName || undefined,
+        lastName: formData.lastName || undefined,
+        roles: formData.roles.length > 0 ? formData.roles : undefined,
+        status: formData.status || undefined,
+      });
+      setEditingUser(null);
+      resetForm();
+      loadUsers();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update user');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      partnerCode: '',
+      email: '',
+      phone: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      roles: [],
+      status: 'PENDING_VERIFICATION',
+    });
+  };
+
+  const openEditModal = (user: User) => {
+    setEditingUser(user);
+    setFormData({
+      partnerCode: user.partnerCode,
+      email: user.email || '',
+      phone: user.phone || '',
+      firstName: user.firstName,
+      lastName: user.lastName,
+      password: '',
+      roles: user.roles || [],
+      status: user.status,
+    });
+  };
+
+  return (
+    <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
+      <SidebarLayout title="User Management" navItems={adminNavItems}>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-light text-gray-900">User Management</h1>
+              <p className="text-sm text-gray-600 mt-1">Manage all users in the system</p>
+            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Create User
+            </button>
+          </div>
+
+          {/* Filters */}
+          <div className="bg-white rounded-lg shadow border border-gray-200 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="">All Roles</option>
+                <option value="FARMER">Farmer</option>
+                <option value="GROWER">Grower</option>
+                <option value="BUYER">Buyer</option>
+                <option value="LOGISTICS_PARTNER">Logistics Partner</option>
+                <option value="ADMIN">Admin</option>
+                <option value="SUPER_ADMIN">Super Admin</option>
+              </select>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="">All Statuses</option>
+                <option value="ACTIVE">Active</option>
+                <option value="SUSPENDED">Suspended</option>
+                <option value="PENDING_VERIFICATION">Pending Verification</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Users Table */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading users...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      User
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estates
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Created
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {users.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.firstName} {user.lastName}
+                          </div>
+                          <div className="text-sm text-gray-500">{user.partnerCode}</div>
+                          {user.email && (
+                            <div className="text-xs text-gray-400">{user.email}</div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-1">
+                          {user.roles.map((role) => (
+                            <span
+                              key={role}
+                              className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded"
+                            >
+                              {role.replace(/_/g, ' ')}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded ${
+                            user.status === 'ACTIVE'
+                              ? 'bg-green-100 text-green-800'
+                              : user.status === 'SUSPENDED'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                        >
+                          {user.status.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {user._count?.estates || 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => openEditModal(user)}
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {users.length === 0 && (
+                <div className="text-center py-12">
+                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No users found</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Create User Modal */}
+          {showCreateModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+              >
+                <h2 className="text-xl font-semibold mb-4">Create New User</h2>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Partner Code *</label>
+                      <input
+                        type="text"
+                        value={formData.partnerCode}
+                        onChange={(e) => setFormData({ ...formData, partnerCode: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+                      <input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
+                      <div className="space-y-2">
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                          <label key={role} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={formData.roles.includes(role)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setFormData({ ...formData, roles: [...formData.roles, role] });
+                                } else {
+                                  setFormData({ ...formData, roles: formData.roles.filter(r => r !== role) });
+                                }
+                              }}
+                              className="mr-2"
+                            />
+                            <span className="text-sm text-gray-700">{role.replace(/_/g, ' ')}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="PENDING_VERIFICATION">Pending Verification</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="SUSPENDED">Suspended</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 justify-end pt-4 border-t">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCreateModal(false);
+                        resetForm();
+                      }}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      Create User
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Edit User Modal */}
+          {editingUser && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+              >
+                <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+                <form onSubmit={handleUpdate} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Partner Code</label>
+                      <input
+                        type="text"
+                        value={formData.partnerCode}
+                        disabled
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="PENDING_VERIFICATION">Pending Verification</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="SUSPENDED">Suspended</option>
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                          <label key={role} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={formData.roles.includes(role)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setFormData({ ...formData, roles: [...formData.roles, role] });
+                                } else {
+                                  setFormData({ ...formData, roles: formData.roles.filter(r => r !== role) });
+                                }
+                              }}
+                              className="mr-2"
+                            />
+                            <span className="text-sm text-gray-700">{role.replace(/_/g, ' ')}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 justify-end pt-4 border-t">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingUser(null);
+                        resetForm();
+                      }}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      Update User
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </div>
+      </SidebarLayout>
+    </AuthGuard>
+  );
+}

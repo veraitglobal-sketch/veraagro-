@@ -1,0 +1,29 @@
+═══════════════════════════════════════════════════
+  INSTRUKCIJE ZA SUTRA - Watchman Instalacija
+═══════════════════════════════════════════════════
+
+1. PROVERITE DA LI JE WATCHMAN INSTALIRAN:
+   
+   Otvorite terminal i pokrenite:
+   which watchman
+   
+   Ako vidite putanju (npr. /usr/local/bin/watchman) → ✅ INSTALIRAN!
+   Ako vidite "watchman not found" → ⏳ NIJE ZAVRŠENO
+
+2. AKO JE INSTALIRAN:
+   
+   cd /Users/jovicamihajlovic/Desktop/veraagrar/mobile
+   npm start
+   
+   I sve će raditi bez problema! 🎉
+
+3. AKO NIJE ZAVRŠENO:
+   
+   Proverite terminal gde se instalira Watchman.
+   Ako vidite grešku ili je proces stao, pokrenite:
+   
+   brew install watchman
+   
+   I nastavite sa instalacijom.
+
+═══════════════════════════════════════════════════

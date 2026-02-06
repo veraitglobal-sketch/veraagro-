@@ -1,0 +1,295 @@
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { CryptoUtil } from '../common/utils/crypto.util';
+
+/**
+ * Invoices Service
+ * Automatic generation of PDF invoices
+ */
+@Injectable()
+export class InvoicesService {
+  constructor(private prisma: PrismaService) {}
+
+  /**
+   * Generate invoice PDF automatically when delivery is assigned
+   */
+  async generateInvoice(orderId: string, deliveryId?: string) {
+    const order = await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: {
+        estates: true,
+        users: true,
+        payments: true,
+        deliveries: deliveryId
+          ? {
+              include: {
+                users: true,
+              },
+            }
+          : undefined,
+      },
+    });
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    // Generate invoice number
+    const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+
+    // Prepare invoice data
+    const invoiceData = {
+      invoiceNumber,
+      orderNumber: order.orderNumber,
+      date: new Date().toISOString(),
+      buyer: {
+        name: `${order.users.firstName} ${order.users.lastName}`,
+        email: order.users.email,
+        phone: order.users.phone,
+        deliveryAddress: order.deliveryAddress,
+      },
+      items: [
+        {
+          productName: order.productName,
+          quantity: order.quantity,
+          unit: order.unit,
+          unitPrice: order.unitPrice,
+          total: order.totalAmount,
+        },
+      ],
+      subtotal: order.totalAmount,
+      tax: 0, // Can be calculated
+      total: order.totalAmount,
+      payment: {
+        method: order.payments?.paymentMethod,
+        status: order.payments?.status,
+      },
+      delivery: order.deliveries
+        ? {
+            deliveryNumber: order.deliveries.deliveryNumber,
+            driver: order.deliveries.users
+              ? `${order.deliveries.users.firstName} ${order.deliveries.users.lastName}`
+              : null,
+          }
+        : null,
+    };
+
+    // Generate PDF (mock - in production, use PDF library)
+    const pdfUrl = `/invoices/${invoiceNumber}.pdf`; // TODO: Generate actual PDF
+    const pdfHash = CryptoUtil.hashPassport(invoiceData);
+
+    // Create invoice record
+    const invoice = await this.prisma.invoices.create({
+      data: {
+        id: crypto.randomUUID(),
+        invoiceNumber,
+        orderId,
+        deliveryId: deliveryId || null,
+        pdfUrl,
+        pdfHash,
+        invoiceData,
+        sentToEmail: order.users.email || null,
+      },
+    });
+
+    // TODO: Send invoice via email
+
+    return invoice;
+  }
+
+  async getInvoice(orderId: string) {
+    return this.prisma.invoices.findUnique({
+      where: { orderId },
+      include: {
+        orders: {
+          include: {
+            estates: true,
+            users: true,
+            payments: true,
+          },
+        },
+        deliveries: {
+          include: {
+            users: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findAll(filters?: {
+    buyerId?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }) {
+    const where: any = {};
+
+    if (filters?.buyerId) {
+      where.orders = {
+        buyerId: filters.buyerId,
+      };
+    }
+
+    if (filters?.status) {
+      // Status is based on payment status
+      where.orders = {
+        ...where.orders,
+        payments: {
+          status: filters.status,
+        },
+      };
+    }
+
+    if (filters?.startDate || filters?.endDate) {
+      where.generatedAt = {};
+      if (filters.startDate) {
+        where.generatedAt.gte = new Date(filters.startDate);
+      }
+      if (filters.endDate) {
+        where.generatedAt.lte = new Date(filters.endDate);
+      }
+    }
+
+    return this.prisma.invoices.findMany({
+      where,
+      include: {
+        orders: {
+          include: {
+            estates: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            payments: {
+              select: {
+                id: true,
+                status: true,
+                paymentMethod: true,
+                releasedAt: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
+        deliveries: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        generatedAt: 'desc',
+      },
+    });
+  }
+
+  async findOne(invoiceId: string, buyerId?: string) {
+    const invoice = await this.prisma.invoices.findUnique({
+      where: { id: invoiceId },
+      include: {
+        orders: {
+          include: {
+            estates: {
+              include: {
+                users: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    phone: true,
+                    partnerCode: true,
+                  },
+                },
+              },
+            },
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+              },
+            },
+            payments: true,
+          },
+        },
+        deliveries: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!invoice) {
+      throw new NotFoundException('Invoice not found');
+    }
+
+    // Check if buyer has access
+    if (buyerId && invoice.orders.buyerId !== buyerId) {
+      throw new BadRequestException('Access denied');
+    }
+
+    return invoice;
+  }
+
+  async downloadInvoice(invoiceId: string, buyerId?: string) {
+    const invoice = await this.findOne(invoiceId, buyerId);
+
+    // In production, generate PDF on the fly or return existing PDF
+    // For now, return invoice data that can be used to generate PDF on frontend
+    return {
+      invoice,
+      pdfUrl: invoice.pdfUrl,
+      invoiceData: invoice.invoiceData,
+    };
+  }
+
+  async sendInvoiceEmail(invoiceId: string, buyerId?: string, email?: string) {
+    const invoice = await this.findOne(invoiceId, buyerId);
+
+    // In production, send email via email service
+    // For now, just update sentToEmail and sentAt
+    const updated = await this.prisma.invoices.update({
+      where: { id: invoiceId },
+      data: {
+        sentToEmail: email || invoice.orders.users.email || null,
+        sentAt: new Date(),
+      },
+    });
+
+    // TODO: Implement actual email sending
+    // await this.emailService.sendInvoice(invoice, email || invoice.orders.users.email);
+
+    return {
+      message: 'Invoice email sent',
+      invoice: updated,
+    };
+  }
+}

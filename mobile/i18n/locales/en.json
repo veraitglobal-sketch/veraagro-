@@ -1,0 +1,151 @@
+{
+  "marketplace": {
+    "tagline": "BIO-Ready certified food with digital proof",
+    "searchTitle": "What would you like today?",
+    "searchPlaceholder": "Search products...",
+    "categories": {
+      "title": "Categories",
+      "fruits": "Fruits",
+      "vegetables": "Vegetables",
+      "grains": "Grains"
+    },
+    "premium": {
+      "title": "Bio Vera Premium"
+    },
+    "daysInConversion": "days in conversion",
+    "viewHistory": "View farm history",
+    "becomeProducer": {
+      "title": "Become a Bio Vera Producer",
+      "description": "Join our network of certified producers",
+      "button": "Partner Login",
+      "link": "Learn more →"
+    },
+    "buyerOptions": {
+      "title": "Already a customer?",
+      "login": "Log in",
+      "guest": "Continue as guest"
+    },
+    "loginOptions": {
+      "title": "Access Your Account",
+      "login": "Sign In",
+      "guest": "Browse"
+    },
+    "emptyState": {
+      "noResults": "No results",
+      "noProducts": "Currently no available products",
+      "tryDifferentSearch": "Try a different search term",
+      "comingSoon": "Products will be available soon. Check again later!",
+      "clearSearch": "Clear search"
+    },
+    "header": {
+      "bioReady": "BIO-READY",
+      "certifiedFood": "Certified food"
+    },
+    "products": {
+      "count": "{{count}} product",
+      "count_plural": "{{count}} products"
+    },
+    "errors": {
+      "loadFailed": "Failed to load products"
+    },
+    "loading": "Loading products..."
+  },
+  "partnerLogin": {
+    "subtitle": "Exclusive access for producers",
+    "partnerCode": "Partner Code",
+    "partnerCodePlaceholder": "Enter your Partner Code",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "button": "Log in",
+    "loading": "Logging in...",
+    "fillAllFields": "Fill all fields",
+    "failed": "Login failed",
+    "notProducer": "This account is not a producer",
+    "backToMarketplace": "Back to marketplace"
+  },
+  "buyerLogin": {
+    "subtitle": "Purchase BIO-Ready products",
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "loading": "Logging in...",
+    "fillAllFields": "Fill all fields",
+    "failed": "Login failed",
+    "or": "or",
+    "googleLogin": "Sign in with Google",
+    "continueAsGuest": "Continue as guest",
+    "back": "Back",
+    "googleComingSoon": "Google login coming soon"
+  },
+  "producer": {
+    "tabs": {
+      "dashboard": "Dashboard",
+      "estates": "Estates",
+      "scanner": "Scan",
+      "growthJournal": "Journal"
+    },
+    "dashboard": {
+      "welcome": "Welcome",
+      "partnerCode": "Partner Code",
+      "conversionProgress": "Conversion progress",
+      "days": "days",
+      "daysRemaining": "Days remaining",
+      "activeEstates": "Active estates",
+      "parcels": "parcels",
+      "quickActions": "Quick actions",
+      "scanSeed": "Scan seed",
+      "addEvidence": "Add growth evidence"
+    }
+  },
+  "buyer": {
+    "tabs": {
+      "shop": "Shop",
+      "orders": "Orders",
+      "veraStandard": "Bio Vera Standard",
+      "profile": "Profile"
+    },
+    "shop": {
+      "title": "Bio Vera Marketplace",
+      "subtitle": "BIO-Ready certified food",
+      "veraTrust": "Bio Vera Trust",
+      "addToCart": "Add to cart",
+      "viewHistory": "View history",
+      "noProducts": "Currently no available products",
+      "loading": "Loading products..."
+    },
+    "orders": {
+      "title": "My Orders",
+      "empty": "You have no orders",
+      "list": "Order list"
+    },
+    "veraStandard": {
+      "title": "Bio Vera Standard",
+      "description": "Our standard guarantees indisputable digital proof for every product.",
+      "requirements": {
+        "title": "Certification requirements:",
+        "gps": "GPS tracking of farm boundaries",
+        "images": "Chronological growth images",
+        "lab": "Laboratory results",
+        "duration": "3 years of continuous monitoring"
+      }
+    },
+    "profile": {
+      "title": "My Profile",
+      "deliveryAddress": "Delivery address",
+      "addAddress": "Add address",
+      "purchaseHistory": "Purchase history",
+      "viewOrders": "View orders",
+      "logout": "Log out"
+    }
+  },
+  "error": "Error",
+  "info": "Information",
+  "common": {
+    "currency": "EUR",
+    "close": "Close"
+  },
+  "map": {
+    "title": "Where to Buy",
+    "subtitle": "Find BioVera retail locations near you"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Bio Vera",
+    "slug": "bio-vera",
+    "version": "1.0.0",
+    "sdkVersion": "54.0.0",
+    "orientation": "portrait",
+    "scheme": "biovera",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#16a34a"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.biovera.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Bio Vera needs camera access to capture growth evidence with GPS metadata.",
+        "NSLocationWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#16a34a"
+      },
+      "package": "com.biovera.app",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {},
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Bio Vera to access your camera to capture growth evidence."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Bio Vera to access your location to verify parcel boundaries."
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "373e53b3-f456-4d0e-9cbb-033346876475"
+      }
+    }
+  }
+}

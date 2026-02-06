@@ -1,0 +1,47 @@
+// Security Alert Model
+// Add this to main schema.prisma
+
+model SecurityAlert {
+  id String @id @default(uuid())
+  
+  // Alert Type
+  type String // "UNAUTHORIZED_CHEMICAL", "INACTIVE_CHEMICAL", "GPS_VIOLATION", "LATE_ENTRY"
+  severity String // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  
+  // Context
+  barcode String? // Barcode that triggered alert
+  userId String // User who triggered alert
+  user   User   @relation("SecurityAlerts", fields: [userId], references: [id])
+  farmId String // Farm where alert occurred
+  estate Estate @relation("SecurityAlerts", fields: [farmId], references: [id])
+  entryType String? // Type of entry that triggered alert
+  
+  // Details
+  message String // Alert message
+  gpsLatitude Float? // GPS coordinates if applicable
+  gpsLongitude Float? // GPS coordinates if applicable
+  
+  // Status
+  status String @default("PENDING") // "PENDING", "REVIEWED", "RESOLVED", "DISMISSED"
+  reviewedBy String? // Admin who reviewed
+  reviewedAt DateTime?
+  resolution String? // Resolution notes
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([farmId])
+  @@index([type])
+  @@index([severity])
+  @@index([status])
+  @@index([createdAt])
+  @@map("security_alerts")
+}
+
+// Add relation to User model:
+// securityAlerts SecurityAlert[] @relation("SecurityAlerts")
+
+// Add relation to Estate model:
+// securityAlerts SecurityAlert[] @relation("SecurityAlerts")

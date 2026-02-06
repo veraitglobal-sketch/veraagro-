@@ -1,0 +1,171 @@
+// Bio Vera - Simplified Database Schema
+// Clean schema connecting farmers with seeds they purchased
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  FARMER
+  ADMIN
+  LOGISTIC
+  BUYER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hashed
+  firstName String
+  lastName  String
+  phone     String?
+  role      UserRole @default(FARMER)
+  
+  // Vera Partner Program
+  isVeraPartner Boolean @default(false)
+  
+  // Relationships
+  farms       Farm[]
+  seedBatches SeedBatch[] @relation("PurchasedSeeds")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+
+// ============================================
+// FARM MANAGEMENT
+// ============================================
+
+enum SoilType {
+  CLAY
+  SANDY
+  LOAMY
+  PEATY
+  CHALKY
+  SILTY
+}
+
+model Farm {
+  id        String   @id @default(uuid())
+  name      String
+  ownerId   String   // User (Farmer) who owns this farm
+  
+  // Coordinates (polygon or point)
+  coordinates Json   // { lat: number, lng: number } or polygon array
+  
+  // Farm details
+  size      Float    // Size in hectares
+  soilType  SoilType
+  
+  // Relationships
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("farms")
+}
+
+// ============================================
+// SEED BATCH MANAGEMENT
+// ============================================
+
+enum SeedType {
+  WHEAT
+  CORN
+  SOYBEAN
+  SUNFLOWER
+  BARLEY
+  OATS
+  RYE
+  OTHER
+}
+
+model SeedBatch {
+  id            String   @id @default(uuid())
+  serialNumber  String   @unique // Unique serial number for tracking
+  seedType      SeedType
+  
+  // Pricing
+  standardPrice Float    // Standard price for regular buyers
+  partnerPrice  Float    // Discounted price for partners
+  
+  // Purchase info
+  purchasedBy   String?  // User (Farmer) who purchased this seed
+  purchasedAt   DateTime?
+  
+  // Relationships
+  farmer        User?    @relation("PurchasedSeeds", fields: [purchasedBy], references: [id], onDelete: SetNull)
+  insurance     InsurancePolicy?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("seed_batches")
+}
+
+// ============================================
+// INSURANCE POLICY
+// ============================================
+
+enum InsuranceStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+model InsurancePolicy {
+  id          String          @id @default(uuid())
+  seedBatchId String          @unique // One policy per seed batch
+  
+  status      InsuranceStatus @default(PENDING)
+  coverage    Float           // Coverage amount
+  commission  Float           // Commission percentage (e.g., 5.5 for 5.5%)
+  
+  // Policy dates
+  startDate   DateTime
+  endDate     DateTime
+  
+  // Relationships
+  seedBatch   SeedBatch       @relation(fields: [seedBatchId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  
+  @@map("insurance_policies")
+}
+
+// ============================================
+// BIO-WHITE-LIST (Compliance)
+// ============================================
+
+model BioWhiteList {
+  id          String   @id @default(uuid())
+  barcode     String   @unique // Fertilizer/chemical barcode
+  productName String
+  manufacturer String
+  description String?
+  
+  // Status
+  isActive    Boolean  @default(true)
+  
+  // Who added it
+  addedBy     String   // User ID (Admin)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("bio_white_list")
+}

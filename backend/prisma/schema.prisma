@@ -1,0 +1,1402 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model audit_logs {
+  id                String      @id
+  performedByUserId String?
+  performedByRole   UserRole?
+  action            AuditAction
+  entityType        String
+  entityId          String?
+  changes           Json?
+  metadata          Json?
+  ipAddress         String?
+  userAgent         String?
+  createdAt         DateTime    @default(now())
+
+  @@index([action])
+  @@index([createdAt])
+  @@index([performedByUserId])
+}
+
+model audit_trails {
+  id                String         @id
+  eventType         AuditEventType
+  entityType        String
+  entityId          String
+  batchId           String?
+  performedByUserId String?
+  oldValue          Json?
+  newValue          Json
+  changeReason      String?
+  location          Json?
+  temperature       Float?
+  temperatureUnit   String?
+  deviceId          String?
+  deviceModel       String?
+  ipAddress         String?
+  userAgent         String?
+  timestamp         DateTime       @default(now())
+  isCompliant       Boolean        @default(true)
+  batches           batches?       @relation(fields: [batchId], references: [id])
+  users             users?         @relation(fields: [performedByUserId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([eventType])
+  @@index([performedByUserId])
+  @@index([timestamp])
+}
+
+model batches {
+  id                                         String                 @id
+  batchId                                    String                 @unique
+  estateId                                   String
+  parcelId                                   String?
+  harvestedByUserId                          String?
+  currentHubId                               String?
+  transportedByDriverId                      String?
+  productName                                String
+  quantity                                   Float
+  unit                                       String
+  harvestDate                                DateTime
+  status                                     BatchStatus            @default(PACKED)
+  qualityIssues                              Json?
+  inventoryId                                String?
+  locationHistory                            Json
+  createdAt                                  DateTime               @default(now())
+  updatedAt                                  DateTime
+  audit_trails                               audit_trails[]
+  hubs                                       hubs?                  @relation(fields: [currentHubId], references: [id])
+  estates                                    estates                @relation(fields: [estateId], references: [id])
+  users_batches_harvestedByUserIdTousers     users?                 @relation("batches_harvestedByUserIdTousers", fields: [harvestedByUserId], references: [id])
+  inventory                                  inventory?             @relation(fields: [inventoryId], references: [id])
+  parcels                                    parcels?               @relation(fields: [parcelId], references: [id])
+  users_batches_transportedByDriverIdTousers users?                 @relation("batches_transportedByDriverIdTousers", fields: [transportedByDriverId], references: [id])
+  compliance_photos                          compliance_photos[]
+  distributor_arrivals                       distributor_arrivals[]
+  freshness_trackers                         freshness_trackers?
+  missions                                   missions[]
+  order_items                                order_items[]
+  quality_entries                            quality_entries?
+  temperature_logs                           temperature_logs[]
+
+  @@index([batchId])
+  @@index([currentHubId])
+  @@index([estateId])
+  @@index([status])
+}
+
+model bio_vera_standards {
+  id                       String   @id
+  requiredTemperatureMin   Float    @default(2.0)
+  requiredTemperatureMax   Float    @default(8.0)
+  requiredPackagingType    String   @default("BIO_VERA_CRATE")
+  requiredFilmType         String   @default("BIO_VERA_FILM")
+  requiresCompliancePhotos Boolean  @default(true)
+  requiredPhotoTypes       String[] @default(["PUNNETS", "LABELING", "PALLETIZATION"])
+  qualityPremiumAmount     Float    @default(0.10)
+  crateCostPerUnit         Float    @default(0.50)
+  labelCostPerUnit         Float    @default(0.10)
+  filmCostPerMeter         Float    @default(0.05)
+  isActive                 Boolean  @default(true)
+  updatedByUserId          String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime
+  users                    users?   @relation(fields: [updatedByUserId], references: [id])
+
+  @@index([isActive])
+}
+
+model bio_white_list {
+  id           String   @id
+  barcode      String   @unique
+  productName  String
+  manufacturer String
+  description  String?
+  isActive     Boolean  @default(true)
+  addedBy      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+
+  @@index([barcode])
+  @@index([isActive])
+}
+
+model border_wait_times {
+  id                String   @id
+  missionId         String
+  borderName        String?
+  borderArrivalTime DateTime
+  borderExitTime    DateTime
+  waitTimeMinutes   Int
+  notes             String?
+  recordedByUserId  String
+  createdAt         DateTime @default(now())
+  missions          missions @relation(fields: [missionId], references: [id])
+  users             users    @relation(fields: [recordedByUserId], references: [id])
+
+  @@index([borderArrivalTime])
+  @@index([missionId])
+  @@index([recordedByUserId])
+}
+
+model compliance_logs {
+  id                     String    @id
+  farmerId               String
+  estateId               String
+  parcelId               String?
+  entryType              String
+  scannedBarcode         String
+  barcodeType            String
+  isCompliant            Boolean
+  complianceStatus       String
+  blockedReason          String?
+  gpsLatitude            Float
+  gpsLongitude           Float
+  gpsAccuracy            Float?
+  isWithinFarm           Boolean
+  photos                 String[]
+  deviceFingerprint      String
+  deviceId               String?
+  deviceTimestamp        DateTime
+  synced                 Boolean   @default(false)
+  syncedAt               DateTime?
+  offlineId              String?
+  relatedSeedInventoryId String?
+  relatedBatchId         String?
+  createdAt              DateTime  @default(now())
+  networkTimestamp       DateTime  @default(now())
+  estates                estates   @relation(fields: [estateId], references: [id])
+  users                  users     @relation(fields: [farmerId], references: [id])
+  parcels                parcels?  @relation(fields: [parcelId], references: [id])
+
+  @@index([complianceStatus])
+  @@index([createdAt])
+  @@index([entryType])
+  @@index([estateId])
+  @@index([farmerId])
+  @@index([isCompliant])
+  @@index([parcelId])
+  @@index([scannedBarcode])
+  @@index([synced])
+}
+
+model compliance_photos {
+  id         String    @id
+  batchId    String
+  photoType  String
+  photoUrl   String
+  photoHash  String
+  verifiedBy String?
+  verifiedAt DateTime?
+  isVerified Boolean   @default(false)
+  uploadedAt DateTime  @default(now())
+  uploadedBy String
+  batches    batches   @relation(fields: [batchId], references: [id])
+
+  @@index([batchId])
+  @@index([isVerified])
+  @@index([photoType])
+}
+
+model deliveries {
+  id                String             @id
+  deliveryNumber    String             @unique
+  orderId           String             @unique
+  driverId          String
+  pickupLocation    Json
+  pickupAddress     String
+  deliveryLocation  Json
+  deliveryAddress   String
+  status            DeliveryStatus     @default(PENDING)
+  deliveryQRCode    String             @unique
+  qrScannedAt       DateTime?
+  assignedAt        DateTime?
+  pickedUpAt        DateTime?
+  inTransitAt       DateTime?
+  deliveredAt       DateTime?
+  confirmedAt       DateTime?
+  pickupSignature   String?
+  deliverySignature String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  users             users              @relation(fields: [driverId], references: [id])
+  orders            orders             @relation(fields: [orderId], references: [id])
+  digital_handovers digital_handovers? @relation("DigitalHandovers")
+  invoices          invoices?
+  waybills          waybills?
+
+  @@index([deliveryQRCode])
+  @@index([driverId])
+  @@index([orderId])
+  @@index([status])
+}
+
+model digital_passports {
+  id                String         @id
+  estateId          String
+  parcelIds         String[]
+  exportData        Json
+  passportHash      String         @unique
+  signature         String?
+  status            PassportStatus @default(DRAFT)
+  generatedByUserId String?
+  generatedAt       DateTime       @default(now())
+  exportedAt        DateTime?
+  estates           estates        @relation(fields: [estateId], references: [id])
+
+  @@index([estateId])
+  @@index([passportHash])
+}
+
+model discount_quota_usage {
+  id                 String   @id
+  farmerId           String
+  orderId            String?
+  quantityUsed       Float
+  discountRate       Float
+  discountAmount     Float
+  maxQuotaPerHectare Float    @default(200)
+  estateArea         Float
+  createdAt          DateTime @default(now())
+  users              users    @relation(fields: [farmerId], references: [id])
+  orders             orders?  @relation(fields: [orderId], references: [id])
+
+  @@index([createdAt])
+  @@index([farmerId])
+  @@index([orderId])
+}
+
+model distributor_arrivals {
+  id                   String   @id
+  batchId              String
+  hubName              String
+  arrivalTime          DateTime @default(now())
+  temperatureAtArrival Float
+  visualState          String
+  notes                String?
+  photos               String[]
+  recordedByUserId     String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  batches              batches  @relation(fields: [batchId], references: [id])
+  users                users    @relation(fields: [recordedByUserId], references: [id])
+
+  @@index([arrivalTime])
+  @@index([batchId])
+  @@index([recordedByUserId])
+}
+
+model estates {
+  id                     String              @id
+  name                   String
+  ownerId                String
+  polygonCoordinates     Json
+  calculatedArea         Float
+  verifiedArea           Float?
+  status                 EstateStatus        @default(PENDING_SETUP)
+  certificationStartDate DateTime?
+  daysRemaining          Int?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime
+  batches                batches[]
+  compliance_logs        compliance_logs[]
+  digital_passports      digital_passports[]
+  users                  users               @relation(fields: [ownerId], references: [id])
+  growth_logs            growth_logs[]
+  inventory              inventory[]
+  orders                 orders[]
+  parcels                parcels[]
+  security_alerts        security_alerts[]
+
+  @@index([ownerId])
+  @@index([status])
+}
+
+model farmer_material_balances {
+  id               String   @id
+  userId           String   @unique
+  crateBalance     Int      @default(0)
+  labelRollBalance Int      @default(0)
+  filmMeterBalance Float    @default(0)
+  totalPurchased   Json
+  lastUpdated      DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
+  users            users    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model freshness_trackers {
+  id                      String    @id
+  batchId                 String    @unique
+  cropType                String
+  timestampHarvested      DateTime
+  shelfLifeHours          Int
+  remainingShelfLifeHours Float
+  expiresAt               DateTime
+  isExpired               Boolean   @default(false)
+  alertSentAt             DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime
+  batches                 batches   @relation(fields: [batchId], references: [id])
+
+  @@index([batchId])
+  @@index([expiresAt])
+  @@index([isExpired])
+}
+
+model growth_logs {
+  id               String    @id
+  userId           String
+  estateId         String
+  parcelId         String?
+  imageUrl         String
+  imageHash        String
+  gpsLatitude      Float
+  gpsLongitude     Float
+  gpsAccuracy      Float?
+  deviceId         String
+  deviceModel      String?
+  networkTimestamp DateTime
+  deviceTimestamp  DateTime
+  timeOffset       Int?
+  notes            String?
+  growthStage      String?
+  dataHash         String    @unique
+  previousLogHash  String?
+  labResultUrl     String?
+  labResultHash    String?
+  labTestDate      DateTime?
+  createdAt        DateTime  @default(now())
+  estates          estates   @relation(fields: [estateId], references: [id])
+  parcels          parcels?  @relation(fields: [parcelId], references: [id])
+  users            users     @relation(fields: [userId], references: [id])
+
+  @@index([dataHash])
+  @@index([estateId])
+  @@index([networkTimestamp])
+  @@index([parcelId])
+  @@index([userId])
+}
+
+model hubs {
+  id        String      @id
+  name      String
+  location  Json
+  address   String
+  city      String
+  status    HubStatus   @default(ACTIVE)
+  managerId String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime
+  batches   batches[]
+  users     users?      @relation(fields: [managerId], references: [id])
+  inventory inventory[]
+
+  @@index([city])
+  @@index([status, city])
+  @@index([status])
+}
+
+model inventory {
+  id                    String          @id
+  hubId                 String
+  estateId              String
+  parcelId              String?
+  productName           String
+  quantity              Float
+  unit                  String
+  unitPrice             Float
+  status                InventoryStatus @default(AVAILABLE)
+  estimatedDeliveryDays Int?
+  availableCities       String[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime
+  expiresAt             DateTime?
+  batches               batches[]
+  estates               estates         @relation(fields: [estateId], references: [id])
+  hubs                  hubs            @relation(fields: [hubId], references: [id])
+  parcels               parcels?        @relation(fields: [parcelId], references: [id])
+  order_items           order_items[]
+
+  @@index([availableCities])
+  @@index([estateId])
+  @@index([hubId])
+  @@index([status])
+}
+
+model invoices {
+  id            String      @id
+  invoiceNumber String      @unique
+  orderId       String      @unique
+  deliveryId    String?     @unique
+  pdfUrl        String
+  pdfHash       String
+  invoiceData   Json
+  sentToEmail   String?
+  sentAt        DateTime?
+  generatedAt   DateTime    @default(now())
+  deliveries    deliveries? @relation(fields: [deliveryId], references: [id])
+  orders        orders      @relation(fields: [orderId], references: [id])
+
+  @@index([invoiceNumber])
+  @@index([orderId])
+}
+
+model location_logs {
+  id               String    @id
+  missionId        String?
+  vehicleId        String?
+  batchId          String?
+  latitude         Float
+  longitude        Float
+  accuracy         Float?
+  address          String?
+  reportedByUserId String
+  deviceId         String?
+  timestamp        DateTime  @default(now())
+  missions         missions? @relation(fields: [missionId], references: [id])
+  users            users     @relation(fields: [reportedByUserId], references: [id])
+
+  @@index([batchId])
+  @@index([missionId])
+  @@index([timestamp])
+  @@index([vehicleId])
+}
+
+model logistics_handovers {
+  id                     String                  @id
+  missionId              String                  @unique
+  insideTruckTemperature Float
+  verifiedBy             String
+  notes                  String?
+  timestamp              DateTime                @default(now())
+  status                 LogisticsHandoverStatus @default(PENDING)
+  missions               missions                @relation(fields: [missionId], references: [id])
+
+  @@index([missionId])
+  @@index([status])
+  @@index([verifiedBy])
+}
+
+model market_prices {
+  id            String         @id
+  cropType      String
+  buyPrice      Float
+  sellPrice     Float
+  effectiveFrom DateTime       @default(now())
+  effectiveTo   DateTime?
+  setByUserId   String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime
+  users         users?         @relation(fields: [setByUserId], references: [id])
+  transactions  transactions[]
+
+  @@index([cropType])
+  @@index([effectiveFrom])
+  @@index([isActive])
+}
+
+model material_inventory {
+  id             String         @id
+  materialTypeId String
+  serialNumber   String?        @unique
+  batchNumber    String?
+  status         MaterialStatus @default(AVAILABLE)
+  soldToUserId   String?
+  soldAt         DateTime?
+  usedInBatchId  String?
+  usedAt         DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  material_types material_types @relation(fields: [materialTypeId], references: [id])
+  users          users?         @relation(fields: [soldToUserId], references: [id])
+
+  @@index([materialTypeId])
+  @@index([serialNumber])
+  @@index([soldToUserId])
+  @@index([status])
+}
+
+model material_types {
+  id                 String               @id
+  name               String               @unique
+  type               MaterialTypeEnum
+  unit               String
+  unitPrice          Float
+  description        String?
+  isActive           Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  material_inventory material_inventory[]
+
+  @@index([isActive])
+  @@index([type])
+}
+
+model missions {
+  id                                       String               @id
+  missionNumber                            String               @unique
+  growerId                                 String
+  batchId                                  String?
+  pickupLocation                           Json
+  pickupAddress                            String
+  logisticsPartnerId                       String?
+  vehicleId                                String?
+  optimalRoute                             Json?
+  estimatedPickupTime                      DateTime?
+  status                                   MissionStatus        @default(PENDING)
+  requestedAt                              DateTime             @default(now())
+  assignedAt                               DateTime?
+  acceptedAt                               DateTime?
+  pickedUpAt                               DateTime?
+  completedAt                              DateTime?
+  createdAt                                DateTime             @default(now())
+  updatedAt                                DateTime
+  border_wait_times                        border_wait_times[]
+  location_logs                            location_logs[]
+  logistics_handovers                      logistics_handovers?
+  batches                                  batches?             @relation(fields: [batchId], references: [id])
+  users_missions_growerIdTousers           users                @relation("missions_growerIdTousers", fields: [growerId], references: [id])
+  users_missions_logisticsPartnerIdTousers users?               @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
+  vehicles                                 vehicles?            @relation(fields: [vehicleId], references: [id])
+  temperature_logs                         temperature_logs[]
+
+  @@index([growerId])
+  @@index([logisticsPartnerId])
+  @@index([missionNumber])
+  @@index([status])
+}
+
+model notification_templates {
+  id         String              @id
+  trigger    NotificationTrigger
+  userRole   UserRole
+  title      String
+  message    String
+  actionUrl  String?
+  conditions Json?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime
+
+  @@index([trigger])
+  @@index([userRole])
+}
+
+model notifications {
+  id        String             @id
+  userId    String
+  type      NotificationType
+  status    NotificationStatus @default(UNREAD)
+  title     String
+  message   String
+  actionUrl String?
+  createdAt DateTime           @default(now())
+  readAt    DateTime?
+  users     users              @relation(fields: [userId], references: [id])
+
+  @@index([status])
+  @@index([userId])
+}
+
+model order_items {
+  id          String     @id
+  orderId     String
+  inventoryId String?
+  batchId     String?
+  productName String
+  quantity    Float
+  unitPrice   Float
+  createdAt   DateTime   @default(now())
+  batches     batches?   @relation(fields: [batchId], references: [id])
+  inventory   inventory? @relation(fields: [inventoryId], references: [id])
+  orders      orders     @relation(fields: [orderId], references: [id])
+
+  @@index([batchId])
+  @@index([orderId])
+}
+
+model orders {
+  id                   String                 @id
+  orderNumber          String                 @unique
+  buyerId              String
+  estateId             String
+  parcelId             String?
+  productName          String
+  quantity             Float
+  unit                 String
+  unitPrice            Float
+  totalAmount          Float
+  deliveryAddress      Json
+  deliveryNotes        String?
+  status               OrderStatus            @default(PENDING)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  completedAt          DateTime?
+  deliveries           deliveries?
+  discount_quota_usage discount_quota_usage[]
+  invoices             invoices?
+  order_items          order_items[]
+  users                users                  @relation(fields: [buyerId], references: [id])
+  estates              estates                @relation(fields: [estateId], references: [id])
+  parcels              parcels?               @relation(fields: [parcelId], references: [id])
+  payments             payments?
+  ratings              ratings[]
+
+  @@index([buyerId])
+  @@index([estateId])
+  @@index([orderNumber])
+  @@index([status])
+}
+
+model parcels {
+  id                    String                  @id
+  estateId              String
+  polygonCoordinates    Json
+  calculatedArea        Float
+  inputSerialNumber     String?                 @unique
+  seedId                String?
+  status                ParcelStatus            @default(INVALID)
+  validationError       String?
+  cropType              String?
+  plantingDate          DateTime?
+  expectedHarvestDate   DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime
+  batches               batches[]
+  compliance_logs       compliance_logs[]
+  growth_logs           growth_logs[]
+  harvest_announcements harvest_announcements[]
+  inventory             inventory[]
+  orders                orders[]
+  estates               estates                 @relation(fields: [estateId], references: [id])
+  seeds                 seeds?                  @relation(fields: [seedId], references: [id])
+  plot_blueprints       plot_blueprints?
+  seed_scans            seed_scans[]
+
+  @@index([estateId])
+  @@index([inputSerialNumber])
+  @@index([status])
+}
+
+model harvest_announcements {
+  id                String    @id
+  parcelId          String
+  userId            String
+  announcementType  String
+  cropType          String
+  estimatedDate     DateTime
+  estimatedQuantity Float?
+  actualDate        DateTime?
+  actualQuantity    Float?
+  status            String    @default("PENDING")
+  notes             String?
+  notifiedAt        DateTime?
+  confirmedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  parcel            parcels   @relation(fields: [parcelId], references: [id])
+  user              users     @relation(fields: [userId], references: [id])
+
+  @@index([parcelId])
+  @@index([userId])
+  @@index([estimatedDate])
+  @@index([status])
+}
+
+model payments {
+  id                String        @id
+  orderId           String        @unique
+  totalAmount       Float
+  farmerAmount      Float
+  driverAmount      Float
+  platformFee       Float
+  status            PaymentStatus @default(PENDING)
+  escrowReleaseDate DateTime?
+  paymentMethod     String
+  transactionId     String?
+  splitDetails      Json
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime
+  releasedAt        DateTime?
+  orders            orders        @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@index([status])
+}
+
+model quality_entries {
+  id                   String             @id
+  batchId              String             @unique
+  weatherAtHarvest     Json
+  preCoolingStartTime  DateTime
+  visualGradePhotos    String[]
+  standardConfirmation Boolean            @default(false)
+  confirmedBy          String
+  status               QualityEntryStatus @default(DRAFT)
+  notes                String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime
+  batches              batches            @relation(fields: [batchId], references: [id])
+
+  @@index([batchId])
+  @@index([confirmedBy])
+  @@index([status])
+}
+
+model ratings {
+  id                               String   @id
+  orderId                          String
+  raterId                          String
+  ratedUserId                      String
+  ratingType                       String
+  score                            Int
+  punctuality                      Int?
+  productQuality                   Int?
+  communication                    Int?
+  comment                          String?
+  trustScoreImpact                 Float?
+  createdAt                        DateTime @default(now())
+  orders                           orders   @relation(fields: [orderId], references: [id])
+  users_ratings_ratedUserIdTousers users    @relation("ratings_ratedUserIdTousers", fields: [ratedUserId], references: [id])
+  users_ratings_raterIdTousers     users    @relation("ratings_raterIdTousers", fields: [raterId], references: [id])
+
+  @@index([orderId])
+  @@index([ratedUserId])
+  @@index([raterId])
+  @@index([ratingType])
+}
+
+model scraped_prices {
+  id        String   @id
+  retailer  String
+  product   String
+  cropType  String
+  price     Float
+  unit      String   @default("kg")
+  location  String
+  url       String?
+  scrapedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([cropType])
+  @@index([location])
+  @@index([retailer])
+  @@index([scrapedAt])
+}
+
+model security_alerts {
+  id           String    @id
+  type         String
+  severity     String
+  status       String    @default("PENDING")
+  barcode      String
+  userId       String
+  estateId     String
+  entryType    String
+  message      String
+  gpsLatitude  Float?
+  gpsLongitude Float?
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  reviewNotes  String?
+  resolution   String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime
+  estates      estates   @relation(fields: [estateId], references: [id])
+  users        users     @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([estateId])
+  @@index([severity])
+  @@index([status])
+  @@index([type])
+  @@index([userId])
+}
+
+model seed_scans {
+  id                String   @id
+  inputSerialNumber String
+  seedId            String?
+  scannedByUserId   String
+  gpsLatitude       Float
+  gpsLongitude      Float
+  gpsAccuracy       Float?
+  deviceId          String
+  deviceModel       String?
+  networkTimestamp  DateTime
+  deviceTimestamp   DateTime
+  timeOffset        Int?
+  parcelId          String?
+  isValid           Boolean  @default(false)
+  validationError   String?
+  createdAt         DateTime @default(now())
+  parcels           parcels? @relation(fields: [parcelId], references: [id])
+  users             users    @relation(fields: [scannedByUserId], references: [id])
+  seeds             seeds?   @relation(fields: [seedId], references: [id])
+
+  @@index([inputSerialNumber])
+  @@index([parcelId])
+  @@index([scannedByUserId])
+}
+
+model seeds {
+  id               String          @id
+  serialNumber     String          @unique
+  type             SeedType
+  name             String
+  batchNumber      String
+  quantity         Float
+  areaCoverage     Float
+  status           SeedStatus      @default(AVAILABLE)
+  assignedToUserId String?
+  assignedAt       DateTime?
+  manufacturedAt   DateTime
+  expiresAt        DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime
+  parcels          parcels[]
+  seed_scans       seed_scans[]
+  vera_insights    vera_insights[]
+
+  @@index([batchNumber])
+  @@index([serialNumber])
+  @@index([status])
+}
+
+model temperature_logs {
+  id               String    @id
+  missionId        String?
+  vehicleId        String?
+  batchId          String?
+  temperature      Float
+  humidity         Float?
+  location         Json
+  reportedByUserId String
+  sensorId         String?
+  deviceId         String?
+  timestamp        DateTime  @default(now())
+  isOutOfRange     Boolean   @default(false)
+  alertSent        Boolean   @default(false)
+  batches          batches?  @relation(fields: [batchId], references: [id])
+  missions         missions? @relation(fields: [missionId], references: [id])
+  users            users     @relation(fields: [reportedByUserId], references: [id])
+  vehicles         vehicles? @relation(fields: [vehicleId], references: [id])
+
+  @@index([batchId])
+  @@index([isOutOfRange])
+  @@index([missionId])
+  @@index([timestamp])
+  @@index([vehicleId])
+}
+
+model transactions {
+  id              String        @id
+  marketPriceId   String
+  cropType        String
+  quantity        Float
+  unitPrice       Float
+  totalAmount     Float
+  growerId        String?
+  buyerId         String?
+  orderId         String?
+  batchId         String?
+  transactionDate DateTime      @default(now())
+  market_prices   market_prices @relation(fields: [marketPriceId], references: [id])
+
+  @@index([buyerId])
+  @@index([growerId])
+  @@index([marketPriceId])
+  @@index([transactionDate])
+}
+
+model trust_scores {
+  id            String   @id
+  userId        String   @unique
+  currentScore  Float    @default(50.0)
+  farmerScore   Float?
+  driverScore   Float?
+  totalRatings  Int      @default(0)
+  averageRating Float    @default(0.0)
+  badges        String[]
+  lastUpdated   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  users         users    @relation(fields: [userId], references: [id])
+
+  @@index([currentScore])
+  @@index([userId])
+}
+
+model users {
+  id                                           String                    @id
+  partnerCode                                  String                    @unique
+  email                                        String?                   @unique
+  phone                                        String?
+  firstName                                    String
+  lastName                                     String
+  roles                                        UserRole[]                @default([FARMER])
+  status                                       UserStatus                @default(PENDING_VERIFICATION)
+  passwordHash                                 String
+  deviceId                                     String?
+  createdAt                                    DateTime                  @default(now())
+  updatedAt                                    DateTime
+  lastLoginAt                                  DateTime?
+  isVeraPartner                                Boolean                   @default(false)
+  audit_trails                                 audit_trails[]
+  batches_batches_harvestedByUserIdTousers     batches[]                 @relation("batches_harvestedByUserIdTousers")
+  batches_batches_transportedByDriverIdTousers batches[]                 @relation("batches_transportedByDriverIdTousers")
+  bio_vera_standards                           bio_vera_standards[]
+  border_wait_times                            border_wait_times[]
+  compliance_logs                              compliance_logs[]
+  deliveries                                   deliveries[]
+  digital_handovers                            digital_handovers[]       @relation("DriverHandovers")
+  discount_quota_usage                         discount_quota_usage[]
+  distributor_arrivals                         distributor_arrivals[]
+  estates                                      estates[]
+  farmer_material_balances                     farmer_material_balances?
+  growth_logs                                  growth_logs[]
+  harvest_announcements                        harvest_announcements[]
+  hubs                                         hubs[]
+  location_logs                                location_logs[]
+  market_prices                                market_prices[]
+  material_inventory                           material_inventory[]
+  missions_missions_growerIdTousers            missions[]                @relation("missions_growerIdTousers")
+  missions_missions_logisticsPartnerIdTousers  missions[]                @relation("missions_logisticsPartnerIdTousers")
+  notifications                                notifications[]
+  orders                                       orders[]
+  ratings_ratings_ratedUserIdTousers           ratings[]                 @relation("ratings_ratedUserIdTousers")
+  ratings_ratings_raterIdTousers               ratings[]                 @relation("ratings_raterIdTousers")
+  security_alerts                              security_alerts[]
+  seed_scans                                   seed_scans[]
+  temperature_logs                             temperature_logs[]
+  trust_scores                                 trust_scores?
+  vehicles                                     vehicles[]
+  vera_insights_vera_insights_createdByTousers vera_insights[]           @relation("vera_insights_createdByTousers")
+  vera_insights_vera_insights_updatedByTousers vera_insights[]           @relation("vera_insights_updatedByTousers")
+  wallets                                      wallets?
+
+  @@index([partnerCode])
+}
+
+model vehicles {
+  id                 String             @id
+  vehicleNumber      String             @unique
+  logisticsPartnerId String
+  type               String
+  make               String?
+  model              String?
+  licensePlate       String             @unique
+  hasFrigo           Boolean            @default(true)
+  tempRangeMin       Float
+  tempRangeMax       Float
+  status             VehicleStatus      @default(AVAILABLE)
+  currentLocation    Json?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime
+  missions           missions[]
+  temperature_logs   temperature_logs[]
+  users              users              @relation(fields: [logisticsPartnerId], references: [id])
+
+  @@index([licensePlate])
+  @@index([logisticsPartnerId])
+  @@index([status])
+}
+
+model vera_insights {
+  id                                   String     @id
+  cropName                             String
+  veraScore                            Int
+  historicalDeficit                    Float?
+  whyText                              String
+  riskLevel                            RiskLevel  @default(MEDIUM)
+  priceTrend                           PriceTrend @default(STABLE)
+  seedId                               String?
+  isActive                             Boolean    @default(true)
+  createdBy                            String
+  updatedBy                            String?
+  createdAt                            DateTime   @default(now())
+  updatedAt                            DateTime
+  users_vera_insights_createdByTousers users      @relation("vera_insights_createdByTousers", fields: [createdBy], references: [id])
+  seeds                                seeds?     @relation(fields: [seedId], references: [id])
+  users_vera_insights_updatedByTousers users?     @relation("vera_insights_updatedByTousers", fields: [updatedBy], references: [id])
+
+  @@index([cropName])
+  @@index([isActive])
+  @@index([veraScore])
+}
+
+model wallet_transactions {
+  id          String                  @id
+  walletId    String
+  type        WalletTransactionType
+  amount      Float
+  status      WalletTransactionStatus @default(PENDING)
+  orderId     String?
+  deliveryId  String?
+  description String
+  createdAt   DateTime                @default(now())
+  completedAt DateTime?
+  wallets     wallets                 @relation(fields: [walletId], references: [id])
+
+  @@index([status])
+  @@index([type])
+  @@index([walletId])
+}
+
+model wallets {
+  id                  String                @id
+  userId              String                @unique
+  availableBalance    Float                 @default(0.0)
+  pendingBalance      Float                 @default(0.0)
+  totalEarned         Float                 @default(0.0)
+  bankAccount         Json?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  wallet_transactions wallet_transactions[]
+  users               users                 @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model waybills {
+  id            String     @id
+  waybillNumber String     @unique
+  deliveryId    String     @unique
+  pdfUrl        String
+  pdfHash       String
+  generatedData Json
+  generatedAt   DateTime   @default(now())
+  deliveries    deliveries @relation(fields: [deliveryId], references: [id])
+
+  @@index([deliveryId])
+  @@index([waybillNumber])
+}
+
+model digital_handovers {
+  id            String                @id @default(uuid())
+  deliveryId    String                @unique
+  driverId      String
+  storeQrCode   String
+  status        DigitalHandoverStatus @default(INITIATED)
+  qualityStatus QualityStatus?
+  temperature   Float?
+  photoUrls     String[]
+  signature     String?
+  notes         String?
+  completedBy   String?
+  completedAt   DateTime?
+  initiatedAt   DateTime              @default(now())
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  deliveries    deliveries            @relation("DigitalHandovers", fields: [deliveryId], references: [id])
+  users         users                 @relation("DriverHandovers", fields: [driverId], references: [id])
+  disputes      disputes[]
+
+  @@index([deliveryId])
+  @@index([driverId])
+  @@index([status])
+  @@index([initiatedAt])
+  @@map("digital_handovers")
+}
+
+model disputes {
+  id                String            @id @default(uuid())
+  handoverId        String
+  reason            String
+  status            String            @default("PENDING")
+  evidencePhotos    String[]
+  resolvedBy        String?
+  resolvedAt        DateTime?
+  resolution        String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  digital_handovers digital_handovers @relation(fields: [handoverId], references: [id])
+
+  @@index([handoverId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("disputes")
+}
+
+model plot_blueprints {
+  id            String   @id @default(uuid())
+  parcelId      String   @unique
+  blueprintData Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  parcels       parcels  @relation(fields: [parcelId], references: [id])
+
+  @@index([parcelId])
+  @@map("plot_blueprints")
+}
+
+enum AuditAction {
+  USER_CREATED
+  USER_UPDATED
+  USER_SUSPENDED
+  ESTATE_CREATED
+  ESTATE_VERIFIED
+  SEED_ASSIGNED
+  PARCEL_LOCKED
+  PARCEL_UNLOCKED
+  DATA_EXPORTED
+  CERTIFICATE_GENERATED
+}
+
+enum AuditEventType {
+  TEMPERATURE_CHANGE
+  LOCATION_CHANGE
+  STATUS_CHANGE
+  QUALITY_CHECK
+  BATCH_LOCKED
+  BATCH_UNLOCKED
+  PAYMENT_RELEASED
+  PRICE_UPDATED
+  QUALITY_ENTRY
+  LOGISTICS_HANDOVER
+}
+
+enum BatchStatus {
+  PACKED
+  IN_HUB
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  EXPIRED
+  QUALITY_VERIFIED
+}
+
+enum CropShelfLife {
+  RASPBERRIES
+  BLACKBERRIES
+  BLUEBERRIES
+  APPLES
+  PEPPERS
+}
+
+enum CropStatus {
+  PREPARING_SOIL
+  YOUNG_SEEDLING
+  IN_FULL_PRODUCTION
+  HARVESTING
+  FALLOW
+}
+
+enum DeliveryStatus {
+  PENDING
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  CONFIRMED
+  COMPLETED
+}
+
+enum EstateStatus {
+  ACTIVE
+  INVALID
+  PENDING_SETUP
+  CERTIFIED
+  SUSPENDED
+}
+
+enum HandoverStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BLOCKED
+}
+
+enum HubStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum InventoryStatus {
+  AVAILABLE
+  RESERVED
+  IN_TRANSIT
+  SOLD
+  EXPIRED
+}
+
+enum LogisticsHandoverStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BLOCKED
+}
+
+enum MaterialStatus {
+  AVAILABLE
+  SOLD
+  USED
+  EXPIRED
+}
+
+enum MaterialTypeEnum {
+  CRATE
+  LABEL
+  FILM
+}
+
+enum MissionStatus {
+  PENDING
+  ASSIGNED
+  ACCEPTED
+  IN_PROGRESS
+  PICKED_UP
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+  READY_FOR_LOADING
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum NotificationTrigger {
+  DELIVERY_ASSIGNED
+  DRIVER_NEARBY
+  PACKAGE_READY
+  PAYMENT_RELEASED
+  QUALITY_ISSUE
+  BATCH_ARRIVED
+  CUSTOM
+}
+
+enum NotificationType {
+  ACTION_REQUIRED
+  REMINDER
+  ALERT
+  SYSTEM
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CONFIRMED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum ParcelStatus {
+  ACTIVE
+  INVALID
+  LOCKED
+  CERTIFIED
+}
+
+enum PassportStatus {
+  DRAFT
+  GENERATED
+  VERIFIED
+  EXPORTED
+}
+
+enum PaymentStatus {
+  PENDING
+  IN_ESCROW
+  RELEASED
+  REFUNDED
+}
+
+enum PriceTrend {
+  UP
+  DOWN
+  STABLE
+}
+
+enum QualityEntryStatus {
+  DRAFT
+  COMPLETED
+  VERIFIED
+  REJECTED
+}
+
+enum QualityStatus {
+  FRESH
+  DAMAGED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SeedStatus {
+  AVAILABLE
+  ASSIGNED
+  SCANNED
+  USED
+  EXPIRED
+}
+
+enum SeedType {
+  SEED
+  FERTILIZER
+}
+
+enum UserRole {
+  FARMER
+  PARTNER
+  ADMIN
+  DRIVER
+  BUYER
+  SUPER_ADMIN
+  COORDINATOR
+  GROWER
+  LOGISTICS_PARTNER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum WalletTransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum WalletTransactionType {
+  EARNED
+  WITHDRAWN
+  REFUNDED
+  PENALTY
+  BONUS
+}
+
+enum DigitalHandoverStatus {
+  INITIATED
+  IN_PROGRESS
+  COMPLETED
+  DISPUTED
+}

@@ -1,0 +1,49 @@
+// Database Optimization Indexes
+// Add these composite indexes to improve query performance
+
+// ============================================
+// OPTIMIZATION INDEXES
+// ============================================
+
+// For map queries (location-based)
+// Add to Hub model:
+// @@index([country, status, type])
+// @@index([latitude, longitude]) // For geospatial queries
+
+// For batch traceability (frequent queries)
+// Add to Batch model:
+// @@index([estateId, status, harvestDate])
+// @@index([batchId, status])
+
+// For order tracking
+// Add to Order model:
+// @@index([buyerId, status, createdAt])
+// @@index([estateId, status, createdAt])
+
+// For inventory availability
+// Add to Inventory model:
+// @@index([hubId, status, availableCities])
+// @@index([productName, status])
+
+// For market price lookups
+// Add to MarketPrice model:
+// @@index([cropType, isActive, effectiveFrom])
+
+// For distributor network map (<1s target)
+// Add to Hub model:
+// @@index([country, type, status]) // Composite for filtering
+// @@index([latitude, longitude, status]) // For map rendering
+
+// For tax calculations
+// Add to Order model:
+// @@index([createdAt, status]) // For period queries
+// @@index([buyerId, createdAt]) // For buyer reports
+
+// For compliance checks (frequent)
+// Add to BioWhiteList model:
+// @@index([barcode, isActive]) // Composite for lookups
+
+// For field entries sync
+// Add to FieldEntry model (if exists):
+// @@index([userId, synced, createdAt])
+// @@index([farmId, type, createdAt])

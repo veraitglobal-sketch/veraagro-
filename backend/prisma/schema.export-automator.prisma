@@ -1,0 +1,90 @@
+// Additional models for Export Automator
+// Add these to your main schema.prisma file
+
+// ============================================
+// EXPORT AUTOMATOR
+// ============================================
+
+model CMRDocument {
+  id        String   @id @default(uuid())
+  cmrNumber String   @unique
+  deliveryId String  @unique
+  delivery   Delivery @relation(fields: [deliveryId], references: [id])
+
+  // PDF Storage
+  pdfUrl  String
+  pdfHash String // SHA-256 hash
+
+  // CMR Data
+  cmrData Json // Complete CMR document data
+
+  // Metadata
+  generatedAt DateTime @default(now())
+
+  @@index([deliveryId])
+  @@index([cmrNumber])
+  @@map("cmr_documents")
+}
+
+model PhytosanitaryCertificate {
+  id              String   @id @default(uuid())
+  certificateNumber String @unique
+  batchId         String   @unique
+  batch           Batch    @relation(fields: [batchId], references: [id])
+
+  // PDF Storage
+  pdfUrl  String
+  pdfHash String // SHA-256 hash
+
+  // Certificate Data
+  certificateData Json // Complete certificate data
+
+  // Metadata
+  generatedAt DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([batchId])
+  @@index([certificateNumber])
+  @@index([expiresAt])
+  @@map("phytosanitary_certificates")
+}
+
+model TaxCalculation {
+  id      String @id @default(uuid())
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  // Tax Calculation Data
+  taxCalculationData Json // Complete tax calculation
+
+  // Metadata
+  calculatedAt DateTime @default(now())
+
+  @@index([orderId])
+  @@map("tax_calculations")
+}
+
+model TaxReport {
+  id         String   @id @default(uuid())
+  periodStart DateTime
+  periodEnd   DateTime
+
+  // PDF Storage
+  pdfUrl  String
+  pdfHash String // SHA-256 hash
+
+  // Report Data
+  reportData Json // Complete tax report
+
+  // Status
+  submittedToTaxOffice Boolean @default(false)
+  submittedAt          DateTime?
+
+  // Metadata
+  generatedAt DateTime @default(now())
+
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([submittedToTaxOffice])
+  @@map("tax_reports")
+}

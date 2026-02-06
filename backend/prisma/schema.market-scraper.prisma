@@ -1,0 +1,44 @@
+// Additional models for Market Price Scraper
+// Add these to your main schema.prisma file
+
+// ============================================
+// MARKET PRICE SCRAPER
+// ============================================
+
+model ScrapedPrice {
+  id        String   @id @default(uuid())
+  retailer  String   // "Edeka", "Rewe", "Alnatura"
+  product   String   // "Bio Apfel", "Bio Weizen"
+  cropType  String   // "Apple", "Wheat"
+  price     Float    // EUR per kg
+  unit      String   // "kg", "100g", etc.
+  location  String   // "Hamburg", "Berlin", etc.
+  url       String?  // URL where price was scraped
+  scrapedAt DateTime @default(now())
+
+  @@index([retailer])
+  @@index([cropType])
+  @@index([location])
+  @@index([scrapedAt])
+  @@map("scraped_prices")
+}
+
+model PriceAlert {
+  id                   String   @id @default(uuid())
+  cropType             String
+  retailer             String
+  location             String
+  previousPrice        Float
+  currentPrice         Float
+  priceChange          Float    // EUR
+  priceChangePercentage Float   // %
+  alertType            String   // "SPIKE", "DROP", "STABLE"
+  message              String
+  sentAt               DateTime @default(now())
+
+  @@index([cropType])
+  @@index([location])
+  @@index([alertType])
+  @@index([sentAt])
+  @@map("price_alerts")
+}

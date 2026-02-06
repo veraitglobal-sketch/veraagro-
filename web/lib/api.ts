@@ -1,0 +1,577 @@
+import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add token to requests
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+// Handle 401 errors - redirect to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Unauthorized - clear token and redirect to login
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Only redirect if not already on login page
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login/producer';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API
+export const authAPI = {
+  login: async (partnerCode: string, password: string) => {
+    // Backend expects 'username' field (can be email or partnerCode)
+    const response = await api.post('/auth/login', { username: partnerCode, password });
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
+  getCurrentUser: () => {
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    }
+    return null;
+  },
+};
+
+// Inventory API
+export const inventoryAPI = {
+  getAvailableProducts: async (city?: string, lat?: number, lng?: number) => {
+    try {
+      const params: any = {};
+      if (city) params.city = city;
+      if (lat) params.lat = lat.toString();
+      if (lng) params.lng = lng.toString();
+      const response = await api.get('/inventory/available', { params });
+      return response.data;
+    } catch (error: any) {
+      // Enhanced error handling
+      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
+        const errorMessage = `Cannot connect to backend server at ${API_URL}. Please ensure the backend is running:\n\ncd backend && npm run start:dev`;
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+      } else if (error.response) {
+        // Server responded with error status
+        throw new Error(error.response.data?.message || `API Error: ${error.response.status}`);
+      } else {
+        throw error;
+      }
+    }
+  },
+};
+
+// Orders API
+export const ordersAPI = {
+  create: async (orderData: any) => {
+    const response = await api.post('/orders', orderData);
+    return response.data;
+  },
+  getAll: async () => {
+    const response = await api.get('/orders');
+    return response.data;
+  },
+  getAllAdmin: async (filters?: { status?: string; buyerId?: string; estateId?: string }) => {
+    const response = await api.get('/orders/admin/all', { params: filters });
+    return response.data;
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/orders/${id}`);
+    return response.data;
+  },
+  initiatePayment: async (id: string, paymentMethod: string, transactionId?: string) => {
+    const response = await api.post(`/orders/${id}/pay`, { paymentMethod, transactionId });
+    return response.data;
+  },
+};
+
+// Missions API
+export const missionsAPI = {
+  getAllAdmin: async (filters?: { status?: string; growerId?: string; logisticsPartnerId?: string }) => {
+    const response = await api.get('/missions/admin/all', { params: filters });
+    return response.data;
+  },
+  getMyMissions: async () => {
+    const response = await api.get('/missions/my-missions');
+    return response.data;
+  },
+};
+
+// Deliveries API
+export const deliveriesAPI = {
+  getBuyerDeliveries: async (status?: string) => {
+    const response = await api.get('/deliveries/buyer/my-deliveries', { params: status ? { status } : {} });
+    return response.data;
+  },
+  getByOrder: async (orderId: string) => {
+    const response = await api.get(`/deliveries/buyer/order/${orderId}`);
+    return response.data;
+  },
+  getByQR: async (qrCode: string) => {
+    const response = await api.get(`/deliveries/qr/${qrCode}`);
+    return response.data;
+  },
+  confirmDelivery: async (qrCode: string) => {
+    const response = await api.post(`/deliveries/confirm/${qrCode}`);
+    return response.data;
+  },
+};
+
+// Estates API
+export const estatesAPI = {
+  // Admin endpoints
+  getPendingEstates: async () => {
+    const response = await api.get('/estates/admin/pending');
+    return response.data;
+  },
+  approveEstate: async (estateId: string) => {
+    const response = await api.put(`/estates/${estateId}/approve`);
+    return response.data;
+  },
+  rejectEstate: async (estateId: string, reason?: string) => {
+    const response = await api.put(`/estates/${estateId}/reject`, { reason });
+    return response.data;
+  },
+  create: async (estateData: { name: string; polygonCoordinates: any }) => {
+    const response = await api.post('/estates', estateData);
+    return response.data;
+  },
+  getAll: async () => {
+    const response = await api.get('/estates');
+    return response.data;
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/estates/${id}`);
+    return response.data;
+  },
+  startCertification: async (id: string) => {
+    const response = await api.post(`/estates/${id}/start-certification`);
+    return response.data;
+  },
+};
+
+// Parcels API
+export const parcelsAPI = {
+  create: async (estateId: string, parcelData: { polygonCoordinates: any; cropType?: string }) => {
+    const response = await api.post(`/parcels/estate/${estateId}`, parcelData);
+    return response.data;
+  },
+  getByEstate: async (estateId: string) => {
+    const response = await api.get(`/parcels/estate/${estateId}`);
+    return response.data;
+  },
+};
+
+// Smart Lock API
+export const smartLockAPI = {
+  scanSeed: async (data: {
+    inputSerialNumber: string;
+    gpsLatitude: number;
+    gpsLongitude: number;
+    parcelId?: string;
+  }) => {
+    const response = await api.post('/smart-lock/scan', data);
+    return response.data;
+  },
+  getParcelStatus: async (parcelId: string) => {
+    const response = await api.get(`/smart-lock/parcel/${parcelId}/status`);
+    return response.data;
+  },
+};
+
+// Admin API
+export const adminAPI = {
+  getStatistics: async () => {
+    const response = await api.get('/admin/statistics');
+    return response.data;
+  },
+  getRecentActivities: async (limit?: number) => {
+    const response = await api.get('/admin/recent-activities', { params: { limit } });
+    return response.data;
+  },
+};
+
+// Users API (Admin)
+export const usersAPI = {
+  getAll: async (filters?: { role?: string; status?: string; search?: string }) => {
+    const response = await api.get('/users/admin/all', { params: filters });
+    return response.data;
+  },
+  getStatistics: async () => {
+    const response = await api.get('/users/admin/statistics');
+    return response.data;
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/users/admin/${id}`);
+    return response.data;
+  },
+  create: async (userData: {
+    partnerCode: string;
+    email?: string;
+    phone?: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    roles?: string[];
+    role?: string;
+  }) => {
+    const response = await api.post('/users/admin', userData);
+    return response.data;
+  },
+  update: async (id: string, userData: {
+    email?: string;
+    phone?: string;
+    firstName?: string;
+    lastName?: string;
+    roles?: string[];
+    status?: string;
+  }) => {
+    const response = await api.put(`/users/admin/${id}`, userData);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/users/admin/${id}`);
+    return response.data;
+  },
+};
+
+// Security Alerts API
+export const securityAlertsAPI = {
+  getAll: async (filters?: {
+    type?: string;
+    severity?: string;
+    status?: string;
+    userId?: string;
+    estateId?: string;
+  }) => {
+    const response = await api.get('/security-alerts', { params: filters });
+    return response.data;
+  },
+  getStatistics: async () => {
+    const response = await api.get('/security-alerts/statistics');
+    return response.data;
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/security-alerts/${id}`);
+    return response.data;
+  },
+  updateStatus: async (id: string, data: {
+    status: string;
+    reviewNotes?: string;
+    resolution?: string;
+  }) => {
+    const response = await api.put(`/security-alerts/${id}/status`, data);
+    return response.data;
+  },
+};
+
+// Buyers API
+export const buyersAPI = {
+  getStatistics: async () => {
+    const response = await api.get('/buyers/statistics');
+    return response.data;
+  },
+  getAnalytics: async (startDate?: string, endDate?: string) => {
+    const response = await api.get('/buyers/analytics', { params: { startDate, endDate } });
+    return response.data;
+  },
+  getSuppliers: async () => {
+    const response = await api.get('/buyers/suppliers');
+    return response.data;
+  },
+};
+
+// Invoices API
+export const invoicesAPI = {
+  getAll: async (filters?: {
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await api.get('/invoices', { params: filters });
+    return response.data;
+  },
+  getByOrder: async (orderId: string) => {
+    const response = await api.get(`/invoices/order/${orderId}`);
+    return response.data;
+  },
+  getOne: async (invoiceId: string) => {
+    const response = await api.get(`/invoices/${invoiceId}`);
+    return response.data;
+  },
+  download: async (invoiceId: string) => {
+    const response = await api.get(`/invoices/${invoiceId}/download`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  sendEmail: async (invoiceId: string, email?: string) => {
+    const response = await api.post(`/invoices/${invoiceId}/send-email`, { email });
+    return response.data;
+  },
+};
+
+// Notifications API
+export const notificationsAPI = {
+  getAll: async () => {
+    const response = await api.get('/notifications');
+    return response.data;
+  },
+  markAsRead: async (id: string) => {
+    const response = await api.patch(`/notifications/${id}/read`);
+    return response.data;
+  },
+  markAllAsRead: async () => {
+    const response = await api.patch('/notifications/read-all');
+    return response.data;
+  },
+};
+
+// Digital Passports API
+export const digitalPassportsAPI = {
+  getByBatch: async (batchId: string) => {
+    const response = await api.get(`/digital-passports/batch/${batchId}`);
+    return response.data;
+  },
+  getById: async (passportId: string) => {
+    const response = await api.get(`/digital-passports/${passportId}`);
+    return response.data;
+  },
+};
+
+// Vera Transparency API
+export const veraTransparencyAPI = {
+  groupBatches: async (batchIds: string[]) => {
+    const response = await api.post('/vera-transparency/batch-manager/group', { batchIds });
+    return response.data;
+  },
+  validateGrouping: async (batchIds: string[]) => {
+    const response = await api.post('/vera-transparency/batch-manager/validate', { batchIds });
+    return response.data;
+  },
+  generateQRCode: async (batchId: string) => {
+    const response = await api.get(`/vera-transparency/batch/${batchId}/qr-code`);
+    return response.data;
+  },
+  getDeepDive: async (batchId: string) => {
+    const response = await api.get(`/vera-transparency/batch/${batchId}/deep-dive`);
+    return response.data;
+  },
+};
+
+// Batches API
+export const batchesAPI = {
+  getAll: async () => {
+    const response = await api.get('/batches');
+    return response.data;
+  },
+  getOne: async (batchId: string) => {
+    const response = await api.get(`/batches/${batchId}/traceability`);
+    return response.data;
+  },
+  create: async (data: {
+    estateId: string;
+    parcelId?: string;
+    productName: string;
+    quantity: number;
+    unit: string;
+    harvestDate: string;
+  }) => {
+    const response = await api.post('/batches', data);
+    return response.data;
+  },
+  moveToHub: async (batchId: string, hubId: string, driverId?: string) => {
+    const response = await api.post(`/batches/${batchId}/move-to-hub`, { hubId, driverId });
+    return response.data;
+  },
+  reportIssue: async (batchId: string, issue: string) => {
+    const response = await api.post(`/batches/${batchId}/report-issue`, { issue });
+    return response.data;
+  },
+  getAvailability: async (batchId: string) => {
+    const response = await api.get(`/batches/${batchId}/availability`);
+    return response.data;
+  },
+};
+
+// Buyer Trade Panel API
+export const buyerTradePanelAPI = {
+  getSupplyAndDemand: async () => {
+    const response = await api.get('/buyer-trade-panel/supply-demand');
+    return response.data;
+  },
+  getRealTimePrices: async () => {
+    const response = await api.get('/buyer-trade-panel/prices');
+    return response.data;
+  },
+  checkPriceEscalation: async (productName?: string) => {
+    const response = await api.get(`/buyer-trade-panel/price-escalation${productName ? `?productName=${productName}` : ''}`);
+    return response.data;
+  },
+  applySurgePricing: async (productName: string, increasePercent: number) => {
+    const response = await api.post('/buyer-trade-panel/surge-pricing', { productName, increasePercent });
+    return response.data;
+  },
+  getHarvestForecast: async (weeks: number = 4) => {
+    const response = await api.get(`/buyer-trade-panel/forecast?weeks=${weeks}`);
+    return response.data;
+  },
+  createPreOrder: async (data: {
+    productName: string;
+    quantity: number;
+    unit: string;
+    requestedDeliveryDate: string;
+    lockPrice: boolean;
+  }) => {
+    const response = await api.post('/buyer-trade-panel/pre-order', data);
+    return response.data;
+  },
+  setCriticalThreshold: async (productName: string, threshold: number) => {
+    const response = await api.post('/buyer-trade-panel/critical-threshold', { productName, threshold });
+    return response.data;
+  },
+};
+
+// Market Prices API
+export const marketPricesAPI = {
+  getAllActive: async () => {
+    const response = await api.get('/market-prices');
+    return response.data;
+  },
+  getCurrent: async (cropType: string) => {
+    const response = await api.get(`/market-prices/current/${cropType}`);
+    return response.data;
+  },
+  getHistory: async (cropType: string) => {
+    const response = await api.get(`/market-prices/history/${cropType}`);
+    return response.data;
+  },
+  create: async (priceData: {
+    cropType: string;
+    buyPrice: number;
+    sellPrice: number;
+    effectiveFrom?: string;
+    effectiveTo?: string;
+  }) => {
+    const response = await api.post('/market-prices', priceData);
+    return response.data;
+  },
+  update: async (id: string, priceData: {
+    buyPrice?: number;
+    sellPrice?: number;
+    effectiveTo?: string;
+    isActive?: boolean;
+  }) => {
+    const response = await api.put(`/market-prices/${id}`, priceData);
+    return response.data;
+  },
+};
+
+// Standard Engine API
+export const standardEngineAPI = {
+  checkLoadingApproval: async (batchId: string) => {
+    const response = await api.get(`/standard-engine/check/${batchId}`);
+    return response.data;
+  },
+  approveForLoading: async (batchId: string) => {
+    const response = await api.post(`/standard-engine/approve/${batchId}`);
+    return response.data;
+  },
+};
+
+// Financial Dashboard API
+export const financialDashboardAPI = {
+  getDashboard: async () => {
+    const response = await api.get('/financial-dashboard');
+    return response.data;
+  },
+};
+
+// Group Sync API
+export const groupSyncAPI = {
+  getAvailableGroups: async () => {
+    const response = await api.get('/group-sync/groups');
+    return response.data;
+  },
+  getGroupStatistics: async (groupId: string) => {
+    const response = await api.get(`/group-sync/groups/${groupId}/statistics`);
+    return response.data;
+  },
+  sendGroupInstruction: async (
+    groupId: string,
+    instruction: {
+      title: string;
+      message: string;
+      priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+      actionUrl?: string;
+    },
+  ) => {
+    const response = await api.post(
+      `/group-sync/groups/${groupId}/send-instruction`,
+      instruction,
+    );
+    return response.data;
+  },
+};
+
+export const suppliersAPI = {
+  downloadProspect: async () => {
+    const response = await api.get('/suppliers/prospect/download', {
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'bio-vera-supplier-prospect.pdf');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
+};
+
+export const growersAPI = {
+  downloadProspect: async () => {
+    const response = await api.get('/growers/prospect/download', {
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'bio-vera-grower-prospect.pdf');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
+};
+
+export default api;
