@@ -28,8 +28,11 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Run Prisma migrations (will run on container start if DATABASE_URL is available)
+# Note: Migrations should be run before starting the app
+
 # Expose port
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Start script that runs migrations then starts the app
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
