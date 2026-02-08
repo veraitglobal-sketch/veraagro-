@@ -70,6 +70,31 @@ async function bootstrap() {
     // Create test users if database is empty (only in production for initial setup)
     if (process.env.NODE_ENV === 'production' && process.env.CREATE_TEST_USERS !== 'false') {
       try {
+        // Verify that farmerQrCode column exists before running script
+        console.log('Verifying farmerQrCode column exists...');
+        const verifyPrisma = new PrismaClient();
+        try {
+          // Try to query the column to verify it exists
+          await verifyPrisma.$queryRawUnsafe(`SELECT "farmerQrCode" FROM "users" LIMIT 1`);
+          console.log('✅ farmerQrCode column verified');
+        } catch (verifyError: any) {
+          console.error('❌ farmerQrCode column does not exist. Re-applying migration...');
+          // Re-apply migration
+          await verifyPrisma.$executeRawUnsafe(`
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;
+            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;
+          `);
+          await verifyPrisma.$executeRawUnsafe(`
+            CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");
+          `);
+          console.log('✅ Migration re-applied successfully');
+        }
+        await verifyPrisma.$disconnect();
+        
         console.log('Checking if test users need to be created...');
         execSync('npm run create:users', { 
           stdio: 'inherit',
