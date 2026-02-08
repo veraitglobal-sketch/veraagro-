@@ -24,9 +24,7 @@ export default function AuthGuard({ children, requiredRoles, redirectTo = '/logi
       if (requiredRoles && requiredRoles.length > 0) {
         const userRoles = user?.roles && Array.isArray(user.roles) 
           ? user.roles 
-          : user?.role 
-            ? [user.role] 
-            : [];
+          : [];
 
         const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
         
@@ -56,9 +54,7 @@ export default function AuthGuard({ children, requiredRoles, redirectTo = '/logi
   if (requiredRoles && requiredRoles.length > 0) {
     const userRoles = user?.roles && Array.isArray(user.roles) 
       ? user.roles 
-      : user?.role 
-        ? [user.role] 
-        : [];
+      : [];
 
     const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
     

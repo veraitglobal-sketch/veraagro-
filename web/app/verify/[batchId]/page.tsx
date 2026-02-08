@@ -23,6 +23,7 @@ interface VerificationData {
     ownerName: string;
     gpsLocation: any;
     address: string;
+    location?: string;
   };
   timeline: {
     harvested: string;
