@@ -19,6 +19,7 @@ async function bootstrap() {
     ];
     
     // Apply farmer profile fields migration directly via SQL if needed
+    // This must happen BEFORE Prisma Client is used in scripts
     try {
       console.log('Applying farmer profile fields migration...');
       const prisma = new PrismaClient();
@@ -39,17 +40,10 @@ async function bootstrap() {
       `);
       
       await prisma.$disconnect();
-      console.log('Farmer profile fields migration applied');
-      
-      // Regenerate Prisma Client to include new columns
-      console.log('Regenerating Prisma Client...');
-      execSync('npx prisma generate', { 
-        stdio: 'inherit',
-        env: process.env 
-      });
-      console.log('Prisma Client regenerated');
+      console.log('✅ Farmer profile fields migration applied successfully');
     } catch (sqlError: any) {
-      console.log('Farmer profile fields may already exist:', sqlError?.message || 'Unknown error');
+      console.error('❌ Error applying farmer profile fields migration:', sqlError?.message || 'Unknown error');
+      // Don't exit - continue with migrations
     }
     
     console.log('Checking for failed migrations...');
