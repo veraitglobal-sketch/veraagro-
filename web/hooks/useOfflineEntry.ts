@@ -13,7 +13,7 @@ import {
   FieldEntry,
   ScannedCode,
 } from '@/lib/offline/indexeddb';
-import { syncAllEntries, setupAutoSync, isOnline, onOnlineStatusChange } from '@/lib/offline/sync';
+import { syncAllEntries, setupAutoSync, setupPeriodicSync, isOnline, onOnlineStatusChange } from '@/lib/offline/sync';
 import { checkCompliance } from '@/lib/offline/compliance';
 
 export type EntryType = 'PRSKANJE' | 'SETVA' | 'BERBA';
