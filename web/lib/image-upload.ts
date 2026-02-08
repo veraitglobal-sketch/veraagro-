@@ -1,5 +1,5 @@
 import { compressImage } from './image-compression';
-import { api } from './api';
+import api from './api';
 
 /**
  * Image Upload Utility
