@@ -1,9 +1,9 @@
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
 
-# Install OpenSSL and other required libraries for Prisma
-RUN apk add --no-cache openssl1.1-compat libc6-compat
+# Debian-based image includes OpenSSL by default
+# No additional packages needed for Prisma
 
 # Copy package files
 COPY package*.json ./
