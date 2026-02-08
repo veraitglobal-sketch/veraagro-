@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { execSync } from 'child_process';
+import { PrismaClient } from '@prisma/client';
 
 async function bootstrap() {
   // Run Prisma migrations before starting the app
@@ -16,6 +17,32 @@ async function bootstrap() {
       '20250201140000_add_vera_insights',
       '20250201150000_add_farmer_profile_fields'
     ];
+    
+    // Apply farmer profile fields migration directly via SQL if needed
+    try {
+      console.log('Applying farmer profile fields migration...');
+      const prisma = new PrismaClient();
+      
+      // Check if columns exist, if not add them
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;
+        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;
+      `);
+      
+      // Create index if it doesn't exist
+      await prisma.$executeRawUnsafe(`
+        CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");
+      `);
+      
+      await prisma.$disconnect();
+      console.log('Farmer profile fields migration applied');
+    } catch (sqlError: any) {
+      console.log('Farmer profile fields may already exist:', sqlError?.message || 'Unknown error');
+    }
     
     console.log('Checking for failed migrations...');
     for (const migration of failedMigrations) {
