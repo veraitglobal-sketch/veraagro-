@@ -16,7 +16,7 @@ export default function MissionBoardPage() {
   const [availableMissions] = useState([
     {
       id: 'LD-001',
-      pickup: 'Hamburg Grossmarkt Gate 2',
+      pickup: 'European Distribution Hub',
       delivery: '3 Rewe locations',
       pallets: 4,
       distance: '45 km',

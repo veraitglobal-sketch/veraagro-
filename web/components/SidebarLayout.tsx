@@ -33,9 +33,9 @@ export default function SidebarLayout({ children, title, navItems }: SidebarLayo
             <Image
               src="/logo1.png"
               alt="Bio Vera"
-              width={120}
-              height={40}
-              className="h-8 w-auto"
+              width={200}
+              height={70}
+              className="h-14 w-auto"
             />
           </Link>
         </div>

@@ -2,13 +2,11 @@
 
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { inventoryAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { 
   QrCode, 
-  PackageSearch, 
+  PackageSearch,
   Wallet, 
   Handshake, 
   Shield, 
@@ -16,41 +14,14 @@ import {
   Eye,
   Lock,
   Globe,
-  MapPin,
   Apple,
   Carrot,
   Wheat,
-  ChevronRight
 } from 'lucide-react';
-import { formatFarmerIdentity } from '@/lib/farmer-utils';
+import { partners } from '@/lib/partners';
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
-    try {
-      setError(null);
-      const data = await inventoryAPI.getAvailableProducts();
-      setProducts(data);
-    } catch (error: any) {
-      console.error('Error loading products:', error);
-      // Network error - backend might not be running
-      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.code === 'ERR_NETWORK') {
-        setError('Backend server is not running. Please start it with: cd backend && npm run start:dev');
-      } else {
-        setError('Failed to load products. Please try again later.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -69,17 +40,17 @@ export default function Home() {
           </h1>
             <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
               From seed to EU market. Immutable digital proof. Bio-Ready certification 
-              with complete traceability and automated compliance.
+              with complete traceability and automated compliance. Open to producers across Europe.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/login/buyer"
+                href="/login"
                 className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
               >
                 Browse Products
               </Link>
               <Link
-                href="/login/producer"
+                href="/growers"
                 className="px-6 py-3 border border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors"
               >
                 Become a Producer
@@ -126,24 +97,63 @@ export default function Home() {
           >
             <p className="text-sm text-gray-500 mb-12">Trusted every day by leading agricultural organizations</p>
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all"
-          >
-            <Image
-                    src="/logo1.png" 
-                    alt="Bio Vera Partner" 
-                    width={120} 
-                    height={40} 
-                    className="h-8 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
-                  />
-                </motion.div>
-              ))}
+              {partners.length > 0 ? (
+                partners.map((partner, index) => (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all"
+                  >
+                    {partner.url ? (
+                      <a
+                        href={partner.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center"
+                      >
+                        <Image
+                          src={partner.logo}
+                          alt={partner.alt || `${partner.name} Logo`}
+                          width={160}
+                          height={55}
+                          className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                        />
+                      </a>
+                    ) : (
+                      <Image
+                        src={partner.logo}
+                        alt={partner.alt || `${partner.name} Logo`}
+                        width={160}
+                        height={55}
+                        className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                      />
+                    )}
+                  </motion.div>
+                ))
+              ) : (
+                // Fallback: Show placeholder if no partners configured
+                Array.from({ length: 8 }).map((_, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all"
+                  >
+                    <Image
+                      src="/logo1.png"
+                      alt="Bio Vera Partner"
+                      width={160}
+                      height={55}
+                      className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                    />
+                  </motion.div>
+                ))
+              )}
             </div>
           </motion.div>
         </div>
@@ -269,25 +279,25 @@ export default function Home() {
           <div className="space-y-8">
             {[
               {
-                phase: 'Q1 2024',
+                phase: 'Q1 2026',
                 title: 'Platform Launch',
                 status: 'completed',
                 items: ['Backend API', 'Mobile App', 'Web Platform', 'Core Features']
               },
               {
-                phase: 'Q2 2024',
+                phase: 'Q2 2026',
                 title: 'Feature Expansion',
                 status: 'in-progress',
                 items: ['AI Analytics', 'Advanced Dashboard', 'Integrations', 'EU Certificates']
               },
               {
-                phase: 'Q3-Q4 2024',
+                phase: 'Q3-Q4 2026',
                 title: 'Scaling',
                 status: 'planned',
                 items: ['Multi-region Support', 'API Marketplace', 'Partner Integrations', 'Enterprise Features']
               },
               {
-                phase: '2025',
+                phase: '2027',
                 title: 'Global Expansion',
                 status: 'planned',
                 items: ['EU Market', 'Blockchain Integration', 'IoT Sensors', 'AI Predictions']
@@ -337,7 +347,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products Section */}
+
+      {/* Products Categories Section */}
       <section className="py-24 px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -346,108 +357,34 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-4">Available Products</h2>
+            <h2 className="text-3xl font-light text-gray-900 mb-4">Browse Products</h2>
             <p className="text-lg text-gray-600">
               Organic products with complete traceability
             </p>
           </motion.div>
 
           {/* Category Filters */}
-          <div className="mb-12 border-t border-b border-gray-200 py-4">
-            <div className="flex gap-4 justify-center overflow-x-auto">
-              {[
-                { id: 'fruits', name: 'Fruits', icon: Apple, color: 'text-green-600', hoverColor: 'hover:text-green-700' },
-                { id: 'vegetables', name: 'Vegetables', icon: Carrot, color: 'text-green-600', hoverColor: 'hover:text-green-700' },
-                { id: 'grains', name: 'Grains', icon: Wheat, color: 'text-green-600', hoverColor: 'hover:text-green-700' },
-              ].map((category) => {
-                const Icon = category.icon;
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/products?category=${category.id}`}
-                    className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg hover:border-green-600 transition-all group"
-                  >
-                    <Icon className={`w-5 h-5 ${category.color} ${category.hoverColor} group-hover:scale-110 transition-transform`} strokeWidth={1.5} />
-                    <span className={`text-sm font-light ${category.color} ${category.hoverColor} transition-colors`}>
-                      {category.name}
-                    </span>
-                    <ChevronRight className={`w-4 h-4 ${category.color} opacity-0 group-hover:opacity-100 transition-opacity`} strokeWidth={1.5} />
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
-              <p className="mt-4 text-sm text-gray-500">Loading products...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-                <p className="text-red-800 font-medium mb-2">Connection Error</p>
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-            </div>
-          ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product: any, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white border border-gray-200 p-6 hover:border-green-600 transition-all shadow-subtle shadow-subtle-hover"
+          <div className="flex gap-4 justify-center overflow-x-auto">
+            {[
+              { id: 'fruits', name: 'Fruits', icon: Apple },
+              { id: 'vegetables', name: 'Vegetables', icon: Carrot },
+              { id: 'grains', name: 'Grains', icon: Wheat },
+            ].map((category) => {
+              const Icon = category.icon;
+              return (
+                <Link
+                  key={category.id}
+                  href="/login"
+                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg transition-all group hover:border-green-600 hover:text-green-600"
                 >
-                  <div className="h-48 bg-gray-100 mb-4 flex items-center justify-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 to-transparent group-hover:from-green-100/40 transition-colors"></div>
-                    <div className="w-16 h-16 bg-gray-200 relative z-10"></div>
-                    {/* Placeholder for product image */}
-                    {/* <img src={product.image} alt={product.name} className="w-full h-full object-cover" /> */}
-                  </div>
-                  <h3 className="font-medium text-gray-900 mb-2">{product.productName || product.name || 'Organic Product'}</h3>
-                  
-                  {/* VERA PRODUCER Brand & Farmer Identity */}
-                  {product.estate?.owner && (
-                    <div className="mb-3 pb-3 border-b border-gray-100">
-                      <p className="text-[10px] font-light tracking-[0.15em] text-gray-400 uppercase mb-1.5">
-                        VERA PRODUCER
-                      </p>
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-gray-400" strokeWidth={1} />
-                        <span className="text-xs font-light text-gray-700">
-                          {formatFarmerIdentity(
-                            product.estate.owner.firstName,
-                            undefined,
-                            product.estate.location,
-                            product.estate.location
-                          )}
-                        </span>
-                      </div>
-                      {product.estate.location && (
-                        <p className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase mt-1">
-                          {product.estate.location}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  
-                  <p className="text-sm text-gray-600 mb-4">{product.description || 'Organic product'}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-900 font-medium">{product.price || 'N/A'} RSD</span>
-                    <span className="text-xs text-gray-500">{product.quantity || 0} kg</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600">No products available at the moment.</p>
-              <p className="text-sm text-gray-500 mt-2">Please check back soon.</p>
-            </div>
-          )}
+                  <Icon className="w-5 h-5 text-gray-600 group-hover:text-green-600 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
+                  <span className="text-sm font-medium transition-colors">
+                    {category.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -465,13 +402,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/login/producer"
+                href="/growers"
                 className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
               >
                 Become a Producer
               </Link>
               <Link
-                href="/login/buyer"
+                href="/login"
                 className="px-6 py-3 border border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors"
               >
                 Start Shopping
@@ -484,15 +421,15 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <Link href="/" className="inline-block mb-4">
+          <div className="grid md:grid-cols-5 gap-12 mb-12 items-start">
+            <div className="flex flex-col">
+              <Link href="/" className="inline-block mb-4 -mt-1">
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={180} 
-                  height={60} 
-                  className="h-12 w-auto"
+                  width={200} 
+                  height={70} 
+                  className="h-14 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -503,30 +440,39 @@ export default function Home() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-green-600 transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-green-600 transition-colors">For Producers</Link></li>
-                <li><Link href="#features" className="hover:text-green-600 transition-colors">Features</Link></li>
+                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="#contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li><Link href="/faq" className="hover:text-green-600 transition-colors">FAQ</Link></li>
+                <li><Link href="/help-center" className="hover:text-green-600 transition-colors">Help Center</Link></li>
+                <li><Link href="/security" className="hover:text-green-600 transition-colors">Security</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Cookies</Link></li>
+                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2024 Bio Vera. All rights reserved.</p>
+            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
           </div>
         </div>
       </footer>

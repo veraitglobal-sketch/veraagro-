@@ -205,10 +205,10 @@ export default function TradePanelPage() {
       const isSurgePricing = productPrice?.isLimitedPrice || false;
       const oldPrice = isSurgePricing && productPrice?.sellPrice ? productPrice.sellPrice / 1.05 : undefined;
 
-      // Calculate lead time (default 48h to Hamburg)
+      // Calculate lead time (default 48h to European warehouse)
       const leadTime = product.estimatedDeliveryDays 
-        ? `${product.estimatedDeliveryDays * 24}h to Hamburg Warehouse`
-        : '48h to Hamburg Warehouse';
+        ? `${product.estimatedDeliveryDays * 24}h to European Warehouse`
+        : '48h to European Warehouse';
 
       // Get certifications from estate
       const certifications = {
@@ -304,7 +304,7 @@ export default function TradePanelPage() {
           isSurgePricing,
           availableQuantity: priceItem.stock || 0,
           totalQuantity: priceItem.stock || 0,
-          leadTime: '48h to Hamburg Warehouse',
+          leadTime: '48h to European Warehouse',
           unit: priceItem.unit || 'kg',
           availabilityStatus: priceItem.availabilityStatus || 'IN_STOCK',
           category: categorizeProduct(productName),
@@ -374,7 +374,7 @@ export default function TradePanelPage() {
           isSurgePricing: false,
           availableQuantity: 2500,
           totalQuantity: 3000,
-          leadTime: '48h to Hamburg Warehouse',
+          leadTime: '48h to European Warehouse',
           unit: 'kg',
           availabilityStatus: 'IN_STOCK' as const,
         },
@@ -389,7 +389,7 @@ export default function TradePanelPage() {
           isSurgePricing: true,
           availableQuantity: 800,
           totalQuantity: 2000,
-          leadTime: '48h to Hamburg Warehouse',
+          leadTime: '48h to European Warehouse',
           unit: 'kg',
           availabilityStatus: 'LIMITED' as const,
         },
@@ -404,7 +404,7 @@ export default function TradePanelPage() {
           isSurgePricing: false,
           availableQuantity: 1500,
           totalQuantity: 2000,
-          leadTime: '72h to Hamburg Warehouse',
+          leadTime: '72h to European Warehouse',
           unit: 'kg',
           availabilityStatus: 'IN_STOCK' as const,
         },

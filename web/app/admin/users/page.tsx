@@ -5,7 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { usersAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { Users, Plus, Edit2, Trash2, Search, Filter } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
 interface User {
@@ -33,6 +33,7 @@ export default function UsersManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [createdFarmer, setCreatedFarmer] = useState<{ qrCode: string; profileUrl: string; name: string } | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -77,21 +78,65 @@ export default function UsersManagementPage() {
     password: '',
     roles: [] as string[],
     status: 'PENDING_VERIFICATION' as string,
+    autoGeneratePassword: false,
+    sendEmail: true,
   });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await usersAPI.create({
+      const newUser = await usersAPI.create({
         ...formData,
-        password: formData.password,
+        password: formData.autoGeneratePassword ? undefined : formData.password,
         roles: formData.roles.length > 0 ? formData.roles : undefined,
+        autoGeneratePassword: formData.autoGeneratePassword,
+        sendEmail: formData.sendEmail,
       });
-      setShowCreateModal(false);
-      resetForm();
+      
+      // Show success message
+      let successMessage = 'Korisnik je uspešno kreiran!';
+      if (newUser.passwordGenerated && newUser.password) {
+        successMessage += `\n\nGenerisana šifra: ${newUser.password}`;
+        if (newUser.emailSent) {
+          successMessage += '\n✅ Šifra je poslata na email.';
+        } else if (formData.sendEmail) {
+          successMessage += '\n⚠️ Email nije poslat (proverite email konfiguraciju).';
+        }
+      }
+      
+      // If farmer/grower was created, show QR code
+      if ((formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && newUser.farmerQrCode) {
+        setCreatedFarmer({
+          qrCode: newUser.farmerQrCode,
+          profileUrl: newUser.farmerProfileUrl || '',
+          name: `${newUser.firstName} ${newUser.lastName}`,
+        });
+        // Show password if generated
+        if (newUser.passwordGenerated && newUser.password) {
+          setTimeout(() => alert(successMessage), 100);
+        }
+      } else {
+        alert(successMessage);
+        setShowCreateModal(false);
+        resetForm();
+      }
       loadUsers();
     } catch (err: any) {
       alert(err.message || 'Failed to create user');
+    }
+  };
+
+  const handleApproveVerification = async (userId: string) => {
+    if (!confirm('Are you sure you want to approve verification for this user?')) return;
+    
+    try {
+      await usersAPI.update(userId, {
+        status: 'ACTIVE',
+      });
+      loadUsers();
+      alert('Verification approved successfully!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to approve verification');
     }
   };
 
@@ -126,6 +171,8 @@ export default function UsersManagementPage() {
       password: '',
       roles: [],
       status: 'PENDING_VERIFICATION',
+      autoGeneratePassword: false,
+      sendEmail: true,
     });
   };
 
@@ -287,15 +334,26 @@ export default function UsersManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
+                          {user.status === 'PENDING_VERIFICATION' && (
+                            <button
+                              onClick={() => handleApproveVerification(user.id)}
+                              className="text-green-600 hover:text-green-900"
+                              title="Approve verification"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
                             onClick={() => openEditModal(user)}
                             className="text-green-600 hover:text-green-900"
+                            title="Edit user"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
                             className="text-red-600 hover:text-red-900"
+                            title="Delete user"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -374,14 +432,44 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.autoGeneratePassword}
+                            onChange={(e) => {
+                              setFormData({ 
+                                ...formData, 
+                                autoGeneratePassword: e.target.checked,
+                                password: e.target.checked ? '' : formData.password
+                              });
+                            }}
+                            className="mr-2"
+                          />
+                          <span className="text-sm text-gray-700">Automatski generiši šifru</span>
+                        </label>
+                        {!formData.autoGeneratePassword && (
+                          <input
+                            type="password"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        )}
+                        {(formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && formData.email && (
+                          <label className="flex items-center mt-2">
+                            <input
+                              type="checkbox"
+                              checked={formData.sendEmail}
+                              onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
+                              className="mr-2"
+                            />
+                            <span className="text-sm text-gray-700">Pošalji šifru na email</span>
+                          </label>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
@@ -437,6 +525,89 @@ export default function UsersManagementPage() {
                     </button>
                   </div>
                 </form>
+              </motion.div>
+            </div>
+          )}
+
+          {/* QR Code Modal for Created Farmer */}
+          {createdFarmer && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">Farmer QR Code Generated</h2>
+                  <button
+                    onClick={() => {
+                      setCreatedFarmer(null);
+                      setShowCreateModal(false);
+                      resetForm();
+                    }}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="text-center mb-4">
+                  <p className="text-sm text-gray-600 mb-2">
+                    QR code for <strong>{createdFarmer.name}</strong>
+                  </p>
+                  <p className="text-xs text-gray-500 mb-4">
+                    This QR code will be printed on product boxes
+                  </p>
+                  
+                  {/* QR Code Image */}
+                  <div className="bg-white p-4 border-2 border-gray-200 rounded-lg inline-block mb-4">
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/farmer-profile/qr/${createdFarmer.qrCode}/image`}
+                      alt="Farmer QR Code"
+                      className="w-48 h-48 mx-auto"
+                    />
+                  </div>
+                  
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                    <p className="text-xs text-green-800 font-medium mb-1">QR Code ID:</p>
+                    <p className="text-sm text-green-900 font-mono">{createdFarmer.qrCode}</p>
+                  </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <p className="text-xs text-blue-800 font-medium mb-1">Profile URL:</p>
+                    <a
+                      href={createdFarmer.profileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline break-all"
+                    >
+                      {createdFarmer.profileUrl}
+                    </a>
+                  </div>
+                  
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={() => {
+                        const qrImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/farmer-profile/qr/${createdFarmer.qrCode}/image`;
+                        window.open(qrImageUrl, '_blank');
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download QR Code
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCreatedFarmer(null);
+                        setShowCreateModal(false);
+                        resetForm();
+                      }}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </div>
           )}

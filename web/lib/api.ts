@@ -50,6 +50,21 @@ export const authAPI = {
     }
     return response.data;
   },
+  registerBuyer: async (data: {
+    partnerCode: string;
+    email?: string;
+    phone?: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    businessName?: string;
+    location?: { latitude: number; longitude: number };
+    address?: string;
+    city?: string;
+  }) => {
+    const response = await api.post('/auth/register/buyer', data);
+    return response.data;
+  },
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -74,16 +89,21 @@ export const inventoryAPI = {
       const response = await api.get('/inventory/available', { params });
       return response.data;
     } catch (error: any) {
-      // Enhanced error handling
+      // Silently handle network errors - don't throw, just return empty array
       if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
-        const errorMessage = `Cannot connect to backend server at ${API_URL}. Please ensure the backend is running:\n\ncd backend && npm run start:dev`;
-        console.error(errorMessage);
-        throw new Error(errorMessage);
+        // Only log in development mode
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Backend not available at ${API_URL}. Products will not be displayed.`);
+        }
+        return []; // Return empty array instead of throwing
       } else if (error.response) {
-        // Server responded with error status
-        throw new Error(error.response.data?.message || `API Error: ${error.response.status}`);
+        // Server responded with error status - return empty array
+        console.warn('API Error:', error.response.status, error.response.data?.message);
+        return [];
       } else {
-        throw error;
+        // Other errors - return empty array
+        console.warn('Error loading products:', error.message);
+        return [];
       }
     }
   },
@@ -121,6 +141,14 @@ export const missionsAPI = {
   },
   getMyMissions: async () => {
     const response = await api.get('/missions/my-missions');
+    return response.data;
+  },
+  create: async (data: {
+    batchId?: string;
+    pickupLocation: { lat: number; lng: number; address?: string };
+    pickupAddress: string;
+  }) => {
+    const response = await api.post('/missions', data);
     return response.data;
   },
 };
@@ -239,9 +267,11 @@ export const usersAPI = {
     phone?: string;
     firstName: string;
     lastName: string;
-    password: string;
+    password?: string;
     roles?: string[];
     role?: string;
+    autoGeneratePassword?: boolean;
+    sendEmail?: boolean;
   }) => {
     const response = await api.post('/users/admin', userData);
     return response.data;
@@ -392,6 +422,10 @@ export const batchesAPI = {
   getAll: async () => {
     const response = await api.get('/batches');
     return response.data;
+  },
+  getMyBatches: async () => {
+    const response = await api.get('/batches');
+    return response.data; // Backend returns only user's batches
   },
   getOne: async (batchId: string) => {
     const response = await api.get(`/batches/${batchId}/traceability`);
@@ -544,33 +578,452 @@ export const groupSyncAPI = {
 
 export const suppliersAPI = {
   downloadProspect: async () => {
-    const response = await api.get('/suppliers/prospect/download', {
-      responseType: 'blob',
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'bio-vera-supplier-prospect.pdf');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
+    try {
+      const response = await api.get('/suppliers/prospect/download', {
+        responseType: 'blob',
+      });
+      
+      // Check if response is actually a blob
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-supplier-prospect.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading prospect:', error);
+      throw error;
+    }
+  },
+};
+
+export const qualityControlLevelsAPI = {
+  getProtocol360Status: async (batchId: string) => {
+    const response = await api.get(`/quality-control-levels/batch/${batchId}`);
+    return response.data;
+  },
+  getProtocol360Info: async () => {
+    const response = await api.get('/quality-control-levels/protocol-360');
+    return response.data;
   },
 };
 
 export const growersAPI = {
   downloadProspect: async () => {
-    const response = await api.get('/growers/prospect/download', {
+    try {
+      const response = await api.get('/growers/prospect/download', {
+        responseType: 'blob',
+      });
+      
+      // Check if response is actually a blob
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-grower-prospect.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading prospect:', error);
+      throw error;
+    }
+  },
+  downloadPackagingGuidelines: async () => {
+    try {
+      const response = await api.get('/growers/packaging-guidelines/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-packaging-guidelines.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading packaging guidelines:', error);
+      throw error;
+    }
+  },
+  downloadFieldManagementGuide: async () => {
+    try {
+      const response = await api.get('/growers/field-management-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-field-management-guide.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading field management guide:', error);
+      throw error;
+    }
+  },
+  downloadProtocol: async () => {
+    try {
+      const response = await api.get('/growers/protocol/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-protocol.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading protocol:', error);
+      throw error;
+    }
+  },
+  downloadCertificationRequirements: async () => {
+    try {
+      const response = await api.get('/growers/certification-requirements/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-certification-requirements.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading certification requirements:', error);
+      throw error;
+    }
+  },
+  downloadMobileAppGuide: async () => {
+    try {
+      const response = await api.get('/growers/mobile-app-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-mobile-app-guide.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading mobile app guide:', error);
+      throw error;
+    }
+  },
+  downloadPaymentProcessGuide: async () => {
+    try {
+      const response = await api.get('/growers/payment-process-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-payment-process-guide.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading payment process guide:', error);
+      throw error;
+    }
+  },
+  downloadQualityStandards: async () => {
+    try {
+      const response = await api.get('/growers/quality-standards/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-quality-standards.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading quality standards:', error);
+      throw error;
+    }
+  },
+};
+
+export const logisticsPartnerAPI = {
+  downloadProspect: async () => {
+    try {
+      const response = await api.get('/logistics-partner/prospect/download', {
+        responseType: 'blob',
+      });
+      
+      // Check if response is actually a blob
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-logistics-partner-prospect.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading prospect:', error);
+      throw error;
+    }
+  },
+  downloadTransportOperationsGuide: async () => {
+    try {
+      const response = await api.get('/logistics-partner/transport-operations-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-transport-operations-guide.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading transport operations guide:', error);
+      throw error;
+    }
+  },
+  downloadColdChainProtocol: async () => {
+    try {
+      const response = await api.get('/logistics-partner/cold-chain-protocol/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-cold-chain-protocol.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading cold chain protocol:', error);
+      throw error;
+    }
+  },
+  downloadMobileAppGuide: async () => {
+    try {
+      const response = await api.get('/logistics-partner/mobile-app-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-mobile-app-guide-logistics.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading mobile app guide:', error);
+      throw error;
+    }
+  },
+  downloadPaymentProcessGuide: async () => {
+    try {
+      const response = await api.get('/logistics-partner/payment-process-guide/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-payment-process-guide-logistics.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading payment process guide:', error);
+      throw error;
+    }
+  },
+  downloadGPSTrackingStandards: async () => {
+    try {
+      const response = await api.get('/logistics-partner/gps-tracking-standards/download', {
+        responseType: 'blob',
+      });
+      
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bio-vera-gps-tracking-standards.pdf');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error downloading GPS tracking standards:', error);
+      throw error;
+    }
+  },
+};
+
+export const farmerProfileAPI = {
+  getMyProfile: async () => {
+    const response = await api.get('/farmer-profile/me');
+    return response.data;
+  },
+  
+  updateProfile: async (data: {
+    farmerBio?: string;
+    yearsOfExperience?: number;
+    generation?: string;
+  }) => {
+    const response = await api.put('/farmer-profile/me', data);
+    return response.data;
+  },
+  
+  uploadPhoto: async (file: File) => {
+    const formData = new FormData();
+    formData.append('photo', file);
+    
+    const response = await api.post('/farmer-profile/me/photo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+  
+  getByQrCode: async (qrCode: string) => {
+    const response = await api.get(`/farmer-profile/qr/${qrCode}`);
+    return response.data;
+  },
+  
+  getQrCodeImage: async (qrCode: string) => {
+    const response = await api.get(`/farmer-profile/qr/${qrCode}/image`, {
       responseType: 'blob',
     });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'bio-vera-grower-prospect.pdf');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
+    return URL.createObjectURL(response.data);
+  },
+};
+
+export const contactAPI = {
+  submitInquiry: async (data: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    phone?: string;
+  }) => {
+    const response = await api.post('/contact/submit', data);
+    return response.data;
   },
 };
 

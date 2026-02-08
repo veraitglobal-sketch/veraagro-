@@ -45,9 +45,9 @@ export default function LoginPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={180} 
-                height={60} 
-                className="h-12 w-auto"
+                width={200} 
+                height={70} 
+                className="h-14 w-auto"
                 priority
               />
             </Link>
@@ -72,11 +72,7 @@ export default function LoginPage() {
             <div className="text-center mb-8">
               <h1 className="text-3xl font-light text-gray-900 mb-2">Sign In</h1>
               <p className="text-sm text-gray-600">
-                {isProducer 
-                  ? 'Access your grower dashboard and manage your harvests' 
-                  : isBuyer
-                    ? 'Access your buyer portal and place orders'
-                    : 'Sign in to your Bio Vera account'}
+                Sign in to your Bio Vera account
               </p>
             </div>
 
@@ -140,59 +136,27 @@ export default function LoginPage() {
                 </Link>
                 
                 <p className="text-sm text-gray-600">
-                  {isProducer ? (
-                    <>
-                      Not a grower? <Link href="/login/buyer" className="text-green-600 hover:text-green-700 font-medium">Sign in as buyer</Link>
-                    </>
-                  ) : isBuyer ? (
-                    <>
-                      Are you a grower? <Link href="/login/producer" className="text-green-600 hover:text-green-700 font-medium">Sign in as grower</Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link href="/login/producer" className="text-green-600 hover:text-green-700 font-medium">Grower login</Link> • <Link href="/login/buyer" className="text-green-600 hover:text-green-700 font-medium">Buyer login</Link>
-                    </>
-                  )}
+                  Don't have an account? <Link href="/register/buyer" className="text-green-600 hover:text-green-700 font-medium">Register</Link>
                 </p>
               </div>
             </div>
           </motion.div>
 
-          {/* Additional Links */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 mb-4">
-              Don't have an account?
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/growers"
-                className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
-              >
-                Apply as Grower →
-              </Link>
-              <Link
-                href="/logistics-partner"
-                className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
-              >
-                Apply as Logistics Partner →
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <Link href="/" className="inline-block mb-4">
+          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
+            <div className="flex flex-col">
+              <Link href="/" className="inline-block mb-4 -mt-1">
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={180} 
-                  height={60} 
-                  className="h-12 w-auto"
+                  width={200} 
+                  height={70} 
+                  className="h-14 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -224,7 +188,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2024 Bio Vera. All rights reserved.</p>
+            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -17,11 +17,11 @@ export default function ActiveDeliveriesPage() {
     {
       id: 'DLV-001',
       missionId: 'LD-001',
-      pickup: 'Hamburg Grossmarkt Gate 2',
+      pickup: 'European Distribution Hub',
       delivery: [
-        { location: 'Rewe Store A', address: 'Hauptstraße 123, Hamburg', qrCode: 'QR-001', status: 'delivered', pod: true },
-        { location: 'Rewe Store B', address: 'Musterstraße 456, Hamburg', qrCode: 'QR-002', status: 'in_transit', pod: false },
-        { location: 'Rewe Store C', address: 'Beispielweg 789, Hamburg', qrCode: 'QR-003', status: 'pending', pod: false },
+        { location: 'Retail Store A', address: 'European Address 123', qrCode: 'QR-001', status: 'delivered', pod: true },
+        { location: 'Retail Store B', address: 'European Address 456', qrCode: 'QR-002', status: 'in_transit', pod: false },
+        { location: 'Retail Store C', address: 'European Address 789', qrCode: 'QR-003', status: 'pending', pod: false },
       ],
       vehicle: 'VAN-001',
       startedAt: '2024-01-10T14:30:00',

@@ -25,6 +25,9 @@ interface PassportData {
     name: string;
     photo: string | null;
     generation?: string;
+    yearsOfExperience?: number | null;
+    farmerQrCode?: string | null;
+    farmerProfileUrl?: string | null;
   };
   compliance: {
     euOrganic: string; // RS-BIO-XXX
@@ -104,6 +107,9 @@ export default function ProductPassportPage() {
           name: farmerIdentity, // Formatted identity
           photo: apiData.farmer?.photo || null,
           generation: apiData.farmer?.generation || '3rd',
+          yearsOfExperience: apiData.farmer?.yearsOfExperience || null,
+          farmerQrCode: apiData.farmer?.farmerQrCode || null,
+          farmerProfileUrl: apiData.farmer?.farmerProfileUrl || null,
         },
         compliance: {
           euOrganic: apiData.compliance?.euOrganic || 'RS-BIO-001',
@@ -120,11 +126,11 @@ export default function ProductPassportPage() {
           } : null,
           transport: apiData.transit ? {
             vehicleNumber: apiData.transit.vehicleNumber || 'VEH-001',
-            route: `Balkan → Hamburg`,
+            route: `Origin → Europe`,
           } : null,
           arrival: {
             estimated: apiData.timeline?.arrived || new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-            location: 'Hamburg Market',
+            location: 'European Market',
           },
         },
         labReport: {
@@ -228,6 +234,21 @@ export default function ProductPassportPage() {
             <p className="text-xs font-light tracking-[0.15em] text-[#1A3021]/70 uppercase">
               {data.origin.location}
             </p>
+            {data.farmer.yearsOfExperience && (
+              <p className="text-[10px] font-light text-[#1A3021]/50 mt-1">
+                {data.farmer.yearsOfExperience} years of experience
+              </p>
+            )}
+            {data.farmer.farmerProfileUrl && (
+              <a
+                href={data.farmer.farmerProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-2 text-[10px] font-light text-[#A4C639] hover:underline"
+              >
+                Meet the person who picked this →
+              </a>
+            )}
           </div>
 
           {/* Vera Integrity Badge */}

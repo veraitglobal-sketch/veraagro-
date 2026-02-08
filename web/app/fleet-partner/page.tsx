@@ -25,7 +25,7 @@ export default function FleetPartnerPage() {
     {
       id: 1,
       type: 'assignment',
-      message: 'Truck T-456 arriving at Hamburg Hub in 1 hour',
+      message: 'Truck T-456 arriving at European Hub in 1 hour',
       timestamp: new Date(),
       missionId: 'M-2024-001',
     },
@@ -34,7 +34,7 @@ export default function FleetPartnerPage() {
   const [availableMissions] = useState([
     {
       id: 'LD-001',
-      pickup: 'Hamburg Grossmarkt Gate 2',
+      pickup: 'European Distribution Hub',
       delivery: '3 Rewe locations',
       pallets: 4,
       distance: '45 km',
@@ -58,7 +58,7 @@ export default function FleetPartnerPage() {
     {
       id: 'DLV-001',
       missionId: 'LD-001',
-      pickup: 'Hamburg Grossmarkt Gate 2',
+      pickup: 'European Distribution Hub',
       delivery: ['Rewe Store A', 'Rewe Store B', 'Rewe Store C'],
       status: 'in_transit',
       progress: 2,

@@ -2,20 +2,51 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { Shield, Award, CheckCircle } from 'lucide-react';
 
 type Language = 'en' | 'sr' | 'de';
-type Category = 'growers' | 'drivers' | 'general';
+type Category = 'buyers' | 'growers' | 'drivers' | 'general';
 
 const content = {
   en: {
     title: 'Help Center',
     searchPlaceholder: 'Search for help...',
     categories: {
+      buyers: 'For Buyers',
       growers: 'For Growers',
       drivers: 'For Drivers',
       general: 'General',
     },
     articles: {
+      buyers: [
+        { 
+          title: 'Protocol 360: Quality Assurance System', 
+          content: 'Discover Bio Vera\'s three-tier quality control system ensuring product safety, quality, and standardization. Learn about our rigorous verification process from field to shelf.',
+          link: '/protocol-360',
+          highlight: true,
+        },
+        { 
+          title: 'Product Safety & Quality Standards', 
+          content: 'Every product undergoes strict quality checks including soil analysis, biometric scanning, and cold chain monitoring. Our standards exceed industry expectations.',
+        },
+        { 
+          title: 'Standardization & Compliance', 
+          content: 'All products meet EU certification standards with complete traceability. Every unit is verified through our Protocol 360 system for guaranteed quality.',
+        },
+        { 
+          title: 'Buyer Benefits & Advantages', 
+          content: 'Enjoy competitive pricing, guaranteed freshness, complete transparency, and direct access to European producers. Build trust with your customers through verified quality.',
+        },
+        { 
+          title: 'Terms & Conditions', 
+          content: 'Understand our purchase terms, delivery conditions, quality guarantees, and return policies. We ensure fair and transparent transactions.',
+        },
+        { 
+          title: 'How to Place Orders', 
+          content: 'Step-by-step guide on browsing products, placing orders, tracking deliveries, and managing your account on the Bio Vera platform.',
+        },
+      ],
       growers: [
         { title: 'How to Create a Batch', content: 'Step-by-step guide on creating and managing batches in the Bio Vera system.' },
         { title: 'Digital Scheduling', content: 'Learn how to announce harvests 24 hours in advance and report start/stop times.' },
@@ -40,11 +71,40 @@ const content = {
     title: 'Centar za Pomoć',
     searchPlaceholder: 'Pretraži pomoć...',
     categories: {
+      buyers: 'Za Kupce',
       growers: 'Za Proizvođače',
       drivers: 'Za Vozače',
       general: 'Opšte',
     },
     articles: {
+      buyers: [
+        { 
+          title: 'Protokol 360: Sistem Osiguranja Kvaliteta', 
+          content: 'Otkrijte Bio Vera trostepeni sistem kontrole kvaliteta koji osigurava sigurnost, kvalitet i standardizaciju proizvoda. Saznajte više o našem rigoroznom procesu verifikacije od polja do police.',
+          link: '/protocol-360',
+          highlight: true,
+        },
+        { 
+          title: 'Sigurnost Proizvoda i Standardi Kvaliteta', 
+          content: 'Svaki proizvod prolazi stroge kontrole kvaliteta uključujući analizu zemljišta, biometrijsko skeniranje i monitoring hladnog lanca. Naši standardi prevazilaze industrijska očekivanja.',
+        },
+        { 
+          title: 'Standardizacija i Usaglašenost', 
+          content: 'Svi proizvodi ispunjavaju EU sertifikacione standarde sa potpunom trasabilnošću. Svaka jedinica je verifikovana kroz naš Protokol 360 sistem za garantovani kvalitet.',
+        },
+        { 
+          title: 'Pogodnosti i Prednosti za Kupce', 
+          content: 'Uživajte u konkurentnim cenama, garantovanoj svežini, potpunoj transparentnosti i direktnom pristupu evropskim proizvođačima. Gradite poverenje sa svojim kupcima kroz verifikovani kvalitet.',
+        },
+        { 
+          title: 'Uslovi i Odredbe', 
+          content: 'Razumite naše uslove kupovine, uslove isporuke, garancije kvaliteta i politiku povrata. Osiguravamo poštene i transparentne transakcije.',
+        },
+        { 
+          title: 'Kako da Poručite', 
+          content: 'Korak-po-korak vodič za pregled proizvoda, postavljanje porudžbina, praćenje isporuka i upravljanje nalogom na Bio Vera platformi.',
+        },
+      ],
       growers: [
         { title: 'Kako Kreirati Seriju', content: 'Korak-po-korak vodič za kreiranje i upravljanje serijama u Bio Vera sistemu.' },
         { title: 'Digitalno Zakazivanje', content: 'Naučite kako da najavite berbu 24 sata unapred i prijavite vreme početka/kraja.' },
@@ -69,11 +129,40 @@ const content = {
     title: 'Hilfezentrum',
     searchPlaceholder: 'Hilfe suchen...',
     categories: {
+      buyers: 'Für Käufer',
       growers: 'Für Erzeuger',
       drivers: 'Für Fahrer',
       general: 'Allgemein',
     },
     articles: {
+      buyers: [
+        { 
+          title: 'Protokoll 360: Qualitätssicherungssystem', 
+          content: 'Entdecken Sie Bio Veras dreistufiges Qualitätskontrollsystem, das Produktsicherheit, Qualität und Standardisierung gewährleistet. Erfahren Sie mehr über unseren rigorosen Verifizierungsprozess vom Feld bis zum Regal.',
+          link: '/protocol-360',
+          highlight: true,
+        },
+        { 
+          title: 'Produktsicherheit & Qualitätsstandards', 
+          content: 'Jedes Produkt durchläuft strenge Qualitätsprüfungen einschließlich Bodenanalyse, biometrischem Scannen und Kühlkettenüberwachung. Unsere Standards übertreffen Branchenerwartungen.',
+        },
+        { 
+          title: 'Standardisierung & Compliance', 
+          content: 'Alle Produkte erfüllen EU-Zertifizierungsstandards mit vollständiger Rückverfolgbarkeit. Jede Einheit wird durch unser Protokoll 360-System für garantierte Qualität verifiziert.',
+        },
+        { 
+          title: 'Käufervorteile & Vorteile', 
+          content: 'Genießen Sie wettbewerbsfähige Preise, garantierte Frische, vollständige Transparenz und direkten Zugang zu europäischen Erzeugern. Bauen Sie Vertrauen bei Ihren Kunden durch verifizierte Qualität auf.',
+        },
+        { 
+          title: 'Bedingungen & Bestimmungen', 
+          content: 'Verstehen Sie unsere Kaufbedingungen, Lieferbedingungen, Qualitätsgarantien und Rückgaberichtlinien. Wir gewährleisten faire und transparente Transaktionen.',
+        },
+        { 
+          title: 'Wie man Bestellungen aufgibt', 
+          content: 'Schritt-für-Schritt-Anleitung zum Durchsuchen von Produkten, Aufgeben von Bestellungen, Verfolgen von Lieferungen und Verwalten Ihres Kontos auf der Bio Vera-Plattform.',
+        },
+      ],
       growers: [
         { title: 'Wie man eine Charge erstellt', content: 'Schritt-für-Schritt-Anleitung zur Erstellung und Verwaltung von Chargen im Bio Vera-System.' },
         { title: 'Digitale Terminplanung', content: 'Erfahren Sie, wie Sie Ernten 24 Stunden im Voraus ankündigen und Start-/Stoppzeiten melden.' },
@@ -98,7 +187,7 @@ const content = {
 
 export default function HelpCenterPage() {
   const [language, setLanguage] = useState<Language>('en');
-  const [category, setCategory] = useState<Category>('general');
+  const [category, setCategory] = useState<Category>('buyers');
   const [searchQuery, setSearchQuery] = useState('');
 
   const t = content[language];
@@ -165,14 +254,14 @@ export default function HelpCenterPage() {
               <h2 className="text-sm font-semibold text-gray-900 mb-4">Categories</h2>
               <div className="space-y-2">
                 <button
-                  onClick={() => setCategory('general')}
+                  onClick={() => setCategory('buyers')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                    category === 'general'
+                    category === 'buyers'
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  {t.categories.general}
+                  {t.categories.buyers}
                 </button>
                 <button
                   onClick={() => setCategory('growers')}
@@ -194,6 +283,16 @@ export default function HelpCenterPage() {
                 >
                   {t.categories.drivers}
                 </button>
+                <button
+                  onClick={() => setCategory('general')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                    category === 'general'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {t.categories.general}
+                </button>
               </div>
             </div>
           </div>
@@ -201,18 +300,59 @@ export default function HelpCenterPage() {
           {/* Articles */}
           <div className="lg:col-span-3">
             <div className="space-y-4">
-              {filteredArticles.map((article, index) => (
-                <motion.div
-                  key={article.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{article.title}</h3>
-                  <p className="text-gray-600">{article.content}</p>
-                </motion.div>
-              ))}
+              {filteredArticles.map((article: any, index) => {
+                const isHighlighted = article.highlight;
+                const ArticleWrapper = article.link ? Link : motion.div;
+                const wrapperProps = article.link 
+                  ? { href: article.link, className: 'block' }
+                  : { 
+                      initial: { opacity: 0, y: 20 },
+                      animate: { opacity: 1, y: 0 },
+                      transition: { delay: index * 0.1 },
+                      className: 'cursor-pointer'
+                    };
+
+                return (
+                  <ArticleWrapper key={article.title} {...wrapperProps}>
+                    <motion.div
+                      initial={!article.link ? undefined : { opacity: 0, y: 20 }}
+                      animate={!article.link ? undefined : { opacity: 1, y: 0 }}
+                      transition={!article.link ? undefined : { delay: index * 0.1 }}
+                      className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-all ${
+                        isHighlighted
+                          ? 'border-2 border-green-300 bg-gradient-to-br from-green-50/50 to-white'
+                          : 'border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {isHighlighted && (
+                          <div className="flex-shrink-0 mt-1">
+                            <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg flex items-center justify-center shadow-md">
+                              <Shield className="w-6 h-6 text-white" />
+                            </div>
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h3 className={`text-lg font-semibold mb-2 ${isHighlighted ? 'text-green-900' : 'text-gray-900'}`}>
+                            {article.title}
+                          </h3>
+                          <p className={`${isHighlighted ? 'text-gray-700' : 'text-gray-600'}`}>
+                            {article.content}
+                          </p>
+                          {article.link && (
+                            <div className="mt-4 flex items-center gap-2 text-green-600 font-medium text-sm">
+                              <span>Learn more</span>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </ArticleWrapper>
+                );
+              })}
             </div>
           </div>
         </div>

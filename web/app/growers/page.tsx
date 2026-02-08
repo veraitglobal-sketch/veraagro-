@@ -20,6 +20,37 @@ export default function GrowersPage() {
     fieldPhotos: null as File | null,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  const handleDownload = async (resourceTitle: string) => {
+    try {
+      setDownloading(resourceTitle);
+      
+      // Map resource titles to API methods
+      const downloadMap: { [key: string]: () => Promise<void> } = {
+        'Grower Prospect': growersAPI.downloadProspect,
+        'Packaging Guidelines': growersAPI.downloadPackagingGuidelines,
+        'Farmer Field Management Guide': growersAPI.downloadFieldManagementGuide,
+        'Bio Vera Protocol': growersAPI.downloadProtocol,
+        'Certification Requirements': growersAPI.downloadCertificationRequirements,
+        'Mobile App Guide': growersAPI.downloadMobileAppGuide,
+        'Payment Process Guide': growersAPI.downloadPaymentProcessGuide,
+        'Quality Standards': growersAPI.downloadQualityStandards,
+      };
+
+      const downloadMethod = downloadMap[resourceTitle];
+      if (downloadMethod) {
+        await downloadMethod();
+      } else {
+        throw new Error(`Download method not found for: ${resourceTitle}`);
+      }
+    } catch (error) {
+      console.error('Error downloading resource:', error);
+      alert('Failed to download resource. Please try again.');
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -79,9 +110,9 @@ export default function GrowersPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={180} 
-                height={60} 
-                className="h-12 w-auto"
+                width={200} 
+                height={70} 
+                className="h-14 w-auto"
                 priority
               />
             </Link>
@@ -97,13 +128,13 @@ export default function GrowersPage() {
       {/* Hero Section */}
       <section className="pt-24 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
             For Growers
-          </h1>
+            </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-            Join the most advanced In-Time logistics network. Secure your placement and eliminate 
-            market volatility by following the Bio Vera Protocol.
-          </p>
+              Join the most advanced In-Time logistics network. Secure your placement and eliminate 
+              market volatility by following the Bio Vera Protocol. Open to producers across Europe.
+            </p>
           <button
             onClick={async () => {
               try {
@@ -293,10 +324,38 @@ export default function GrowersPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
+                title: 'Grower Prospect',
+                description: 'Complete information about becoming a Bio Vera grower, including benefits, requirements, and the application process.',
+                type: 'PDF',
+                size: '~2 MB',
+                downloadKey: 'Grower Prospect',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'Packaging Guidelines',
+                description: 'Complete packaging standards and instructions for Bio Vera products. Includes specifications for boxes, product arrangement (5 rows × 3 products for round items), QR codes, and branding requirements.',
+                type: 'PDF',
+                size: '~1.5 MB',
+                downloadKey: 'Packaging Guidelines',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                ),
+              },
+              {
                 title: 'Farmer Field Management Guide',
                 description: 'Complete guide on managing estates, parcels, and field entries using the Bio Vera system.',
                 type: 'PDF',
                 size: '2.4 MB',
+                downloadKey: 'Farmer Field Management Guide',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -308,6 +367,8 @@ export default function GrowersPage() {
                 description: 'Detailed requirements and standards for network participation and certification.',
                 type: 'PDF',
                 size: '1.8 MB',
+                downloadKey: 'Bio Vera Protocol',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -319,6 +380,8 @@ export default function GrowersPage() {
                 description: 'GlobalG.A.P. IFA v6 group certification requirements and compliance checklist.',
                 type: 'PDF',
                 size: '1.2 MB',
+                downloadKey: 'Certification Requirements',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -330,6 +393,8 @@ export default function GrowersPage() {
                 description: 'Step-by-step guide for using the Bio Vera mobile application for field management.',
                 type: 'PDF',
                 size: '3.1 MB',
+                downloadKey: 'Mobile App Guide',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -341,6 +406,8 @@ export default function GrowersPage() {
                 description: 'Understanding escrow payments, release schedules, and payment splits.',
                 type: 'PDF',
                 size: '1.5 MB',
+                downloadKey: 'Payment Process Guide',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -352,6 +419,8 @@ export default function GrowersPage() {
                 description: 'Visual and chemical quality standards for Bio Vera certified products.',
                 type: 'PDF',
                 size: '2.7 MB',
+                downloadKey: 'Quality Standards',
+                available: true,
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -379,18 +448,34 @@ export default function GrowersPage() {
                         <span className="px-2 py-1 bg-gray-100 rounded">{resource.type}</span>
                         <span>{resource.size}</span>
                       </div>
-                      <button
-                        className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors flex items-center gap-1"
-                        onClick={() => {
-                          // TODO: Implement download functionality
-                          console.log(`Downloading ${resource.title}`);
-                        }}
-                      >
-                        Download
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                      </button>
+                      {resource.available ? (
+                        <button
+                          className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => handleDownload(resource.downloadKey || resource.title)}
+                          disabled={downloading === resource.title}
+                        >
+                          {downloading === resource.title ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Downloading...
+                            </>
+                          ) : (
+                            <>
+                              Download
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                              </svg>
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <span className="text-sm text-gray-400 font-medium">
+                          Coming Soon
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -612,15 +697,15 @@ export default function GrowersPage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <Link href="/" className="inline-block mb-4">
+          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
+            <div className="flex flex-col">
+              <Link href="/" className="inline-block mb-4 -mt-1">
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={180} 
-                  height={60} 
-                  className="h-12 w-auto"
+                  width={200} 
+                  height={70} 
+                  className="h-14 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -641,6 +726,7 @@ export default function GrowersPage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
                 <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
@@ -652,7 +738,7 @@ export default function GrowersPage() {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2024 Bio Vera. All rights reserved.</p>
+            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
           </div>
         </div>
       </footer>

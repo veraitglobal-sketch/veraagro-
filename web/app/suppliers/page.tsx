@@ -82,9 +82,9 @@ export default function SuppliersPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={180} 
-                height={60} 
-                className="h-12 w-auto"
+                width={200} 
+                height={70} 
+                className="h-14 w-auto"
                 priority
               />
             </Link>
@@ -729,19 +729,20 @@ export default function SuppliersPage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-12 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <Link href="/" className="flex items-center gap-2 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
+            <div className="flex flex-col">
+              <Link href="/" className="inline-block mb-4 -mt-1">
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={120} 
-                  height={40} 
-                  className="h-8 w-auto"
+                  width={200} 
+                  height={70} 
+                  className="h-14 w-auto"
                 />
               </Link>
-              <p className="text-sm text-gray-600 font-light">
-                Vertically integrated agrotech platform
+              <p className="text-sm text-gray-600 font-light leading-relaxed">
+                Vertically integrated agrotech platform for Bio-Ready certification 
+                and EU market compliance.
               </p>
             </div>
             <div>
@@ -777,6 +778,11 @@ export default function SuppliersPage() {
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-4">Contact</h3>
               <ul className="space-y-2">
+                <li>
+                  <Link href="/contact" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                    Contact Us
+                  </Link>
+                </li>
                 <li className="text-sm text-gray-600 font-light">
                   Email: info@biovera.app
                 </li>
@@ -788,7 +794,7 @@ export default function SuppliersPage() {
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center">
             <p className="text-sm text-gray-600 font-light">
-              © 2024 Bio Vera. All rights reserved.
+              © 2026 Bio Vera. All rights reserved.
             </p>
           </div>
         </div>

@@ -60,8 +60,8 @@ export default function AdminLoginPage() {
               src="/logo1.png"
               alt="Bio Vera"
               width={200}
-              height={60}
-              className="mx-auto h-12 w-auto"
+              height={70}
+              className="mx-auto h-14 w-auto"
             />
           </Link>
           <h2 className="mt-6 text-3xl font-light text-gray-900">Admin Login</h2>

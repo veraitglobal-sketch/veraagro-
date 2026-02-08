@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Download } from 'lucide-react';
+import { logisticsPartnerAPI } from '@/lib/api';
 
 export default function LogisticsPartnerPage() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ export default function LogisticsPartnerPage() {
   });
   const [fuelSavings, setFuelSavings] = useState(15); // Default 15% savings
   const [submitted, setSubmitted] = useState(false);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -58,6 +61,34 @@ export default function LogisticsPartnerPage() {
 
   const savings = calculateSavings(fuelSavings);
 
+  const handleDownload = async (resourceTitle: string) => {
+    try {
+      setDownloading(resourceTitle);
+      
+      // Map resource titles to API methods
+      const downloadMap: { [key: string]: () => Promise<void> } = {
+        'Logistics Partner Prospect': logisticsPartnerAPI.downloadProspect,
+        'Transport Operations Guide': logisticsPartnerAPI.downloadTransportOperationsGuide,
+        'Cold Chain Protocol': logisticsPartnerAPI.downloadColdChainProtocol,
+        'Mobile App Guide': logisticsPartnerAPI.downloadMobileAppGuide,
+        'Payment Process Guide': logisticsPartnerAPI.downloadPaymentProcessGuide,
+        'GPS Tracking Standards': logisticsPartnerAPI.downloadGPSTrackingStandards,
+      };
+
+      const downloadMethod = downloadMap[resourceTitle];
+      if (downloadMethod) {
+        await downloadMethod();
+      } else {
+        throw new Error(`Download method not found for: ${resourceTitle}`);
+      }
+    } catch (error) {
+      console.error('Error downloading resource:', error);
+      alert('Failed to download resource. Please try again.');
+    } finally {
+      setDownloading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -68,9 +99,9 @@ export default function LogisticsPartnerPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={180} 
-                height={60} 
-                className="h-12 w-auto"
+                width={200} 
+                height={70} 
+                className="h-14 w-auto"
                 priority
               />
             </Link>
@@ -85,14 +116,34 @@ export default function LogisticsPartnerPage() {
 
       {/* Hero Section */}
       <section className="pt-24 pb-24 px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
-            For Logistics
-          </h1>
-          <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-            Join Bio Vera's trusted network of transport partners. Deliver organic products 
-            with complete traceability and earn stable, long-term contracts.
-          </p>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center">
+            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
+              For Logistics
+            </h1>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
+              Join Bio Vera's trusted network of transport partners. Open to independent drivers, 
+              small vans, medium trucks, and large transport companies. Deliver organic products 
+              with complete traceability and earn stable, long-term contracts.
+            </p>
+            <button
+              onClick={async () => {
+                try {
+                  await logisticsPartnerAPI.downloadProspect();
+                } catch (error) {
+                  console.error('Error downloading prospect:', error);
+                  alert('Failed to download prospect. Please try again.');
+                }
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Download Prospect PDF
+            </button>
+            <p className="text-xs text-gray-500 mt-4 font-light">
+              The prospect PDF includes our branded truck design and complete program details
+            </p>
+          </div>
         </div>
       </section>
 
@@ -106,15 +157,19 @@ export default function LogisticsPartnerPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
+                title: 'Bio Vera: From Orchard to Shelf',
+                description: 'Complete end-to-end responsibility from farm pickup to retail shelf delivery. You guarantee full cold chain integrity, GPS tracking, and digital handover at every stage. No partial deliveries - you are responsible for the entire journey from field to final destination.',
+              },
+              {
                 title: 'Frigo Equipment',
-                description: 'Mandatory refrigeration unit capable of maintaining temperatures between 0°C and +12°C for organic product transport.',
+                description: 'Mandatory refrigeration unit capable of maintaining temperatures between 0°C and +12°C for organic product transport. Open to all vehicle sizes - small vans, medium trucks, and large transport vehicles.',
               },
               {
                 title: 'Digital Tracking',
-                description: 'Mandatory installation of Bio Vera sensors for real-time temperature monitoring and GPS tracking throughout the delivery process.',
+                description: 'Mandatory installation of Bio Vera sensors for real-time temperature monitoring and GPS tracking throughout the delivery process. Available to independent drivers, small companies, and large logistics partners.',
               },
               {
                 title: 'Reliability',
@@ -231,6 +286,155 @@ export default function LogisticsPartnerPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Resources & Downloads Section */}
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-light text-gray-900 mb-3">Resources & Downloads</h2>
+            <p className="text-base text-gray-600 font-light">
+              Essential documents and guides for logistics partners
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Logistics Partner Prospect',
+                description: 'Complete information about becoming a Bio Vera logistics partner, including benefits, requirements, and the application process.',
+                type: 'PDF',
+                size: '~2 MB',
+                downloadKey: 'Logistics Partner Prospect',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'Transport Operations Guide',
+                description: 'Complete guide on managing deliveries, digital handovers, and route optimization using the Bio Vera system.',
+                type: 'PDF',
+                size: '2.4 MB',
+                downloadKey: 'Transport Operations Guide',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'Cold Chain Protocol',
+                description: 'Detailed requirements and standards for temperature-controlled transport and compliance.',
+                type: 'PDF',
+                size: '1.8 MB',
+                downloadKey: 'Cold Chain Protocol',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'Mobile App Guide',
+                description: 'Step-by-step guide for using the Bio Vera mobile application for logistics operations.',
+                type: 'PDF',
+                size: '3.1 MB',
+                downloadKey: 'Mobile App Guide',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'Payment Process Guide',
+                description: 'Understanding automated payments, delivery confirmations, and payment schedules.',
+                type: 'PDF',
+                size: '1.5 MB',
+                downloadKey: 'Payment Process Guide',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                ),
+              },
+              {
+                title: 'GPS Tracking Standards',
+                description: 'Requirements for GPS tracking equipment, data logging, and real-time monitoring.',
+                type: 'PDF',
+                size: '2.7 MB',
+                downloadKey: 'GPS Tracking Standards',
+                available: true,
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                ),
+              },
+            ].map((resource, index) => (
+              <div
+                key={index}
+                className="border border-gray-200 rounded-lg p-6 hover:border-green-300 transition-colors bg-white"
+              >
+                <div className="flex items-start mb-4">
+                  <div className="flex-shrink-0 text-green-600">
+                    {resource.icon}
+                  </div>
+                  <div className="ml-4 flex-1">
+                    <h3 className="text-base font-light text-gray-900 mb-2">
+                      {resource.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed font-light mb-4">
+                      {resource.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span className="px-2 py-1 bg-gray-100 rounded">{resource.type}</span>
+                        <span>{resource.size}</span>
+                      </div>
+                      {resource.available ? (
+                        <button
+                          className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => handleDownload(resource.downloadKey || resource.title)}
+                          disabled={downloading === resource.title}
+                        >
+                          {downloading === resource.title ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Downloading...
+                            </>
+                          ) : (
+                            <>
+                              Download
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                              </svg>
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <span className="text-sm text-gray-400 font-medium">
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -380,15 +584,15 @@ export default function LogisticsPartnerPage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <Link href="/" className="inline-block mb-4">
+          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
+            <div className="flex flex-col">
+              <Link href="/" className="inline-block mb-4 -mt-1">
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={180} 
-                  height={60} 
-                  className="h-12 w-auto"
+                  width={200} 
+                  height={70} 
+                  className="h-14 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -409,18 +613,18 @@ export default function LogisticsPartnerPage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
                 <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Privacy</Link></li>
+                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2024 Bio Vera. All rights reserved.</p>
+            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
           </div>
         </div>
       </footer>
