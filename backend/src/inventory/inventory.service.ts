@@ -12,6 +12,49 @@ export class InventoryService {
   constructor(private prisma: PrismaService) {}
 
   /**
+   * Categorize product based on name
+   * Returns: 'fruits', 'vegetables', 'grains', or 'other'
+   */
+  private categorizeProduct(productName: string): string {
+    const name = productName.toLowerCase();
+    
+    // Fruits
+    const fruits = [
+      'raspberry', 'blackberry', 'blueberry', 'strawberry', 'currant',
+      'apple', 'pear', 'plum', 'cherry', 'peach', 'apricot', 'grape',
+      'malina', 'kupina', 'borovnica', 'jagoda', 'kruška', 'šljiva', 
+      'trešnja', 'breskva', 'kajsija', 'grožđe', 'ribizla'
+    ];
+    if (fruits.some(fruit => name.includes(fruit))) {
+      return 'fruits';
+    }
+    
+    // Vegetables
+    const vegetables = [
+      'pepper', 'paprika', 'tomato', 'paradajz', 'cucumber', 'krastavac',
+      'zucchini', 'tikvica', 'onion', 'luk', 'garlic', 'beli luk',
+      'carrot', 'šargarepa', 'potato', 'krompir', 'cabbage', 'kupus',
+      'lettuce', 'salata', 'spinach', 'spanać', 'broccoli', 'cauliflower',
+      'bean', 'pasulj', 'pea', 'grašak', 'celery', 'celer', 'beet', 'cvekla'
+    ];
+    if (vegetables.some(veg => name.includes(veg))) {
+      return 'vegetables';
+    }
+    
+    // Grains
+    const grains = [
+      'wheat', 'pšenica', 'corn', 'kukuruz', 'barley', 'ječam',
+      'oats', 'zob', 'rye', 'raž', 'rice', 'pirinač', 'millet', 'proso',
+      'buckwheat', 'heljda', 'quinoa'
+    ];
+    if (grains.some(grain => name.includes(grain))) {
+      return 'grains';
+    }
+    
+    return 'other';
+  }
+
+  /**
    * Get available products for buyer's location
    * Calculates delivery time based on distance
    */
@@ -133,13 +176,13 @@ export class InventoryService {
       }
     }
 
-    // If inventory is empty, try Batch fallback
+    // If inventory is empty, try Batch fallback - include more statuses
     if (inventory.length === 0) {
       try {
         const batches = await this.prisma.batches.findMany({
           where: {
             status: {
-              in: ['PACKED', 'IN_TRANSIT', 'IN_HUB'],
+              in: ['PACKED', 'IN_TRANSIT', 'IN_HUB', 'QUALITY_VERIFIED'],
             },
           },
           include: {
@@ -149,7 +192,8 @@ export class InventoryService {
                   select: {
                     id: true,
                     firstName: true,
-                    // Privacy: Never include lastName, phone, email
+                    lastName: true,
+                    // Privacy: Never include phone, email
                   },
                 },
               },
@@ -173,33 +217,105 @@ export class InventoryService {
                 photoType: true,
                 isVerified: true,
               },
+              take: 3, // Limit photos
             },
           },
-          take: 20,
+          orderBy: {
+            harvestDate: 'desc', // Show latest harvests first
+          },
+          take: 50, // Increased limit to show more products
         });
 
-        inventory = batches.map((batch) => ({
-          id: batch.id,
-          productName: batch.productName,
-          quantity: batch.quantity,
-          unit: batch.unit,
-          unitPrice: 0,
-          harvestDate: batch.harvestDate,
-          hub: batch.hubs || {
-            id: 'default',
-            name: 'Hamburg Hub',
-            city: 'Hamburg',
-            location: null,
-          },
-          estate: batch.estates || {
-            id: batch.estateId || 'unknown',
-            name: 'Unknown Estate',
-          },
-          parcel: batch.parcels,
-        }));
+        if (batches.length > 0) {
+          inventory = batches.map((batch: any) => ({
+            id: batch.id,
+            batchId: batch.batchId,
+            productName: batch.productName,
+            category: this.categorizeProduct(batch.productName),
+            quantity: batch.quantity,
+            unit: batch.unit,
+            unitPrice: 0, // Will be set from market prices
+            harvestDate: batch.harvestDate,
+            status: batch.status,
+            hub: batch.hubs || {
+              id: 'default',
+              name: 'European Distribution Hub',
+              city: 'Europe',
+              location: null,
+            },
+            estate: batch.estates ? {
+              id: batch.estates.id,
+              name: batch.estates.name,
+              location: batch.estates.polygonCoordinates,
+              owner: batch.estates.users ? {
+                id: batch.estates.users.id,
+                firstName: batch.estates.users.firstName,
+                lastName: batch.estates.users.lastName,
+              } : null,
+              certificationStartDate: batch.estates.certificationStartDate,
+              daysRemaining: batch.estates.daysRemaining,
+            } : {
+              id: batch.estateId || 'unknown',
+              name: 'Unknown Estate',
+            },
+            parcel: batch.parcels ? {
+              id: batch.parcels.id,
+              cropType: batch.parcels.cropType,
+              plantingDate: batch.parcels.plantingDate,
+              expectedHarvestDate: batch.parcels.expectedHarvestDate,
+            } : null,
+            compliancePhotos: batch.compliance_photos || [],
+          }));
+        }
       } catch (batchError) {
-        // Return empty array if both fail
-        return [];
+        // If Batch query fails, continue to market prices fallback
+        console.warn('Batch query failed, trying market prices:', batchError);
+      }
+      
+      // If still no inventory (no batches or batches query failed), use market prices
+      if (inventory.length === 0) {
+        try {
+          const marketPrices = await this.prisma.market_prices.findMany({
+            where: {
+              isActive: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            distinct: ['cropType'],
+            take: 50, // Limit to 50 products
+          });
+
+          // Create product entries from market prices with categories
+          inventory = marketPrices.map((price, index) => ({
+            id: `market-${price.id}`,
+            batchId: null,
+            productName: price.cropType,
+            category: this.categorizeProduct(price.cropType),
+            quantity: 0, // Unknown quantity - will show as "Available"
+            unit: 'kg',
+            unitPrice: price.sellPrice || price.buyPrice || 0,
+            harvestDate: new Date(),
+            status: 'AVAILABLE',
+            hub: {
+              id: 'default',
+              name: 'European Distribution Hub',
+              city: 'Europe',
+              location: null,
+            },
+            estate: {
+              id: `estate-${index}`,
+              name: 'Available from European Producers',
+              location: null,
+              owner: null,
+            },
+            parcel: null,
+            compliancePhotos: [],
+          }));
+        } catch (marketError) {
+          console.error('Market prices fallback failed:', marketError);
+          return [];
+        }
       }
     }
 
@@ -221,8 +337,13 @@ export class InventoryService {
       // If MarketPrice query fails, use default prices
     }
 
-    // Calculate availability for each product
+    // Calculate availability for each product and ensure category is set
     const products = inventory.map((item) => {
+      // Ensure category is set (if not already set from batches/market prices)
+      if (!item.category && item.productName) {
+        item.category = this.categorizeProduct(item.productName);
+      }
+      
       const hubLocation = item.hub?.location as any;
       let estimatedDays = null;
       let isAvailable = true;
@@ -261,6 +382,7 @@ export class InventoryService {
         id: item.id,
         batchId, // For digital passport access
         productName: item.productName,
+        category: item.category || this.categorizeProduct(item.productName),
         quantity: item.quantity,
         unit: item.unit,
         price: finalPrice,

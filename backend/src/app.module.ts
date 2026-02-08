@@ -65,6 +65,12 @@ import { FinancialDashboardModule } from './financial-dashboard/financial-dashbo
 import { GroupSyncModule } from './group-sync/group-sync.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { GrowersModule } from './growers/growers.module';
+import { LogisticsPartnerModule } from './logistics-partner/logistics-partner.module';
+import { FarmerProfileModule } from './farmer-profile/farmer-profile.module';
+import { MissionPassportModule } from './mission-passport/mission-passport.module';
+import { EmailModule } from './email/email.module';
+import { QualityControlLevelsModule } from './quality-control-levels/quality-control-levels.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -137,6 +143,12 @@ import { GrowersModule } from './growers/growers.module';
     GroupSyncModule,
     SuppliersModule,
     GrowersModule,
+    LogisticsPartnerModule,
+    FarmerProfileModule,
+    MissionPassportModule,
+    EmailModule,
+    QualityControlLevelsModule,
+    ContactModule,
   ],
   providers: [
     {

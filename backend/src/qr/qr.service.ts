@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as QRCode from 'qrcode';
+import { QualityControlLevelsService } from '../quality-control-levels/quality-control-levels.service';
 
 @Injectable()
 export class QrService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private qualityControlLevelsService: QualityControlLevelsService,
+  ) {}
 
   /**
    * Generate QR code for a batch
@@ -61,7 +65,7 @@ export class QrService {
    * Get certificate data by QR ID
    */
   async getCertificateData(qrId: string) {
-    // QR ID format: BIO-VERA-BATCH-2024-001
+    // QR ID format: BIO-VERA-BATCH-2026-001
     // Extract batch number from QR ID
     const batchIdMatch = qrId.replace('BIO-VERA-', '');
     if (!batchIdMatch) {
@@ -239,13 +243,40 @@ export class QrService {
         // Privacy protection: Only first name
         name: batch.estates.users.firstName,
         lastName: undefined, // Never send to Buyer
-        bio: `Grown by ${batch.estates.users.firstName}, 3rd generation grower`,
-        photo: null,
-        generation: '3rd',
+        bio: batch.estates.users.farmerBio || `Grown by ${batch.estates.users.firstName}${batch.estates.users.generation ? `, ${batch.estates.users.generation} generation grower` : ''}${batch.estates.users.yearsOfExperience ? ` with ${batch.estates.users.yearsOfExperience} years of experience` : ''}`,
+        photo: batch.estates.users.farmerPhoto || null,
+        generation: batch.estates.users.generation || '3rd',
+        yearsOfExperience: batch.estates.users.yearsOfExperience || null,
+        farmerQrCode: batch.estates.users.farmerQrCode || null,
+        farmerProfileUrl: batch.estates.users.farmerProfileUrl || null,
         phone: undefined, // Never send to Buyer
         email: undefined, // Never send to Buyer
       },
+      // Protocol 360: Quality Control Levels
+      protocol360: await this.getProtocol360Data(batch.id),
     };
+  }
+
+  /**
+   * Get Protocol 360 data for certificate
+   */
+  private async getProtocol360Data(batchId: string) {
+    try {
+      const protocol360 = await this.qualityControlLevelsService.getProtocol360Status(batchId);
+      return {
+        overallStatus: protocol360.overallStatus,
+        levels: protocol360.levels.map(level => ({
+          level: level.level,
+          name: level.name,
+          status: level.status,
+          badgeText: level.badgeText,
+        })),
+        brandingSlogan: protocol360.brandingSlogan,
+      };
+    } catch (error) {
+      // If Protocol 360 data is not available, return null
+      return null;
+    }
   }
 
   /**

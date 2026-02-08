@@ -951,6 +951,12 @@ model users {
   updatedAt                                    DateTime
   lastLoginAt                                  DateTime?
   isVeraPartner                                Boolean                   @default(false)
+  farmerQrCode                                 String?                   @unique
+  farmerProfileUrl                              String?
+  farmerPhoto                                  String?
+  farmerBio                                    String?
+  yearsOfExperience                            Int?
+  generation                                   String?                   // e.g., "3rd", "4th"
   audit_trails                                 audit_trails[]
   batches_batches_harvestedByUserIdTousers     batches[]                 @relation("batches_harvestedByUserIdTousers")
   batches_batches_transportedByDriverIdTousers batches[]                 @relation("batches_transportedByDriverIdTousers")

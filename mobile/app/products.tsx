@@ -85,11 +85,11 @@ export default function ProductsPage() {
     fruits: [
       { name: 'Apples', description: 'Traditional organic apple varieties', season: 'Autumn', icon: Apple },
       { name: 'Pears', description: 'Organic pears from certified farms', season: 'Autumn', icon: Circle },
-      { name: 'Raspberries', description: 'Organic raspberries from Balkan farms', season: 'Summer', icon: Cherry },
+      { name: 'Raspberries', description: 'Organic raspberries from European farms', season: 'Summer', icon: Cherry },
       { name: 'Strawberries', description: 'Fresh organic strawberries', season: 'Spring/Summer', icon: Cherry },
       { name: 'Blueberries', description: 'Premium organic blueberries', season: 'Summer', icon: Cherry },
       { name: 'Blackberries', description: 'Wild organic blackberries', season: 'Summer', icon: Cherry },
-      { name: 'Plums', description: 'Traditional Balkan plum varieties', season: 'Late Summer', icon: Circle },
+      { name: 'Plums', description: 'Traditional European plum varieties', season: 'Late Summer', icon: Circle },
       { name: 'Cherries', description: 'Sweet organic cherries', season: 'Early Summer', icon: Cherry },
     ],
     vegetables: [

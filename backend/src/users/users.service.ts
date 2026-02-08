@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, UserStatus } from '@prisma/client';
 import * as crypto from 'crypto';
+import * as QRCode from 'qrcode';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +66,19 @@ export class UsersService {
     // Support both old (single role) and new (multiple roles) format
     const roles = data.roles || (data.role ? [data.role] : [UserRole.FARMER]);
     
+    // Generate farmer QR code if user is a farmer/grower
+    let farmerQrCode: string | undefined;
+    let farmerProfileUrl: string | undefined;
+    
+    if (roles.includes(UserRole.FARMER) || roles.includes(UserRole.GROWER)) {
+      // Generate unique QR code ID
+      farmerQrCode = `FARMER-${data.partnerCode}`;
+      
+      // Generate profile URL
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+      farmerProfileUrl = `${frontendUrl}/farmer/${farmerQrCode}`;
+    }
+    
     return this.prisma.users.create({
       data: {
         id: crypto.randomUUID(),
@@ -76,6 +90,8 @@ export class UsersService {
         passwordHash: data.passwordHash,
         roles: roles,
         status: UserStatus.PENDING_VERIFICATION,
+        farmerQrCode: farmerQrCode,
+        farmerProfileUrl: farmerProfileUrl,
         updatedAt: new Date(),
       },
     });

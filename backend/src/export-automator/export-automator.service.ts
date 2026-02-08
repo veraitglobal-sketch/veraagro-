@@ -74,13 +74,13 @@ export interface TaxCalculation {
   orderId: string;
   batchId?: string;
   
-  // Balkan costs (input costs - no VAT)
-  balkanCosts: {
+  // European origin costs (input costs - no VAT)
+  europeanOriginCosts: {
     growerPrice: number; // Price paid to grower (no VAT)
-    transportBalkan: number; // Transport within Balkans (no VAT)
+    transportEurope: number; // Transport within Europe (no VAT)
     packaging: number; // Packaging costs (no VAT)
-    otherBalkan: number; // Other costs in Balkans
-    totalBalkan: number;
+    otherEurope: number; // Other costs in Europe
+    totalEurope: number;
   };
   
   // German market (output - with VAT)
@@ -97,7 +97,7 @@ export interface TaxCalculation {
   // Tax summary
   taxSummary: {
     totalRevenue: number; // Total revenue from sale
-    totalCosts: number; // Total costs (Balkan + Germany)
+    totalCosts: number; // Total costs (European origin + Germany)
     grossProfit: number; // Revenue - Costs
     vatToPay: number; // VAT amount to pay to German tax office
     vatToClaim: number; // VAT to claim back (input VAT in Germany)
@@ -121,7 +121,7 @@ export interface TaxReport {
   };
   summary: {
     totalRevenue: number;
-    totalBalkanCosts: number;
+    totalEuropeanOriginCosts: number;
     totalGermanCosts: number;
     totalVatCollected: number;
     totalVatPaid: number;
@@ -315,7 +315,7 @@ export class ExportAutomatorService {
   }
 
   /**
-   * Calculate tax separation (Balkan costs vs German market)
+   * Calculate tax separation (European origin costs vs German market)
    */
   async calculateTaxSeparation(orderId: string): Promise<TaxCalculation> {
     const order = await this.prisma.orders.findUnique({
@@ -353,19 +353,19 @@ export class ExportAutomatorService {
 
     const growerPrice = marketPrice?.buyPrice || order.unitPrice * 0.7; // Fallback: 70% of sell price
 
-    // Calculate Balkan costs (no VAT)
-    const balkanCosts = {
+    // Calculate European origin costs (no VAT)
+    const europeanOriginCosts = {
       growerPrice: growerPrice * order.quantity,
-      transportBalkan: order.quantity * 0.10, // 0.10 EUR per kg
+      transportEurope: order.quantity * 0.10, // 0.10 EUR per kg
       packaging: order.quantity * 0.05, // 0.05 EUR per kg
-      otherBalkan: order.quantity * 0.02, // 0.02 EUR per kg
-      totalBalkan: 0,
+      otherEurope: order.quantity * 0.02, // 0.02 EUR per kg
+      totalEurope: 0,
     };
-    balkanCosts.totalBalkan =
-      balkanCosts.growerPrice +
-      balkanCosts.transportBalkan +
-      balkanCosts.packaging +
-      balkanCosts.otherBalkan;
+    europeanOriginCosts.totalEurope =
+      europeanOriginCosts.growerPrice +
+      europeanOriginCosts.transportEurope +
+      europeanOriginCosts.packaging +
+      europeanOriginCosts.otherEurope;
 
     // Calculate German market (with VAT)
     const sellPrice = order.totalAmount;
@@ -391,8 +391,8 @@ export class ExportAutomatorService {
     // Tax summary
     const taxSummary = {
       totalRevenue: sellPrice,
-      totalCosts: balkanCosts.totalBalkan + germanMarket.totalGermany,
-      grossProfit: sellPrice - (balkanCosts.totalBalkan + germanMarket.totalGermany),
+      totalCosts: europeanOriginCosts.totalEurope + germanMarket.totalGermany,
+      grossProfit: sellPrice - (europeanOriginCosts.totalEurope + germanMarket.totalGermany),
       vatToPay: vatAmount,
       vatToClaim,
       netVatLiability: vatAmount - vatToClaim,
@@ -404,14 +404,14 @@ export class ExportAutomatorService {
     const exportDetails = {
       exportDate: order.createdAt,
       destinationCountry: 'DE',
-      customsValue: balkanCosts.totalBalkan, // Value for customs (cost basis)
+      customsValue: europeanOriginCosts.totalEurope, // Value for customs (cost basis)
       currency: 'EUR',
     };
 
     const taxCalculation: TaxCalculation = {
       orderId,
       batchId: order.deliveries?.id,
-      balkanCosts,
+      europeanOriginCosts,
       germanMarket,
       taxSummary,
       exportDetails,
@@ -455,7 +455,7 @@ export class ExportAutomatorService {
     // Calculate tax for each order
     const transactions: TaxCalculation[] = [];
     let totalRevenue = 0;
-    let totalBalkanCosts = 0;
+    let totalEuropeanOriginCosts = 0;
     let totalGermanCosts = 0;
     let totalVatCollected = 0;
     let totalVatPaid = 0;
@@ -466,7 +466,7 @@ export class ExportAutomatorService {
         transactions.push(taxCalc);
 
         totalRevenue += taxCalc.taxSummary.totalRevenue;
-        totalBalkanCosts += taxCalc.balkanCosts.totalBalkan;
+        totalEuropeanOriginCosts += taxCalc.europeanOriginCosts.totalEurope;
         totalGermanCosts += taxCalc.germanMarket.totalGermany;
         totalVatCollected += taxCalc.germanMarket.vatAmount;
         totalVatPaid += taxCalc.germanMarket.vatAmount; // VAT collected = VAT to pay
@@ -476,7 +476,7 @@ export class ExportAutomatorService {
     }
 
     const netVatLiability = totalVatCollected - transactions.reduce((sum, t) => sum + t.taxSummary.vatToClaim, 0);
-    const grossProfit = totalRevenue - totalBalkanCosts - totalGermanCosts;
+    const grossProfit = totalRevenue - totalEuropeanOriginCosts - totalGermanCosts;
     const netProfit = grossProfit - netVatLiability;
 
     const report: TaxReport = {
@@ -486,7 +486,7 @@ export class ExportAutomatorService {
       },
       summary: {
         totalRevenue,
-        totalBalkanCosts,
+        totalEuropeanOriginCosts,
         totalGermanCosts,
         totalVatCollected,
         totalVatPaid,
@@ -736,7 +736,7 @@ export class ExportAutomatorService {
       doc.moveDown();
       doc.fontSize(10);
       doc.text(`Total Revenue: ${report.summary.totalRevenue.toFixed(2)} EUR`);
-      doc.text(`Total Balkan Costs: ${report.summary.totalBalkanCosts.toFixed(2)} EUR`);
+      doc.text(`Total European Origin Costs: ${report.summary.totalEuropeanOriginCosts.toFixed(2)} EUR`);
       doc.text(`Total German Costs: ${report.summary.totalGermanCosts.toFixed(2)} EUR`);
       doc.text(`Total VAT Collected: ${report.summary.totalVatCollected.toFixed(2)} EUR`);
       doc.text(`Net VAT Liability: ${report.summary.netVatLiability.toFixed(2)} EUR`);

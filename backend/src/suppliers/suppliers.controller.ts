@@ -15,7 +15,11 @@ export class SuppliersController {
       res.send(pdfBuffer);
     } catch (error) {
       console.error('Error generating prospect PDF:', error);
-      throw new HttpException('Failed to generate prospect PDF', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      throw new HttpException(
+        `Failed to generate prospect PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }
