@@ -76,7 +76,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
         },
         fertilizerBarcode ? {
           fertilizerBarcode: fertilizerBarcode,
-        } : undefined
+        } as { seedSerialNumber?: string; packagingBarcode?: string; fertilizerBarcode?: string } : undefined
       );
 
       if (result.success) {
