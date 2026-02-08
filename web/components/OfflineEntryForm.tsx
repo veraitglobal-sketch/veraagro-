@@ -74,9 +74,9 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
           deviceId,
           deviceTimestamp: new Date().toISOString(),
         },
-        {
-          fertilizerBarcode: fertilizerBarcode || undefined,
-        }
+        fertilizerBarcode ? {
+          fertilizerBarcode: fertilizerBarcode,
+        } : undefined
       );
 
       if (result.success) {
