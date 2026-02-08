@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth';
 import { farmerProfileAPI } from '@/lib/api';
 import Image from 'next/image';
 import { Camera, Save, Loader2 } from 'lucide-react';
