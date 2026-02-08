@@ -25,6 +25,9 @@ RUN npx prisma generate
 # Copy source code
 COPY . .
 
+# Copy public assets (images for PDF generation)
+COPY public ./public
+
 # Build the application
 RUN npm run build
 

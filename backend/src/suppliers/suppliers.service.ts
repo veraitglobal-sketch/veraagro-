@@ -37,8 +37,8 @@ export class SuppliersService {
         });
 
         // Try to add logo image if it exists
-        const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-        const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+        const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+        const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
         const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
 
         // Helper function to add header on new pages
@@ -457,7 +457,7 @@ export class SuppliersService {
         ];
         let productsTriptychPath = null;
         for (const imgName of productsTriptychPaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             productsTriptychPath = imgPath;
             break;
@@ -504,7 +504,7 @@ export class SuppliersService {
         ];
         let bioGrowImagePath = null;
         for (const imgName of bioGrowImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             bioGrowImagePath = imgPath;
             break;
@@ -602,7 +602,7 @@ export class SuppliersService {
         ];
         let seedImagePath = null;
         for (const imgName of seedImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             seedImagePath = imgPath;
             break;
@@ -835,7 +835,7 @@ export class SuppliersService {
         ];
         let boxImagePath = null;
         for (const imgName of boxImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             boxImagePath = imgPath;
             break;
@@ -895,7 +895,7 @@ export class SuppliersService {
         ];
         let ceradaImagePath = null;
         for (const imgName of ceradaImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             ceradaImagePath = imgPath;
             break;

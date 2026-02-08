@@ -80,8 +80,8 @@ export class MissionPassportService {
           doc.rect(0, 0, doc.page.width, 150)
             .fill(bgGreen);
           
-          const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-          const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+          const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+          const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
           const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
           
           if (logoPath && fs.existsSync(logoPath)) {

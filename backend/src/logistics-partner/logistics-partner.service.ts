@@ -38,8 +38,8 @@ export class LogisticsPartnerService {
           doc.rect(0, 0, doc.page.width, 150)
             .fill(bgGreen);
           
-          const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-          const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+          const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+          const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
           const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
           
           if (logoPath && fs.existsSync(logoPath)) {
@@ -116,8 +116,8 @@ export class LogisticsPartnerService {
         doc.moveDown(2);
 
         // Truck Image Section - Bio Vera: From Orchard to Shelf (Split Layout)
-        const truckImagePath1 = path.join(process.cwd(), '..', 'web', 'public', 'truck-cerada.jpg');
-        const truckImagePath2 = path.join(process.cwd(), '..', 'web', 'public', 'truck-cerada.png');
+        const truckImagePath1 = path.join(process.cwd(), 'public', 'truck-cerada.jpg');
+        const truckImagePath2 = path.join(process.cwd(), 'public', 'truck-cerada.png');
         const truckImagePath = fs.existsSync(truckImagePath1) ? truckImagePath1 : (fs.existsSync(truckImagePath2) ? truckImagePath2 : null);
         
         if (truckImagePath && fs.existsSync(truckImagePath)) {
@@ -634,8 +634,8 @@ export class LogisticsPartnerService {
   private addHeader(doc: any, title: string, veraGreen: string, darkGray: string, lightGray: string, bgGreen: string): void {
     doc.rect(0, 0, doc.page.width, 150).fill(bgGreen);
     
-    const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-    const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+    const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+    const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
     const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
     
     if (logoPath && fs.existsSync(logoPath)) {

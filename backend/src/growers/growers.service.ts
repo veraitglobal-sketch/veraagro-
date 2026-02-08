@@ -62,8 +62,8 @@ export class GrowersService {
           .fill(bgGreen);
         
         // Try to add logo image if it exists
-        const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-        const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+        const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+        const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
         const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
         
         if (logoPath && fs.existsSync(logoPath)) {
@@ -625,8 +625,8 @@ export class GrowersService {
           doc.rect(0, 0, doc.page.width, 120)
             .fill(bgGreen);
           
-          const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-          const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+          const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+          const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
           const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
           
           if (logoPath && fs.existsSync(logoPath)) {
@@ -713,7 +713,7 @@ export class GrowersService {
         ];
         let boxImagePath = null;
         for (const imgName of boxImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             boxImagePath = imgPath;
             break;
@@ -794,7 +794,7 @@ export class GrowersService {
         ];
         let appleImagePath = null;
         for (const imgName of appleImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             appleImagePath = imgPath;
             break;
@@ -807,7 +807,7 @@ export class GrowersService {
         ];
         let avocadoImagePath = null;
         for (const imgName of avocadoImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             avocadoImagePath = imgPath;
             break;
@@ -987,7 +987,7 @@ export class GrowersService {
         ];
         let palletImagePath = null;
         for (const imgName of palletImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             palletImagePath = imgPath;
             break;
@@ -1034,7 +1034,7 @@ export class GrowersService {
         ];
         let bulkImagePath = null;
         for (const imgName of bulkImagePaths) {
-          const imgPath = path.join(process.cwd(), '..', 'web', 'public', imgName);
+          const imgPath = path.join(process.cwd(), 'public', imgName);
           if (fs.existsSync(imgPath)) {
             bulkImagePath = imgPath;
             break;
@@ -1080,9 +1080,9 @@ export class GrowersService {
         addSectionTitle('3. Branding Requirements', 250);
 
         // Try to add branding example image if available
-        const brandingImagePath1 = path.join(process.cwd(), '..', 'web', 'public', 'branding-example.jpg');
-        const brandingImagePath2 = path.join(process.cwd(), '..', 'web', 'public', 'branding-example.png');
-        const brandingImagePath3 = path.join(process.cwd(), '..', 'web', 'public', 'box-branding.jpg');
+        const brandingImagePath1 = path.join(process.cwd(), 'public', 'branding-example.jpg');
+        const brandingImagePath2 = path.join(process.cwd(), 'public', 'branding-example.png');
+        const brandingImagePath3 = path.join(process.cwd(), 'public', 'box-branding.jpg');
         const brandingImagePath = fs.existsSync(brandingImagePath1) ? brandingImagePath1 : 
                                  (fs.existsSync(brandingImagePath2) ? brandingImagePath2 : 
                                  (fs.existsSync(brandingImagePath3) ? brandingImagePath3 : null));
@@ -1351,8 +1351,8 @@ export class GrowersService {
       .fill(bgGreen);
     
     // Try to add logo
-    const logoPath1 = path.join(process.cwd(), '..', 'web', 'public', 'logo1.png');
-    const logoPath2 = path.join(process.cwd(), '..', 'web', 'public', 'logo.png');
+    const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
+    const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
     const logoPath = fs.existsSync(logoPath1) ? logoPath1 : (fs.existsSync(logoPath2) ? logoPath2 : null);
     
     if (logoPath && fs.existsSync(logoPath)) {
