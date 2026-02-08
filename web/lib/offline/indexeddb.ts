@@ -133,7 +133,7 @@ export async function getUnsyncedEntries(): Promise<FieldEntry[]> {
     const transaction = database.transaction([STORE_ENTRIES], 'readonly');
     const store = transaction.objectStore(STORE_ENTRIES);
     const index = store.index('synced');
-    const request = index.getAll(false);
+    const request = index.getAll(false as IDBValidKey);
 
     request.onsuccess = () => resolve(request.result as FieldEntry[]);
     request.onerror = () => reject(request.error);
