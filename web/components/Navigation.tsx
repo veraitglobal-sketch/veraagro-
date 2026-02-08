@@ -71,9 +71,7 @@ export default function Navigation() {
                 {(() => {
                   const userRoles: string[] = user?.roles && Array.isArray(user.roles) 
                     ? user.roles 
-                    : user?.role 
-                      ? [user.role] 
-                      : [];
+                    : [];
                   
                   // Get dashboard link based on roles
                   const getDashboardLink = () => {
@@ -148,9 +146,7 @@ export default function Navigation() {
                 {(() => {
                   const userRoles: string[] = user?.roles && Array.isArray(user.roles) 
                     ? user.roles 
-                    : user?.role 
-                      ? [user.role] 
-                      : [];
+                    : [];
                   
                   const getDashboardLink = () => {
                     if (userRoles.includes('GROWER') || userRoles.includes('FARMER')) return '/grower';
