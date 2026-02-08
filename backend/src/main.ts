@@ -13,7 +13,8 @@ async function bootstrap() {
     // List of known failed migrations to resolve
     const failedMigrations = [
       '20250101000000_add_harvest_announcements',
-      '20250201140000_add_vera_insights'
+      '20250201140000_add_vera_insights',
+      '20250201150000_add_farmer_profile_fields'
     ];
     
     console.log('Checking for failed migrations...');
