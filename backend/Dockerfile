@@ -1,15 +1,13 @@
-FROM node:20-bullseye
+FROM node:20-slim
 
 WORKDIR /app
 
-# Install OpenSSL 1.1.x for Prisma compatibility
-# Debian Bullseye (11) includes OpenSSL 1.1.x
-# Using full bullseye image (not slim) for better compatibility
-# Force no-cache to ensure fresh package lists
+# Install OpenSSL 3.0 for Prisma compatibility
+# Debian Bookworm (12) uses OpenSSL 3.0
+# Prisma binaryTargets configured for OpenSSL 3.0.x
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         openssl \
-        libssl1.1 \
         ca-certificates && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
