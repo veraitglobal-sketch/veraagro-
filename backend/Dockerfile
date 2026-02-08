@@ -1,8 +1,9 @@
-FROM node:20-slim
+FROM node:20-bullseye-slim
 
 WORKDIR /app
 
 # Install OpenSSL 1.1.x for Prisma compatibility
+# Debian Bullseye (11) includes OpenSSL 1.1.x
 # Prisma requires libssl.so.1.1 specifically
 RUN apt-get update -y && \
     apt-get install -y openssl libssl1.1 ca-certificates && \
