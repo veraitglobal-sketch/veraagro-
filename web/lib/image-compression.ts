@@ -46,7 +46,6 @@ export async function compressImage(
       const compressed = await imageCompression(file, {
         maxWidthOrHeight: opts.maxWidth || 1920,
         useWebWorker: opts.useWebWorker,
-        quality: opts.quality || 0.8,
       });
 
       return compressed;
@@ -57,7 +56,6 @@ export async function compressImage(
       maxWidthOrHeight: opts.maxWidth || 1920,
       maxSizeMB: opts.maxSizeMB || 2,
       useWebWorker: opts.useWebWorker,
-      quality: opts.quality || 0.8,
       fileType: file.type, // Preserve original file type
     });
 
