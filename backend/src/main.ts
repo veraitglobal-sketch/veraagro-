@@ -2,8 +2,25 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { execSync } from 'child_process';
 
 async function bootstrap() {
+  // Run Prisma migrations before starting the app
+  try {
+    console.log('Running Prisma migrations...');
+    execSync('npx prisma migrate deploy', { 
+      stdio: 'inherit',
+      env: process.env 
+    });
+    console.log('Migrations completed successfully');
+  } catch (error) {
+    console.error('Migration failed:', error);
+    // Don't exit in development, but exit in production
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    }
+  }
+
   const app = await NestFactory.create(AppModule);
   
   // Enable CORS for mobile app and web
