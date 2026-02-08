@@ -28,9 +28,7 @@ export default function AdminLoginPage() {
       // Check if user has admin role
       const userRoles = response.user?.roles && Array.isArray(response.user.roles) 
         ? response.user.roles 
-        : response.user?.role 
-          ? [response.user.role] 
-          : [];
+        : [];
 
       const isAdmin = userRoles.some((role: string) => ['SUPER_ADMIN', 'ADMIN'].includes(role));
       

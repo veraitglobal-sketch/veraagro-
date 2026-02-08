@@ -66,9 +66,7 @@ export default function SidebarLayout({ children, title, navItems }: SidebarLayo
             <p className="text-xs text-gray-500">
               {(user?.roles && Array.isArray(user.roles) 
                 ? user.roles 
-                : user?.role 
-                  ? [user.role] 
-                  : []
+                : []
               ).map(role => role.replace(/_/g, ' ')).join(', ')}
             </p>
           </div>
