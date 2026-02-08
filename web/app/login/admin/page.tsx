@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
+import { authAPI } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -21,21 +22,27 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const response = await login(partnerCode, password);
+      // Use authAPI.login directly to get response data
+      const response = await authAPI.login(partnerCode, password);
       
       // Check if user has admin role
-      const userRoles = response.user.roles && Array.isArray(response.user.roles) 
+      const userRoles = response.user?.roles && Array.isArray(response.user.roles) 
         ? response.user.roles 
-        : response.user.role 
+        : response.user?.role 
           ? [response.user.role] 
           : [];
 
-      const isAdmin = userRoles.some(role => ['SUPER_ADMIN', 'ADMIN'].includes(role));
+      const isAdmin = userRoles.some((role: string) => ['SUPER_ADMIN', 'ADMIN'].includes(role));
       
       if (!isAdmin) {
         setError('This account does not have admin privileges.');
+        // Clear token if not admin
+        authAPI.logout();
         return;
       }
+
+      // Update auth context
+      await login(partnerCode, password);
 
       // Redirect to admin dashboard
       router.push('/admin');

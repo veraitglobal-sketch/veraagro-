@@ -38,6 +38,8 @@ interface Product {
 interface PriceMatrixTableProps {
   products: Product[];
   onOrder: (productId: string, quantity: number, lockPrice: boolean) => void;
+  onPriceChange?: (productId: string, newPrice: number) => void;
+  onProductClick?: (product: Product) => void;
 }
 
 export default function PriceMatrixTable({ products, onOrder, onPriceChange, onProductClick }: PriceMatrixTableProps) {

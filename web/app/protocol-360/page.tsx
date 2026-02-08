@@ -512,7 +512,7 @@ export default function Protocol360Page() {
                                     // Localize check names based on content
                                     const checkLower = check.name.toLowerCase();
                                     const levelKey = level.level === 1 ? 'level1' : level.level === 2 ? 'level2' : 'level3';
-                                    const checks = t.levels[levelKey as keyof typeof t.levels].checks;
+                                    const checks = t.levels[levelKey as keyof typeof t.levels].checks as any;
                                     
                                     if (language === 'en') return check.name;
                                     if (checkLower.includes('heavy') || checkLower.includes('metal')) return checks.heavyMetals;
@@ -607,7 +607,7 @@ export default function Protocol360Page() {
                       const getLocalizedCheck = (checkName: string, levelNum: number) => {
                         if (language === 'en') return checkName;
                         const levelKey = levelNum === 1 ? 'level1' : levelNum === 2 ? 'level2' : 'level3';
-                        const checks = t.levels[levelKey as keyof typeof t.levels].checks;
+                        const checks = t.levels[levelKey as keyof typeof t.levels].checks as any;
                         // Try to match by key
                         if (checkName.toLowerCase().includes('heavy') || checkName.toLowerCase().includes('metals')) {
                           return checks.heavyMetals;

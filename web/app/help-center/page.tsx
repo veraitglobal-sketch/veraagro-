@@ -302,28 +302,17 @@ export default function HelpCenterPage() {
             <div className="space-y-4">
               {filteredArticles.map((article: any, index) => {
                 const isHighlighted = article.highlight;
-                const ArticleWrapper = article.link ? Link : motion.div;
-                const wrapperProps = article.link 
-                  ? { href: article.link, className: 'block' }
-                  : { 
-                      initial: { opacity: 0, y: 20 },
-                      animate: { opacity: 1, y: 0 },
-                      transition: { delay: index * 0.1 },
-                      className: 'cursor-pointer'
-                    };
-
-                return (
-                  <ArticleWrapper key={article.title} {...wrapperProps}>
-                    <motion.div
-                      initial={!article.link ? undefined : { opacity: 0, y: 20 }}
-                      animate={!article.link ? undefined : { opacity: 1, y: 0 }}
-                      transition={!article.link ? undefined : { delay: index * 0.1 }}
-                      className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-all ${
-                        isHighlighted
-                          ? 'border-2 border-green-300 bg-gradient-to-br from-green-50/50 to-white'
-                          : 'border-gray-200'
-                      }`}
-                    >
+                const content = (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-all ${
+                      isHighlighted
+                        ? 'border-2 border-green-300 bg-gradient-to-br from-green-50/50 to-white'
+                        : 'border-gray-200'
+                    }`}
+                  >
                       <div className="flex items-start gap-3">
                         {isHighlighted && (
                           <div className="flex-shrink-0 mt-1">
@@ -350,7 +339,16 @@ export default function HelpCenterPage() {
                         </div>
                       </div>
                     </motion.div>
-                  </ArticleWrapper>
+                );
+
+                return article.link ? (
+                  <Link key={article.title} href={article.link} className="block">
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={article.title} className="cursor-pointer">
+                    {content}
+                  </div>
                 );
               })}
             </div>

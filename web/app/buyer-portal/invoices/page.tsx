@@ -17,6 +17,7 @@ import {
   Mail,
   ChevronDown,
   ChevronUp,
+  X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
