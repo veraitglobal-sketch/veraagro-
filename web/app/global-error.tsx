@@ -14,7 +14,9 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // Log error to error reporting service
-    console.error('Global application error:', error);
+    if (typeof window !== 'undefined') {
+      console.error('Global application error:', error);
+    }
   }, [error]);
 
   return (

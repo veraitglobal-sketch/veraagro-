@@ -14,7 +14,9 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log error to error reporting service
-    console.error('Application error:', error);
+    if (typeof window !== 'undefined') {
+      console.error('Application error:', error);
+    }
   }, [error]);
 
   return (

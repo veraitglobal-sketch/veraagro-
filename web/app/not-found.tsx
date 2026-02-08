@@ -2,6 +2,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Home, ArrowLeft } from 'lucide-react';
 
+export const metadata = {
+  title: '404 - Page Not Found | Bio Vera',
+  description: 'The page you are looking for does not exist.',
+};
+
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
@@ -30,13 +35,13 @@ export default function NotFound() {
             <Home className="w-4 h-4" />
             Go to Homepage
           </Link>
-          <button
-            onClick={() => window.history.back()}
+          <Link
+            href="/"
             className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Go Back
-          </button>
+          </Link>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-200">
