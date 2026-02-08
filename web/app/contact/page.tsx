@@ -17,11 +17,13 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
       const result = await contactAPI.submitInquiry({
@@ -39,12 +41,43 @@ export default function ContactPage() {
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
         setSubmitStatus('error');
-        setTimeout(() => setSubmitStatus('idle'), 5000);
+        setErrorMessage(result.message || 'Something went wrong. Please try again.');
+        setTimeout(() => {
+          setSubmitStatus('idle');
+          setErrorMessage('');
+        }, 10000);
       }
     } catch (error: any) {
       console.error('Error submitting contact form:', error);
       setSubmitStatus('error');
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      
+      // More detailed error messages
+      if (error.response) {
+        // Server responded with error status
+        const status = error.response.status;
+        const data = error.response.data;
+        
+        if (status === 400) {
+          setErrorMessage(data?.message || 'Please check your input and try again.');
+        } else if (status === 429) {
+          setErrorMessage('Too many requests. Please wait a few minutes and try again.');
+        } else if (status >= 500) {
+          setErrorMessage('Server error. Please try again later or contact us directly at info@biovera.app');
+        } else {
+          setErrorMessage(data?.message || 'An error occurred. Please try again.');
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        setErrorMessage('Unable to connect to server. Please check your internet connection and try again.');
+      } else {
+        // Something else happened
+        setErrorMessage('An unexpected error occurred. Please try again or contact us directly at info@biovera.app');
+      }
+      
+      setTimeout(() => {
+        setSubmitStatus('idle');
+        setErrorMessage('');
+      }, 10000);
     } finally {
       setIsSubmitting(false);
     }
@@ -291,8 +324,13 @@ export default function ContactPage() {
                   {submitStatus === 'error' && (
                     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                       <p className="text-sm text-red-800 font-light">
-                        Something went wrong. Please try again or contact us directly via email.
+                        {errorMessage || 'Something went wrong. Please try again or contact us directly via email.'}
                       </p>
+                      {process.env.NODE_ENV === 'development' && (
+                        <p className="text-xs text-red-600 mt-2 font-mono">
+                          Check browser console for details.
+                        </p>
+                      )}
                     </div>
                   )}
 
