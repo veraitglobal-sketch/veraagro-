@@ -2,8 +2,8 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Debian-based image includes OpenSSL by default
-# No additional packages needed for Prisma
+# Install OpenSSL for Prisma (as recommended by Prisma)
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
