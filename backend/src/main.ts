@@ -40,6 +40,14 @@ async function bootstrap() {
       
       await prisma.$disconnect();
       console.log('Farmer profile fields migration applied');
+      
+      // Regenerate Prisma Client to include new columns
+      console.log('Regenerating Prisma Client...');
+      execSync('npx prisma generate', { 
+        stdio: 'inherit',
+        env: process.env 
+      });
+      console.log('Prisma Client regenerated');
     } catch (sqlError: any) {
       console.log('Farmer profile fields may already exist:', sqlError?.message || 'Unknown error');
     }
