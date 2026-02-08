@@ -1,12 +1,23 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { Throttle } from '@nestjs/throttler';
+import { IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class ContactInquiryDto {
+  @IsString()
   name: string;
+
+  @IsEmail()
   email: string;
+
+  @IsString()
   subject: string;
+
+  @IsString()
   message: string;
+
+  @IsOptional()
+  @IsString()
   phone?: string;
 }
 
