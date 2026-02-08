@@ -215,7 +215,7 @@ interface Protocol360Status {
   updatedAt: Date;
 }
 
-export default function Protocol360Page() {
+function Protocol360Content() {
   const searchParams = useSearchParams();
   const batchId = searchParams.get('batchId');
   const [protocolInfo, setProtocolInfo] = useState<any>(null);
