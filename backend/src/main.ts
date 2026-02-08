@@ -37,6 +37,22 @@ async function bootstrap() {
       env: process.env 
     });
     console.log('Migrations completed successfully');
+    
+    // Create test users if database is empty (only in production for initial setup)
+    if (process.env.NODE_ENV === 'production' && process.env.CREATE_TEST_USERS !== 'false') {
+      try {
+        console.log('Checking if test users need to be created...');
+        execSync('npm run create:users', { 
+          stdio: 'inherit',
+          env: process.env,
+          cwd: process.cwd()
+        });
+        console.log('Test users check completed');
+      } catch (error) {
+        // Script uses upsert, so it's safe to run multiple times
+        console.log('Test users script completed (users may already exist)');
+      }
+    }
   } catch (error) {
     console.error('Migration failed:', error);
     // Don't exit in development, but exit in production
