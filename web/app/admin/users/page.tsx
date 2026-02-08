@@ -187,6 +187,8 @@ export default function UsersManagementPage() {
       password: '',
       roles: user.roles || [],
       status: user.status,
+      autoGeneratePassword: false,
+      sendEmail: false,
     });
   };
 
