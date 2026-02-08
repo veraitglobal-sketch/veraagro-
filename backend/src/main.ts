@@ -10,16 +10,24 @@ async function bootstrap() {
     console.log('Running Prisma migrations...');
     
     // First, try to resolve any failed migrations
-    try {
-      console.log('Checking for failed migrations...');
-      execSync('npx prisma migrate resolve --applied 20250101000000_add_harvest_announcements', { 
-        stdio: 'pipe',
-        env: process.env 
-      });
-      console.log('Resolved failed migration');
-    } catch (resolveError) {
-      // If migration doesn't exist or is already resolved, that's okay
-      console.log('No failed migration to resolve (or already resolved)');
+    // List of known failed migrations to resolve
+    const failedMigrations = [
+      '20250101000000_add_harvest_announcements',
+      '20250201140000_add_vera_insights'
+    ];
+    
+    console.log('Checking for failed migrations...');
+    for (const migration of failedMigrations) {
+      try {
+        execSync(`npx prisma migrate resolve --applied ${migration}`, { 
+          stdio: 'pipe',
+          env: process.env 
+        });
+        console.log(`Resolved failed migration: ${migration}`);
+      } catch (resolveError) {
+        // If migration doesn't exist or is already resolved, that's okay
+        console.log(`Migration ${migration} not found or already resolved`);
+      }
     }
     
     // Now run migrations
