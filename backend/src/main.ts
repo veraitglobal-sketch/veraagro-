@@ -24,20 +24,16 @@ async function bootstrap() {
       console.log('Applying farmer profile fields migration...');
       const prisma = new PrismaClient();
       
-      // Check if columns exist, if not add them
-      await prisma.$executeRawUnsafe(`
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;
-        ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;
-      `);
+      // Execute each ALTER TABLE command separately (PostgreSQL doesn't allow multiple commands in one statement)
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;`);
       
       // Create index if it doesn't exist
-      await prisma.$executeRawUnsafe(`
-        CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");
-      `);
+      await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");`);
       
       await prisma.$disconnect();
       console.log('✅ Farmer profile fields migration applied successfully');
@@ -79,18 +75,14 @@ async function bootstrap() {
           console.log('✅ farmerQrCode column verified');
         } catch (verifyError: any) {
           console.error('❌ farmerQrCode column does not exist. Re-applying migration...');
-          // Re-apply migration
-          await verifyPrisma.$executeRawUnsafe(`
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;
-            ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;
-          `);
-          await verifyPrisma.$executeRawUnsafe(`
-            CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");
-          `);
+          // Re-apply migration - execute each command separately
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;`);
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;`);
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;`);
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;`);
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;`);
+          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;`);
+          await verifyPrisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");`);
           console.log('✅ Migration re-applied successfully');
         }
         await verifyPrisma.$disconnect();
