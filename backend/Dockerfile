@@ -5,9 +5,14 @@ WORKDIR /app
 # Install OpenSSL 1.1.x for Prisma compatibility
 # Debian Bullseye (11) includes OpenSSL 1.1.x
 # Using full bullseye image (not slim) for better compatibility
+# Force no-cache to ensure fresh package lists
 RUN apt-get update -y && \
-    apt-get install -y openssl libssl1.1 ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        openssl \
+        libssl1.1 \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 # Copy package files
 COPY package*.json ./
