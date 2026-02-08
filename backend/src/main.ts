@@ -8,6 +8,21 @@ async function bootstrap() {
   // Run Prisma migrations before starting the app
   try {
     console.log('Running Prisma migrations...');
+    
+    // First, try to resolve any failed migrations
+    try {
+      console.log('Checking for failed migrations...');
+      execSync('npx prisma migrate resolve --applied 20250101000000_add_harvest_announcements', { 
+        stdio: 'pipe',
+        env: process.env 
+      });
+      console.log('Resolved failed migration');
+    } catch (resolveError) {
+      // If migration doesn't exist or is already resolved, that's okay
+      console.log('No failed migration to resolve (or already resolved)');
+    }
+    
+    // Now run migrations
     execSync('npx prisma migrate deploy', { 
       stdio: 'inherit',
       env: process.env 
