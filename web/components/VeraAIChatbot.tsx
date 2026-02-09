@@ -63,11 +63,6 @@ export default function VeraAIChatbot() {
     }
   }, []);
 
-  // Don't render until mounted (client-side only)
-  if (!isMounted) {
-    return null;
-  }
-
   // Live Pre-Order ticker simulation
   useEffect(() => {
     if (!isOpen) return;
@@ -217,6 +212,11 @@ export default function VeraAIChatbot() {
       setContactSubmitting(false);
     }
   };
+
+  // Don't render until mounted (client-side only)
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <>
