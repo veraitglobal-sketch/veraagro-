@@ -71,6 +71,7 @@ import { MissionPassportModule } from './mission-passport/mission-passport.modul
 import { EmailModule } from './email/email.module';
 import { QualityControlLevelsModule } from './quality-control-levels/quality-control-levels.module';
 import { ContactModule } from './contact/contact.module';
+import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
 
 @Module({
   imports: [
@@ -149,6 +150,7 @@ import { ContactModule } from './contact/contact.module';
     EmailModule,
     QualityControlLevelsModule,
     ContactModule,
+    AiAssistantModule,
   ],
   providers: [
     {

@@ -421,15 +421,16 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-12 mb-12 items-start">
+          <div className="grid md:grid-cols-5 gap-12 mb-12">
             <div className="flex flex-col">
-              <Link href="/" className="inline-block mb-4 -mt-1">
+              <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
                   width={200} 
                   height={70} 
                   className="h-14 w-auto"
+                  style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -438,7 +439,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center" style={{ minHeight: '1.25rem' }}>Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
                 <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>

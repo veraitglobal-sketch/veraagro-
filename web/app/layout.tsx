@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import Navigation from "@/components/Navigation";
 import CookieConsent from "@/components/CookieConsent";
+import VeraAIChatbot from "@/components/VeraAIChatbot";
 import { defaultMetadata } from "./metadata";
 
 const geistSans = Geist({
@@ -53,6 +54,7 @@ export default function RootLayout({
           <Navigation />
           {children}
           <CookieConsent />
+          <VeraAIChatbot />
         </AuthProvider>
       </body>
     </html>

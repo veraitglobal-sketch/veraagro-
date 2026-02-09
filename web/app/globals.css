@@ -99,6 +99,20 @@ button, a, input, select, textarea {
   font-weight: 600;
 }
 
+/* Logo transparent background */
+img[src*="logo"], img[src*="logo1"], img[src*="logo.png"], img[src*="logo1.png"],
+img[alt*="Bio Vera"], img[alt*="logo"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Next.js Image component transparent background */
+span[style*="logo"], span img[src*="logo"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 /* Smooth transitions */
 * {
   transition-property: color, background-color, border-color, opacity, transform;

@@ -363,13 +363,14 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
             <div className="flex flex-col">
-              <Link href="/" className="inline-block mb-4 -mt-1">
+              <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
                   width={200} 
                   height={70} 
                   className="h-14 w-auto"
+                  style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

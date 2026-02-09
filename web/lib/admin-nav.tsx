@@ -11,6 +11,7 @@ import {
   Shield,
   BarChart3,
   MapPin,
+  MessageCircle,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -28,6 +29,7 @@ const navLabels = {
     veraInsights: 'Vera Insights',
     commandControl: 'Command & Control',
     estates: 'Estate Approval',
+    aiConversations: 'AI Conversations',
   },
   sr: {
     dashboard: 'Kontrolna Tabla',
@@ -41,6 +43,7 @@ const navLabels = {
     veraInsights: 'Vera Uvidi',
     commandControl: 'Komanda i Kontrola',
     estates: 'Odobravanje Poseda',
+    aiConversations: 'AI Konverzacije',
   },
   de: {
     dashboard: 'Dashboard',
@@ -54,6 +57,7 @@ const navLabels = {
     veraInsights: 'Vera Einblicke',
     commandControl: 'Befehls- und Kontrollzentrale',
     estates: 'Grundstücksgenehmigung',
+    aiConversations: 'KI-Konversationen',
   },
 };
 
@@ -152,6 +156,11 @@ export function getAdminNavItems(language?: 'en' | 'sr' | 'de') {
       href: '/admin/estates', 
       label: labels.estates, 
       icon: <MapPin className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/ai-conversations', 
+      label: labels.aiConversations, 
+      icon: <MessageCircle className="w-5 h-5" /> 
     },
   ];
 }

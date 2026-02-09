@@ -1407,3 +1407,19 @@ enum DigitalHandoverStatus {
   COMPLETED
   DISPUTED
 }
+
+model ai_conversations {
+  id                String   @id @default(uuid())
+  sessionId         String
+  messages          Json     // Array of {role: 'user'|'assistant', content: string, timestamp: DateTime}
+  userInfo          Json?    // {ipAddress, userAgent, language}
+  contactRequested  Boolean  @default(false)
+  contactInfo       Json?    // {name, email, phone, message, consentGiven: boolean}
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([contactRequested])
+  @@index([createdAt])
+  @@map("ai_conversations")
+}
