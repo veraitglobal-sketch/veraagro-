@@ -4,11 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import Navigation from "@/components/Navigation";
 import CookieConsent from "@/components/CookieConsent";
-import dynamic from 'next/dynamic';
-
-const VeraAIChatbot = dynamic(() => import('@/components/VeraAIChatbot'), {
-  ssr: false,
-});
+import VeraAIChatbotWrapper from "@/components/VeraAIChatbotWrapper";
 import { defaultMetadata } from "./metadata";
 
 const geistSans = Geist({
@@ -58,7 +54,7 @@ export default function RootLayout({
           <Navigation />
           {children}
           <CookieConsent />
-          <VeraAIChatbot />
+          <VeraAIChatbotWrapper />
         </AuthProvider>
       </body>
     </html>
