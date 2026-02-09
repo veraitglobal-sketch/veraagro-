@@ -34,14 +34,13 @@ export default function ContactPage() {
         phone: formData.phone || undefined,
       });
 
-      if (result.success) {
+      if (result && result.success) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '', phone: '' });
-        // Reset success message after 5 seconds
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
         setSubmitStatus('error');
-        setErrorMessage(result.message || 'Something went wrong. Please try again.');
+        setErrorMessage((result && result.message) || 'Something went wrong. Please try again.');
         setTimeout(() => {
           setSubmitStatus('idle');
           setErrorMessage('');
@@ -50,7 +49,8 @@ export default function ContactPage() {
     } catch (error: any) {
       console.error('Error submitting contact form:', error);
       setSubmitStatus('error');
-      
+      let msg = '';
+
       // More detailed error messages
       if (error.response) {
         // Server responded with error status
@@ -58,22 +58,23 @@ export default function ContactPage() {
         const data = error.response.data;
         
         if (status === 400) {
-          setErrorMessage(data?.message || 'Please check your input and try again.');
+          msg = data?.message || 'Please check your input and try again.';
         } else if (status === 429) {
-          setErrorMessage('Too many requests. Please wait a few minutes and try again.');
+          msg = 'Too many requests. Please wait a few minutes and try again.';
         } else if (status >= 500) {
-          setErrorMessage('Server error. Please try again later or contact us directly at info@biovera.app');
+          msg = 'Server error. Please try again later or contact us at info@biovera.app';
         } else {
-          setErrorMessage(data?.message || 'An error occurred. Please try again.');
+          msg = data?.message || 'An error occurred. Please try again.';
         }
+      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        msg = 'Request timed out. Please try again or email us at info@biovera.app';
       } else if (error.request) {
-        // Request was made but no response received
-        setErrorMessage('Unable to connect to server. Please check your internet connection and try again.');
+        msg = 'Could not reach server. Please check your connection or email us at info@biovera.app';
       } else {
-        // Something else happened
-        setErrorMessage('An unexpected error occurred. Please try again or contact us directly at info@biovera.app');
+        msg = 'Something went wrong. Please try again or email us at info@biovera.app';
       }
-      
+      setErrorMessage(msg || 'Please try again or contact us at info@biovera.app');
+
       setTimeout(() => {
         setSubmitStatus('idle');
         setErrorMessage('');
@@ -351,6 +352,10 @@ export default function ContactPage() {
                       </>
                     )}
                   </button>
+                  <p className="text-center text-sm text-gray-500 mt-4">
+                    If the form does not work, contact us directly at{' '}
+                    <a href="mailto:info@biovera.app" className="text-green-600 hover:underline">info@biovera.app</a>.
+                  </p>
                 </form>
               </motion.div>
             </div>

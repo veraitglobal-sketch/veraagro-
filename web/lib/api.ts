@@ -1026,8 +1026,8 @@ export const contactAPI = {
     message: string;
     phone?: string;
   }) => {
-    const response = await api.post('/contact/submit', data);
-    return response.data;
+    const response = await api.post('/contact/submit', data, { timeout: 20000 });
+    return response.data as { success: boolean; message?: string };
   },
 };
 
