@@ -4,23 +4,21 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
-    // Configure email transporter
-    // Supports multiple providers: Gmail, Resend, Brevo, Mailgun, etc.
-    // See EMAIL_SETUP.md for configuration instructions
-    
+    // Configure email transporter only when credentials exist (avoids "Missing credentials" in CI)
+    // Supports: Resend (RESEND_API_KEY or SMTP_PASS), Gmail, Brevo, Mailgun, etc.
     const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
     const smtpPort = parseInt(process.env.SMTP_PORT || '587');
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASSWORD;
     const resendApiKey = process.env.RESEND_API_KEY;
-    
-    // Resend: use RESEND_API_KEY or SMTP_PASS, and default to Resend SMTP when key is set
-    const useResend = smtpHost.includes('resend.com') || resendApiKey;
+
+    // Resend: password is RESEND_API_KEY or SMTP_PASS (Resend SMTP always uses user 'resend')
+    const useResend = smtpHost.includes('resend.com') || !!resendApiKey;
     const resendPass = resendApiKey || smtpPass;
-    
+
     if (useResend && resendPass) {
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.resend.com',
@@ -31,35 +29,27 @@ export class EmailService {
           pass: resendPass,
         },
       });
-    } else if (smtpHost.includes('amazonses.com')) {
-      // Amazon SES configuration
+    } else if (smtpHost.includes('amazonses.com') && smtpUser && smtpPass) {
       this.transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
-        secure: smtpPort === 465, // 465 for SSL, 587 for TLS
-        auth: {
-          user: smtpUser, // SMTP username from Amazon SES
-          pass: smtpPass, // SMTP password from Amazon SES
-        },
+        secure: smtpPort === 465,
+        auth: { user: smtpUser, pass: smtpPass },
+      });
+    } else if (smtpUser && smtpPass) {
+      this.transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: { user: smtpUser, pass: smtpPass },
       });
     } else {
-      // Standard SMTP configuration (Gmail, Brevo, Mailgun, etc.)
-      this.transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
+      this.logger.warn('Email not configured: no RESEND_API_KEY/SMTP_PASS or SMTP user/pass. Emails will be skipped.');
     }
-    
-    // Test connection on startup (only log, don't throw)
-    this.testConnection().catch(() => {
-      // Connection test failed, but don't block startup
-      // Email will be attempted when needed
-    });
+
+    if (this.transporter) {
+      this.testConnection().catch(() => {});
+    }
   }
 
   /**
@@ -174,6 +164,10 @@ Bio Vera Team
         `,
       };
 
+      if (!this.transporter) {
+        this.logger.warn('Email not configured, skipping welcome email');
+        return false;
+      }
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Welcome email sent to ${data.email}`);
       return true;
@@ -282,6 +276,10 @@ Reply to: ${data.email}
         `,
       };
 
+      if (!this.transporter) {
+        this.logger.warn('Email not configured, skipping contact inquiry email');
+        return false;
+      }
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Contact inquiry email sent to ${adminEmail} from ${data.email}`);
       return true;
@@ -295,6 +293,7 @@ Reply to: ${data.email}
    * Test email configuration
    */
   async testConnection(): Promise<boolean> {
+    if (!this.transporter) return false;
     try {
       await this.transporter.verify();
       this.logger.log('Email service connection verified');
