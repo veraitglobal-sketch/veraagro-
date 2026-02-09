@@ -127,6 +127,8 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:3001',
+      'https://www.biovera.app', // Production frontend
+      'https://biovera.app', // Production frontend (root)
       'http://localhost:3000', // iOS simulator
       'http://127.0.0.1:3000', // iOS simulator alternative
       /^http:\/\/192\.168\.\d+\.\d+:3000$/, // Network IP for physical devices

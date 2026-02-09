@@ -15,16 +15,20 @@ export class EmailService {
     const smtpPort = parseInt(process.env.SMTP_PORT || '587');
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASSWORD;
+    const resendApiKey = process.env.RESEND_API_KEY;
     
-    // Resend uses different configuration
-    if (smtpHost.includes('resend.com')) {
+    // Resend: use RESEND_API_KEY or SMTP_PASS, and default to Resend SMTP when key is set
+    const useResend = smtpHost.includes('resend.com') || resendApiKey;
+    const resendPass = resendApiKey || smtpPass;
+    
+    if (useResend && resendPass) {
       this.transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
+        host: process.env.SMTP_HOST || 'smtp.resend.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
         secure: false,
         auth: {
-          user: 'resend', // Resend always uses 'resend' as username
-          pass: smtpPass, // Your Resend API key
+          user: 'resend',
+          pass: resendPass,
         },
       });
     } else if (smtpHost.includes('amazonses.com')) {
