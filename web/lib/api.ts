@@ -9,9 +9,13 @@ const api = axios.create({
   },
 });
 
-// Add token to requests
+// Add token to requests; on production (non-localhost) ensure baseURL is correct even if env was missing at build
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') {
+      config.baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
+    }
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

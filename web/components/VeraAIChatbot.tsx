@@ -25,6 +25,17 @@ interface PreOrder {
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+4915563740470';
 
+// API URL: use env if set; on production (non-localhost) fallback to api.biovera.app so chat works even if env was missing at build
+function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') {
+      return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
+}
+
 // Simulated cities and products for pre-orders
 const cities = ['Hamburg', 'Berlin', 'Munich', 'Vienna', 'Frankfurt', 'Stuttgart', 'Zagreb', 'Ljubljana'];
 const products = ['Organic Strawberries', 'Bio Tomatoes', 'Fresh Lettuce', 'Organic Carrots', 'Bio Peppers', 'Fresh Cucumbers'];
@@ -115,7 +126,7 @@ export default function VeraAIChatbot() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/ai-assistant/query`, {
+      const response = await fetch(`${getApiBaseUrl()}/ai-assistant/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, sessionId }),
@@ -174,7 +185,7 @@ export default function VeraAIChatbot() {
     setContactSubmitting(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/ai-assistant/contact`, {
+      const response = await fetch(`${getApiBaseUrl()}/ai-assistant/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
