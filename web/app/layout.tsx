@@ -4,7 +4,11 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import Navigation from "@/components/Navigation";
 import CookieConsent from "@/components/CookieConsent";
-import VeraAIChatbot from "@/components/VeraAIChatbot";
+import dynamic from 'next/dynamic';
+
+const VeraAIChatbot = dynamic(() => import('@/components/VeraAIChatbot'), {
+  ssr: false,
+});
 import { defaultMetadata } from "./metadata";
 
 const geistSans = Geist({
