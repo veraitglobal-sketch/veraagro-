@@ -36,7 +36,6 @@ export default function VeraAIChatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -51,7 +50,6 @@ export default function VeraAIChatbot() {
   const tickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsMounted(true);
     // Initialize session ID from localStorage or generate new
     if (typeof window !== 'undefined') {
       let currentSessionId = localStorage.getItem('ai_session_id');
@@ -212,11 +210,6 @@ export default function VeraAIChatbot() {
       setContactSubmitting(false);
     }
   };
-
-  // Don't render until mounted (client-side only)
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <>
