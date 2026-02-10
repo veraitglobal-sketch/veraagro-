@@ -110,9 +110,9 @@ export default function GrowersPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -133,7 +133,7 @@ export default function GrowersPage() {
             </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
               Join the most advanced In-Time logistics network. Secure your placement and eliminate 
-              market volatility by following the Bio Vera Protocol. Open to producers across Europe.
+              market volatility by following the Bio Vera Protocol. Open to producers worldwide.
             </p>
           <button
             onClick={async () => {
@@ -703,9 +703,9 @@ export default function GrowersPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

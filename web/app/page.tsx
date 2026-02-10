@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { 
@@ -17,16 +18,31 @@ import {
   Apple,
   Carrot,
   Wheat,
+  HelpCircle,
 } from 'lucide-react';
 import { partners } from '@/lib/partners';
+import dynamic from 'next/dynamic';
+
+const VeraAIChatbotInline = dynamic(() => import('@/components/VeraAIChatbotInline'), { ssr: false });
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
+  const [showPreOrderInfo, setShowPreOrderInfo] = useState(false);
+  const preOrderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showPreOrderInfo) return;
+    const close = (e: MouseEvent) => {
+      if (preOrderRef.current && !preOrderRef.current.contains(e.target as Node)) setShowPreOrderInfo(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [showPreOrderInfo]);
 
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - Minimal */}
-      <section className="pt-24 pb-24 px-6 lg:px-8">
+      <section className="pt-40 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -39,8 +55,8 @@ export default function Home() {
               <span className="font-normal">Agrotech Platform</span>
           </h1>
             <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              From seed to EU market. Immutable digital proof. Bio-Ready certification 
-              with complete traceability and automated compliance. Open to producers across Europe.
+              From seed to market—anywhere in the world. Immutable digital proof. Bio-Ready certification 
+              with complete traceability and automated compliance. Open to producers worldwide.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -56,12 +72,43 @@ export default function Home() {
                 Become a Producer
               </Link>
             </div>
+            {/* Pre-order 2026 — klik vodi na login, posle login direktno na pre-order */}
+            <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
+              <Link
+                href="/login?returnTo=/pre-order-2026"
+                className="text-sm font-light text-gray-500 hover:text-[#2D5A27] transition-colors"
+              >
+                Pre-order for 2026 is open
+              </Link>
+              <button
+                type="button"
+                onClick={() => setShowPreOrderInfo((v) => !v)}
+                className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#2D5A27]/30 bg-transparent text-[#2D5A27] transition hover:border-[#2D5A27]/50 hover:bg-[#2D5A27]/5 focus:outline-none focus:ring-1 focus:ring-[#2D5A27]/20"
+                aria-label="Pre-order info"
+              >
+                <HelpCircle className="h-3 w-3" strokeWidth={2} />
+              </button>
+              {showPreOrderInfo && (
+                <motion.div
+                  initial={{ opacity: 0, y: 2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute left-1/2 top-full z-10 mt-2 w-72 -translate-x-1/2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-sm font-light text-gray-600 shadow-sm"
+                >
+                  <p className="leading-relaxed">
+                    Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.
+                  </p>
+                  <p className="mt-2 pt-2 border-t border-gray-100 text-gray-500 text-xs leading-relaxed">
+                    Pre-order is for planning 2026 quantities only; it is not a binding order.
+                  </p>
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Stats - Minimal */}
-      <section className="py-16 border-t border-gray-200 bg-green-50/30">
+      <section className="pt-16 pb-12 border-t border-gray-200 bg-green-50/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -87,7 +134,7 @@ export default function Home() {
       </section>
 
       {/* Partners Section */}
-      <section className="py-20 border-t border-gray-200 bg-white">
+      <section className="pt-16 pb-20 border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -105,51 +152,51 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all"
+                    className="w-[170px] h-[84px] rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all p-2"
                   >
                     {partner.url ? (
                       <a
                         href={partner.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center w-full h-full"
                       >
                         <Image
                           src={partner.logo}
                           alt={partner.alt || `${partner.name} Logo`}
-                          width={160}
-                          height={55}
-                          className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                          width={100}
+                          height={50}
+                          className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
                         />
                       </a>
                     ) : (
                       <Image
                         src={partner.logo}
                         alt={partner.alt || `${partner.name} Logo`}
-                        width={160}
-                        height={55}
-                        className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                        width={100}
+                        height={50}
+                        className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
                       />
                     )}
                   </motion.div>
                 ))
               ) : (
                 // Fallback: Show placeholder if no partners configured
-                Array.from({ length: 8 }).map((_, index) => (
+                Array.from({ length: 5 }).map((_, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all"
+                    className="w-[170px] h-[84px] rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all p-2"
                   >
                     <Image
                       src="/logo1.png"
                       alt="Bio Vera Partner"
-                      width={160}
-                      height={55}
-                      className="h-12 w-auto opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                      width={100}
+                      height={50}
+                      className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale"
                     />
                   </motion.div>
                 ))
@@ -160,13 +207,13 @@ export default function Home() {
       </section>
 
       {/* Vision Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">Our Vision</h2>
             <p className="text-base text-gray-600 max-w-2xl mx-auto font-light">
               Transforming agriculture through technology, ensuring transparency, 
-              security, and EU market access for all producers.
+              security, and market access for producers everywhere.
             </p>
           </div>
 
@@ -300,7 +347,7 @@ export default function Home() {
                 phase: '2027',
                 title: 'Global Expansion',
                 status: 'planned',
-                items: ['EU Market', 'Blockchain Integration', 'IoT Sensors', 'AI Predictions']
+                items: ['Global Markets', 'Blockchain Integration', 'IoT Sensors', 'AI Predictions']
               },
             ].map((plan, index) => (
               <motion.div
@@ -418,6 +465,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Help / Chat — linija kod chata u posebnoj sekciji */}
+      <section className="border-t border-gray-200 bg-gray-50/50 py-6 px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <p className="text-sm font-light text-gray-600">Questions? We’re here to help.</p>
+          <VeraAIChatbotInline />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -427,16 +482,26 @@ export default function Home() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                   style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
                 />
               </Link>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
                 Vertically integrated agrotech platform for Bio-Ready certification 
                 and EU market compliance.
               </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  Apple
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 2.807a.998.998 0 0 1 0 1.414l-2.807 2.807 2.113 2.113a.996.996 0 0 1 0 1.414L17.314 20.2a.996.996 0 0 1-1.414 0l-2.113-2.113-2.302 2.302-2.113-2.113 8.635-8.635 2.113 2.113zM5.864 2.658L16.802 8.99l-2.302 2.302-8.636-8.634z"/></svg>
+                  Android
+                </span>
+              </div>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center" style={{ minHeight: '1.25rem' }}>Product</h4>

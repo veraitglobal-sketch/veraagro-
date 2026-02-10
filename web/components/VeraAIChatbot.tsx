@@ -1,588 +1,397 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Search, Package, Activity, Zap, ShoppingCart, MessageCircle, Users, Truck } from 'lucide-react';
+import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { v4 as uuidv4 } from 'uuid';
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  suggestedActions?: Array<{ label: string; url: string }>;
-  quickActions?: Array<{ label: string; query: string }>;
-  askForContact?: boolean;
-}
+const VERA_GREEN = '#2D5A27';
 
-interface PreOrder {
-  id: string;
-  city: string;
-  product: string;
-  quantity: number;
-  unit: string;
-  timestamp: Date;
-}
+type CategoryKey = 'buyers' | 'growers' | 'logistics' | 'suppliers';
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+4915563740470';
+// Kada korisnik klikne na kategoriju, prikaže se panel sa naslovom, 2x2 akcijama i velikim CTA dugmetom
+const categoryPanels: Record<CategoryKey, {
+  title: string;
+  ctaLabel: string;
+  href: string;
+  actions: { label: string; icon: React.ComponentType<{ className?: string }> }[];
+}> = {
+  logistics: {
+    title: 'Logistics analytics',
+    ctaLabel: 'For Logistics',
+    href: '/logistics-partner',
+    actions: [
+      { label: 'Load Optimization', icon: Package },
+      { label: 'Route Efficiency', icon: Route },
+      { label: 'Packaging Integrity', icon: Package },
+      { label: 'Cost Analysis', icon: Calculator },
+    ],
+  },
+  buyers: {
+    title: 'For Buyers',
+    ctaLabel: 'Browse Products',
+    href: '/products',
+    actions: [
+      { label: 'Browse Products', icon: ShoppingBag },
+      { label: 'Pre-order', icon: Calendar },
+      { label: 'Traceability', icon: QrCode },
+      { label: 'Contact Sales', icon: Mail },
+    ],
+  },
+  growers: {
+    title: 'For Growers',
+    ctaLabel: 'For Growers',
+    href: '/growers',
+    actions: [
+      { label: 'Apply as Producer', icon: FileCheck },
+      { label: 'Certification', icon: Award },
+      { label: 'Resources', icon: BookOpen },
+      { label: 'Contact', icon: Mail },
+    ],
+  },
+  suppliers: {
+    title: 'For Suppliers',
+    ctaLabel: 'For Suppliers',
+    href: '/suppliers',
+    actions: [
+      { label: 'Join Network', icon: UserPlus },
+      { label: 'Products', icon: Package },
+      { label: 'Regions', icon: MapPin },
+      { label: 'Contact', icon: Mail },
+    ],
+  },
+};
 
-// API URL: use env if set; on production (non-localhost) fallback to api.biovera.app so chat works even if env was missing at build
-function getApiBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
-    if (host !== 'localhost' && host !== '127.0.0.1') {
-      return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
-    }
-  }
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
-}
+const CITIES = ['Hamburg', 'Vienna', 'Munich', 'Berlin', 'Zagreb', 'Ljubljana'];
 
-// Simulated cities and products for pre-orders
-const cities = ['Hamburg', 'Berlin', 'Munich', 'Vienna', 'Frankfurt', 'Stuttgart', 'Zagreb', 'Ljubljana'];
-const products = ['Organic Strawberries', 'Bio Tomatoes', 'Fresh Lettuce', 'Organic Carrots', 'Bio Peppers', 'Fresh Cucumbers'];
+const INITIAL_TICKER = { newOrders: 6, inTransit: 8, toHamburg: 3, delivered: 78 };
 
-export default function VeraAIChatbot() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showContactForm, setShowContactForm] = useState(false);
-  const [contactForm, setContactForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-    consentGiven: false,
-  });
-  const [contactSubmitting, setContactSubmitting] = useState(false);
-  const [preOrders, setPreOrders] = useState<PreOrder[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const tickerRef = useRef<HTMLDivElement>(null);
+// Live ticker: ref drži stanje da ne koristimo setState(prev =>) – izbegava grešku sa brojem umesto objekta
+function useTicker() {
+  const [ticker, setTicker] = useState(INITIAL_TICKER);
+  const tickerRef = useRef(INITIAL_TICKER);
+  const [newOrder, setNewOrder] = useState<{ qty: number; city: string } | null>(null);
 
   useEffect(() => {
-    // Initialize session ID from localStorage or generate new
-    if (typeof window !== 'undefined') {
-      let currentSessionId = localStorage.getItem('ai_session_id');
-      if (!currentSessionId) {
-        currentSessionId = uuidv4();
-        localStorage.setItem('ai_session_id', currentSessionId);
+    tickerRef.current = ticker;
+  }, [ticker]);
+
+  // Kamioni / brojke – menja se na 20–45 s, povezana logika (bez setState(prev =>))
+  useEffect(() => {
+    const intervalMs = 20000 + Math.random() * 25000;
+    const id = setInterval(() => {
+      const t = tickerRef.current;
+      const r = Math.random();
+      let next = t;
+      if (r > 0.75) {
+        next = { newOrders: Math.min(15, t.newOrders + 1), inTransit: Math.min(10, t.inTransit + 1), toHamburg: t.toHamburg, delivered: t.delivered };
+      } else if (r > 0.5) {
+        next = { newOrders: t.newOrders, inTransit: Math.max(6, t.inTransit - 1), toHamburg: Math.min(5, t.toHamburg + 1), delivered: t.delivered };
+      } else if (r > 0.25) {
+        next = { newOrders: t.newOrders, inTransit: t.inTransit, toHamburg: Math.max(1, t.toHamburg - 1), delivered: Math.min(88, t.delivered + 1) };
       }
-      setSessionId(currentSessionId);
-    }
+      setTicker(next);
+    }, intervalMs);
+    return () => clearInterval(id);
   }, []);
 
-  // Live Pre-Order ticker simulation
+  // New order – potpuno nezavisno od kamiona, češće (svakih 5–10 s), ostane 4–8 s
   useEffect(() => {
-    if (!isOpen) return;
+    const intervalId = setInterval(() => {
+      const qty = [24, 48, 80, 120][Math.floor(Math.random() * 4)];
+      const city = CITIES[Math.floor(Math.random() * CITIES.length)];
+      setNewOrder({ qty, city });
+      setTimeout(() => setNewOrder(null), 4000 + Math.random() * 4000);
+    }, 5000 + Math.random() * 5000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-    const interval = setInterval(() => {
-      // Generate random pre-order
-      const newOrder: PreOrder = {
-        id: uuidv4(),
-        city: cities[Math.floor(Math.random() * cities.length)],
-        product: products[Math.floor(Math.random() * products.length)],
-        quantity: Math.floor(Math.random() * 500) + 100,
-        unit: 'kg',
-        timestamp: new Date(),
-      };
+  return { ...ticker, newOrder };
+}
 
-      setPreOrders(prev => {
-        const updated = [newOrder, ...prev].slice(0, 5); // Keep last 5 orders
-        return updated;
-      });
-    }, 10000); // New order every 10 seconds
+const audienceButtons: { key: CategoryKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: 'buyers', label: 'For Buyers', icon: ShoppingBag },
+  { key: 'growers', label: 'For Growers', icon: Leaf },
+  { key: 'logistics', label: 'For Logistics', icon: Truck },
+  { key: 'suppliers', label: 'For Suppliers', icon: Building2 },
+];
 
-    return () => clearInterval(interval);
-  }, [isOpen]);
+type VeraAIChatbotProps = { inline?: boolean };
 
-  // Auto-scroll ticker
+export default function VeraAIChatbot({ inline }: VeraAIChatbotProps) {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [view, setView] = useState<'main' | CategoryKey>('main');
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; link?: string; linkLabel?: string }[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const ticker = useTicker();
+
   useEffect(() => {
-    if (tickerRef.current && preOrders.length > 0) {
-      tickerRef.current.scrollLeft = 0;
-    }
-  }, [preOrders]);
-
-  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [messages]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, showContactForm]);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current && messages.length === 0 && !showContactForm) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [isOpen, messages.length, showContactForm]);
-
-  const handleSend = async (query?: string) => {
-    const userMessage = query || input.trim();
-    if (!userMessage.trim()) return;
-
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/ai-assistant/query`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: userMessage, sessionId }),
-      });
-
-      if (!response.ok) throw new Error('Failed to get response');
-
-      const data = await response.json();
-      
-      if (data.sessionId) {
-        setSessionId(data.sessionId);
-        localStorage.setItem('ai_session_id', data.sessionId);
-      }
-
-      setMessages(prev => [...prev, {
+  const handleSend = () => {
+    if (!message.trim()) return;
+    const q = message.trim();
+    setMessages((prev) => [...prev, { role: 'user', content: q }]);
+    setMessage('');
+    setMessages((prev) => [
+      ...prev,
+      {
         role: 'assistant',
-        content: data.answer,
-        suggestedActions: data.suggestedActions,
-        quickActions: data.quickActions,
-        askForContact: data.askForContact,
-      }]);
+        content: 'Connect to the backend for full answers. You can also use the quick actions above or ask anything else here.',
+      },
+    ]);
+  };
 
-      if (data.askForContact) {
-        setShowContactForm(true);
-      }
-    } catch (error) {
-      console.error('AI query error:', error);
-      setMessages(prev => [...prev, {
+  const handleCategorySelect = (key: CategoryKey) => {
+    setView(key);
+  };
+
+  const handlePanelAction = (label: string) => {
+    setMessages((prev) => [...prev, { role: 'user', content: label }]);
+    setMessages((prev) => [
+      ...prev,
+      {
         role: 'assistant',
-        content: 'System error. Please retry or contact support via WhatsApp.',
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleWhatsAppClick = () => {
-    const message = encodeURIComponent('Hello, I have a question about BioVera logistics optimization.');
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${message}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contactForm.consentGiven || !contactForm.name || !contactForm.email) {
-      return;
-    }
-
-    setContactSubmitting(true);
-
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/ai-assistant/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: sessionId,
-          name: contactForm.name,
-          email: contactForm.email,
-          phone: contactForm.phone || undefined,
-          message: contactForm.message || undefined,
-          consentGiven: contactForm.consentGiven,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to submit contact request');
-
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: 'Contact request logged. Our logistics team will analyze your requirements and respond within 24h.',
-        askForContact: false,
-      }]);
-
-      setShowContactForm(false);
-      setContactForm({
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        consentGiven: false,
-      });
-    } catch (error) {
-      console.error('Contact submit error:', error);
-      alert('Failed to submit contact request. Please try again.');
-    } finally {
-      setContactSubmitting(false);
-    }
+        content: `"${label}" — connect backend for details, or ask your own question below.`,
+      },
+    ]);
   };
 
   return (
     <>
-      {/* Floating Button */}
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-8 right-8 px-6 py-3 bg-white border-2 border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors rounded-lg shadow-lg z-50 flex items-center gap-2"
-            aria-label="Open Assistant"
-          >
-            <MessageCircle className="w-5 h-5 text-green-600" strokeWidth={1.5} />
-            <span className="text-green-600">Need help?</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`flex items-center gap-2 rounded-lg border border-[#2D5A27]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#2D5A27] shadow-sm transition hover:bg-[#2D5A27]/5 hover:border-[#2D5A27]/50 ${inline ? '' : 'fixed bottom-5 right-5 z-40'}`}
+        style={{
+          boxShadow: `0 2px 12px rgba(45, 90, 39, 0.12)`,
+        }}
+        aria-label="Open Vera AI Assistant"
+        animate={{ opacity: 1 }}
+      >
+        <MessageCircle className="h-5 w-5" />
+        <span>Need help?</span>
+      </motion.button>
 
-      {/* Intelligence Terminal */}
       <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-            />
-            
-            {/* Terminal Panel */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed bottom-8 right-8 w-[350px] h-[650px] bg-white/95 backdrop-blur-md shadow-2xl z-50 flex flex-col rounded-xl border border-green-200 overflow-hidden"
-              style={{
-                boxShadow: '0 20px 60px rgba(34, 197, 94, 0.1), 0 0 0 1px rgba(34, 197, 94, 0.05)',
-              }}
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-xl border bg-white/95 shadow-2xl backdrop-blur-md"
+            style={{
+              width: 'min(350px, calc(100vw - 3rem))',
+              maxHeight: '650px',
+              height: '650px',
+              borderColor: 'rgba(45, 90, 39, 0.2)',
+              boxShadow: `0 25px 50px -12px rgba(45, 90, 39, 0.25)`,
+            }}
+          >
+            {/* Live Ticker – šta znače brojevi: New orders | In transit | To Hamburg | Delivered % */}
+            <div
+              className="px-3 py-2 border-b font-mono text-xs space-y-1"
+              style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))' }}
             >
-              {/* Live Pre-Order Ticker */}
-              <div className="px-4 py-2.5 bg-gradient-to-r from-green-50/50 to-green-50/30 border-b border-green-200">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-mono text-green-600 uppercase">Live Pre-Orders</span>
-                  </div>
+              <div className="flex items-center justify-between gap-1">
+                <div className="flex flex-col items-center">
+                  <span className="flex items-center gap-1 text-gray-700">
+                    <Package className="h-3.5 w-3 text-[#2D5A27]" />
+                    {ticker.newOrders}
+                  </span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">New</span>
                 </div>
-                <div 
-                  ref={tickerRef}
-                  className="flex gap-4 overflow-x-auto scrollbar-hide"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                <div className="flex flex-col items-center">
+                  <span className="flex items-center gap-1 text-gray-700">
+                    <Truck className="h-3.5 w-3 text-[#2D5A27]" />
+                    {ticker.inTransit}
+                  </span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">Transit</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="flex items-center gap-1 text-gray-700">
+                    <MapPin className="h-3.5 w-3 text-[#2D5A27]" />
+                    {ticker.toHamburg}
+                  </span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">→ Hamburg</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-medium text-[#2D5A27]">
+                    <CheckCircle className="h-3.5 w-3 inline mr-0.5" />
+                    {ticker.delivered}%
+                  </span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
+                </div>
+              </div>
+              {ticker.newOrder && (
+                <div className="text-[#2D5A27] font-medium pt-0.5">
+                  New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}
+                </div>
+              )}
+            </div>
+
+            {/* Header: INTELLIGENCE TERMINAL + WhatsApp + Close */}
+            <div
+              className="flex items-center justify-between px-4 py-3 border-b"
+              style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}
+            >
+              <div>
+                <div className="text-sm font-semibold tracking-wide" style={{ color: VERA_GREEN }}>
+                  INTELLIGENCE TERMINAL
+                </div>
+                <div className="text-xs text-gray-500">Logistics Analytics v2.1</div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Link
+                  href="https://wa.me/381601234567"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded p-1.5 text-gray-600 hover:bg-white/60 hover:text-[#2D5A27] transition"
+                  aria-label="WhatsApp"
                 >
-                  {preOrders.length === 0 ? (
-                    <div className="text-[9px] font-mono text-gray-500">Waiting for new orders...</div>
-                  ) : (
-                    preOrders.map((order) => (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-center gap-2 flex-shrink-0 px-2 py-1 bg-white/60 rounded border border-green-200"
+                  <Zap className="h-5 w-5" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition"
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Jedan prikaz: ili 4 kategorije (main) ili panel kategorije + Nazad */}
+            <div className="border-b border-gray-100 p-3 min-h-[140px]">
+              <AnimatePresence mode="wait">
+                {view === 'main' ? (
+                  <motion.div
+                    key="main"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    {audienceButtons.map(({ key, label, icon: Icon }) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => handleCategorySelect(key)}
+                        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
                       >
-                        <ShoppingCart className="w-3 h-3 text-green-600" strokeWidth={1.5} />
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[9px] font-mono text-green-600 font-medium">{order.city}</span>
-                          <span className="text-[9px] font-mono text-gray-500">•</span>
-                          <span className="text-[9px] font-mono text-gray-600">{order.quantity}{order.unit}</span>
-                          <span className="text-[9px] font-mono text-gray-500">•</span>
-                          <span className="text-[9px] font-mono text-gray-600 truncate max-w-[80px]">{order.product}</span>
-                        </div>
-                      </motion.div>
-                    ))
+                        <Icon className="h-4 w-4 flex-shrink-0 text-[#2D5A27]" />
+                        {label}
+                      </button>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={view}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="space-y-3"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setView('main')}
+                      className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Back
+                    </button>
+                    <p className="text-xs font-medium text-gray-500">
+                      {categoryPanels[view].title}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {categoryPanels[view].actions.map(({ label, icon: Icon }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => handlePanelAction(label)}
+                          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
+                        >
+                          <Icon className="h-4 w-4 flex-shrink-0 text-[#2D5A27]" />
+                          <span className="leading-tight">{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <Link
+                      href={categoryPanels[view].href}
+                      className="flex items-center justify-center gap-2 w-full rounded-lg py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                      style={{ backgroundColor: VERA_GREEN }}
+                    >
+                      {categoryPanels[view].ctaLabel}
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Sredina: chat za slobodna pitanja */}
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
+              {messages.length === 0 && (
+                <p className="text-center text-sm text-gray-500 py-4 font-light px-2">
+                  Click a category above to see options, or ask any question here.
+                </p>
+              )}
+              {messages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`rounded-lg px-3 py-2 text-sm ${
+                    m.role === 'user'
+                      ? 'ml-6 bg-[#2D5A27] text-white'
+                      : 'mr-6 border border-gray-200 bg-white text-gray-700'
+                  } ${m.role === 'assistant' && !m.link ? 'font-mono' : ''}`}
+                >
+                  {m.content}
+                  {m.role === 'assistant' && m.link && m.linkLabel && (
+                    <Link
+                      href={m.link}
+                      className="mt-2 inline-block text-xs font-medium hover:underline"
+                      style={{ color: VERA_GREEN }}
+                    >
+                      {m.linkLabel} →
+                    </Link>
                   )}
                 </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input – Search ikona levo, placeholder, Send zelena */}
+            <div className="flex gap-2 border-t border-gray-100 p-3">
+              <div className="relative flex-1">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none"
+                  strokeWidth={2}
+                />
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Ask anything else..."
+                  className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20"
+                />
               </div>
-
-              {/* Header */}
-              <div className="px-4 py-3 border-b border-green-200 bg-white/50">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h3 className="text-sm font-light text-green-600 tracking-wide">INTELLIGENCE TERMINAL</h3>
-                    <p className="text-[10px] text-gray-500 font-mono mt-0.5">Bio Vera Analytics v2.1</p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={handleWhatsAppClick}
-                      className="p-1.5 hover:bg-green-50 rounded-lg transition-colors text-green-600 hover:text-green-700"
-                      aria-label="Contact via WhatsApp"
-                      title="Contact via WhatsApp"
-                    >
-                      <Zap className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    </button>
-                    <button
-                      onClick={() => setIsOpen(false)}
-                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-600"
-                      aria-label="Close"
-                    >
-                      <X className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Quick Options - Only when no messages */}
-                {messages.length === 0 && !showContactForm && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => handleSend('How do I become a buyer? How can I order products?')}
-                      className="flex items-center gap-2 px-3 py-2 border border-green-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-all group text-left"
-                    >
-                      <ShoppingCart className="w-4 h-4 text-gray-500 group-hover:text-green-600 transition-colors" strokeWidth={1.5} />
-                      <span className="text-xs font-light text-gray-700 group-hover:text-green-700">For Buyers</span>
-                    </button>
-                    <button
-                      onClick={() => handleSend('How do I become a grower? How can I join as a producer?')}
-                      className="flex items-center gap-2 px-3 py-2 border border-green-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-all group text-left"
-                    >
-                      <Users className="w-4 h-4 text-gray-500 group-hover:text-green-600 transition-colors" strokeWidth={1.5} />
-                      <span className="text-xs font-light text-gray-700 group-hover:text-green-700">For Growers</span>
-                    </button>
-                    <button
-                      onClick={() => handleSend('How do I become a supplier?')}
-                      className="flex items-center gap-2 px-3 py-2 border border-green-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-all group text-left"
-                    >
-                      <Package className="w-4 h-4 text-gray-500 group-hover:text-green-600 transition-colors" strokeWidth={1.5} />
-                      <span className="text-xs font-light text-gray-700 group-hover:text-green-700">For Suppliers</span>
-                    </button>
-                    <button
-                      onClick={() => handleSend('How do I become a logistics partner?')}
-                      className="flex items-center gap-2 px-3 py-2 border border-green-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-all group text-left"
-                    >
-                      <Truck className="w-4 h-4 text-gray-500 group-hover:text-green-600 transition-colors" strokeWidth={1.5} />
-                      <span className="text-xs font-light text-gray-700 group-hover:text-green-700">For Logistics</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Content Area */}
-              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gradient-to-b from-white/50 to-white/30">
-                {showContactForm ? (
-                  <div className="space-y-3">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                      <h4 className="text-xs font-light text-green-600 mb-1">Contact Request</h4>
-                      <p className="text-[10px] text-gray-600 font-light">
-                        Our logistics team will analyze your requirements and provide optimized solutions.
-                      </p>
-                    </div>
-
-                    <form onSubmit={handleContactSubmit} className="space-y-2.5">
-                      <div>
-                        <label className="block text-[10px] font-mono text-gray-600 mb-1">NAME *</label>
-                        <input
-                          type="text"
-                          required
-                          value={contactForm.name}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                          className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-xs font-light bg-white"
-                          placeholder="Your name"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] font-mono text-gray-600 mb-1">EMAIL *</label>
-                        <input
-                          type="email"
-                          required
-                          value={contactForm.email}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                          className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-xs font-light bg-white"
-                          placeholder="email@example.com"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] font-mono text-gray-600 mb-1">PHONE</label>
-                        <input
-                          type="tel"
-                          value={contactForm.phone}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
-                          className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-xs font-light bg-white"
-                          placeholder="+381 60 123 4567"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] font-mono text-gray-600 mb-1">MESSAGE</label>
-                        <textarea
-                          value={contactForm.message}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                          rows={2}
-                          className="w-full px-2.5 py-1.5 border border-[#2D5A27]/20 rounded-lg focus:ring-1 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none text-xs font-light resize-none bg-white/80"
-                          placeholder="Requirements..."
-                        />
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <input
-                          type="checkbox"
-                          id="consent"
-                          required
-                          checked={contactForm.consentGiven}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, consentGiven: e.target.checked }))}
-                          className="mt-0.5"
-                        />
-                        <label htmlFor="consent" className="text-[10px] font-light text-gray-600 leading-relaxed">
-                          I consent to be contacted by BioVera logistics team. *
-                        </label>
-                      </div>
-
-                      <div className="flex gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => setShowContactForm(false)}
-                          className="flex-1 px-3 py-1.5 border border-[#2D5A27]/20 rounded-lg hover:bg-[#2D5A27]/5 transition-colors text-xs font-light text-gray-700"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={contactSubmitting || !contactForm.consentGiven}
-                          className="flex-1 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-light"
-                        >
-                          {contactSubmitting ? 'Submitting...' : 'Submit'}
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                    <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
-                      <Activity className="w-6 h-6 text-green-600" strokeWidth={1} />
-                    </div>
-                    <h4 className="text-xs font-light text-green-600 mb-1.5">How can I assist you?</h4>
-                    <p className="text-[10px] text-gray-500 font-light max-w-xs">
-                      Ask about becoming a buyer, grower, supplier, or logistics partner. I'm here to help!
-                    </p>
-                  </div>
-                ) : (
-                  messages.map((msg, idx) => (
-                    <div key={idx} className="space-y-2">
-                      {msg.role === 'user' && (
-                        <div className="flex justify-end">
-                          <div className="max-w-[85%] bg-gray-900 text-white px-3 py-2 rounded-lg border-l-2 border-green-600">
-                            <p className="text-xs font-light leading-relaxed">{msg.content}</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {msg.role === 'assistant' && (
-                        <div className="space-y-2">
-                          <div className="bg-gray-50 border border-gray-200 border-l-2 border-l-green-600 rounded-lg p-3">
-                            <div className="text-xs text-gray-700 font-light leading-relaxed whitespace-pre-wrap">
-                              {msg.content.split(/(```[\s\S]*?```|\d+\.?\d*|€\d+\.?\d*|%\d+\.?\d*|kg|L|km|boxes?|pallets?)/g).map((part, i) => {
-                                // Format code blocks (monospaced tables)
-                                if (part.startsWith('```') && part.endsWith('```')) {
-                                  const codeContent = part.slice(3, -3);
-                                  return (
-                                    <pre key={i} className="font-mono text-[10px] bg-green-50 border border-green-200 rounded p-2 my-2 overflow-x-auto">
-                                      <code className="text-green-700">{codeContent}</code>
-                                    </pre>
-                                  );
-                                }
-                                // Apply monospaced to numbers, percentages, currency, units
-                                if (/^\d+\.?\d*$|^€\d+\.?\d*$|^%\d+\.?\d*$|^kg$|^L$|^km$|^boxes?$|^pallets?$/i.test(part)) {
-                                  return <span key={i} className="font-mono font-medium text-green-600">{part}</span>;
-                                }
-                                return <span key={i}>{part}</span>;
-                              })}
-                            </div>
-                          </div>
-                          
-                          {/* Quick Actions */}
-                          {msg.quickActions && msg.quickActions.length > 0 && (
-                            <div className="space-y-1.5">
-                              <p className="text-[9px] font-mono text-gray-500 uppercase tracking-wider">Related Analysis</p>
-                              <div className="space-y-1">
-                                {msg.quickActions.map((action, actionIdx) => (
-                                  <button
-                                    key={actionIdx}
-                                    onClick={() => handleSend(action.query)}
-                                    className="w-full text-left px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-all text-[10px] font-light text-gray-700 flex items-center justify-between group"
-                                  >
-                                    <span>{action.label}</span>
-                                    <span className="text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Suggested Actions */}
-                          {msg.suggestedActions && msg.suggestedActions.length > 0 && (
-                            <div className="space-y-1.5">
-                              <p className="text-[9px] font-mono text-gray-500 uppercase tracking-wider">Quick Links</p>
-                              <div className="space-y-1">
-                                {msg.suggestedActions.map((action, actionIdx) => (
-                                  <Link
-                                    key={actionIdx}
-                                    href={action.url}
-                                    className="flex items-center justify-between px-2.5 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-[10px] font-light group"
-                                    onClick={() => setIsOpen(false)}
-                                  >
-                                    <span>{action.label}</span>
-                                    <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-
-                {isLoading && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                      </div>
-                      <span className="text-[10px] text-gray-500 font-mono">Analyzing...</span>
-                    </div>
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Input */}
-              <div className="px-4 py-3 border-t border-green-200 bg-white">
-                <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" strokeWidth={1.5} />
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask a question..."
-                      disabled={isLoading}
-                      className="w-full pl-8 pr-2.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-xs disabled:opacity-50 font-light bg-white"
-                    />
-                  </div>
-                  <button
-                    onClick={() => handleSend()}
-                    disabled={isLoading || !input.trim()}
-                    className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-                  >
-                    <Send className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </>
+              <button
+                type="button"
+                onClick={handleSend}
+                className="rounded-lg px-3 py-2 text-white transition hover:opacity-90 flex-shrink-0"
+                style={{ backgroundColor: VERA_GREEN }}
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>

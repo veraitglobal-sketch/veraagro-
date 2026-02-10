@@ -16,9 +16,9 @@ export default function AboutPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -64,7 +64,7 @@ export default function AboutPage() {
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Mission</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
                     Bio Vera is on a mission to revolutionize the agricultural supply chain by connecting 
-                    European producers directly with markets, ensuring complete transparency, quality assurance, 
+                    producers worldwide directly with markets, ensuring complete transparency, quality assurance, 
                     and fair compensation at every step.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
@@ -90,7 +90,7 @@ export default function AboutPage() {
                 <div>
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Vision</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    To become the leading vertically integrated agrotech platform in Europe, setting new 
+                    To become the leading vertically integrated agrotech platform worldwide, setting new 
                     standards for traceability, quality assurance, and sustainable agriculture.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
@@ -192,7 +192,7 @@ export default function AboutPage() {
                   <h3 className="text-lg font-medium text-gray-900 mb-2">EU Compliance</h3>
                   <p className="text-gray-600 font-light leading-relaxed">
                     Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, 
-                    and complete compliance tracking for seamless EU market access.
+                    and complete compliance tracking for seamless access to markets around the world.
                   </p>
                 </div>
               </div>
@@ -239,9 +239,9 @@ export default function AboutPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

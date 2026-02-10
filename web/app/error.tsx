@@ -26,9 +26,9 @@ export default function Error({
           <Image
             src="/logo1.png"
             alt="Bio Vera"
-            width={200}
-            height={70}
-            className="h-16 w-auto mx-auto mb-8"
+            width={56}
+            height={20}
+            className="h-4 w-auto mx-auto mb-8"
             priority
           />
           <div className="flex justify-center mb-4">

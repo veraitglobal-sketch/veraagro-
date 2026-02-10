@@ -36,7 +36,7 @@ const content = {
         },
         { 
           title: 'Buyer Benefits & Advantages', 
-          content: 'Enjoy competitive pricing, guaranteed freshness, complete transparency, and direct access to European producers. Build trust with your customers through verified quality.',
+          content: 'Enjoy competitive pricing, guaranteed freshness, complete transparency, and direct access to producers worldwide. Build trust with your customers through verified quality.',
         },
         { 
           title: 'Terms & Conditions', 

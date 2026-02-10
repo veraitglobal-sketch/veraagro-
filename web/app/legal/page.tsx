@@ -14,9 +14,9 @@ export default function LegalPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -86,9 +86,9 @@ export default function LegalPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

@@ -18,6 +18,7 @@ export default function Navigation() {
     if (!isAuthenticated || !user) {
       return [
         { href: '/', label: 'Home' },
+        { href: '/products', label: 'For Buyers' },
         { href: '/growers', label: 'For Growers' },
         { href: '/suppliers', label: 'For Suppliers' },
         { href: '/logistics-partner', label: 'For Logistics' },
@@ -38,27 +39,27 @@ export default function Navigation() {
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div className="flex items-center h-16">
+          {/* Logo — levo */}
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
             <Image
               src="/logo1.png"
               alt="Bio Vera"
-              width={200}
-              height={70}
-              className="h-20 w-auto bg-transparent"
+              width={56}
+              height={20}
+              className="h-4 w-auto bg-transparent"
               priority
               style={{ background: 'transparent' }}
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6 h-full">
+          {/* Desktop Navigation — centrirani linkovi, na užim ekranima manji gap da ne prelome */}
+          <div className="hidden md:flex flex-1 justify-center items-center gap-4 lg:gap-6 h-full flex-nowrap">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors flex items-center h-full ${
+                className={`text-sm font-medium transition-colors flex items-center h-full whitespace-nowrap ${
                   isActive(link.href)
                     ? 'text-green-600 border-b-2 border-green-600'
                     : 'text-gray-600 hover:text-green-600'
@@ -67,6 +68,10 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
+          </div>
+
+          {/* Login / Dashboard — desno */}
+          <div className="hidden md:flex flex-shrink-0 items-center gap-4 ml-auto">
             {isAuthenticated ? (
               <>
                 {(() => {
@@ -74,7 +79,6 @@ export default function Navigation() {
                     ? user.roles 
                     : [];
                   
-                  // Get dashboard link based on roles
                   const getDashboardLink = () => {
                     if (userRoles.includes('GROWER') || userRoles.includes('FARMER')) return '/grower';
                     if (userRoles.includes('BUYER')) return '/buyer-portal';

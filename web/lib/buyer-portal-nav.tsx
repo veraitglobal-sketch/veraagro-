@@ -16,6 +16,8 @@ import { ReactNode, createElement } from 'react';
 const navLabels = {
   en: {
     dashboard: 'Dashboard',
+    preOrder2026: 'Pre-order 2026',
+    directOrders: 'Direct orders',
     veraTrade: 'Vera Trade',
     availableProducts: 'Available Products',
     myOrders: 'My Orders',
@@ -27,6 +29,8 @@ const navLabels = {
   },
   sr: {
     dashboard: 'Kontrolna Tabla',
+    preOrder2026: 'Pre-order 2026',
+    directOrders: 'Direktne porudžbine',
     veraTrade: 'Vera Trade',
     availableProducts: 'Dostupni Proizvodi',
     myOrders: 'Moje Porudžbine',
@@ -38,6 +42,8 @@ const navLabels = {
   },
   de: {
     dashboard: 'Dashboard',
+    preOrder2026: 'Pre-order 2026',
+    directOrders: 'Direktbestellungen',
     veraTrade: 'Vera Trade',
     availableProducts: 'Verfügbare Produkte',
     myOrders: 'Meine Bestellungen',
@@ -76,9 +82,14 @@ export function getBuyerPortalNavItems(language?: 'en' | 'sr' | 'de') {
       icon: <DashboardIcon /> 
     },
     { 
+      href: '/pre-order-2026', 
+      label: labels.preOrder2026, 
+      icon: <FileText className="w-5 h-5" /> 
+    },
+    { 
       href: '/buyer-portal/trade-panel', 
-      label: labels.veraTrade, 
-      icon: <BarChart3 className="w-5 h-5" /> 
+      label: labels.directOrders, 
+      icon: <ShoppingCart className="w-5 h-5" /> 
     },
     { 
       href: '/buyer-portal/inventory', 

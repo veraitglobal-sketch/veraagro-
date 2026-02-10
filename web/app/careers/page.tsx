@@ -43,7 +43,7 @@ const jobOpenings: JobOpening[] = [
     id: '2',
     title: 'Agricultural Technology Specialist',
     department: 'Product',
-    location: 'Europe (Remote)',
+    location: 'Remote (EU / Worldwide)',
     type: 'Full-time',
     description: 'Join our product team to help shape the future of agricultural technology. You will work closely with farmers, understand their needs, and translate them into product features.',
     requirements: [
@@ -51,11 +51,11 @@ const jobOpenings: JobOpening[] = [
       'Understanding of EU agricultural regulations and certifications',
       'Experience with farm management systems',
       'Strong analytical and communication skills',
-      'Willingness to travel to farms across Europe',
+      'Willingness to travel to farms and partners worldwide',
     ],
     benefits: [
       'Competitive salary',
-      'Travel opportunities across Europe',
+      'Travel opportunities around the world',
       'Direct impact on agricultural innovation',
       'Health insurance',
       'Learning and development opportunities',
@@ -67,12 +67,12 @@ const jobOpenings: JobOpening[] = [
     department: 'Sales',
     location: 'Hamburg, Germany',
     type: 'Full-time',
-    description: 'We are seeking a Business Development Manager to expand our network of growers, suppliers, and buyers across Europe. You will be responsible for building strategic partnerships.',
+    description: 'We are seeking a Business Development Manager to expand our network of growers, suppliers, and buyers worldwide. You will be responsible for building strategic partnerships.',
     requirements: [
       '3+ years of experience in B2B sales or business development',
       'Experience in agriculture, food, or logistics industries',
       'Strong networking and relationship-building skills',
-      'Fluent in English and at least one other European language',
+      'Fluent in English and at least one other language',
       'Results-oriented with a track record of meeting targets',
     ],
     benefits: [
@@ -109,7 +109,7 @@ const values = [
   {
     icon: Globe,
     title: 'Global Impact',
-    description: 'Join a team that\'s transforming agriculture across Europe and beyond.',
+    description: 'Join a team that\'s transforming agriculture around the world.',
   },
 ];
 
@@ -124,9 +124,9 @@ export default function CareersPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -305,9 +305,9 @@ export default function CareersPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

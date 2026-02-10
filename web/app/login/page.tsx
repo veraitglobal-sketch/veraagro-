@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') || '';
   const [partnerCode, setPartnerCode] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,8 +24,8 @@ export default function LoginPage() {
 
     try {
       await login(partnerCode, password);
-      // Redirect to home page after login (Navigation will show Dashboard link)
-      router.push('/');
+      const redirectUrl = returnTo && returnTo.startsWith('/') ? returnTo : '/';
+      router.push(redirectUrl);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -41,9 +43,9 @@ export default function LoginPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto bg-transparent"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto bg-transparent"
                 priority
                 style={{ background: 'transparent' }}
               />
@@ -150,9 +152,9 @@ export default function LoginPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                   style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
                 />
               </Link>

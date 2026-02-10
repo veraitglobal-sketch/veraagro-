@@ -1,31 +1,23 @@
 /**
- * Partner logos configuration
- * 
- * To add a new partner:
- * 1. Add the partner logo image to /web/public/partners/
- * 2. Add an entry to the partners array below
- * 3. The image will automatically be displayed on the homepage
+ * Partner / certification logos configuration
+ *
+ * Logos in /web/public/ are used (e.g. GLOBALGAP.png, IFOAM.png).
+ * To add a new partner: add image to public, then add an entry below.
  */
 
 export interface Partner {
   name: string;
-  logo: string; // Path to logo image in /public/partners/
+  logo: string; // Path to logo image in /public/
   url?: string; // Optional partner website URL
   alt?: string; // Optional alt text (defaults to partner name)
 }
 
 export const partners: Partner[] = [
-  // Example partners - replace with real ones
-  // {
-  //   name: 'Partner Name',
-  //   logo: '/partners/partner-logo.png',
-  //   url: 'https://partner-website.com',
-  //   alt: 'Partner Name Logo',
-  // },
-  
-  // Placeholder partners (will be replaced with real ones)
-  // For now, using Bio Vera logo as placeholder
-  // Remove these when real partners are added
+  { name: 'GLOBALG.A.P.', logo: '/GLOBALGAP.png', alt: 'GLOBALG.A.P. Certification' },
+  { name: 'IFOAM', logo: '/IFOAM.png', alt: 'IFOAM Organic' },
+  { name: 'HACCP', logo: '/haccp.png', alt: 'HACCP' },
+  { name: 'Sedex', logo: '/sedex.png', alt: 'Sedex' },
+  { name: 'EU Organic Awards', logo: '/eu-organic-awards.png', alt: 'EU Organic Awards' },
 ];
 
 /**

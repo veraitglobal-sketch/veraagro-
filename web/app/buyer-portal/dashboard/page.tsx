@@ -24,6 +24,7 @@ import {
   BarChart3,
   CheckCircle,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   LineChart,
@@ -122,6 +123,34 @@ export default function BuyerDashboardPage() {
     <AuthGuard requiredRoles={['BUYER']}>
         <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
         <div className="space-y-10">
+          {/* Pre-order 2026 & Direct orders */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Link
+              href="/pre-order-2026"
+              className="flex items-center gap-4 p-4 rounded-lg border border-green-200 bg-green-50/50 hover:bg-green-50 hover:border-green-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/10">
+                <FileText className="h-6 w-6 text-green-600" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Pre-order for 2026 is open</p>
+                <p className="text-sm text-gray-600 font-light">Plan quantities for the 2026 season</p>
+              </div>
+            </Link>
+            <Link
+              href="/buyer-portal/trade-panel"
+              className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
+                <ShoppingCart className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Direct orders</p>
+                <p className="text-sm text-gray-600 font-light">Place an order now</p>
+              </div>
+            </Link>
+          </div>
+
           {/* Header */}
           <div className="border-b border-green-200/50 pb-8">
             <div className="flex items-center justify-between mb-6">

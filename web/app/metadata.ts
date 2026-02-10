@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 const siteName = 'Bio Vera';
-const siteDescription = 'Vertically Integrated Agrotech Platform. From seed to EU market. Immutable digital proof. Bio-Ready certification with complete traceability and automated compliance.';
+const siteDescription = 'Vertically Integrated Agrotech Platform. From seed to market—worldwide. Immutable digital proof. Bio-Ready certification with complete traceability and automated compliance.';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://biovera.app';
 const siteImage = `${siteUrl}/logo1.png`;
 

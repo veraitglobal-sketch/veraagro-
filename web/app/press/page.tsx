@@ -18,7 +18,7 @@ const pressReleases: PressRelease[] = [
     id: '1',
     date: 'January 15, 2026',
     title: 'Bio Vera Launches Vertically Integrated Agrotech Platform',
-    summary: 'Bio Vera announces the launch of its comprehensive platform connecting European agricultural producers with markets, featuring complete traceability and automated compliance.',
+    summary: 'Bio Vera announces the launch of its comprehensive platform connecting agricultural producers worldwide with markets, featuring complete traceability and automated compliance.',
     link: '#',
   },
   {
@@ -76,9 +76,9 @@ export default function PressPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -200,10 +200,10 @@ export default function PressPage() {
                 <div className="border-l-2 border-green-600 pl-6">
                   <h3 className="text-base font-medium text-gray-900 mb-2">About Bio Vera</h3>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    Bio Vera is a vertically integrated agrotech platform that connects European agricultural 
-                    producers directly with markets. We provide complete traceability, quality assurance, and 
+                    Bio Vera is a vertically integrated agrotech platform that connects agricultural producers 
+                    worldwide directly with markets. We provide complete traceability, quality assurance, and 
                     automated compliance management from seed to shelf. Founded in 2026, Bio Vera is headquartered 
-                    in Hamburg, Germany, and serves producers and buyers across Europe.
+                    in Hamburg, Germany, and serves producers and buyers around the world.
                   </p>
                 </div>
                 <div className="border-l-2 border-green-600 pl-6">
@@ -211,7 +211,7 @@ export default function PressPage() {
                   <ul className="space-y-2 text-sm text-gray-600 font-light">
                     <li>• Founded: 2026</li>
                     <li>• Headquarters: Hamburg, Germany</li>
-                    <li>• Market: Europe</li>
+                    <li>• Market: Worldwide</li>
                     <li>• Focus: Agricultural traceability and quality assurance</li>
                     <li>• Technology: Protocol 360 quality control system</li>
                   </ul>
@@ -325,9 +325,9 @@ export default function PressPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

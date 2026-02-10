@@ -14,9 +14,9 @@ export default function TermsPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -107,7 +107,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-light text-gray-900 mb-4">4. Platform Services and Description</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 Bio Vera operates a vertically integrated agrotech platform that connects growers, suppliers, logistics partners, and buyers 
-                across Europe. Our services include, but are not limited to:
+                worldwide. Our services include, but are not limited to:
               </p>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
                 <li><strong>Digital Marketplace:</strong> Platform for buying and selling agricultural products with transparent pricing and quality standards</li>
@@ -409,9 +409,9 @@ export default function TermsPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

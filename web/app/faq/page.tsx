@@ -16,7 +16,7 @@ const faqs: FAQItem[] = [
   {
     category: 'general',
     question: 'What is Bio Vera?',
-    answer: 'Bio Vera is a vertically integrated agrotech platform that connects European agricultural producers directly with markets. We provide complete traceability, quality assurance, and automated compliance management from seed to shelf.',
+    answer: 'Bio Vera is a vertically integrated agrotech platform that connects agricultural producers worldwide directly with markets. We provide complete traceability, quality assurance, and automated compliance management from seed to shelf—around the world.',
   },
   {
     category: 'general',
@@ -26,7 +26,7 @@ const faqs: FAQItem[] = [
   {
     category: 'general',
     question: 'What certifications does Bio Vera support?',
-    answer: 'We facilitate GlobalG.A.P. IFA v6 group certification and ensure all products meet EU market standards. Our platform automates certification management and compliance tracking.',
+    answer: 'We facilitate GlobalG.A.P. IFA v6 group certification and ensure all products meet international and EU market standards. Our platform automates certification management and compliance tracking globally.',
   },
   {
     category: 'growers',
@@ -122,9 +122,9 @@ export default function FAQPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -259,9 +259,9 @@ export default function FAQPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">

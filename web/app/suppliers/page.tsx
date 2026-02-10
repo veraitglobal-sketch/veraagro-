@@ -82,9 +82,9 @@ export default function SuppliersPage() {
               <Image 
                 src="/logo1.png" 
                 alt="Bio Vera" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto"
+                width={56} 
+                height={20} 
+                className="h-4 w-auto"
                 priority
               />
             </Link>
@@ -104,7 +104,7 @@ export default function SuppliersPage() {
             Become a Strategic Supplier
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-            Join our network of trusted suppliers and expand your reach to the European market 
+            Join our network of trusted suppliers and expand your reach to markets worldwide 
             through the Bio Vera platform. Source seeds, fertilizers, and packaging materials 
             both domestically and internationally.
           </p>
@@ -492,7 +492,7 @@ export default function SuppliersPage() {
               },
               {
                 title: 'Exclusive Market Access',
-                description: 'Direct access to European market through our vertically integrated network. Your products reach end customers without intermediaries.',
+                description: 'Direct access to global markets through our vertically integrated network. Your products reach end customers without intermediaries.',
               },
               {
                 title: 'Integrated Return Logistics',
@@ -735,9 +735,9 @@ export default function SuppliersPage() {
                 <Image 
                   src="/logo1.png" 
                   alt="Bio Vera" 
-                  width={200} 
-                  height={70} 
-                  className="h-14 w-auto"
+                  width={56} 
+                  height={20} 
+                  className="h-4 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 font-light leading-relaxed">

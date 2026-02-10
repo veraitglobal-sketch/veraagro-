@@ -15,9 +15,9 @@ export default function NotFound() {
           <Image
             src="/logo1.png"
             alt="Bio Vera"
-            width={200}
-            height={70}
-            className="h-16 w-auto mx-auto mb-8"
+            width={56}
+            height={20}
+            className="h-4 w-auto mx-auto mb-8"
             priority
           />
           <h1 className="text-9xl font-light text-gray-200 mb-4">404</h1>
