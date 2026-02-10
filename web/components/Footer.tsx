@@ -6,9 +6,9 @@ import Image from 'next/image';
  */
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
+    <footer className="border-t border-gray-200 py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-5 gap-12 mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-8 md:mb-12">
           <div className="flex flex-col">
             <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
               <Image
@@ -69,7 +69,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
+        <div className="border-t border-gray-200 pt-6 md:pt-8 text-center text-xs sm:text-sm text-gray-500">
           <p>&copy; 2026 Bio Vera. All rights reserved.</p>
         </div>
       </div>

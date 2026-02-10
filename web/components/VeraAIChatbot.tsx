@@ -118,11 +118,30 @@ const audienceButtons: { key: CategoryKey; label: string; icon: React.ComponentT
 
 type VeraAIChatbotProps = { inline?: boolean; inlineVariant?: 'default' | 'minimal' };
 
+function getApiBase(): string {
+  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
+}
+
+async function sendChatQuery(query: string, sessionId?: string): Promise<{ answer: string; sessionId: string }> {
+  const base = getApiBase();
+  const res = await fetch(`${base}/ai-assistant/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, sessionId }),
+  });
+  if (!res.ok) throw new Error('Chat request failed');
+  const data = await res.json();
+  return { answer: data.answer ?? 'Sorry, I couldn’t process that. Try rephrasing or use the quick actions above.', sessionId: data.sessionId ?? '' };
+}
+
 export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: VeraAIChatbotProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [view, setView] = useState<'main' | CategoryKey>('main');
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; link?: string; linkLabel?: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const sessionIdRef = useRef<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const ticker = useTicker();
 
@@ -130,33 +149,40 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!message.trim()) return;
+  const addAssistantReply = (content: string) => {
+    setMessages((prev) => [...prev, { role: 'assistant', content }]);
+    setLoading(false);
+  };
+
+  const handleSend = async () => {
+    if (!message.trim() || loading) return;
     const q = message.trim();
     setMessages((prev) => [...prev, { role: 'user', content: q }]);
     setMessage('');
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: 'assistant',
-        content: 'Connect to the backend for full answers. You can also use the quick actions above or ask anything else here.',
-      },
-    ]);
+    setLoading(true);
+    try {
+      const { answer, sessionId } = await sendChatQuery(q, sessionIdRef.current);
+      if (sessionId) sessionIdRef.current = sessionId;
+      addAssistantReply(answer);
+    } catch {
+      addAssistantReply('Connection error. Check your internet or try again. You can also use the quick actions above.');
+    }
   };
 
   const handleCategorySelect = (key: CategoryKey) => {
     setView(key);
   };
 
-  const handlePanelAction = (label: string) => {
+  const handlePanelAction = async (label: string) => {
     setMessages((prev) => [...prev, { role: 'user', content: label }]);
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: 'assistant',
-        content: `"${label}" — connect backend for details, or ask your own question below.`,
-      },
-    ]);
+    setLoading(true);
+    try {
+      const { answer, sessionId } = await sendChatQuery(label, sessionIdRef.current);
+      if (sessionId) sessionIdRef.current = sessionId;
+      addAssistantReply(answer);
+    } catch {
+      addAssistantReply(`"${label}" — connection error. Try again or ask your own question below.`);
+    }
   };
 
   const isMinimalInline = inline && inlineVariant === 'minimal';
@@ -191,22 +217,19 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-xl border bg-white/95 shadow-2xl backdrop-blur-md"
+            className="fixed inset-0 z-50 flex flex-col overflow-hidden border bg-white/95 shadow-2xl backdrop-blur-md rounded-none h-[100dvh] max-h-[100dvh] md:inset-auto md:bottom-6 md:right-6 md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
             style={{
-              width: 'min(350px, calc(100vw - 3rem))',
-              maxHeight: '650px',
-              height: '650px',
               borderColor: 'rgba(45, 90, 39, 0.2)',
-              boxShadow: `0 25px 50px -12px rgba(45, 90, 39, 0.25)`,
+              boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
             }}
           >
-            {/* Live Ticker – šta znače brojevi: New orders | In transit | To Hamburg | Delivered % */}
+            {/* Live Ticker – flex-shrink-0 da ostane na mestu kad tastatura uđe */}
             <div
-              className="px-3 py-2 border-b font-mono text-xs space-y-1"
+              className="flex-shrink-0 px-3 py-2 border-b font-mono text-xs space-y-1"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))' }}
             >
               <div className="flex items-center justify-between gap-1">
@@ -246,9 +269,9 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               )}
             </div>
 
-            {/* Header: INTELLIGENCE TERMINAL + WhatsApp + Close */}
+            {/* Header – flex-shrink-0 */}
             <div
-              className="flex items-center justify-between px-4 py-3 border-b"
+              className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}
             >
               <div>
@@ -278,8 +301,8 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </div>
             </div>
 
-            {/* Jedan prikaz: ili 4 kategorije (main) ili panel kategorije + Nazad */}
-            <div className="border-b border-gray-100 p-3 min-h-[140px]">
+            {/* Jedan prikaz: ili 4 kategorije (main) ili panel kategorije + Nazad — flex-shrink-0 da se ne sabije kad tastatura uđe */}
+            <div className="flex-shrink-0 border-b border-gray-100 p-3 min-h-[120px] md:min-h-[140px]">
               <AnimatePresence mode="wait">
                 {view === 'main' ? (
                   <motion.div
@@ -347,9 +370,8 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </AnimatePresence>
             </div>
 
-            {/* Sredina: chat za slobodna pitanja */}
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
+            {/* Sredina: chat — flex-1 min-h-0 da scroll radi; na mobilnom ostaje iznad tastature */}
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3 space-y-3">
               {messages.length === 0 && (
                 <p className="text-center text-sm text-gray-500 py-4 font-light px-2">
                   Click a category above to see options, or ask any question here.
@@ -376,11 +398,16 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   )}
                 </div>
               ))}
+              {loading && (
+                <div className="mr-6 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 font-mono">
+                  Thinking…
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input – Search ikona levo, placeholder, Send zelena */}
-            <div className="flex gap-2 border-t border-gray-100 p-3">
+            {/* Input – fiksiran dole, safe-area da ne prelazi preko home indikatora/tastature */}
+            <div className="flex-shrink-0 flex gap-2 border-t border-gray-100 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white">
               <div className="relative flex-1">
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none"
@@ -390,15 +417,17 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
                   placeholder="Ask anything else..."
-                  className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20"
+                  disabled={loading}
+                  className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60"
                 />
               </div>
               <button
                 type="button"
-                onClick={handleSend}
-                className="rounded-lg px-3 py-2 text-white transition hover:opacity-90 flex-shrink-0"
+                onClick={() => handleSend()}
+                disabled={loading}
+                className="rounded-lg px-3 py-2 text-white transition hover:opacity-90 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: VERA_GREEN }}
               >
                 <Send className="h-4 w-4" />

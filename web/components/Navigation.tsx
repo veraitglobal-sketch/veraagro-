@@ -114,11 +114,11 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Mobile menu button - 44px min touch target */}
+          {/* Mobile menu button - desno, 44px min touch target */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
+            className="md:hidden ml-auto min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
           >

@@ -43,20 +43,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - Minimal */}
-      <section className="pt-40 pb-24 px-6 lg:px-8">
+      {/* Hero Section - manji gornji razmak na mobilnom */}
+      <section className="pt-20 sm:pt-28 md:pt-40 pb-16 md:pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
               Vertically Integrated
               <br />
               <span className="font-normal">Agrotech Platform</span>
           </h1>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
               From seed to market—anywhere in the world. Immutable digital proof. Bio-Ready certification 
               with complete traceability and automated compliance. Open to producers worldwide.
             </p>
