@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useAuth } from '@/lib/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Package, ShoppingBag, Printer, Building2, User, Phone, Mail, Calendar, ChevronDown, ChevronRight } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 type Variety = { id: string; name: string };
 type Article = { id: string; name: string; unit: string; varieties?: Variety[] };
@@ -109,7 +110,7 @@ const CATEGORIES: { id: string; name: string; articles: Article[] }[] = [
   },
 ];
 
-type OrderLine = { name: string; unit: string; quantity: string };
+type OrderLine = { id: string; name: string; unit: string; quantity: string };
 function getOrderLinesFromCategories(
   categories: typeof CATEGORIES,
   quantities: Record<string, string>
@@ -121,11 +122,11 @@ function getOrderLinesFromCategories(
         for (const v of a.varieties) {
           const key = `${a.id}_${v.id}`;
           const q = quantities[key]?.trim();
-          if (q && Number(q) > 0) lines.push({ name: `${a.name} – ${v.name}`, unit: a.unit, quantity: q });
+          if (q && Number(q) > 0) lines.push({ id: key, name: `${a.name} – ${v.name}`, unit: a.unit, quantity: q });
         }
       } else {
         const q = quantities[a.id]?.trim();
-        if (q && Number(q) > 0) lines.push({ name: a.name, unit: a.unit, quantity: q });
+        if (q && Number(q) > 0) lines.push({ id: a.id, name: a.name, unit: a.unit, quantity: q });
       }
     }
   }
@@ -151,6 +152,7 @@ export default function PreOrder2026Page() {
   const [email, setEmail] = useState('');
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
   const [deliveryPeriodFrom, setDeliveryPeriodFrom] = useState('');
   const [deliveryPeriodTo, setDeliveryPeriodTo] = useState('');
   const [quality, setQuality] = useState('');
@@ -173,6 +175,17 @@ export default function PreOrder2026Page() {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      return next;
+    });
+  };
+
+  const productKey = (catId: string, articleId: string) => `${catId}_${articleId}`;
+  const toggleProduct = (catId: string, articleId: string) => {
+    const key = productKey(catId, articleId);
+    setExpandedProducts((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -260,21 +273,26 @@ export default function PreOrder2026Page() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Header – same as For Buyers / Growers / Suppliers: logo + Home only */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto bg-transparent" priority style={{ background: 'transparent' }} />
+              <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto" priority />
             </Link>
-            <nav className="flex gap-6 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">Home</Link>
-              <Link href="/products" className="text-sm text-gray-600 hover:text-green-600 transition-colors">Products</Link>
+            <nav className="flex gap-8 items-center">
+              <Link
+                href="/"
+                className="text-sm text-gray-600 hover:text-[#2D5A27] hover:bg-[#2D5A27]/10 px-3 py-2 rounded-full transition-colors"
+              >
+                Home
+              </Link>
             </nav>
           </div>
         </div>
       </header>
 
-      <main className="pt-28 pb-24 px-6 lg:px-8">
+      <main className="pt-24 pb-12 px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -295,7 +313,7 @@ export default function PreOrder2026Page() {
                 {/* Company and contact */}
                 <div className="space-y-4">
                   <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-green-600" />
+                    <Building2 className="h-4 w-4 text-[#2D5A27]" />
                     Company and contact
                   </h2>
                   <div className="grid gap-4">
@@ -307,7 +325,7 @@ export default function PreOrder2026Page() {
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                         placeholder="e.g. Trade Ltd."
                       />
                     </div>
@@ -319,7 +337,7 @@ export default function PreOrder2026Page() {
                         value={contactPerson}
                         onChange={(e) => setContactPerson(e.target.value)}
                         required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                         placeholder="Full name"
                       />
                     </div>
@@ -331,7 +349,7 @@ export default function PreOrder2026Page() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                         placeholder="+44..."
                       />
                     </div>
@@ -343,7 +361,7 @@ export default function PreOrder2026Page() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                         placeholder="contact@company.com"
                       />
                     </div>
@@ -353,10 +371,10 @@ export default function PreOrder2026Page() {
                 {/* Products by category — expand on click */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                    <ShoppingBag className="h-4 w-4 text-green-600" />
+                    <ShoppingBag className="h-4 w-4 text-[#2D5A27]" />
                     Products and quantities
                   </label>
-                  <p className="text-xs text-gray-500 mb-3">Click a category to open it and enter quantities. Leave blank if you do not order that item.</p>
+                  <p className="text-xs text-gray-500 mb-3">Click a category to open it; click a product with varieties to open its subcategories. Leave blank if you do not order that item.</p>
                   <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
                     {CATEGORIES.map((cat) => {
                       const isOpen = expandedCategories.has(cat.id);
@@ -365,7 +383,7 @@ export default function PreOrder2026Page() {
                           <button
                             type="button"
                             onClick={() => toggleCategory(cat.id)}
-                            className="w-full flex items-center justify-between py-3 px-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                            className={`w-full flex items-center justify-between py-3 px-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors ${isOpen ? 'border-b-2 border-[#2D5A27]' : ''}`}
                           >
                             <span className="flex items-center gap-2">
                               {isOpen ? <ChevronDown className="h-4 w-4 text-gray-500" /> : <ChevronRight className="h-4 w-4 text-gray-500" />}
@@ -381,58 +399,75 @@ export default function PreOrder2026Page() {
                                 transition={{ duration: 0.2 }}
                                 className="overflow-hidden"
                               >
-                                <div className="px-4 pb-4 pt-0 bg-gray-50/50">
+                                <div className="px-4 pb-4 pt-2 bg-gray-50/50">
                                   <table className="w-full text-sm">
                                     <thead>
-                                      <tr className="border-b border-gray-200">
-                                        <th className="text-left py-2 px-3 font-medium text-gray-600">Product</th>
-                                        <th className="text-left py-2 px-3 font-medium text-gray-600 w-20">Unit</th>
-                                        <th className="text-left py-2 px-3 font-medium text-gray-600 w-28">Quantity</th>
+                                      <tr className="border-b-2 border-[#2D5A27]">
+                                        <th className="text-left py-2.5 px-3 font-medium text-gray-700">Product</th>
+                                        <th className="text-right py-2.5 px-3 font-medium text-gray-700 w-16">Unit</th>
+                                        <th className="text-right py-2.5 px-3 font-medium text-gray-700 w-28">Quantity</th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {cat.articles.map((a) =>
-                                        a.varieties && a.varieties.length > 0 ? (
-                                          <React.Fragment key={a.id}>
-                                            <tr className="bg-gray-100/70">
-                                              <td colSpan={3} className="py-2 px-3 text-gray-900 font-medium">{a.name}</td>
-                                            </tr>
-                                            {a.varieties.map((v) => (
-                                              <tr key={`${a.id}_${v.id}`} className="border-b border-gray-100 last:border-0">
-                                                <td className="py-1.5 px-3 pl-5 text-gray-700 text-xs">{v.name}</td>
-                                                <td className="py-1.5 px-3 text-gray-500">{a.unit}</td>
-                                                <td className="py-1.5 px-3">
-                                                  <input
-                                                    type="number"
-                                                    min="0"
-                                                    step="1"
-                                                    value={quantities[`${a.id}_${v.id}`] ?? ''}
-                                                    onChange={(e) => setQuantity(`${a.id}_${v.id}`, e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                                    placeholder="0"
-                                                  />
+                                      {cat.articles.map((a) => {
+                                        const hasVarieties = a.varieties && a.varieties.length > 0;
+                                        const isProductOpen = expandedProducts.has(productKey(cat.id, a.id));
+                                        if (hasVarieties) {
+                                          return (
+                                            <React.Fragment key={a.id}>
+                                              <tr className="border-b border-gray-100">
+                                                <td className="py-2 px-3" colSpan={3}>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => toggleProduct(cat.id, a.id)}
+                                                    className="w-full flex items-center justify-between text-left text-gray-900 font-medium hover:bg-gray-100/70 rounded py-1 pr-2 -mx-2 px-2"
+                                                  >
+                                                    <span>{a.name}</span>
+                                                    <span className="text-gray-400">
+                                                      {isProductOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                                                    </span>
+                                                  </button>
                                                 </td>
                                               </tr>
-                                            ))}
-                                          </React.Fragment>
-                                        ) : (
+                                                {isProductOpen &&
+                                                  a.varieties!.map((v) => (
+                                                    <tr key={`${a.id}_${v.id}`} className="border-b border-gray-100 last:border-0 bg-gray-50/30">
+                                                      <td className="py-2 px-3 pl-6 text-gray-700 text-sm">{v.name}</td>
+                                                      <td className="py-2 px-3 text-right text-gray-600 text-sm">{a.unit}</td>
+                                                      <td className="py-2 px-3 text-right">
+                                                        <input
+                                                          type="number"
+                                                          min="0"
+                                                          step="1"
+                                                          value={quantities[`${a.id}_${v.id}`] ?? ''}
+                                                          onChange={(e) => setQuantity(`${a.id}_${v.id}`, e.target.value)}
+                                                          className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] text-right"
+                                                          placeholder="0"
+                                                        />
+                                                      </td>
+                                                    </tr>
+                                                  ))}
+                                            </React.Fragment>
+                                          );
+                                        }
+                                        return (
                                           <tr key={a.id} className="border-b border-gray-100 last:border-0">
-                                            <td className="py-2 px-3 text-gray-900">{a.name}</td>
-                                            <td className="py-2 px-3 text-gray-500">{a.unit}</td>
-                                            <td className="py-2 px-3">
+                                            <td className="py-2 px-3 text-gray-900 font-medium">{a.name}</td>
+                                            <td className="py-2 px-3 text-right text-gray-600">{a.unit}</td>
+                                            <td className="py-2 px-3 text-right">
                                               <input
                                                 type="number"
                                                 min="0"
                                                 step="1"
                                                 value={quantities[a.id] ?? ''}
                                                 onChange={(e) => setQuantity(a.id, e.target.value)}
-                                                className="w-full px-2 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                                className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] text-right inline-block"
                                                 placeholder="0"
                                               />
                                             </td>
                                           </tr>
-                                        )
-                                      )}
+                                        );
+                                      })}
                                     </tbody>
                                   </table>
                                 </div>
@@ -448,7 +483,7 @@ export default function PreOrder2026Page() {
                 {/* Delivery period */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-green-600" />
+                    <Calendar className="h-4 w-4 text-[#2D5A27]" />
                     Approximate delivery period
                   </label>
                   <div className="flex flex-wrap items-center gap-3">
@@ -456,7 +491,7 @@ export default function PreOrder2026Page() {
                       type="text"
                       value={deliveryPeriodFrom}
                       onChange={(e) => setDeliveryPeriodFrom(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-36"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] w-36"
                       placeholder="e.g. Jan 2026"
                     />
                     <span className="text-gray-400">–</span>
@@ -464,7 +499,7 @@ export default function PreOrder2026Page() {
                       type="text"
                       value={deliveryPeriodTo}
                       onChange={(e) => setDeliveryPeriodTo(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-36"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] w-36"
                       placeholder="e.g. Jun 2026"
                     />
                   </div>
@@ -478,18 +513,18 @@ export default function PreOrder2026Page() {
                     <div className="space-y-2">
                       {QUALITY_OPTIONS.map((q) => (
                         <label key={q.id} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="quality" value={q.id} checked={quality === q.id} onChange={() => setQuality(q.id)} className="text-green-600 focus:ring-green-500" />
+                          <input type="radio" name="quality" value={q.id} checked={quality === q.id} onChange={() => setQuality(q.id)} className="text-[#2D5A27] focus:ring-[#2D5A27]" />
                           <span className="text-sm">{q.name}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Package className="h-4 w-4 text-green-600" /> Packaging</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Package className="h-4 w-4 text-[#2D5A27]" /> Packaging</label>
                     <div className="space-y-2">
                       {PACKAGING_OPTIONS.map((pkg) => (
                         <label key={pkg.id} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="packaging" value={pkg.id} checked={packaging === pkg.id} onChange={() => setPackaging(pkg.id)} className="text-green-600 focus:ring-green-500" />
+                          <input type="radio" name="packaging" value={pkg.id} checked={packaging === pkg.id} onChange={() => setPackaging(pkg.id)} className="text-[#2D5A27] focus:ring-[#2D5A27]" />
                           <span className="text-sm">{pkg.name}</span>
                         </label>
                       ))}
@@ -504,7 +539,7 @@ export default function PreOrder2026Page() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={2}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                     placeholder="Additional requirements..."
                   />
                 </div>
@@ -512,16 +547,16 @@ export default function PreOrder2026Page() {
                 <button
                   type="submit"
                   disabled={sending || !companyName || !contactPerson || !phone || !email || !hasAnyQuantity() || !quality || !packaging}
-                  className="w-full py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {sending ? 'Sending...' : 'Submit pre-order'}
                 </button>
               </form>
             ) : (
               <div className="mt-8">
-                <div className="p-6 rounded-lg border border-green-200 bg-green-50/50 text-center">
-                  <p className="text-green-800 font-medium">Pre-order received.</p>
-                  <p className="text-sm text-green-700 mt-1 font-light">You can print or save as PDF below.</p>
+                <div className="p-6 rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/5/50 text-center">
+                  <p className="text-[#23471f] font-medium">Pre-order received.</p>
+                  <p className="text-sm text-[#2D5A27] mt-1 font-light">You can print or save as PDF below.</p>
                 </div>
 
                 <div ref={printRef} className="mt-6 border border-gray-200 rounded-lg overflow-hidden bg-white">
@@ -556,7 +591,7 @@ export default function PreOrder2026Page() {
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Products and quantities</p>
                     <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
                       <thead>
-                        <tr className="bg-gray-50">
+                        <tr className="bg-gray-50 border-b-2 border-[#2D5A27]">
                           <th className="text-left py-2 px-3 font-medium text-gray-700">No.</th>
                           <th className="text-left py-2 px-3 font-medium text-gray-700">Product</th>
                           <th className="text-right py-2 px-3 font-medium text-gray-700">Unit</th>
@@ -565,7 +600,7 @@ export default function PreOrder2026Page() {
                       </thead>
                       <tbody>
                         {orderLines.map((line, i) => (
-                          <tr key={line.id} className="border-t border-gray-100">
+                          <tr key={i} className="border-t border-gray-100">
                             <td className="py-2 px-3 text-gray-500">{i + 1}</td>
                             <td className="py-2 px-3 text-gray-900">{line.name}</td>
                             <td className="py-2 px-3 text-right text-gray-600">{line.unit}</td>
@@ -593,7 +628,7 @@ export default function PreOrder2026Page() {
                     <Printer className="h-4 w-4" />
                     Print / Save as PDF
                   </button>
-                  <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors">
+                  <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 border border-[#2D5A27] text-[#2D5A27] rounded-lg text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors">
                     Back to Home
                   </Link>
                 </div>
@@ -602,6 +637,8 @@ export default function PreOrder2026Page() {
           </motion.div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }
