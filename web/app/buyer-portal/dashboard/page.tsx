@@ -94,7 +94,7 @@ export default function BuyerDashboardPage() {
         <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
               <p className="mt-4 text-gray-600">Loading dashboard...</p>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function BuyerDashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               href="/pre-order-2026"
-              className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/10/50 hover:bg-[#2D5A27]/10 hover:border-green-300 transition-colors"
+              className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/10/50 hover:bg-[#2D5A27]/10 hover:border-[#2D5A27]/40 transition-colors"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2D5A27]/10 flex-shrink-0">
                 <FileText className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.5} />

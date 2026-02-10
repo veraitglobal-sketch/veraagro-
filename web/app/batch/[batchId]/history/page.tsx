@@ -184,13 +184,13 @@ export default function BatchHistoryPage() {
   );
 
   const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
+    if (score >= 90) return 'text-[#2D5A27]';
     if (score >= 70) return 'text-yellow-600';
     return 'text-red-600';
   };
 
   const getComplianceBadge = (score: number) => {
-    if (score >= 90) return 'bg-green-100 text-green-800';
+    if (score >= 90) return 'bg-[#2D5A27]/20 text-[#23471f]';
     if (score >= 70) return 'bg-yellow-100 text-yellow-800';
     return 'bg-red-100 text-red-800';
   };
@@ -282,7 +282,7 @@ export default function BatchHistoryPage() {
                 <p className="text-sm text-gray-600">Standard Confirmation</p>
                 <p className="font-medium text-gray-900">
                   {data.farmerEntry.standardConfirmation ? (
-                    <span className="text-green-600">✓ Confirmed</span>
+                    <span className="text-[#2D5A27]">✓ Confirmed</span>
                   ) : (
                     <span className="text-red-600">✗ Not Confirmed</span>
                   )}
@@ -399,7 +399,7 @@ export default function BatchHistoryPage() {
                 <Line
                   type="monotone"
                   dataKey="temperature"
-                  stroke="#16a34a"
+                  stroke="#2D5A27"
                   strokeWidth={2}
                   name="Temperature"
                 />
@@ -447,13 +447,13 @@ export default function BatchHistoryPage() {
                     <p className="text-sm text-gray-600">Temperature</p>
                     <p className={`text-lg font-bold ${
                       arrival.temperatureAtArrival >= 2 && arrival.temperatureAtArrival <= 8
-                        ? 'text-green-600'
+                        ? 'text-[#2D5A27]'
                         : 'text-red-600'
                     }`}>
                       {arrival.temperatureAtArrival}°C
                     </p>
                     <span className={`inline-block px-2 py-1 rounded text-xs font-medium mt-1 ${
-                      arrival.visualState === 'EXCELLENT' ? 'bg-green-100 text-green-800' :
+                      arrival.visualState === 'EXCELLENT' ? 'bg-[#2D5A27]/20 text-[#23471f]' :
                       arrival.visualState === 'GOOD' ? 'bg-blue-100 text-blue-800' :
                       arrival.visualState === 'ACCEPTABLE' ? 'bg-yellow-100 text-yellow-800' :
                       'bg-red-100 text-red-800'
@@ -493,7 +493,7 @@ export default function BatchHistoryPage() {
           <div className="space-y-4">
             {data.timeline.map((event, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-green-600 mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-[#2D5A27] mt-2"></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <p className="font-medium text-gray-900">{event.description}</p>

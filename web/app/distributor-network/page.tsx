@@ -160,7 +160,7 @@ export default function DistributorNetworkPage() {
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      packaging_hub: 'bg-green-100 text-green-800 border-green-300',
+      packaging_hub: 'bg-[#2D5A27]/20 text-[#23471f] border-[#2D5A27]/40',
       distribution_center: 'bg-blue-100 text-blue-800 border-blue-300',
       last_mile_partner: 'bg-purple-100 text-purple-800 border-purple-300',
       cross_docking: 'bg-orange-100 text-orange-800 border-orange-300',
@@ -188,23 +188,23 @@ export default function DistributorNetworkPage() {
       </header>
 
       {/* Network Stats Bar */}
-      <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 border-b border-green-700/50">
+      <div className="bg-gradient-to-r from-[#23471f]/50 to-[#2D5A27]/50 border-b border-[#2D5A27]/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">{networkStats.totalCountries}</p>
+              <p className="text-2xl font-bold text-[#2D5A27]">{networkStats.totalCountries}</p>
               <p className="text-xs text-gray-300">Countries</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">{networkStats.activeHubs}</p>
+              <p className="text-2xl font-bold text-[#2D5A27]">{networkStats.activeHubs}</p>
               <p className="text-xs text-gray-300">Active Hubs</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">{networkStats.totalCapacity.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-[#2D5A27]">{networkStats.totalCapacity.toLocaleString()}</p>
               <p className="text-xs text-gray-300">Tons/Month</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">{networkStats.totalColdStorage.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-[#2D5A27]">{networkStats.totalColdStorage.toLocaleString()}</p>
               <p className="text-xs text-gray-300">m³ Cold Storage</p>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function DistributorNetworkPage() {
                 onClick={() => handleCountrySelect(country.code)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   selectedCountry === country.code
-                    ? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
+                    ? 'bg-[#2D5A27] text-white shadow-lg shadow-[#2D5A27]/50'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700'
                 }`}
               >
@@ -305,7 +305,7 @@ export default function DistributorNetworkPage() {
                   onClick={() => setSelectedDistributor(distributor)}
                   className={`p-4 rounded-lg border cursor-pointer transition-all ${
                     selectedDistributor?.id === distributor.id
-                      ? 'bg-green-900/50 border-green-600 shadow-lg shadow-green-500/20'
+                      ? 'bg-[#23471f]/50 border-[#2D5A27] shadow-lg shadow-[#2D5A27]/20'
                       : 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-750'
                   }`}
                 >
@@ -371,7 +371,7 @@ export default function DistributorNetworkPage() {
                 </div>
               </div>
               <div className="flex items-end">
-                <button className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+                <button className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] transition-colors">
                   View Logistics Performance
                 </button>
               </div>

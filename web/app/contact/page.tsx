@@ -108,7 +108,7 @@ export default function ContactPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -146,21 +146,21 @@ export default function ContactPage() {
                 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-green-600" />
+                    <div className="flex-shrink-0 w-12 h-12 bg-[#2D5A27]/10 rounded-lg flex items-center justify-center">
+                      <Mail className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-900 mb-1">Email</h3>
                       <a 
                         href="mailto:info@biovera.app" 
-                        className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors"
+                        className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
                       >
                         info@biovera.app
                       </a>
                       <br />
                       <a 
                         href="mailto:support@biovera.app" 
-                        className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors"
+                        className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
                       >
                         support@biovera.app
                       </a>
@@ -168,8 +168,8 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-green-600" />
+                    <div className="flex-shrink-0 w-12 h-12 bg-[#2D5A27]/10 rounded-lg flex items-center justify-center">
+                      <Phone className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-900 mb-1">Phone</h3>
@@ -181,8 +181,8 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-green-600" />
+                    <div className="flex-shrink-0 w-12 h-12 bg-[#2D5A27]/10 rounded-lg flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-900 mb-1">Headquarters</h3>
@@ -205,22 +205,22 @@ export default function ContactPage() {
                 <h3 className="text-sm font-medium text-gray-900 mb-4">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link href="/help-center" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                    <Link href="/help-center" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                       Help Center
                     </Link>
                   </li>
                   <li>
-                    <Link href="/legal" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                    <Link href="/legal" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                       Legal Information
                     </Link>
                   </li>
                   <li>
-                    <Link href="/growers" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                    <Link href="/growers" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                       For Growers
                     </Link>
                   </li>
                   <li>
-                    <Link href="/suppliers" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                    <Link href="/suppliers" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                       For Suppliers
                     </Link>
                   </li>
@@ -237,7 +237,7 @@ export default function ContactPage() {
                 className="bg-gray-50 border border-gray-200 rounded-lg p-8"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <MessageSquare className="w-5 h-5 text-green-600" />
+                  <MessageSquare className="w-5 h-5 text-[#2D5A27]" />
                   <h2 className="text-2xl font-light text-gray-900">Send us a Message</h2>
                 </div>
 
@@ -254,7 +254,7 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors font-light"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light"
                         placeholder="Your name"
                       />
                     </div>
@@ -269,7 +269,7 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors font-light"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light"
                         placeholder="your.email@example.com"
                       />
                     </div>
@@ -285,7 +285,7 @@ export default function ContactPage() {
                       required
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors font-light bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light bg-white"
                     >
                       <option value="">Select a subject</option>
                       <option value="general">General Inquiry</option>
@@ -309,14 +309,14 @@ export default function ContactPage() {
                       rows={6}
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors font-light resize-none"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light resize-none"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
 
                   {submitStatus === 'success' && (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-sm text-green-800 font-light">
+                    <div className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg">
+                      <p className="text-sm text-[#23471f] font-light">
                         Thank you for your message! We'll get back to you as soon as possible.
                       </p>
                     </div>
@@ -338,7 +338,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -354,7 +354,7 @@ export default function ContactPage() {
                   </button>
                   <p className="text-center text-sm text-gray-500 mt-4">
                     If the form does not work, contact us directly at{' '}
-                    <a href="mailto:info@biovera.app" className="text-green-600 hover:underline">info@biovera.app</a>.
+                    <a href="mailto:info@biovera.app" className="text-[#2D5A27] hover:underline">info@biovera.app</a>.
                   </p>
                 </form>
               </motion.div>
@@ -386,26 +386,26 @@ export default function ContactPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

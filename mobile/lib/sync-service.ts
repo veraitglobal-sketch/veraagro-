@@ -3,6 +3,7 @@ import {
   PendingFieldEntry,
   PendingProduct,
   PendingCost,
+  PendingCertificatePhoto,
 } from './offline-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -48,15 +49,17 @@ export const syncService = {
    */
   async getSyncStatus(): Promise<SyncStatus> {
     try {
-      const [entries, products, costs] = await Promise.all([
+      const [entries, products, costs, certPhotos] = await Promise.all([
         offlineStorage.getPendingEntries(),
         offlineStorage.getPendingProducts(),
         offlineStorage.getPendingCosts(),
+        offlineStorage.getPendingCertificatePhotos(),
       ]);
       const pendingEntries = entries.filter((e) => e.status === 'pending').length;
       const pendingProducts = products.filter((p) => p.status === 'pending').length;
       const pendingCosts = costs.filter((c) => c.status === 'pending').length;
-      const pendingCount = pendingEntries + pendingProducts + pendingCosts;
+      const pendingCertPhotos = certPhotos.filter((c) => c.status === 'pending').length;
+      const pendingCount = pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos;
 
       const statusData = await AsyncStorage.getItem(SYNC_STATUS_KEY);
       const status = statusData ? JSON.parse(statusData) : {};
@@ -274,16 +277,57 @@ export const syncService = {
   },
 
   /**
-   * Sync all pending data: entries, then products, then costs
+   * Sync pending certificate photos (when endpoint exists)
    */
-  async syncAll(): Promise<{ entries: { success: number; failed: number }; products: { success: number; failed: number }; costs: { success: number; failed: number } }> {
+  async syncPendingCertificatePhotos(): Promise<{ success: number; failed: number }> {
+    const pending = await offlineStorage.getPendingCertificatePhotos();
+    const toSync = pending.filter((p) => p.status === 'pending');
+    if (toSync.length === 0) return { success: 0, failed: 0 };
+
+    const token = await AsyncStorage.getItem('auth_token');
+    let success = 0;
+    let failed = 0;
+
+    for (const photo of toSync) {
+      try {
+        await offlineStorage.updateCertificatePhotoStatus(photo.id, 'syncing');
+        await syncApi.post(
+          '/grower-portal/certificate-photos',
+          {
+            certificateId: photo.certificateId,
+            certificateTitle: photo.certificateTitle,
+            photoUri: photo.photoUri,
+            timestamp: photo.timestamp,
+          },
+          { headers: { Authorization: token ? `Bearer ${token}` : '' } }
+        );
+        await offlineStorage.removeCertificatePhoto(photo.id);
+        success++;
+      } catch (err: any) {
+        const isNotImplemented = err.response?.status === 404 || err.response?.status === 501;
+        await offlineStorage.updateCertificatePhotoStatus(
+          photo.id,
+          'pending',
+          isNotImplemented ? undefined : err.message
+        );
+        if (!isNotImplemented) failed++;
+      }
+    }
+    return { success, failed };
+  },
+
+  /**
+   * Sync all pending data: entries, products, costs, certificate photos
+   */
+  async syncAll(): Promise<{ entries: { success: number; failed: number }; products: { success: number; failed: number }; costs: { success: number; failed: number }; certificatePhotos: { success: number; failed: number } }> {
     await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
 
     const entries = await this.syncPendingEntries();
     const products = await this.syncPendingProducts();
     const costs = await this.syncPendingCosts();
+    const certificatePhotos = await this.syncPendingCertificatePhotos();
 
-    const totalFailed = entries.failed + products.failed + costs.failed;
+    const totalFailed = entries.failed + products.failed + costs.failed + certificatePhotos.failed;
     await AsyncStorage.setItem(
       SYNC_STATUS_KEY,
       JSON.stringify({
@@ -293,7 +337,7 @@ export const syncService = {
       })
     );
 
-    return { entries, products, costs };
+    return { entries, products, costs, certificatePhotos };
   },
 
   /**

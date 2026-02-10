@@ -730,4 +730,51 @@ export const digitalHandoverAPI = {
   },
 };
 
+/** Plot mapper: parcel blueprint (zones, partitions). Used by features/grower/plot-mapper. */
+export interface PlotBlueprintZone {
+  id: string;
+  name: string;
+  coordinates: { x1: number; y1: number; x2: number; y2: number };
+  area: number;
+  cropType?: string;
+  plantingDate?: string;
+  status?: string;
+}
+
+export interface PlotBlueprintPartition {
+  id: string;
+  type: 'HORIZONTAL' | 'VERTICAL';
+  position: number;
+}
+
+export interface PlotBlueprint {
+  parcelId: string;
+  length: number;
+  width: number;
+  blueprintData: {
+    zones: PlotBlueprintZone[];
+    partitions: PlotBlueprintPartition[];
+  };
+}
+
+export const plotMapperAPI = {
+  getByParcel: async (parcelId: string): Promise<PlotBlueprint | null> => {
+    try {
+      const response = await api.get(`/parcels/${parcelId}/blueprint`);
+      return response.data ?? null;
+    } catch {
+      return null;
+    }
+  },
+  save: async (data: {
+    parcelId: string;
+    length: number;
+    width: number;
+    blueprintData: { zones: PlotBlueprintZone[]; partitions: PlotBlueprintPartition[] };
+  }): Promise<PlotBlueprint> => {
+    const response = await api.post(`/parcels/${data.parcelId}/blueprint`, data);
+    return response.data;
+  },
+};
+
 export default api;

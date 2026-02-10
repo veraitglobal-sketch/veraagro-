@@ -42,11 +42,11 @@ export default function PayoutTrackerPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm border border-green-200 p-6"
+            className="bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 rounded-lg shadow-sm border border-[#2D5A27]/30 p-6"
           >
-            <p className="text-sm text-green-700 mb-1">This Week</p>
-            <p className="text-3xl font-bold text-green-900">€{weeklyPayout.currentWeek}</p>
-            <p className="text-sm text-green-600 mt-1">{weeklyPayout.completedDeliveries} deliveries</p>
+            <p className="text-sm text-[#2D5A27] mb-1">This Week</p>
+            <p className="text-3xl font-bold text-[#23471f]">€{weeklyPayout.currentWeek}</p>
+            <p className="text-sm text-[#2D5A27] mt-1">{weeklyPayout.completedDeliveries} deliveries</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -111,7 +111,7 @@ export default function PayoutTrackerPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-gray-900">€{payout.amount}</p>
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                  <span className="px-2 py-1 bg-[#2D5A27]/20 text-[#23471f] text-xs font-medium rounded-full">
                     {payout.status}
                   </span>
                 </div>

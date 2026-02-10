@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, FileText, Package, User, MapPin, Calculator } from 'lucide-react-native';
+import { Home, FileText, Package, User, MapPin, Calculator, Award, ShieldAlert } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -70,6 +70,22 @@ export default function ProducerTabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="certifications"
+        options={{
+          title: 'Sertifikacije',
+          tabBarLabel: 'Sertifikati',
+          tabBarIcon: ({ color, size }) => <Award size={size || 24} color={color} strokeWidth={1} />,
+        }}
+      />
+      <Tabs.Screen
+        name="banned-substances"
+        options={{
+          title: 'Zabranjena sredstva',
+          tabBarLabel: 'Zabranjeno',
+          tabBarIcon: ({ color, size }) => <ShieldAlert size={size || 24} color={color} strokeWidth={1} />,
+        }}
+      />
+      <Tabs.Screen
         name="estates"
         options={{
           title: 'Estates',
@@ -97,9 +113,7 @@ export default function ProducerTabsLayout() {
       />
       <Tabs.Screen
         name="shop"
-        options={{
-          href: null,
-        }}
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="profile"

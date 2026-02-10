@@ -132,9 +132,9 @@ export default function LogisticsHandoverPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-green-50 border border-green-200 rounded-lg"
+            className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg"
           >
-            <p className="text-sm text-green-800">
+            <p className="text-sm text-[#23471f]">
               ✓ Truck temperature verified. Loading can proceed.
             </p>
           </motion.div>
@@ -160,7 +160,7 @@ export default function LogisticsHandoverPage() {
                 value={selectedMission}
                 onChange={(e) => setSelectedMission(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
               >
                 <option value="">-- Select Mission --</option>
                 {missions.map((mission) => (
@@ -186,17 +186,17 @@ export default function LogisticsHandoverPage() {
                 step="0.1"
                 className={`w-full px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:border-transparent ${
                   temperatureStatus === 'valid'
-                    ? 'border-green-500 bg-green-50 focus:ring-green-500'
+                    ? 'border-[#2D5A27] bg-[#2D5A27]/10 focus:ring-[#2D5A27]'
                     : temperatureStatus === 'invalid'
                     ? 'border-red-500 bg-red-50 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-green-500'
+                    : 'border-gray-300 focus:ring-[#2D5A27]'
                 }`}
                 placeholder="e.g., 4.5"
               />
               {truckTemperature && (
                 <div className="mt-2">
                   {temperatureStatus === 'valid' ? (
-                    <p className="text-sm text-green-600 flex items-center gap-2">
+                    <p className="text-sm text-[#2D5A27] flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -226,7 +226,7 @@ export default function LogisticsHandoverPage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 placeholder="Any additional information..."
               />
             </div>
@@ -236,7 +236,7 @@ export default function LogisticsHandoverPage() {
               <button
                 type="submit"
                 disabled={submitting || temperatureStatus !== 'valid'}
-                className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? 'Verifying...' : 'Verify Temperature & Proceed'}
               </button>

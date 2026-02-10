@@ -53,7 +53,7 @@ export default function LoginPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -62,7 +62,7 @@ export default function LoginPage() {
       </header>
 
       {/* Login Section */}
-      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-green-50/30 to-white">
+      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-[#2D5A27]/10 to-white">
         <div className="max-w-md mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -88,7 +88,7 @@ export default function LoginPage() {
                   value={partnerCode}
                   onChange={(e) => setPartnerCode(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                   placeholder="Enter your partner code"
                 />
               </div>
@@ -103,7 +103,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                   placeholder="Enter your password"
                 />
               </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 text-white py-3 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-[#2D5A27] text-white py-3 rounded-lg text-sm font-medium hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -131,13 +131,13 @@ export default function LoginPage() {
               <div className="text-center space-y-3">
                 <Link
                   href="/"
-                  className="block text-sm text-gray-600 hover:text-green-600 transition-colors"
+                  className="block text-sm text-gray-600 hover:text-[#2D5A27] transition-colors"
                 >
                   ← Back to Home
                 </Link>
                 
                 <p className="text-sm text-gray-600">
-                  Don't have an account? <Link href="/register/buyer" className="text-green-600 hover:text-green-700 font-medium">Register</Link>
+                  Don't have an account? <Link href="/register/buyer" className="text-[#2D5A27] hover:text-[#23471f] font-medium">Register</Link>
                 </p>
               </div>
             </div>
@@ -169,23 +169,23 @@ export default function LoginPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-green-600 transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-green-600 transition-colors">For Producers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/login/buyer" className="hover:text-[#2D5A27] transition-colors">For Buyers</Link></li>
+                <li><Link href="/login/producer" className="hover:text-[#2D5A27] transition-colors">For Producers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Terms</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
               </ul>
             </div>
           </div>

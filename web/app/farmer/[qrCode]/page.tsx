@@ -117,7 +117,7 @@ export default function FarmerProfilePage() {
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-green-50 to-green-100/50 flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 flex items-center justify-center">
                   <span className="text-6xl">🌱</span>
                 </div>
               )}

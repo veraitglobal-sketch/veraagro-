@@ -80,7 +80,7 @@ export default function CertificatePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="inline-block w-8 h-8 border-2 border-[#2D5A27] border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600">Loading certificate...</p>
         </div>
       </div>
@@ -135,8 +135,8 @@ export default function CertificatePage() {
                 <p className="text-red-800 font-medium text-sm">⚠️ Compromised</p>
               </div>
             ) : (
-              <div className="bg-green-100 border border-green-300 rounded-lg px-4 py-2">
-                <p className="text-green-800 font-medium text-sm">✓ Verified</p>
+              <div className="bg-[#2D5A27]/20 border border-[#2D5A27]/40 rounded-lg px-4 py-2">
+                <p className="text-[#23471f] font-medium text-sm">✓ Verified</p>
               </div>
             )}
           </div>
@@ -186,7 +186,7 @@ export default function CertificatePage() {
           <h2 className="text-xl font-medium text-gray-900 mb-4">Timeline</h2>
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+              <div className="w-2 h-2 bg-[#2D5A27] rounded-full mt-2"></div>
               <div className="flex-1">
                 <p className="text-sm text-gray-500 mb-1">Harvested</p>
                 <p className="text-gray-900 font-medium">{formatDate(data.timeline.harvested)}</p>
@@ -225,7 +225,7 @@ export default function CertificatePage() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Temperature Range: 2°C - 8°C</span>
               <span className={`text-sm font-medium ${
-                data.coldChainProof.isWithinRange ? 'text-green-600' : 'text-red-600'
+                data.coldChainProof.isWithinRange ? 'text-[#2D5A27]' : 'text-red-600'
               }`}>
                 {data.coldChainProof.isWithinRange ? '✓ Within Range' : '⚠️ Out of Range'}
               </span>
@@ -262,7 +262,7 @@ export default function CertificatePage() {
                     >
                       <div
                         className={`w-full rounded-t ${
-                          isInRange ? 'bg-green-500' : 'bg-red-500'
+                          isInRange ? 'bg-[#2D5A27]' : 'bg-red-500'
                         }`}
                         style={{ height: `${height}%`, minHeight: '4px' }}
                         title={`${point.temperature.toFixed(1)}°C at ${formatTime(point.timestamp)}`}
@@ -301,7 +301,7 @@ export default function CertificatePage() {
               </div>
               <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-green-600 h-2 rounded-full"
+                  className="bg-[#2D5A27] h-2 rounded-full"
                   style={{ width: `${data.sustainability.sustainabilityScore}%` }}
                 ></div>
               </div>

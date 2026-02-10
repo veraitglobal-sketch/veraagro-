@@ -209,7 +209,7 @@ export default function HelpCenterPage() {
               <button
                 onClick={() => setLanguage('en')}
                 className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'en' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  language === 'en' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 EN
@@ -217,7 +217,7 @@ export default function HelpCenterPage() {
               <button
                 onClick={() => setLanguage('sr')}
                 className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'sr' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  language === 'sr' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 SR
@@ -225,7 +225,7 @@ export default function HelpCenterPage() {
               <button
                 onClick={() => setLanguage('de')}
                 className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'de' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  language === 'de' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 DE
@@ -243,7 +243,7 @@ export default function HelpCenterPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
           />
         </div>
 
@@ -257,7 +257,7 @@ export default function HelpCenterPage() {
                   onClick={() => setCategory('buyers')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     category === 'buyers'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -267,7 +267,7 @@ export default function HelpCenterPage() {
                   onClick={() => setCategory('growers')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     category === 'growers'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -277,7 +277,7 @@ export default function HelpCenterPage() {
                   onClick={() => setCategory('drivers')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     category === 'drivers'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -287,7 +287,7 @@ export default function HelpCenterPage() {
                   onClick={() => setCategory('general')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     category === 'general'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -309,27 +309,27 @@ export default function HelpCenterPage() {
                     transition={{ delay: index * 0.1 }}
                     className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-all ${
                       isHighlighted
-                        ? 'border-2 border-green-300 bg-gradient-to-br from-green-50/50 to-white'
+                        ? 'border-2 border-[#2D5A27]/40 bg-gradient-to-br from-[#2D5A27]/10 to-white'
                         : 'border-gray-200'
                     }`}
                   >
                       <div className="flex items-start gap-3">
                         {isHighlighted && (
                           <div className="flex-shrink-0 mt-1">
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg flex items-center justify-center shadow-md">
+                            <div className="w-10 h-10 bg-gradient-to-br from-[#2D5A27] to-[#23471f] rounded-lg flex items-center justify-center shadow-md">
                               <Shield className="w-6 h-6 text-white" />
                             </div>
                           </div>
                         )}
                         <div className="flex-1">
-                          <h3 className={`text-lg font-semibold mb-2 ${isHighlighted ? 'text-green-900' : 'text-gray-900'}`}>
+                          <h3 className={`text-lg font-semibold mb-2 ${isHighlighted ? 'text-[#23471f]' : 'text-gray-900'}`}>
                             {article.title}
                           </h3>
                           <p className={`${isHighlighted ? 'text-gray-700' : 'text-gray-600'}`}>
                             {article.content}
                           </p>
                           {article.link && (
-                            <div className="mt-4 flex items-center gap-2 text-green-600 font-medium text-sm">
+                            <div className="mt-4 flex items-center gap-2 text-[#2D5A27] font-medium text-sm">
                               <span>Learn more</span>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

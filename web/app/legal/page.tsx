@@ -21,7 +21,7 @@ export default function LegalPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -44,7 +44,7 @@ export default function LegalPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <Link 
                   href="/terms"
-                  className="block p-6 border border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50/30 transition-colors"
+                  className="block p-6 border border-gray-200 rounded-lg hover:border-[#2D5A27] hover:bg-[#2D5A27]/10 transition-colors"
                 >
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Terms of Service</h3>
                   <p className="text-sm text-gray-600 font-light">
@@ -54,7 +54,7 @@ export default function LegalPage() {
                 
                 <Link 
                   href="/privacy"
-                  className="block p-6 border border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50/30 transition-colors"
+                  className="block p-6 border border-gray-200 rounded-lg hover:border-[#2D5A27] hover:bg-[#2D5A27]/10 transition-colors"
                 >
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Privacy Policy</h3>
                   <p className="text-sm text-gray-600 font-light">
@@ -64,7 +64,7 @@ export default function LegalPage() {
                 
                 <Link 
                   href="/cookies"
-                  className="block p-6 border border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50/30 transition-colors"
+                  className="block p-6 border border-gray-200 rounded-lg hover:border-[#2D5A27] hover:bg-[#2D5A27]/10 transition-colors"
                 >
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Cookie Policy</h3>
                   <p className="text-sm text-gray-600 font-light">
@@ -99,22 +99,22 @@ export default function LegalPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

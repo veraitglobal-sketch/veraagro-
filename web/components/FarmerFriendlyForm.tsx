@@ -61,8 +61,8 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
 
         {/* Success Message */}
         {success && (
-          <div className="mb-6 p-6 bg-green-100 border-2 border-green-500 rounded-lg text-center">
-            <p className="text-2xl font-bold text-green-800">✓ Uspešno sačuvano!</p>
+          <div className="mb-6 p-6 bg-[#2D5A27]/20 border-2 border-[#2D5A27] rounded-lg text-center">
+            <p className="text-2xl font-bold text-[#23471f]">✓ Uspešno sačuvano!</p>
           </div>
         )}
 
@@ -70,7 +70,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
         <button
           onClick={handleScan}
           disabled={scanning}
-          className="w-full h-24 bg-green-600 text-white text-2xl font-bold rounded-lg shadow-lg hover:bg-green-700 active:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+          className="w-full h-24 bg-[#2D5A27] text-white text-2xl font-bold rounded-lg shadow-lg hover:bg-[#23471f] active:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed mb-6"
         >
           {scanning ? 'Skeniranje...' : '📷 SKENIRAJ BAR-KOD'}
         </button>

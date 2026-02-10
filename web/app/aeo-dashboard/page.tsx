@@ -169,12 +169,12 @@ export default function AeoDashboardPage() {
               value={vehicleId}
               onChange={(e) => setVehicleId(e.target.value)}
               placeholder="Enter Vehicle ID or License Plate"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
             />
             <button
               onClick={fetchVehicleData}
               disabled={loading || !vehicleId}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Loading...' : 'Search'}
             </button>
@@ -219,7 +219,7 @@ export default function AeoDashboardPage() {
               <h2 className="text-xl font-medium text-gray-900 mb-4">Seal Status</h2>
               <div className="flex items-center gap-4">
                 <div className={`w-4 h-4 rounded-full ${
-                  data.sealStatus.isIntact ? 'bg-green-500' : 'bg-red-500'
+                  data.sealStatus.isIntact ? 'bg-[#2D5A27]' : 'bg-red-500'
                 }`}></div>
                 <div>
                   <p className="text-gray-900 font-medium">
@@ -253,7 +253,7 @@ export default function AeoDashboardPage() {
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Compliance</p>
                   <p className={`text-2xl font-light ${
-                    data.summary.allSealsIntact ? 'text-green-600' : 'text-red-600'
+                    data.summary.allSealsIntact ? 'text-[#2D5A27]' : 'text-red-600'
                   }`}>
                     {data.summary.allSealsIntact ? '✓ Compliant' : '✗ Non-Compliant'}
                   </p>
@@ -314,7 +314,7 @@ export default function AeoDashboardPage() {
                                 >
                                   <div
                                     className={`w-full rounded-t ${
-                                      point.isWithinRange ? 'bg-green-500' : 'bg-red-500'
+                                      point.isWithinRange ? 'bg-[#2D5A27]' : 'bg-red-500'
                                     }`}
                                     style={{ height: `${height}%`, minHeight: '4px' }}
                                     title={`${point.temperature.toFixed(1)}°C`}
@@ -346,7 +346,7 @@ export default function AeoDashboardPage() {
                                 </p>
                               </div>
                               <span className={`text-xs px-2 py-1 rounded ${
-                                passport.status === 'VERIFIED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                passport.status === 'VERIFIED' ? 'bg-[#2D5A27]/20 text-[#23471f]' : 'bg-yellow-100 text-yellow-800'
                               }`}>
                                 {passport.status}
                               </span>

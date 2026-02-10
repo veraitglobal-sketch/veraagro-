@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const PENDING_ENTRIES_KEY = 'pending_field_entries';
 const PENDING_PRODUCTS_KEY = 'pending_products';
 const PENDING_COSTS_KEY = 'pending_costs';
+const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
 const WHITELIST_KEY = 'material_whitelist';
 
 export interface PendingFieldEntry {
@@ -37,11 +38,22 @@ export interface PendingProduct {
 /** Trošak unet u kalkulator (preneseni proizvod ili ručni iznos) */
 export interface PendingCost {
   id: string;
-  type: 'product' | 'manual'; // product = prenesen iz Moji proizvodi, manual = korisnik dodao iznos
-  productId?: string; // ako type === 'product', referenca na pending/synced product
-  label: string; // npr. "Gorivo", "Đubrivo", ili naziv proizvoda
+  type: 'product' | 'manual';
+  productId?: string;
+  label: string;
   amount: number;
   currency?: string;
+  timestamp: string;
+  status: 'pending' | 'syncing' | 'synced' | 'error';
+  error?: string;
+}
+
+/** Fotografija sertifikata – čeka slanje na server */
+export interface PendingCertificatePhoto {
+  id: string;
+  certificateId: string; // id obaveznog sertifikata (iz admin liste)
+  certificateTitle: string;
+  photoUri: string;
   timestamp: string;
   status: 'pending' | 'syncing' | 'synced' | 'error';
   error?: string;
@@ -224,6 +236,60 @@ export const offlineStorage = {
       }
     } catch (e) {
       console.error('Error updating cost status:', e);
+    }
+  },
+
+  // --- Pending certificate photos (Sertifikacije) ---
+  async getPendingCertificatePhotos(): Promise<PendingCertificatePhoto[]> {
+    try {
+      const data = await AsyncStorage.getItem(PENDING_CERTIFICATE_PHOTOS_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error getting pending certificate photos:', error);
+      return [];
+    }
+  },
+
+  async savePendingCertificatePhoto(entry: Omit<PendingCertificatePhoto, 'id' | 'timestamp' | 'status'>): Promise<string> {
+    try {
+      const list = await this.getPendingCertificatePhotos();
+      const newEntry: PendingCertificatePhoto = {
+        ...entry,
+        id: `cert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: new Date().toISOString(),
+        status: 'pending',
+      };
+      list.push(newEntry);
+      await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
+      return newEntry.id;
+    } catch (error) {
+      console.error('Error saving pending certificate photo:', error);
+      throw error;
+    }
+  },
+
+  async removeCertificatePhoto(id: string): Promise<void> {
+    try {
+      const list = await this.getPendingCertificatePhotos();
+      const filtered = list.filter((p) => p.id !== id);
+      await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error removing certificate photo:', error);
+      throw error;
+    }
+  },
+
+  async updateCertificatePhotoStatus(id: string, status: PendingCertificatePhoto['status'], error?: string): Promise<void> {
+    try {
+      const list = await this.getPendingCertificatePhotos();
+      const item = list.find((p) => p.id === id);
+      if (item) {
+        item.status = status;
+        if (error) item.error = error;
+        await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
+      }
+    } catch (e) {
+      console.error('Error updating certificate photo status:', e);
     }
   },
 };

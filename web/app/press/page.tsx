@@ -83,7 +83,7 @@ export default function PressPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -116,24 +116,24 @@ export default function PressPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-green-50/30 border border-green-200 rounded-lg p-8"
+              className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg p-8"
             >
               <h2 className="text-2xl font-light text-gray-900 mb-6">Media Contact</h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <Mail className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                  <Mail className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 mb-1">Press Inquiries</h3>
                     <a 
                       href="mailto:press@biovera.app" 
-                      className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors"
+                      className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
                     >
                       press@biovera.app
                     </a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <User className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                  <User className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 mb-1">Media Relations</h3>
                     <p className="text-sm text-gray-600 font-light">
@@ -158,7 +158,7 @@ export default function PressPage() {
                 {pressReleases.map((release, index) => (
                   <div
                     key={release.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors"
+                    className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors"
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex-1">
@@ -175,7 +175,7 @@ export default function PressPage() {
                     {release.link && (
                       <Link
                         href={release.link}
-                        className="inline-flex items-center gap-2 text-sm text-green-600 hover:text-green-700 transition-colors mt-4"
+                        className="inline-flex items-center gap-2 text-sm text-[#2D5A27] hover:text-[#23471f] transition-colors mt-4"
                       >
                         <FileText className="w-4 h-4" />
                         Read Full Release
@@ -197,7 +197,7 @@ export default function PressPage() {
             >
               <h2 className="text-2xl font-light text-gray-900 mb-6">Company Information</h2>
               <div className="space-y-4">
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-base font-medium text-gray-900 mb-2">About Bio Vera</h3>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
                     Bio Vera is a vertically integrated agrotech platform that connects agricultural producers 
@@ -206,7 +206,7 @@ export default function PressPage() {
                     in Hamburg, Germany, and serves producers and buyers around the world.
                   </p>
                 </div>
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-base font-medium text-gray-900 mb-2">Key Facts</h3>
                   <ul className="space-y-2 text-sm text-gray-600 font-light">
                     <li>• Founded: 2026</li>
@@ -237,7 +237,7 @@ export default function PressPage() {
                       {category.items.map((item, itemIndex) => (
                         <div
                           key={itemIndex}
-                          className="border border-gray-200 rounded-lg p-4 hover:border-green-600 transition-colors"
+                          className="border border-gray-200 rounded-lg p-4 hover:border-[#2D5A27] transition-colors"
                         >
                           <div className="flex items-start justify-between gap-4 mb-2">
                             <div className="flex-1">
@@ -248,7 +248,7 @@ export default function PressPage() {
                               {item.format}
                             </span>
                           </div>
-                          <button className="mt-3 flex items-center gap-2 text-xs text-green-600 hover:text-green-700 transition-colors">
+                          <button className="mt-3 flex items-center gap-2 text-xs text-[#2D5A27] hover:text-[#23471f] transition-colors">
                             <Download className="w-3 h-3" />
                             Download
                           </button>
@@ -286,7 +286,7 @@ export default function PressPage() {
                 </p>
                 <p>
                   • For commercial use or licensing inquiries, please contact{' '}
-                  <a href="mailto:press@biovera.app" className="text-green-600 hover:underline">
+                  <a href="mailto:press@biovera.app" className="text-[#2D5A27] hover:underline">
                     press@biovera.app
                   </a>.
                 </p>
@@ -308,7 +308,7 @@ export default function PressPage() {
             </p>
             <Link
               href="/contact?subject=Press Inquiry"
-              className="inline-block px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+              className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
               Contact Press Team
             </Link>
@@ -338,34 +338,34 @@ export default function PressPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/faq" className="hover:text-green-600 transition-colors">FAQ</Link></li>
-                <li><Link href="/help-center" className="hover:text-green-600 transition-colors">Help Center</Link></li>
-                <li><Link href="/security" className="hover:text-green-600 transition-colors">Security</Link></li>
+                <li><Link href="/faq" className="hover:text-[#2D5A27] transition-colors">FAQ</Link></li>
+                <li><Link href="/help-center" className="hover:text-[#2D5A27] transition-colors">Help Center</Link></li>
+                <li><Link href="/security" className="hover:text-[#2D5A27] transition-colors">Security</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

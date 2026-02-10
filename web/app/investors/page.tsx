@@ -45,11 +45,11 @@ export default function InvestorsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm border border-green-200 p-6"
+            className="bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 rounded-lg shadow-sm border border-[#2D5A27]/30 p-6"
           >
-            <p className="text-sm text-green-700 mb-2">Waste Reduction</p>
-            <p className="text-3xl font-bold text-green-900">{impactData.wasteReduction.toLocaleString()}</p>
-            <p className="text-sm text-green-600 mt-1">tons saved</p>
+            <p className="text-sm text-[#2D5A27] mb-2">Waste Reduction</p>
+            <p className="text-3xl font-bold text-[#23471f]">{impactData.wasteReduction.toLocaleString()}</p>
+            <p className="text-sm text-[#2D5A27] mt-1">tons saved</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -137,22 +137,22 @@ export default function InvestorsPage() {
             <div>
               <p className="text-sm text-gray-500 mb-2">Average Delivery Time</p>
               <p className="text-2xl font-semibold text-gray-900">14.2 hours</p>
-              <p className="text-xs text-green-600 mt-1">↓ 23% improvement</p>
+              <p className="text-xs text-[#2D5A27] mt-1">↓ 23% improvement</p>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-2">Customer Satisfaction</p>
               <p className="text-2xl font-semibold text-gray-900">4.8/5.0</p>
-              <p className="text-xs text-green-600 mt-1">↑ 0.3 points</p>
+              <p className="text-xs text-[#2D5A27] mt-1">↑ 0.3 points</p>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-2">Cold Chain Compliance</p>
               <p className="text-2xl font-semibold text-gray-900">98.5%</p>
-              <p className="text-xs text-green-600 mt-1">↑ 2.1% improvement</p>
+              <p className="text-xs text-[#2D5A27] mt-1">↑ 2.1% improvement</p>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-2">Revenue Growth (YoY)</p>
               <p className="text-2xl font-semibold text-gray-900">+142%</p>
-              <p className="text-xs text-green-600 mt-1">↑ €65K increase</p>
+              <p className="text-xs text-[#2D5A27] mt-1">↑ €65K increase</p>
             </div>
           </div>
         </motion.div>

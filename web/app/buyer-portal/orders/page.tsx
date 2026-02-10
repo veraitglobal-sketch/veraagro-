@@ -42,9 +42,9 @@ export default function OrdersPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'border-green-200/50 text-green-600/80';
+        return 'border-[#2D5A27]/30 text-[#2D5A27]/80';
       case 'DELIVERED':
-        return 'border-green-200/50 text-green-600/80';
+        return 'border-[#2D5A27]/30 text-[#2D5A27]/80';
       case 'IN_TRANSIT':
         return 'border-yellow-200/50 text-yellow-600/80';
       case 'PENDING':
@@ -60,7 +60,7 @@ export default function OrdersPage() {
     switch (status) {
       case 'COMPLETED':
       case 'DELIVERED':
-        return <CheckCircle className="w-4 h-4 text-green-600/60" strokeWidth={1} />;
+        return <CheckCircle className="w-4 h-4 text-[#2D5A27]/60" strokeWidth={1} />;
       case 'IN_TRANSIT':
         return <Truck className="w-4 h-4 text-yellow-600/60" strokeWidth={1} />;
       case 'PENDING':
@@ -120,10 +120,10 @@ export default function OrdersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               href="/pre-order-2026"
-              className="flex items-center gap-4 p-4 rounded-lg border border-green-200 bg-green-50/50 hover:bg-green-50 hover:border-green-300 transition-colors"
+              className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 hover:bg-[#2D5A27]/10 hover:border-[#2D5A27]/40 transition-colors"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/10">
-                <FileText className="h-6 w-6 text-green-600" strokeWidth={1.5} />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2D5A27]/10">
+                <FileText className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="font-medium text-gray-900">Pre-order 2026</p>
@@ -145,7 +145,7 @@ export default function OrdersPage() {
           </div>
 
           {/* My orders */}
-          <div className="border-b border-green-200/50 pb-6">
+          <div className="border-b border-[#2D5A27]/30 pb-6">
             <div>
               <h2 className="text-xl font-light text-gray-900">My orders</h2>
               <p className="text-sm text-gray-600 mt-1 font-light">View and track your orders</p>
@@ -153,7 +153,7 @@ export default function OrdersPage() {
           </div>
 
           {/* Search and Filters */}
-          <div className="border-b border-green-200/50 pb-6">
+          <div className="border-b border-[#2D5A27]/30 pb-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" strokeWidth={1} />
@@ -162,14 +162,14 @@ export default function OrdersPage() {
                   placeholder="Search orders by number, product, or supplier..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-2 pl-10 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
+                  className="w-full px-4 py-2 pl-10 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                 />
               </div>
               <div className="flex items-center gap-2">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
+                  className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                 >
                   <option value="all">All Status</option>
                   <option value="PENDING">Pending</option>
@@ -180,7 +180,7 @@ export default function OrdersPage() {
                 </select>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 border border-gray-300 text-sm font-light hover:border-[#2D5A27]/30 transition-colors flex items-center gap-2"
                 >
                   <Filter className="w-4 h-4" strokeWidth={1} />
                   Filters
@@ -196,7 +196,7 @@ export default function OrdersPage() {
                     type="date"
                     value={dateFilter.start}
                     onChange={(e) => setDateFilter({ ...dateFilter, start: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
+                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                   />
                 </div>
                 <div>
@@ -205,7 +205,7 @@ export default function OrdersPage() {
                     type="date"
                     value={dateFilter.end}
                     onChange={(e) => setDateFilter({ ...dateFilter, end: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
+                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                   />
                 </div>
                 <div>
@@ -213,7 +213,7 @@ export default function OrdersPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
+                    className="w-full px-3 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                   >
                     <option value="date">Date</option>
                     <option value="amount">Amount</option>
@@ -227,7 +227,7 @@ export default function OrdersPage() {
                       setStatusFilter('all');
                       setSearchTerm('');
                     }}
-                    className="w-full px-4 py-2 text-sm text-gray-700 hover:text-gray-900 font-light border border-gray-300 hover:border-green-200/50 transition-colors"
+                    className="w-full px-4 py-2 text-sm text-gray-700 hover:text-gray-900 font-light border border-gray-300 hover:border-[#2D5A27]/30 transition-colors"
                   >
                     Clear Filters
                   </button>
@@ -247,7 +247,7 @@ export default function OrdersPage() {
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
                 <p className="mt-4 text-gray-600">Loading orders...</p>
               </div>
             </div>
@@ -256,12 +256,12 @@ export default function OrdersPage() {
               {filteredOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="border-b border-green-200/50 pb-6 hover:border-green-300/50 transition-colors"
+                  className="border-b border-[#2D5A27]/30 pb-6 hover:border-[#2D5A27]/40 transition-colors"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <ShoppingCart className="w-5 h-5 text-green-600/60" strokeWidth={1} />
+                        <ShoppingCart className="w-5 h-5 text-[#2D5A27]/60" strokeWidth={1} />
                         <h3 className="text-lg font-light text-gray-900">
                           {order.orderNumber || `Order #${order.id.slice(0, 8)}`}
                         </h3>
@@ -277,7 +277,7 @@ export default function OrdersPage() {
                       </span>
                       <button
                         onClick={() => loadOrderDetails(order.id)}
-                        className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
+                        className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-[#2D5A27]/30 transition-colors flex items-center gap-1"
                       >
                         <Eye className="w-4 h-4" strokeWidth={1} />
                         Details
@@ -303,7 +303,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-gray-600 font-light">Total:</span>
-                      <span className="font-light text-green-600/80">
+                      <span className="font-light text-[#2D5A27]/80">
                         €{order.totalAmount?.toFixed(2) || '0.00'}
                       </span>
                     </div>
@@ -333,7 +333,7 @@ export default function OrdersPage() {
           )}
 
           {!loading && filteredOrders.length === 0 && (
-            <div className="text-center py-12 border-b border-green-200/50">
+            <div className="text-center py-12 border-b border-[#2D5A27]/30">
               <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={1} />
               <p className="text-gray-500 font-light">No orders found</p>
               <p className="text-sm text-gray-400 mt-2 font-light">
@@ -371,7 +371,7 @@ export default function OrdersPage() {
                     <h3 className="text-sm font-light text-gray-500 mb-4">Order Status</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm">
-                        <div className="w-2 h-2 bg-green-600/60 rounded-full"></div>
+                        <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>
                         <div className="flex-1">
                           <p className="font-light text-gray-900">Order Created</p>
                           <p className="text-xs text-gray-500 font-light">
@@ -416,7 +416,7 @@ export default function OrdersPage() {
                           )}
                           {selectedOrder.delivery.deliveredAt && (
                             <div className="flex items-center gap-3 text-sm">
-                              <div className="w-2 h-2 bg-green-600/60 rounded-full"></div>
+                              <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>
                               <div className="flex-1">
                                 <p className="font-light text-gray-900">Delivered</p>
                                 <p className="text-xs text-gray-500 font-light">
@@ -455,7 +455,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="flex justify-between pt-2 border-t border-gray-200/50">
                           <span className="text-gray-600 font-light">Total Amount:</span>
-                          <span className="font-light text-green-600/80">
+                          <span className="font-light text-[#2D5A27]/80">
                             €{selectedOrder.totalAmount?.toFixed(2) || '0.00'}
                           </span>
                         </div>
@@ -537,7 +537,7 @@ export default function OrdersPage() {
                           setSelectedOrder(null);
                           window.location.href = '/buyer-portal/deliveries';
                         }}
-                        className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-light hover:border-green-200/50 transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-light hover:border-[#2D5A27]/30 transition-colors flex items-center justify-center gap-2"
                       >
                         <Truck className="w-4 h-4" strokeWidth={1} />
                         View Delivery Details
@@ -545,7 +545,7 @@ export default function OrdersPage() {
                     )}
                     <button
                       onClick={() => setSelectedOrder(null)}
-                      className="px-4 py-3 border border-gray-300 text-gray-700 text-sm font-light hover:border-green-200/50 transition-colors"
+                      className="px-4 py-3 border border-gray-300 text-gray-700 text-sm font-light hover:border-[#2D5A27]/30 transition-colors"
                     >
                       Close
                     </button>

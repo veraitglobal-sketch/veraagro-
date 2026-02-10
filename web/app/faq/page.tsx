@@ -129,7 +129,7 @@ export default function FAQPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -164,7 +164,7 @@ export default function FAQPage() {
                 placeholder="Search questions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none font-light"
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none font-light"
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function FAQPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   selectedCategory === category.id
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-[#2D5A27] text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -242,7 +242,7 @@ export default function FAQPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-block px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+              className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
               Contact Support
             </Link>
@@ -272,26 +272,26 @@ export default function FAQPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

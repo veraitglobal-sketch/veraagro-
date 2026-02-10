@@ -21,7 +21,7 @@ export default function CookiesPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -218,9 +218,9 @@ export default function CookiesPage() {
                 You can use industry opt-out tools to manage cookies from specific service providers:
               </p>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
-                <li><strong>Your Online Choices:</strong> <a href="http://www.youronlinechoices.com" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">www.youronlinechoices.com</a> (for EU users)</li>
-                <li><strong>Network Advertising Initiative:</strong> <a href="http://www.networkadvertising.org" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">www.networkadvertising.org</a></li>
-                <li><strong>Digital Advertising Alliance:</strong> <a href="http://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">www.aboutads.info</a></li>
+                <li><strong>Your Online Choices:</strong> <a href="http://www.youronlinechoices.com" target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] hover:underline">www.youronlinechoices.com</a> (for EU users)</li>
+                <li><strong>Network Advertising Initiative:</strong> <a href="http://www.networkadvertising.org" target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] hover:underline">www.networkadvertising.org</a></li>
+                <li><strong>Digital Advertising Alliance:</strong> <a href="http://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] hover:underline">www.aboutads.info</a></li>
               </ul>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">5.4. Mobile Device Settings</h3>
@@ -294,7 +294,7 @@ export default function CookiesPage() {
                 If you have any questions, concerns, or requests regarding this Cookie Policy or our use of cookies, please contact us at:
                 <br />
                 <strong>Bio Vera</strong><br />
-                Email: <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline">privacy@biovera.app</a>
+                Email: <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline">privacy@biovera.app</a>
               </p>
             </section>
           </div>
@@ -323,22 +323,22 @@ export default function CookiesPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

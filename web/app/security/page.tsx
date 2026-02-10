@@ -23,7 +23,7 @@ export default function SecurityPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -42,8 +42,8 @@ export default function SecurityPage() {
             className="text-center mb-16"
           >
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
-                <Shield className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-[#2D5A27]/10 rounded-full flex items-center justify-center">
+                <Shield className="w-8 h-8 text-[#2D5A27]" />
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
@@ -98,11 +98,11 @@ export default function SecurityPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors"
+                    className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                        <IconComponent className="w-6 h-6 text-green-600" />
+                      <div className="flex-shrink-0 w-12 h-12 bg-[#2D5A27]/10 rounded-lg flex items-center justify-center">
+                        <IconComponent className="w-6 h-6 text-[#2D5A27]" />
                       </div>
                       <div>
                         <h3 className="text-lg font-medium text-gray-900 mb-2">{item.title}</h3>
@@ -124,12 +124,12 @@ export default function SecurityPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-green-50/30 border border-green-200 rounded-lg p-8"
+              className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg p-8"
             >
               <h2 className="text-2xl font-light text-gray-900 mb-6">Compliance & Certifications</h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-base font-medium text-gray-900 mb-1">GDPR Compliance</h3>
                     <p className="text-sm text-gray-600 font-light leading-relaxed">
@@ -140,7 +140,7 @@ export default function SecurityPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-base font-medium text-gray-900 mb-1">EU Market Standards</h3>
                     <p className="text-sm text-gray-600 font-light leading-relaxed">
@@ -150,7 +150,7 @@ export default function SecurityPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-base font-medium text-gray-900 mb-1">ISO Standards</h3>
                     <p className="text-sm text-gray-600 font-light leading-relaxed">
@@ -167,26 +167,26 @@ export default function SecurityPage() {
           <section className="mb-16">
             <h2 className="text-2xl font-light text-gray-900 mb-6">Data Protection</h2>
             <div className="space-y-4">
-              <div className="border-l-2 border-green-600 pl-6">
+              <div className="border-l-2 border-[#2D5A27] pl-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">What We Protect</h3>
                 <p className="text-sm text-gray-600 font-light leading-relaxed mb-4">
                   We protect all personal data, transaction information, financial data, location data, and 
                   any other sensitive information you entrust to us.
                 </p>
               </div>
-              <div className="border-l-2 border-green-600 pl-6">
+              <div className="border-l-2 border-[#2D5A27] pl-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">How We Protect It</h3>
                 <p className="text-sm text-gray-600 font-light leading-relaxed mb-4">
                   Through encryption, access controls, secure infrastructure, regular audits, and comprehensive 
                   monitoring. We never sell your data and only share it as described in our Privacy Policy.
                 </p>
               </div>
-              <div className="border-l-2 border-green-600 pl-6">
+              <div className="border-l-2 border-[#2D5A27] pl-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Your Rights</h3>
                 <p className="text-sm text-gray-600 font-light leading-relaxed">
                   You have the right to access, correct, delete, or port your data. You can also object to processing 
                   or request restriction. Learn more in our{' '}
-                  <Link href="/privacy" className="text-green-600 hover:underline">
+                  <Link href="/privacy" className="text-[#2D5A27] hover:underline">
                     Privacy Policy
                   </Link>.
                 </p>
@@ -210,7 +210,7 @@ export default function SecurityPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-block px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+              className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
               Contact Security Team
             </Link>
@@ -240,26 +240,26 @@ export default function SecurityPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

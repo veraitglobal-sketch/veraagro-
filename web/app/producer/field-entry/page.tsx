@@ -44,7 +44,7 @@ export default function FieldEntryPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Konekcija:</span>
-                  <span className={`px-2 py-1 rounded text-xs ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  <span className={`px-2 py-1 rounded text-xs ${isOnline ? 'bg-[#2D5A27]/20 text-[#23471f]' : 'bg-red-100 text-red-800'}`}>
                     {isOnline ? 'Online' : 'Offline'}
                   </span>
                 </div>
@@ -80,7 +80,7 @@ export default function FieldEntryPage() {
                         <span className="font-medium">
                           {entry.type === 'SETVA' ? '🌱 Setva' : entry.type === 'PRSKANJE' ? '💧 Prskanje' : '🌾 Berba'}
                         </span>
-                        <span className={`text-xs ${entry.synced ? 'text-green-600' : 'text-yellow-600'}`}>
+                        <span className={`text-xs ${entry.synced ? 'text-[#2D5A27]' : 'text-yellow-600'}`}>
                           {entry.synced ? '✓' : '⏳'}
                         </span>
                       </div>

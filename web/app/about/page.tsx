@@ -23,7 +23,7 @@ export default function AboutPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -56,10 +56,10 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-green-50/30 border border-green-200 rounded-lg p-8 mb-8"
+              className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg p-8 mb-8"
             >
               <div className="flex items-start gap-4 mb-6">
-                <Target className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
+                <Target className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Mission</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
@@ -86,7 +86,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <div className="flex items-start gap-4 mb-6">
-                <Globe className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
+                <Globe className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Vision</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
@@ -143,9 +143,9 @@ export default function AboutPage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                      className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors"
+                      className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors"
                     >
-                      <IconComponent className="w-6 h-6 text-green-600 mb-4" />
+                      <IconComponent className="w-6 h-6 text-[#2D5A27] mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">{value.title}</h3>
                       <p className="text-sm text-gray-600 font-light leading-relaxed">
                         {value.description}
@@ -167,28 +167,28 @@ export default function AboutPage() {
             >
               <h2 className="text-2xl font-light text-gray-900 mb-6">What We Do</h2>
               <div className="space-y-4">
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Complete Traceability</h3>
                   <p className="text-gray-600 font-light leading-relaxed">
                     Every product gets a digital passport with immutable proof of origin, journey, and quality. 
                     QR codes on every box connect consumers directly to the farmer who grew their food.
                   </p>
                 </div>
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Quality Assurance</h3>
                   <p className="text-gray-600 font-light leading-relaxed">
                     Our Protocol 360 system ensures three-tier quality control: field-level soil analysis, 
                     biometric scanning at packaging, and cold chain monitoring during transport.
                   </p>
                 </div>
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Direct Market Access</h3>
                   <p className="text-gray-600 font-light leading-relaxed">
                     We eliminate intermediaries, connecting producers directly with buyers. This means better 
                     prices for farmers and guaranteed freshness for consumers.
                   </p>
                 </div>
-                <div className="border-l-2 border-green-600 pl-6">
+                <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">EU Compliance</h3>
                   <p className="text-gray-600 font-light leading-relaxed">
                     Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, 
@@ -215,13 +215,13 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/growers"
-                className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+                className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 Become a Producer
               </Link>
               <Link
                 href="/contact"
-                className="px-6 py-3 border border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors rounded-lg"
+                className="px-6 py-3 border border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/10 transition-colors rounded-lg"
               >
                 Contact Us
               </Link>
@@ -252,26 +252,26 @@ export default function AboutPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

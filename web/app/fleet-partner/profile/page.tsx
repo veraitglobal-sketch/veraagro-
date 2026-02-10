@@ -58,7 +58,7 @@ export default function CompanyProfilePage() {
                   type="text"
                   value={companyInfo.name}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.name}</p>
@@ -71,7 +71,7 @@ export default function CompanyProfilePage() {
                   type="text"
                   value={companyInfo.contactPerson}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, contactPerson: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.contactPerson}</p>
@@ -84,7 +84,7 @@ export default function CompanyProfilePage() {
                   type="email"
                   value={companyInfo.email}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.email}</p>
@@ -97,7 +97,7 @@ export default function CompanyProfilePage() {
                   type="tel"
                   value={companyInfo.phone}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.phone}</p>
@@ -110,7 +110,7 @@ export default function CompanyProfilePage() {
                   type="text"
                   value={companyInfo.address}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.address}</p>
@@ -123,7 +123,7 @@ export default function CompanyProfilePage() {
                   type="text"
                   value={companyInfo.taxId}
                   onChange={(e) => setCompanyInfo({ ...companyInfo, taxId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 />
               ) : (
                 <p className="text-gray-900">{companyInfo.taxId}</p>
@@ -141,7 +141,7 @@ export default function CompanyProfilePage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Fleet Registration</h2>
-            <button className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+            <button className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors">
               Add Vehicle
             </button>
           </div>
@@ -159,7 +159,7 @@ export default function CompanyProfilePage() {
                 </div>
                 <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                   vehicle.status === 'Active'
-                    ? 'bg-green-100 text-green-800'
+                    ? 'bg-[#2D5A27]/20 text-[#23471f]'
                     : 'bg-gray-100 text-gray-800'
                 }`}>
                   {vehicle.status}

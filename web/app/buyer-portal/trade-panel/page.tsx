@@ -759,7 +759,7 @@ export default function TradePanelPage() {
                               <div className="space-y-2">
                                 {productDetails.passport.timeline.map((stage: any, idx: number) => (
                                   <div key={idx} className="flex items-center gap-3 text-sm">
-                                    <div className="w-2 h-2 bg-green-600/60 rounded-full" />
+                                    <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full" />
                                     <span>{stage.stage}</span>
                                     {stage.date && <span className="text-gray-500">{new Date(stage.date).toLocaleDateString()}</span>}
                                   </div>
@@ -775,7 +775,7 @@ export default function TradePanelPage() {
                                 href={`/passport/${productDetails.batchId}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 hover:text-green-800"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2D5A27] hover:text-[#23471f]"
                               >
                                 View full passport (product, photos, producer)
                               </Link>
@@ -806,7 +806,7 @@ export default function TradePanelPage() {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <button className="flex-1 px-4 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg">
+                    <button className="flex-1 px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg">
                       Add to Cart
                     </button>
                     <button className="px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:border-[#2D5A27]/20 transition-colors rounded-lg">
@@ -825,7 +825,7 @@ export default function TradePanelPage() {
                           </span>
                         )}
                         {productDetails.certifications?.bio && (
-                          <span className="px-3 py-1 bg-[#2D5A27]/10 text-green-700 rounded-lg text-xs font-medium flex items-center gap-1">
+                          <span className="px-3 py-1 bg-[#2D5A27]/10 text-[#2D5A27] rounded-lg text-xs font-medium flex items-center gap-1">
                             <Leaf className="w-4 h-4" /> Bio
                           </span>
                         )}
@@ -869,7 +869,7 @@ export default function TradePanelPage() {
                       </div>
                       <div className="space-y-3 max-h-96 overflow-y-auto">
                         {productDetails.partners.map((partner: any, index: number) => (
-                          <div key={index} className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors">
+                          <div key={index} className="border border-gray-200 rounded-lg p-4 hover:border-[#2D5A27]/40 transition-colors">
                             <div className="flex items-start justify-between mb-2">
                               <div>
                                 <h4 className="font-semibold text-gray-900">{partner.estate?.name || 'Unknown Estate'}</h4>
@@ -986,7 +986,7 @@ export default function TradePanelPage() {
                   {forecast.forecast.slice(0, 8).map((item: any, index: number) => (
                     <div
                       key={index}
-                      className="p-4 border border-gray-200 rounded-lg hover:border-green-500 transition-colors"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-[#2D5A27] transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <p className="font-semibold text-gray-900">{item.productName}</p>
@@ -1032,7 +1032,7 @@ export default function TradePanelPage() {
                   onChange={(e) =>
                     setPreOrderData({ ...preOrderData, productName: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
                 >
                   <option value="">Select product</option>
                   {categories.map((cat: any) => (
@@ -1060,7 +1060,7 @@ export default function TradePanelPage() {
                   onChange={(e) =>
                     setPreOrderData({ ...preOrderData, quantity: parseFloat(e.target.value) })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
                   placeholder="Enter quantity"
                 />
               </div>
@@ -1075,7 +1075,7 @@ export default function TradePanelPage() {
                   onChange={(e) =>
                     setPreOrderData({ ...preOrderData, requestedDeliveryDate: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
                 />
               </div>
 
@@ -1087,7 +1087,7 @@ export default function TradePanelPage() {
                   onChange={(e) =>
                     setPreOrderData({ ...preOrderData, lockPrice: e.target.checked })
                   }
-                  className="w-4 h-4 text-[#2D5A27] border-gray-300 rounded focus:ring-green-500"
+                  className="w-4 h-4 text-[#2D5A27] border-gray-300 rounded focus:ring-[#2D5A27]"
                 />
                 <label htmlFor="lockPrice" className="text-sm font-medium text-gray-700">
                   Lock current price (better rate)
@@ -1098,7 +1098,7 @@ export default function TradePanelPage() {
             <button
               onClick={handlePreOrder}
               disabled={!preOrderData.productName || !preOrderData.quantity || !preOrderData.requestedDeliveryDate}
-              className="mt-4 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 w-full px-4 py-3 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create Pre-Order {preOrderData.lockPrice && '& Lock Price'}
             </button>

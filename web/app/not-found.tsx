@@ -30,7 +30,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
             Go to Homepage
@@ -46,7 +46,7 @@ export default function NotFound() {
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            Need help? <Link href="/contact" className="text-green-600 hover:text-green-700">Contact us</Link>
+            Need help? <Link href="/contact" className="text-[#2D5A27] hover:text-[#23471f]">Contact us</Link>
           </p>
         </div>
       </div>

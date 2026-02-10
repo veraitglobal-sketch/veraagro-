@@ -21,7 +21,7 @@ export default function PrivacyPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -240,7 +240,7 @@ export default function PrivacyPage() {
               <p className="text-gray-600 font-light leading-relaxed">
                 You have the right to obtain confirmation as to whether we process your personal data and to access your personal data, 
                 including copies of the data we hold about you. You may request this information by contacting us at 
-                <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline"> privacy@biovera.app</a>.
+                <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline"> privacy@biovera.app</a>.
               </p>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">6.2. Right to Rectification</h3>
@@ -290,7 +290,7 @@ export default function PrivacyPage() {
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">6.9. Exercising Your Rights</h3>
               <p className="text-gray-600 font-light leading-relaxed">
                 To exercise any of these rights, please contact us at 
-                <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline"> privacy@biovera.app</a>. We will respond 
+                <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline"> privacy@biovera.app</a>. We will respond 
                 to your request within one month (or two months for complex requests). We may require verification of your identity before 
                 processing your request. In some cases, we may charge a reasonable fee if your request is manifestly unfounded or excessive.
               </p>
@@ -327,7 +327,7 @@ export default function PrivacyPage() {
                 If we become aware that we have collected personal information from a child under 18 without verifiable parental consent, 
                 we will take steps to delete such information immediately. If you believe we have collected information from a child under 18, 
                 please contact us immediately at 
-                <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline"> privacy@biovera.app</a>.
+                <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline"> privacy@biovera.app</a>.
               </p>
             </section>
 
@@ -393,7 +393,7 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
                 <li>Clicking the "unsubscribe" link in any marketing email</li>
                 <li>Updating your communication preferences in your account settings</li>
-                <li>Contacting us at <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline">privacy@biovera.app</a></li>
+                <li>Contacting us at <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline">privacy@biovera.app</a></li>
               </ul>
               <p className="text-gray-600 font-light leading-relaxed mt-4">
                 Please note that even if you opt-out of marketing communications, we may still send you service-related communications, 
@@ -425,8 +425,8 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-600 font-light leading-relaxed mb-2">
                 <strong>Bio Vera</strong><br />
-                Email: <a href="mailto:privacy@biovera.app" className="text-green-600 hover:underline">privacy@biovera.app</a><br />
-                Legal: <a href="mailto:legal@biovera.app" className="text-green-600 hover:underline">legal@biovera.app</a>
+                Email: <a href="mailto:privacy@biovera.app" className="text-[#2D5A27] hover:underline">privacy@biovera.app</a><br />
+                Legal: <a href="mailto:legal@biovera.app" className="text-[#2D5A27] hover:underline">legal@biovera.app</a>
               </p>
               <p className="text-gray-600 font-light leading-relaxed mt-4">
                 For users in the EEA, you also have the right to contact your local data protection authority if you have concerns about 
@@ -459,22 +459,22 @@ export default function PrivacyPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

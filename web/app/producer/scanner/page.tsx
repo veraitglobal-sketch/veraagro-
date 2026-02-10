@@ -18,7 +18,7 @@ export default function ScannerPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27]"></div>
       </div>
     );
   }
@@ -64,11 +64,11 @@ export default function ScannerPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-green-600">
+            <Link href="/" className="text-2xl font-bold text-[#2D5A27]">
               🌱 Bio Vera
             </Link>
             <nav className="flex gap-4">
-              <Link href="/producer/dashboard" className="px-4 py-2 text-gray-700 hover:text-green-600">
+              <Link href="/producer/dashboard" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
                 Dashboard
               </Link>
             </nav>
@@ -89,7 +89,7 @@ export default function ScannerPage() {
                 type="text"
                 value={serialNumber}
                 onChange={(e) => setSerialNumber(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 placeholder="Skeniraj ili unesi QR kod"
               />
             </div>
@@ -102,7 +102,7 @@ export default function ScannerPage() {
                 type="text"
                 value={parcelId}
                 onChange={(e) => setParcelId(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 placeholder="ID parcele"
               />
             </div>
@@ -114,7 +114,7 @@ export default function ScannerPage() {
             )}
 
             {result && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+              <div className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 text-[#2D5A27] px-4 py-3 rounded-lg">
                 <p className="font-semibold mb-2">Uspešno skenirano!</p>
                 <pre className="text-sm overflow-auto">{JSON.stringify(result, null, 2)}</pre>
               </div>
@@ -123,7 +123,7 @@ export default function ScannerPage() {
             <button
               onClick={handleScan}
               disabled={loading}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-[#2D5A27] text-white py-3 rounded-lg font-semibold hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Skeniranje...' : 'Skeniraj QR Kod'}
             </button>

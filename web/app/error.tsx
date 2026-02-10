@@ -48,7 +48,7 @@ export default function Error({
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={reset}
-            className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             Try Again
@@ -64,7 +64,7 @@ export default function Error({
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            If the problem persists, please <Link href="/contact" className="text-green-600 hover:text-green-700">contact our support team</Link>
+            If the problem persists, please <Link href="/contact" className="text-[#2D5A27] hover:text-[#23471f]">contact our support team</Link>
           </p>
         </div>
       </div>

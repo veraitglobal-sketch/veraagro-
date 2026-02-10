@@ -151,10 +151,10 @@ export default function BuyerRegisterPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
-              <Link href="/login/buyer" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/login/buyer" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Sign In
               </Link>
             </nav>
@@ -163,7 +163,7 @@ export default function BuyerRegisterPage() {
       </header>
 
       {/* Registration Section */}
-      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-green-50/30 to-white">
+      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-[#2D5A27]/10 to-white">
         <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -182,7 +182,7 @@ export default function BuyerRegisterPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm text-center"
+                className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 text-[#2D5A27] px-4 py-3 rounded-lg text-sm text-center"
               >
                 Registration successful! Redirecting to login...
               </motion.div>
@@ -200,7 +200,7 @@ export default function BuyerRegisterPage() {
                       value={formData.partnerCode}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Enter your partner code"
                     />
                   </div>
@@ -215,7 +215,7 @@ export default function BuyerRegisterPage() {
                       name="businessName"
                       value={formData.businessName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Your business name (optional)"
                     />
                   </div>
@@ -233,7 +233,7 @@ export default function BuyerRegisterPage() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="First name"
                     />
                   </div>
@@ -249,7 +249,7 @@ export default function BuyerRegisterPage() {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Last name"
                     />
                   </div>
@@ -266,7 +266,7 @@ export default function BuyerRegisterPage() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="your@email.com (optional)"
                     />
                   </div>
@@ -281,7 +281,7 @@ export default function BuyerRegisterPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Phone number (optional)"
                     />
                   </div>
@@ -300,7 +300,7 @@ export default function BuyerRegisterPage() {
                       onChange={handleInputChange}
                       required
                       minLength={6}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Minimum 6 characters"
                     />
                   </div>
@@ -316,7 +316,7 @@ export default function BuyerRegisterPage() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                       placeholder="Confirm password"
                     />
                   </div>
@@ -349,7 +349,7 @@ export default function BuyerRegisterPage() {
                           name="address"
                           value={formData.address}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                           placeholder="Street address"
                         />
                       </div>
@@ -364,7 +364,7 @@ export default function BuyerRegisterPage() {
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                           placeholder="City"
                         />
                       </div>
@@ -391,7 +391,7 @@ export default function BuyerRegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-[#2D5A27] text-white py-3 rounded-lg text-sm font-medium hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Registering...' : 'Register'}
                 </button>
@@ -400,7 +400,7 @@ export default function BuyerRegisterPage() {
 
             <div className="mt-6 pt-6 border-t border-gray-200 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account? <Link href="/login/buyer" className="text-green-600 hover:text-green-700 font-medium">Sign in</Link>
+                Already have an account? <Link href="/login/buyer" className="text-[#2D5A27] hover:text-[#23471f] font-medium">Sign in</Link>
               </p>
             </div>
           </motion.div>
@@ -429,23 +429,23 @@ export default function BuyerRegisterPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-green-600 transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-green-600 transition-colors">For Producers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/login/buyer" className="hover:text-[#2D5A27] transition-colors">For Buyers</Link></li>
+                <li><Link href="/login/producer" className="hover:text-[#2D5A27] transition-colors">For Producers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Terms</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
               </ul>
             </div>
           </div>

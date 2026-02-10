@@ -123,7 +123,7 @@ export default function CommandControlPage() {
         <SidebarLayout title="Command & Control" navItems={adminNavItems}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="inline-block w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="inline-block w-8 h-8 border-2 border-[#2D5A27] border-t-transparent rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading...</p>
           </div>
         </div>
@@ -141,14 +141,14 @@ export default function CommandControlPage() {
           className={`rounded-lg shadow-sm border p-6 ${
             systemStatus.paused
               ? 'bg-red-50 border-red-200'
-              : 'bg-green-50 border-green-200'
+              : 'bg-[#2D5A27]/10 border-[#2D5A27]/30'
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-1">System Status</h2>
               <p className={`text-sm font-medium ${
-                systemStatus.paused ? 'text-red-700' : 'text-green-700'
+                systemStatus.paused ? 'text-red-700' : 'text-[#2D5A27]'
               }`}>
                 {systemStatus.paused ? '⛔ PAUSED' : '✓ OPERATIONAL'}
               </p>
@@ -157,7 +157,7 @@ export default function CommandControlPage() {
               {systemStatus.paused ? (
                 <button
                   onClick={handleResumeSystem}
-                  className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                 >
                   Resume System
                 </button>
@@ -267,7 +267,7 @@ export default function CommandControlPage() {
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-500 mb-1">Healthy</p>
-              <p className="text-2xl font-bold text-green-600">42</p>
+              <p className="text-2xl font-bold text-[#2D5A27]">42</p>
               <p className="text-xs text-gray-500 mt-1">Score &gt; 80</p>
             </div>
           </div>

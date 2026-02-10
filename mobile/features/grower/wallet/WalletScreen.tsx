@@ -1,0 +1,175 @@
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { ArrowLeft } from 'lucide-react-native';
+import { theme } from '../../../lib/theme';
+import { useWalletData } from './useWalletData';
+import { WalletBalanceCard } from './WalletBalanceCard';
+import { TransactionItem } from './TransactionItem';
+
+/**
+ * Wallet – prikaz stanja i transakcija (growers).
+ * App route: app/(producer)/(tabs)/wallet.tsx samo renderuje ovaj screen.
+ */
+export default function WalletScreen() {
+  const router = useRouter();
+  const { wallet, transactions, loading } = useWalletData();
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.background,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View
+        style={{
+          paddingTop: 60,
+          paddingBottom: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg,
+          backgroundColor: theme.colors.background,
+          borderBottomWidth: 0.5,
+          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+            style={{ marginRight: theme.spacing.md }}
+          >
+            <ArrowLeft
+              size={20}
+              color={theme.colors.text.primary}
+              strokeWidth={1.5}
+            />
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '300',
+              color: theme.colors.text.primary,
+              letterSpacing: 0.5,
+            }}
+          >
+            Wallet
+          </Text>
+        </View>
+      </View>
+
+      <ScrollView style={{ flex: 1 }}>
+        <View style={{ padding: theme.spacing.lg }}>
+          <WalletBalanceCard
+            availableBalance={wallet?.availableBalance ?? 0}
+            pendingBalance={wallet?.pendingBalance ?? 0}
+          />
+
+          {wallet && (
+            <View
+              style={{
+                backgroundColor: theme.colors.surface,
+                borderRadius: theme.borderRadius.md,
+                padding: theme.spacing.md,
+                marginBottom: theme.spacing.lg,
+                borderWidth: 0.5,
+                borderColor: 'rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '300',
+                    color: theme.colors.text.secondary,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Ukupno zarađeno
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '300',
+                    color: theme.colors.text.primary,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  {wallet.totalEarned.toLocaleString('de-DE', {
+                    style: 'currency',
+                    currency: 'EUR',
+                  })}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          <View>
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '300',
+                color: theme.colors.text.secondary,
+                marginBottom: theme.spacing.md,
+                textTransform: 'uppercase',
+                letterSpacing: 1.5,
+              }}
+            >
+              Transakcije
+            </Text>
+
+            {transactions.length === 0 ? (
+              <View
+                style={{
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: theme.borderRadius.md,
+                  padding: theme.spacing.xl,
+                  alignItems: 'center',
+                  borderWidth: 0.5,
+                  borderColor: 'rgba(0, 0, 0, 0.05)',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '300',
+                    color: theme.colors.text.secondary,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Nema transakcija
+                </Text>
+              </View>
+            ) : (
+              <View style={{ gap: theme.spacing.sm }}>
+                {transactions.map((tx) => (
+                  <TransactionItem key={tx.id} transaction={tx} />
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}

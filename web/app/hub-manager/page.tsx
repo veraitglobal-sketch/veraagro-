@@ -103,7 +103,7 @@ export default function HubManagerPage() {
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+            <button className="px-4 py-3 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors text-sm font-medium">
               Start New Transfer
             </button>
             <button className="px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">

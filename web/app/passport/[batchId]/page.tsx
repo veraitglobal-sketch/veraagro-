@@ -239,7 +239,7 @@ export default function ProductPassportPage() {
               </div>
             ))}
             {(!data.farmer.photo && (!data.photos || data.photos.length === 0)) && (
-              <div className="col-span-2 sm:col-span-3 aspect-video rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 flex flex-col items-center justify-center gap-2 border border-black/5">
+              <div className="col-span-2 sm:col-span-3 aspect-video rounded-xl bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 flex flex-col items-center justify-center gap-2 border border-black/5">
                 <span className="text-4xl">🌱</span>
                 <p className="text-[11px] font-light text-[#1A3021]/50">No photos yet</p>
               </div>
@@ -263,7 +263,7 @@ export default function ProductPassportPage() {
               {data.farmer.photo ? (
                 <Image src={data.farmer.photo} alt={data.farmer.name} fill className="object-cover" unoptimized />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-green-50 to-green-100/50 flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 flex items-center justify-center">
                   <span className="text-3xl">🌱</span>
                 </div>
               )}

@@ -66,11 +66,11 @@ export default function OperationsCenterPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm border border-green-200 p-6"
+            className="bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 rounded-lg shadow-sm border border-[#2D5A27]/30 p-6"
           >
-            <p className="text-sm text-green-700 mb-1">Standard SKUs</p>
-            <p className="text-3xl font-bold text-green-900">{standardSkus.length}</p>
-            <p className="text-xs text-green-600 mt-1">Active products</p>
+            <p className="text-sm text-[#2D5A27] mb-1">Standard SKUs</p>
+            <p className="text-3xl font-bold text-[#23471f]">{standardSkus.length}</p>
+            <p className="text-xs text-[#2D5A27] mt-1">Active products</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,7 +115,7 @@ export default function OperationsCenterPage() {
             <h2 className="text-lg font-semibold text-gray-900">Distributor Import/Export Network</h2>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                <div className="w-3 h-3 bg-[#2D5A27] rounded-full"></div>
                 <span>Import Nodes</span>
               </div>
             </div>
@@ -175,12 +175,12 @@ export default function OperationsCenterPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500 mb-1">Supply (Harvests)</p>
-                  <p className="text-2xl font-bold text-green-600">{ledger.supply.toLocaleString()} kg</p>
+                  <p className="text-2xl font-bold text-[#2D5A27]">{ledger.supply.toLocaleString()} kg</p>
                 </div>
               </div>
               <div className={`p-4 rounded-lg border-2 ${
                 ledger.guaranteed
-                  ? 'bg-green-50 border-green-300'
+                  ? 'bg-[#2D5A27]/10 border-[#2D5A27]/40'
                   : 'bg-yellow-50 border-yellow-300'
               }`}>
                 <p className="text-sm font-medium mb-1">
@@ -203,9 +203,9 @@ export default function OperationsCenterPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-2">Confirmed Harvests (Supply)</p>
                   {ledger.harvests.map((harvest, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-green-50 rounded text-sm mb-1">
+                    <div key={idx} className="flex items-center justify-between p-2 bg-[#2D5A27]/10 rounded text-sm mb-1">
                       <span className="text-gray-700">{harvest.farmer}</span>
-                      <span className="font-medium text-green-700">{harvest.quantity} kg</span>
+                      <span className="font-medium text-[#2D5A27]">{harvest.quantity} kg</span>
                     </div>
                   ))}
                 </div>
@@ -233,10 +233,10 @@ export default function OperationsCenterPage() {
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-2">
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="p-4 bg-[#2D5A27]/10 rounded-lg border border-[#2D5A27]/30">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-700">Bio Vera Net Margin</p>
-                  <p className="text-xl font-bold text-green-700">€{financialFlow.bioVeraMargin.toLocaleString()}</p>
+                  <p className="text-xl font-bold text-[#2D5A27]">€{financialFlow.bioVeraMargin.toLocaleString()}</p>
                 </div>
               </div>
               <div className="text-xs text-gray-500 space-y-1">
@@ -260,7 +260,7 @@ export default function OperationsCenterPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Bio Vera Standard SKU Hub</h2>
           <div className="space-y-3">
             {standardSkus.map((sku) => (
-              <div key={sku.skuCode} className="p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors">
+              <div key={sku.skuCode} className="p-4 border border-gray-200 rounded-lg hover:border-[#2D5A27]/40 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <p className="font-semibold text-gray-900">{sku.name}</p>

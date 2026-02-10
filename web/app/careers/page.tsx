@@ -131,7 +131,7 @@ export default function CareersPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -150,8 +150,8 @@ export default function CareersPage() {
             className="text-center mb-16"
           >
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
-                <Briefcase className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-[#2D5A27]/10 rounded-full flex items-center justify-center">
+                <Briefcase className="w-8 h-8 text-[#2D5A27]" />
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
@@ -182,9 +182,9 @@ export default function CareersPage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
-                      className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors text-center"
+                      className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors text-center"
                     >
-                      <IconComponent className="w-8 h-8 text-green-600 mx-auto mb-4" />
+                      <IconComponent className="w-8 h-8 text-[#2D5A27] mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">{value.title}</h3>
                       <p className="text-sm text-gray-600 font-light leading-relaxed">
                         {value.description}
@@ -213,7 +213,7 @@ export default function CareersPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="border border-gray-200 rounded-lg p-8 hover:border-green-600 transition-colors"
+                    className="border border-gray-200 rounded-lg p-8 hover:border-[#2D5A27] transition-colors"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
                       <div>
@@ -235,7 +235,7 @@ export default function CareersPage() {
                       </div>
                       <Link
                         href={`/contact?subject=Job Application: ${job.title}`}
-                        className="px-6 py-2 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg whitespace-nowrap"
+                        className="px-6 py-2 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg whitespace-nowrap"
                       >
                         Apply Now
                       </Link>
@@ -249,7 +249,7 @@ export default function CareersPage() {
                         <ul className="space-y-2">
                           {job.requirements.map((req, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                              <span className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0"></span>
+                              <span className="w-1.5 h-1.5 bg-[#2D5A27] rounded-full mt-2 flex-shrink-0"></span>
                               <span className="font-light">{req}</span>
                             </li>
                           ))}
@@ -260,7 +260,7 @@ export default function CareersPage() {
                         <ul className="space-y-2">
                           {job.benefits.map((benefit, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                              <span className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0"></span>
+                              <span className="w-1.5 h-1.5 bg-[#2D5A27] rounded-full mt-2 flex-shrink-0"></span>
                               <span className="font-light">{benefit}</span>
                             </li>
                           ))}
@@ -288,7 +288,7 @@ export default function CareersPage() {
             </p>
             <Link
               href="/contact?subject=General Application"
-              className="inline-block px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+              className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
               Send Your Resume
             </Link>
@@ -318,33 +318,33 @@ export default function CareersPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
+                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/faq" className="hover:text-green-600 transition-colors">FAQ</Link></li>
-                <li><Link href="/help-center" className="hover:text-green-600 transition-colors">Help Center</Link></li>
-                <li><Link href="/security" className="hover:text-green-600 transition-colors">Security</Link></li>
+                <li><Link href="/faq" className="hover:text-[#2D5A27] transition-colors">FAQ</Link></li>
+                <li><Link href="/help-center" className="hover:text-[#2D5A27] transition-colors">Help Center</Link></li>
+                <li><Link href="/security" className="hover:text-[#2D5A27] transition-colors">Security</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

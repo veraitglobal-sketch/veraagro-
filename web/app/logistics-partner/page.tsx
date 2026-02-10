@@ -106,7 +106,7 @@ export default function LogisticsPartnerPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -135,7 +135,7 @@ export default function LogisticsPartnerPage() {
                   alert('Failed to download prospect. Please try again.');
                 }
               }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
             >
               <Download className="w-4 h-4" />
               Download Prospect PDF
@@ -176,7 +176,7 @@ export default function LogisticsPartnerPage() {
                 description: 'High Trust Score and strict adherence to \'In-Time\' delivery deadlines. Consistent performance is essential for long-term partnerships.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-b border-green-200/50 pb-8">
+              <div key={index} className="border-b border-[#2D5A27]/30 pb-8">
                 <h3 className="text-lg font-light text-gray-900 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
@@ -186,7 +186,7 @@ export default function LogisticsPartnerPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">What You Get</h2>
@@ -210,8 +210,8 @@ export default function LogisticsPartnerPage() {
                 description: 'Stable volume commitments with predictable revenue streams. Build sustainable growth with reliable partnerships.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-b border-green-200/50 pb-8">
-                <h3 className="text-lg font-light text-green-600/80 mb-3">{item.title}</h3>
+              <div key={index} className="border-b border-[#2D5A27]/30 pb-8">
+                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
             ))}
@@ -240,7 +240,7 @@ export default function LogisticsPartnerPage() {
                 max="30"
                 value={fuelSavings}
                 onChange={(e) => setFuelSavings(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#2D5A27]"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>5%</span>
@@ -249,18 +249,18 @@ export default function LogisticsPartnerPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mt-8">
-              <div className="text-center p-6 bg-green-50 rounded-lg">
-                <div className="text-2xl font-light text-green-600 mb-2">{fuelSavings}%</div>
+              <div className="text-center p-6 bg-[#2D5A27]/10 rounded-lg">
+                <div className="text-2xl font-light text-[#2D5A27] mb-2">{fuelSavings}%</div>
                 <div className="text-sm text-gray-600">Fuel Reduction</div>
               </div>
-              <div className="text-center p-6 bg-green-50 rounded-lg">
-                <div className="text-2xl font-light text-green-600 mb-2">
+              <div className="text-center p-6 bg-[#2D5A27]/10 rounded-lg">
+                <div className="text-2xl font-light text-[#2D5A27] mb-2">
                   €{savings.monthlySavings.toLocaleString('en-US', { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-sm text-gray-600">Monthly Savings</div>
               </div>
-              <div className="text-center p-6 bg-green-50 rounded-lg">
-                <div className="text-2xl font-light text-green-600 mb-2">
+              <div className="text-center p-6 bg-[#2D5A27]/10 rounded-lg">
+                <div className="text-2xl font-light text-[#2D5A27] mb-2">
                   €{savings.yearlySavings.toLocaleString('en-US', { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-sm text-gray-600">Yearly Savings</div>
@@ -279,7 +279,7 @@ export default function LogisticsPartnerPage() {
                 </div>
                 <div className="flex flex-col items-center">
                   <div 
-                    className="w-8 bg-green-600 rounded-t"
+                    className="w-8 bg-[#2D5A27] rounded-t"
                     style={{ height: `${100 - fuelSavings}%` }}
                   ></div>
                   <div className="text-xs text-gray-500 mt-2">After</div>
@@ -384,10 +384,10 @@ export default function LogisticsPartnerPage() {
             ].map((resource, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-6 hover:border-green-300 transition-colors bg-white"
+                className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27]/40 transition-colors bg-white"
               >
                 <div className="flex items-start mb-4">
-                  <div className="flex-shrink-0 text-green-600">
+                  <div className="flex-shrink-0 text-[#2D5A27]">
                     {resource.icon}
                   </div>
                   <div className="ml-4 flex-1">
@@ -404,7 +404,7 @@ export default function LogisticsPartnerPage() {
                       </div>
                       {resource.available ? (
                         <button
-                          className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => handleDownload(resource.downloadKey || resource.title)}
                           disabled={downloading === resource.title}
                         >
@@ -450,8 +450,8 @@ export default function LogisticsPartnerPage() {
           </div>
 
           {submitted ? (
-            <div className="bg-green-50/50 border border-green-200/50 p-8 text-center">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 p-8 text-center">
+              <div className="w-16 h-16 bg-[#2D5A27] rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
@@ -475,7 +475,7 @@ export default function LogisticsPartnerPage() {
                     value={formData.companyName}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Enter your company name"
                   />
                 </div>
@@ -492,7 +492,7 @@ export default function LogisticsPartnerPage() {
                     onChange={handleInputChange}
                     required
                     min="1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="e.g., 5 vans, 2 trucks"
                   />
                   <p className="text-xs text-gray-500 mt-1">Specify number of vans and trucks separately</p>
@@ -509,7 +509,7 @@ export default function LogisticsPartnerPage() {
                     onChange={handleInputChange}
                     required
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="List the regions, cities, or routes you cover (e.g., Belgrade, Novi Sad, Niš)"
                   />
                 </div>
@@ -518,13 +518,13 @@ export default function LogisticsPartnerPage() {
                   <label htmlFor="licenseFile" className="block text-sm font-medium text-gray-700 mb-2">
                     Transport License (PDF) *
                   </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-green-600 transition-colors">
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#2D5A27] transition-colors">
                     <div className="space-y-1 text-center">
                       <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       <div className="flex text-sm text-gray-600">
-                        <label htmlFor="licenseFile" className="relative cursor-pointer rounded-md font-medium text-green-600 hover:text-green-500">
+                        <label htmlFor="licenseFile" className="relative cursor-pointer rounded-md font-medium text-[#2D5A27] hover:text-[#23471f]">
                           <span>Upload a file</span>
                           <input
                             id="licenseFile"
@@ -540,7 +540,7 @@ export default function LogisticsPartnerPage() {
                       </div>
                       <p className="text-xs text-gray-500">PDF up to 10MB</p>
                       {formData.licenseFile && (
-                        <p className="text-sm text-green-600 mt-2">{formData.licenseFile.name}</p>
+                        <p className="text-sm text-[#2D5A27] mt-2">{formData.licenseFile.name}</p>
                       )}
                     </div>
                   </div>
@@ -555,7 +555,7 @@ export default function LogisticsPartnerPage() {
                       checked={formData.acceptDigitalControl}
                       onChange={handleCheckboxChange}
                       required
-                      className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-[#2D5A27] focus:ring-[#2D5A27] border-gray-300 rounded"
                     />
                   </div>
                   <div className="ml-3 text-sm">
@@ -571,7 +571,7 @@ export default function LogisticsPartnerPage() {
 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+                  className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
                 >
                   Submit Application
                 </button>
@@ -604,23 +604,23 @@ export default function LogisticsPartnerPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-green-600 transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-green-600 transition-colors">For Producers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/login/buyer" className="hover:text-[#2D5A27] transition-colors">For Buyers</Link></li>
+                <li><Link href="/login/producer" className="hover:text-[#2D5A27] transition-colors">For Producers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

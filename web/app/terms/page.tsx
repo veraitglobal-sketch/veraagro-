@@ -21,7 +21,7 @@ export default function TermsPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -177,7 +177,7 @@ export default function TermsPage() {
               </ul>
               <p className="text-gray-600 font-light leading-relaxed mt-4">
                 If you believe that any content on the Service infringes your intellectual property rights, please contact us immediately 
-                at <a href="mailto:legal@biovera.app" className="text-green-600 hover:underline">legal@biovera.app</a> with detailed information 
+                at <a href="mailto:legal@biovera.app" className="text-[#2D5A27] hover:underline">legal@biovera.app</a> with detailed information 
                 about the alleged infringement, and we will investigate and respond in accordance with applicable law.
               </p>
             </section>
@@ -245,7 +245,7 @@ export default function TermsPage() {
                 Upon termination, your right to use the Service will immediately cease. All provisions of these Terms which by their nature 
                 should survive termination shall survive termination, including ownership provisions, warranty disclaimers, indemnity, and 
                 limitations of liability. You may terminate your account at any time by contacting us at 
-                <a href="mailto:support@biovera.app" className="text-green-600 hover:underline"> support@biovera.app</a>.
+                <a href="mailto:support@biovera.app" className="text-[#2D5A27] hover:underline"> support@biovera.app</a>.
               </p>
             </section>
 
@@ -253,7 +253,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-light text-gray-900 mb-4">10. Dispute Resolution</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 <strong>Informal Resolution:</strong> Before filing a claim, you agree to try to resolve the dispute informally by contacting 
-                us at <a href="mailto:legal@biovera.app" className="text-green-600 hover:underline">legal@biovera.app</a>. We will try to resolve 
+                us at <a href="mailto:legal@biovera.app" className="text-[#2D5A27] hover:underline">legal@biovera.app</a>. We will try to resolve 
                 the dispute informally within 60 days.
               </p>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
@@ -375,8 +375,8 @@ export default function TermsPage() {
                 If you have any questions about these Terms, please contact us at:
                 <br />
                 <strong>Bio Vera</strong><br />
-                Email: <a href="mailto:legal@biovera.app" className="text-green-600 hover:underline">legal@biovera.app</a><br />
-                Support: <a href="mailto:support@biovera.app" className="text-green-600 hover:underline">support@biovera.app</a>
+                Email: <a href="mailto:legal@biovera.app" className="text-[#2D5A27] hover:underline">legal@biovera.app</a><br />
+                Support: <a href="mailto:support@biovera.app" className="text-[#2D5A27] hover:underline">support@biovera.app</a>
               </p>
             </section>
 
@@ -393,7 +393,7 @@ export default function TermsPage() {
               <p className="text-gray-600 font-light leading-relaxed">
                 If you have any questions about these Terms, please contact us at:
                 <br />
-                <a href="mailto:legal@biovera.app" className="text-green-600 hover:underline">legal@biovera.app</a>
+                <a href="mailto:legal@biovera.app" className="text-[#2D5A27] hover:underline">legal@biovera.app</a>
               </p>
             </section>
           </div>
@@ -422,22 +422,22 @@ export default function TermsPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
+                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
               </ul>
             </div>
           </div>

@@ -263,7 +263,7 @@ function Protocol360Content() {
     switch (status) {
       case 'PASS':
       case 'APPROVED':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-[#2D5A27]/10 text-[#2D5A27] border-[#2D5A27]/30';
       case 'FAIL':
       case 'REJECTED':
         return 'bg-red-50 text-red-700 border-red-200';
@@ -280,7 +280,7 @@ function Protocol360Content() {
     switch (status) {
       case 'PASS':
       case 'APPROVED':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-[#2D5A27]" />;
       case 'FAIL':
       case 'REJECTED':
         return <XCircle className="w-5 h-5 text-red-600" />;
@@ -296,11 +296,11 @@ function Protocol360Content() {
   const getLevelIcon = (level: number) => {
     switch (level) {
       case 1:
-        return <Shield className="w-6 h-6 text-green-600" />;
+        return <Shield className="w-6 h-6 text-[#2D5A27]" />;
       case 2:
-        return <Eye className="w-6 h-6 text-green-600" />;
+        return <Eye className="w-6 h-6 text-[#2D5A27]" />;
       case 3:
-        return <Truck className="w-6 h-6 text-green-600" />;
+        return <Truck className="w-6 h-6 text-[#2D5A27]" />;
       default:
         return null;
     }
@@ -310,7 +310,7 @@ function Protocol360Content() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
           <p className="mt-4 text-gray-600">{t.loading}</p>
         </div>
       </div>
@@ -334,14 +334,14 @@ function Protocol360Content() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 {t.home}
               </Link>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setLanguage('en')}
                   className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'en' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    language === 'en' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   EN
@@ -349,7 +349,7 @@ function Protocol360Content() {
                 <button
                   onClick={() => setLanguage('sr')}
                   className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'sr' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    language === 'sr' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   SR
@@ -357,7 +357,7 @@ function Protocol360Content() {
                 <button
                   onClick={() => setLanguage('de')}
                   className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'de' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    language === 'de' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   DE
@@ -389,7 +389,7 @@ function Protocol360Content() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium mb-8 shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium mb-8 shadow-md"
             >
               <Award className="w-4 h-4" />
               <span>{t.premiumQuality}</span>
@@ -397,7 +397,7 @@ function Protocol360Content() {
 
             {/* Protocol 360 Title */}
             <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
-              Protocol <span className="text-green-600">360</span>
+              Protocol <span className="text-[#2D5A27]">360</span>
             </h1>
             
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
@@ -444,11 +444,11 @@ function Protocol360Content() {
 
       {/* Batch Status Section */}
       {batchId && (
-        <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-green-50/30">
+        <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10">
           <div className="max-w-6xl mx-auto">
             {loading ? (
               <div className="bg-white rounded-lg shadow-sm p-8 text-center border border-gray-200">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D5A27] mx-auto"></div>
                 <p className="mt-4 text-gray-600 font-light">{t.loadingStatus}</p>
               </div>
             ) : error ? (
@@ -569,7 +569,7 @@ function Protocol360Content() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-green-50/30 border border-green-200/50 rounded-lg p-8"
+                className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg p-8"
               >
                 <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-6">
                   <div className="flex items-center gap-4">
@@ -597,7 +597,7 @@ function Protocol360Content() {
                   </div>
                 </div>
 
-                <div className="border-t border-green-200/50 pt-6">
+                <div className="border-t border-[#2D5A27]/30 pt-6">
                   <h4 className="font-semibold text-gray-900 mb-4 text-sm">
                     {t.qualityChecks}
                   </h4>
@@ -642,7 +642,7 @@ function Protocol360Content() {
                           key={idx}
                           className="flex items-center gap-3 text-gray-700 font-light"
                         >
-                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                          <CheckCircle className="w-4 h-4 text-[#2D5A27] flex-shrink-0" />
                           <span>{getLocalizedCheck(check, level.level)}</span>
                         </li>
                       );
@@ -677,7 +677,7 @@ function Protocol360Content() {
                 transition={{ delay: idx * 0.1 }}
                 className="relative"
               >
-                <div className="bg-white rounded-lg p-6 border border-green-200 hover:border-green-300 transition-colors">
+                <div className="bg-white rounded-lg p-6 border border-[#2D5A27]/30 hover:border-[#2D5A27]/40 transition-colors">
                   <p className="text-lg font-medium italic text-gray-800 text-center leading-relaxed">
                     "{slogan}"
                   </p>
@@ -701,7 +701,7 @@ function Protocol360Content() {
             </p>
             <Link
               href="/"
-              className="inline-block px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
             >
               {t.backToHome}
             </Link>
