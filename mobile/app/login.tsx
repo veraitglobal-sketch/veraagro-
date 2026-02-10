@@ -32,10 +32,10 @@ export default function LoginScreen() {
       const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
       
       // Automatically navigate based on role
-      if (userRoles.some(role => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
+      if (userRoles.some((role: string) => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
         // Producer/Admin - navigate to producer dashboard
         router.replace('/(producer)/(tabs)');
-      } else if (userRoles.some(role => ['BUYER', 'CUSTOMER'].includes(role))) {
+      } else if (userRoles.some((role: string) => ['BUYER', 'CUSTOMER'].includes(role))) {
         // Buyer - navigate to buyer dashboard
         router.replace('/(buyer)/shop');
       } else {

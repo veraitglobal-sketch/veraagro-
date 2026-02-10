@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { theme } from '../lib/theme';
-import { api } from '../lib/api';
+import api from '../lib/api';
 
 /**
  * Buyer Registration Screen

@@ -13,7 +13,7 @@ import ReservationModal from '../../components/ReservationModal';
 
 type FilterStatus = 'all' | 'available_now' | 'incoming' | 'reservations';
 
-interface EnhancedProduct extends Product {
+interface EnhancedProduct extends Omit<Product, 'harvestDate'> {
   expectedDeliveryDate?: string;
   farmerTrustScore?: number;
   farmerName?: string;

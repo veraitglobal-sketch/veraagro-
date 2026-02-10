@@ -9,7 +9,7 @@ import {
   Wheat,
   Cherry,
   Circle,
-  PepperHot,
+  Flame,
   Bean,
   LeafyGreen,
   Sprout,
@@ -93,7 +93,7 @@ export default function ProductsPage() {
       { name: 'Cherries', description: 'Sweet organic cherries', season: 'Early Summer', icon: Cherry },
     ],
     vegetables: [
-      { name: 'Peppers', description: 'Organic bell peppers and hot peppers', season: 'Summer/Autumn', icon: PepperHot },
+      { name: 'Peppers', description: 'Organic bell peppers and hot peppers', season: 'Summer/Autumn', icon: Flame },
       { name: 'Tomatoes', description: 'Heirloom organic tomatoes', season: 'Summer/Autumn', icon: Circle },
       { name: 'Cucumbers', description: 'Fresh organic cucumbers', season: 'Summer', icon: Sprout },
       { name: 'Zucchini', description: 'Organic zucchini and squash', season: 'Summer', icon: Sprout },

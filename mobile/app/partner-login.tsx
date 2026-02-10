@@ -30,7 +30,7 @@ export default function PartnerLoginScreen() {
       
       // Verify user is a producer (FARMER or PARTNER role)
       const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      const isProducer = userRoles.some(role => 
+      const isProducer = userRoles.some((role: string) => 
         ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role)
       );
       

@@ -150,22 +150,22 @@ Sve što farmer uradi **prvo se čuva lokalno**. Kada ima internet, **jedan sync
 
 ### 4.1 Preveliki screen fajlovi (refaktor u fazama)
 
-| Fajl | Linije | Akcija |
-|------|--------|--------|
-| `(producer)/(tabs)/index.tsx` | **~945** | Podeliti: DashboardLayout + komponente (TrustScore, QuickActions, RecentActivity, FinancialSummary, ActiveMissions, ActiveBatches). |
-| `(producer)/plot-mapper.tsx` | **~719** | Izvući: MapView, PlotList, PlotEditor u `features/grower/plot-mapper/`. |
-| `(producer)/mission/[id].tsx` | **~567** | Izvući: MissionHeader, JourneyMap, Timeline, ConsumerFeedback u feature. |
-| `(producer)/(tabs)/field-log.tsx` | **~539** | Izvući: EntryForm, EntryList, FilterBar u `features/grower/field-log/`. |
-| `(producer)/orders/[id].tsx` | **~509** | Izvući: OrderHeader, OrderLines, DeliveryBlock, PaymentStatus. |
-| `(producer)/vera-insights.tsx` | **~436** | Izvući: InsightCards, Charts u feature komponente. |
-| `(producer)/batch/[id].tsx` | **~424** | Izvući: BatchHeader, TraceabilityBlock, LocationHistory. |
-| `(producer)/growth-journal.tsx` | **~398** | Izvući: JournalFilters, JournalTimeline. |
-| `(producer)/(tabs)/harvest.tsx` | **~379** | Izvući: HarvestForm, HarvestList. |
-| `(producer)/quality-entry.tsx` | **~384** | Izvući: QualityForm, BatchSelector. |
-| `(producer)/materials.tsx` | **~360** | Izvući: MaterialList, WhitelistSearch. |
-| `(producer)/scanner.tsx` | **~346** | Ostaje ili mala podela (ScannerView + ResultHandler). |
+| Fajl | Linije (pre) | Status | Akcija |
+|------|--------------|--------|--------|
+| `(producer)/(tabs)/index.tsx` | ~945 | ✅ Urađeno | Tanki wrapper → `features/grower/dashboard/` (DashboardScreen, QuickActionsSection, itd.). |
+| `(producer)/plot-mapper.tsx` | ~719 | ✅ Urađeno | Tanki wrapper → `features/grower/plot-mapper/` (PlotMapperScreen, PlotCanvas, ZoneModal, itd.). |
+| `(producer)/mission/[id].tsx` | ~567 | ✅ Urađeno | Tanki wrapper → `features/grower/missions/` (MissionDetailScreen, MissionHeader, JourneyMapBlock, TimelineBlock, itd.). |
+| `(producer)/(tabs)/field-log.tsx` | ~539 | ✅ Urađeno | Tanki wrapper → `features/grower/field-log/` (FieldLogScreen, EntryForm, useFieldLogData). |
+| `(producer)/orders/[id].tsx` | ~509 | ✅ Urađeno | Tanki wrapper → `features/grower/orders/` (OrderDetailScreen, OrderInfoBlock, OrderLinesBlock, BuyerBlock, DeliveryBlock, PaymentStatusBlock). |
+| `(producer)/vera-insights.tsx` | ~436 | ✅ Urađeno | Tanki wrapper → `features/grower/vera-insights/` (VeraInsightsScreen, InsightCard, ShortagesSection). |
+| `(producer)/batch/[id].tsx` | ~424 | ✅ Urađeno | Tanki wrapper → `features/grower/batches/` (BatchDetailScreen, BatchHeaderBlock, TraceabilityBlock, LocationHistoryBlock, QualityIssuesBlock). |
+| `(producer)/growth-journal.tsx` | ~398 | ✅ Urađeno | Tanki wrapper → `features/grower/growth-journal/` (GrowthJournalScreen, Filters, List). |
+| `(producer)/(tabs)/harvest.tsx` | ~379 | ✅ Urađeno | Tanki wrapper → `features/grower/harvest/` (HarvestScreen, HarvestForm, useHarvestData). |
+| `(producer)/quality-entry.tsx` | ~384 | ⏳ Ostalo | Izvući: QualityForm, BatchSelector u feature. |
+| `(producer)/materials.tsx` | ~360 | ⏳ Ostalo | Izvući: MaterialList, WhitelistSearch u `features/grower/materials/`. |
+| `(producer)/scanner.tsx` | ~346 | ⏳ Ostalo | Ostaje ili mala podela (ScannerView + ResultHandler). |
 
-Ostali fajlovi su u prihvatljivom opsegu ili već manji; prioritet refaktora: **index (dashboard)** i **plot-mapper**, pa **mission/[id]** i **field-log**.
+**Prioritet za naredne refaktore:** `quality-entry`, `materials`, opciono `scanner`.
 
 ### 4.2 Struktura ruta (Expo Router) – šta već postoji
 
@@ -175,6 +175,36 @@ Ostali fajlovi su u prihvatljivom opsegu ili već manji; prioritet refaktora: **
 - **Driver / Manager:** po jedan ekran – kasnije.
 
 Cilj: **ne menjati routing drastično**, već unutar `(producer)` uvesti **feature foldere** i **komponente** tako da screen fajlovi ostaju tanki.
+
+### 4.3 Status implementacije – šta je urađeno, šta fali
+
+**✅ Urađeno**
+
+| Oblast | Šta je urađeno |
+|--------|-----------------|
+| **Offline + sync** | `offline-storage.ts`: pending_products, pending_costs, pending_certificate_photos. `sync-service.ts`: šalje entries, products, costs, certificate photos. SyncStatus u headeru („Sačuvano u telefonu: X“ / „Sve poslato“). |
+| **Faza 1** | Tabovi Moji proizvodi, Kalkulator troškova. Feature: products, cost-calculator. Dashboard sa brzim akcijama (bez Shop-a). Scanner povezan na products flow. |
+| **Faza 2** | Tabovi Sertifikacije, Zabranjena sredstva. Feature: certifications, banned-substances. Upload foto sertifikata (offline pa sync). |
+| **Faza 3** | Shop uklonjen za growers (redirect na Moji proizvodi). Dashboard refaktor. Field log i Harvest koriste offline-first. |
+| **Faza 4** | Plot mapper, Growth journal, Vera insights (refaktor u feature), Vera bag, Wallet – svi tanki wrapperi ili već u feature-u. |
+| **Refaktor velikih ekrana** | Dashboard, plot-mapper, mission/[id], field-log, vera-insights, growth-journal, **orders/[id], batch/[id], harvest** – svi ispod ~300 linija u app/, logika u `features/grower/...`. |
+
+**⏳ Šta još fali (po prioritetu)**
+
+| # | Šta fali | Gde / kako |
+|---|----------|------------|
+| 1 | **Refaktor quality-entry.tsx** | Izvući QualityForm, BatchSelector u `features/grower/quality-entry/`. |
+| 2 | **Refaktor materials.tsx** | Izvući MaterialList, WhitelistSearch u `features/grower/materials/`. |
+| 3 | **Scanner** | Opciono: mala podela (ScannerView + ResultHandler) ili ostaviti kao jedan manji fajl. |
+| 4 | **Build i linter** | Rešiti postojeće TypeScript greške u drugim delovima projekta (buyer, login, ProductPassport, Card, itd.) ako blokiraju build. |
+
+**Checklist pre svake nove faze**
+
+- [ ] Nove rute u `app/` samo delegiraju na feature screen.
+- [ ] Nema ekrana preko ~300 linija bez plana za podelu.
+- [ ] Offline podaci: prvo lokalno, pa sync (sekcija 2).
+- [ ] Unos sa terena: GPS i barcode provera (Integrity Guard).
+- [ ] Po završetku bloka: „Proveri build i linter.“
 
 ---
 
@@ -527,6 +557,66 @@ Ovim redosledom smo **100% sigurni** da prvo imamo offline + sync, pa unos proiz
 - Možeš i unapred reći: *„Od sada, pre nego što kažeš da je nešto gotovo, uvek proveri build i linter.“* – onda ću to primenjivati na sve naredne korake dok ne kažeš drugačije.
 
 Tako **nećemo zaboraviti** da proverimo build i greške – ti mi to eksplicitno narediš, a ja to uradim pre nego što potvrdim da je gotovo.
+
+---
+
+## Naredni koraci (brzi pregled)
+
+Za brzu orijentaciju – **šta sledeće uraditi**:
+
+1. **Refaktor preostalih ekrana:** `quality-entry` → feature, `materials` → feature, opciono `scanner`.
+2. **Provera builda i lintera** – rešiti TypeScript greške ako blokiraju build.
+3. **Opciono:** Wallet detaljniji prikaz, Compliance photos offline queue.
+
+Detaljan status: **sekcija 4.3**. Nova lista po fazama: **sekcija ispod**.
+
+---
+
+## Nova lista po fazama (ažurirano)
+
+Pregled **faza** od trenutnog stanja nadalje – šta je završeno i šta sledi.
+
+### Faza A – Završeno (arhitektura growers)
+
+| Stavka | Status |
+|--------|--------|
+| Offline storage + sync (proizvodi, troškovi, certificate photos, field entries) | ✅ |
+| SyncStatus u headeru („Sačuvano u telefonu“ / „Sve poslato“) | ✅ |
+| Tabovi: Moji proizvodi, Kalkulator troškova, Sertifikacije, Zabranjena sredstva | ✅ |
+| Dashboard refaktor (feature komponente) | ✅ |
+| Shop uklonjen za growers (redirect na Moji proizvodi) | ✅ |
+| Plot mapper, Growth journal, Vera insights, Vera bag, Wallet (tanki ili u feature-u) | ✅ |
+| Mission detail refaktor (`features/grower/missions/`) | ✅ |
+| Field log refaktor (`features/grower/field-log/`) | ✅ |
+| **Orders detail refaktor** (`features/grower/orders/`) | ✅ |
+| **Batch detail refaktor** (`features/grower/batches/`) | ✅ |
+| **Harvest refaktor** (`features/grower/harvest/`) | ✅ |
+
+### Faza B – Preostali refaktori (kratko)
+
+| # | Šta | Akcija |
+|---|-----|--------|
+| B1 | quality-entry.tsx | Izvući u `features/grower/quality-entry/` (QualityForm, BatchSelector). |
+| B2 | materials.tsx | Izvući u `features/grower/materials/` (MaterialList, WhitelistSearch). |
+| B3 | scanner.tsx | Opciono: ScannerView + ResultHandler ili ostaviti. |
+
+### Faza C – Stabilnost i provera
+
+| # | Šta | Akcija |
+|---|-----|--------|
+| C1 | Build | `cd mobile && npx expo export` (ili `npm run build`) – ispraviti sve TS greške koje blokiraju. |
+| C2 | Linter | ESLint/TypeScript u celom `mobile/` – čisto pre release-a. |
+
+### Faza D – Opciono / kasnije
+
+| # | Šta | Napomena |
+|---|-----|----------|
+| D1 | Wallet detaljniji prikaz | Transakcije, isplate – po potrebi. |
+| D2 | Compliance photos offline queue | Ako treba konzistentno sa field log. |
+| D3 | Buyer aplikacija | Ista pravila: feature-based, tanki screen fajlovi. |
+| D4 | Driver / Manager ekrani | Minimalno za handover. |
+
+**Kako koristiti:** Reci npr. *„Uradi Fazу B“* (refaktor quality-entry, materials, scanner) ili *„Uradi B1“* (samo quality-entry). Zatim *„Proveri build i linter“* (Faza C).
 
 ---
 

@@ -4,7 +4,7 @@ import { theme } from '../../lib/theme';
 interface CardProps extends ViewProps {
   children: React.ReactNode;
   variant?: 'default' | 'elevated' | 'outlined';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export default function Card({ 
@@ -20,6 +20,7 @@ export default function Card({
     sm: theme.spacing.sm,
     md: theme.spacing.md,
     lg: theme.spacing.lg,
+    xl: theme.spacing.xl,
   };
 
   const variantStyles = {
@@ -41,13 +42,14 @@ export default function Card({
     },
   };
 
+  const resolvedStyle = style && typeof style === 'object' ? style : {};
   return (
     <View
       className={`rounded-${theme.borderRadius.lg} ${className}`}
       style={{
         padding: paddingMap[padding],
         ...variantStyles[variant],
-        ...style,
+        ...resolvedStyle,
       }}
       {...props}
     >

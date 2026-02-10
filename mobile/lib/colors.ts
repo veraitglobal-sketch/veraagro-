@@ -9,6 +9,7 @@ export const colors = {
     secondary: '#6B7280',
     light: '#9CA3AF',
     tertiary: '#9CA3AF',
+    inverse: '#FFFFFF',
   },
   border: 'rgba(26, 48, 33, 0.2)', // primary sa 20% opacity
   success: '#10B981',

@@ -196,14 +196,16 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                       </Marker>
                       {passport.map.polygon && Array.isArray(passport.map.polygon) && (
                         <Polygon
-                          coordinates={passport.map.polygon.map((coord: any) => {
-                            if (Array.isArray(coord) && coord.length === 2) {
-                              return { latitude: coord[0], longitude: coord[1] };
-                            } else if (typeof coord === 'object' && 'lat' in coord) {
-                              return { latitude: coord.lat, longitude: coord.lng };
-                            }
-                            return null;
-                          }).filter(Boolean)}
+                          coordinates={(passport.map.polygon
+                            .map((coord: any) => {
+                              if (Array.isArray(coord) && coord.length === 2) {
+                                return { latitude: coord[0], longitude: coord[1] };
+                              } else if (typeof coord === 'object' && coord != null && 'lat' in coord) {
+                                return { latitude: (coord as { lat: number; lng: number }).lat, longitude: (coord as { lat: number; lng: number }).lng };
+                              }
+                              return null;
+                            })
+                            .filter((c): c is { latitude: number; longitude: number } => c != null))}
                           fillColor={`${theme.colors.primary}20`}
                           strokeColor={theme.colors.primary}
                           strokeWidth={1}
