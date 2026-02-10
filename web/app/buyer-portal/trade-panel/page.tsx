@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyerTradePanelAPI, inventoryAPI, marketPricesAPI, digitalPassportsAPI } from '@/lib/api';
@@ -22,6 +23,8 @@ import {
   Lock,
   BarChart3,
   RefreshCw,
+  Mountain,
+  QrCode,
 } from 'lucide-react';
 import {
   LineChart,
@@ -557,7 +560,7 @@ export default function TradePanelPage() {
   const getAvailabilityBadge = (status: string) => {
     switch (status) {
       case 'IN_STOCK':
-        return { text: 'In Stock', color: 'bg-green-100 text-green-800', border: 'border-green-200' };
+        return { text: 'In Stock', color: 'bg-[#2D5A27]/15 text-[#23471f]', border: 'border-[#2D5A27]/20' };
       case 'LIMITED':
         return { text: 'Limited', color: 'bg-orange-100 text-orange-800', border: 'border-orange-200' };
       case 'SOLD_OUT':
@@ -573,7 +576,7 @@ export default function TradePanelPage() {
         <SidebarLayout title="Trade Panel" navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
               <p className="mt-4 text-gray-600">Loading trade data...</p>
             </div>
           </div>
@@ -587,7 +590,7 @@ export default function TradePanelPage() {
       <SidebarLayout title="Vera Trade" navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
-          <div className="border-b border-green-200/50 pb-6">
+          <div className="border-b border-[#2D5A27]/20/50 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-light text-gray-900">Vera Trade</h1>
@@ -598,7 +601,7 @@ export default function TradePanelPage() {
               <button
                 onClick={loadData}
                 disabled={refreshing}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-light hover:border-green-600/50 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-light hover:border-[#2D5A27]/50 transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                 Refresh
@@ -607,7 +610,7 @@ export default function TradePanelPage() {
           </div>
 
           {/* Product Catalog */}
-          <div className="border-b border-green-200/50 pb-8">
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="mb-6">
               <h2 className="text-xl font-light text-gray-900 mb-2">Product Catalog</h2>
               <p className="text-sm text-gray-600 font-light">
@@ -621,8 +624,8 @@ export default function TradePanelPage() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 text-sm font-light transition-colors border ${
                   selectedCategory === null
-                    ? 'border-green-600/50 text-green-600/80 bg-green-50/20'
-                    : 'border-gray-300 text-gray-700 hover:border-green-200/50'
+                    ? 'border-[#2D5A27]/50 text-[#2D5A27]/80 bg-[#2D5A27]/10/20'
+                    : 'border-gray-300 text-gray-700 hover:border-[#2D5A27]/20/50'
                 }`}
               >
                 All Products
@@ -631,8 +634,8 @@ export default function TradePanelPage() {
                 onClick={() => setSelectedCategory('Fruits')}
                 className={`px-4 py-2 text-sm font-light transition-colors border ${
                   selectedCategory === 'Fruits'
-                    ? 'border-green-600/50 text-green-600/80 bg-green-50/20'
-                    : 'border-gray-300 text-gray-700 hover:border-green-200/50'
+                    ? 'border-[#2D5A27]/50 text-[#2D5A27]/80 bg-[#2D5A27]/10/20'
+                    : 'border-gray-300 text-gray-700 hover:border-[#2D5A27]/20/50'
                 }`}
               >
                 Fruits
@@ -641,8 +644,8 @@ export default function TradePanelPage() {
                 onClick={() => setSelectedCategory('Vegetables')}
                 className={`px-4 py-2 text-sm font-light transition-colors border ${
                   selectedCategory === 'Vegetables'
-                    ? 'border-green-600/50 text-green-600/80 bg-green-50/20'
-                    : 'border-gray-300 text-gray-700 hover:border-green-200/50'
+                    ? 'border-[#2D5A27]/50 text-[#2D5A27]/80 bg-[#2D5A27]/10/20'
+                    : 'border-gray-300 text-gray-700 hover:border-[#2D5A27]/20/50'
                 }`}
               >
                 Vegetables
@@ -651,8 +654,8 @@ export default function TradePanelPage() {
                 onClick={() => setSelectedCategory('Grains')}
                 className={`px-4 py-2 text-sm font-light transition-colors border ${
                   selectedCategory === 'Grains'
-                    ? 'border-green-600/50 text-green-600/80 bg-green-50/20'
-                    : 'border-gray-300 text-gray-700 hover:border-green-200/50'
+                    ? 'border-[#2D5A27]/50 text-[#2D5A27]/80 bg-[#2D5A27]/10/20'
+                    : 'border-gray-300 text-gray-700 hover:border-[#2D5A27]/20/50'
                 }`}
               >
                 Grains
@@ -687,24 +690,128 @@ export default function TradePanelPage() {
                 </div>
 
                 <div className="p-6 space-y-6">
-                  {/* Basic Info */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <p className="text-gray-600 font-light">
+                    From: {productDetails.estate?.name || productDetails.estate || 'Available from European Producers'}
+                  </p>
+
+                  {/* Origin & Growing Method */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
+                        <Mountain className="w-5 h-5 text-[#2D5A27]" />
+                        Origin Information
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div>
+                          <span className="text-gray-600">Farm:</span>
+                          <span className="ml-2 font-medium text-gray-900">
+                            {productDetails.estate?.name || productDetails.estate || 'Vera Partner'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Harvested:</span>
+                          <span className="ml-2 font-medium text-gray-900">
+                            {productDetails.harvestDate
+                              ? new Date(productDetails.harvestDate).toLocaleDateString()
+                              : productDetails.estate?.harvestDate
+                                ? new Date(productDetails.estate.harvestDate).toLocaleDateString()
+                                : '—'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
+                        <Leaf className="w-5 h-5 text-[#2D5A27]" />
+                        Growing Method
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div>
+                          <span className="text-gray-600">Certification:</span>
+                          <span className="ml-2 font-medium text-[#2D5A27]">Bio Vera Certified</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Method:</span>
+                          <span className="ml-2 font-medium text-gray-900">Organic & Sustainable</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Digital Passport (Energetski Pasos) */}
+                  <div className="border-b border-gray-200/50 pb-6">
+                    <h3 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
+                      <QrCode className="w-5 h-5 text-[#2D5A27]" />
+                      Digital Passport (Energetski Pasos)
+                    </h3>
+                    {productDetails.passport ? (
+                      <div className="bg-[#2D5A27]/10/20 border border-[#2D5A27]/20/50 rounded-lg p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">Passport Hash:</span>
+                            <span className="text-xs font-mono text-gray-700">
+                              {(productDetails.passport.hash || productDetails.passport.passportHash || 'N/A').slice(0, 20)}...
+                            </span>
+                          </div>
+                          {productDetails.passport.timeline && productDetails.passport.timeline.length > 0 && (
+                            <div>
+                              <p className="text-sm text-gray-900 mb-2">Journey Timeline</p>
+                              <div className="space-y-2">
+                                {productDetails.passport.timeline.map((stage: any, idx: number) => (
+                                  <div key={idx} className="flex items-center gap-3 text-sm">
+                                    <div className="w-2 h-2 bg-green-600/60 rounded-full" />
+                                    <span>{stage.stage}</span>
+                                    {stage.date && <span className="text-gray-500">{new Date(stage.date).toLocaleDateString()}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {productDetails.batchId && (
+                            <div className="mt-3 pt-3 border-t border-[#2D5A27]/20/50">
+                              <p className="text-xs text-gray-600 mb-1">Scan QR or open full passport</p>
+                              <p className="text-xs text-gray-500 mb-2">Batch: {productDetails.batchId}</p>
+                              <Link
+                                href={`/passport/${productDetails.batchId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 hover:text-green-800"
+                              >
+                                View full passport (product, photos, producer)
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-200 rounded-lg p-4 text-center">
+                        <p className="text-sm text-gray-600 font-light">Digital passport not available for this product</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quantity & Price + Actions */}
+                  <div className="grid grid-cols-2 gap-4 border-b border-gray-200/50 pb-6">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Variety</p>
-                      <p className="text-base text-gray-900 mt-1">{productDetails.variety || 'Standard'}</p>
+                      <p className="text-sm text-gray-600 font-light mb-1">Quantity Available</p>
+                      <p className="text-xl font-light text-gray-900">
+                        {productDetails.availableQuantity?.toFixed(0) ?? productDetails.quantity ?? 0} {productDetails.unit || 'kg'}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Vera Partner</p>
-                      <p className="text-base text-gray-900 mt-1">{productDetails.estate?.name || productDetails.estate || 'N/A'}</p>
+                      <p className="text-sm text-gray-600 font-light mb-1">Price per {productDetails.unit || 'kg'}</p>
+                      <p className="text-xl font-light text-[#2D5A27]/80">
+                        €{productDetails.currentPrice?.toFixed(2) ?? productDetails.unitPrice?.toFixed(2) ?? '0.00'}
+                      </p>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Price</p>
-                      <p className="text-lg font-light text-green-600/80 mt-1">€{productDetails.currentPrice?.toFixed(2) || '0.00'}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Available Stock</p>
-                      <p className="text-base text-gray-900 mt-1">{productDetails.availableQuantity?.toFixed(0) || 0} {productDetails.unit || 'kg'}</p>
-                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <button className="flex-1 px-4 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg">
+                      Add to Cart
+                    </button>
+                    <button className="px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:border-[#2D5A27]/20 transition-colors rounded-lg">
+                      Request Quote
+                    </button>
                   </div>
 
                   {/* Certifications */}
@@ -718,7 +825,7 @@ export default function TradePanelPage() {
                           </span>
                         )}
                         {productDetails.certifications?.bio && (
-                          <span className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-xs font-medium flex items-center gap-1">
+                          <span className="px-3 py-1 bg-[#2D5A27]/10 text-green-700 rounded-lg text-xs font-medium flex items-center gap-1">
                             <Leaf className="w-4 h-4" /> Bio
                           </span>
                         )}
@@ -749,16 +856,6 @@ export default function TradePanelPage() {
                     </div>
                   </div>
 
-                  {/* Digital Passport Info */}
-                  {productDetails.passport && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-2">Digital Passport</p>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-xs text-gray-600 font-mono">{productDetails.passport.hash || 'N/A'}</p>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Vera Partners Section */}
                   {productDetails.partners && productDetails.partners.length > 0 && (
                     <div>
@@ -783,7 +880,7 @@ export default function TradePanelPage() {
                                 )}
                               </div>
                               <div className="text-right">
-                                <p className="text-sm font-semibold text-green-600">
+                                <p className="text-sm font-semibold text-[#2D5A27]">
                                   {partner.totalQuantity.toFixed(0)} {productDetails.unit || 'kg'}
                                 </p>
                                 <p className="text-xs text-gray-500">{partner.products.length} {partner.products.length === 1 ? 'batch' : 'batches'}</p>
@@ -839,15 +936,6 @@ export default function TradePanelPage() {
                     </div>
                   )}
 
-                  {/* Additional Info Placeholder */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-2">Additional Information</p>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-600">
-                        Detailed information about pesticides, permits, and pre-harvest photos will be displayed here once available.
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -855,7 +943,7 @@ export default function TradePanelPage() {
 
 
           {/* Harvest Forecast */}
-          <div className="border-b border-green-200/50 pb-8">
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="mb-6">
               <h2 className="text-xl font-light text-gray-900 mb-2">Harvest Forecast</h2>
               <p className="text-sm text-gray-600 font-light">Next 4 weeks</p>
@@ -906,7 +994,7 @@ export default function TradePanelPage() {
                           Week of {new Date(item.week).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-lg font-bold text-[#2D5A27]">
                         {item.estimatedQuantity.toFixed(0)} {item.unit}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -928,7 +1016,7 @@ export default function TradePanelPage() {
           </div>
 
           {/* Pre-Order & Lock Price */}
-          <div className="border-b border-green-200/50 pb-8">
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="mb-6">
               <h2 className="text-xl font-light text-gray-900 mb-2">Pre-Order & Lock Price</h2>
               <p className="text-sm text-gray-600 font-light">Secure your order and lock current price</p>
@@ -999,7 +1087,7 @@ export default function TradePanelPage() {
                   onChange={(e) =>
                     setPreOrderData({ ...preOrderData, lockPrice: e.target.checked })
                   }
-                  className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                  className="w-4 h-4 text-[#2D5A27] border-gray-300 rounded focus:ring-green-500"
                 />
                 <label htmlFor="lockPrice" className="text-sm font-medium text-gray-700">
                   Lock current price (better rate)

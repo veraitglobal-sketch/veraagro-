@@ -3,11 +3,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Bio Vera brand green (widget green) – used site-wide */
+  --color-vera: #2D5A27;
+  --color-vera-hover: #23471f;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-vera: var(--color-vera);
+  --color-vera-hover: var(--color-vera-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -73,10 +78,13 @@ body {
   line-height: 1.6;
 }
 
-/* Ensure buttons and interactive elements are readable */
-button, a, input, select, textarea {
+/* Ensure buttons and form controls are touch-friendly (44px min tap target); links use padding in components */
+button, input, select, textarea {
   font-size: 14px;
-  min-height: 36px;
+  min-height: 44px;
+}
+a {
+  font-size: 14px;
 }
 
 /* Thinner font weight for specific elements */

@@ -8,7 +8,6 @@ import {
   ShoppingCart,
   TrendingUp,
   Package,
-  Users,
   DollarSign,
   Calendar,
   ArrowUp,
@@ -26,6 +25,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth';
+import { Shield, HelpCircle, Mail } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -41,6 +42,7 @@ import {
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function BuyerDashboardPage() {
+  const { user } = useAuth();
   const buyerPortalNavItems = getBuyerPortalNavItems();
   const router = useRouter();
   const [statistics, setStatistics] = useState<any>(null);
@@ -79,7 +81,7 @@ export default function BuyerDashboardPage() {
 
   const getTrendIndicator = (current: number, previous: number) => {
     if (current > previous) {
-      return { icon: <ArrowUp className="w-4 h-4 text-green-600" />, color: 'text-green-600' };
+      return { icon: <ArrowUp className="w-4 h-4 text-[#2D5A27]" />, color: 'text-[#2D5A27]' };
     } else if (current < previous) {
       return { icon: <ArrowDown className="w-4 h-4 text-red-600" />, color: 'text-red-600' };
     }
@@ -123,36 +125,80 @@ export default function BuyerDashboardPage() {
     <AuthGuard requiredRoles={['BUYER']}>
         <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
         <div className="space-y-10">
-          {/* Pre-order 2026 & Direct orders */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Welcome + Trust */}
+          <div className="border-b border-[#2D5A27]/20/50 pb-6">
+            <h2 className="text-xl font-light text-gray-900 mb-1">
+              Welcome back{user?.firstName ? `, ${user.firstName}` : ''}
+            </h2>
+            <p className="text-sm text-gray-600 font-light mb-4">
+              Your Bio Vera B2B procurement dashboard — orders, deliveries and spending at a glance.
+            </p>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-gray-500 font-light">
+              <span className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-[#2D5A27]/70" strokeWidth={1.5} />
+                Secure B2B platform
+              </span>
+              <span>·</span>
+              <span>Certified supply chain</span>
+              <span>·</span>
+              <span>Your data protected</span>
+            </div>
+          </div>
+
+          {/* Quick actions: Pre-order, Direct orders, Invoices, Deliveries */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               href="/pre-order-2026"
-              className="flex items-center gap-4 p-4 rounded-lg border border-green-200 bg-green-50/50 hover:bg-green-50 hover:border-green-300 transition-colors"
+              className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/10/50 hover:bg-[#2D5A27]/10 hover:border-green-300 transition-colors"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/10">
-                <FileText className="h-6 w-6 text-green-600" strokeWidth={1.5} />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2D5A27]/10 flex-shrink-0">
+                <FileText className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.5} />
               </div>
-              <div>
-                <p className="font-medium text-gray-900">Pre-order for 2026 is open</p>
-                <p className="text-sm text-gray-600 font-light">Plan quantities for the 2026 season</p>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">Pre-order 2026</p>
+                <p className="text-sm text-gray-600 font-light">Plan quantities for the season</p>
               </div>
             </Link>
             <Link
               href="/buyer-portal/trade-panel"
               className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 flex-shrink-0">
                 <ShoppingCart className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="font-medium text-gray-900">Direct orders</p>
                 <p className="text-sm text-gray-600 font-light">Place an order now</p>
+              </div>
+            </Link>
+            <Link
+              href="/buyer-portal/invoices"
+              className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 flex-shrink-0">
+                <FileText className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">Invoices</p>
+                <p className="text-sm text-gray-600 font-light">View and download</p>
+              </div>
+            </Link>
+            <Link
+              href="/buyer-portal/deliveries"
+              className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 flex-shrink-0">
+                <Package className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">Deliveries</p>
+                <p className="text-sm text-gray-600 font-light">Track your orders</p>
               </div>
             </Link>
           </div>
 
           {/* Header */}
-          <div className="border-b border-green-200/50 pb-8">
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-light text-gray-900 mb-2">Business Overview</h1>
@@ -163,7 +209,7 @@ export default function BuyerDashboardPage() {
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-light hover:border-green-600/50 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-light hover:border-[#2D5A27]/50 transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={1} />
                 Refresh Data
@@ -172,30 +218,30 @@ export default function BuyerDashboardPage() {
             
             {/* System Status */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border-b border-green-200/50 pb-4">
+              <div className="border-b border-[#2D5A27]/20/50 pb-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Platform Status</p>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-[#2D5A27]/100 rounded-full"></div>
                       <p className="text-sm font-light text-gray-900">All Systems Operational</p>
                     </div>
                   </div>
-                  <Activity className="w-5 h-5 text-green-600/60" strokeWidth={1} />
+                  <Activity className="w-5 h-5 text-[#2D5A27]/60" strokeWidth={1} />
                 </div>
               </div>
-              <div className="border-b border-green-200/50 pb-4">
+              <div className="border-b border-[#2D5A27]/20/50 pb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Active Suppliers</p>
+                    <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Open orders</p>
                     <p className="text-sm font-light text-gray-900">
-                      {statistics?.topSuppliers?.length || 0} Vera Partners
+                      {recentOrders.filter((o: any) => o.status === 'PENDING').length}
                     </p>
                   </div>
-                  <Users className="w-5 h-5 text-green-600/60" strokeWidth={1} />
+                  <Package className="w-5 h-5 text-[#2D5A27]/60" strokeWidth={1} />
                 </div>
               </div>
-              <div className="border-b border-green-200/50 pb-4">
+              <div className="border-b border-[#2D5A27]/20/50 pb-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Last Updated</p>
@@ -203,15 +249,15 @@ export default function BuyerDashboardPage() {
                       {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
-                  <Calendar className="w-5 h-5 text-green-600/60" strokeWidth={1} />
+                  <Calendar className="w-5 h-5 text-[#2D5A27]/60" strokeWidth={1} />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 border-b border-green-200/50 pb-8">
-            <div className="border-b border-green-200/50 pb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 border-b border-[#2D5A27]/20/50 pb-8">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-light text-gray-600">Total Orders</p>
@@ -228,11 +274,11 @@ export default function BuyerDashboardPage() {
                     </p>
                   </div>
                 </div>
-                <ShoppingCart className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                <ShoppingCart className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
               </div>
             </div>
 
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-light text-gray-600">Total Spent</p>
@@ -249,11 +295,11 @@ export default function BuyerDashboardPage() {
                     </p>
                   </div>
                 </div>
-                <DollarSign className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                <DollarSign className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
               </div>
             </div>
 
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-light text-gray-600">Active Orders</p>
@@ -264,11 +310,11 @@ export default function BuyerDashboardPage() {
                     {statistics?.orders.pending || 0} pending
                   </p>
                 </div>
-                <Package className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                <Package className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
               </div>
             </div>
 
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-light text-gray-600">Avg Order Value</p>
@@ -279,15 +325,15 @@ export default function BuyerDashboardPage() {
                     {statistics?.orders.completed || 0} completed
                   </p>
                 </div>
-                <TrendingUp className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                <TrendingUp className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
               </div>
             </div>
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-b border-green-200/50 pb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-b border-[#2D5A27]/20/50 pb-8">
             {/* Spending Trend */}
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <h3 className="text-lg font-light text-gray-900 mb-6">Spending Trend</h3>
               <p className="text-sm text-gray-600 mb-4 font-light">Last 6 months</p>
               <ResponsiveContainer width="100%" height={300}>
@@ -321,7 +367,7 @@ export default function BuyerDashboardPage() {
             </div>
 
             {/* Top Products */}
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <h3 className="text-lg font-light text-gray-900 mb-6">Top Products</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={topProductsData}>
@@ -336,39 +382,9 @@ export default function BuyerDashboardPage() {
             </div>
           </div>
 
-          {/* Top Suppliers & Recent Orders */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-b border-green-200/50 pb-8">
-            {/* Top Vera Partners */}
-            <div className="border-b border-green-200/50 pb-6">
-              <h3 className="text-lg font-light text-gray-900 mb-6">Top Vera Partners</h3>
-              <div className="space-y-4">
-                {statistics?.topSuppliers?.slice(0, 5).map((partner: any, index: number) => (
-                  <div key={partner.estateId} className="flex items-center justify-between pb-4 border-b border-gray-200/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 flex items-center justify-center text-green-600/60 text-sm font-light">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className="text-sm font-light text-gray-900">{partner.estateName}</p>
-                        <p className="text-xs text-gray-500 font-light">{partner.farmerName}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-light text-gray-900">
-                        €{partner.totalSpent?.toFixed(2) || '0.00'}
-                      </p>
-                      <p className="text-xs text-gray-500 font-light">{partner.orderCount} orders</p>
-                    </div>
-                  </div>
-                ))}
-                {(!statistics?.topSuppliers || statistics.topSuppliers.length === 0) && (
-                  <p className="text-sm text-gray-500 text-center py-4 font-light">No Vera Partners yet</p>
-                )}
-              </div>
-            </div>
-
-            {/* Recent Orders */}
-            <div className="border-b border-green-200/50 pb-6">
+          {/* Recent Orders */}
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <h3 className="text-lg font-light text-gray-900 mb-6">Recent Orders</h3>
               <div className="space-y-4">
                 {recentOrders.map((order) => (
@@ -386,7 +402,7 @@ export default function BuyerDashboardPage() {
                         €{order.totalAmount?.toFixed(2) || '0.00'}
                       </p>
                       <span className={`text-xs px-2 py-1 border ${
-                        order.status === 'COMPLETED' ? 'border-green-200/50 text-green-600/80' :
+                        order.status === 'COMPLETED' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' :
                         order.status === 'PENDING' ? 'border-yellow-200/50 text-yellow-600/80' :
                         'border-gray-200/50 text-gray-600/80'
                       } font-light`}>
@@ -403,9 +419,9 @@ export default function BuyerDashboardPage() {
           </div>
 
           {/* Pending Orders & Upcoming Deliveries */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-b border-green-200/50 pb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-b border-[#2D5A27]/20/50 pb-8">
             {/* Pending Orders */}
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <h3 className="text-lg font-light text-gray-900 mb-6">Pending Orders</h3>
               <div className="space-y-4">
                 {recentOrders
@@ -438,7 +454,7 @@ export default function BuyerDashboardPage() {
             </div>
 
             {/* Upcoming Deliveries */}
-            <div className="border-b border-green-200/50 pb-6">
+            <div className="border-b border-[#2D5A27]/20/50 pb-6">
               <h3 className="text-lg font-light text-gray-900 mb-6">Upcoming Deliveries</h3>
               <div className="space-y-4">
                 {statistics?.upcomingDeliveries?.map((delivery: any) => (
@@ -458,7 +474,7 @@ export default function BuyerDashboardPage() {
                     </div>
                     <div className="text-right">
                       <span className={`text-xs px-2 py-1 border font-light ${
-                        delivery.status === 'IN_TRANSIT' ? 'border-green-200/50 text-green-600/80' :
+                        delivery.status === 'IN_TRANSIT' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' :
                         delivery.status === 'PICKED_UP' ? 'border-gray-200/50 text-gray-600/80' :
                         'border-gray-200/50 text-gray-600/80'
                       }`}>
@@ -475,12 +491,12 @@ export default function BuyerDashboardPage() {
           </div>
 
           {/* Recent Activity Summary */}
-          <div className="border-b border-green-200/50 pb-8">
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-light text-gray-900">Recent Activity</h3>
               <button
                 onClick={() => router.push('/buyer-portal/history')}
-                className="text-sm font-light text-green-600/80 hover:text-green-600 transition-colors"
+                className="text-sm font-light text-[#2D5A27]/80 hover:text-[#2D5A27] transition-colors"
               >
                 View All →
               </button>
@@ -491,7 +507,7 @@ export default function BuyerDashboardPage() {
                   <div key={order.id} className="flex items-center justify-between pb-4 border-b border-gray-200/50">
                     <div className="flex items-center gap-3">
                       <div className={`w-2 h-2 rounded-full ${
-                        order.status === 'COMPLETED' ? 'bg-green-600/60' :
+                        order.status === 'COMPLETED' ? 'bg-[#2D5A27]/60' :
                         order.status === 'PENDING' ? 'bg-yellow-600/60' :
                         'bg-gray-600/60'
                       }`} />
@@ -509,7 +525,7 @@ export default function BuyerDashboardPage() {
                         €{order.totalAmount?.toFixed(2) || '0.00'}
                       </p>
                       <span className={`text-xs px-2 py-1 border font-light ${
-                        order.status === 'COMPLETED' ? 'border-green-200/50 text-green-600/80' :
+                        order.status === 'COMPLETED' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' :
                         order.status === 'PENDING' ? 'border-yellow-200/50 text-yellow-600/80' :
                         'border-gray-200/50 text-gray-600/80'
                       }`}>
@@ -521,6 +537,27 @@ export default function BuyerDashboardPage() {
               ) : (
                 <p className="text-sm text-gray-500 text-center py-4 font-light">No recent activity</p>
               )}
+            </div>
+          </div>
+
+          {/* Resources & Support */}
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
+            <h3 className="text-lg font-light text-gray-900 mb-4">Resources & support</h3>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/for-buyers#how-we-operate"
+                className="inline-flex items-center gap-2 text-sm font-light text-gray-700 hover:text-[#23471f] transition-colors"
+              >
+                <HelpCircle className="w-4 h-4 text-[#2D5A27]/70" strokeWidth={1.5} />
+                How we operate
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 text-sm font-light text-gray-700 hover:text-[#23471f] transition-colors"
+              >
+                <Mail className="w-4 h-4 text-[#2D5A27]/70" strokeWidth={1.5} />
+                Contact
+              </Link>
             </div>
           </div>
         </div>

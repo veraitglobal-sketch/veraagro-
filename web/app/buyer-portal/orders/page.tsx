@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI } from '@/lib/api';
-import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function OrdersPage() {
@@ -113,13 +114,41 @@ export default function OrdersPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="My Orders" navItems={buyerPortalNavItems}>
+      <SidebarLayout title="Orders" navItems={buyerPortalNavItems}>
         <div className="space-y-8">
-          {/* Header */}
+          {/* Pre-orders & Direct orders */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/pre-order-2026"
+              className="flex items-center gap-4 p-4 rounded-lg border border-green-200 bg-green-50/50 hover:bg-green-50 hover:border-green-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/10">
+                <FileText className="h-6 w-6 text-green-600" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Pre-order 2026</p>
+                <p className="text-sm text-gray-600 font-light">Plan quantities for the 2026 season</p>
+              </div>
+            </Link>
+            <Link
+              href="/buyer-portal/trade-panel"
+              className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
+                <ShoppingCart className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Direct orders</p>
+                <p className="text-sm text-gray-600 font-light">Place an order now (Vera Trade)</p>
+              </div>
+            </Link>
+          </div>
+
+          {/* My orders */}
           <div className="border-b border-green-200/50 pb-6">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">My Orders</h1>
-              <p className="text-sm text-gray-600 mt-2 font-light">View and track your orders</p>
+              <h2 className="text-xl font-light text-gray-900">My orders</h2>
+              <p className="text-sm text-gray-600 mt-1 font-light">View and track your orders</p>
             </div>
           </div>
 

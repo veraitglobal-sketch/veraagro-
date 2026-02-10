@@ -61,11 +61,9 @@ const navLabels = {
   },
 };
 
-// Helper function to get current language (defaults to 'en')
-function getCurrentLanguage(): 'en' | 'sr' | 'de' {
-  if (typeof window === 'undefined') return 'en';
-  const stored = localStorage.getItem('language');
-  return (stored === 'sr' || stored === 'de') ? stored : 'en';
+// English localization only
+function getCurrentLanguage(): 'en' {
+  return 'en';
 }
 
 // Dashboard icon component
@@ -97,9 +95,8 @@ const CommandControlIcon = () => (
 );
 
 // Function to get navigation items with localization
-export function getAdminNavItems(language?: 'en' | 'sr' | 'de') {
-  const lang = language || getCurrentLanguage();
-  const labels = navLabels[lang];
+export function getAdminNavItems(_language?: 'en') {
+  const labels = navLabels.en;
 
   return [
     { 

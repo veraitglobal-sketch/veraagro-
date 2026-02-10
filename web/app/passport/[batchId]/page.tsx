@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Shield, Download, MapPin } from 'lucide-react';
+import { Shield, Download, MapPin, Package, Camera, User } from 'lucide-react';
 import Image from 'next/image';
 import { formatFarmerIdentity, getFirstName, extractRegion } from '@/lib/farmer-utils';
 
@@ -28,12 +28,14 @@ interface PassportData {
     yearsOfExperience?: number | null;
     farmerQrCode?: string | null;
     farmerProfileUrl?: string | null;
+    bio?: string | null;
   };
+  photos?: { url: string; type: string; verified: boolean }[];
   compliance: {
-    euOrganic: string; // RS-BIO-XXX
-    soilHealth: string; // Last check date
-    pesticideFree: string; // 'Negative' or status
-    waterPurity: string; // Water source
+    euOrganic: string;
+    soilHealth: string;
+    pesticideFree: string;
+    waterPurity: string;
   };
   timeline: {
     harvested: string;
@@ -70,7 +72,7 @@ export default function ProductPassportPage() {
 
   const fetchPassportData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/qr/verify/${batchId}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/qr/verify/${batchId}`);
       
       if (!response.ok) {
         throw new Error('Passport data not found');
@@ -104,16 +106,18 @@ export default function ProductPassportPage() {
           gpsLocation: undefined, // No GPS for privacy
         },
         farmer: {
-          name: farmerIdentity, // Formatted identity
+          name: farmerIdentity,
           photo: apiData.farmer?.photo || null,
           generation: apiData.farmer?.generation || '3rd',
           yearsOfExperience: apiData.farmer?.yearsOfExperience || null,
           farmerQrCode: apiData.farmer?.farmerQrCode || null,
           farmerProfileUrl: apiData.farmer?.farmerProfileUrl || null,
+          bio: apiData.farmer?.bio || null,
         },
+        photos: apiData.photos || [],
         compliance: {
           euOrganic: apiData.compliance?.euOrganic || 'RS-BIO-001',
-          soilHealth: apiData.compliance?.soilHealth || new Date().toLocaleDateString('sr-RS'),
+          soilHealth: apiData.compliance?.soilHealth || new Date().toLocaleDateString('en-GB'),
           pesticideFree: apiData.compliance?.pesticideFree || 'Negative',
           waterPurity: apiData.compliance?.waterPurity || 'Izvorska voda',
         },
@@ -149,7 +153,7 @@ export default function ProductPassportPage() {
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('sr-RS', {
+    return date.toLocaleString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -160,7 +164,7 @@ export default function ProductPassportPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('sr-RS', {
+    return date.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -192,76 +196,104 @@ export default function ProductPassportPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Header & Identity */}
+        {/* 1. Product details */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="mb-10 pb-8 border-b border-black/10"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Package className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/60 uppercase">Product</span>
+          </div>
+          <h1 className="text-2xl font-light text-[#1A3021] mb-2">{data.batch.productName}</h1>
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-[#1A3021]/80">
+            <span>Batch: {data.batch.batchId}</span>
+            <span>{data.batch.quantity} {data.batch.unit}</span>
+            <span>Harvested: {formatDate(data.batch.harvestDate)}</span>
+          </div>
+        </motion.div>
+
+        {/* 2. Photos */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-10 pb-8 border-b border-black/10"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Camera className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/60 uppercase">Photos</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {data.farmer.photo && (
+              <div className="relative aspect-square rounded-xl overflow-hidden border border-black/10">
+                <Image src={data.farmer.photo} alt="Producer" fill className="object-cover" unoptimized />
+                <span className="absolute bottom-1 left-1 right-1 text-[10px] font-light text-white/90 bg-black/40 rounded px-1.5 py-0.5">Producer</span>
+              </div>
+            )}
+            {(data.photos || []).map((p, i) => (
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-black/10">
+                <Image src={p.url} alt={p.type} fill className="object-cover" unoptimized />
+                <span className="absolute bottom-1 left-1 right-1 text-[10px] font-light text-white/90 bg-black/40 rounded px-1.5 py-0.5 truncate">{p.type}</span>
+              </div>
+            ))}
+            {(!data.farmer.photo && (!data.photos || data.photos.length === 0)) && (
+              <div className="col-span-2 sm:col-span-3 aspect-video rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 flex flex-col items-center justify-center gap-2 border border-black/5">
+                <span className="text-4xl">🌱</span>
+                <p className="text-[11px] font-light text-[#1A3021]/50">No photos yet</p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* 3. Producer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="mb-12"
         >
-          {/* Farmer Photo */}
-          <div className="mb-6 flex justify-center">
-            <div className="relative w-32 h-32 rounded-2xl overflow-hidden border border-black/5">
+          <div className="flex items-center gap-2 mb-4">
+            <User className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/60 uppercase">Producer</span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-6 items-start">
+            <div className="relative w-28 h-28 rounded-2xl overflow-hidden border border-black/5 flex-shrink-0">
               {data.farmer.photo ? (
-                <Image
-                  src={data.farmer.photo}
-                  alt={data.farmer.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={data.farmer.photo} alt={data.farmer.name} fill className="object-cover" unoptimized />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-green-50 to-green-100/50 flex items-center justify-center">
-                  <span className="text-4xl">🌱</span>
+                  <span className="text-3xl">🌱</span>
                 </div>
               )}
             </div>
-          </div>
-
-          {/* VERA PRODUCER Brand Prefix */}
-          <div className="text-center mb-3">
-            <p className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/50 uppercase">
-              VERA PRODUCER
-            </p>
-          </div>
-
-          {/* Farmer Name & Location */}
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <MapPin className="w-3 h-3 text-[#1A3021]/60" strokeWidth={1} />
-              <h1 className="text-sm font-light tracking-[0.2em] text-[#1A3021]">
-                {data.farmer.name}
-              </h1>
+            <div>
+              <p className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/50 uppercase mb-1">VERA PRODUCER</p>
+              <h2 className="text-lg font-light text-[#1A3021] mb-1">{data.farmer.name}</h2>
+              <div className="flex items-center gap-1.5 text-sm text-[#1A3021]/70">
+                <MapPin className="w-3.5 h-3.5" strokeWidth={1} />
+                {data.origin.farmName} · {data.origin.location}
+              </div>
+              {data.farmer.bio && <p className="text-sm text-[#1A3021]/70 mt-2 font-light">{data.farmer.bio}</p>}
+              {data.farmer.yearsOfExperience != null && (
+                <p className="text-xs text-[#1A3021]/50 mt-1">{data.farmer.yearsOfExperience} years of experience</p>
+              )}
+              {data.farmer.farmerProfileUrl && (
+                <a
+                  href={data.farmer.farmerProfileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 text-xs font-light text-[#A4C639] hover:underline"
+                >
+                  Meet the person who picked this →
+                </a>
+              )}
             </div>
-            <p className="text-xs font-light tracking-[0.15em] text-[#1A3021]/70 uppercase">
-              {data.origin.location}
-            </p>
-            {data.farmer.yearsOfExperience && (
-              <p className="text-[10px] font-light text-[#1A3021]/50 mt-1">
-                {data.farmer.yearsOfExperience} years of experience
-              </p>
-            )}
-            {data.farmer.farmerProfileUrl && (
-              <a
-                href={data.farmer.farmerProfileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-2 text-[10px] font-light text-[#A4C639] hover:underline"
-              >
-                Meet the person who picked this →
-              </a>
-            )}
           </div>
-
-          {/* Vera Integrity Badge */}
-          <div className="flex justify-center items-center gap-2 mb-8">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Shield className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
-            </motion.div>
-            <span className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/60 uppercase">
-              Vera Integrity
-            </span>
+          <div className="flex justify-start items-center gap-2 mt-6">
+            <Shield className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/60 uppercase">Vera Integrity</span>
           </div>
         </motion.div>
 

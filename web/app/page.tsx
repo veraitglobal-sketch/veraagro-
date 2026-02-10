@@ -19,11 +19,13 @@ import {
   Carrot,
   Wheat,
   HelpCircle,
+  ShoppingBag,
 } from 'lucide-react';
 import { partners } from '@/lib/partners';
 import dynamic from 'next/dynamic';
 
 const VeraAIChatbotInline = dynamic(() => import('@/components/VeraAIChatbotInline'), { ssr: false });
+import Footer from '@/components/Footer';
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
@@ -61,13 +63,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/login"
-                className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
+                <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
                 Browse Products
               </Link>
               <Link
                 href="/growers"
-                className="px-6 py-3 border border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
                 Become a Producer
               </Link>
@@ -108,7 +111,7 @@ export default function Home() {
       </section>
 
       {/* Stats - Minimal */}
-      <section className="pt-16 pb-12 border-t border-gray-200 bg-green-50/30">
+      <section className="pt-16 pb-12 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -126,6 +129,7 @@ export default function Home() {
                 className="text-center"
               >
                 <div className="text-3xl font-light text-gray-900 mb-2">{stat.number}</div>
+                <div className="h-0.5 w-8 mx-auto mb-2 rounded-full bg-[#2D5A27]/40" aria-hidden />
                 <div className="text-sm text-gray-500 uppercase tracking-wide">{stat.label}</div>
               </motion.div>
             ))}
@@ -207,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* Vision Section */}
-      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">Our Vision</h2>
@@ -237,9 +241,9 @@ export default function Home() {
             ].map((item, index) => {
               const IconComponent = item.icon;
               return (
-                <div key={index} className="border-b border-green-200/50 pb-8">
+                <div key={index} className="border-b border-[#2D5A27]/15 pb-8">
                   <div className="mb-4">
-                    <IconComponent className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                    <IconComponent className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
                   </div>
                   <h3 className="text-lg font-light text-gray-900 mb-3">{item.title}</h3>
                   <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
@@ -295,9 +299,9 @@ export default function Home() {
             ].map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <div key={index} className="border-b border-green-200/50 pb-8">
+                <div key={index} className="border-b border-[#2D5A27]/15 pb-8">
                   <div className="mb-4">
-                    <IconComponent className="w-6 h-6 text-green-600/60" strokeWidth={1} />
+                    <IconComponent className="w-6 h-6 text-[#2D5A27]/60" strokeWidth={1} />
                   </div>
                   <h3 className="text-lg font-light text-gray-900 mb-3">{feature.title}</h3>
                   <p className="text-sm text-gray-600 leading-relaxed font-light">{feature.description}</p>
@@ -309,7 +313,7 @@ export default function Home() {
       </section>
 
       {/* Roadmap Section */}
-      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -356,13 +360,13 @@ export default function Home() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="border-l-2 border-gray-200 pl-8 pb-8 last:pb-0 hover:border-green-600 transition-colors"
+                className="border-l-2 border-gray-200 pl-8 pb-8 last:pb-0 hover:border-vera transition-colors"
               >
                 <div className="flex items-start gap-6">
                   <div className="flex-shrink-0">
                     <div className={`w-2 h-2 rounded-full mt-2 ${
-                      plan.status === 'completed' ? 'bg-green-600' :
-                      plan.status === 'in-progress' ? 'bg-green-400' :
+                      plan.status === 'completed' ? 'bg-[#2D5A27]' :
+                      plan.status === 'in-progress' ? 'bg-[#2D5A27]/80' :
                       'bg-gray-300'
                     }`}></div>
                   </div>
@@ -370,8 +374,8 @@ export default function Home() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.phase}</span>
                       <span className={`text-xs px-2 py-1 border ${
-                        plan.status === 'completed' ? 'border-green-600 text-green-600' :
-                        plan.status === 'in-progress' ? 'border-green-400 text-green-600' :
+                        plan.status === 'completed' ? 'border-[#2D5A27] text-[#2D5A27]' :
+                        plan.status === 'in-progress' ? 'border-[#2D5A27]/70 text-[#2D5A27]' :
                         'border-gray-300 text-gray-400'
                       }`}>
                         {plan.status === 'completed' ? 'Completed' : plan.status === 'in-progress' ? 'In Progress' : 'Planned'}
@@ -422,9 +426,9 @@ export default function Home() {
                 <Link
                   key={category.id}
                   href="/login"
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg transition-all group hover:border-green-600 hover:text-green-600"
+                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg transition-all group hover:border-[#2D5A27] hover:text-[#2D5A27]"
                 >
-                  <Icon className="w-5 h-5 text-gray-600 group-hover:text-green-600 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
+                  <Icon className="w-5 h-5 text-gray-600 group-hover:text-[#2D5A27] group-hover:scale-110 transition-transform" strokeWidth={1.5} />
                   <span className="text-sm font-medium transition-colors">
                     {category.name}
                   </span>
@@ -450,13 +454,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/growers"
-                className="px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 Become a Producer
               </Link>
               <Link
                 href="/login"
-                className="px-6 py-3 border border-green-600 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
                 Start Shopping
               </Link>
@@ -473,75 +477,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-12 mb-12">
-            <div className="flex flex-col">
-              <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
-                <Image 
-                  src="/logo1.png" 
-                  alt="Bio Vera" 
-                  width={56} 
-                  height={20} 
-                  className="h-4 w-auto"
-                  style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
-                />
-              </Link>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                Vertically integrated agrotech platform for Bio-Ready certification 
-                and EU market compliance.
-              </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                  Apple
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 2.807a.998.998 0 0 1 0 1.414l-2.807 2.807 2.113 2.113a.996.996 0 0 1 0 1.414L17.314 20.2a.996.996 0 0 1-1.414 0l-2.113-2.113-2.302 2.302-2.113-2.113 8.635-8.635 2.113 2.113zM5.864 2.658L16.802 8.99l-2.302 2.302-8.636-8.634z"/></svg>
-                  Android
-                </span>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center" style={{ minHeight: '1.25rem' }}>Product</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-green-600 transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-green-600 transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-green-600 transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-green-600 transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-green-600 transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/faq" className="hover:text-green-600 transition-colors">FAQ</Link></li>
-                <li><Link href="/help-center" className="hover:text-green-600 transition-colors">Help Center</Link></li>
-                <li><Link href="/security" className="hover:text-green-600 transition-colors">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-green-600 transition-colors">Legal</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

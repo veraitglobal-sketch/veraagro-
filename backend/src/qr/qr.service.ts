@@ -83,6 +83,9 @@ export class QrService {
           },
         },
         parcels: true,
+        compliance_photos: {
+          orderBy: { uploadedAt: 'desc' },
+        },
         users_batches_harvestedByUserIdTousers: {
           select: {
             id: true,
@@ -252,6 +255,12 @@ export class QrService {
         phone: undefined, // Never send to Buyer
         email: undefined, // Never send to Buyer
       },
+      // Product photos (compliance / packaging) for passport
+      photos: (batch.compliance_photos || []).map((p) => ({
+        url: p.photoUrl,
+        type: p.photoType,
+        verified: p.isVerified,
+      })),
       // Protocol 360: Quality Control Levels
       protocol360: await this.getProtocol360Data(batch.id),
     };

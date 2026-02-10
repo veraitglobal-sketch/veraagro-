@@ -18,7 +18,7 @@ export default function Navigation() {
     if (!isAuthenticated || !user) {
       return [
         { href: '/', label: 'Home' },
-        { href: '/products', label: 'For Buyers' },
+        { href: '/for-buyers', label: 'For Buyers' },
         { href: '/growers', label: 'For Growers' },
         { href: '/suppliers', label: 'For Suppliers' },
         { href: '/logistics-partner', label: 'For Logistics' },
@@ -61,8 +61,8 @@ export default function Navigation() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors flex items-center h-full whitespace-nowrap ${
                   isActive(link.href)
-                    ? 'text-green-600 border-b-2 border-green-600'
-                    : 'text-gray-600 hover:text-green-600'
+                    ? 'text-[#2D5A27] border-b-2 border-[#2D5A27]'
+                    : 'text-gray-800 hover:text-[#2D5A27]'
                 }`}
               >
                 {link.label}
@@ -91,7 +91,7 @@ export default function Navigation() {
                   return (
                     <Link
                       href={getDashboardLink()}
-                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                      className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                     >
                       Dashboard
                     </Link>
@@ -107,17 +107,20 @@ export default function Navigation() {
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
               >
                 Login
               </Link>
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button - 44px min touch target */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? (
@@ -130,22 +133,31 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation - touch-friendly tap targets (min 44px) */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-4 space-y-3">
+          <div className="px-4 py-3 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block text-sm font-medium ${
-                  isActive(link.href) ? 'text-green-600' : 'text-gray-600'
+                className={`flex items-center min-h-[44px] px-2 text-sm font-medium ${
+                  isActive(link.href) ? 'text-[#2D5A27]' : 'text-gray-800'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
+            {!isAuthenticated && (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center min-h-[44px] px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] mt-2"
+              >
+                Login
+              </Link>
+            )}
             {isAuthenticated ? (
               <>
                 {(() => {
@@ -166,18 +178,19 @@ export default function Navigation() {
                     <Link
                       href={getDashboardLink()}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 text-center mb-3"
+                      className="flex items-center justify-center min-h-[44px] px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] mt-2"
                     >
                       Dashboard
                     </Link>
                   );
                 })()}
                 <button
+                  type="button"
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left text-sm font-medium text-gray-600 hover:text-red-600"
+                  className="flex items-center min-h-[44px] w-full text-left px-2 text-sm font-medium text-gray-600 hover:text-red-600"
                 >
                   Logout
                 </button>

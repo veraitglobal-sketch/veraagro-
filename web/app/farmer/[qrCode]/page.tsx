@@ -90,7 +90,7 @@ export default function FarmerProfilePage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-xl font-light text-[#1A3021] mb-2">Profil nije pronađen</h1>
+          <h1 className="text-xl font-light text-[#1A3021] mb-2">Profile not found</h1>
           <p className="text-sm text-[#1A3021]/60 font-light">{error || 'Farmer profil ne postoji.'}</p>
         </div>
       </div>

@@ -72,7 +72,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
     if (percentage === 0) return 'bg-gray-300';
     if (percentage < 20) return 'bg-red-500';
     if (percentage < 50) return 'bg-orange-500';
-    return 'bg-green-500';
+    return 'bg-[#2D5A27]';
   };
 
   const getAvailabilityStatusText = (product: Product): string => {
@@ -87,21 +87,24 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-        {/* Sticky Header - Simple Design */}
-        <div className="sticky top-0 z-10 bg-gray-50 border-b border-gray-200">
-          <div className="grid grid-cols-5 gap-4 px-6 py-2.5">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        {/* Header – same style as pre-order (Product / Unit / Price / Stock / Action) */}
+        <div className="sticky top-0 z-10 bg-gray-50/80 border-b-2 border-[#2D5A27]">
+          <div className="grid grid-cols-6 gap-4 px-4 py-2.5 sm:px-6">
             <div className="col-span-2">
-              <span className="text-xs font-normal text-gray-600">Product</span>
+              <span className="text-sm font-medium text-gray-700">Product</span>
             </div>
-            <div className="col-span-1">
-              <span className="text-xs font-normal text-gray-600">Price (€)</span>
+            <div className="col-span-1 text-right">
+              <span className="text-sm font-medium text-gray-700">Unit</span>
             </div>
-            <div className="col-span-1">
-              <span className="text-xs font-normal text-gray-600">Stock</span>
+            <div className="col-span-1 text-right">
+              <span className="text-sm font-medium text-gray-700">Price (€)</span>
             </div>
-            <div className="col-span-1 text-center">
-              <span className="text-xs font-normal text-gray-600">Action</span>
+            <div className="col-span-1 text-right">
+              <span className="text-sm font-medium text-gray-700">Stock</span>
+            </div>
+            <div className="col-span-1 text-right">
+              <span className="text-sm font-medium text-gray-700">Action</span>
             </div>
           </div>
         </div>
@@ -114,6 +117,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
               const availabilityPercentage = getAvailabilityPercentage(product);
               const availabilityColor = getAvailabilityColor(product);
               const statusText = getAvailabilityStatusText(product);
+              const unit = product.unit || 'kg';
 
               return (
                 <motion.div
@@ -121,15 +125,15 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.1 }}
-                  className={`grid grid-cols-5 gap-4 px-6 py-2.5 items-center border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                    isEven ? 'bg-white' : 'bg-gray-50/50'
+                  className={`grid grid-cols-6 gap-4 px-4 py-2.5 sm:px-6 items-center border-b border-gray-100 hover:bg-gray-50/50 transition-colors ${
+                    isEven ? 'bg-white' : 'bg-gray-50/30'
                   }`}
                 >
                   {/* Product Name - Clickable */}
                   <div className="col-span-2">
                     <button
                       onClick={() => onProductClick && onProductClick(product)}
-                      className="text-left hover:text-green-600 transition-colors"
+                      className="text-left hover:text-[#2D5A27] transition-colors"
                     >
                       <p className="font-normal text-sm text-gray-900">{product.productName}</p>
                       {product.variety && product.variety !== 'Standard' && (
@@ -138,8 +142,13 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                     </button>
                   </div>
 
+                  {/* Unit – same as pre-order */}
+                  <div className="col-span-1 text-right">
+                    <span className="text-sm text-gray-600">{unit}</span>
+                  </div>
+
                   {/* Price - Editable */}
-                  <div className="col-span-1">
+                  <div className="col-span-1 text-right">
                     {editingPrice === product.id ? (
                       <div className="flex items-center gap-2">
                         <input
@@ -169,7 +178,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                               setEditingPrice(null);
                             }
                           }}
-                          className="text-green-600 hover:text-green-700 text-xs font-normal"
+                          className="text-[#2D5A27] hover:text-[#23471f] text-xs font-normal"
                         >
                           ✓
                         </button>
@@ -213,20 +222,26 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                   </div>
 
                   {/* Stock */}
-                  <div className="col-span-1">
-                    <span className="text-xs font-normal text-gray-600">
-                      {product.availableQuantity > 0 
-                        ? `${(product.availableQuantity / 1000).toFixed(1)}t`
-                        : '0t'
+                  <div className="col-span-1 text-right">
+                    <span className="text-sm text-gray-600">
+                      {product.availableQuantity > 0
+                        ? (product.unit === 't' ? `${(product.availableQuantity / 1000).toFixed(1)} t` : `${product.availableQuantity} ${unit}`)
+                        : `0 ${unit}`
                       }
                     </span>
                   </div>
 
                   {/* Action */}
-                  <div className="col-span-1 flex justify-center">
+                  <div className="col-span-1 flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => onProductClick && onProductClick(product)}
+                      className="text-xs font-normal text-gray-600 hover:text-[#2D5A27] transition-colors"
+                    >
+                      Details
+                    </button>
                     <button
                       onClick={() => handleOrderClick(product.id)}
-                      className="px-2.5 py-1 bg-green-600 text-white text-xs font-normal rounded hover:bg-green-700 transition-colors"
+                      className="px-2.5 py-1 bg-[#2D5A27] text-white text-xs font-normal rounded hover:bg-[#23471f] transition-colors"
                     >
                       Order
                     </button>
@@ -260,7 +275,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-green-600" />
+                  <Lock className="w-5 h-5 text-[#2D5A27]" />
                   Lock Price & Order
                 </h2>
                 <button
@@ -292,7 +307,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                           {product.variety && (
                             <p className="text-sm text-gray-500">Variety: {product.variety}</p>
                           )}
-                          <p className="text-lg font-bold text-green-600 mt-1">
+                          <p className="text-lg font-bold text-[#2D5A27] mt-1">
                             €{product.currentPrice.toFixed(2)} / {product.unit || 'kg'}
                           </p>
                         </div>
@@ -311,7 +326,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                         step="0.1"
                         value={orderQuantity}
                         onChange={(e) => setOrderQuantity(parseFloat(e.target.value) || 1)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         Available: {product.availableQuantity.toFixed(0)} {product.unit || 'kg'}
@@ -319,10 +334,10 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                     </div>
 
                     {/* Total Price */}
-                    <div className="bg-green-50 rounded-lg p-4">
+                    <div className="bg-[#2D5A27]/10 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-gray-700">Total Amount:</span>
-                        <span className="text-xl font-bold text-green-600">
+                        <span className="text-xl font-bold text-[#2D5A27]">
                           €{(orderQuantity * product.currentPrice).toFixed(2)}
                         </span>
                       </div>
@@ -335,7 +350,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                         id="lockPrice"
                         checked={lockPrice}
                         onChange={(e) => setLockPrice(e.target.checked)}
-                        className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        className="w-4 h-4 text-[#2D5A27] border-gray-300 rounded focus:ring-[#2D5A27]"
                       />
                       <label htmlFor="lockPrice" className="text-sm text-gray-700">
                         Lock this price for this order
@@ -346,7 +361,7 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                     <div className="flex gap-3 pt-4">
                       <button
                         onClick={handleSubmitOrder}
-                        className="flex-1 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                        className="flex-1 px-4 py-2 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                       >
                         Confirm Order
                       </button>

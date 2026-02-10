@@ -30,7 +30,7 @@ const categoryPanels: Record<CategoryKey, {
   buyers: {
     title: 'For Buyers',
     ctaLabel: 'Browse Products',
-    href: '/products',
+    href: '/for-buyers',
     actions: [
       { label: 'Browse Products', icon: ShoppingBag },
       { label: 'Pre-order', icon: Calendar },
@@ -116,9 +116,9 @@ const audienceButtons: { key: CategoryKey; label: string; icon: React.ComponentT
   { key: 'suppliers', label: 'For Suppliers', icon: Building2 },
 ];
 
-type VeraAIChatbotProps = { inline?: boolean };
+type VeraAIChatbotProps = { inline?: boolean; inlineVariant?: 'default' | 'minimal' };
 
-export default function VeraAIChatbot({ inline }: VeraAIChatbotProps) {
+export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: VeraAIChatbotProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [view, setView] = useState<'main' | CategoryKey>('main');
@@ -159,20 +159,33 @@ export default function VeraAIChatbot({ inline }: VeraAIChatbotProps) {
     ]);
   };
 
+  const isMinimalInline = inline && inlineVariant === 'minimal';
+
   return (
     <>
       <motion.button
         type="button"
         onClick={() => setOpen(true)}
-        className={`flex items-center gap-2 rounded-lg border border-[#2D5A27]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#2D5A27] shadow-sm transition hover:bg-[#2D5A27]/5 hover:border-[#2D5A27]/50 ${inline ? '' : 'fixed bottom-5 right-5 z-40'}`}
-        style={{
-          boxShadow: `0 2px 12px rgba(45, 90, 39, 0.12)`,
-        }}
-        aria-label="Open Vera AI Assistant"
+        className={
+          isMinimalInline
+            ? 'inline-flex items-center gap-2 text-sm font-light text-gray-600 hover:text-[#2D5A27] transition-colors border-b border-transparent hover:border-[#2D5A27]/40'
+            : `flex items-center gap-2 rounded-lg border border-[#2D5A27]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#2D5A27] shadow-sm transition hover:bg-[#2D5A27]/5 hover:border-[#2D5A27]/50 ${inline ? '' : 'fixed bottom-5 right-5 z-40'}`
+        }
+        style={isMinimalInline ? undefined : { boxShadow: `0 2px 12px rgba(45, 90, 39, 0.12)` }}
+        aria-label={isMinimalInline ? 'Get in touch' : 'Open Vera AI Assistant'}
         animate={{ opacity: 1 }}
       >
-        <MessageCircle className="h-5 w-5" />
-        <span>Need help?</span>
+        {isMinimalInline ? (
+          <>
+            <Mail className="h-4 w-4" strokeWidth={1.5} />
+            <span>Get in touch</span>
+          </>
+        ) : (
+          <>
+            <MessageCircle className="h-5 w-5" />
+            <span>Need help?</span>
+          </>
+        )}
       </motion.button>
 
       <AnimatePresence>

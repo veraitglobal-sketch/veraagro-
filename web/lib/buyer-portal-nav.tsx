@@ -1,66 +1,42 @@
 'use client';
 
-import { 
-  BarChart3, 
-  Package, 
-  ShoppingCart, 
-  FileText, 
-  Users, 
-  TrendingUp,
-  Building2,
-  Truck,
-} from 'lucide-react';
+import { ShoppingCart, FileText, Building2, Truck } from 'lucide-react';
 import { ReactNode, createElement } from 'react';
 
 // Localization for navigation items
 const navLabels = {
   en: {
     dashboard: 'Dashboard',
+    orders: 'Orders',
     preOrder2026: 'Pre-order 2026',
     directOrders: 'Direct orders',
-    veraTrade: 'Vera Trade',
-    availableProducts: 'Available Products',
-    myOrders: 'My Orders',
     invoices: 'Invoices',
     deliveries: 'Deliveries',
-    veraPartners: 'Vera Partners',
-    analytics: 'Analytics',
     companyProfile: 'Company Profile',
   },
   sr: {
     dashboard: 'Kontrolna Tabla',
+    orders: 'Porudžbine',
     preOrder2026: 'Pre-order 2026',
     directOrders: 'Direktne porudžbine',
-    veraTrade: 'Vera Trade',
-    availableProducts: 'Dostupni Proizvodi',
-    myOrders: 'Moje Porudžbine',
     invoices: 'Računi',
     deliveries: 'Dostave',
-    veraPartners: 'Vera Partneri',
-    analytics: 'Analitika',
     companyProfile: 'Profil Kompanije',
   },
   de: {
     dashboard: 'Dashboard',
+    orders: 'Bestellungen',
     preOrder2026: 'Pre-order 2026',
     directOrders: 'Direktbestellungen',
-    veraTrade: 'Vera Trade',
-    availableProducts: 'Verfügbare Produkte',
-    myOrders: 'Meine Bestellungen',
     invoices: 'Rechnungen',
     deliveries: 'Lieferungen',
-    veraPartners: 'Vera Partner',
-    analytics: 'Analytik',
     companyProfile: 'Firmenprofil',
   },
 };
 
-// Helper function to get current language (defaults to 'en')
-// You can integrate this with a proper i18n library later
-function getCurrentLanguage(): 'en' | 'sr' | 'de' {
-  if (typeof window === 'undefined') return 'en';
-  const stored = localStorage.getItem('language');
-  return (stored === 'sr' || stored === 'de') ? stored : 'en';
+// English localization only
+function getCurrentLanguage(): 'en' {
+  return 'en';
 }
 
 // Dashboard icon component - returns JSX element
@@ -71,61 +47,15 @@ const DashboardIcon = () => (
 );
 
 // Function to get navigation items with localization
-export function getBuyerPortalNavItems(language?: 'en' | 'sr' | 'de') {
-  const lang = language || getCurrentLanguage();
-  const labels = navLabels[lang];
+export function getBuyerPortalNavItems(_language?: 'en') {
+  const labels = navLabels.en;
 
   return [
-    { 
-      href: '/buyer-portal/dashboard', 
-      label: labels.dashboard, 
-      icon: <DashboardIcon /> 
-    },
-    { 
-      href: '/pre-order-2026', 
-      label: labels.preOrder2026, 
-      icon: <FileText className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/trade-panel', 
-      label: labels.directOrders, 
-      icon: <ShoppingCart className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/inventory', 
-      label: labels.availableProducts, 
-      icon: <Package className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/orders', 
-      label: labels.myOrders, 
-      icon: <ShoppingCart className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/invoices', 
-      label: labels.invoices, 
-      icon: <FileText className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/deliveries', 
-      label: labels.deliveries, 
-      icon: <Truck className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/suppliers', 
-      label: labels.veraPartners, 
-      icon: <Users className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/analytics', 
-      label: labels.analytics, 
-      icon: <TrendingUp className="w-5 h-5" /> 
-    },
-    { 
-      href: '/buyer-portal/profile', 
-      label: labels.companyProfile, 
-      icon: <Building2 className="w-5 h-5" /> 
-    },
+    { href: '/buyer-portal/dashboard', label: labels.dashboard, icon: <DashboardIcon /> },
+    { href: '/buyer-portal/orders', label: labels.orders, icon: <ShoppingCart className="w-5 h-5" /> },
+    { href: '/buyer-portal/invoices', label: labels.invoices, icon: <FileText className="w-5 h-5" /> },
+    { href: '/buyer-portal/deliveries', label: labels.deliveries, icon: <Truck className="w-5 h-5" /> },
+    { href: '/buyer-portal/profile', label: labels.companyProfile, icon: <Building2 className="w-5 h-5" /> },
   ];
 }
 

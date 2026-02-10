@@ -117,7 +117,7 @@ export default function GrowersPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -144,7 +144,7 @@ export default function GrowersPage() {
                 alert('Failed to download prospect. Please try again.');
               }
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
           >
             <Download className="w-4 h-4" />
             Download Prospect PDF
@@ -181,7 +181,7 @@ export default function GrowersPage() {
                 description: 'Soil and spray logs must be uploaded digitally before the season starts.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-b border-green-200/50 pb-8">
+              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
                 <h3 className="text-lg font-light text-gray-900 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
@@ -191,7 +191,7 @@ export default function GrowersPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">The Value Proposition</h2>
@@ -215,8 +215,8 @@ export default function GrowersPage() {
                 description: 'Funds are reserved upon field verification and released within 48 hours of Hub arrival. No payment delays, no cash flow worries.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-b border-green-200/50 pb-8">
-                <h3 className="text-lg font-light text-green-600/80 mb-3">{item.title}</h3>
+              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
+                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
             ))}
@@ -243,7 +243,7 @@ export default function GrowersPage() {
             <h3 className="text-xl font-light text-gray-900 mb-6 text-center">Technical Standards</h3>
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-green-50/50">
+                <thead className="bg-[#2D5A27]/10/50">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-900 border-b border-gray-200">
                       Category
@@ -284,10 +284,10 @@ export default function GrowersPage() {
           </div>
 
           {/* Payment Information */}
-          <div className="bg-green-50/30 border border-green-200/50 rounded-lg p-6 mb-8">
+          <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-6 mb-8">
             <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-6 w-6 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -303,7 +303,7 @@ export default function GrowersPage() {
           <div className="text-center">
             <Link
               href="#application"
-              className="inline-block px-8 py-4 bg-green-600 text-white text-base font-medium hover:bg-green-700 transition-colors rounded-lg shadow-sm hover:shadow-md"
+              className="inline-block px-8 py-4 bg-[#2D5A27] text-white text-base font-medium hover:bg-[#23471f] transition-colors rounded-lg shadow-sm hover:shadow-md"
             >
               Apply for Vera Group Certification 2026
             </Link>
@@ -430,10 +430,10 @@ export default function GrowersPage() {
             ].map((resource, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-6 hover:border-green-300 transition-colors bg-white"
+                className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27]/40 transition-colors bg-white"
               >
                 <div className="flex items-start mb-4">
-                  <div className="flex-shrink-0 text-green-600">
+                  <div className="flex-shrink-0 text-[#2D5A27]">
                     {resource.icon}
                   </div>
                   <div className="ml-4 flex-1">
@@ -450,7 +450,7 @@ export default function GrowersPage() {
                       </div>
                       {resource.available ? (
                         <button
-                          className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => handleDownload(resource.downloadKey || resource.title)}
                           disabled={downloading === resource.title}
                         >
@@ -496,7 +496,7 @@ export default function GrowersPage() {
           </div>
 
           {submitted ? (
-            <div className="bg-green-50/50 border border-green-200/50 p-8 text-center">
+            <div className="bg-[#2D5A27]/10/50 border border-[#2D5A27]/20/50 p-8 text-center">
               <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -521,7 +521,7 @@ export default function GrowersPage() {
                     value={formData.farmName}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Enter your farm name"
                   />
                 </div>
@@ -537,7 +537,7 @@ export default function GrowersPage() {
                     value={formData.contactPerson}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Full name"
                   />
                 </div>
@@ -553,7 +553,7 @@ export default function GrowersPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="+1234567890"
                   />
                 </div>
@@ -569,7 +569,7 @@ export default function GrowersPage() {
                     value={formData.gpsLocation}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Latitude, Longitude (e.g., 44.7866, 20.4489)"
                   />
                 </div>
@@ -584,7 +584,7 @@ export default function GrowersPage() {
                         key={crop}
                         className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${
                           formData.cropTypes.includes(crop)
-                            ? 'bg-green-50 border-green-600'
+                            ? 'bg-[#2D5A27]/10 border-[#2D5A27]'
                             : 'bg-white border-gray-300 hover:border-gray-400'
                         }`}
                       >
@@ -616,7 +616,7 @@ export default function GrowersPage() {
                     required
                     min="0"
                     step="0.1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="e.g., 5.5"
                   />
                 </div>
@@ -638,7 +638,7 @@ export default function GrowersPage() {
                           type="checkbox"
                           checked={formData[item.name as keyof typeof formData] as boolean}
                           onChange={handleCheckboxChange}
-                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-[#2D5A27] focus:ring-[#2D5A27] border-gray-300 rounded"
                         />
                       </div>
                       <div className="ml-3 text-sm">
@@ -654,13 +654,13 @@ export default function GrowersPage() {
                   <label htmlFor="fieldPhotos" className="block text-sm font-medium text-gray-700 mb-2">
                     Recent Field Photos
                   </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-green-600 transition-colors">
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#2D5A27] transition-colors">
                     <div className="space-y-1 text-center">
                       <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       <div className="flex text-sm text-gray-600">
-                        <label htmlFor="fieldPhotos" className="relative cursor-pointer rounded-md font-medium text-green-600 hover:text-green-500">
+                        <label htmlFor="fieldPhotos" className="relative cursor-pointer rounded-md font-medium text-[#2D5A27] hover:text-[#23471f]">
                           <span>Upload photos</span>
                           <input
                             id="fieldPhotos"
@@ -676,7 +676,7 @@ export default function GrowersPage() {
                       </div>
                       <p className="text-xs text-gray-500">PNG, JPG up to 10MB each</p>
                       {formData.fieldPhotos && (
-                        <p className="text-sm text-green-600 mt-2">{formData.fieldPhotos.name}</p>
+                        <p className="text-sm text-[#2D5A27] mt-2">{formData.fieldPhotos.name}</p>
                       )}
                     </div>
                   </div>
@@ -684,7 +684,7 @@ export default function GrowersPage() {
 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors rounded-lg"
+                  className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
                 >
                   Submit Application
                 </button>
@@ -716,24 +716,24 @@ export default function GrowersPage() {
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-green-600 transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-green-600 transition-colors">For Producers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-green-600 transition-colors">For Logistics</Link></li>
+                <li><Link href="/login/buyer" className="hover:text-[#2D5A27] transition-colors">For Buyers</Link></li>
+                <li><Link href="/login/producer" className="hover:text-[#2D5A27] transition-colors">For Producers</Link></li>
+                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-green-600 transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-green-600 transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link></li>
+                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-green-600 transition-colors">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Terms</Link></li>
+                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
               </ul>
             </div>
           </div>

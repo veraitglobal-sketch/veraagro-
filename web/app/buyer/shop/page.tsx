@@ -80,12 +80,12 @@ export default function ShopPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-green-600">
+            <Link href="/" className="text-2xl font-bold text-[#2D5A27]">
               🌱 Bio Vera
             </Link>
             <nav className="flex gap-4 items-center">
-              <Link href="/buyer/orders" className="px-4 py-2 text-gray-700 hover:text-green-600">
-                Moje Porudžbine
+              <Link href="/buyer/orders" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
+                My Orders
               </Link>
               <span className="text-gray-700">Korpa ({cart.length})</span>
             </nav>
@@ -102,19 +102,19 @@ export default function ShopPage() {
         <div className="mb-8 border-t border-b border-gray-200 py-4">
           <div className="flex gap-4 overflow-x-auto">
             {[
-              { id: 'fruits', name: 'Fruits', icon: Apple, color: 'text-green-600' },
-              { id: 'vegetables', name: 'Vegetables', icon: Carrot, color: 'text-green-600' },
-              { id: 'grains', name: 'Grains', icon: Wheat, color: 'text-green-600' },
+              { id: 'fruits', name: 'Fruits', icon: Apple, color: 'text-[#2D5A27]' },
+              { id: 'vegetables', name: 'Vegetables', icon: Carrot, color: 'text-[#2D5A27]' },
+              { id: 'grains', name: 'Grains', icon: Wheat, color: 'text-[#2D5A27]' },
             ].map((category) => {
               const Icon = category.icon;
               return (
                 <Link
                   key={category.id}
-                  href={`/products?category=${category.id}`}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:border-green-600 transition-all group"
+                  href={`/buyer-portal/trade-panel?category=${category.id}`}
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:border-[#2D5A27] transition-all group"
                 >
                   <Icon className={`w-5 h-5 ${category.color} group-hover:scale-110 transition-transform`} strokeWidth={1.5} />
-                  <span className={`text-sm font-light ${category.color} group-hover:text-green-600 transition-colors`}>
+                  <span className={`text-sm font-light ${category.color} group-hover:text-[#2D5A27] transition-colors`}>
                     {category.name}
                   </span>
                   <ChevronRight className={`w-4 h-4 ${category.color} opacity-0 group-hover:opacity-100 transition-opacity`} strokeWidth={1.5} />
@@ -133,7 +133,7 @@ export default function ShopPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
               {products.map((product: any) => (
                 <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="h-48 bg-green-100 flex items-center justify-center">
+                  <div className="h-48 bg-[#2D5A27]/10 flex items-center justify-center">
                     <span className="text-6xl">🌾</span>
                   </div>
                   <div className="p-4">
@@ -164,12 +164,12 @@ export default function ShopPage() {
                     
                     <p className="text-gray-600 text-sm mb-2">{product.description || 'Organski proizvod'}</p>
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-green-600 font-bold">{product.price || 'N/A'} RSD</span>
+                      <span className="text-[#2D5A27] font-bold">{product.price || 'N/A'} RSD</span>
                       <span className="text-sm text-gray-500">{product.quantity || 0} kg</span>
                     </div>
                     <button
                       onClick={() => addToCart(product)}
-                      className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      className="w-full bg-[#2D5A27] text-white py-2 rounded-lg hover:bg-[#23471f] transition-colors"
                     >
                       Dodaj u korpu
                     </button>
@@ -191,7 +191,7 @@ export default function ShopPage() {
                 </div>
                 <button
                   onClick={createOrder}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold"
+                  className="w-full bg-[#2D5A27] text-white py-3 rounded-lg hover:bg-[#23471f] font-semibold"
                 >
                   Poruči ({cart.reduce((sum, item) => sum + (item.price || 0), 0)} RSD)
                 </button>

@@ -89,7 +89,7 @@ export default function SuppliersPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 Home
               </Link>
             </nav>
@@ -117,7 +117,7 @@ export default function SuppliersPage() {
                 alert('Failed to download prospect. Please try again.');
               }
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
           >
             <Download className="w-4 h-4" />
             Download Prospect PDF
@@ -135,13 +135,13 @@ export default function SuppliersPage() {
             </p>
           </div>
 
-          <div className="bg-green-50/30 border border-green-200/50 rounded-lg p-8 mb-12">
+          <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-8 mb-12">
             <div className="max-w-4xl mx-auto">
               <h3 className="text-xl font-light text-gray-900 mb-6 text-center">Supply Chain Process</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     1
                   </div>
                   <div>
@@ -154,7 +154,7 @@ export default function SuppliersPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     2
                   </div>
                   <div>
@@ -167,7 +167,7 @@ export default function SuppliersPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     3
                   </div>
                   <div>
@@ -181,7 +181,7 @@ export default function SuppliersPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     4
                   </div>
                   <div>
@@ -206,19 +206,19 @@ export default function SuppliersPage() {
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Purchase from approved manufacturing partners</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Maintain secure storage facilities</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Distribute to growers at fixed prices</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Track all transactions via QR codes</span>
                 </li>
               </ul>
@@ -232,19 +232,19 @@ export default function SuppliersPage() {
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Produce to exact Vera specifications</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Print serial numbers/barcodes on each series</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Deliver flat-packed within 48 hours</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Maintain food contact certification</span>
                 </li>
               </ul>
@@ -266,28 +266,28 @@ export default function SuppliersPage() {
           {/* For Distributors */}
           <div className="mb-12">
             <h3 className="text-xl font-light text-gray-900 mb-6 flex items-center gap-2">
-              <Warehouse className="w-6 h-6 text-green-600" />
+              <Warehouse className="w-6 h-6 text-[#2D5A27]" />
               For Distributors (Agricultural Pharmacies & Wholesalers)
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  icon: <Warehouse className="w-6 h-6 text-green-600" />,
+                  icon: <Warehouse className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Vera Resources Storage',
                   description: 'Obligation to provide dry and secure storage space for Vera seeds, fertilizers, and packaging materials.',
                 },
                 {
-                  icon: <QrCode className="w-6 h-6 text-green-600" />,
+                  icon: <QrCode className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'QR Code Issuance',
                   description: 'Distributor cannot issue goods without scanning the QR code from the farmer\'s app. This is the only way to track consumption per hectare.',
                 },
                 {
-                  icon: <Users className="w-6 h-6 text-green-600" />,
+                  icon: <Users className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Local Support',
                   description: 'Distributor is the first point of contact for farmers in their region. They perform physical verification of received goods.',
                 },
                 {
-                  icon: <AlertTriangle className="w-6 h-6 text-green-600" />,
+                  icon: <AlertTriangle className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Inventory Reporting',
                   description: 'System must automatically notify headquarters in Hamburg when inventory falls below 20%.',
                 },
@@ -310,23 +310,23 @@ export default function SuppliersPage() {
           {/* For Packaging Manufacturers */}
           <div className="mb-12">
             <h3 className="text-xl font-light text-gray-900 mb-6 flex items-center gap-2">
-              <Box className="w-6 h-6 text-green-600" />
+              <Box className="w-6 h-6 text-[#2D5A27]" />
               For Packaging Manufacturers (Cardboard/Producers)
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  icon: <CheckCircle className="w-6 h-6 text-green-600" />,
+                  icon: <CheckCircle className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Production to Vera Specification',
                   description: 'Every box must be made from agreed cardboard weight (e.g., five-layer) with food contact certification.',
                 },
                 {
-                  icon: <Clock className="w-6 h-6 text-green-600" />,
+                  icon: <Clock className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Just-in-Time Delivery',
                   description: 'Obligation to deliver flat-packed packaging directly to our distributors within 48 hours of order.',
                 },
                 {
-                  icon: <Printer className="w-6 h-6 text-green-600" />,
+                  icon: <Printer className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Barcode Printing',
                   description: 'Every packaging series must have a printed serial number or barcode that we generate, so we know which farmer used which series of boxes.',
                 },
@@ -347,10 +347,10 @@ export default function SuppliersPage() {
           </div>
 
           {/* Common Obligation */}
-          <div className="bg-green-50/30 border border-green-200/50 rounded-lg p-6">
+          <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-6">
             <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-6 w-6 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -374,13 +374,13 @@ export default function SuppliersPage() {
             </p>
           </div>
 
-          <div className="bg-green-50/30 border border-green-200/50 rounded-lg p-8 mb-8">
+          <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-8 mb-8">
             <div className="max-w-4xl mx-auto">
               <h3 className="text-xl font-light text-gray-900 mb-6 text-center">No Empty Return Trips</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     1
                   </div>
                   <div>
@@ -392,7 +392,7 @@ export default function SuppliersPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     2
                   </div>
                   <div>
@@ -404,7 +404,7 @@ export default function SuppliersPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
                     3
                   </div>
                   <div>
@@ -427,15 +427,15 @@ export default function SuppliersPage() {
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>No need to arrange separate transport for incoming goods</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Reduced logistics costs through integrated system</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Regular, predictable delivery schedule</span>
                 </li>
               </ul>
@@ -449,15 +449,15 @@ export default function SuppliersPage() {
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Zero empty kilometers on return trips</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Reduced fuel costs and environmental impact</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
+                  <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Faster delivery times through optimized routes</span>
                 </li>
               </ul>
@@ -467,7 +467,7 @@ export default function SuppliersPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-green-50/20">
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">What You Get</h2>
@@ -503,8 +503,8 @@ export default function SuppliersPage() {
                 description: 'Pre-agreed pricing structure ensures predictable revenue. No price fluctuations or negotiations per transaction.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-b border-green-200/50 pb-8">
-                <h3 className="text-lg font-light text-green-600/80 mb-3">{item.title}</h3>
+              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
+                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
             ))}
@@ -523,7 +523,7 @@ export default function SuppliersPage() {
           </div>
 
           {submitted ? (
-            <div className="bg-green-50/50 border border-green-200/50 p-8 text-center">
+            <div className="bg-[#2D5A27]/10/50 border border-[#2D5A27]/20/50 p-8 text-center">
               <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -550,7 +550,7 @@ export default function SuppliersPage() {
                     value={formData.companyName}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Enter company name"
                   />
                 </div>
@@ -568,7 +568,7 @@ export default function SuppliersPage() {
                     value={formData.pib}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Enter VAT ID"
                   />
                 </div>
@@ -585,7 +585,7 @@ export default function SuppliersPage() {
                     value={formData.contactPerson}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Full name"
                   />
                 </div>
@@ -602,7 +602,7 @@ export default function SuppliersPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="email@example.com"
                   />
                 </div>
@@ -619,7 +619,7 @@ export default function SuppliersPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="+1234567890"
                   />
                 </div>
@@ -636,7 +636,7 @@ export default function SuppliersPage() {
                     value={formData.productType}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                   >
                     <option value="">Select product type</option>
                     {productTypes.map((type) => (
@@ -659,7 +659,7 @@ export default function SuppliersPage() {
                         key={cert}
                         className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${
                           formData.certifications.includes(cert)
-                            ? 'bg-green-50 border-green-600'
+                            ? 'bg-[#2D5A27]/10 border-[#2D5A27]'
                             : 'bg-white border-gray-300 hover:border-gray-400'
                         }`}
                       >
@@ -692,7 +692,7 @@ export default function SuppliersPage() {
                     name="website"
                     value={formData.website}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="https://www.example.com"
                   />
                 </div>
@@ -708,7 +708,7 @@ export default function SuppliersPage() {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                     placeholder="Brief description of your company and products..."
                   />
                 </div>
@@ -716,7 +716,7 @@ export default function SuppliersPage() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                  className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                 >
                   Submit Application
                 </button>
@@ -749,12 +749,12 @@ export default function SuppliersPage() {
               <h3 className="text-sm font-medium text-gray-900 mb-4">For Growers</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/growers" className="text-sm text-gray-600 hover:text-green-600 transition-colors font-light">
+                  <Link href="/growers" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
                     Become a Grower
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login/producer" className="text-sm text-gray-600 hover:text-green-600 transition-colors font-light">
+                  <Link href="/login/producer" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
                     Login
                   </Link>
                 </li>
@@ -764,12 +764,12 @@ export default function SuppliersPage() {
               <h3 className="text-sm font-medium text-gray-900 mb-4">For Suppliers</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/suppliers" className="text-sm text-gray-600 hover:text-green-600 transition-colors font-light">
+                  <Link href="/suppliers" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
                     Become a Supplier
                   </Link>
                 </li>
                 <li>
-                  <Link href="/logistics-partner" className="text-sm text-gray-600 hover:text-green-600 transition-colors font-light">
+                  <Link href="/logistics-partner" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
                     Logistics Partnership
                   </Link>
                 </li>
@@ -779,7 +779,7 @@ export default function SuppliersPage() {
               <h3 className="text-sm font-medium text-gray-900 mb-4">Contact</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/contact" className="text-sm text-gray-600 font-light hover:text-green-600 transition-colors">
+                  <Link href="/contact" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                     Contact Us
                   </Link>
                 </li>

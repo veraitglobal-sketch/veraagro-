@@ -52,11 +52,11 @@ export default function OrdersPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-green-600">
+            <Link href="/" className="text-2xl font-bold text-[#2D5A27]">
               🌱 Bio Vera
             </Link>
             <nav className="flex gap-4">
-              <Link href="/buyer/shop" className="px-4 py-2 text-gray-700 hover:text-green-600">
+              <Link href="/buyer/shop" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
                 Shop
               </Link>
             </nav>
@@ -65,7 +65,7 @@ export default function OrdersPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Moje Porudžbine</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
 
         {loading ? (
           <div className="text-center py-12">
@@ -79,11 +79,11 @@ export default function OrdersPage() {
                   <div>
                     <h3 className="font-semibold text-lg">Porudžbina #{order.id.slice(0, 8)}</h3>
                     <p className="text-sm text-gray-600">
-                      {new Date(order.createdAt).toLocaleDateString('sr-RS')}
+                      {new Date(order.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                    order.status === 'COMPLETED' ? 'bg-[#2D5A27]/15 text-[#23471f]' :
                     order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
@@ -100,7 +100,7 @@ export default function OrdersPage() {
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between">
                   <span className="font-semibold">Ukupno:</span>
-                  <span className="font-bold text-green-600">{order.totalAmount || 0} RSD</span>
+                  <span className="font-bold text-[#2D5A27]">{order.totalAmount || 0} RSD</span>
                 </div>
               </div>
             ))}
@@ -110,7 +110,7 @@ export default function OrdersPage() {
             <p className="text-gray-600 mb-4">Nemate porudžbina.</p>
             <Link
               href="/buyer/shop"
-              className="text-green-600 hover:text-green-700 font-semibold"
+              className="text-[#2D5A27] hover:text-[#23471f] font-semibold"
             >
               Krenite u kupovinu →
             </Link>
