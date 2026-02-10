@@ -5,6 +5,7 @@ import MissionDetailScreen from '../../../features/grower/missions/MissionDetail
  * Mission detail – tanki wrapper; logika i UI u features/grower/missions/
  */
 export default function MissionDetailRoute() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  return <MissionDetailScreen missionId={id} />;
+  const params = useLocalSearchParams<{ id: string }>();
+  const missionId = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : undefined;
+  return <MissionDetailScreen missionId={missionId} />;
 }

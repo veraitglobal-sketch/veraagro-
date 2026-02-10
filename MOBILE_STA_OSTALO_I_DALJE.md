@@ -29,19 +29,21 @@ Liste **batches.tsx** (~289), **missions.tsx** (~292), **orders.tsx** (~304), **
 
 ### 2.2 TypeScript / build greške (mora da se reši za čist build)
 
-| Fajl | Greška | Šta uraditi |
-|------|--------|-------------|
-| `app/(buyer)/dashboard.tsx` | `EnhancedProduct` – `harvestDate` tip | Dovesti u sklad sa `Product` (npr. `harvestDate?: string` ili obavezno). |
-| `app/(buyer)/shop.tsx` | `"xl"` nije u tipu spacing | Zameniti sa `"lg"` ili dodati `xl` u theme spacing tip. |
-| `app/(producer)/scanner.tsx` | `theme.colors.text.inverse` ne postoji | Dodati `inverse` u `lib/theme.ts` (text) ili koristiti `theme.colors.background` / drugo. |
-| `app/buyer-register.tsx` | `import { api }` – nema export `api` | Koristiti default import ili pravi export iz `lib/api`. |
-| `app/index.tsx` | `"xl"` spacing | Isto kao buyer shop – `xl` u theme ili zameniti. |
-| `app/login.tsx` | Parameter `role` ima tip `any` | Dodati tip npr. `(role: string)` ili odgovarajući tip. |
-| `app/partner-login.tsx` | Isto – `role` any | Dodati tip. |
-| `app/products.tsx` | `PepperHot` ne postoji u lucide-react-native | Ukloniti ili zameniti drugom ikonom. |
-| `components/ProductPassport.tsx` | `LatLng[]` – null nije dozvoljen | Filtrirati null ili proširiti tip. |
-| `components/ui/Card.tsx` | Spread types samo iz object | Ispraviti tip (ne spread-ovati non-object). |
-| `features/grower/field-log/useFieldLogData.ts` | ~~`validateMaterial` used before declaration~~ | ✅ Ispravljeno: `validateMaterial` premestjen iznad useEffect-a. |
+**✅ Sve navedene greške su ispravljene.** Build (`npx expo export --platform ios`) prolazi.
+
+| Fajl | Greška | Status |
+|------|--------|--------|
+| `app/(buyer)/dashboard.tsx` | `EnhancedProduct` – `harvestDate` tip | ✅ `Omit<Product, 'harvestDate'>` + opciono `harvestDate?`. |
+| `app/(buyer)/shop.tsx` | `"xl"` nije u tipu Card padding | ✅ Card podržava `xl`. |
+| `lib/colors.ts` | `text.inverse` za scanner | ✅ Dodato `inverse: '#FFFFFF'`. |
+| `app/buyer-register.tsx` | `import { api }` | ✅ `import api from '../lib/api'`. |
+| `app/index.tsx` | `"xl"` spacing | ✅ Card podržava `xl`. |
+| `app/login.tsx` | `role` any | ✅ `(role: string)`. |
+| `app/partner-login.tsx` | `role` any | ✅ `(role: string)`. |
+| `app/products.tsx` | `PepperHot` | ✅ Zamenjeno sa `Flame`. |
+| `components/ProductPassport.tsx` | `LatLng[]` null | ✅ Type guard filter. |
+| `components/ui/Card.tsx` | Spread types + xl | ✅ `resolvedStyle` objekat, padding `xl` dodat. |
+| `features/grower/field-log/useFieldLogData.ts` | validateMaterial | ✅ Premestjen iznad useEffect-a. |
 
 **Naredba:** *„Proveri build i greške“* ili *„Ispravi sve TypeScript greške u mobile“* – rešiti redom da `npx tsc --noEmit` prođe.
 

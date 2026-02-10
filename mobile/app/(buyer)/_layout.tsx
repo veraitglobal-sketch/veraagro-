@@ -1,18 +1,21 @@
+import { View } from 'react-native';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, ShoppingBag, Package, CheckCircle2, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../../lib/theme';
+import VeraAIChatbot from '../../components/VeraAIChatbot';
 
 /**
  * Buyer Navigation Layout
- * Light, appetizing design focused on shopping
+ * Light, appetizing design focused on shopping; Intelligence Terminal FAB overlay
  */
 export default function BuyerLayout() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
+    <View style={{ flex: 1 }}>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
@@ -117,5 +120,7 @@ export default function BuyerLayout() {
         }}
       />
     </Tabs>
+    <VeraAIChatbot />
+    </View>
   );
 }

@@ -1,13 +1,16 @@
+import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { AuthGuard } from '../../components/AuthGuard';
+import VeraAIChatbot from '../../components/VeraAIChatbot';
 
 /**
  * Producer Layout
- * Wraps producer routes with authentication
+ * Wraps producer routes with authentication; Intelligence Terminal FAB overlay
  */
 export default function ProducerLayout() {
   return (
     <AuthGuard requiredRole={['ADMIN', 'FARMER', 'PARTNER', 'GROWER']}>
+      <View style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen 
@@ -38,6 +41,8 @@ export default function ProducerLayout() {
         <Stack.Screen name="vera-insights" />
         <Stack.Screen name="plot-mapper" />
       </Stack>
+      <VeraAIChatbot />
+      </View>
     </AuthGuard>
   );
 }
