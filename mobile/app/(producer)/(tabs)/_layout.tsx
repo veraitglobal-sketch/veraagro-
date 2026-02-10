@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, FileText, ShoppingBag, User, MapPin, Package } from 'lucide-react-native';
+import { Home, FileText, Package, User, MapPin, Calculator } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -54,12 +54,28 @@ export default function ProducerTabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="products"
+        options={{
+          title: 'Moji proizvodi',
+          tabBarLabel: 'Proizvodi',
+          tabBarIcon: ({ color, size }) => <Package size={size || 24} color={color} strokeWidth={1} />,
+        }}
+      />
+      <Tabs.Screen
+        name="cost-calculator"
+        options={{
+          title: 'Kalkulator troškova',
+          tabBarLabel: 'Troškovi',
+          tabBarIcon: ({ color, size }) => <Calculator size={size || 24} color={color} strokeWidth={1} />,
+        }}
+      />
+      <Tabs.Screen
         name="estates"
         options={{
           title: 'Estates',
           tabBarLabel: 'Estates',
           tabBarIcon: ({ color, size }) => <MapPin size={size || 24} color={color} strokeWidth={1} />,
-          href: null, // Will be added as tab later
+          href: null,
         }}
       />
       <Tabs.Screen
@@ -76,15 +92,13 @@ export default function ProducerTabsLayout() {
           title: 'Batches',
           tabBarLabel: 'Batches',
           tabBarIcon: ({ color, size }) => <Package size={size || 24} color={color} strokeWidth={1} />,
-          href: null, // Will be added as tab later
+          href: null,
         }}
       />
       <Tabs.Screen
         name="shop"
         options={{
-          title: 'Procurement',
-          tabBarLabel: 'Shop',
-          tabBarIcon: ({ color, size }) => <ShoppingBag size={size || 24} color={color} strokeWidth={1} />,
+          href: null,
         }}
       />
       <Tabs.Screen

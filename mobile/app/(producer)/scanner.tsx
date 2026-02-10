@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScanLine, X, Check } from 'lucide-react-native';
@@ -10,11 +10,14 @@ import { materialValidator } from '../../lib/integrity-guard';
 
 /**
  * QR/Barcode Scanner Screen
- * Scans seed bag barcodes and validates against whitelist
+ * - returnTo=products: za Moji proizvodi – skenirani QR se šalje u formu (bez whitelist provere)
+ * - inače: validacija prema whitelist-u (field log / materijali)
  */
 export default function ScannerScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ returnTo?: string }>();
+  const isForProducts = params.returnTo === 'products';
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState<string | null>(null);
@@ -29,48 +32,39 @@ export default function ScannerScreen() {
   }, [permission]);
 
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
-    if (scanned) return; // Prevent multiple scans
-    
+    if (scanned) return;
+
     setScanned(true);
     setBarcode(data);
     setValidating(true);
 
     try {
-      // Validate barcode against whitelist
+      if (isForProducts) {
+        await AsyncStorage.setItem('last_scanned_qr', data);
+        setValidating(false);
+        router.back();
+        return;
+      }
+
       const result = await materialValidator(data);
       setIsValid(result.valid);
 
       if (result.valid) {
-        // Store barcode temporarily for parent screen to pick up
         await AsyncStorage.setItem('last_scanned_barcode', data);
-        
-        Alert.alert(
-          'Uspešno',
-          `Bar-kod je validan: ${data}`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                router.back();
-              },
-            },
-          ]
-        );
+        Alert.alert('Uspešno', `Bar-kod je validan: ${data}`, [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
       } else {
-        Alert.alert(
-          'Upozorenje',
-          result.message || 'Bar-kod nije na whitelist-i',
-          [
-            {
-              text: 'Pokušaj ponovo',
-              onPress: () => {
-                setScanned(false);
-                setBarcode(null);
-                setIsValid(null);
-              },
+        Alert.alert('Upozorenje', result.message || 'Bar-kod nije na whitelist-i', [
+          {
+            text: 'Pokušaj ponovo',
+            onPress: () => {
+              setScanned(false);
+              setBarcode(null);
+              setIsValid(null);
             },
-          ]
-        );
+          },
+        ]);
       }
     } catch (error) {
       console.error('Validation error:', error);

@@ -114,7 +114,7 @@ export default function ProducerDashboard() {
     try {
       await Promise.all([
         loadData(),
-        syncService.syncPendingEntries(),
+        syncService.syncAll(),
       ]);
     } finally {
       setRefreshing(false);

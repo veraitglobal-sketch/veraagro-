@@ -600,7 +600,7 @@ export default function PreOrder2026Page() {
                       </thead>
                       <tbody>
                         {orderLines.map((line, i) => (
-                          <tr key={i} className="border-t border-gray-100">
+                          <tr key={`${line.name}-${line.unit}-${i}`} className="border-t border-gray-100">
                             <td className="py-2 px-3 text-gray-500">{i + 1}</td>
                             <td className="py-2 px-3 text-gray-900">{line.name}</td>
                             <td className="py-2 px-3 text-right text-gray-600">{line.unit}</td>

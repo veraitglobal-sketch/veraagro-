@@ -20,13 +20,13 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
     loadSyncStatus();
     const interval = setInterval(loadSyncStatus, 5000); // Check every 5 seconds
     
-    // Auto-sync if enabled
+    // Auto-sync if enabled (entries + products + costs)
     const autoSyncInterval = setInterval(async () => {
       try {
         const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const autoSyncEnabled = await AsyncStorage.getItem('settings_auto_sync');
         if (autoSyncEnabled !== 'false') {
-          await syncService.syncPendingEntries();
+          await syncService.syncAll();
         }
       } catch (error) {
         // Ignore
@@ -51,21 +51,13 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
   const handleSync = async () => {
     try {
       setSyncStatus(prev => ({ ...prev, syncing: true }));
-      const result = await syncService.syncPendingEntries();
+      await syncService.syncAll();
       await loadSyncStatus();
       
-      if (result.failed > 0) {
-        // Show error if some failed
-        console.warn(`${result.failed} entries failed to sync`);
-      }
     } catch (error) {
       console.error('Error syncing:', error);
     }
   };
-
-  if (syncStatus.pendingCount === 0 && !syncStatus.syncing) {
-    return null; // Don't show if everything is synced
-  }
 
   return (
     <TouchableOpacity
@@ -82,21 +74,21 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
         <>
           <RefreshCw size={16} color="#F59E0B" strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: '#92400E' }}>
-            Sinhronizovanje...
+            Šaljem podatke…
           </Text>
         </>
       ) : syncStatus.pendingCount > 0 ? (
         <>
-          <RefreshCw size={16} color="#F59E0B" strokeWidth={1} />
+          <CloudOff size={16} color="#F59E0B" strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: '#92400E' }}>
-            {syncStatus.pendingCount} {syncStatus.pendingCount === 1 ? 'zapis' : 'zapisa'} čeka
+            Sačuvano u telefonu: {syncStatus.pendingCount} {syncStatus.pendingCount === 1 ? 'stavka' : 'stavki'}
           </Text>
         </>
       ) : (
         <>
           <Cloud size={16} color={colors.success} strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: colors.success }}>
-            Sinhronizovano
+            Sve poslato
           </Text>
         </>
       )}
