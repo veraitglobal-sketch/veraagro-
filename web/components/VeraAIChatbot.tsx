@@ -149,6 +149,15 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Kada je chat otvoren, blokiraj skrol pozadine da se stranica ne pomera
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [open]);
+
   const addAssistantReply = (content: string) => {
     setMessages((prev) => [...prev, { role: 'assistant', content }]);
     setLoading(false);
@@ -221,64 +230,64 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex flex-col overflow-hidden border bg-white/95 shadow-2xl backdrop-blur-md rounded-none h-[100dvh] max-h-[100dvh] md:inset-auto md:bottom-6 md:right-6 md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
+            className="fixed inset-0 z-50 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl backdrop-blur-md rounded-none w-full max-w-full min-w-0 h-[100dvh] max-h-[100dvh] touch-manipulation md:inset-auto md:bottom-6 md:right-6 md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
             style={{
               borderColor: 'rgba(45, 90, 39, 0.2)',
               boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
             }}
           >
-            {/* Live Ticker – flex-shrink-0 da ostane na mestu kad tastatura uđe */}
+            {/* Live Ticker – kompaktno na mobilnom da ostane više mesta za tekst */}
             <div
-              className="flex-shrink-0 px-3 py-2 border-b font-mono text-xs space-y-1"
+              className="flex-shrink-0 px-2 py-1.5 md:px-3 md:py-2 border-b font-mono border-gray-100"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))' }}
             >
-              <div className="flex items-center justify-between gap-1">
-                <div className="flex flex-col items-center">
-                  <span className="flex items-center gap-1 text-gray-700">
-                    <Package className="h-3.5 w-3 text-[#2D5A27]" />
+              <div className="flex items-center justify-between gap-0.5 md:gap-1">
+                <div className="flex flex-col items-center min-w-0 flex-1">
+                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
+                    <Package className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
                     {ticker.newOrders}
                   </span>
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">New</span>
+                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">New</span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="flex items-center gap-1 text-gray-700">
-                    <Truck className="h-3.5 w-3 text-[#2D5A27]" />
+                <div className="flex flex-col items-center min-w-0 flex-1">
+                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
+                    <Truck className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
                     {ticker.inTransit}
                   </span>
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">Transit</span>
+                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Transit</span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="flex items-center gap-1 text-gray-700">
-                    <MapPin className="h-3.5 w-3 text-[#2D5A27]" />
+                <div className="flex flex-col items-center min-w-0 flex-1">
+                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
+                    <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
                     {ticker.toHamburg}
                   </span>
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">→ Hamburg</span>
+                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">→ HH</span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-medium text-[#2D5A27]">
-                    <CheckCircle className="h-3.5 w-3 inline mr-0.5" />
+                <div className="flex flex-col items-center min-w-0 flex-1">
+                  <span className="font-medium text-[#2D5A27] text-[10px] md:text-xs flex items-center justify-center gap-0.5">
+                    <CheckCircle className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0" />
                     {ticker.delivered}%
                   </span>
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
+                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
                 </div>
               </div>
               {ticker.newOrder && (
-                <div className="text-[#2D5A27] font-medium pt-0.5">
+                <div className="text-[#2D5A27] font-medium pt-0.5 text-[10px] md:text-xs truncate">
                   New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}
                 </div>
               )}
             </div>
 
-            {/* Header – flex-shrink-0 */}
+            {/* Header – flex-shrink-0, kompaktnije na mobilnom */}
             <div
-              className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b"
+              className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-3 border-b border-gray-100"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}
             >
-              <div>
-                <div className="text-sm font-semibold tracking-wide" style={{ color: VERA_GREEN }}>
+              <div className="min-w-0">
+                <div className="text-xs md:text-sm font-semibold tracking-wide truncate" style={{ color: VERA_GREEN }}>
                   INTELLIGENCE TERMINAL
                 </div>
-                <div className="text-xs text-gray-500">Logistics Analytics v2.1</div>
+                <div className="text-[10px] md:text-xs text-gray-500">Logistics Analytics v2.1</div>
               </div>
               <div className="flex items-center gap-1">
                 <Link
@@ -301,8 +310,8 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </div>
             </div>
 
-            {/* Jedan prikaz: ili 4 kategorije (main) ili panel kategorije + Nazad — flex-shrink-0 da se ne sabije kad tastatura uđe */}
-            <div className="flex-shrink-0 border-b border-gray-100 p-3 min-h-[120px] md:min-h-[140px]">
+            {/* Kategorije – manje kolone i padding na mobilnom da ima mesta za tekst */}
+            <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[90px] md:min-h-[140px]">
               <AnimatePresence mode="wait">
                 {view === 'main' ? (
                   <motion.div
@@ -311,17 +320,17 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
-                    className="grid grid-cols-2 gap-2"
+                    className="grid grid-cols-2 gap-1.5 md:gap-2"
                   >
                     {audienceButtons.map(({ key, label, icon: Icon }) => (
                       <button
                         key={key}
                         type="button"
                         onClick={() => handleCategorySelect(key)}
-                        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
+                        className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
                       >
-                        <Icon className="h-4 w-4 flex-shrink-0 text-[#2D5A27]" />
-                        {label}
+                        <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" />
+                        <span className="truncate">{label}</span>
                       </button>
                     ))}
                   </motion.div>
@@ -332,35 +341,35 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
-                    className="space-y-3"
+                    className="space-y-2 md:space-y-3"
                   >
                     <button
                       type="button"
                       onClick={() => setView('main')}
-                      className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"
+                      className="flex items-center gap-1 text-[11px] md:text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"
                     >
-                      <ArrowLeft className="h-4 w-4" />
+                      <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
                       Back
                     </button>
-                    <p className="text-xs font-medium text-gray-500">
+                    <p className="text-[11px] md:text-xs font-medium text-gray-500">
                       {categoryPanels[view].title}
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-1.5 md:gap-2">
                       {categoryPanels[view].actions.map(({ label, icon: Icon }) => (
                         <button
                           key={label}
                           type="button"
                           onClick={() => handlePanelAction(label)}
-                          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
+                          className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2.5 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
                         >
-                          <Icon className="h-4 w-4 flex-shrink-0 text-[#2D5A27]" />
-                          <span className="leading-tight">{label}</span>
+                          <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" />
+                          <span className="leading-tight line-clamp-2">{label}</span>
                         </button>
                       ))}
                     </div>
                     <Link
                       href={categoryPanels[view].href}
-                      className="flex items-center justify-center gap-2 w-full rounded-lg py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                      className="flex items-center justify-center gap-2 w-full rounded-lg py-2.5 md:py-3 text-xs md:text-sm font-semibold text-white transition hover:opacity-90"
                       style={{ backgroundColor: VERA_GREEN }}
                     >
                       {categoryPanels[view].ctaLabel}
@@ -370,21 +379,21 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </AnimatePresence>
             </div>
 
-            {/* Sredina: chat — flex-1 min-h-0 da scroll radi; na mobilnom ostaje iznad tastature */}
-            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3 space-y-3">
+            {/* Sredina: chat — više mesta za tekst, break-words da se ne prelama layout */}
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-2 md:p-3 space-y-2 md:space-y-3">
               {messages.length === 0 && (
-                <p className="text-center text-sm text-gray-500 py-4 font-light px-2">
+                <p className="text-center text-xs md:text-sm text-gray-500 py-3 md:py-4 font-light px-2">
                   Click a category above to see options, or ask any question here.
                 </p>
               )}
               {messages.map((m, i) => (
                 <div
                   key={i}
-                  className={`rounded-lg px-3 py-2 text-sm ${
+                  className={`rounded-lg px-2.5 py-1.5 md:px-3 md:py-2 text-xs md:text-sm break-words ${
                     m.role === 'user'
-                      ? 'ml-6 bg-[#2D5A27] text-white'
-                      : 'mr-6 border border-gray-200 bg-white text-gray-700'
-                  } ${m.role === 'assistant' && !m.link ? 'font-mono' : ''}`}
+                      ? 'ml-4 md:ml-6 bg-[#2D5A27] text-white'
+                      : 'mr-4 md:mr-6 border border-gray-200 bg-white text-gray-700'
+                  } ${m.role === 'assistant' && !m.link ? 'font-mono whitespace-pre-wrap' : ''}`}
                 >
                   {m.content}
                   {m.role === 'assistant' && m.link && m.linkLabel && (
@@ -406,11 +415,11 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input – fiksiran dole, safe-area da ne prelazi preko home indikatora/tastature */}
-            <div className="flex-shrink-0 flex gap-2 border-t border-gray-100 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white">
-              <div className="relative flex-1">
+            {/* Input – 16px font na mobilnom da iOS ne zumira pri fokusu, safe-area dole */}
+            <div className="flex-shrink-0 flex gap-1.5 md:gap-2 border-t border-gray-100 p-2 md:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-white">
+              <div className="relative flex-1 min-w-0">
                 <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none"
+                  className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-gray-400 pointer-events-none"
                   strokeWidth={2}
                 />
                 <input
@@ -420,7 +429,9 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
                   placeholder="Ask anything else..."
                   disabled={loading}
-                  className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60"
+                  className="w-full rounded-lg border border-gray-200 py-2 pl-8 md:pl-9 pr-2 md:pr-3 text-base outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60 min-w-0"
+                  style={{ fontSize: '16px' }}
+                  autoComplete="off"
                 />
               </div>
               <button
