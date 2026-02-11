@@ -226,22 +226,22 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl backdrop-blur-md rounded-none w-full max-w-full min-w-0 h-[100dvh] max-h-[100dvh] touch-manipulation md:inset-auto md:bottom-6 md:right-6 md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
             style={{
               borderColor: 'rgba(45, 90, 39, 0.2)',
               boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
             }}
           >
-            {/* Live Ticker – kompaktno na mobilnom da ostane više mesta za tekst */}
+            {/* Live Ticker – fiksna visina da "New order" ne pomera chat */}
             <div
-              className="flex-shrink-0 px-2 py-1.5 md:px-3 md:py-2 border-b font-mono border-gray-100"
+              className="flex-shrink-0 flex flex-col px-2 py-1.5 md:px-3 md:py-2 border-b font-mono border-gray-100 h-[4.25rem] md:h-[4.5rem]"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))' }}
             >
-              <div className="flex items-center justify-between gap-0.5 md:gap-1">
+              <div className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0">
                 <div className="flex flex-col items-center min-w-0 flex-1">
                   <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
                     <Package className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
@@ -271,11 +271,16 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
                 </div>
               </div>
-              {ticker.newOrder && (
-                <div className="text-[#2D5A27] font-medium pt-0.5 text-[10px] md:text-xs truncate">
-                  New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}
-                </div>
-              )}
+              {/* Uvek rezervisana visina da se chat ne pomera kada se pojavi New order */}
+              <div className="min-h-[1.25rem] flex items-center flex-shrink-0">
+                {ticker.newOrder ? (
+                  <span className="text-[#2D5A27] font-medium text-[10px] md:text-xs truncate block w-full">
+                    New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}
+                  </span>
+                ) : (
+                  <span className="block w-full min-h-[1rem]" aria-hidden />
+                )}
+              </div>
             </div>
 
             {/* Header – flex-shrink-0, kompaktnije na mobilnom */}
