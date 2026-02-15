@@ -1,6 +1,14 @@
 # Kontakt forma – šta mora biti podešeno
 
-Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku), sve ispod mora biti tačno.
+Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku na mejl), sve ispod mora biti tačno.
+
+---
+
+## Arhitektura (od 2025)
+
+**Frontend → Next.js API proxy (`/api/contact/submit`) → Backend (`/contact/submit`) → Email (Resend)**
+
+Kontakt forma više ne šalje direktno na backend. Zahtev ide na same-origin proxy, pa proxy prosleđuje backendu. To rešava CORS i probleme sa `NEXT_PUBLIC_API_URL` u produkciji.
 
 ---
 
@@ -8,12 +16,11 @@ Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku), sve ispo
 
 | Šta | Gde | Vrednost |
 |-----|-----|----------|
-| **NEXT_PUBLIC_API_URL** | Settings → Environment Variables | `https://api.biovera.app` |
+| **NEXT_PUBLIC_API_URL** | Settings → Environment Variables | `https://api.biovera.app` ili Railway URL |
 
+- Proxy koristi ovu vrednost da zna gde da šalje zahtev.
 - Mora biti za **Production** (i Preview ako ga koristiš).
 - Posle izmene: **Deployments** → **Redeploy**.
-
-Bez ovoga frontend ne zna gde da šalje zahtev (može da koristi fallback iz koda, ali bolje je eksplicitno).
 
 ---
 
@@ -29,15 +36,20 @@ U kodu su već dozvoljeni: `www.biovera.app`, `biovera.app`, `bio-vera.vercel.ap
 
 ### B) Da backend pošalje email (Resend)
 
-| Variable | Vrednost |
-|----------|----------|
-| **RESEND_API_KEY** | `re_ZG6pwXSM_Agb9hQFZBQtsfxuRzoJDsfTK` |
+| Variable | Vrednost | Obavezno |
+|----------|----------|----------|
+| **RESEND_API_KEY** | API ključ iz Resend dashboarda (re_xxx...) | ✅ |
+| **ADMIN_EMAIL** | Adresa na koju stižu upiti (npr. info@biovera.app ili tvoj lični mejl) | ✅ |
+| **EMAIL_FROM** | `onboarding@resend.dev` (default) ili `info@tvoj-domen.com` ako je domen verifikovan | Opciono |
+
+**Važno za Resend free tier:**
+- Ako NEMAŠ verifikovan domen u Resend, koristi `onboarding@resend.dev` kao FROM (to je sada default).
+- `ADMIN_EMAIL` mora biti adresa na koju možeš primati – za test može biti tvoj Resend signup email.
+- Posle verifikacije domena u Resend, postavi `EMAIL_FROM=info@biovera.app` (ili tvoj domen).
+
+Opciono (Resend SMTP):
 | **SMTP_HOST** | `smtp.resend.com` |
 | **SMTP_PORT** | `587` |
-| **SMTP_USER** | `resend` |
-| **SMTP_PASS** | `re_ZG6pwXSM_Agb9hQFZBQtsfxuRzoJDsfTK` |
-| **EMAIL_FROM** | `onboarding@resend.dev` ili `info@biovera.app` (ako je domen verifikovan u Resend) |
-| **ADMIN_EMAIL** | `info@biovera.app` |
 
 Posle izmene varijabli: **Redeploy** backenda na Railway-u.
 

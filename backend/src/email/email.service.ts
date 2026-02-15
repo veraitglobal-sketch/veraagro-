@@ -190,9 +190,12 @@ Bio Vera Team
   }): Promise<boolean> {
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
-      
+      // Resend free tier: use onboarding@resend.dev as FROM if no custom domain verified
+      const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER
+        || (process.env.RESEND_API_KEY ? 'onboarding@resend.dev' : 'info@biovera.app');
+
       const mailOptions = {
-        from: `"Bio Vera Contact Form" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app'}>`,
+        from: `"Bio Vera Contact Form" <${fromAddr}>`,
         to: adminEmail,
         replyTo: data.email,
         subject: `Contact Inquiry: ${data.subject}`,
@@ -283,8 +286,13 @@ Reply to: ${data.email}
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Contact inquiry email sent to ${adminEmail} from ${data.email}`);
       return true;
-    } catch (error) {
-      this.logger.error(`Failed to send contact inquiry email:`, error);
+    } catch (error: any) {
+      const errMsg = error?.message || String(error);
+      const resendErr = error?.response?.body || error?.response?.data;
+      this.logger.error(
+        `Failed to send contact inquiry email: ${errMsg}`,
+        resendErr ? JSON.stringify(resendErr) : '',
+      );
       return false;
     }
   }

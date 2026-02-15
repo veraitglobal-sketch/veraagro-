@@ -1045,9 +1045,21 @@ export const contactAPI = {
     subject: string;
     message: string;
     phone?: string;
-  }) => {
-    const response = await api.post('/contact/submit', data, { timeout: 20000 });
-    return response.data as { success: boolean; message?: string };
+  }): Promise<{ success: boolean; message?: string }> => {
+    // Use same-origin proxy to avoid CORS and env issues
+    const res = await fetch('/api/contact/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: AbortSignal.timeout(20000),
+    });
+    const result = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
+    if (!res.ok) {
+      const err = new Error(result?.message || 'Failed to send message') as Error & { response?: { status: number; data: unknown } };
+      err.response = { status: res.status, data: result };
+      throw err;
+    }
+    return { success: result.success ?? true, message: result.message };
   },
 };
 

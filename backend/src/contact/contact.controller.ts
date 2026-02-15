@@ -29,11 +29,11 @@ export class ContactController {
    * Submit contact form inquiry
    * POST /contact/submit
    * 
-   * Rate limited to prevent spam: 5 requests per 15 minutes
+   * Rate limited to prevent spam: 20 requests per 15 minutes
    */
   @Post('submit')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 900000 } }) // 5 requests per 15 minutes
+  @Throttle({ default: { limit: 20, ttl: 900000 } }) // 20 requests per 15 minutes
   async submitInquiry(@Body() dto: ContactInquiryDto) {
     // Basic validation
     if (!dto.name || !dto.email || !dto.subject || !dto.message) {

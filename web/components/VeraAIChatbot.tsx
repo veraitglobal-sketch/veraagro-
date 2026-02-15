@@ -124,15 +124,10 @@ const audienceButtons: { key: CategoryKey; label: string; icon: React.ComponentT
 
 type VeraAIChatbotProps = { inline?: boolean; inlineVariant?: 'default' | 'minimal' };
 
-function getApiBase(): string {
-  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
-  return process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
-}
-
 async function sendChatQuery(query: string, sessionId?: string): Promise<{ answer: string; sessionId: string }> {
-  const base = getApiBase();
+  const apiUrl = '/api/ai-assistant/query';
   try {
-    const res = await fetch(`${base}/ai-assistant/query`, {
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, sessionId }),

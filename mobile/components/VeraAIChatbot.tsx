@@ -438,6 +438,9 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   modalBox: {
+    width: '100%',
+    maxWidth: 350,
+    height: '85%',
     maxHeight: '85%',
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -446,6 +449,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(45, 90, 39, 0.2)',
   },
   ticker: {
+    flexShrink: 0,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderBottomWidth: 1,
@@ -477,6 +481,7 @@ const styles = StyleSheet.create({
     color: VERA_GREEN,
   },
   header: {
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -505,6 +510,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   categoriesSection: {
+    flexShrink: 0,
     minHeight: 120,
     padding: 12,
     borderBottomWidth: 1,
@@ -565,8 +571,7 @@ const styles = StyleSheet.create({
   },
   messagesScroll: {
     flex: 1,
-    minHeight: 120,
-    maxHeight: 220,
+    minHeight: 80,
   },
   messagesContent: {
     padding: 12,
@@ -604,6 +609,7 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
   },
   inputRow: {
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
