@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBatchDetailData } from './useBatchDetailData';
@@ -15,6 +16,7 @@ interface BatchDetailScreenProps {
 }
 
 export default function BatchDetailScreen({ batchId }: BatchDetailScreenProps) {
+  const { t } = useTranslation();
   const { batch, loading, onRefresh } = useBatchDetailData(batchId);
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
@@ -26,14 +28,14 @@ export default function BatchDetailScreen({ batchId }: BatchDetailScreenProps) {
   if (loading && !batch) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>Učitavanje...</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.batches.loading')}</Text>
       </View>
     );
   }
   if (!batch) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>Batch nije pronađen</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.batches.notFound')}</Text>
       </View>
     );
   }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useOrderDetailData } from './useOrderDetailData';
@@ -17,6 +18,7 @@ interface OrderDetailScreenProps {
 }
 
 export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
+  const { t } = useTranslation();
   const { order, loading, onRefresh } = useOrderDetailData(orderId);
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
@@ -28,14 +30,14 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
   if (loading && !order) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>Učitavanje...</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.orders.loading')}</Text>
       </View>
     );
   }
   if (!order) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>Porudžbina nije pronađena</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.orders.notFound')}</Text>
       </View>
     );
   }

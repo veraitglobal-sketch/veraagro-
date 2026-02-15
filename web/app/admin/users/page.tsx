@@ -5,7 +5,8 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { usersAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
+import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
 interface User {
@@ -335,7 +336,16 @@ export default function UsersManagementPage() {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 items-center">
+                          {(user.roles.includes('FARMER') || user.roles.includes('GROWER')) && (
+                            <Link
+                              href={`/admin/farm/${user.id}`}
+                              className="text-[#2D5A27] hover:text-[#2D5A27]/80 p-1.5 rounded hover:bg-[#2D5A27]/5"
+                              title="View farm detail"
+                            >
+                              <MapPin className="w-4 h-4" />
+                            </Link>
+                          )}
                           {user.status === 'PENDING_VERIFICATION' && (
                             <button
                               onClick={() => handleApproveVerification(user.id)}

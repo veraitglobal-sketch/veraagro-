@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Truck, Package, MapPin, Calendar, Clock } from 'lucide-react-native';
+import { ArrowLeft, Truck, Calendar, Clock } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { missionsAPI, Mission } from '../../lib/api';
 

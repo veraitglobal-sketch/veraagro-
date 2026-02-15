@@ -51,6 +51,9 @@ Samo **growers (producer)** deo aplikacije. Referenca: `MOBILE_ARCHITECTURE_PLAN
 |-------|------|----------------|--------|
 | Quality entry | `quality-entry.tsx` | `features/grower/quality-entry/` | ✅ |
 | Materials (whitelist) | `materials.tsx` | `features/grower/materials/` | ✅ |
+| Compliance photos | `compliance-photos.tsx` | `features/grower/compliance-photos/` | ✅ |
+| Estates (lista) | `estates.tsx` | `features/grower/estates/` | ✅ |
+| Orders (lista) | `orders.tsx` | `features/grower/orders/` (OrdersListScreen) | ✅ |
 | Plot mapper | `plot-mapper.tsx` | `features/grower/plot-mapper/` | ✅ |
 | Growth journal | `growth-journal.tsx` | `features/grower/growth-journal/` | ✅ |
 | Vera insights | `vera-insights.tsx` | `features/grower/vera-insights/` | ✅ |
@@ -63,7 +66,7 @@ Samo **growers (producer)** deo aplikacije. Referenca: `MOBILE_ARCHITECTURE_PLAN
 | Stavka | Status |
 |--------|--------|
 | Tanki screen fajlovi u `app/(producer)/` – delegiraju na feature | ✅ za sve refaktorisane |
-| Feature moduli u `features/grower/<naziv>/` | ✅ dashboard, products, cost-calculator, certifications, banned-substances, field-log, harvest, missions, orders, batches, **quality-entry**, **materials**, plot-mapper, growth-journal, vera-insights, vera-bag, wallet |
+| Feature moduli u `features/grower/<naziv>/` | ✅ dashboard, products, cost-calculator, certifications, banned-substances, field-log, harvest, missions, orders (lista + detalj), batches, **quality-entry**, **materials**, **compliance-photos**, **estates**, plot-mapper, growth-journal, vera-insights, vera-bag, wallet |
 | TypeScript bez grešaka (`npx tsc --noEmit`) | ✅ |
 | Build (`npx expo export --platform ios`) | ✅ prolazi |
 | Integrity: barcode validacija, GPS (field log, harvest) | ✅ gde je planirano |
@@ -76,20 +79,16 @@ Samo **growers (producer)** deo aplikacije. Referenca: `MOBILE_ARCHITECTURE_PLAN
 
 | Fajl | Linije (okvirno) | Šta uraditi |
 |------|-------------------|-------------|
-| `(producer)/compliance-photos.tsx` | ~333 | Opciono: izvući u `features/grower/compliance-photos/` (i eventualno offline queue kao field log). |
-| `(producer)/estates.tsx` | ~337 | Opciono: refaktor u feature ako lista/detalj naraste. |
 | `(producer)/scanner.tsx` | ~346 | Opciono: podela na ScannerView + ResultHandler ili ostaviti kao jedan fajl. |
 
-**quality-entry** i **materials** refaktor su urađeni (tanki wrapper u `app/`, logika u `features/grower/quality-entry/` i `features/grower/materials/`).
-
-Liste `batches.tsx`, `missions.tsx`, `orders.tsx`, `notifications.tsx` su na granici (~290–315 linija); refaktor po potrebi.
+**quality-entry**, **materials**, **compliance-photos**, **estates** i **orders (lista)** refaktor su urađeni. Liste `batches.tsx` (~289), `missions.tsx` (~292), `notifications.tsx` su ispod ili na granici; refaktor po potrebi.
 
 ### 2.2 Funkcionalno – provera / dopuna
 
 | Oblast | Šta proveriti ili uraditi |
 |--------|----------------------------|
-| **Compliance photos** | Da li postoji offline queue + sync kao za field log; ako treba konzistentno – dodati. |
-| **Quality entry** | Da li šalje na backend / offline-first po potrebi (refaktor urađen). |
+| **Compliance photos** | Refaktor urađen. Nema offline queue (upload direktno na API); ako treba kao field log – dodati pending + sync. |
+| **Quality entry** | Refaktor urađen; šalje direktno na API (nema offline queue). |
 | **Materials** | Već ima offline cache; refaktor u feature urađen. |
 | **Estates** | Provera da lista i detalj rade kako treba. |
 | **Notifications** | Lista i „mark as read“ – provera da radi. |
@@ -118,7 +117,7 @@ Liste `batches.tsx`, `missions.tsx`, `orders.tsx`, `notifications.tsx` su na gra
 
 ### Ostalo (growers)
 
-- Refaktor (opciono): compliance-photos, estates, scanner.  
+- Refaktor (opciono): scanner. compliance-photos, estates, orders lista – urađeno.  
 - Funkcionalno: provera compliance photos (offline), quality entry (flow), materials (samo refaktor), estates, notifications.  
 - Opciono: wallet detaljnije, estates u feature, compliance offline queue.
 

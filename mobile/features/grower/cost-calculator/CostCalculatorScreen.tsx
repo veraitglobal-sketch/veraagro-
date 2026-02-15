@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Calculator, Plus } from 'lucide-react-native';
 import { useCostCalculatorData } from './useCostCalculatorData';
 import CostEntryForm from './CostEntryForm';
@@ -7,6 +8,7 @@ import CostList from './CostList';
 import { theme } from '../../../lib/theme';
 
 export default function CostCalculatorScreen() {
+  const { t } = useTranslation();
   const { costs, products, loading, load, addCost } = useCostCalculatorData();
   const [showForm, setShowForm] = useState(false);
 
@@ -21,8 +23,8 @@ export default function CostCalculatorScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Kalkulator troškova</Text>
-        <Text style={styles.subtitle}>Dodajte iznose troškova za praćenje</Text>
+        <Text style={styles.title}>{t('producer.costCalculator.title')}</Text>
+        <Text style={styles.subtitle}>{t('producer.costCalculator.subtitle')}</Text>
       </View>
 
       <TouchableOpacity
@@ -30,13 +32,13 @@ export default function CostCalculatorScreen() {
         onPress={() => setShowForm(true)}
       >
         <Plus size={28} color={theme.colors.text.inverse} strokeWidth={1.5} />
-        <Text style={styles.bigButtonText}>Dodaj iznos troška</Text>
+        <Text style={styles.bigButtonText}>{t('producer.costCalculator.addCostAmount')}</Text>
       </TouchableOpacity>
 
       {products.length > 0 && (
         <View style={styles.productsHint}>
           <Text style={styles.productsHintText}>
-            Proizvodi iz „Moji proizvodi“ mogu se preneti ovde kao stavke (u narednoj verziji).
+            {t('producer.costCalculator.productsTransferNote')}
           </Text>
         </View>
       )}
@@ -52,7 +54,7 @@ export default function CostCalculatorScreen() {
 
       <View style={styles.listHeader}>
         <Calculator size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.listTitle}>Lista troškova</Text>
+        <Text style={styles.listTitle}>{t('producer.costCalculator.costListTitle')}</Text>
       </View>
       <CostList costs={costs} loading={loading} onRefresh={load} />
     </View>

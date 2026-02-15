@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Package } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -6,6 +7,7 @@ import type { Order } from '../../../lib/api';
 import { getOrderStatusColor, getOrderStatusLabel } from './useOrderDetailData';
 
 export default function OrderInfoBlock({ order }: { order: Order }) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -34,7 +36,7 @@ export default function OrderInfoBlock({ order }: { order: Order }) {
           }}
         >
           <Text style={{ fontSize: 12, fontWeight: '300', color: getOrderStatusColor(order.status), letterSpacing: 0.3 }}>
-            {getOrderStatusLabel(order.status)}
+            {getOrderStatusLabel(order.status, t)}
           </Text>
         </View>
       </View>

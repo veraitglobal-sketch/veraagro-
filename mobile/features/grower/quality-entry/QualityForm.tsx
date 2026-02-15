@@ -1,4 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Package } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
@@ -34,7 +35,7 @@ export function QualityForm({
   getStatusColor,
   getStatusLabel,
 }: QualityFormProps) {
-
+  const { t } = useTranslation();
   if (!selectedBatch) {
     return null;
   }
@@ -59,7 +60,7 @@ export function QualityForm({
             marginLeft: theme.spacing.xs,
             letterSpacing: 0.3,
           }}>
-            {selectedBatch.productName || 'Proizvod'}
+            {selectedBatch.productName || t('producer.qualityEntry.product')}
           </Text>
         </View>
         {selectedBatch.quantity != null && (
@@ -192,7 +193,7 @@ export function QualityForm({
               color: colors.background,
               letterSpacing: 0.3,
             }}>
-              {qualityEntry ? 'Ažuriraj' : 'Sačuvaj'}
+              {qualityEntry ? t('producer.qualityEntry.update') : t('producer.qualityEntry.save')}
             </Text>
           )}
         </TouchableOpacity>

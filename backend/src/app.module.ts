@@ -72,6 +72,9 @@ import { EmailModule } from './email/email.module';
 import { QualityControlLevelsModule } from './quality-control-levels/quality-control-levels.module';
 import { ContactModule } from './contact/contact.module';
 import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
+import { KycModule } from './kyc/kyc.module';
+import { TreatmentLogsModule } from './treatment-logs/treatment-logs.module';
+import { HaccpModule } from './haccp/haccp.module';
 
 @Module({
   imports: [
@@ -151,6 +154,9 @@ import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
     QualityControlLevelsModule,
     ContactModule,
     AiAssistantModule,
+    KycModule,
+    TreatmentLogsModule,
+    HaccpModule,
   ],
   providers: [
     {

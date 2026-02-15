@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
@@ -17,6 +18,7 @@ import { TransactionItem } from './TransactionItem';
  * App route: app/(producer)/(tabs)/wallet.tsx samo renderuje ovaj screen.
  */
 export default function WalletScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { wallet, transactions, loading } = useWalletData();
 
@@ -105,7 +107,7 @@ export default function WalletScreen() {
                     letterSpacing: 0.3,
                   }}
                 >
-                  Ukupno zarađeno
+                  {t('producer.wallet.totalEarned')}
                 </Text>
                 <Text
                   style={{
@@ -135,7 +137,7 @@ export default function WalletScreen() {
                 letterSpacing: 1.5,
               }}
             >
-              Transakcije
+              {t('producer.wallet.transactions')}
             </Text>
 
             {transactions.length === 0 ? (
@@ -157,7 +159,7 @@ export default function WalletScreen() {
                     letterSpacing: 0.3,
                   }}
                 >
-                  Nema transakcija
+                  {t('producer.wallet.noTransactions')}
                 </Text>
               </View>
             ) : (

@@ -1,9 +1,11 @@
 import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { useHarvestData, CROP_TYPES } from './useHarvestData';
 
 export default function HarvestForm() {
+  const { t } = useTranslation();
   const {
     cropType,
     setCropType,
@@ -35,12 +37,12 @@ export default function HarvestForm() {
               alignItems: 'center',
             }}
           >
-            <Text style={{ fontSize: 13, color: '#92400E', flex: 1 }}>Upozorenje: Niste na svojoj parceli!</Text>
+            <Text style={{ fontSize: 13, color: '#92400E', flex: 1 }}>{t('producer.harvest.notOnParcelWarning')}</Text>
           </View>
         )}
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-            Tip useva <Text style={{ color: colors.error }}>*</Text>
+            {t('producer.harvest.cropType')} <Text style={{ color: colors.error }}>*</Text>
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {CROP_TYPES.map((type) => (
@@ -66,7 +68,7 @@ export default function HarvestForm() {
         </View>
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-            Procenjena količina <Text style={{ color: colors.error }}>*</Text>
+            {t('producer.harvest.estimatedQuantity')} <Text style={{ color: colors.error }}>*</Text>
           </Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <TextInput
@@ -104,7 +106,7 @@ export default function HarvestForm() {
         </View>
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-            Datum berbe
+            {t('producer.harvest.harvestDate')}
           </Text>
           <TextInput
             value={harvestDate}
@@ -125,7 +127,7 @@ export default function HarvestForm() {
         </View>
         <View style={{ marginBottom: 24 }}>
           <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-            Lokacija <Text style={{ color: colors.error }}>*</Text>
+            {t('producer.harvest.location')} <Text style={{ color: colors.error }}>*</Text>
           </Text>
           <TouchableOpacity
             onPress={getCurrentLocation}
@@ -150,10 +152,10 @@ export default function HarvestForm() {
                     <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
                       GPS: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
                     </Text>
-                    <Text style={{ fontSize: 12, fontWeight: '300', color: colors.success, marginTop: 4 }}>✓ Lokacija učitana</Text>
+                    <Text style={{ fontSize: 12, fontWeight: '300', color: colors.success, marginTop: 4 }}>✓ {t('producer.harvest.locationLoaded')}</Text>
                   </>
                 ) : (
-                  <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>Uzmi trenutnu lokaciju</Text>
+                  <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.harvest.getCurrentLocation')}</Text>
                 )}
               </View>
             </View>
@@ -186,7 +188,7 @@ export default function HarvestForm() {
                 letterSpacing: 0.5,
               }}
             >
-              Prijavi berbu
+              {t('producer.harvest.reportHarvest')}
             </Text>
           )}
         </TouchableOpacity>

@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SyncStatus from '../../../components/SyncStatus';
 import { theme } from '../../../lib/theme';
 
@@ -10,25 +12,27 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ farmName, partnerCode, connected }: DashboardHeaderProps) {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={{
-        paddingTop: 60,
+        paddingTop: insets.top + 8,
         paddingBottom: theme.spacing.md,
         paddingHorizontal: theme.spacing.lg,
         backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: theme.colors.border,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: theme.spacing.sm }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 18, fontWeight: '300', color: theme.colors.text.primary, letterSpacing: 1 }}>
+          <Text style={{ fontSize: 20, fontWeight: '600', color: theme.colors.text.primary }}>
             {farmName}
           </Text>
           {partnerCode && (
-            <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary, marginTop: 4, letterSpacing: 0.3 }}>
-              Partner: {partnerCode}
+            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 2 }}>
+              {t('producer.dashboard.partner')}: {partnerCode}
             </Text>
           )}
         </View>

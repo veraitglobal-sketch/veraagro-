@@ -26,13 +26,13 @@ export default function Card({
   const variantStyles = {
     default: {
       backgroundColor: theme.colors.surfaceElevated,
-      borderWidth: 0,
-      borderColor: 'transparent',
+      borderWidth: 0.5,
+      borderColor: theme.colors.border,
     },
     elevated: {
       backgroundColor: theme.colors.surfaceElevated,
-      borderWidth: 0,
-      borderColor: 'transparent',
+      borderWidth: 0.5,
+      borderColor: theme.colors.border,
       ...theme.shadows.md,
     },
     outlined: {
@@ -45,8 +45,9 @@ export default function Card({
   const resolvedStyle = style && typeof style === 'object' ? style : {};
   return (
     <View
-      className={`rounded-${theme.borderRadius.lg} ${className}`}
+      className={className}
       style={{
+        borderRadius: theme.borderRadius.lg,
         padding: paddingMap[padding],
         ...variantStyles[variant],
         ...resolvedStyle,

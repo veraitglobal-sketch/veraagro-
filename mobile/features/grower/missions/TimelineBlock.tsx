@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Calendar, User, Truck, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -17,6 +18,7 @@ const dateFormat = {
 };
 
 export default function TimelineBlock({ mission }: TimelineBlockProps) {
+  const { t } = useTranslation();
   const driver = mission.driver as { firstName?: string; lastName?: string } | undefined;
   return (
     <View
@@ -54,7 +56,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
             <Text
               style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
             >
-              Kreirano
+              {t('producer.missions.created')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
               <Calendar size={11} color={colors.text.secondary} strokeWidth={1} />
@@ -66,7 +68,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
                   marginLeft: 4,
                 }}
               >
-                {new Date(mission.createdAt).toLocaleDateString('sr-RS', dateFormat)}
+                {new Date(mission.createdAt).toLocaleDateString('en-US', dateFormat)}
               </Text>
             </View>
           </View>
@@ -85,7 +87,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
               <Text
                 style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
               >
-                Dodeljeno vozaču
+                {t('producer.missions.assignedToDriver')}
               </Text>
               {driver && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
@@ -119,7 +121,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
               <Text
                 style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
               >
-                U transportu
+                {t('producer.missions.inTransit')}
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                 <Truck size={11} color={colors.text.secondary} strokeWidth={1} />
@@ -131,7 +133,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
                     marginLeft: 4,
                   }}
                 >
-                  Na putu ka destinaciji
+                  {t('producer.missions.enRouteToDestination')}
                 </Text>
               </View>
             </View>
@@ -151,7 +153,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
               <Text
                 style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
               >
-                Isporučeno
+                {t('producer.missions.delivered')}
               </Text>
               {mission.updatedAt && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
@@ -164,7 +166,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
                       marginLeft: 4,
                     }}
                   >
-                    {new Date(mission.updatedAt).toLocaleDateString('sr-RS', dateFormat)}
+                    {new Date(mission.updatedAt).toLocaleDateString('en-US', dateFormat)}
                   </Text>
                 </View>
               )}

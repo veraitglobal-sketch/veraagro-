@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { PendingCost } from '../../../lib/offline-storage';
 
@@ -9,6 +10,7 @@ interface CostEntryFormProps {
 }
 
 export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps) {
+  const { t } = useTranslation();
   const [label, setLabel] = useState('');
   const [amount, setAmount] = useState('');
   const [saving, setSaving] = useState(false);
@@ -32,7 +34,7 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Naziv troška (npr. Gorivo, Đubrivo)"
+        placeholder={t('producer.costCalculator.costNamePlaceholder')}
         placeholderTextColor={theme.colors.text.tertiary}
         value={label}
         onChangeText={setLabel}
@@ -48,7 +50,7 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
       <View style={styles.actions}>
         {onCancel && (
           <TouchableOpacity style={styles.cancelBtn} onPress={onCancel} disabled={saving}>
-            <Text style={styles.cancelBtnText}>Odustani</Text>
+            <Text style={styles.cancelBtnText}>{t('producer.costCalculator.cancel')}</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
@@ -56,7 +58,7 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
           onPress={handleSubmit}
           disabled={!label.trim() || saving}
         >
-          <Text style={styles.submitBtnText}>{saving ? 'Čuvam…' : 'Dodaj trošak'}</Text>
+          <Text style={styles.submitBtnText}>{saving ? t('producer.costCalculator.saving') : t('producer.costCalculator.addCost')}</Text>
         </TouchableOpacity>
       </View>
     </View>

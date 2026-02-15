@@ -21,10 +21,10 @@ export default function DashboardScreen() {
   const farmName = data.estates[0]?.name || 'My Farm';
 
   const handlers = {
-    onMojiProizvodi: () => router.push('/(producer)/(tabs)/products'),
-    onKalkulatorTroskova: () => router.push('/(producer)/(tabs)/cost-calculator'),
-    onSertifikati: () => router.push('/(producer)/(tabs)/certifications'),
-    onZabranjenaSredstva: () => router.push('/(producer)/(tabs)/banned-substances'),
+    onMyProducts: () => router.push('/(producer)/(tabs)/products'),
+    onCostCalculator: () => router.push('/(producer)/(tabs)/cost-calculator'),
+    onCertifications: () => router.push('/(producer)/(tabs)/certifications'),
+    onBannedSubstances: () => router.push('/(producer)/(tabs)/banned-substances'),
     onScanInput: () => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } }),
     onNewEntry: () => router.push('/(producer)/(tabs)/field-log'),
     onReportHarvest: () => router.push('/(producer)/(tabs)/harvest'),
@@ -33,6 +33,7 @@ export default function DashboardScreen() {
     onViewBatches: () => router.push('/(producer)/batches'),
     onViewNotifications: () => router.push('/(producer)/notifications'),
     onViewWallet: () => router.push('/(producer)/(tabs)/wallet'),
+    onEstates: () => router.push('/(producer)/estates'),
   };
 
   return (
@@ -55,16 +56,16 @@ export default function DashboardScreen() {
       <View style={{ padding: theme.spacing.md }}>
         <View
           style={{
-            backgroundColor: theme.colors.surface,
+            backgroundColor: theme.colors.surfaceElevated,
             borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.xl,
+            padding: theme.spacing.lg,
             marginBottom: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.05)',
+            borderWidth: 1,
+            borderColor: theme.colors.border,
             alignItems: 'center',
           }}
         >
-          <TrustScoreWidget score={data.trustScore} size={140} />
+          <TrustScoreWidget score={data.trustScore} size={100} />
         </View>
         <QuickActionsSection handlers={handlers} />
         <LiveInformationSection

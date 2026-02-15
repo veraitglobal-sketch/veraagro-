@@ -1,10 +1,12 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 
 export default function OrderDetailHeader() {
+  const { t } = useTranslation();
   const router = useRouter();
   return (
     <View
@@ -23,7 +25,7 @@ export default function OrderDetailHeader() {
         <ArrowLeft size={24} color={colors.text.primary} strokeWidth={1.5} />
       </TouchableOpacity>
       <Text style={{ fontSize: 18, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.3, flex: 1 }}>
-        Detalji Porudžbine
+        {t('producer.orders.orderDetails')}
       </Text>
     </View>
   );

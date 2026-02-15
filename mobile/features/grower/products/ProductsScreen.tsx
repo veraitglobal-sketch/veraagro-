@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Package, QrCode, Plus } from 'lucide-react-native';
@@ -9,6 +10,7 @@ import ProductList from './ProductList';
 import { theme } from '../../../lib/theme';
 
 export default function ProductsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { products, loading, load, addProduct } = useProductsData();
   const [showForm, setShowForm] = useState(false);
@@ -47,21 +49,21 @@ export default function ProductsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Moji proizvodi</Text>
-        <Text style={styles.subtitle}>Šta proizvod sadrži – QR ili ručni unos</Text>
+        <Text style={styles.title}>{t('producer.dashboard.myProducts')}</Text>
+        <Text style={styles.subtitle}>{t('producer.dashboard.myProductsDesc')}</Text>
       </View>
 
       <View style={styles.actions}>
         <TouchableOpacity style={styles.bigButton} onPress={openScanner}>
           <QrCode size={28} color={theme.colors.text.inverse} strokeWidth={1.5} />
-          <Text style={styles.bigButtonText}>Skeniraj QR</Text>
+          <Text style={styles.bigButtonText}>{t('producer.dashboard.scanQr')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.bigButton, styles.bigButtonSecondary]}
           onPress={() => { setScannedQr(null); setShowForm(true); }}
         >
           <Plus size={28} color={theme.colors.primary} strokeWidth={1.5} />
-          <Text style={styles.bigButtonTextSecondary}>Ručni unos</Text>
+          <Text style={styles.bigButtonTextSecondary}>{t('producer.dashboard.manualEntry')}</Text>
         </TouchableOpacity>
       </View>
 

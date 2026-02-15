@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useCart } from '../../hooks/useCart';
@@ -11,6 +12,7 @@ import { ArrowLeft } from 'lucide-react-native';
  * Elegant form with floating labels and dark green submit button
  */
 export default function CheckoutScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
@@ -25,12 +27,12 @@ export default function CheckoutScreen() {
   const handleSubmit = async () => {
     // Validation
     if (!street || !city || !postalCode) {
-      Alert.alert('Greška', 'Molimo popunite sva obavezna polja');
+      Alert.alert(t('error'), t('buyer.checkout.fillRequired'));
       return;
     }
 
     if (items.length === 0) {
-      Alert.alert('Greška', 'Korpa je prazna');
+      Alert.alert(t('error'), t('buyer.checkout.cartEmpty'));
       return;
     }
 
@@ -68,8 +70,8 @@ export default function CheckoutScreen() {
       router.replace(`/(buyer)/order/${order.id}`);
     } catch (error: any) {
       console.error('Error creating order:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Ne mogu da kreiram porudžbinu';
-      Alert.alert('Greška', errorMessage);
+      const errorMessage = error.response?.data?.message || error.message || t('buyer.checkout.orderCreateFailed');
+      Alert.alert(t('error'), errorMessage);
     } finally {
       setLoading(false);
     }

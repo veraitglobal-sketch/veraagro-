@@ -67,17 +67,14 @@ export function getStatusColor(status: string): string {
   }
 }
 
-export function getStatusLabel(status: string): string {
-  switch (status) {
-    case 'PENDING':
-      return 'Na čekanju';
-    case 'ASSIGNED':
-      return 'Dodeljeno';
-    case 'IN_TRANSIT':
-      return 'U transportu';
-    case 'DELIVERED':
-      return 'Isporučeno';
-    default:
-      return status;
-  }
+const MISSION_STATUS_KEYS: Record<string, string> = {
+  PENDING: 'statusPending',
+  ASSIGNED: 'statusAssigned',
+  IN_TRANSIT: 'statusInTransit',
+  DELIVERED: 'statusDelivered',
+};
+
+export function getStatusLabel(status: string, t: (key: string) => string): string {
+  const key = MISSION_STATUS_KEYS[status];
+  return key ? t(`producer.orders.${key}`) : status;
 }

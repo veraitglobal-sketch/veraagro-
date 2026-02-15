@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Wallet } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
@@ -11,6 +12,7 @@ export function WalletBalanceCard({
   availableBalance,
   pendingBalance,
 }: WalletBalanceCardProps) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -40,7 +42,7 @@ export function WalletBalanceCard({
             letterSpacing: 0.5,
           }}
         >
-          Raspoloživo
+          {t('producer.wallet.available')}
         </Text>
       </View>
       <Text
@@ -68,7 +70,7 @@ export function WalletBalanceCard({
             letterSpacing: 0.3,
           }}
         >
-          Na čekanju:{' '}
+          {t('producer.wallet.pending')}:{' '}
           {pendingBalance.toLocaleString('de-DE', {
             style: 'currency',
             currency: 'EUR',

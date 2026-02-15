@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { theme } from '../lib/theme';
@@ -13,6 +13,7 @@ import { theme } from '../lib/theme';
 export default function PartnerLoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ redirect?: string }>();
   const { login, logout } = useAuth();
   const [username, setUsername] = useState(''); // Can be email or partnerCode
   const [password, setPassword] = useState('');
@@ -35,8 +36,13 @@ export default function PartnerLoginScreen() {
       );
       
       if (isProducer) {
-        // Navigate to producer dashboard
-        router.replace('/(producer)/(tabs)');
+        if (params.redirect === 'estates/new') {
+          router.replace('/(producer)/estates/new');
+        } else if (params.redirect === 'estates') {
+          router.replace('/(producer)/estates');
+        } else {
+          router.replace('/(producer)/(tabs)');
+        }
       } else {
         Alert.alert(
           t('error') || 'Error',
@@ -62,7 +68,7 @@ export default function PartnerLoginScreen() {
           marginBottom: theme.spacing.sm,
           letterSpacing: 2,
         }}>
-          Bio Vera Producer Portal
+          Bio Vera
         </Text>
         <Text style={{
           fontSize: 13,

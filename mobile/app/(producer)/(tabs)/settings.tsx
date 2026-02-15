@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Bell, Moon, Globe, Shield, Info } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
@@ -18,6 +19,7 @@ const SETTINGS_KEYS = {
  * App preferences and configuration
  */
 export default function SettingsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
@@ -89,7 +91,7 @@ export default function SettingsScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 1,
           }}>
-            Podešavanja
+            {t('producer.tabs.settings')}
           </Text>
         </View>
       </View>

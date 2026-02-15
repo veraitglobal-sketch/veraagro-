@@ -40,7 +40,8 @@ export class EstatesController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string, @Request() req: any) {
-    return this.estatesService.delete(id, req.user.id);
+    const isAdmin = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('SUPER_ADMIN');
+    return this.estatesService.delete(id, req.user.id, isAdmin);
   }
 
   @Post(':id/start-certification')

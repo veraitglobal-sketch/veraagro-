@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Euro, CheckCircle, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -8,7 +9,8 @@ interface PaymentStatusBlockProps {
 }
 
 export default function PaymentStatusBlock({ paymentStatus }: PaymentStatusBlockProps) {
-  const label = paymentStatus === 'PAID' ? 'Plaćeno' : paymentStatus === 'PENDING' ? 'Na čekanju' : paymentStatus;
+  const { t } = useTranslation();
+  const label = paymentStatus === 'PAID' ? t('producer.orders.paid') : paymentStatus === 'PENDING' ? t('producer.orders.pending') : paymentStatus;
   return (
     <View
       style={{
@@ -23,7 +25,7 @@ export default function PaymentStatusBlock({ paymentStatus }: PaymentStatusBlock
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
         <Euro size={18} color={colors.text.primary} strokeWidth={1} />
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          Status plaćanja
+          {t('producer.orders.paymentStatus')}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

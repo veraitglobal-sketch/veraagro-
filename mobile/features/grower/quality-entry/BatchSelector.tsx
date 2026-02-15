@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import type { BatchItem } from './useQualityEntryData';
@@ -20,6 +21,7 @@ export function BatchSelector({
   setSelectedBatchId,
   loading,
 }: BatchSelectorProps) {
+  const { t } = useTranslation();
   return (
     <View style={{ marginBottom: theme.spacing.md }}>
       <Text style={{
@@ -48,7 +50,7 @@ export function BatchSelector({
             fontWeight: '300',
             color: colors.text.secondary,
           }}>
-            Nema batch-ova za unos kvaliteta
+            {t('producer.qualityEntry.noBatches')}
           </Text>
         </View>
       ) : (

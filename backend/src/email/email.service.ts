@@ -290,6 +290,87 @@ Reply to: ${data.email}
   }
 
   /**
+   * Send email verification link for grower registration
+   */
+  async sendVerificationEmail(data: {
+    email: string;
+    firstName: string;
+    verificationLink: string;
+    expiresInHours?: number;
+  }): Promise<boolean> {
+    const expires = data.expiresInHours ?? 24;
+    try {
+      const mailOptions = {
+        from: `"Bio Vera" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app'}>`,
+        to: data.email,
+        subject: 'Verify your Bio Vera email',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #2D5A27; color: white; padding: 20px; text-align: center; }
+              .content { background-color: #f9f9f9; padding: 30px; }
+              .button { display: inline-block; padding: 14px 28px; background-color: #2D5A27; color: white !important; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 600; }
+              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+              .link { word-break: break-all; color: #2D5A27; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🌱 Bio Vera</h1>
+                <p>Verify your email address</p>
+              </div>
+              <div class="content">
+                <p>Dear <strong>${data.firstName}</strong>,</p>
+                <p>Thank you for registering with Bio Vera. Please click the button below to verify your email and continue:</p>
+                <p><a href="${data.verificationLink}" class="button">Verify Email</a></p>
+                <p>Or copy this link: <a href="${data.verificationLink}" class="link">${data.verificationLink}</a></p>
+                <p style="color: #666; font-size: 13px;">This link expires in ${expires} hours.</p>
+                <p>If you did not register, you can ignore this email.</p>
+                <p>Best regards,<br>Bio Vera Team</p>
+              </div>
+              <div class="footer">
+                <p>Bio Vera - Transparency from field to shelf</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        text: `
+Hello ${data.firstName},
+
+Thank you for registering with Bio Vera. Please verify your email by clicking this link:
+
+${data.verificationLink}
+
+This link expires in ${expires} hours.
+
+If you did not register, you can ignore this email.
+
+Best regards,
+Bio Vera Team
+        `,
+      };
+
+      if (!this.transporter) {
+        this.logger.warn('Email not configured, skipping verification email');
+        return false;
+      }
+      await this.transporter.sendMail(mailOptions);
+      this.logger.log(`Verification email sent to ${data.email}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to send verification email to ${data.email}:`, error);
+      return false;
+    }
+  }
+
+  /**
    * Test email configuration
    */
   async testConnection(): Promise<boolean> {

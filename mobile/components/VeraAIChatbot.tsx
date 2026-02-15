@@ -15,6 +15,7 @@ import {
   useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {
   MessageCircle,
@@ -41,6 +42,7 @@ import {
   UserPlus,
 } from 'lucide-react-native';
 import { colors, VERA_GREEN } from '../lib/colors';
+import { aiAssistantApi } from '../lib/api';
 
 const SITE_URL = process.env.EXPO_PUBLIC_SITE_URL || 'https://biovera.app';
 
@@ -158,11 +160,15 @@ function useTicker() {
 
 type MessageItem = { role: 'user' | 'assistant'; content: string };
 
+const LOADING_PLACEHOLDER = '\u00A0';
+
 export default function VeraAIChatbot() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [view, setView] = useState<'main' | CategoryKey>('main');
   const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const ticker = useTicker();
   const { width } = useWindowDimensions();
@@ -171,27 +177,49 @@ export default function VeraAIChatbot() {
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
   }, [messages]);
 
+  const sendQuery = async (query: string) => {
+    setLoading(true);
+    setMessages((prev) => [...prev, { role: 'assistant', content: LOADING_PLACEHOLDER }]);
+    try {
+      const data = await aiAssistantApi.query(query, { language: 'en', sessionId });
+      if (data.sessionId) setSessionId(data.sessionId);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.role === 'assistant' && m.content === LOADING_PLACEHOLDER
+            ? { role: 'assistant' as const, content: data.answer }
+            : m
+        )
+      );
+    } catch (err: unknown) {
+      const errorMessage =
+        err && typeof err === 'object' && 'message' in err
+          ? String((err as { message: unknown }).message)
+          : 'Cannot reach the assistant. Check your connection and try again.';
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.role === 'assistant' && m.content === LOADING_PLACEHOLDER
+            ? { role: 'assistant' as const, content: errorMessage }
+            : m
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSend = () => {
-    if (!message.trim()) return;
+    if (!message.trim() || loading) return;
     const q = message.trim();
     setMessages((prev) => [...prev, { role: 'user', content: q }]);
     setMessage('');
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: 'assistant',
-        content: 'Connect to the backend for full answers. Use the quick actions above or ask anything else.',
-      },
-    ]);
+    sendQuery(q);
   };
 
   const handleCategorySelect = (key: CategoryKey) => setView(key);
   const handlePanelAction = (label: string) => {
+    if (loading) return;
     setMessages((prev) => [...prev, { role: 'user', content: label }]);
-    setMessages((prev) => [
-      ...prev,
-      { role: 'assistant', content: `"${label}" — connect backend for details, or ask your own question below.` },
-    ]);
+    sendQuery(label);
   };
 
   const handleCta = (href: string) => {
@@ -332,9 +360,16 @@ export default function VeraAIChatbot() {
                     m.role === 'user' ? styles.messageUser : styles.messageAssistant,
                   ]}
                 >
+                  {m.content === LOADING_PLACEHOLDER ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <ActivityIndicator size="small" color={VERA_GREEN} />
+                    <Text style={styles.messageAssistantText}>Loading...</Text>
+                  </View>
+                ) : (
                   <Text style={m.role === 'user' ? styles.messageUserText : styles.messageAssistantText}>
                     {m.content}
                   </Text>
+                )}
                 </View>
               ))}
             </ScrollView>
@@ -353,7 +388,11 @@ export default function VeraAIChatbot() {
                   returnKeyType="send"
                 />
               </View>
-              <TouchableOpacity style={styles.sendBtn} onPress={handleSend}>
+              <TouchableOpacity
+                style={[styles.sendBtn, loading && { opacity: 0.6 }]}
+                onPress={handleSend}
+                disabled={loading}
+              >
                 <Send size={18} color="#fff" />
               </TouchableOpacity>
             </View>

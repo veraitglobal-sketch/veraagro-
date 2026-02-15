@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, X } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
@@ -13,13 +14,14 @@ interface CertificatePhotoUploadProps {
 }
 
 export default function CertificatePhotoUpload({ cert, onSave, onCancel }: CertificatePhotoUploadProps) {
+  const { t } = useTranslation();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Dozvola', 'Potrebna je dozvola za pristup galeriji.');
+      Alert.alert(t('producer.compliance.permissionsTitle'), t('producer.compliance.galleryPermissionRequired'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -35,7 +37,7 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Dozvola', 'Potrebna je dozvola za kameru.');
+      Alert.alert(t('producer.compliance.permissionsTitle'), t('producer.compliance.cameraPermissionRequired'));
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -96,7 +98,7 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
 
       <TouchableOpacity onPress={onCancel} style={styles.backBtn}>
         <X size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.backBtnText}>Zatvori</Text>
+        <Text style={styles.backBtnText}>{t('common.close')}</Text>
       </TouchableOpacity>
     </View>
   );

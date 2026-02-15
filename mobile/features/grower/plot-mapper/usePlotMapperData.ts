@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { plotMapperAPI } from '../../../lib/api';
@@ -6,6 +7,7 @@ import type { Zone, Partition } from './types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
 
 export function usePlotMapperData(parcelId: string | undefined) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [length, setLength] = useState('');
   const [width, setWidth] = useState('');
@@ -157,17 +159,17 @@ export function usePlotMapperData(parcelId: string | undefined) {
 
   const handleSaveBlueprint = async () => {
     if (!parcelId) {
-      Alert.alert('Greška', 'Nedostaje ID parcele');
+      Alert.alert(t('error'), t('producer.plotMapper.missingParcelId'));
       return;
     }
     if (!length || !width) {
-      Alert.alert('Obavezno', 'Unesite dužinu i širinu');
+      Alert.alert(t('producer.plotMapper.required'), t('producer.plotMapper.enterLengthWidth'));
       return;
     }
     const l = parseFloat(length);
     const w = parseFloat(width);
     if (isNaN(l) || isNaN(w) || l <= 0 || w <= 0) {
-      Alert.alert('Neispravno', 'Unesite ispravne dimenzije');
+      Alert.alert(t('producer.plotMapper.invalid'), t('producer.plotMapper.enterValidDimensions'));
       return;
     }
 
@@ -179,14 +181,14 @@ export function usePlotMapperData(parcelId: string | undefined) {
         width: w,
         blueprintData: { zones, partitions },
       });
-      Alert.alert('Uspeh', 'Plan parcele je sačuvan', [
-        { text: 'OK', onPress: () => router.back() },
+      Alert.alert(t('alerts.success'), t('producer.plotMapper.planSaved'), [
+        { text: t('alerts.ok'), onPress: () => router.back() },
       ]);
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : null;
-      Alert.alert('Greška', msg || 'Nije moguće sačuvati plan');
+      Alert.alert(t('error'), msg || t('producer.plotMapper.savePlanFailed'));
     } finally {
       setSaving(false);
     }

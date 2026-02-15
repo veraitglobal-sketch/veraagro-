@@ -12,6 +12,7 @@ import {
   BarChart3,
   MapPin,
   MessageCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -26,6 +27,7 @@ const navLabels = {
     security: 'Security Alerts',
     marketPrices: 'Market Prices',
     standards: 'Bio Vera Standards',
+    haccp: 'HACCP Monitoring',
     veraInsights: 'Vera Insights',
     commandControl: 'Command & Control',
     estates: 'Estate Approval',
@@ -40,6 +42,7 @@ const navLabels = {
     security: 'Sigurnosna Upozorenja',
     marketPrices: 'Tržišne Cene',
     standards: 'Bio Vera Standardi',
+    haccp: 'HACCP Praćenje',
     veraInsights: 'Vera Uvidi',
     commandControl: 'Komanda i Kontrola',
     estates: 'Odobravanje Poseda',
@@ -54,6 +57,7 @@ const navLabels = {
     security: 'Sicherheitswarnungen',
     marketPrices: 'Marktpreise',
     standards: 'Bio Vera Standards',
+    haccp: 'HACCP-Überwachung',
     veraInsights: 'Vera Einblicke',
     commandControl: 'Befehls- und Kontrollzentrale',
     estates: 'Grundstücksgenehmigung',
@@ -138,6 +142,11 @@ export function getAdminNavItems(_language?: 'en') {
       href: '/admin/standards', 
       label: labels.standards, 
       icon: <StandardsIcon /> 
+    },
+    { 
+      href: '/admin/haccp', 
+      label: labels.haccp, 
+      icon: <ClipboardCheck className="w-5 h-5" /> 
     },
     { 
       href: '/admin/vera-insights', 

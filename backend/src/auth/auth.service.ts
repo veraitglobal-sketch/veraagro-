@@ -1,10 +1,13 @@
 import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { UserRole, UserStatus, HubStatus } from '@prisma/client';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
+import { RegisterGrowerDto } from './dto/register-grower.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +15,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private prisma: PrismaService,
+    private emailService: EmailService,
   ) {}
 
   async validateUser(identifier: string, password: string): Promise<any> {
@@ -146,5 +150,126 @@ export class AuthService {
         ? 'Buyer registered successfully. Hub location created and will appear on the map after admin approval.'
         : 'Buyer registered successfully. Add location in profile to appear on map.',
     };
+  }
+
+  /**
+   * Register a grower (farmer) - requires email verification to activate
+   */
+  async registerGrower(data: RegisterGrowerDto) {
+    const existingEmail = await this.prisma.users.findFirst({ where: { email: data.email } });
+    if (existingEmail) {
+      throw new ConflictException('Email already registered');
+    }
+
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const partnerCode = await this.generateUniquePartnerCode();
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.users.create({
+        data: {
+          id: crypto.randomUUID(),
+          partnerCode,
+          email: data.email,
+          phone: data.phone,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          passwordHash,
+          roles: [UserRole.FARMER],
+          status: UserStatus.PENDING_VERIFICATION,
+          farmerQrCode: `FARMER-${partnerCode}`,
+          farmerProfileUrl: `${process.env.FRONTEND_URL || 'https://biovera.app'}/farmer/FARMER-${partnerCode}`,
+          updatedAt: new Date(),
+        } as any,
+      });
+
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+
+      await tx.email_verification_tokens.create({
+        data: {
+          id: crypto.randomUUID(),
+          userId: user.id,
+          token,
+          expiresAt,
+        },
+      });
+
+      return { user, token };
+    });
+
+    const webUrl = process.env.FRONTEND_URL || process.env.WEB_URL || 'https://biovera.app';
+    const verificationLink = `${webUrl}/verify-email?token=${result.token}`;
+
+    await this.emailService.sendVerificationEmail({
+      email: data.email,
+      firstName: data.firstName,
+      verificationLink,
+      expiresInHours: 24,
+    });
+
+    return {
+      message: 'Registration successful. Please check your email to verify your account and continue.',
+      email: data.email,
+      requiresEmailVerification: true,
+    };
+  }
+
+  /**
+   * Verify email from token - activates account
+   */
+  async verifyEmail(token: string) {
+    const record = await this.prisma.email_verification_tokens.findUnique({
+      where: { token },
+      include: { users: true },
+    });
+
+    if (!record) {
+      throw new BadRequestException('Invalid or expired verification link');
+    }
+    if (record.expiresAt < new Date()) {
+      await this.prisma.email_verification_tokens.delete({ where: { id: record.id } });
+      throw new BadRequestException('Verification link has expired');
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.users.update({
+        where: { id: record.userId },
+        data: { status: UserStatus.ACTIVE, updatedAt: new Date() } as any,
+      }),
+      this.prisma.email_verification_tokens.delete({ where: { id: record.id } }),
+    ]);
+
+    const user = await this.prisma.users.findUnique({
+      where: { id: record.userId },
+    });
+
+    const payload = {
+      sub: user!.id,
+      partnerCode: user!.partnerCode,
+      roles: user!.roles,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user!.id,
+        partnerCode: user!.partnerCode,
+        roles: user!.roles,
+        firstName: user!.firstName,
+        lastName: user!.lastName,
+      },
+      message: 'Email verified. Account activated. You can now add your fields and continue.',
+    };
+  }
+
+  private async generateUniquePartnerCode(): Promise<string> {
+    let attempts = 0;
+    while (attempts < 10) {
+      const code = `FARMER-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+      const existing = await this.usersService.findByPartnerCode(code);
+      if (!existing) return code;
+      attempts++;
+    }
+    throw new BadRequestException('Could not generate unique partner code. Please try again.');
   }
 }

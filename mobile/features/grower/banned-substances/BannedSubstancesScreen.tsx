@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { ShieldAlert } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { materialsAPI } from '../../../lib/api';
@@ -8,15 +9,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const BANNED_CACHE_KEY = 'banned_substances_cache';
 const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
 
-/** Lista zabranjenih kategorija – koristi se kada nema API-ja ili za offline */
+/** Default banned categories when API is unavailable or offline */
 const DEFAULT_BANNED: { title: string; description: string }[] = [
-  { title: 'Sintetička hemija', description: 'Sva sintetička đubriva i pesticidi koji nisu na Bio listi.' },
-  { title: 'GMO', description: 'Genetski modifikovani organizmi i proizvodi.' },
-  { title: 'Zabranjeni herbicidi', description: 'Sredstva koja nisu na dozvoljenoj (whitelist) listi.' },
-  { title: 'Provera pre upotrebe', description: 'Skenirajte barcode – samo dozvoljena sredstva mogu da se unesu.' },
+  { title: 'Synthetic chemistry', description: 'All synthetic fertilizers and pesticides not on the Bio list.' },
+  { title: 'GMO', description: 'Genetically modified organisms and products.' },
+  { title: 'Banned herbicides', description: 'Products not on the approved (whitelist) list.' },
+  { title: 'Check before use', description: 'Scan barcode – only approved products can be entered.' },
 ];
 
 export default function BannedSubstancesScreen() {
+  const { t } = useTranslation();
   const [allowedList, setAllowedList] = useState<{ barcode?: string; name?: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,12 +62,12 @@ export default function BannedSubstancesScreen() {
     >
       <View style={styles.header}>
         <ShieldAlert size={28} color={theme.colors.warning} strokeWidth={1.5} />
-        <Text style={styles.title}>Zabranjena sredstva</Text>
-        <Text style={styles.subtitle}>Lista šta ne sme – provera pre upotrebe</Text>
+        <Text style={styles.title}>{t('producer.bannedSubstances.title')}</Text>
+        <Text style={styles.subtitle}>{t('producer.bannedSubstances.subtitle')}</Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Šta je zabranjeno</Text>
+        <Text style={styles.sectionTitle}>{t('producer.bannedSubstances.whatIsBanned')}</Text>
         {DEFAULT_BANNED.map((item, i) => (
           <View key={i} style={styles.card}>
             <Text style={styles.cardTitle}>{item.title}</Text>
@@ -75,11 +77,11 @@ export default function BannedSubstancesScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Dozvoljena sredstva (whitelist)</Text>
+        <Text style={styles.sectionTitle}>{t('producer.bannedSubstances.allowedSubstances')}</Text>
         {loading && allowedList.length === 0 ? (
-          <Text style={styles.hint}>Učitavanje…</Text>
+          <Text style={styles.hint}>{t('producer.bannedSubstances.loading')}</Text>
         ) : allowedList.length === 0 ? (
-          <Text style={styles.hint}>Nema u kešu. Povucite nadole da osvežite kada imate internet.</Text>
+          <Text style={styles.hint}>{t('producer.bannedSubstances.noCache')}</Text>
         ) : (
           allowedList.slice(0, 30).map((a, i) => (
             <View key={i} style={styles.allowedRow}>
@@ -89,7 +91,7 @@ export default function BannedSubstancesScreen() {
           ))
         )}
         {allowedList.length > 30 && (
-          <Text style={styles.hint}>… i još {allowedList.length - 30} stavki. Samo dozvoljena sredstva smeju da se koriste.</Text>
+          <Text style={styles.hint}>{t('producer.bannedSubstances.moreItems', { count: allowedList.length - 30 })}</Text>
         )}
       </View>
     </ScrollView>

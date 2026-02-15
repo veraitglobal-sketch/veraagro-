@@ -1,26 +1,28 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Award, Camera, Check, Clock } from 'lucide-react-native';
 import { useCertificationsData, CertStatus } from './useCertificationsData';
 import CertificatePhotoUpload from './CertificatePhotoUpload';
 import { theme } from '../../../lib/theme';
 import type { RequiredCert } from './useCertificationsData';
 
-const statusLabel: Record<CertStatus, string> = {
-  not_done: 'Nije završeno',
-  pending: 'Čeka potvrdu',
-  done: 'Završeno',
-};
-
 function CertRow({
   cert,
   status,
   onUpload,
+  t,
 }: {
   cert: RequiredCert;
   status: CertStatus;
   onUpload: () => void;
+  t: (k: string) => string;
 }) {
+  const statusLabel = {
+    not_done: t('producer.certifications.notDone'),
+    pending: t('producer.certifications.pending'),
+    done: t('producer.certifications.done'),
+  };
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -40,7 +42,7 @@ function CertRow({
       {status !== 'done' && (
         <TouchableOpacity style={styles.uploadBtn} onPress={onUpload}>
           <Camera size={18} color={theme.colors.primary} strokeWidth={1} />
-          <Text style={styles.uploadBtnText}>Pošalji fotografiju sertifikata</Text>
+          <Text style={styles.uploadBtnText}>{t('producer.certifications.sendPhoto')}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -48,6 +50,7 @@ function CertRow({
 }
 
 export default function CertificationsScreen() {
+  const { t } = useTranslation();
   const { requiredCerts, pendingPhotos, loading, load, getStatusForCert, addPhoto } = useCertificationsData();
   const [uploadingCert, setUploadingCert] = useState<RequiredCert | null>(null);
 
@@ -75,8 +78,8 @@ export default function CertificationsScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Award size={28} color={theme.colors.primary} strokeWidth={1.5} />
-        <Text style={styles.title}>Sertifikacije</Text>
-        <Text style={styles.subtitle}>Obavezni sertifikati – pošaljite foto, mi potvrdimo</Text>
+        <Text style={styles.title}>{t('producer.tabs.certifications')}</Text>
+        <Text style={styles.subtitle}>{t('producer.certifications.subtitle')}</Text>
       </View>
 
       <FlatList
@@ -90,6 +93,7 @@ export default function CertificationsScreen() {
             cert={item}
             status={getStatusForCert(item.id)}
             onUpload={() => setUploadingCert(item)}
+            t={t}
           />
         )}
       />
@@ -97,7 +101,7 @@ export default function CertificationsScreen() {
       {pendingPhotos.length > 0 && (
         <View style={styles.pendingBar}>
           <Text style={styles.pendingText}>
-            {pendingPhotos.filter((p) => p.status === 'pending').length} foto čeka slanje. Povucite nadole na dashboardu da pošaljete.
+            {t('producer.certifications.photosPending', { count: pendingPhotos.filter((p) => p.status === 'pending').length })}
           </Text>
         </View>
       )}

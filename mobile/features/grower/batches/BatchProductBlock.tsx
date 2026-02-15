@@ -1,9 +1,11 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Package, Calendar } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 
 export default function BatchProductBlock({ batch }: { batch: any }) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -18,22 +20,22 @@ export default function BatchProductBlock({ batch }: { batch: any }) {
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
         <Package size={18} color={colors.text.primary} strokeWidth={1} />
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          Proizvod
+          {t('producer.batches.product')}
         </Text>
       </View>
       <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary, marginBottom: theme.spacing.xs }}>
-        {batch.productName || 'Nepoznat proizvod'}
+        {batch.productName || t('producer.batches.unknownProduct')}
       </Text>
       {batch.quantity && (
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>
-          Količina: {batch.quantity} {batch.unit || 'kg'}
+          {t('producer.batches.quantity')}: {batch.quantity} {batch.unit || 'kg'}
         </Text>
       )}
       {batch.harvestDate && (
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: theme.spacing.xs }}>
           <Calendar size={14} color={colors.text.secondary} strokeWidth={1} />
           <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginLeft: 4 }}>
-            Berba: {new Date(batch.harvestDate).toLocaleDateString('sr-RS')}
+            {t('producer.batches.harvestLabel')}: {new Date(batch.harvestDate).toLocaleDateString('en-US')}
           </Text>
         </View>
       )}

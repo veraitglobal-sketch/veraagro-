@@ -3,9 +3,10 @@ import { HarvestAnnouncementsController } from './harvest-announcements.controll
 import { HarvestAnnouncementsService } from './harvest-announcements.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { TreatmentLogsModule } from '../treatment-logs/treatment-logs.module';
 
 @Module({
-  imports: [PrismaModule, NotificationsModule],
+  imports: [PrismaModule, NotificationsModule, TreatmentLogsModule],
   controllers: [HarvestAnnouncementsController],
   providers: [HarvestAnnouncementsService],
   exports: [HarvestAnnouncementsService],

@@ -1,0 +1,150 @@
+import { useEffect } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react-native';
+import SuppliersMap from '../components/SuppliersMap';
+import { RetailLocation } from '../lib/api';
+import { theme } from '../lib/theme';
+import { markStepComplete } from '../lib/grower-journey';
+import { useState } from 'react';
+
+/**
+ * Vera Supplier Map – Step 1 of Grower Journey
+ * Shows authorized distributors/retail locations on map
+ */
+export default function SupplierMapScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [selectedLocation, setSelectedLocation] = useState<RetailLocation | null>(null);
+
+  useEffect(() => {
+    markStepComplete(3);
+  }, []);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View
+        style={{
+          backgroundColor: theme.colors.primary,
+          paddingTop: 56,
+          paddingBottom: theme.spacing.lg,
+          paddingHorizontal: theme.spacing.lg,
+          borderBottomLeftRadius: theme.borderRadius.xl,
+          borderBottomRightRadius: theme.borderRadius.xl,
+          ...theme.shadows.lg,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: theme.spacing.md,
+            }}
+          >
+            <ArrowLeft size={20} color="#fff" strokeWidth={1.5} />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '600',
+                color: '#fff',
+                marginBottom: 2,
+              }}
+            >
+              {t('growerJourney.step3.mapTitle')}
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: 'rgba(255, 255, 255, 0.85)',
+              }}
+            >
+              {t('growerJourney.step3.mapSubtitle')}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <View
+        style={{
+          flex: 1,
+          marginTop: -theme.borderRadius.xl,
+          borderTopLeftRadius: theme.borderRadius.xl,
+          borderTopRightRadius: theme.borderRadius.xl,
+          overflow: 'hidden',
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <SuppliersMap onMarkerPress={setSelectedLocation} />
+      </View>
+
+      {selectedLocation && (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: theme.spacing.lg,
+            backgroundColor: theme.colors.background,
+            borderTopLeftRadius: theme.borderRadius.xl,
+            borderTopRightRadius: theme.borderRadius.xl,
+            ...theme.shadows.lg,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setSelectedLocation(null)}
+            style={{ alignSelf: 'flex-end', marginBottom: theme.spacing.sm }}
+          >
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '500',
+                color: theme.colors.text.secondary,
+              }}
+            >
+              {t('common.close')}
+            </Text>
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: theme.colors.text.primary,
+              marginBottom: 4,
+            }}
+          >
+            {selectedLocation.name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: theme.colors.text.secondary,
+            }}
+          >
+            {selectedLocation.city}, {selectedLocation.country}
+          </Text>
+          {selectedLocation.address && (
+            <Text
+              style={{
+                fontSize: 13,
+                color: theme.colors.text.tertiary,
+                marginTop: 4,
+              }}
+            >
+              {selectedLocation.address}
+            </Text>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}

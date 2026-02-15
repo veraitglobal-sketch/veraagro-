@@ -1,12 +1,12 @@
 export const CANVAS_WIDTH = 300;
 export const CANVAS_HEIGHT = 200;
 
-export const CROP_TYPES = ['Jabuka', 'Malina', 'Borovnica', 'Kupina', 'Šljiva', 'Kruška', 'Trešnja'];
+export const CROP_TYPES = ['Apple', 'Raspberry', 'Blueberry', 'Blackberry', 'Plum', 'Pear', 'Cherry'];
 
 export const CROP_STATUSES = [
-  { value: 'PREPARING_SOIL', label: 'Priprema zemljišta' },
-  { value: 'YOUNG_SEEDLING', label: 'Mlada sadnica' },
-  { value: 'IN_FULL_PRODUCTION', label: 'U punom rodu' },
-  { value: 'HARVESTING', label: 'Berba' },
-  { value: 'FALLOW', label: 'Ugar' },
+  { value: 'PREPARING_SOIL', label: 'Preparing soil' },
+  { value: 'YOUNG_SEEDLING', label: 'Young seedling' },
+  { value: 'IN_FULL_PRODUCTION', label: 'In full production' },
+  { value: 'HARVESTING', label: 'Harvest' },
+  { value: 'FALLOW', label: 'Fallow' },
 ] as const;

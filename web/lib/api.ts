@@ -54,6 +54,14 @@ export const authAPI = {
     }
     return response.data;
   },
+  verifyEmail: async (token: string) => {
+    const response = await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
   registerBuyer: async (data: {
     partnerCode: string;
     email?: string;
@@ -235,6 +243,18 @@ export const smartLockAPI = {
   },
   getParcelStatus: async (parcelId: string) => {
     const response = await api.get(`/smart-lock/parcel/${parcelId}/status`);
+    return response.data;
+  },
+};
+
+// HACCP API
+export const haccpAPI = {
+  getOverview: async () => {
+    const response = await api.get('/haccp/admin/overview');
+    return response.data;
+  },
+  getTrackData: async (batchId: string) => {
+    const response = await api.get(`/haccp/track/${encodeURIComponent(batchId)}`);
     return response.data;
   },
 };

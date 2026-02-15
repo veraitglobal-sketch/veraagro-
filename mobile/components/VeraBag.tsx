@@ -21,9 +21,9 @@ interface VeraBagProps {
 }
 
 const CATEGORIES = [
-  { value: 'SEED_PLANTING', label: 'Seme i Setva', icon: Package },
-  { value: 'TREATMENT', label: 'Tretman', icon: Package },
-  { value: 'HARVEST', label: 'Berba', icon: Package },
+  { value: 'SEED_PLANTING', label: 'Seed & planting', icon: Package },
+  { value: 'TREATMENT', label: 'Treatment', icon: Package },
+  { value: 'HARVEST', label: 'Harvest', icon: Package },
 ] as const;
 
 /**

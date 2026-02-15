@@ -38,14 +38,14 @@ export default function Button({
       textColor: theme.colors.text.inverse,
     },
     secondary: {
-      backgroundColor: theme.colors.accent,
-      borderWidth: 0,
-      borderColor: 'transparent',
-      textColor: theme.colors.text.primary,
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+      textColor: theme.colors.primary,
     },
     outline: {
       backgroundColor: 'transparent',
-      borderWidth: 1.5,
+      borderWidth: 2,
       borderColor: theme.colors.primary,
       textColor: theme.colors.primary,
     },
@@ -78,13 +78,13 @@ export default function Button({
         backgroundColor: currentStyle.backgroundColor,
         borderWidth: currentStyle.borderWidth,
         borderColor: currentStyle.borderColor,
-        borderRadius: theme.borderRadius.md,
+        borderRadius: theme.borderRadius.lg,
         opacity,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
         width: fullWidth ? '100%' : undefined,
-        ...theme.shadows.sm,
+        ...(variant === 'primary' ? theme.shadows.sm : {}),
       }}
     >
       {loading ? (
@@ -99,8 +99,8 @@ export default function Button({
             style={{
               color: currentStyle.textColor,
               fontSize: currentSize.fontSize,
-              fontWeight: '300',
-              letterSpacing: 0.5,
+              fontWeight: '500',
+              letterSpacing: -0.2,
             }}
           >
             {title}

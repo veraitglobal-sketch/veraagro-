@@ -120,6 +120,8 @@ model bio_white_list {
   productName  String
   manufacturer String
   description  String?
+  phiDays      Int?     // Pre-Harvest Interval (days) - blocks harvest until elapsed
+  mrlLimit     Float?   // Max residue limit (optional)
   isActive     Boolean  @default(true)
   addedBy      String
   createdAt    DateTime @default(now())
@@ -127,6 +129,47 @@ model bio_white_list {
 
   @@index([barcode])
   @@index([isActive])
+}
+
+model kyc_documents {
+  id          String   @id @default(uuid())
+  userId      String
+  docType     String   // 'ID_FRONT' | 'ID_BACK' | 'PASSPORT' | 'LAND_REGISTRY' | 'LEASE'
+  fileUrl     String
+  verifiedAt  DateTime?
+  verifiedBy  String?
+  status      String   @default("PENDING") // PENDING | VERIFIED | REJECTED
+  rejectionReason String?
+  createdAt   DateTime @default(now())
+  users       users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model treatment_logs {
+  id            String   @id @default(uuid())
+  parcelId      String
+  userId        String
+  productId     String   // bio_white_list.id
+  productName   String
+  dosage        String   // e.g. "2 L/ha"
+  waterVolume   Float?   // litres
+  reason        String?  // e.g. "grey mould protection"
+  appliedAt     DateTime
+  gpsLatitude   Float
+  gpsLongitude  Float
+  gpsAccuracy   Float?
+  deviceId      String?
+  deviceTimestamp DateTime
+  needsAudit    Boolean  @default(false) // true if submitted offline >24h after apply
+  createdAt     DateTime @default(now())
+  parcels       parcels  @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  users         users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([parcelId])
+  @@index([userId])
+  @@index([appliedAt])
 }
 
 model border_wait_times {
@@ -683,6 +726,7 @@ model parcels {
   seeds                 seeds?                  @relation(fields: [seedId], references: [id])
   plot_blueprints       plot_blueprints?
   seed_scans            seed_scans[]
+  treatment_logs        treatment_logs[]
 
   @@index([estateId])
   @@index([inputSerialNumber])
@@ -968,6 +1012,9 @@ model users {
   digital_handovers                            digital_handovers[]       @relation("DriverHandovers")
   discount_quota_usage                         discount_quota_usage[]
   distributor_arrivals                         distributor_arrivals[]
+  email_verification_token                     email_verification_tokens?
+  kyc_documents                                kyc_documents[]
+  treatment_logs                               treatment_logs[]
   estates                                      estates[]
   farmer_material_balances                     farmer_material_balances?
   growth_logs                                  growth_logs[]
@@ -992,6 +1039,18 @@ model users {
   wallets                                      wallets?
 
   @@index([partnerCode])
+}
+
+model email_verification_tokens {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([expiresAt])
 }
 
 model vehicles {

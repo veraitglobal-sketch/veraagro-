@@ -67,31 +67,56 @@ export function useAuth() {
   };
 
   const login = async (username: string, password: string) => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        username, // Can be email or partnerCode
-        password,
-      });
+    const body = { username, password };
+    const urlsToTry = [
+      `${API_URL}/auth/login`,
+      `${API_URL.replace(/\/$/, '')}/api/auth/login`,
+    ];
 
-      const { access_token, user } = response.data;
+    let lastError: any = null;
+    for (const url of urlsToTry) {
+      try {
+        const response = await axios.post(url, body);
+        const { access_token, user } = response.data;
 
-      // Store auth data
-      await AsyncStorage.setItem('auth_token', access_token);
-      await AsyncStorage.setItem('auth_user', JSON.stringify(user));
+        if (!access_token || !user) {
+          throw new Error('Invalid response from server');
+        }
 
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+        await AsyncStorage.setItem('auth_token', access_token);
+        await AsyncStorage.setItem('auth_user', JSON.stringify(user));
 
-      setAuthState({
-        user,
-        token: access_token,
-        loading: false,
-      });
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
-      return { user, token: access_token };
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Login failed');
+        setAuthState({
+          user,
+          token: access_token,
+          loading: false,
+        });
+
+        return { user, token: access_token };
+      } catch (err: any) {
+        lastError = err;
+        // Ako nije 404, ne pokušavaj drugi URL
+        if (err.response?.status !== 404) break;
+      }
     }
+
+    const error = lastError;
+    if (!error.response) {
+      const msg = error.code === 'ECONNABORTED'
+        ? 'Request timeout. Check your connection.'
+        : 'Cannot reach server. Check EXPO_PUBLIC_API_URL and that the backend is running.';
+      throw new Error(msg);
+    }
+    if (error.response?.status === 404) {
+      throw new Error(
+        'Login endpoint not found (404). Set EXPO_PUBLIC_API_URL to your backend URL (e.g. https://api.biovera.app), not the website.'
+      );
+    }
+    const msg = error.response?.data?.message;
+    const message = Array.isArray(msg) ? msg[0] : msg;
+    throw new Error(message || `Login failed (${error.response?.status})`);
   };
 
   const logout = async () => {

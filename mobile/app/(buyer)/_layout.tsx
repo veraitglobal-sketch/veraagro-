@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, ShoppingBag, Package, CheckCircle2, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../../lib/theme';
-import VeraAIChatbot from '../../components/VeraAIChatbot';
 
 /**
  * Buyer Navigation Layout
- * Light, appetizing design focused on shopping; Intelligence Terminal FAB overlay
+ * Light, appetizing design focused on shopping
  */
 export default function BuyerLayout() {
   const { t } = useTranslation();
@@ -22,8 +21,8 @@ export default function BuyerLayout() {
         tabBarInactiveTintColor: theme.colors.text.tertiary,
         tabBarStyle: {
           backgroundColor: theme.colors.background,
-          borderTopWidth: 0.5,
-          borderTopColor: 'rgba(0, 0, 0, 0.08)',
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
           height: 60 + insets.bottom,
           paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 8,
@@ -39,14 +38,14 @@ export default function BuyerLayout() {
         },
         headerStyle: {
           backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.border,
         },
         headerTintColor: theme.colors.text.primary,
         headerTitleStyle: {
           fontSize: 18,
           fontWeight: '300',
-          letterSpacing: 0.5,
+          letterSpacing: -0.2,
         },
       }}
     >
@@ -120,7 +119,6 @@ export default function BuyerLayout() {
         }}
       />
     </Tabs>
-    <VeraAIChatbot />
     </View>
   );
 }

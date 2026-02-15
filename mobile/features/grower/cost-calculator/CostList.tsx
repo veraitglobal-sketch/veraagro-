@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { PendingCost } from '../../../lib/offline-storage';
 import { theme } from '../../../lib/theme';
 
@@ -9,8 +10,8 @@ interface CostListProps {
   onRefresh: () => Promise<void>;
 }
 
-function CostItem({ item }: { item: PendingCost }) {
-  const statusLabel = item.status === 'pending' ? 'Sačuvano u telefonu' : item.status === 'syncing' ? 'Šalje se…' : item.status;
+function CostItem({ item, t }: { item: PendingCost; t: (k: string) => string }) {
+  const statusLabel = item.status === 'pending' ? t('producer.costCalculator.savedOnDevice') : item.status === 'syncing' ? t('producer.costCalculator.syncing') : item.status;
   return (
     <View style={styles.item}>
       <Text style={styles.label} numberOfLines={1}>{item.label}</Text>
@@ -23,12 +24,13 @@ function CostItem({ item }: { item: PendingCost }) {
 }
 
 export default function CostList({ costs, loading, onRefresh }: CostListProps) {
+  const { t } = useTranslation();
   const total = costs.reduce((sum, c) => sum + c.amount, 0);
 
   if (loading && costs.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.secondary}>Učitavanje…</Text>
+        <Text style={styles.secondary}>{t('producer.costCalculator.loading')}</Text>
       </View>
     );
   }
@@ -37,21 +39,21 @@ export default function CostList({ costs, loading, onRefresh }: CostListProps) {
     <>
       {costs.length > 0 && (
         <View style={styles.totalBar}>
-          <Text style={styles.totalLabel}>Ukupno</Text>
+          <Text style={styles.totalLabel}>{t('producer.costCalculator.total')}</Text>
           <Text style={styles.totalAmount}>{total.toFixed(2)} EUR</Text>
         </View>
       )}
       <FlatList
         data={costs}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <CostItem item={item} />}
+        renderItem={({ item }) => <CostItem item={item} t={t} />}
         onRefresh={onRefresh}
         refreshing={loading}
         contentContainerStyle={styles.list}
         style={styles.flatList}
         ListEmptyComponent={
           <View style={styles.centered}>
-            <Text style={styles.secondary}>Nema unetih troškova. Dodajte iznos ili prenesite iz Moji proizvodi.</Text>
+            <Text style={styles.secondary}>{t('producer.costCalculator.noCosts')}</Text>
           </View>
         }
       />

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { qualityEntryAPI, QualityEntry, batchesAPI } from '../../../lib/api';
 import { colors } from '../../../lib/colors';
@@ -13,6 +14,7 @@ export interface BatchItem {
 }
 
 export function useQualityEntryData() {
+  const { t } = useTranslation();
   const [batches, setBatches] = useState<BatchItem[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState<string>('');
   const [qualityEntry, setQualityEntry] = useState<QualityEntry | null>(null);
@@ -73,11 +75,11 @@ export function useQualityEntryData() {
 
   const handleSave = useCallback(async () => {
     if (!selectedBatchId) {
-      Alert.alert('Greška', 'Izaberite batch');
+      Alert.alert(t('error'), t('producer.qualityEntry.selectBatch'));
       return;
     }
     if (qualityScore && (isNaN(parseFloat(qualityScore)) || parseFloat(qualityScore) < 0 || parseFloat(qualityScore) > 100)) {
-      Alert.alert('Greška', 'Ocena kvaliteta mora biti između 0 i 100');
+      Alert.alert(t('error'), t('producer.qualityEntry.qualityScoreRange'));
       return;
     }
     try {
@@ -88,10 +90,10 @@ export function useQualityEntryData() {
         notes: notes.trim() || undefined,
       });
       await loadQualityEntry();
-      Alert.alert('Uspešno', 'Kvalitet je sačuvan');
+      Alert.alert(t('alerts.success'), t('producer.qualityEntry.saved'));
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Ne mogu da sačuvam kvalitet';
-      Alert.alert('Greška', message);
+      const message = error instanceof Error ? error.message : t('producer.qualityEntry.saveFailed');
+      Alert.alert(t('error'), message);
       console.error('Error saving quality entry:', error);
     } finally {
       setSaving(false);

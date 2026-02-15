@@ -1,99 +1,101 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Package, Calculator, Award, ShieldAlert, Camera, FilePlus, Wheat, TrendingUp } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { Package, Camera, FilePlus, Award, Calculator, ShieldAlert, TrendingUp, MapPinned } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
 export interface QuickActionsHandlers {
-  onMojiProizvodi: () => void;
-  onKalkulatorTroskova: () => void;
-  onSertifikati: () => void;
-  onZabranjenaSredstva: () => void;
+  onMyProducts: () => void;
+  onCostCalculator: () => void;
+  onCertifications: () => void;
+  onBannedSubstances: () => void;
   onScanInput: () => void;
   onNewEntry: () => void;
   onReportHarvest: () => void;
   onVeraInsights: () => void;
+  onEstates: () => void;
 }
 
 const cardStyle = {
-  backgroundColor: theme.colors.surface,
-  borderRadius: theme.borderRadius.md,
+  backgroundColor: theme.colors.surfaceElevated,
+  borderRadius: theme.borderRadius.lg,
   padding: theme.spacing.md,
-  borderWidth: 0.5,
-  borderColor: 'rgba(0, 0, 0, 0.05)',
+  borderWidth: 1,
+  borderColor: theme.colors.border,
   flexDirection: 'row' as const,
   alignItems: 'center' as const,
-  minHeight: 64,
+  minHeight: 56,
 };
 
 export default function QuickActionsSection({ handlers }: { handlers: QuickActionsHandlers }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <View style={{ marginBottom: theme.spacing.lg }}>
-        <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, letterSpacing: 0.5, marginBottom: theme.spacing.md }}>
-          Brzi pristup
+        <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.tertiary, letterSpacing: 1.2, marginBottom: theme.spacing.sm, textTransform: 'uppercase' }}>
+          {t('producer.dashboard.quickActions')}
         </Text>
         <View style={{ gap: theme.spacing.sm }}>
-          <TouchableOpacity onPress={handlers.onMojiProizvodi} activeOpacity={0.7} style={cardStyle}>
-            <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.sm, backgroundColor: `${theme.colors.primary}15`, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.md }}>
-              <Package size={24} color={theme.colors.primary} strokeWidth={1} />
+          <TouchableOpacity onPress={handlers.onMyProducts} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
+              <Package size={22} color={theme.colors.primary} strokeWidth={1.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 2 }}>Moji proizvodi</Text>
-              <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>QR ili ručni unos – šta sadrži</Text>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.myProducts')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.dashboard.myProductsDesc')}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onKalkulatorTroskova} activeOpacity={0.7} style={cardStyle}>
-            <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.sm, backgroundColor: `${theme.colors.accent}15`, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.md }}>
-              <Calculator size={24} color={theme.colors.accent} strokeWidth={1} />
+          <TouchableOpacity onPress={handlers.onScanInput} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
+              <Camera size={22} color={theme.colors.primary} strokeWidth={1.5} />
+            </View>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.scanQr')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handlers.onNewEntry} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
+              <FilePlus size={22} color={theme.colors.primary} strokeWidth={1.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 2 }}>Kalkulator troškova</Text>
-              <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>Dodaj iznose – praćenje troškova</Text>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.fieldLog')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.dashboard.fieldLogDesc')}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onSertifikati} activeOpacity={0.7} style={cardStyle}>
-            <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.sm, backgroundColor: `${theme.colors.info}15`, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.md }}>
-              <Award size={24} color={theme.colors.info} strokeWidth={1} />
+          <TouchableOpacity onPress={handlers.onCertifications} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.infoLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
+              <Award size={22} color={theme.colors.info} strokeWidth={1.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 2 }}>Sertifikacije</Text>
-              <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>Obavezni sertifikati – pošalji foto</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onZabranjenaSredstva} activeOpacity={0.7} style={cardStyle}>
-            <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.sm, backgroundColor: `${theme.colors.warning}15`, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.md }}>
-              <ShieldAlert size={24} color={theme.colors.warning} strokeWidth={1} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 2 }}>Zabranjena sredstva</Text>
-              <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>Lista šta ne sme</Text>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.certifications')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.dashboard.certificationsDesc')}</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
       <View style={{ marginBottom: theme.spacing.lg }}>
-        <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.tertiary, letterSpacing: 0.5, marginBottom: theme.spacing.sm }}>Ostalo</Text>
-        <View style={{ gap: theme.spacing.sm }}>
-          <TouchableOpacity onPress={handlers.onScanInput} activeOpacity={0.7} style={{ ...cardStyle, minHeight: 52 }}>
-            <Camera size={20} color={theme.colors.text.secondary} strokeWidth={1} style={{ marginRight: 12 }} />
-            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>Skeniraj QR (proizvodi)</Text>
+        <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.tertiary, letterSpacing: 1.2, marginBottom: theme.spacing.sm, textTransform: 'uppercase' }}>
+          {t('producer.dashboard.more')}
+        </Text>
+        <View style={{ gap: theme.spacing.xs }}>
+          <TouchableOpacity onPress={handlers.onCostCalculator} activeOpacity={0.7} style={[cardStyle, { minHeight: 48 }]}>
+            <Calculator size={20} color={theme.colors.text.secondary} strokeWidth={1.5} style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{t('producer.dashboard.costCalculator')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onNewEntry} activeOpacity={0.7} style={{ ...cardStyle, minHeight: 52 }}>
-            <FilePlus size={20} color={theme.colors.text.secondary} strokeWidth={1} style={{ marginRight: 12 }} />
-            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>Unos rada (field log)</Text>
+          <TouchableOpacity onPress={handlers.onBannedSubstances} activeOpacity={0.7} style={[cardStyle, { minHeight: 48 }]}>
+            <ShieldAlert size={20} color={theme.colors.text.secondary} strokeWidth={1.5} style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{t('producer.dashboard.bannedSubstances')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onReportHarvest} activeOpacity={0.7} style={{ ...cardStyle, minHeight: 52 }}>
-            <Wheat size={20} color={theme.colors.text.secondary} strokeWidth={1} style={{ marginRight: 12 }} />
-            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>Prijava berbe</Text>
+          <TouchableOpacity onPress={handlers.onReportHarvest} activeOpacity={0.7} style={[cardStyle, { minHeight: 48 }]}>
+            <FilePlus size={20} color={theme.colors.text.secondary} strokeWidth={1.5} style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{t('producer.dashboard.reportHarvest')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlers.onVeraInsights} activeOpacity={0.7} style={{ ...cardStyle, minHeight: 70 }}>
-            <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.sm, backgroundColor: `${theme.colors.accent}15`, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.md }}>
-              <TrendingUp size={24} color={theme.colors.accent} strokeWidth={1} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 2 }}>Vera Insights</Text>
-              <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary }}>Market intelligence and recommendations</Text>
-            </View>
+          <TouchableOpacity onPress={handlers.onVeraInsights} activeOpacity={0.7} style={[cardStyle, { minHeight: 48 }]}>
+            <TrendingUp size={20} color={theme.colors.text.secondary} strokeWidth={1.5} style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{t('producer.dashboard.veraInsights')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handlers.onEstates} activeOpacity={0.7} style={[cardStyle, { minHeight: 48 }]}>
+            <MapPinned size={20} color={theme.colors.text.secondary} strokeWidth={1.5} style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{t('producer.dashboard.parcelMapping')}</Text>
           </TouchableOpacity>
         </View>
       </View>

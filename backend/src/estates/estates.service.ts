@@ -149,9 +149,14 @@ export class EstatesService {
     });
   }
 
-  async delete(id: string, userId: string) {
-    // Verify ownership first
-    const estate = await this.findOne(id, userId);
+  async delete(id: string, userId: string, isAdmin = false) {
+    const estate = await this.prisma.estates.findUnique({ where: { id } });
+    if (!estate) throw new NotFoundException('Estate not found');
+
+    // Admin can delete any estate; otherwise verify ownership
+    if (!isAdmin && estate.ownerId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
 
     // Check if estate has parcels
     const parcelsCount = await this.prisma.parcels.count({

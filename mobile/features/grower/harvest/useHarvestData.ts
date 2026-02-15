@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +11,7 @@ import { estatesAPI, Estate } from '../../../lib/api';
 export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce', 'Other'];
 
 export function useHarvestData() {
+  const { t } = useTranslation();
   const [cropType, setCropType] = useState('');
   const [estimatedQuantity, setEstimatedQuantity] = useState('');
   const [unit, setUnit] = useState('kg');
@@ -33,9 +35,9 @@ export function useHarvestData() {
   useEffect(() => {
     loadEstates();
     Location.requestForegroundPermissionsAsync().then(({ status }) => {
-      if (status !== 'granted') Alert.alert('Dozvole', 'Potrebna je dozvola za lokaciju');
+      if (status !== 'granted') Alert.alert(t('producer.estates.permissionsTitle'), t('producer.estates.locationPermissionRequired'));
     });
-  }, [loadEstates]);
+  }, [loadEstates, t]);
 
   const getCurrentLocation = useCallback(async () => {
     try {
@@ -50,7 +52,7 @@ export function useHarvestData() {
         setGpsWarning(!isValid);
       }
     } catch (error) {
-      Alert.alert('Greška', 'Ne mogu da dobijem lokaciju');
+      Alert.alert(t('error'), t('producer.harvest.locationFailed'));
     } finally {
       setLoading(false);
     }
@@ -80,7 +82,7 @@ export function useHarvestData() {
       };
       existing.push(harvestEntry as any);
       await AsyncStorage.setItem('pending_field_entries', JSON.stringify(existing));
-      Alert.alert('Uspešno', 'Prijava berbe je sačuvana. Biće poslata kada budeš online.');
+      Alert.alert(t('alerts.success'), t('producer.harvest.saved'));
       setCropType('');
       setEstimatedQuantity('');
       setUnit('kg');
@@ -88,29 +90,29 @@ export function useHarvestData() {
       setLocation(null);
       setGpsWarning(false);
     } catch (error) {
-      Alert.alert('Greška', 'Ne mogu da sačuvam prijavu berbe');
+      Alert.alert(t('error'), t('producer.harvest.saveFailed'));
     } finally {
       setLoading(false);
     }
-  }, [cropType, estimatedQuantity, unit, harvestDate, location]);
+  }, [cropType, estimatedQuantity, unit, harvestDate, location, t]);
 
   const handleSubmit = useCallback(async () => {
     if (!cropType.trim()) {
-      Alert.alert('Greška', 'Unesi tip useva');
+      Alert.alert(t('error'), t('producer.harvest.enterCropType'));
       return;
     }
     if (!estimatedQuantity || parseFloat(estimatedQuantity) <= 0) {
-      Alert.alert('Greška', 'Unesi validnu količinu');
+      Alert.alert(t('error'), t('producer.harvest.enterQuantity'));
       return;
     }
     if (!location) {
-      Alert.alert('Greška', 'Lokacija je obavezna');
+      Alert.alert(t('error'), t('producer.harvest.locationRequired'));
       return;
     }
     if (gpsWarning) {
-      Alert.alert('Upozorenje', 'Niste na svojoj parceli! Da li želite da nastavite?', [
-        { text: 'Otkaži', style: 'cancel' },
-        { text: 'Nastavi', onPress: saveHarvest },
+      Alert.alert(t('alerts.warning'), t('producer.harvest.notOnParcel'), [
+        { text: t('producer.harvest.cancel'), style: 'cancel' },
+        { text: t('producer.harvest.continue'), onPress: saveHarvest },
       ]);
       return;
     }

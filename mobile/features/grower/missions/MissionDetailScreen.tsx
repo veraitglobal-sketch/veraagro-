@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useMissionDetailData } from './useMissionDetailData';
@@ -16,6 +17,7 @@ interface MissionDetailScreenProps {
 }
 
 export default function MissionDetailScreen({ missionId }: MissionDetailScreenProps) {
+  const { t } = useTranslation();
   const {
     mission,
     journeyMap,
@@ -42,7 +44,7 @@ export default function MissionDetailScreen({ missionId }: MissionDetailScreenPr
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>Učitavanje...</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.missions.loading')}</Text>
       </View>
     );
   }
@@ -58,7 +60,7 @@ export default function MissionDetailScreen({ missionId }: MissionDetailScreenPr
         }}
       >
         <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
-          Misija nije pronađena
+          {t('producer.missions.notFound')}
         </Text>
       </View>
     );

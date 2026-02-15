@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, MapPin } from 'lucide-react-native';
@@ -13,6 +14,7 @@ import { estatesAPI, Estate } from '../../../../lib/api';
  * Edit estate name and GPS polygon
  */
 export default function EditEstateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [estate, setEstate] = useState<Estate | null>(null);
@@ -58,7 +60,7 @@ export default function EditEstateScreen() {
       }
     } catch (error) {
       console.error('Error loading estate:', error);
-      Alert.alert('Greška', 'Ne mogu da učitam njivu');
+      Alert.alert(t('error'), t('producer.estates.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -73,7 +75,7 @@ export default function EditEstateScreen() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Greška', 'Unesite naziv njive');
+      Alert.alert(t('error'), t('producer.estates.enterName'));
       return;
     }
 
@@ -87,7 +89,7 @@ export default function EditEstateScreen() {
       });
       router.back();
     } catch (error: any) {
-      Alert.alert('Greška', error.message || 'Ne mogu da ažuriram njivu');
+      Alert.alert(t('error'), error.message || t('producer.estates.updateFailed'));
       console.error('Error updating estate:', error);
     } finally {
       setLoading(false);

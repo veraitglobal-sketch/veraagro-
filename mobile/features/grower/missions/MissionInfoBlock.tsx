@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Truck } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -10,6 +11,7 @@ interface MissionInfoBlockProps {
 }
 
 export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -61,7 +63,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
               letterSpacing: 0.3,
             }}
           >
-            {getStatusLabel(mission.status)}
+            {getStatusLabel(mission.status, t)}
           </Text>
         </View>
       </View>

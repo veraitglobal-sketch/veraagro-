@@ -1,17 +1,13 @@
-// Design System - Konzistentne boje, spacing, tipografija
-
+/**
+ * Design system – usklađen sa webom (Bio Vera #2D5A27, gray paleta)
+ */
 export const colors = {
   primary: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e',
-    600: '#16a34a', // Bio Vera Green
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
+    50: '#f0f7ef',
+    100: '#dcebda',
+    200: '#b8d7b5',
+    500: '#2D5A27',
+    600: '#23471f',
   },
   gray: {
     50: '#f9fafb',
@@ -41,10 +37,10 @@ export const spacing = {
 };
 
 export const borderRadius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
+  sm: 6,
+  md: 8,
+  lg: 12,
+  xl: 16,
   full: 9999,
 };
 
@@ -59,48 +55,24 @@ export const shadows = {
   md: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 4,
   },
   lg: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 8,
   },
 };
 
 export const typography = {
-  h1: {
-    fontSize: 32,
-    fontWeight: '700' as const,
-    lineHeight: 40,
-  },
-  h2: {
-    fontSize: 24,
-    fontWeight: '700' as const,
-    lineHeight: 32,
-  },
-  h3: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    lineHeight: 28,
-  },
-  body: {
-    fontSize: 16,
-    fontWeight: '400' as const,
-    lineHeight: 24,
-  },
-  bodySmall: {
-    fontSize: 14,
-    fontWeight: '400' as const,
-    lineHeight: 20,
-  },
-  caption: {
-    fontSize: 12,
-    fontWeight: '400' as const,
-    lineHeight: 16,
-  },
+  h1: { fontSize: 28, fontWeight: '300' as const, lineHeight: 36, letterSpacing: -0.5 },
+  h2: { fontSize: 22, fontWeight: '600' as const, lineHeight: 30, letterSpacing: -0.3 },
+  h3: { fontSize: 18, fontWeight: '600' as const, lineHeight: 26, letterSpacing: -0.2 },
+  body: { fontSize: 15, fontWeight: '400' as const, lineHeight: 24, letterSpacing: -0.2 },
+  bodySmall: { fontSize: 14, fontWeight: '400' as const, lineHeight: 20, letterSpacing: -0.1 },
+  caption: { fontSize: 12, fontWeight: '400' as const, lineHeight: 16, letterSpacing: 0 },
 };

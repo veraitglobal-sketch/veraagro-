@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScanLine, X, Check } from 'lucide-react-native';
 import { colors } from '../../lib/colors';
@@ -17,7 +17,7 @@ export default function ScannerScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{ returnTo?: string }>();
-  const isForProducts = params.returnTo === 'products';
+  const isForProducts = params.returnTo === 'products' || params.returnTo === 'seed-registration';
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState<string | null>(null);
@@ -51,13 +51,13 @@ export default function ScannerScreen() {
 
       if (result.valid) {
         await AsyncStorage.setItem('last_scanned_barcode', data);
-        Alert.alert('Uspešno', `Bar-kod je validan: ${data}`, [
-          { text: 'OK', onPress: () => router.back() },
+        Alert.alert(t('producer.scanner.successTitle'), `Bar-kod je validan: ${data}`, [
+          { text: t('alerts.ok'), onPress: () => router.back() },
         ]);
       } else {
-        Alert.alert('Upozorenje', result.message || 'Bar-kod nije na whitelist-i', [
+        Alert.alert(t('alerts.warning'), result.message || t('producer.scanner.barcodeNotOnWhitelist'), [
           {
-            text: 'Pokušaj ponovo',
+            text: t('alerts.tryAgain'),
             onPress: () => {
               setScanned(false);
               setBarcode(null);
@@ -68,7 +68,7 @@ export default function ScannerScreen() {
       }
     } catch (error) {
       console.error('Validation error:', error);
-      Alert.alert('Greška', 'Ne mogu da validiram bar-kod');
+      Alert.alert(t('error'), t('producer.scanner.barcodeValidationFailed'));
       setScanned(false);
       setBarcode(null);
     } finally {
@@ -134,7 +134,7 @@ export default function ScannerScreen() {
             >
               <X size={24} color={colors.text.inverse} strokeWidth={1.5} />
             </TouchableOpacity>
-            <Text style={styles.overlayTitle}>Skeniraj bar-kod</Text>
+            <Text style={styles.overlayTitle}>{t('producer.scanner.scanBarcode')}</Text>
             <View style={{ width: 40 }} />
           </View>
 
@@ -161,7 +161,7 @@ export default function ScannerScreen() {
             {validating ? (
               <View style={styles.statusContainer}>
                 <ActivityIndicator size="small" color={colors.accent} />
-                <Text style={styles.statusText}>Validiranje...</Text>
+                <Text style={styles.statusText}>{t('producer.scanner.validating')}</Text>
               </View>
             ) : scanned && barcode ? (
               <View style={styles.statusContainer}>
@@ -169,21 +169,21 @@ export default function ScannerScreen() {
                   <>
                     <Check size={20} color={colors.success} strokeWidth={2} />
                     <Text style={[styles.statusText, { color: colors.success }]}>
-                      Validan bar-kod
+                      {t('producer.scanner.validBarcode')}
                     </Text>
                   </>
                 ) : (
                   <>
                     <X size={20} color={colors.error} strokeWidth={2} />
                     <Text style={[styles.statusText, { color: colors.error }]}>
-                      Bar-kod nije validan
+                      {t('producer.scanner.barcodeInvalid')}
                     </Text>
                   </>
                 )}
               </View>
             ) : (
               <Text style={styles.instructionText}>
-                Postavite bar-kod unutar okvira
+                {t('producer.scanner.placeBarcode')}
               </Text>
             )}
 
@@ -193,7 +193,7 @@ export default function ScannerScreen() {
                 style={[styles.resetButton, { borderColor: colors.border }]}
               >
                 <Text style={[styles.resetButtonText, { color: colors.text.primary }]}>
-                  Skeniraj ponovo
+                  {t('producer.scanner.scanAgain')}
                 </Text>
               </TouchableOpacity>
             )}

@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Cloud, CloudOff, RefreshCw } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { syncService, SyncStatus as SyncStatusType } from '../lib/sync-service';
@@ -9,6 +10,7 @@ interface SyncStatusProps {
 }
 
 export default function SyncStatus({ className = '' }: SyncStatusProps) {
+  const { t } = useTranslation();
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>({
     lastSyncTime: null,
     pendingCount: 0,
@@ -74,21 +76,21 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
         <>
           <RefreshCw size={16} color="#F59E0B" strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: '#92400E' }}>
-            Šaljem podatke…
+            {t('producer.sync.syncing')}
           </Text>
         </>
       ) : syncStatus.pendingCount > 0 ? (
         <>
           <CloudOff size={16} color="#F59E0B" strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: '#92400E' }}>
-            Sačuvano u telefonu: {syncStatus.pendingCount} {syncStatus.pendingCount === 1 ? 'stavka' : 'stavki'}
+            {t('producer.sync.savedOnDevice', { count: syncStatus.pendingCount })}
           </Text>
         </>
       ) : (
         <>
           <Cloud size={16} color={colors.success} strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: colors.success }}>
-            Sve poslato
+            {t('producer.sync.allSent')}
           </Text>
         </>
       )}

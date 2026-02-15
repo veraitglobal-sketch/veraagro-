@@ -1,6 +1,7 @@
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { TreatmentLogsService } from '../treatment-logs/treatment-logs.service';
 import * as crypto from 'crypto';
 
 export interface CreateHarvestAnnouncementDto {
@@ -17,6 +18,7 @@ export class HarvestAnnouncementsService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private treatmentLogsService: TreatmentLogsService,
   ) {}
 
   /**
@@ -41,7 +43,16 @@ export class HarvestAnnouncementsService {
       throw new ForbiddenException('Parcel not found or access denied');
     }
 
-    // 2. Create announcement
+    // 2. PHI Check: Block harvest if Pre-Harvest Interval not elapsed
+    const { date: earliestHarvest, reason } = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
+    const harvestDate = new Date(dto.estimatedDate);
+    if (earliestHarvest && harvestDate < earliestHarvest) {
+      throw new BadRequestException(
+        `Harvest blocked: ${reason || 'Pre-harvest interval'}. Earliest harvest date: ${earliestHarvest.toISOString().split('T')[0]}`,
+      );
+    }
+
+    // 3. Create announcement
     const announcement = await this.prisma.harvest_announcements.create({
       data: {
         id: crypto.randomUUID(),
@@ -69,7 +80,7 @@ export class HarvestAnnouncementsService {
       },
     });
 
-    // 3. Notify admins (async, non-blocking)
+    // 4. Notify admins (async, non-blocking)
     this.notifyAdmins(announcement).catch((err) => {
       console.error('Error notifying admins:', err);
     });

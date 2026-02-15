@@ -19,8 +19,8 @@ Ovaj dokument je **jedna lista** – šta je završeno, šta ostaje, i **priorit
 
 | Fajl | Linije | Prioritet | Akcija |
 |------|--------|-----------|--------|
-| `(producer)/quality-entry.tsx` | ~403 | **1** | Izvući u `features/grower/quality-entry/` (QualityForm, BatchSelector, hook). |
-| `(producer)/materials.tsx` | ~375 | **2** | Izvući u `features/grower/materials/` (MaterialList, WhitelistSearch, hook). |
+| `(producer)/quality-entry.tsx` | ~403 | **1** | ✅ Urađeno. Izvučeno u `features/grower/quality-entry/` (QualityForm, BatchSelector, useQualityEntryData, QualityEntryScreen), tanki wrapper u `app/`. |
+| `(producer)/materials.tsx` | ~375 | **2** | ✅ Urađeno. Izvučeno u `features/grower/materials/` (MaterialList, WhitelistSearch, useMaterialsData, MaterialsScreen), tanki wrapper u `app/`. |
 | `(producer)/compliance-photos.tsx` | ~333 | 3 | Opciono: izvući u `features/grower/compliance-photos/`. |
 | `(producer)/estates.tsx` | ~337 | 4 | Opciono: izvući u feature ako raste. |
 | `(producer)/scanner.tsx` | ~346 | 5 | Ili mala podela (ScannerView + ResultHandler), ili ostaviti + ispraviti TS (theme.colors.text.inverse). |
@@ -49,9 +49,10 @@ Liste **batches.tsx** (~289), **missions.tsx** (~292), **orders.tsx** (~304), **
 
 ### 2.3 Growers – funkcionalno šta još može da fali
 
-- **Compliance photos** – da li ima offline queue kao field log? Ako treba konzistentno, dodati pending + sync.
-- **Quality entry** – pored refaktora, proveriti da li šalje na backend / offline-first po potrebi.
-- **Materials (whitelist)** – već ima offline cache; samo refaktor u feature.
+- **Field log:** offline first da – unosi se čuvaju u `offlineStorage.savePendingEntry` (pending_field_entries), sync šalje na server.
+- **Quality entry:** šalje direktno na API (qualityEntryAPI.create), nema offline queue.
+- **Compliance photos:** nema offline queue – upload ide direktno na API (compliancePhotosAPI.upload). Ako treba konzistentno kao field log, dodati pending + sync.
+- **Materials (whitelist)** – refaktor urađen; već ima offline cache.
 - **Estates lista/detalj** – provera da li sve radi; refaktor liste ako pređe 300 linija.
 - **Notifications** – lista i “mark as read”; bez velikih izmena ako je već ok.
 
@@ -88,18 +89,20 @@ Liste **batches.tsx** (~289), **missions.tsx** (~292), **orders.tsx** (~304), **
 
 | Red | Šta | Kako |
 |-----|-----|------|
-| 2.1 | quality-entry | Napraviti `features/grower/quality-entry/` (QualityForm, BatchSelector, useQualityEntryData), tanki `app/(producer)/quality-entry.tsx`. |
-| 2.2 | materials | Napraviti `features/grower/materials/` (MaterialList, WhitelistSearch, hook), tanki `app/(producer)/materials.tsx`. |
-| 2.3 | scanner | Ili mala podela (ScannerView + ResultHandler), ili samo ispraviti TS (text.inverse) i ostaviti jedan fajl. |
-| 2.4 | compliance-photos (opciono) | Ako želimo konzistentnost – izvući u feature; eventualno offline queue. |
+| 2.1 | ~~quality-entry~~ | ✅ Završeno. `features/grower/quality-entry/` (QualityForm, BatchSelector, useQualityEntryData, QualityEntryScreen), tanki `app/(producer)/quality-entry.tsx`. |
+| 2.2 | ~~materials~~ | ✅ Završeno. `features/grower/materials/` (MaterialList, WhitelistSearch, useMaterialsData, MaterialsScreen), tanki `app/(producer)/materials.tsx`. |
+| 2.3 | ~~scanner~~ | ✅ Ostavljen jedan fajl; TS/theme ok (text.inverse već dodat). |
+| 2.4 | ~~compliance-photos~~ | ✅ Završeno. `features/grower/compliance-photos/` (useCompliancePhotosData, PhotoUploadBlock, CompliancePhotosList, CompliancePhotosScreen), tanki wrapper. |
+| (estates) | ~~estates~~ | ✅ Završeno. `features/grower/estates/` (useEstatesData, EstateList, EstatesScreen), tanki wrapper. |
+| (orders lista) | ~~orders.tsx~~ | ✅ Završeno. `features/grower/orders/` (useOrdersListData, OrdersListScreen), tanki wrapper. |
 
-**Naredba:** *„Uradi refaktor quality-entry i materials (Faza 2.1 i 2.2).“*
+**Naredba:** *„Uradi refaktor quality-entry i materials (Faza 2.1 i 2.2).“* → **Faza 2.1 i 2.2 su završene.**
 
 ### Faza 3 – Provera i čišćenje
 
 | Red | Šta | Kako |
 |-----|-----|------|
-| 3.1 | Linter | ESLint u celom `mobile/` – ispraviti sve. |
+| 3.1 | Linter | ✅ ESLint dodat u `mobile/` (eslint.config.js, @typescript-eslint). Ispravljeni neiskorišćeni importi u batches, missions, notifications, orders, scanner. Preostala upozorenja (no-console, unused vars u drugim fajlovima) – po potrebi. |
 | 3.2 | Liste (estates, batches, missions, orders) | Proveriti da nisu prevelike; ako jesu, izvući u feature. |
 | 3.3 | Offline-first provera | Field log, harvest, products, cost-calculator, certifications – sve što ima unos da prvo ide u lokalno pa sync. |
 

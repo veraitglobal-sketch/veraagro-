@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Calendar, Package, Edit, Trash2 } from 'lucide-react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
@@ -12,6 +13,7 @@ import { estatesAPI, Estate } from '../../../lib/api';
  * Shows estate details, map, parcels, and certification status
  */
 export default function EstateDetailsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [estate, setEstate] = useState<Estate | null>(null);
@@ -47,7 +49,7 @@ export default function EstateDetailsScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
-          Učitavanje...
+          {t('producer.estates.loading')}
         </Text>
       </View>
     );
@@ -57,7 +59,7 @@ export default function EstateDetailsScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
-          Njiva nije pronađena
+          {t('producer.estates.notFound')}
         </Text>
       </View>
     );

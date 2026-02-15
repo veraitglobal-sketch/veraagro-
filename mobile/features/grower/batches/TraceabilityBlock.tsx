@@ -1,9 +1,11 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { User, Truck, MapPin } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 
 export default function TraceabilityBlock({ batch }: { batch: any }) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -22,7 +24,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, paddingBottom: theme.spacing.sm, borderBottomWidth: 0.5, borderBottomColor: colors.border }}>
           <User size={14} color={colors.text.secondary} strokeWidth={1} />
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
-            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>Berba</Text>
+            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>{t('producer.batches.harvestLabel')}</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
               {batch.harvestedBy.firstName} {batch.harvestedBy.lastName}
             </Text>

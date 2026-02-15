@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Euro } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -12,6 +13,7 @@ interface FinancialStatusBlockProps {
 }
 
 export default function FinancialStatusBlock({ financial }: FinancialStatusBlockProps) {
+  const { t } = useTranslation();
   if (!financial) return null;
   return (
     <View
@@ -52,7 +54,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.secondary,
             }}
           >
-            Ukupno
+            {t('producer.missions.total')}
           </Text>
           <Text
             style={{
@@ -83,7 +85,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.secondary,
             }}
           >
-            Vaša isplata
+            {t('producer.missions.yourPayout')}
           </Text>
           <Text
             style={{

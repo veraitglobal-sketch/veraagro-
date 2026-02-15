@@ -112,12 +112,50 @@ export interface Category {
 // Auth API
 export const authAPI = {
   login: async (partnerCode: string, password: string) => {
-    const response = await api.post('/auth/login', { partnerCode, password });
+    const response = await api.post('/auth/login', { username: partnerCode, password });
     return response.data;
   },
   logout: async () => {
     await AsyncStorage.removeItem('auth_token');
     await AsyncStorage.removeItem('auth_user');
+  },
+  registerGrower: async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phone?: string;
+    totalHectares?: number;
+  }) => {
+    const response = await api.post('/auth/register/grower', data);
+    return response.data;
+  },
+  verifyEmail: async (token: string) => {
+    const response = await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+    return response.data;
+  },
+};
+
+// AI Assistant (no auth required)
+export interface AiAssistantResponse {
+  answer: string;
+  suggestedActions?: Array<{ label: string; url: string }>;
+  quickActions?: Array<{ label: string; query: string }>;
+  askForContact?: boolean;
+  sessionId: string;
+}
+
+export const aiAssistantApi = {
+  query: async (
+    query: string,
+    options?: { language?: string; sessionId?: string }
+  ): Promise<AiAssistantResponse> => {
+    const response = await api.post<AiAssistantResponse>('/ai-assistant/query', {
+      query,
+      language: options?.language ?? 'en',
+      sessionId: options?.sessionId,
+    });
+    return response.data;
   },
 };
 
@@ -194,6 +232,21 @@ export const estatesAPI = {
   },
   delete: async (id: string): Promise<void> => {
     await api.delete(`/estates/${id}`);
+  },
+};
+
+// Parcels API
+export const parcelsAPI = {
+  create: async (
+    estateId: string,
+    data: { polygonCoordinates: any; cropType?: string }
+  ): Promise<Parcel> => {
+    const response = await api.post(`/parcels/estate/${estateId}`, data);
+    return response.data;
+  },
+  getByEstate: async (estateId: string): Promise<Parcel[]> => {
+    const response = await api.get(`/parcels/estate/${estateId}`);
+    return response.data || [];
   },
 };
 
@@ -606,11 +659,76 @@ export interface CompliancePhoto {
 export interface Material {
   id: string;
   barcode: string;
-  name: string;
-  type: 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER';
+  name?: string;
+  productName?: string;
+  type?: 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER';
   manufacturer?: string;
   certification?: string;
+  phiDays?: number; // Pre-Harvest Interval (days)
+  mrlLimit?: number;
 }
+
+// KYC API (Pillar 1)
+export const kycAPI = {
+  uploadDocument: async (docType: string, fileUrl: string) => {
+    const response = await api.post('/kyc/documents', { docType, fileUrl });
+    return response.data;
+  },
+  getMyDocuments: async () => {
+    const response = await api.get('/kyc/documents');
+    return response.data;
+  },
+  getStatus: async () => {
+    const response = await api.get('/kyc/status');
+    return response.data;
+  },
+};
+
+// Treatment Logs API (Pillar 2 - Phyto-Log)
+export interface TreatmentLog {
+  id: string;
+  parcelId: string;
+  productId: string;
+  productName: string;
+  dosage: string;
+  appliedAt: string;
+  gpsLatitude: number;
+  gpsLongitude: number;
+  needsAudit?: boolean;
+}
+
+export const treatmentLogsAPI = {
+  create: async (data: {
+    parcelId: string;
+    productId: string;
+    productName: string;
+    dosage: string;
+    waterVolume?: number;
+    reason?: string;
+    appliedAt: string;
+    gpsLatitude: number;
+    gpsLongitude: number;
+    gpsAccuracy?: number;
+    deviceId?: string;
+    deviceTimestamp: string;
+  }) => {
+    const response = await api.post('/treatment-logs', data);
+    return response.data;
+  },
+  getByParcel: async (parcelId: string) => {
+    const response = await api.get(`/treatment-logs/parcel/${parcelId}`);
+    return response.data;
+  },
+  getAll: async (parcelId?: string) => {
+    const params = parcelId ? { parcelId } : {};
+    const response = await api.get('/treatment-logs', { params });
+    return response.data;
+  },
+  getHarvestAllowed: async (parcelId: string) => {
+    const response = await api.get(`/treatment-logs/harvest-allowed/${parcelId}`);
+    return response.data;
+  },
+};
 
 export const materialsAPI = {
   getWhitelist: async (): Promise<Material[]> => {
@@ -659,6 +777,34 @@ export const seedsAPI = {
   getAvailable: async () => {
     const response = await api.get('/seeds/available');
     return response.data || [];
+  },
+};
+
+/**
+ * Manual seed registration (Step 2 Grower Journey)
+ * POST /seed-registrations with photo + GPS + timestamp
+ * Backend TBD – when implemented, will persist to DB + Cloud Storage
+ */
+export const seedRegistrationsAPI = {
+  registerManual: async (data: {
+    seedName: string;
+    photoUri: string;
+    gpsLocation: { lat: number; lng: number };
+    timestamp: string;
+  }) => {
+    const formData = new FormData();
+    formData.append('seedName', data.seedName);
+    formData.append('gpsLocation', JSON.stringify(data.gpsLocation));
+    formData.append('timestamp', data.timestamp);
+    formData.append('photo', {
+      uri: data.photoUri,
+      type: 'image/jpeg',
+      name: 'seed-bag.jpg',
+    } as any);
+    const response = await api.post('/seed-registrations', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
   },
 };
 

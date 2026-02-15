@@ -1,11 +1,10 @@
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { AuthGuard } from '../../components/AuthGuard';
-import VeraAIChatbot from '../../components/VeraAIChatbot';
 
 /**
  * Producer Layout
- * Wraps producer routes with authentication; Intelligence Terminal FAB overlay
+ * Wraps producer routes with authentication
  */
 export default function ProducerLayout() {
   return (
@@ -40,8 +39,8 @@ export default function ProducerLayout() {
         <Stack.Screen name="vera-bag" />
         <Stack.Screen name="vera-insights" />
         <Stack.Screen name="plot-mapper" />
+        <Stack.Screen name="packing-flow" options={{ title: 'Packing Flow' }} />
       </Stack>
-      <VeraAIChatbot />
       </View>
     </AuthGuard>
   );

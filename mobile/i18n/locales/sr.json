@@ -55,22 +55,89 @@
   },
   "producer": {
     "tabs": {
-      "dashboard": "Početna",
+      "home": "Početna",
+      "dashboard": "Kontrolna tabla",
+      "products": "Proizvodi",
+      "profile": "Profil",
+      "costCalculator": "Troškovi",
+      "certifications": "Sertifikati",
+      "bannedSubstances": "Zabranjeno",
       "estates": "Njive",
-      "scanner": "Skeniraj",
-      "growthJournal": "Dnevnik"
+      "fieldLog": "Dnevnik",
+      "batches": "Serije",
+      "settings": "Podešavanja",
+      "harvest": "Berba",
+      "wallet": "Novčanik"
     },
     "dashboard": {
       "welcome": "Dobrodošli",
       "partnerCode": "Partner Code",
+      "partner": "Partner",
       "conversionProgress": "Napredak konverzije",
       "days": "dana",
       "daysRemaining": "Preostalo dana",
       "activeEstates": "Aktivne njive",
       "parcels": "parcela",
       "quickActions": "Brze akcije",
+      "more": "Više",
+      "myProducts": "Moji proizvodi",
+      "myProductsDesc": "QR ili ručni unos",
+      "costCalculator": "Kalkulator troškova",
+      "costCalculatorDesc": "Praćenje troškova",
+      "certifications": "Sertifikati",
+      "certificationsDesc": "Obavezni sertifikati",
+      "bannedSubstances": "Zabranjene supstance",
+      "bannedSubstancesDesc": "Šta nije dozvoljeno",
+      "scanQr": "Skeniraj QR",
       "scanSeed": "Skeniraj seme",
+      "fieldLog": "Dnevnik njive",
+      "fieldLogDesc": "Unos rada",
+      "reportHarvest": "Prijavi berbu",
+      "veraInsights": "Vera Insights",
+      "veraInsightsDesc": "Tržišne informacije",
       "addEvidence": "Dodaj dokaz rasta"
+    },
+    "liveInfo": {
+      "title": "Uživo",
+      "missions": "Misije",
+      "batches": "Serije",
+      "notifications": "Obaveštenja",
+      "noMissions": "Nema aktivnih misija",
+      "missionsCount": "{{count}} misija",
+      "noBatches": "Nema aktivnih serija",
+      "batchesCount": "{{count}} serija",
+      "allRead": "Sve pročitano",
+      "unreadCount": "{{count}} nepročitano"
+    },
+    "financial": {
+      "title": "Finansije",
+      "totalEarned": "Ukupno zarađeno",
+      "available": "Dostupno",
+      "pending": "Na čekanju",
+      "nextPayout": "Sledeća isplata"
+    },
+    "recentActivity": {
+      "title": "Nedavna aktivnost",
+      "noActivity": "Nema nedavne aktivnosti",
+      "planting": "Setva",
+      "spraying": "Prskanje",
+      "harvest": "Berba"
+    },
+    "scanner": {
+      "title": "Skeniraj QR Kod",
+      "description": "Skeniraj QR kod sa vreće semena da započneš proces setve"
+    },
+    "estates": {
+      "title": "Moje Njive",
+      "myFields": "Moje njive",
+      "empty": "Nemate još registrovanih njiva",
+      "createNew": "Kreiraj novu njivu",
+      "list": "Lista njiva"
+    },
+    "growthJournal": {
+      "title": "Dnevnik Rasta",
+      "empty": "Nemate još unosa u dnevnik",
+      "list": "Lista unosa"
     }
   },
   "buyer": {
@@ -112,23 +179,45 @@
       "logout": "Odjavi se"
     }
   },
-  "producer": {
-    "scanner": {
-      "title": "Skeniraj QR Kod",
-      "description": "Skeniraj QR kod sa vreće semena da započneš proces setve"
-    },
-    "estates": {
-      "title": "Moje Njive",
-      "empty": "Nemate još registrovanih njiva",
-      "createNew": "Kreiraj novu njivu",
-      "list": "Lista njiva"
-    },
-    "growthJournal": {
-      "title": "Dnevnik Rasta",
-      "empty": "Nemate još unosa u dnevnik",
-      "list": "Lista unosa"
-    }
-  },
   "error": "Greška",
-  "info": "Informacija"
+  "info": "Informacija",
+  "login": {
+    "subtitle": "Prijavi se partner kodom",
+    "partnerCode": "Partner kod",
+    "password": "Lozinka",
+    "fillAllFields": "Popuni sva polja",
+    "failed": "Prijava nije uspela",
+    "loading": "Prijavljivanje...",
+    "button": "Prijavi se"
+  },
+  "common": {
+    "currency": "EUR",
+    "close": "Zatvori"
+  },
+  "map": {
+    "title": "Gde kupiti",
+    "subtitle": "Pronađi BioVera prodajna mesta u blizini"
+  },
+  "register": {
+    "title": "Registracija",
+    "subtitle": "Kreiraj BioVera nalog proizvođača",
+    "firstName": "Ime",
+    "firstNamePlaceholder": "npr. Petar",
+    "lastName": "Prezime",
+    "lastNamePlaceholder": "npr. Petrović",
+    "email": "Email",
+    "emailPlaceholder": "vas@email.com",
+    "hectares": "Hektari",
+    "hectaresPlaceholder": "Ako ne znate tačno, unesite procenu",
+    "password": "Lozinka",
+    "passwordPlaceholder": "Najmanje 6 karaktera",
+    "submit": "Registruj se",
+    "fillAllFields": "Popunite sva obavezna polja",
+    "enterHectares": "Unesite validan broj hektara",
+    "passwordMin": "Lozinka mora imati najmanje 6 karaktera",
+    "successTitle": "Registracija poslata",
+    "successMessage": "Kontaktiraćemo vas uskoro. Sada možete da dodate polja (korak 2).",
+    "checkEmailMessage": "Proverite email i kliknite na link da potvrdite nalog. Zatim se možete prijaviti i dodati polja.",
+    "failed": "Registracija nije uspela. Pokušajte ponovo."
+  }
 }

@@ -1,5 +1,26 @@
 {
   "marketplace": {
+    "about": {
+      "intro": "From seed to shelf—complete traceability, quality assurance, and direct market access for European producers."
+    },
+    "growers": {
+      "title": "For Growers",
+      "description": "Join our network of certified producers. Fixed pricing, digital tools, and direct market access.",
+      "apply": "Apply as Producer",
+      "learnMore": "Learn more"
+    },
+    "hero": {
+      "title": "From Seed to Market",
+      "subtitle": "Immutable digital proof. Bio-Ready certification with complete traceability. Open to producers worldwide.",
+      "browseProducts": "Browse Products",
+      "becomeProducer": "Become a Producer"
+    },
+    "stats": {
+      "traceability": "Traceability",
+      "certified": "Certified",
+      "monitoring": "Monitoring",
+      "fraudCases": "Fraud Cases"
+    },
     "tagline": "BIO-Ready certified food with digital proof",
     "searchTitle": "What would you like today?",
     "searchPlaceholder": "Search products...",
@@ -51,17 +72,17 @@
     "loading": "Loading products..."
   },
   "partnerLogin": {
-    "subtitle": "Exclusive access for producers",
-    "partnerCode": "Partner Code",
-    "partnerCodePlaceholder": "Enter your Partner Code",
+    "subtitle": "Sign in",
+    "partnerCode": "Your code",
+    "partnerCodePlaceholder": "Code",
     "password": "Password",
-    "passwordPlaceholder": "Enter password",
-    "button": "Log in",
-    "loading": "Logging in...",
-    "fillAllFields": "Fill all fields",
-    "failed": "Login failed",
-    "notProducer": "This account is not a producer",
-    "backToMarketplace": "Back to marketplace"
+    "passwordPlaceholder": "Password",
+    "button": "Sign in",
+    "loading": "Wait...",
+    "fillAllFields": "Fill in",
+    "failed": "Wrong code or password",
+    "notProducer": "Not a farmer account",
+    "backToMarketplace": "Back"
   },
   "buyerLogin": {
     "subtitle": "Purchase BIO-Ready products",
@@ -79,22 +100,319 @@
   },
   "producer": {
     "tabs": {
-      "dashboard": "Dashboard",
-      "estates": "Estates",
-      "scanner": "Scan",
-      "growthJournal": "Journal"
+      "home": "Home",
+      "dashboard": "Home",
+      "products": "Products",
+      "profile": "Me",
+      "costCalculator": "Costs",
+      "certifications": "Certificates",
+      "bannedSubstances": "Banned substances",
+      "estates": "Fields",
+      "fieldLog": "Journal",
+      "batches": "Batches",
+      "settings": "Settings",
+      "harvest": "Harvest",
+      "wallet": "Wallet"
     },
     "dashboard": {
-      "welcome": "Welcome",
-      "partnerCode": "Partner Code",
-      "conversionProgress": "Conversion progress",
-      "days": "days",
-      "daysRemaining": "Days remaining",
-      "activeEstates": "Active estates",
-      "parcels": "parcels",
-      "quickActions": "Quick actions",
-      "scanSeed": "Scan seed",
-      "addEvidence": "Add growth evidence"
+      "partner": "Code",
+      "quickActions": "Do",
+      "more": "More",
+      "myProducts": "My products",
+      "myProductsDesc": "Scan or add",
+      "costCalculator": "Costs",
+      "costCalculatorDesc": "See costs",
+      "certifications": "Certificates",
+      "certificationsDesc": "Your certificates",
+      "bannedSubstances": "Banned substances",
+      "bannedSubstancesDesc": "What is not allowed",
+      "scanQr": "Scan",
+      "manualEntry": "Add by hand",
+      "fieldLog": "Journal",
+      "fieldLogDesc": "What you did",
+      "reportHarvest": "Harvest",
+      "veraInsights": "Tips",
+      "veraInsightsDesc": "Good ideas",
+      "parcelMapping": "My fields"
+    },
+    "liveInfo": {
+      "title": "Now",
+      "missions": "Tasks",
+      "batches": "Batches",
+      "notifications": "Messages",
+      "noMissions": "No tasks",
+      "missionsCount": "{{count}}",
+      "noBatches": "None",
+      "batchesCount": "{{count}}",
+      "allRead": "Done",
+      "unreadCount": "{{count}} new"
+    },
+    "financial": {
+      "title": "Wallet",
+      "totalEarned": "Total earned",
+      "available": "Available",
+      "pending": "Pending",
+      "nextPayout": "Next payout"
+    },
+    "recentActivity": {
+      "title": "Last",
+      "noActivity": "Nothing yet",
+      "planting": "Planting",
+      "spraying": "Spray",
+      "harvest": "Harvest"
+    },
+    "scanner": {
+      "scanBarcode": "Scan",
+      "scanAgain": "Scan again",
+      "barcodeValidationFailed": "Could not check",
+      "validating": "Checking...",
+      "validBarcode": "OK",
+      "barcodeInvalid": "Not valid",
+      "placeBarcode": "Point at QR code",
+      "successTitle": "Success",
+      "barcodeNotOnWhitelist": "Not allowed",
+      "checkingPermissions": "Wait..."
+    },
+    "estates": {
+      "newEstate": "Add field",
+      "step": "Step",
+      "estateName": "Field name",
+      "estateNamePlaceholder": "e.g. Big field",
+      "enterName": "Name your field",
+      "locationOptional": "Place (optional)",
+      "drawBoundary": "Tap on map to mark your field",
+      "createFailed": "Could not save",
+      "loadFailed": "Could not load",
+      "updateFailed": "Could not update",
+      "permissionsTitle": "Allow",
+      "locationPermissionRequired": "Turn on location",
+      "loading": "Loading…",
+      "notFound": "Estate not found",
+      "locationNotSpecified": "Location not specified",
+      "area": "Area",
+      "started": "Started",
+      "optionalLocation": "Location (optional)",
+      "clickToAddPoints": "Tap on map",
+      "enableDrawing": "Tap to mark your field",
+      "enableDrawingBtn": "Start",
+      "atLeast3Points": "Tap 3 times or more",
+      "delete": "Clear",
+      "yourLocation": "You are here",
+      "pointN": "Point {{n}}",
+      "boundaryPoints": "Points",
+      "drawingActive": "Tap on map",
+      "plantingTypePrompt": "New seeds or old plants?",
+      "newPlanting": "New seeds",
+      "newPlantingDesc": "Just planted",
+      "existingPlanting": "Old plants",
+      "existingPlantingDesc": "Already growing",
+      "whatPlanted": "What do you grow?",
+      "cropCategory": {
+        "label": "Type",
+        "fruits": "Fruits",
+        "vegetables": "Vegetables",
+        "grains": "Grains"
+      },
+      "cropSelection": "What?",
+      "variety": "Which kind?",
+      "saveEstate": "Save",
+      "myFields": "My fields"
+    },
+    "harvest": {
+      "reportHarvest": "Report harvest",
+      "locationFailed": "Could not get location",
+      "saved": "Harvest report saved. It will be sent when you are online.",
+      "saveFailed": "Could not save harvest report",
+      "enterCropType": "Enter crop type",
+      "enterQuantity": "Enter a valid quantity",
+      "locationRequired": "Location is required",
+      "successTitle": "Success",
+      "notOnParcel": "You are not on your parcel. Do you want to continue?",
+      "notOnParcelWarning": "Warning: You are not on your parcel!",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "cropType": "Crop type",
+      "estimatedQuantity": "Estimated quantity",
+      "harvestDate": "Harvest date",
+      "location": "Location",
+      "locationLoaded": "Location loaded",
+      "getCurrentLocation": "Get current location"
+    },
+    "orders": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "paymentStatus": "Payment status",
+      "statusPending": "Pending",
+      "statusConfirmed": "Confirmed",
+      "statusPreparing": "Preparing",
+      "statusInTransit": "In transit",
+      "statusDelivered": "Delivered",
+      "statusCancelled": "Cancelled",
+      "statusAssigned": "Assigned",
+      "created": "Created",
+      "loading": "Loading…",
+      "notFound": "Order not found",
+      "product": "Product",
+      "quantity": "Quantity",
+      "orderDetails": "Order details",
+      "unitPrice": "Unit price",
+      "total": "Total"
+    },
+    "wallet": {
+      "pending": "Pending",
+      "totalEarned": "Total earned",
+      "available": "Available",
+      "noTransactions": "No transactions",
+      "transactions": "Transactions"
+    },
+    "plotMapper": {
+      "missingParcelId": "Missing parcel ID",
+      "savePlanFailed": "Could not save plan",
+      "required": "Required",
+      "enterLengthWidth": "Enter length and width",
+      "invalid": "Invalid",
+      "enterValidDimensions": "Enter valid dimensions",
+      "planSaved": "Parcel plan saved",
+      "savePlan": "Save plan",
+      "cropType": "Crop type",
+      "saveZone": "Save zone",
+      "length": "Length (m)",
+      "width": "Width (m)",
+      "totalArea": "Total area"
+    },
+    "qualityEntry": {
+      "selectBatch": "Select a batch",
+      "qualityScoreRange": "Quality score must be between 0 and 100",
+      "saved": "Quality saved",
+      "saveFailed": "Could not save quality",
+      "noBatches": "No batches available for quality entry",
+      "product": "Product",
+      "update": "Update",
+      "save": "Save"
+    },
+    "bannedSubstances": {
+      "title": "Banned substances",
+      "subtitle": "What is not allowed – check before use",
+      "whatIsBanned": "What is banned",
+      "allowedSubstances": "Allowed substances (whitelist)",
+      "loading": "Loading…",
+      "noCache": "No data in cache. Pull down to refresh when online.",
+      "moreItems": "… and {{count}} more. Only approved substances may be used.",
+      "checkBeforeUse": "Check before use",
+      "checkBeforeUseDesc": "Scan barcode – only approved products can be entered."
+    },
+    "costCalculator": {
+      "title": "Cost calculator",
+      "subtitle": "Add cost amounts for tracking",
+      "productsTransferNote": "Products from \"My products\" can be transferred here as items (in a future version).",
+      "addCostAmount": "Add cost amount",
+      "costListTitle": "Cost list",
+      "savedOnDevice": "Saved on device",
+      "syncing": "Syncing…",
+      "loading": "Loading…",
+      "noCosts": "No costs entered. Add amount or transfer from My products.",
+      "costNamePlaceholder": "Cost name (e.g. Fuel, Fertilizer)",
+      "saving": "Saving…",
+      "addCost": "Add cost",
+      "total": "Total",
+      "cancel": "Cancel"
+    },
+    "compliance": {
+      "createEstateFirst": "You must create an estate first",
+      "getLocationFailed": "Could not get location",
+      "openCameraFailed": "Could not open camera",
+      "galleryPermissionRequired": "Gallery access permission is required",
+      "cameraPermissionRequired": "Camera permission is required",
+      "photoSaved": "Photo saved successfully",
+      "photoSaveFailed": "Could not save photo",
+      "permissionsTitle": "Permissions",
+      "cameraLocationRequired": "Camera and location permissions are required",
+      "notOnParcel": "You are not on your parcel. Do you want to continue?",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "loading": "Loading…",
+      "noPhotos": "No photos"
+    },
+    "fieldLog": {
+      "planting": "Planting",
+      "fertilizing": "Fertilizing",
+      "spraying": "Spraying",
+      "harvest": "Harvest"
+    },
+    "batches": {
+      "harvestLabel": "Harvest",
+      "product": "Product",
+      "unknownProduct": "Unknown product",
+      "quantity": "Quantity",
+      "loading": "Loading…",
+      "notFound": "Batch not found"
+    },
+    "missions": {
+      "loading": "Loading…",
+      "notFound": "Mission not found",
+      "yourPayout": "Your payout",
+      "assignedToDriver": "Assigned to driver",
+      "delivered": "Delivered",
+      "statusOrdered": "Ordered",
+      "statusConfirmed": "Confirmed",
+      "statusDelivered": "Delivered",
+      "financialStatus": "Financial status",
+      "total": "Total",
+      "created": "Created",
+      "inTransit": "In transit",
+      "enRouteToDestination": "En route to destination"
+    },
+    "materials": {
+      "fertilizer": "Fertilizer",
+      "pesticide": "Pesticide",
+      "seed": "Seed",
+      "other": "Other",
+      "all": "All",
+      "searchPlaceholder": "Search by barcode or name…",
+      "loading": "Loading…",
+      "noResults": "No results",
+      "noMaterials": "No materials on whitelist",
+      "manufacturer": "Manufacturer",
+      "certification": "Certification",
+      "barcode": "Barcode",
+      "lastSync": "Last sync",
+      "materialCount": "{{count}} material",
+      "materialCount_plural": "{{count}} materials"
+    },
+    "certifications": {
+      "notDone": "Not done",
+      "pending": "Pending confirmation",
+      "done": "Done",
+      "sendPhoto": "Send certificate photo",
+      "subtitle": "Required certificates – send photo, we confirm",
+      "photosPending": "{{count}} photo(s) waiting to be sent. Pull down on dashboard to send."
+    },
+    "products": {
+      "savedOnDevice": "Saved on device",
+      "syncing": "Syncing…",
+      "loading": "Loading…",
+      "noProducts": "No products entered. Add via QR or manual entry.",
+      "manualEntry": "Manual entry",
+      "whatProductContains": "What the product contains (composition)",
+      "quantity": "Quantity",
+      "saving": "Saving…",
+      "saveToDevice": "Save to device",
+      "units": "kg,l,pcs,bag,package"
+    },
+    "growthJournal": {
+      "loading": "Loading…",
+      "noLogs": "No growth logs",
+      "addPhotosToTrack": "Add photos to track crop growth"
+    },
+    "settings": {
+      "orderNotifications": "Order and status notifications",
+      "autoSyncRecords": "Automatically send records when online"
+    },
+    "sync": {
+      "syncing": "Syncing data…",
+      "savedOnDevice": "Saved on device: {{count}} item",
+      "savedOnDevice_plural": "Saved on device: {{count}} items",
+      "allSent": "All sent"
     }
   },
   "buyer": {
@@ -116,7 +434,14 @@
     "orders": {
       "title": "My Orders",
       "empty": "You have no orders",
-      "list": "Order list"
+      "list": "Order list",
+      "statusPending": "Pending",
+      "statusConfirmed": "Confirmed",
+      "statusPreparing": "Preparing",
+      "statusInTransit": "In transit",
+      "statusDelivered": "Delivered",
+      "statusCancelled": "Cancelled",
+      "paymentStatus": "Payment status"
     },
     "veraStandard": {
       "title": "Bio Vera Standard",
@@ -136,16 +461,141 @@
       "purchaseHistory": "Purchase history",
       "viewOrders": "View orders",
       "logout": "Log out"
+    },
+    "checkout": {
+      "fillRequired": "Please fill all required fields",
+      "cartEmpty": "Cart is empty",
+      "orderCreateFailed": "Could not create order"
     }
   },
   "error": "Error",
   "info": "Information",
+  "alerts": {
+    "success": "Success",
+    "warning": "Warning",
+    "tryAgain": "Try again",
+    "ok": "OK"
+  },
   "common": {
     "currency": "EUR",
-    "close": "Close"
+    "close": "Close",
+    "retry": "Try again",
+    "next": "Next",
+    "ok": "OK"
+  },
+  "login": {
+    "subtitle": "Sign in to access your account",
+    "username": "Username / Email / Partner Code",
+    "usernamePlaceholder": "Enter username, email or partner code",
+    "partnerCode": "Partner code",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "fillAllFields": "Please fill all fields",
+    "failed": "Login failed. Please check your credentials.",
+    "loading": "Signing in...",
+    "button": "Sign in",
+    "registerBuyer": "Register as Buyer",
+    "backToMarketplace": "Back to Marketplace"
   },
   "map": {
     "title": "Where to Buy",
     "subtitle": "Find BioVera retail locations near you"
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "Create your BioVera farmer account",
+    "firstName": "First name",
+    "firstNamePlaceholder": "e.g. Petar",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "e.g. Petrović",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "hectares": "Hectares",
+    "hectaresPlaceholder": "If you don't know exactly, give an estimate",
+    "password": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "submit": "Register",
+    "fillAllFields": "Fill in all required fields",
+    "enterHectares": "Enter a valid number of hectares",
+    "passwordMin": "Password must be at least 6 characters",
+    "successTitle": "Registration sent",
+    "successMessage": "We'll contact you soon. You can now add your fields (step 2).",
+    "checkEmailMessage": "Check your email and click the link to verify your account. Then you can log in and add your fields.",
+    "failed": "Registration failed. Try again."
+  },
+  "growerJourney": {
+    "welcome": "Become a Vera farmer",
+    "subtitlePlan": "3 simple steps",
+    "alreadyFarmer": "I already have an account",
+    "subtitle": "3 simple steps",
+    "step1": {
+      "title": "Register",
+      "description": "Name, email, hectares",
+      "mapTitle": "Where to buy seeds",
+      "mapSubtitle": "Shops near you"
+    },
+    "step2": {
+      "title": "Mark your field",
+      "description": "Add your parcels and crops",
+      "mapTitle": "Vera Supplier Map",
+      "scanTitle": "Scan",
+      "manualTitle": "Type by hand",
+      "selectPrompt": "How do you want to add seeds?",
+      "scanVeraProduct": "Scan QR",
+      "scanDesc": "Point camera at bag",
+      "manualEntry": "Type name",
+      "manualDesc": "Write name and take photo",
+      "seedName": "What seeds?",
+      "seedNamePlaceholder": "e.g. Raspberry",
+      "takePhotoBag": "Photo of the bag",
+      "takePhoto": "Take photo",
+      "photoAdded": "Photo added",
+      "photoRequired": "Take a photo of the bag",
+      "enterSeedName": "Write what seeds",
+      "locationRequired": "Turn on location",
+      "gpsRecorded": "GPS recorded",
+      "submit": "Save",
+      "manualSuccess": "Saved.",
+      "scanSuccess": "Seed validated: {{info}}",
+      "saveFailed": "Could not save. Try again.",
+      "cameraPermission": "Allow camera",
+      "loginRequired": "Sign in first",
+      "addToProducts": "Add to My products"
+    },
+    "step3": {
+      "title": "Where to buy seeds",
+      "description": "See the map with shops",
+      "mapTitle": "Where to buy seeds",
+      "mapSubtitle": "Shops near you"
+    }
+  },
+  "packingFlow": {
+    "title": "Packing Flow",
+    "submit": "Submit",
+    "step1": {
+      "title": "Packaging Instructions",
+      "subtitle": "Follow these steps before packing crates",
+      "item1": "Use clean Bio Vera crates",
+      "item2": "Apply Bio Vera labels correctly",
+      "item3": "Pack in correct order (heavy at bottom)",
+      "item4": "Scan Bio Vera QR on each pallet to confirm",
+      "confirm": "I have read the instructions"
+    },
+    "step2": {
+      "title": "Photo Crates & Quality Check",
+      "cratePhoto": "Photo of crates",
+      "cratePhotoDesc": "Take a photo of the packed crates",
+      "qualityCheck": "Final quality check",
+      "qualityCheckDesc": "Photo of top raspberry layer – verify no mold or foreign bodies",
+      "takePhoto": "Take photo",
+      "qualityPhoto": "Take quality check photo",
+      "retake": "Retake"
+    },
+    "step3": {
+      "title": "GPS & Timestamp",
+      "subtitle": "Location and time will be recorded automatically",
+      "capture": "Capture location",
+      "captured": "Location recorded"
+    }
   }
 }

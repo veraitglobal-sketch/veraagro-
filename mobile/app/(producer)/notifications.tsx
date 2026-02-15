@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Bell, CheckCircle, AlertCircle, Info, Calendar } from 'lucide-react-native';
+import { ArrowLeft, Bell, AlertCircle, Info, Calendar } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { notificationsAPI, Notification } from '../../lib/api';
 

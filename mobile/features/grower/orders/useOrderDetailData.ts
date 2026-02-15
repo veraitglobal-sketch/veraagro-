@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
+import { TFunction } from 'i18next';
 import { ordersAPI, Order } from '../../../lib/api';
 import { colors } from '../../../lib/colors';
+
+const ORDER_STATUS_KEYS: Record<string, string> = {
+  PENDING: 'statusPending',
+  CONFIRMED: 'statusConfirmed',
+  PREPARING: 'statusPreparing',
+  IN_TRANSIT: 'statusInTransit',
+  DELIVERED: 'statusDelivered',
+  CANCELLED: 'statusCancelled',
+};
 
 export function useOrderDetailData(orderId: string | undefined) {
   const [order, setOrder] = useState<Order | null>(null);
@@ -38,14 +48,7 @@ export function getOrderStatusColor(status: string): string {
   }
 }
 
-export function getOrderStatusLabel(status: string): string {
-  switch (status) {
-    case 'PENDING': return 'Na čekanju';
-    case 'CONFIRMED': return 'Potvrđeno';
-    case 'PREPARING': return 'Priprema';
-    case 'IN_TRANSIT': return 'U transportu';
-    case 'DELIVERED': return 'Isporučeno';
-    case 'CANCELLED': return 'Otkazano';
-    default: return status;
-  }
+export function getOrderStatusLabel(status: string, t: TFunction): string {
+  const key = ORDER_STATUS_KEYS[status];
+  return key ? t(`producer.orders.${key}`) : status;
 }
