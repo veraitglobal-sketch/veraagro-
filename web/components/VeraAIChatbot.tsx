@@ -289,80 +289,41 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               className="fixed inset-0 z-[70] bg-white md:bg-black/20 h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
               aria-hidden
             />
-            {/* Na mobilnom običan div (bez motion) da nema treptanja; na desktopu fade */}
+            {/* Na mobilnom bottom sheet (dole), na desktopu mali prozor dole desno */}
             {isMobile ? (
               <div
-                className="fixed inset-0 z-[80] flex flex-col overflow-hidden h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
+                className="fixed inset-0 z-[80] flex flex-col justify-end h-[100dvh] min-[768px]:h-[100vh]"
               >
                 <div
-                className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[520px] md:max-h-[85vh] md:w-[min(320px,calc(100vw-3rem))] md:rounded-xl"
+                className="flex flex-col overflow-hidden border-t border-x-0 md:border bg-white shadow-2xl rounded-t-2xl md:rounded-xl w-full max-w-full min-w-0 h-[660px] md:h-[680px] touch-manipulation md:absolute md:inset-[auto_1.5rem_1.5rem_auto] md:w-[min(300px,calc(100vw-3rem))]"
                 style={{
                   borderColor: 'rgba(45, 90, 39, 0.2)',
                   boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                 }}
               >
-            {/* Live Ticker – kompaktnije */}
+            {/* Live Ticker – fiksna visina da chat ne skače */}
             <div
-              className="flex-shrink-0 flex flex-col border-b font-mono border-gray-100 w-full"
-              style={{
-                background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))',
-                height: '3.25rem',
-                minHeight: '3.25rem',
-                maxHeight: '3.25rem',
-              }}
+              className="flex-shrink-0 flex flex-col gap-0.5 px-2 py-1.5 border-b font-mono text-[10px] border-gray-100 w-full min-h-[3rem]"
+              style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}
             >
-              {/* Red 1: brojevi New / Transit / → HH / Done */}
-              <div
-                className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0 px-2 md:px-3 w-full box-border"
-                style={{ height: '1.75rem', minHeight: '1.75rem', maxHeight: '1.75rem' }}
-              >
-                <div className="flex flex-col items-center min-w-0 flex-1">
-                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
-                    <Package className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
-                    {ticker.newOrders}
-                  </span>
-                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">New</span>
-                </div>
-                <div className="flex flex-col items-center min-w-0 flex-1">
-                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
-                    <Truck className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
-                    {ticker.inTransit}
-                  </span>
-                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Transit</span>
-                </div>
-                <div className="flex flex-col items-center min-w-0 flex-1">
-                  <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
-                    <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />
-                    {ticker.toHamburg}
-                  </span>
-                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">→ HH</span>
-                </div>
-                <div className="flex flex-col items-center min-w-0 flex-1">
-                  <span className="font-medium text-[#2D5A27] text-[10px] md:text-xs flex items-center justify-center gap-0.5">
-                    <CheckCircle className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0" />
-                    {ticker.delivered}%
-                  </span>
-                  <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
-                </div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} New</span>
+                <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} Transit</span>
+                <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} →HH</span>
+                <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% Done</span>
               </div>
-              {/* Red 2: "New order" */}
-              <div
-                className="flex-shrink-0 flex items-center px-2 md:px-3 w-full overflow-hidden box-border"
-                style={{ height: '1.5rem', minHeight: '1.5rem', maxHeight: '1.5rem' }}
-              >
+              <div className="min-h-[1.25rem] flex items-center overflow-hidden">
                 {ticker.newOrder ? (
-                  <span className="text-[#2D5A27] font-medium text-[10px] md:text-xs truncate block w-full">
-                    New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}
-                  </span>
+                  <span className="text-[#2D5A27] font-medium truncate block w-full">New: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
                 ) : (
-                  <span className="block w-full text-transparent select-none" aria-hidden>New order: …</span>
+                  <span className="text-transparent select-none block w-full" aria-hidden>New: …</span>
                 )}
               </div>
             </div>
 
-            {/* Header – flex-shrink-0, kompaktnije na mobilnom */}
+            {/* Header */}
             <div
-              className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-3 border-b border-gray-100"
+              className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-2.5 border-b border-gray-100"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}
             >
               <div className="min-w-0">
@@ -393,7 +354,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
             </div>
 
             {/* Kategorije */}
-            <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-2.5 min-h-[72px] md:min-h-[100px]">
+            <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[80px] md:min-h-[110px]">
               <AnimatePresence mode="wait">
                 {view === 'main' ? (
                   <motion.div
@@ -537,44 +498,32 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                 className="fixed inset-0 z-[80] flex flex-col overflow-hidden h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
               >
                 <div
-                  className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[520px] md:max-h-[85vh] md:w-[min(320px,calc(100vw-3rem))] md:rounded-xl"
+                  className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-0 touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:min-h-0 md:h-[680px] md:w-[min(340px,calc(100vw-3rem))] md:rounded-xl"
                   style={{
                     borderColor: 'rgba(45, 90, 39, 0.2)',
                     boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                   }}
                 >
-                  {/* Ticker – kompaktno */}
+                  {/* Ticker – fiksna visina */}
                   <div
-                    className="flex-shrink-0 flex flex-col border-b font-mono border-gray-100 w-full"
-                    style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))', height: '3.25rem', minHeight: '3.25rem', maxHeight: '3.25rem' }}
+                    className="flex-shrink-0 flex flex-col gap-0.5 px-2 py-1.5 border-b font-mono text-[10px] border-gray-100 w-full min-h-[3rem]"
+                    style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}
                   >
-                    <div className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0 px-2 md:px-3 w-full box-border" style={{ height: '1.75rem', minHeight: '1.75rem', maxHeight: '1.75rem' }}>
-                      <div className="flex flex-col items-center min-w-0 flex-1">
-                        <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs"><Package className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />{ticker.newOrders}</span>
-                        <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">New</span>
-                      </div>
-                      <div className="flex flex-col items-center min-w-0 flex-1">
-                        <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs"><Truck className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />{ticker.inTransit}</span>
-                        <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Transit</span>
-                      </div>
-                      <div className="flex flex-col items-center min-w-0 flex-1">
-                        <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs"><MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />{ticker.toHamburg}</span>
-                        <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">→ HH</span>
-                      </div>
-                      <div className="flex flex-col items-center min-w-0 flex-1">
-                        <span className="font-medium text-[#2D5A27] text-[10px] md:text-xs flex items-center justify-center gap-0.5"><CheckCircle className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0" />{ticker.delivered}%</span>
-                        <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
-                      </div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                      <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} New</span>
+                      <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} Transit</span>
+                      <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} →HH</span>
+                      <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% Done</span>
                     </div>
-                    <div className="flex-shrink-0 flex items-center px-2 md:px-3 w-full overflow-hidden box-border" style={{ height: '1.5rem', minHeight: '1.5rem', maxHeight: '1.5rem' }}>
+                    <div className="min-h-[1.25rem] flex items-center overflow-hidden">
                       {ticker.newOrder ? (
-                        <span className="text-[#2D5A27] font-medium text-[10px] md:text-xs truncate block w-full">New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
+                        <span className="text-[#2D5A27] font-medium truncate block w-full">New: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
                       ) : (
-                        <span className="block w-full text-transparent select-none" aria-hidden>New order: …</span>
+                        <span className="text-transparent select-none block w-full" aria-hidden>New: …</span>
                       )}
                     </div>
                   </div>
-                  <div className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-3 border-b border-gray-100" style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}>
+                  <div className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-2.5 border-b border-gray-100" style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}>
                     <div className="min-w-0">
                       <div className="text-xs md:text-sm font-semibold tracking-wide truncate" style={{ color: VERA_GREEN }}>INTELLIGENCE TERMINAL</div>
                       <div className="text-[10px] md:text-xs text-gray-500">Logistics Analytics v2.1</div>
@@ -584,7 +533,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                       <button type="button" onClick={() => setOpen(false)} className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition" aria-label="Close"><X className="h-5 w-5" /></button>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-2.5 min-h-[72px] md:min-h-[100px]">
+                  <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[80px] md:min-h-[110px]">
                     <AnimatePresence mode="wait">
                       {view === 'main' ? (
                         <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="grid grid-cols-2 gap-1.5 md:gap-2">
