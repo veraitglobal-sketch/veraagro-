@@ -131,14 +131,30 @@ function getApiBase(): string {
 
 async function sendChatQuery(query: string, sessionId?: string): Promise<{ answer: string; sessionId: string }> {
   const base = getApiBase();
-  const res = await fetch(`${base}/ai-assistant/query`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, sessionId }),
-  });
-  if (!res.ok) throw new Error('Chat request failed');
-  const data = await res.json();
-  return { answer: data.answer ?? 'Sorry, I couldn’t process that. Try rephrasing or use the quick actions above.', sessionId: data.sessionId ?? '' };
+  try {
+    const res = await fetch(`${base}/ai-assistant/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, sessionId }),
+    });
+    let data: { answer?: string; sessionId?: string; message?: string };
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error(res.ok ? 'Invalid response.' : `Server error (${res.status}). Please try again.`);
+    }
+    if (!res.ok) {
+      const msg = data?.message || (res.status >= 500 ? 'Service temporarily unavailable. Please try again.' : `Request failed (${res.status}).`);
+      throw new Error(msg);
+    }
+    return { answer: data.answer ?? 'Sorry, I couldn’t process that. Try rephrasing or use the quick actions above.', sessionId: data.sessionId ?? '' };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('fetch') || msg.includes('Failed to fetch') || msg.includes('Network')) {
+      throw new Error('Cannot reach the server. Check your connection and that the backend API is running.');
+    }
+    throw err;
+  }
 }
 
 // Podrazumevano true da na mobilnom prvom frame-u ne bude animacija (opacity 0→1)
@@ -213,8 +229,9 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
       const { answer, sessionId } = await sendChatQuery(q, sessionIdRef.current);
       if (sessionId) sessionIdRef.current = sessionId;
       addAssistantReply(answer);
-    } catch {
-      addAssistantReply('Connection error. Check your internet or try again. You can also use the quick actions above.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong.';
+      addAssistantReply(`${msg} You can also use the quick actions above or try again.`);
     }
   };
 
@@ -229,8 +246,9 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
       const { answer, sessionId } = await sendChatQuery(label, sessionIdRef.current);
       if (sessionId) sessionIdRef.current = sessionId;
       addAssistantReply(answer);
-    } catch {
-      addAssistantReply(`"${label}" — connection error. Try again or ask your own question below.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong.';
+      addAssistantReply(`"${label}" — ${msg} Try again or ask your own question below.`);
     }
   };
 
@@ -277,26 +295,26 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                 className="fixed inset-0 z-[80] flex flex-col overflow-hidden h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
               >
                 <div
-                className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
+                className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[520px] md:max-h-[85vh] md:w-[min(320px,calc(100vw-3rem))] md:rounded-xl"
                 style={{
                   borderColor: 'rgba(45, 90, 39, 0.2)',
                   boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                 }}
               >
-            {/* Live Ticker – uvek ista visina: red za "New order" uvek zauzet */}
+            {/* Live Ticker – kompaktnije */}
             <div
               className="flex-shrink-0 flex flex-col border-b font-mono border-gray-100 w-full"
               style={{
                 background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))',
-                height: '5rem',
-                minHeight: '5rem',
-                maxHeight: '5rem',
+                height: '3.25rem',
+                minHeight: '3.25rem',
+                maxHeight: '3.25rem',
               }}
             >
-              {/* Red 1: brojevi New / Transit / → HH / Done (3rem) */}
+              {/* Red 1: brojevi New / Transit / → HH / Done */}
               <div
                 className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0 px-2 md:px-3 w-full box-border"
-                style={{ height: '3rem', minHeight: '3rem', maxHeight: '3rem' }}
+                style={{ height: '1.75rem', minHeight: '1.75rem', maxHeight: '1.75rem' }}
               >
                 <div className="flex flex-col items-center min-w-0 flex-1">
                   <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs">
@@ -327,10 +345,10 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
                 </div>
               </div>
-              {/* Red 2: "New order" – uvek 2rem visine, tekst se samo menja unutra */}
+              {/* Red 2: "New order" */}
               <div
                 className="flex-shrink-0 flex items-center px-2 md:px-3 w-full overflow-hidden box-border"
-                style={{ height: '2rem', minHeight: '2rem', maxHeight: '2rem' }}
+                style={{ height: '1.5rem', minHeight: '1.5rem', maxHeight: '1.5rem' }}
               >
                 {ticker.newOrder ? (
                   <span className="text-[#2D5A27] font-medium text-[10px] md:text-xs truncate block w-full">
@@ -374,8 +392,8 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </div>
             </div>
 
-            {/* Kategorije – manje kolone i padding na mobilnom da ima mesta za tekst */}
-            <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[90px] md:min-h-[140px]">
+            {/* Kategorije */}
+            <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-2.5 min-h-[72px] md:min-h-[100px]">
               <AnimatePresence mode="wait">
                 {view === 'main' ? (
                   <motion.div
@@ -519,18 +537,18 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                 className="fixed inset-0 z-[80] flex flex-col overflow-hidden h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
               >
                 <div
-                  className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[650px] md:max-h-[650px] md:w-[min(350px,calc(100vw-3rem))] md:rounded-xl"
+                  className="absolute inset-0 flex flex-col overflow-hidden border-0 md:border bg-white shadow-2xl rounded-none w-full max-w-full min-w-0 min-h-full touch-manipulation md:inset-[auto_1.5rem_1.5rem_auto] md:h-[520px] md:max-h-[85vh] md:w-[min(320px,calc(100vw-3rem))] md:rounded-xl"
                   style={{
                     borderColor: 'rgba(45, 90, 39, 0.2)',
                     boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                   }}
                 >
-                  {/* Ticker – fiksna visina, prostor za New order */}
+                  {/* Ticker – kompaktno */}
                   <div
                     className="flex-shrink-0 flex flex-col border-b font-mono border-gray-100 w-full"
-                    style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))', height: '5rem', minHeight: '5rem', maxHeight: '5rem' }}
+                    style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.1), rgba(45,90,39,0.05))', height: '3.25rem', minHeight: '3.25rem', maxHeight: '3.25rem' }}
                   >
-                    <div className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0 px-2 md:px-3 w-full box-border" style={{ height: '3rem', minHeight: '3rem', maxHeight: '3rem' }}>
+                    <div className="flex items-center justify-between gap-0.5 md:gap-1 flex-shrink-0 px-2 md:px-3 w-full box-border" style={{ height: '1.75rem', minHeight: '1.75rem', maxHeight: '1.75rem' }}>
                       <div className="flex flex-col items-center min-w-0 flex-1">
                         <span className="flex items-center justify-center gap-0.5 text-gray-700 text-[10px] md:text-xs"><Package className="h-3 w-3 md:h-3.5 md:w-3.5 flex-shrink-0 text-[#2D5A27]" />{ticker.newOrders}</span>
                         <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">New</span>
@@ -548,7 +566,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                         <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">Done</span>
                       </div>
                     </div>
-                    <div className="flex-shrink-0 flex items-center px-2 md:px-3 w-full overflow-hidden box-border" style={{ height: '2rem', minHeight: '2rem', maxHeight: '2rem' }}>
+                    <div className="flex-shrink-0 flex items-center px-2 md:px-3 w-full overflow-hidden box-border" style={{ height: '1.5rem', minHeight: '1.5rem', maxHeight: '1.5rem' }}>
                       {ticker.newOrder ? (
                         <span className="text-[#2D5A27] font-medium text-[10px] md:text-xs truncate block w-full">New order: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
                       ) : (
@@ -566,7 +584,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                       <button type="button" onClick={() => setOpen(false)} className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition" aria-label="Close"><X className="h-5 w-5" /></button>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[90px] md:min-h-[140px]">
+                  <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-2.5 min-h-[72px] md:min-h-[100px]">
                     <AnimatePresence mode="wait">
                       {view === 'main' ? (
                         <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="grid grid-cols-2 gap-1.5 md:gap-2">
