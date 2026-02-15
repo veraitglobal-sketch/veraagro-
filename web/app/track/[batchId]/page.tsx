@@ -54,14 +54,13 @@ export default function TrackPage() {
 
   const formatDate = (iso: string) => {
     if (!iso) return '–';
-    try {
-      return new Date(iso).toLocaleDateString(undefined, {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
-    return iso;
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
   if (loading) {
