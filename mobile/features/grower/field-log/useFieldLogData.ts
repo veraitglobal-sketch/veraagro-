@@ -11,10 +11,10 @@ import { estatesAPI, Estate } from '../../../lib/api';
 export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
 
 const ACTIVITY_TYPE_MAP: Record<ActivityType, string> = {
-  PLANTING: 'Setva',
-  FERTILIZING: 'Đubrenje',
-  SPRAYING: 'Prskanje',
-  HARVEST: 'Žetva',
+  PLANTING: 'Planting',
+  FERTILIZING: 'Fertilizing',
+  SPRAYING: 'Spraying',
+  HARVEST: 'Harvest',
 };
 
 export const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
@@ -162,7 +162,7 @@ export function useFieldLogData() {
     try {
       setLoading(true);
       await offlineStorage.savePendingEntry({
-        activityType: ACTIVITY_TYPE_MAP[activityType as ActivityType] as 'Setva' | 'Đubrenje' | 'Prskanje' | 'Žetva',
+        activityType: ACTIVITY_TYPE_MAP[activityType as ActivityType] as 'Planting' | 'Fertilizing' | 'Spraying' | 'Harvest',
         materialID: materialID || undefined,
         photoUri: photoUri!,
         location: location!,

@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
+import { missionsAPI } from '@/lib/api';
 
 const navItems = [
   { href: '/logistics-partner/dashboard', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
@@ -11,8 +13,21 @@ const navItems = [
   { href: '/logistics-partner/handover', label: 'Loading Handover', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg> },
 ];
 
+const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
+
+interface Mission {
+  id: string;
+  missionNumber: string;
+  status: string;
+  batchId?: string | null;
+  batches?: { batchId?: string } | null;
+}
+
 export default function LogisticsHandoverPage() {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missionsLoading, setMissionsLoading] = useState(true);
   const [selectedMission, setSelectedMission] = useState<string>('');
   const [truckTemperature, setTruckTemperature] = useState<string>('');
   const [notes, setNotes] = useState('');
@@ -21,11 +36,40 @@ export default function LogisticsHandoverPage() {
   const [success, setSuccess] = useState(false);
   const [temperatureStatus, setTemperatureStatus] = useState<'valid' | 'invalid' | null>(null);
 
-  // Mock missions - in production, fetch from API
-  const [missions] = useState([
-    { id: 'MISSION-001', missionNumber: 'M-2024-001', batchId: 'BATCH-2024-001', status: 'ACCEPTED' },
-    { id: 'MISSION-002', missionNumber: 'M-2024-002', batchId: 'BATCH-2024-002', status: 'ACCEPTED' },
-  ]);
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) {
+      router.replace('/login/producer');
+      return;
+    }
+    const roles = user?.roles && Array.isArray(user.roles) ? user.roles : [];
+    if (!roles.includes('LOGISTICS_PARTNER')) {
+      router.replace('/');
+      return;
+    }
+  }, [isAuthenticated, isLoading, user, router]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    let cancelled = false;
+    missionsAPI
+      .getMyMissions()
+      .then((data: Mission[]) => {
+        if (!cancelled) {
+          const needHandover = (Array.isArray(data) ? data : []).filter((m) =>
+            LOADING_STATUSES.includes(m.status)
+          );
+          setMissions(needHandover);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setMissions([]);
+      })
+      .finally(() => {
+        if (!cancelled) setMissionsLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [isAuthenticated, user?.roles]);
 
   const STANDARD_TEMP_MIN = 2; // °C
   const STANDARD_TEMP_MAX = 8; // °C
@@ -97,6 +141,14 @@ export default function LogisticsHandoverPage() {
     }
   };
 
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-pulse text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <SidebarLayout title="Loading Handover" navItems={navItems}>
       <div className="space-y-6">
@@ -160,12 +212,13 @@ export default function LogisticsHandoverPage() {
                 value={selectedMission}
                 onChange={(e) => setSelectedMission(e.target.value)}
                 required
+                disabled={missionsLoading}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
               >
-                <option value="">-- Select Mission --</option>
+                <option value="">{missionsLoading ? 'Loading...' : missions.length === 0 ? 'No missions awaiting handover' : '-- Select Mission --'}</option>
                 {missions.map((mission) => (
                   <option key={mission.id} value={mission.id}>
-                    {mission.missionNumber} - Batch {mission.batchId}
+                    {mission.missionNumber} - Batch {mission.batches?.batchId || mission.batchId || '—'}
                   </option>
                 ))}
               </select>

@@ -5,11 +5,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Shield, Award, CheckCircle } from 'lucide-react';
 
-type Language = 'en' | 'sr' | 'de';
 type Category = 'buyers' | 'growers' | 'drivers' | 'general';
 
 const content = {
-  en: {
     title: 'Help Center',
     searchPlaceholder: 'Search for help...',
     categories: {
@@ -66,131 +64,13 @@ const content = {
         { title: 'Contact Support', content: 'Get in touch with our support team for assistance.' },
       ],
     },
-  },
-  sr: {
-    title: 'Centar za Pomoć',
-    searchPlaceholder: 'Pretraži pomoć...',
-    categories: {
-      buyers: 'Za Kupce',
-      growers: 'Za Proizvođače',
-      drivers: 'Za Vozače',
-      general: 'Opšte',
-    },
-    articles: {
-      buyers: [
-        { 
-          title: 'Protokol 360: Sistem Osiguranja Kvaliteta', 
-          content: 'Otkrijte Bio Vera trostepeni sistem kontrole kvaliteta koji osigurava sigurnost, kvalitet i standardizaciju proizvoda. Saznajte više o našem rigoroznom procesu verifikacije od polja do police.',
-          link: '/protocol-360',
-          highlight: true,
-        },
-        { 
-          title: 'Sigurnost Proizvoda i Standardi Kvaliteta', 
-          content: 'Svaki proizvod prolazi stroge kontrole kvaliteta uključujući analizu zemljišta, biometrijsko skeniranje i monitoring hladnog lanca. Naši standardi prevazilaze industrijska očekivanja.',
-        },
-        { 
-          title: 'Standardizacija i Usaglašenost', 
-          content: 'Svi proizvodi ispunjavaju EU sertifikacione standarde sa potpunom trasabilnošću. Svaka jedinica je verifikovana kroz naš Protokol 360 sistem za garantovani kvalitet.',
-        },
-        { 
-          title: 'Pogodnosti i Prednosti za Kupce', 
-          content: 'Uživajte u konkurentnim cenama, garantovanoj svežini, potpunoj transparentnosti i direktnom pristupu evropskim proizvođačima. Gradite poverenje sa svojim kupcima kroz verifikovani kvalitet.',
-        },
-        { 
-          title: 'Uslovi i Odredbe', 
-          content: 'Razumite naše uslove kupovine, uslove isporuke, garancije kvaliteta i politiku povrata. Osiguravamo poštene i transparentne transakcije.',
-        },
-        { 
-          title: 'Kako da Poručite', 
-          content: 'Korak-po-korak vodič za pregled proizvoda, postavljanje porudžbina, praćenje isporuka i upravljanje nalogom na Bio Vera platformi.',
-        },
-      ],
-      growers: [
-        { title: 'Kako Kreirati Seriju', content: 'Korak-po-korak vodič za kreiranje i upravljanje serijama u Bio Vera sistemu.' },
-        { title: 'Digitalno Zakazivanje', content: 'Naučite kako da najavite berbu 24 sata unapred i prijavite vreme početka/kraja.' },
-        { title: 'Standardi Kvaliteta', content: 'Razumevanje Bio Vera zahteva za kvalitet i vizuelnih standarda.' },
-        { title: 'Proces Plaćanja', content: 'Kako se procesiraju plaćanja i kada primite sredstva.' },
-      ],
-      drivers: [
-        { title: 'Upravljanje Misijama', content: 'Kako da prihvatite, započnete i završite misije u aplikaciji.' },
-        { title: 'Praćenje Temperature', content: 'Korišćenje senzora temperature i održavanje hladnog lanca.' },
-        { title: 'Optimizacija Rute', content: 'Razumevanje optimizovanih ruta koje pruža Bio Vera.' },
-        { title: 'Digitalni Pečati', content: 'Kako da koristite i verifikujete digitalne pečate za sigurnost tereta.' },
-      ],
-      general: [
-        { title: 'Početak', content: 'Dobrodošli u Bio Vera! Naučite osnove platforme.' },
-        { title: 'Podešavanje Naloga', content: 'Kako da kreirate i upravljate svojim Bio Vera nalogom.' },
-        { title: 'Vodič za Mobilnu Aplikaciju', content: 'Preuzmite i koristite Bio Vera mobilnu aplikaciju.' },
-        { title: 'Kontakt Podrške', content: 'Kontaktirajte naš tim podrške za pomoć.' },
-      ],
-    },
-  },
-  de: {
-    title: 'Hilfezentrum',
-    searchPlaceholder: 'Hilfe suchen...',
-    categories: {
-      buyers: 'Für Käufer',
-      growers: 'Für Erzeuger',
-      drivers: 'Für Fahrer',
-      general: 'Allgemein',
-    },
-    articles: {
-      buyers: [
-        { 
-          title: 'Protokoll 360: Qualitätssicherungssystem', 
-          content: 'Entdecken Sie Bio Veras dreistufiges Qualitätskontrollsystem, das Produktsicherheit, Qualität und Standardisierung gewährleistet. Erfahren Sie mehr über unseren rigorosen Verifizierungsprozess vom Feld bis zum Regal.',
-          link: '/protocol-360',
-          highlight: true,
-        },
-        { 
-          title: 'Produktsicherheit & Qualitätsstandards', 
-          content: 'Jedes Produkt durchläuft strenge Qualitätsprüfungen einschließlich Bodenanalyse, biometrischem Scannen und Kühlkettenüberwachung. Unsere Standards übertreffen Branchenerwartungen.',
-        },
-        { 
-          title: 'Standardisierung & Compliance', 
-          content: 'Alle Produkte erfüllen EU-Zertifizierungsstandards mit vollständiger Rückverfolgbarkeit. Jede Einheit wird durch unser Protokoll 360-System für garantierte Qualität verifiziert.',
-        },
-        { 
-          title: 'Käufervorteile & Vorteile', 
-          content: 'Genießen Sie wettbewerbsfähige Preise, garantierte Frische, vollständige Transparenz und direkten Zugang zu europäischen Erzeugern. Bauen Sie Vertrauen bei Ihren Kunden durch verifizierte Qualität auf.',
-        },
-        { 
-          title: 'Bedingungen & Bestimmungen', 
-          content: 'Verstehen Sie unsere Kaufbedingungen, Lieferbedingungen, Qualitätsgarantien und Rückgaberichtlinien. Wir gewährleisten faire und transparente Transaktionen.',
-        },
-        { 
-          title: 'Wie man Bestellungen aufgibt', 
-          content: 'Schritt-für-Schritt-Anleitung zum Durchsuchen von Produkten, Aufgeben von Bestellungen, Verfolgen von Lieferungen und Verwalten Ihres Kontos auf der Bio Vera-Plattform.',
-        },
-      ],
-      growers: [
-        { title: 'Wie man eine Charge erstellt', content: 'Schritt-für-Schritt-Anleitung zur Erstellung und Verwaltung von Chargen im Bio Vera-System.' },
-        { title: 'Digitale Terminplanung', content: 'Erfahren Sie, wie Sie Ernten 24 Stunden im Voraus ankündigen und Start-/Stoppzeiten melden.' },
-        { title: 'Qualitätsstandards', content: 'Verstehen der Bio Vera Qualitätsanforderungen und visuellen Standards.' },
-        { title: 'Zahlungsprozess', content: 'Wie Zahlungen verarbeitet werden und wann Sie Mittel erhalten.' },
-      ],
-      drivers: [
-        { title: 'Missionsverwaltung', content: 'Wie Sie Missionen in der App akzeptieren, starten und abschließen.' },
-        { title: 'Temperaturüberwachung', content: 'Verwendung der Temperatursensoren und Aufrechterhaltung der Kühlkette.' },
-        { title: 'Routenoptimierung', content: 'Verstehen der von Bio Vera bereitgestellten optimierten Routen.' },
-        { title: 'Digitale Siegel', content: 'Wie Sie digitale Siegel für die Frachtsicherheit verwenden und überprüfen.' },
-      ],
-      general: [
-        { title: 'Erste Schritte', content: 'Willkommen bei Bio Vera! Lernen Sie die Grundlagen der Plattform.' },
-        { title: 'Kontoeinrichtung', content: 'Wie Sie Ihr Bio Vera-Konto erstellen und verwalten.' },
-        { title: 'Mobil-App-Anleitung', content: 'Laden Sie die Bio Vera-Mobil-App herunter und verwenden Sie sie.' },
-        { title: 'Support kontaktieren', content: 'Kontaktieren Sie unser Support-Team für Hilfe.' },
-      ],
-    },
-  },
 };
 
 export default function HelpCenterPage() {
-  const [language, setLanguage] = useState<Language>('en');
   const [category, setCategory] = useState<Category>('buyers');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const t = content[language];
+  const t = content;
   const articles = t.articles[category];
 
   const filteredArticles = articles.filter(article =>
@@ -205,32 +85,6 @@ export default function HelpCenterPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold text-gray-900">{t.title}</h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'en' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('sr')}
-                className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'sr' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                SR
-              </button>
-              <button
-                onClick={() => setLanguage('de')}
-                className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                  language === 'de' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                DE
-              </button>
-            </div>
           </div>
         </div>
       </header>

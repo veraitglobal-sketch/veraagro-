@@ -170,7 +170,7 @@ export default function ReservationModal({
                 color: theme.colors.text.secondary,
                 letterSpacing: 0.3,
               }}>
-                {product.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} per {unit}
+                {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })} per {unit}
               </Text>
             )}
           </View>
@@ -285,7 +285,7 @@ export default function ReservationModal({
                 color: theme.colors.primary,
                 letterSpacing: 0.5,
               }}>
-                {(product.price * quantity).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                {(product.price * quantity).toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           )}

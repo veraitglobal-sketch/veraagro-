@@ -29,13 +29,13 @@ export default function OrderLinesBlock({ order }: { order: Order }) {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: theme.spacing.sm, paddingTop: theme.spacing.sm, borderTopWidth: 0.5, borderTopColor: colors.border }}>
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.orders.unitPrice')}</Text>
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-          {order.unitPrice.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          {order.unitPrice.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: theme.spacing.xs }}>
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary }}>{t('producer.orders.total')}</Text>
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.primary }}>
-          {order.totalAmount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
         </Text>
       </View>
     </View>

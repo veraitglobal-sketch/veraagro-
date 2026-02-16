@@ -41,7 +41,7 @@ export function getBatchStatusLabel(status: string): string {
     case 'PACKED': return 'Pakovano';
     case 'IN_HUB': return 'U hubu';
     case 'IN_TRANSIT': return 'U transportu';
-    case 'DELIVERED': return 'Isporučeno';
+    case 'DELIVERED': return 'Delivered';
     default: return status;
   }
 }

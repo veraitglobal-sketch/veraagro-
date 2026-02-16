@@ -63,7 +63,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.primary,
             }}
           >
-            {financial.totalAmount.toLocaleString('de-DE', {
+            {financial.totalAmount.toLocaleString('en-US', {
               style: 'currency',
               currency: 'EUR',
             })}
@@ -94,7 +94,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.primary,
             }}
           >
-            {financial.farmerPayout.toLocaleString('de-DE', {
+            {financial.farmerPayout.toLocaleString('en-US', {
               style: 'currency',
               currency: 'EUR',
             })}

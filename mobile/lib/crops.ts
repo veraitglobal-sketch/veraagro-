@@ -72,7 +72,7 @@ export const CROP_HIERARCHY: Record<string, CropCategory[]> = {
       name: 'Plum',
       varieties: [
         { id: 'plum-stanley', name: 'Stanley' },
-        { id: 'plum-cacak', name: 'Čačanska' },
+        { id: 'plum-cacak', name: 'Cacak' },
         { id: 'plum-other', name: 'Other' },
       ],
     },

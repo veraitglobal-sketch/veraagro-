@@ -84,7 +84,7 @@ export class IntegrityGuardService {
 
         return {
           valid: false,
-          reason: `Bar-kod ${barcode} nije na Bio-White-List. Zabranjene hemikalije nisu dozvoljene.`,
+          reason: `Barcode ${barcode} is not on Bio-White-List. Prohibited chemicals are not allowed.`,
           alertCreated: true,
         };
       }
@@ -108,7 +108,7 @@ export class IntegrityGuardService {
 
         return {
           valid: false,
-          reason: `Bar-kod ${barcode} je deaktiviran na Bio-White-List.`,
+          reason: `Barcode ${barcode} is deactivated on Bio-White-List.`,
           alertCreated: true,
         };
       }
@@ -124,7 +124,7 @@ export class IntegrityGuardService {
         this.logger.warn(`Invalid seed barcode: ${barcode}`);
         return {
           valid: false,
-          reason: `Bar-kod semena ${barcode} nije validan.`,
+          reason: `Seed barcode ${barcode} is not valid.`,
         };
       }
 

@@ -8,10 +8,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, AlertCircle, Clock, Shield, Eye, Truck, Award } from 'lucide-react';
 import { qualityControlLevelsAPI } from '@/lib/api';
 
-type Language = 'en' | 'sr' | 'de';
-
 const translations = {
-  en: {
     loading: 'Loading Protocol 360...',
     batchLabel: 'Batch:',
     qualityControlStatus: 'Quality Control Status',
@@ -71,126 +68,6 @@ const translations = {
       },
     },
   },
-  sr: {
-    loading: 'Učitavanje Protokola 360...',
-    batchLabel: 'Serija:',
-    qualityControlStatus: 'Status Kontrole Kvaliteta',
-    loadingStatus: 'Učitavanje statusa...',
-    threeTierSystem: 'Trostepeni Sistem Kontrole Kvaliteta',
-    standardsBeyond: 'Standardi iznad očekivanja',
-    brandingSlogans: 'Bio Vera Branding Slogani',
-    everyUnit: 'Svaka jedinica je remek-delo',
-    checkStatus: 'Da proverite status Protokola 360 za određenu seriju, dodajte',
-    toTheUrl: 'u URL',
-    backToHome: 'Nazad na Početnu',
-    home: 'Početna',
-    errorLoading: 'Neuspešno učitavanje statusa Protokola 360',
-    premiumQuality: 'Premium Osiguranje Kvaliteta',
-    brandingSloganLabel: 'Branding Slogan:',
-    location: 'Lokacija:',
-    qualityChecks: 'Kontrole Kvaliteta:',
-    level: 'Nivo',
-    status: {
-      APPROVED: 'ODOBRENO',
-      CLASS_B: 'KLASA B',
-      REJECTED: 'ODBIJENO',
-      PENDING: 'NA ČEKANJU',
-      PASS: 'PROŠLO',
-      FAIL: 'NIJE PROŠLO',
-    },
-    levels: {
-      level1: {
-        name: 'Eco-Safe Provera',
-        location: 'Polje',
-        checks: {
-          heavyMetals: 'Odsustvo teških metala',
-          nitrates: 'Nivo nitrata',
-          phValue: 'PH vrednost',
-          moisture: 'Nivo vlage (48h pre berbe)',
-        },
-      },
-      level2: {
-        name: 'Biometrijsko i Vizuelno Skeniranje',
-        location: 'Centar za Pakovanje',
-        checks: {
-          calibration: 'Kalibracija (veličina)',
-          firmness: 'Čvrstina ploda',
-          filmIntegrity: 'Integritet folije',
-          colorDeviation: 'Devijacija boje (<5%)',
-        },
-      },
-      level3: {
-        name: 'Logistička Zaštita',
-        location: 'Transport i Skladištenje',
-        checks: {
-          temperature: 'Opseg temperature (2-8°C)',
-          thermalShock: 'Detekcija termičkog šoka',
-          coldChain: 'Kontinuitet hladnog lanca',
-          alertSystem: 'Automatski sistem upozorenja',
-        },
-      },
-    },
-  },
-  de: {
-    loading: 'Protokoll 360 wird geladen...',
-    batchLabel: 'Charge:',
-    qualityControlStatus: 'Qualitätskontrollstatus',
-    loadingStatus: 'Status wird geladen...',
-    threeTierSystem: 'Dreistufiges Qualitätskontrollsystem',
-    standardsBeyond: 'Standards über Erwartungen hinaus',
-    brandingSlogans: 'Bio Vera Branding-Slogans',
-    everyUnit: 'Jede Einheit ein Meisterwerk',
-    checkStatus: 'Um den Protokoll 360-Status für eine bestimmte Charge zu überprüfen, fügen Sie',
-    toTheUrl: 'zur URL hinzu',
-    backToHome: 'Zurück zur Startseite',
-    home: 'Startseite',
-    errorLoading: 'Protokoll 360-Status konnte nicht geladen werden',
-    premiumQuality: 'Premium Qualitätssicherung',
-    brandingSloganLabel: 'Branding-Slogan:',
-    location: 'Standort:',
-    qualityChecks: 'Qualitätsprüfungen:',
-    level: 'Stufe',
-    status: {
-      APPROVED: 'GENEHMIGT',
-      CLASS_B: 'KLASSE B',
-      REJECTED: 'ABGELEHNT',
-      PENDING: 'AUSSTEHEND',
-      PASS: 'BESTANDEN',
-      FAIL: 'NICHT BESTANDEN',
-    },
-    levels: {
-      level1: {
-        name: 'Eco-Safe Prüfung',
-        location: 'Feld',
-        checks: {
-          heavyMetals: 'Abwesenheit von Schwermetallen',
-          nitrates: 'Nitratgehalt',
-          phValue: 'PH-Wert',
-          moisture: 'Feuchtigkeitsgehalt (48h vor der Ernte)',
-        },
-      },
-      level2: {
-        name: 'Biometrischer & Visueller Scan',
-        location: 'Verpackungszentrum',
-        checks: {
-          calibration: 'Kalibrierung (Größe)',
-          firmness: 'Fruchtfestigkeit',
-          filmIntegrity: 'Folienintegrität',
-          colorDeviation: 'Farbabweichung (<5%)',
-        },
-      },
-      level3: {
-        name: 'Logistik-Wächter',
-        location: 'Transport & Lagerung',
-        checks: {
-          temperature: 'Temperaturbereich (2-8°C)',
-          thermalShock: 'Thermoschock-Erkennung',
-          coldChain: 'Kühlketten-Kontinuität',
-          alertSystem: 'Automatisches Warnsystem',
-        },
-      },
-    },
-  },
 };
 
 interface QualityControlLevel {
@@ -222,9 +99,7 @@ function Protocol360Content() {
   const [status, setStatus] = useState<Protocol360Status | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [language, setLanguage] = useState<Language>('en');
-  
-  const t = translations[language];
+  const t = translations;
 
   useEffect(() => {
     loadProtocolInfo();
@@ -337,32 +212,6 @@ function Protocol360Content() {
               <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
                 {t.home}
               </Link>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'en' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('sr')}
-                  className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'sr' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  SR
-                </button>
-                <button
-                  onClick={() => setLanguage('de')}
-                  className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                    language === 'de' ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  DE
-                </button>
-              </div>
             </nav>
           </div>
         </div>
@@ -491,10 +340,7 @@ function Protocol360Content() {
                         </div>
                       </div>
                       <h4 className="text-base font-medium text-gray-700 mb-2">
-                        {language === 'en' ? level.name : 
-                         level.level === 1 ? t.levels.level1.name :
-                         level.level === 2 ? t.levels.level2.name :
-                         t.levels.level3.name}
+                        {level.name}
                       </h4>
                       <p className="text-xs text-gray-500 mb-4 font-mono bg-gray-50 p-2 rounded">
                         {level.badgeText}
@@ -508,27 +354,7 @@ function Protocol360Content() {
                               </span>
                               <div className="flex-1">
                                 <span className="font-medium text-gray-700">
-                                  {(() => {
-                                    // Localize check names based on content
-                                    const checkLower = check.name.toLowerCase();
-                                    const levelKey = level.level === 1 ? 'level1' : level.level === 2 ? 'level2' : 'level3';
-                                    const checks = t.levels[levelKey as keyof typeof t.levels].checks as any;
-                                    
-                                    if (language === 'en') return check.name;
-                                    if (checkLower.includes('heavy') || checkLower.includes('metal')) return checks.heavyMetals;
-                                    if (checkLower.includes('nitrate')) return checks.nitrates;
-                                    if (checkLower.includes('ph')) return checks.phValue;
-                                    if (checkLower.includes('moisture')) return checks.moisture;
-                                    if (checkLower.includes('calibration') || checkLower.includes('size')) return checks.calibration;
-                                    if (checkLower.includes('firmness')) return checks.firmness;
-                                    if (checkLower.includes('film') || checkLower.includes('integrity')) return checks.filmIntegrity;
-                                    if (checkLower.includes('color') || checkLower.includes('deviation')) return checks.colorDeviation;
-                                    if (checkLower.includes('temperature')) return checks.temperature;
-                                    if (checkLower.includes('thermal') || checkLower.includes('shock')) return checks.thermalShock;
-                                    if (checkLower.includes('cold') || checkLower.includes('chain')) return checks.coldChain;
-                                    if (checkLower.includes('alert') || checkLower.includes('system')) return checks.alertSystem;
-                                    return check.name;
-                                  })()}
+                                  {check.name}
                                 </span>
                                 {check.details && (
                                   <p className="text-xs text-gray-500 mt-1 font-light">
@@ -576,17 +402,11 @@ function Protocol360Content() {
                     {getLevelIcon(level.level)}
                     <div>
                       <h3 className="text-2xl font-light text-gray-900 mb-2">
-                        {t.level} {level.level}: {language === 'en' ? level.name : 
-                         level.level === 1 ? t.levels.level1.name :
-                         level.level === 2 ? t.levels.level2.name :
-                         t.levels.level3.name}
+                        {t.level} {level.level}: {level.name}
                       </h3>
                       <p className="text-sm text-gray-600 font-light">
                         <span className="font-medium">{t.location}</span>{' '}
-                        {language === 'en' ? level.location :
-                         level.level === 1 ? t.levels.level1.location :
-                         level.level === 2 ? t.levels.level2.location :
-                         t.levels.level3.location}
+                        {level.location}
                       </p>
                     </div>
                   </div>
@@ -604,38 +424,7 @@ function Protocol360Content() {
                   <ul className="space-y-2">
                     {level.checks.map((check: string, idx: number) => {
                       // Map backend check names to localized versions
-                      const getLocalizedCheck = (checkName: string, levelNum: number) => {
-                        if (language === 'en') return checkName;
-                        const levelKey = levelNum === 1 ? 'level1' : levelNum === 2 ? 'level2' : 'level3';
-                        const checks = t.levels[levelKey as keyof typeof t.levels].checks as any;
-                        // Try to match by key
-                        if (checkName.toLowerCase().includes('heavy') || checkName.toLowerCase().includes('metals')) {
-                          return checks.heavyMetals;
-                        } else if (checkName.toLowerCase().includes('nitrate')) {
-                          return checks.nitrates;
-                        } else if (checkName.toLowerCase().includes('ph')) {
-                          return checks.phValue;
-                        } else if (checkName.toLowerCase().includes('moisture')) {
-                          return checks.moisture;
-                        } else if (checkName.toLowerCase().includes('calibration') || checkName.toLowerCase().includes('size')) {
-                          return checks.calibration;
-                        } else if (checkName.toLowerCase().includes('firmness')) {
-                          return checks.firmness;
-                        } else if (checkName.toLowerCase().includes('film') || checkName.toLowerCase().includes('integrity')) {
-                          return checks.filmIntegrity;
-                        } else if (checkName.toLowerCase().includes('color') || checkName.toLowerCase().includes('deviation')) {
-                          return checks.colorDeviation;
-                        } else if (checkName.toLowerCase().includes('temperature')) {
-                          return checks.temperature;
-                        } else if (checkName.toLowerCase().includes('thermal') || checkName.toLowerCase().includes('shock')) {
-                          return checks.thermalShock;
-                        } else if (checkName.toLowerCase().includes('cold') || checkName.toLowerCase().includes('chain')) {
-                          return checks.coldChain;
-                        } else if (checkName.toLowerCase().includes('alert') || checkName.toLowerCase().includes('system')) {
-                          return checks.alertSystem;
-                        }
-                        return checkName; // Fallback to original
-                      };
+                      const getLocalizedCheck = (checkName: string) => checkName;
                       
                       return (
                         <li
@@ -643,7 +432,7 @@ function Protocol360Content() {
                           className="flex items-center gap-3 text-gray-700 font-light"
                         >
                           <CheckCircle className="w-4 h-4 text-[#2D5A27] flex-shrink-0" />
-                          <span>{getLocalizedCheck(check, level.level)}</span>
+                          <span>{getLocalizedCheck(check)}</span>
                         </li>
                       );
                     })}

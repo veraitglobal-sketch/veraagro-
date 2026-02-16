@@ -38,19 +38,19 @@ export default function FinancialSummarySection({
             <View>
               <Text style={{ fontSize: 12, fontWeight: '500', color: theme.colors.text.primary, marginBottom: 2 }}>{t('producer.financial.totalEarned')}</Text>
               <Text style={{ fontSize: 11, fontWeight: '400', color: theme.colors.text.secondary }}>
-                {t('producer.financial.available')}: {financialData.availableBalance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                {t('producer.financial.available')}: {financialData.availableBalance.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>
           <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.primary }}>
-            {financialData.totalEarned.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+            {financialData.totalEarned.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
           </Text>
         </View>
         {financialData.pendingBalance > 0 && (
           <View style={{ paddingTop: theme.spacing.sm, borderTopWidth: 1, borderTopColor: theme.colors.border, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={{ fontSize: 11, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.financial.pending')}</Text>
             <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.warning }}>
-              {financialData.pendingBalance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+              {financialData.pendingBalance.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
             </Text>
           </View>
         )}

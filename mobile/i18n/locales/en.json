@@ -191,6 +191,7 @@
       "locationNotSpecified": "Location not specified",
       "area": "Area",
       "started": "Started",
+      "daysRemaining": "Days remaining: {{count}}",
       "optionalLocation": "Location (optional)",
       "clickToAddPoints": "Tap on map",
       "enableDrawing": "Tap to mark your field",
@@ -283,6 +284,8 @@
     "qualityEntry": {
       "selectBatch": "Select a batch",
       "qualityScoreRange": "Quality score must be between 0 and 100",
+      "qualityScore": "Quality score (0-100, optional)",
+      "notes": "Notes (optional)",
       "saved": "Quality saved",
       "saveFailed": "Could not save quality",
       "noBatches": "No batches available for quality entry",
@@ -406,7 +409,9 @@
     },
     "settings": {
       "orderNotifications": "Order and status notifications",
-      "autoSyncRecords": "Automatically send records when online"
+      "autoSyncRecords": "Automatically send records when online",
+      "notifications": "Notifications",
+      "autoSync": "Auto sync"
     },
     "sync": {
       "syncing": "Syncing data…",
@@ -441,7 +446,8 @@
       "statusInTransit": "In transit",
       "statusDelivered": "Delivered",
       "statusCancelled": "Cancelled",
-      "paymentStatus": "Payment status"
+      "paymentStatus": "Payment status",
+      "tracking": "Order tracking"
     },
     "veraStandard": {
       "title": "Bio Vera Standard",
@@ -465,7 +471,10 @@
     "checkout": {
       "fillRequired": "Please fill all required fields",
       "cartEmpty": "Cart is empty",
-      "orderCreateFailed": "Could not create order"
+      "orderCreateFailed": "Could not create order",
+      "payment": "Payment",
+      "creating": "Creating order...",
+      "confirm": "Confirm order"
     }
   },
   "error": "Error",

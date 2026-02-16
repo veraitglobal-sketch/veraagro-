@@ -176,31 +176,31 @@ export class NotificationsService {
   ) {
     const messages: Record<NotificationTrigger, { title: string; message: string }> = {
       DELIVERY_ASSIGNED: {
-        title: 'Nova dostava',
-        message: `Nova tura je dodeljena: ${context.orderNumber || 'N/A'}`,
+        title: 'New delivery',
+        message: `New tour assigned: ${context.orderNumber || 'N/A'}`,
       },
       DRIVER_NEARBY: {
-        title: 'Kombi stiže',
-        message: `Vozač ${context.driverName || ''} stiže za ${context.minutes || ''} minuta`,
+        title: 'Driver arriving',
+        message: `Driver ${context.driverName || ''} arriving in ${context.minutes || ''} minutes`,
       },
       PACKAGE_READY: {
-        title: 'Paket spremljen',
-        message: `Tvoj Bio paket za porudžbinu ${context.orderNumber || ''} je spakovan`,
+        title: 'Package ready',
+        message: `Your Bio package for order ${context.orderNumber || ''} is packed`,
       },
       PAYMENT_RELEASED: {
-        title: 'Plaćanje oslobođeno',
-        message: `Plaćanje od ${context.amount || ''} RSD je oslobođeno`,
+        title: 'Payment released',
+        message: `Payment of ${context.amount || ''} EUR has been released`,
       },
       QUALITY_ISSUE: {
-        title: 'Problem sa kvalitetom',
-        message: `Prijavljen problem sa batch ${context.batchId || ''}: ${context.issue || ''}`,
+        title: 'Quality issue',
+        message: `Quality issue reported for batch ${context.batchId || ''}: ${context.issue || ''}`,
       },
       BATCH_ARRIVED: {
-        title: 'Batch stigao',
-        message: `Batch ${context.batchId || ''} je stigao u hub`,
+        title: 'Batch arrived',
+        message: `Batch ${context.batchId || ''} has arrived at hub`,
       },
       CUSTOM: {
-        title: context.title || 'Obaveštenje',
+        title: context.title || 'Notification',
         message: context.message || '',
       },
     };

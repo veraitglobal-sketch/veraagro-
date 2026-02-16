@@ -53,7 +53,7 @@ export default function ScannerPage() {
 
       setResult(data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greška pri skeniranju');
+      setError(err.response?.data?.message || 'Scan error');
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ export default function ScannerPage() {
 
             {result && (
               <div className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 text-[#2D5A27] px-4 py-3 rounded-lg">
-                <p className="font-semibold mb-2">Uspešno skenirano!</p>
+                <p className="font-semibold mb-2">Successfully scanned!</p>
                 <pre className="text-sm overflow-auto">{JSON.stringify(result, null, 2)}</pre>
               </div>
             )}

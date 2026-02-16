@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams } from 'expo-router';
 import { Save } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
@@ -13,6 +14,7 @@ import { ZoneModal } from './ZoneModal';
  * App route: app/(producer)/plot-mapper.tsx samo renderuje ovaj screen.
  */
 export default function PlotMapperScreen() {
+  const { t } = useTranslation();
   const { parcelId } = useLocalSearchParams<{ parcelId: string }>();
   const {
     length,
@@ -104,7 +106,7 @@ export default function PlotMapperScreen() {
                 letterSpacing: 0.3,
               }}
             >
-              Sačuvaj plan
+              {t('producer.plotMapper.savePlan')}
             </Text>
           </TouchableOpacity>
         </View>

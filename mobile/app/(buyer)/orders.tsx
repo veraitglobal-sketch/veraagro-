@@ -122,7 +122,7 @@ export default function OrdersScreen() {
                     color: theme.colors.text.primary,
                     marginTop: theme.spacing.xs,
                   }}>
-                    {order.totalAmount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                    {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
                   </Text>
                 </View>
                 <ArrowRight size={18} color={theme.colors.text.secondary} strokeWidth={1} />

@@ -328,7 +328,7 @@ export class MarketScraperService {
     const absChange = Math.abs(changePercentage);
 
     if (isSpike && absChange >= 5) {
-      return `Danas je cena ${price.product} u ${price.location} (${price.retailer}) skočila ${absChange.toFixed(1)}%. Savršeno vreme za slanje dodatnog kamiona!`;
+      return `Today the price of ${price.product} in ${price.location} (${price.retailer}) jumped ${absChange.toFixed(1)}%. Perfect time to send an extra truck!`;
     } else if (!isSpike && absChange >= 5) {
       return `Cena ${price.product} u ${price.location} (${price.retailer}) je pala ${absChange.toFixed(1)}%. Razmotri smanjenje zaliha.`;
     }

@@ -47,7 +47,7 @@ export class FieldEntriesService {
     });
 
     if (!estate) {
-      return { valid: false, reason: 'Farma nije pronađena' };
+      return { valid: false, reason: 'Farm not found' };
     }
 
     const farmCoords = estate.polygonCoordinates as any;
@@ -63,7 +63,7 @@ export class FieldEntriesService {
       if (!isInside) {
         return {
           valid: false,
-          reason: 'GPS lokacija nije unutar granica vaše farme. Unos je blokiran zbog sigurnosti.',
+          reason: 'GPS location is outside your farm boundaries. Entry blocked for security.',
         };
       }
     } else if (farmCoords.lat && farmCoords.lng) {
@@ -79,14 +79,14 @@ export class FieldEntriesService {
         // More than 100 meters away
         return {
           valid: false,
-          reason: `GPS lokacija je ${distance.toFixed(0)}m udaljena od farme. Maksimalna dozvoljena udaljenost: 100m.`,
+          reason: `GPS location is ${distance.toFixed(0)}m away from farm. Maximum allowed distance: 100m.`,
         };
       }
     }
 
     // Validate GPS accuracy (should be within reasonable range)
     if (location.lat < -90 || location.lat > 90 || location.lng < -180 || location.lng > 180) {
-      return { valid: false, reason: 'Nevažeće GPS koordinate' };
+      return { valid: false, reason: 'Invalid GPS coordinates' };
     }
 
     return { valid: true };
@@ -151,7 +151,7 @@ export class FieldEntriesService {
     if (timeDiff > MAX_TIME_DIFF) {
       return {
         valid: false,
-        reason: `Vremenska razlika između uređaja i servera je prevelika (${Math.round(timeDiff / 1000 / 60)} minuta). Maksimalna dozvoljena: 5 minuta.`,
+        reason: `Time difference between device and server is too large (${Math.round(timeDiff / 1000 / 60)} minutes). Maximum allowed: 5 minutes.`,
       };
     }
 

@@ -82,7 +82,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
         }}
       >
         {isCredit ? '+' : '-'}
-        {transaction.amount.toLocaleString('de-DE', {
+        {transaction.amount.toLocaleString('en-US', {
           style: 'currency',
           currency: 'EUR',
         })}

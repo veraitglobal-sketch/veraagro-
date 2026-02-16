@@ -82,7 +82,7 @@ export default function Navigation() {
                   const getDashboardLink = () => {
                     if (userRoles.includes('GROWER') || userRoles.includes('FARMER')) return '/grower';
                     if (userRoles.includes('BUYER')) return '/buyer-portal';
-                    if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner';
+                    if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner/dashboard';
                     if (userRoles.includes('COORDINATOR')) return '/coordinator';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
                     return '/';
@@ -168,7 +168,7 @@ export default function Navigation() {
                   const getDashboardLink = () => {
                     if (userRoles.includes('GROWER') || userRoles.includes('FARMER')) return '/grower';
                     if (userRoles.includes('BUYER')) return '/buyer-portal';
-                    if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner';
+                    if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner/dashboard';
                     if (userRoles.includes('COORDINATOR')) return '/coordinator';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
                     return '/';

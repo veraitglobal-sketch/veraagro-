@@ -151,7 +151,7 @@ export default function HandoverCompleteScreen() {
                   color: visualCheck === 'FRESH' ? colors.primary : colors.text.secondary,
                 }}
               >
-                Sveže
+                Fresh
               </Text>
             </TouchableOpacity>
 
@@ -177,7 +177,7 @@ export default function HandoverCompleteScreen() {
                   color: visualCheck === 'DAMAGED' ? colors.error : colors.text.secondary,
                 }}
               >
-                Oštećeno
+                Damaged
               </Text>
             </TouchableOpacity>
           </View>

@@ -177,8 +177,8 @@ export class HarvestAnnouncementsService {
       await this.notificationsService.create({
         userId: admin.id,
         type: 'ACTION_REQUIRED',
-        title: `Nova najava ${announcementTypeLabel}`,
-        message: `${farmerName} je najavio ${announcementTypeLabel}: ${announcement.cropType} - ${new Date(announcement.estimatedDate).toLocaleDateString('sr-RS')}${announcement.estimatedQuantity ? ` (${announcement.estimatedQuantity}kg)` : ''}`,
+        title: `New harvest announcement: ${announcementTypeLabel}`,
+        message: `${farmerName} announced ${announcementTypeLabel}: ${announcement.cropType} - ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (${announcement.estimatedQuantity}kg)` : ''}`,
         actionUrl: `/admin/harvest-announcements/${announcement.id}`,
       });
     }

@@ -117,7 +117,7 @@ export default function WalletScreen() {
                     letterSpacing: 0.3,
                   }}
                 >
-                  {wallet.totalEarned.toLocaleString('de-DE', {
+                  {wallet.totalEarned.toLocaleString('en-US', {
                     style: 'currency',
                     currency: 'EUR',
                   })}

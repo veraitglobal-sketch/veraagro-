@@ -6,7 +6,9 @@ Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku na mejl), 
 
 ## Arhitektura (od 2025)
 
-**Frontend → Next.js API proxy (`/api/contact/submit`) → Backend (`/contact/submit`) → Email (Resend)**
+**Frontend → Backend direktno (`/contact/submit`) → Email (Resend)**
+
+*(Proxy je uklonjen – Vercel Hobby ima limit 10s, što je uzrokovalo timeout.)*
 
 Kontakt forma više ne šalje direktno na backend. Zahtev ide na same-origin proxy, pa proxy prosleđuje backendu. To rešava CORS i probleme sa `NEXT_PUBLIC_API_URL` u produkciji.
 
@@ -78,6 +80,7 @@ Posle izmene varijabli: **Redeploy** backenda na Railway-u.
 
 | Problem | Proveri |
 |---------|--------|
+| Timeout "exceeded" | Timeout je 60s. Railway cold start može trajati 30–60s. Proveri backend: `https://api.biovera.app/health` |
 | Forma ostaje na "Sending..." | Request URL u Network tabu – da li ide na `api.biovera.app`? |
 | CORS greška u konzoli | Da li je tvoj domen u CORS-u (FRONTEND_URL ili jedan od u listi)? |
 | 200 OK ali email ne stiže | Railway: RESEND_API_KEY i ostale Resend varijable + Redeploy |

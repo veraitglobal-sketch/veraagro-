@@ -44,14 +44,14 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
         // For fertilizer, store separately for compliance check
         setFertilizerBarcode(scanInput.trim());
         setScanInput('');
-        alert('Bar-kod đubriva skeniran! Biće proveren na Bio-White-List.');
+        alert('Fertilizer barcode scanned! Will be verified against Bio-White-List.');
       } else {
         await scanCode(scanInput.trim(), scanType);
         setScanInput('');
-        alert('Bar-kod uspešno skeniran!');
+        alert('Barcode scanned successfully!');
       }
     } catch (err: any) {
-      alert(`Greška: ${err.message}`);
+      alert(`Error: ${err.message}`);
     }
   };
 
@@ -87,10 +87,10 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
         }
         setTimeout(() => setSuccess(false), 3000);
       } else {
-        alert(result.error || 'Greška pri čuvanju');
+        alert(result.error || 'Error saving');
       }
     } catch (err: any) {
-      alert(`Greška: ${err.message}`);
+      alert(`Error: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -106,7 +106,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
           </span>
           {pendingSync > 0 && (
             <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
-              {pendingSync} na čekanju
+              {pendingSync} pending
             </span>
           )}
         </div>
@@ -121,15 +121,15 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
             onChange={(e) => setScanType(e.target.value as 'SEED' | 'PACKAGING' | 'FERTILIZER')}
             className="px-3 py-2 border rounded-md"
           >
-            <option value="SEED">Seme</option>
-            <option value="PACKAGING">Ambalaža</option>
-            <option value="FERTILIZER">Đubrivo</option>
+            <option value="SEED">Seed</option>
+            <option value="PACKAGING">Packaging</option>
+            <option value="FERTILIZER">Fertilizer</option>
           </select>
           <input
             type="text"
             value={scanInput}
             onChange={(e) => setScanInput(e.target.value)}
-            placeholder="Unesite ili skenirajte bar-kod"
+            placeholder="Enter or scan barcode"
             className="flex-1 px-3 py-2 border rounded-md"
             onKeyPress={(e) => e.key === 'Enter' && handleScan()}
           />
@@ -137,22 +137,22 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
             onClick={handleScan}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
           >
-            Skeniraj
+            Scan
           </button>
         </div>
         {latestScannedCode && (
           <div className="text-sm text-gray-600">
-            ✅ Poslednji skenirani: <strong>{latestScannedCode.code}</strong> ({latestScannedCode.type === 'SEED' ? 'Seme' : 'Ambalaža'})
+            ✅ Last scanned: <strong>{latestScannedCode.code}</strong> ({latestScannedCode.type === 'SEED' ? 'Seed' : 'Packaging'})
           </div>
         )}
         {fertilizerBarcode && (
           <div className="text-sm text-green-600 mt-2">
-            ✅ Đubrivo skenirano: <strong>{fertilizerBarcode}</strong> (biće provereno na Bio-White-List)
+            ✅ Fertilizer scanned: <strong>{fertilizerBarcode}</strong> (will be verified against Bio-White-List)
           </div>
         )}
         {!hasValidScan && (
           <div className="text-sm text-yellow-600 mt-2">
-            ⚠️ Morate skenirati bar-kod pre unosa podataka
+            ⚠️ You must scan a barcode before entering data
           </div>
         )}
       </div>
@@ -201,7 +201,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
 
         {success && (
           <div className="p-3 bg-green-50 text-green-700 rounded-md text-sm">
-            ✅ Podaci uspešno sačuvani {isOnline ? 'i sinhronizovani' : '(biće sinhronizovani kada se konekcija vrati)'}
+            ✅ Data saved successfully {isOnline ? 'and synced' : '(will sync when connection is restored)'}
           </div>
         )}
 
@@ -211,7 +211,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
             disabled={!hasValidScan || submitting}
             className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {submitting ? 'Čuvanje...' : 'Sačuvaj'}
+            {submitting ? 'Saving...' : 'Save'}
           </button>
           {pendingSync > 0 && isOnline && (
             <button

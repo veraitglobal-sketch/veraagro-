@@ -24,7 +24,7 @@ export class RateLimitGuard extends ThrottlerGuard {
     throw new HttpException(
       {
         statusCode: HttpStatus.TOO_MANY_REQUESTS,
-        message: 'Previše zahteva. Molimo sačekajte pre ponovnog pokušaja.',
+        message: 'Too many requests. Please try again later.',
         retryAfter: 60, // seconds
       },
       HttpStatus.TOO_MANY_REQUESTS

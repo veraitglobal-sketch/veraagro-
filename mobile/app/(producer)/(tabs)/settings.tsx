@@ -117,7 +117,7 @@ export default function SettingsScreen() {
                     color: theme.colors.text.primary,
                     letterSpacing: 0.3,
                   }}>
-                    Notifikacije
+                    {t('producer.settings.notifications', 'Notifications')}
                   </Text>
                   <Text style={{
                     fontSize: 11,
@@ -126,7 +126,7 @@ export default function SettingsScreen() {
                     marginTop: 2,
                     letterSpacing: 0.2,
                   }}>
-                    Obaveštenja o porudžbinama i statusu
+                    {t('producer.settings.orderNotifications')}
                   </Text>
                 </View>
               </View>
@@ -158,7 +158,7 @@ export default function SettingsScreen() {
                     color: theme.colors.text.primary,
                     letterSpacing: 0.3,
                   }}>
-                    Automatska sinhronizacija
+                    {t('producer.settings.autoSync', 'Auto sync')}
                   </Text>
                   <Text style={{
                     fontSize: 11,
@@ -167,7 +167,7 @@ export default function SettingsScreen() {
                     marginTop: 2,
                     letterSpacing: 0.2,
                   }}>
-                    Automatski šalji zapise kada si online
+                    {t('producer.settings.autoSyncRecords')}
                   </Text>
                 </View>
               </View>

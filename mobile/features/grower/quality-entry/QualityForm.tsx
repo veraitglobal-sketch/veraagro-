@@ -120,7 +120,7 @@ export function QualityForm({
           marginBottom: theme.spacing.xs,
           letterSpacing: 0.3,
         }}>
-          Ocena kvaliteta (0-100, opciono)
+          {t('producer.qualityEntry.qualityScore')}
         </Text>
         <TextInput
           value={qualityScore}
@@ -149,7 +149,7 @@ export function QualityForm({
           marginBottom: theme.spacing.xs,
           letterSpacing: 0.3,
         }}>
-          Napomene (opciono)
+          {t('producer.qualityEntry.notes')}
         </Text>
         <TextInput
           value={notes}

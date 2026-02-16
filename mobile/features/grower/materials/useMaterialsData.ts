@@ -81,7 +81,7 @@ export function useMaterialsData() {
 
   const getTypeLabel = useCallback((type: string) => {
     switch (type) {
-      case 'FERTILIZER': return 'Đubrivo';
+      case 'FERTILIZER': return 'Fertilizer';
       case 'PESTICIDE': return 'Pesticid';
       case 'SEED': return 'Seme';
       case 'OTHER': return 'Ostalo';

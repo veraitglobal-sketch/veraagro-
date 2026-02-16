@@ -165,7 +165,7 @@ export class DynamicPricingService {
 
       if (!quotaCheck.allowed) {
         // Discount quota exceeded - throw error
-        throw new ForbiddenException(quotaCheck.reason || 'Prekoračen limit popusta');
+        throw new ForbiddenException(quotaCheck.reason || 'Discount limit exceeded');
       }
 
       // Calculate discount limit from quota check

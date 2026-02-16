@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Image as ImageIcon } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
@@ -18,6 +19,7 @@ export function GrowthJournalList({
   refreshing,
   onRefresh,
 }: GrowthJournalListProps) {
+  const { t } = useTranslation();
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -33,7 +35,7 @@ export function GrowthJournalList({
         {loading ? (
           <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
             <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
-              Učitavanje...
+              {t('producer.growthJournal.loading')}
             </Text>
           </View>
         ) : logs.length === 0 ? (

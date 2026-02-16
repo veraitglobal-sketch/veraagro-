@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(60000),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {

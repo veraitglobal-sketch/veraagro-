@@ -55,7 +55,7 @@ export function WalletBalanceCard({
         }}
       >
         {availableBalance != null
-          ? availableBalance.toLocaleString('de-DE', {
+          ? availableBalance.toLocaleString('en-US', {
               style: 'currency',
               currency: 'EUR',
             })
@@ -71,7 +71,7 @@ export function WalletBalanceCard({
           }}
         >
           {t('producer.wallet.pending')}:{' '}
-          {pendingBalance.toLocaleString('de-DE', {
+          {pendingBalance.toLocaleString('en-US', {
             style: 'currency',
             currency: 'EUR',
           })}

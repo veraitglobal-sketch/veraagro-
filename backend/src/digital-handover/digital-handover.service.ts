@@ -196,7 +196,7 @@ export class DigitalHandoverService {
         userId: admin.id,
         type: 'SYSTEM',
         title: 'Delivery Completed',
-        message: `Isporuka za Aldi ${storeName} uspešno završena. Kvalitet potvrđen.`,
+        message: `Delivery for Aldi ${storeName} completed successfully. Quality confirmed.`,
         actionUrl: `/deliveries/${handover.deliveryId}`,
       });
 
@@ -205,7 +205,7 @@ export class DigitalHandoverService {
         await this.notificationsGateway.sendNotificationToUser(admin.id, {
           type: 'SYSTEM',
           title: 'Delivery Completed',
-          message: `Isporuka za Aldi ${storeName} uspešno završena. Kvalitet potvrđen.`,
+          message: `Delivery for Aldi ${storeName} completed successfully. Quality confirmed.`,
           actionUrl: `/deliveries/${handover.deliveryId}`,
         });
       } catch (error) {
@@ -331,7 +331,7 @@ export class DigitalHandoverService {
     doc.fontSize(12);
     doc.text(`Delivery Number: ${handover.deliveries.deliveryNumber}`);
     doc.text(`Order Number: ${handover.deliveries.orders.orderNumber}`);
-    doc.text(`Date: ${new Date().toLocaleDateString('de-DE')}`);
+    doc.text(`Date: ${new Date().toLocaleDateString('en-US')}`);
     doc.moveDown();
 
     // Store Info
@@ -348,7 +348,7 @@ export class DigitalHandoverService {
     doc.text(`Visual Check: ${handover.qualityStatus}`);
     doc.text(`Temperature: ${handover.temperature}°C`);
     doc.text(`Completed by: ${handover.completedBy}`);
-    doc.text(`Completed at: ${handover.completedAt?.toLocaleString('de-DE')}`);
+    doc.text(`Completed at: ${handover.completedAt?.toLocaleString('en-US')}`);
     doc.moveDown();
 
     // Driver Info

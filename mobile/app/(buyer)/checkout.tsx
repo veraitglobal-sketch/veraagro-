@@ -101,7 +101,7 @@ export default function CheckoutScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 1,
           }}>
-            Plaćanje
+            {t('buyer.checkout.payment')}
           </Text>
         </View>
       </View>
@@ -117,7 +117,7 @@ export default function CheckoutScreen() {
             marginBottom: theme.spacing.lg,
             textTransform: 'uppercase',
           }}>
-            Adresa za dostavu
+            {t('buyer.profile.deliveryAddress', 'Delivery address')}
           </Text>
 
           {/* Street */}
@@ -130,7 +130,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Ulica i broj
+              Street and number
             </Text>
             <TextInput
               value={street}
@@ -159,7 +159,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Grad
+              City
             </Text>
             <TextInput
               value={city}
@@ -188,7 +188,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Poštanski broj
+              Postal code
             </Text>
             <TextInput
               value={postalCode}
@@ -218,7 +218,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Država
+              Country
             </Text>
             <TextInput
               value={country}
@@ -247,7 +247,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Napomene (opciono)
+              Notes (optional)
             </Text>
             <TextInput
               value={notes}
@@ -284,7 +284,7 @@ export default function CheckoutScreen() {
               marginBottom: theme.spacing.md,
               textTransform: 'uppercase',
             }}>
-              Pregled porudžbine
+              Order summary
             </Text>
             {items.map((item) => (
               <View key={item.product.id} style={{
@@ -304,7 +304,7 @@ export default function CheckoutScreen() {
                   fontWeight: '300',
                   color: theme.colors.text.primary,
                 }}>
-                  {((item.product.price || 0) * item.quantity).toLocaleString('de-DE', { 
+                  {((item.product.price || 0) * item.quantity).toLocaleString('en-US', { 
                     style: 'currency', 
                     currency: 'EUR' 
                   })}
@@ -324,14 +324,14 @@ export default function CheckoutScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                Ukupno
+                Total
               </Text>
               <Text style={{
                 fontSize: 16,
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                {getTotalPrice().toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                {getTotalPrice().toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>
@@ -363,7 +363,7 @@ export default function CheckoutScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            {loading ? 'Kreiranje porudžbine...' : 'Potvrdi porudžbinu'}
+            {loading ? t('buyer.checkout.creating') : t('buyer.checkout.confirm')}
           </Text>
         </TouchableOpacity>
       </View>

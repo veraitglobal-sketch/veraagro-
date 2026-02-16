@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Plus, Minus, ShoppingCart } from 'lucide-react-native';
@@ -11,6 +12,7 @@ import { useCart } from '../../hooks/useCart';
  * Elegant design with large image, origin story, and minimalist UI
  */
 export default function ProductDetailScreen() {
+  const { t } = useTranslation();
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const router = useRouter();
   const { addToCart } = useCart();
@@ -147,7 +149,7 @@ export default function ProductDetailScreen() {
               letterSpacing: 1,
             }}>
               {product.price 
-                ? product.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
+                ? product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
                 : 'Price on request'}
             </Text>
             <Text style={{
@@ -213,12 +215,12 @@ export default function ProductDetailScreen() {
               marginBottom: theme.spacing.md,
               textTransform: 'uppercase',
             }}>
-              Detalji
+              Details
             </Text>
             <View style={{ gap: theme.spacing.sm }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
-                  Količina
+                  {t('producer.orders.quantity')}
                 </Text>
                 <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
                   {product.quantity} {product.unit}
@@ -227,17 +229,17 @@ export default function ProductDetailScreen() {
               {product.harvestDate && (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
-                    Datum berbe
+                    {t('producer.batches.harvestLabel')}
                   </Text>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
-                    {new Date(product.harvestDate).toLocaleDateString('sr-RS')}
+                    {new Date(product.harvestDate).toLocaleDateString()}
                   </Text>
                 </View>
               )}
               {product.daysInConversion && (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
-                    Dana u konverziji
+                    Days in conversion
                   </Text>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
                     {product.daysInConversion}
@@ -262,7 +264,7 @@ export default function ProductDetailScreen() {
               marginBottom: theme.spacing.md,
               textTransform: 'uppercase',
             }}>
-              Količina
+              {t('producer.orders.quantity')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}>
               <TouchableOpacity
@@ -319,7 +321,7 @@ export default function ProductDetailScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            {isReservationMode ? 'Rezerviši' : 'Dodaj u korpu'}
+            {isReservationMode ? 'Reserve' : t('buyer.shop.addToCart')}
           </Text>
         </TouchableOpacity>
       </View>

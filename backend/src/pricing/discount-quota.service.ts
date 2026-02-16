@@ -76,7 +76,7 @@ export class DiscountQuotaService {
           alreadyUsed: Math.round(alreadyUsed * 100) / 100,
           remaining: Math.round(remaining * 100) / 100,
           requestedQuantity,
-          reason: `Prekoračen limit popusta. Dozvoljeno: ${remaining.toFixed(2)}kg, Zahtevano: ${requestedQuantity}kg. Limit: ${discountLimit.toFixed(2)}kg (${farmAreaHectares.toFixed(2)}ha × 200kg/ha), Već iskorišćeno: ${alreadyUsed.toFixed(2)}kg`,
+          reason: `Discount limit exceeded. Allowed: ${remaining.toFixed(2)}kg, Requested: ${requestedQuantity}kg. Limit: ${discountLimit.toFixed(2)}kg (${farmAreaHectares.toFixed(2)}ha × 200kg/ha), Already used: ${alreadyUsed.toFixed(2)}kg`,
         };
       }
 
@@ -96,7 +96,7 @@ export class DiscountQuotaService {
     } catch (error: any) {
       this.logger.error('Error checking discount quota:', error);
       throw new ForbiddenException(
-        error.message || 'Greška pri proveri kvote popusta',
+        error.message || 'Error checking discount quota',
       );
     }
   }

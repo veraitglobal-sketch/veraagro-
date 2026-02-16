@@ -67,7 +67,7 @@ export default function CartScreen() {
                     letterSpacing: 0.2,
                   }}>
                     {item.product.price 
-                      ? item.product.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
+                      ? item.product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
                       : 'Price on request'} per {item.product.unit}
                   </Text>
                 </View>
@@ -138,7 +138,7 @@ export default function CartScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}>
-            {getTotalPrice().toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+            {getTotalPrice().toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
           </Text>
         </View>
 
@@ -161,7 +161,7 @@ export default function CartScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            Nastavi na plaćanje
+            Proceed to payment
           </Text>
           <ArrowRight size={18} color={theme.colors.text.inverse} strokeWidth={1.5} />
         </TouchableOpacity>

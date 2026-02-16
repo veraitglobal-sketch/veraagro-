@@ -185,12 +185,12 @@ export default function EditEstateScreen() {
               marginBottom: theme.spacing.xs,
               letterSpacing: 0.3,
             }}>
-              Lokacija (opciono)
+              {t('producer.estates.optionalLocation')}
             </Text>
             <TextInput
               value={location}
               onChangeText={setLocation}
-              placeholder="npr. Arilje, Srbija"
+              placeholder="e.g. Arilje, Serbia"
               style={{
                 fontSize: 15,
                 fontWeight: '300',
@@ -227,7 +227,7 @@ export default function EditEstateScreen() {
                 fontWeight: '300',
                 color: drawing ? colors.background : colors.text.primary,
               }}>
-                {drawing ? 'Crtanje aktivno' : 'Uključi crtanje'}
+                {drawing ? t('producer.estates.drawingActive') : t('producer.estates.enableDrawing')}
               </Text>
             </TouchableOpacity>
             {polygonCoordinates.length > 0 && (
@@ -246,7 +246,7 @@ export default function EditEstateScreen() {
                   fontWeight: '300',
                   color: colors.error,
                 }}>
-                  Obriši
+                  {t('producer.estates.delete')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -285,7 +285,7 @@ export default function EditEstateScreen() {
                     latitude: coord.lat,
                     longitude: coord.lng,
                   }}
-                  title={`Tačka ${index + 1}`}
+                  title={t('producer.estates.pointN', { n: index + 1 })}
                 />
               ))}
             </MapView>
@@ -305,7 +305,7 @@ export default function EditEstateScreen() {
                 fontWeight: '300',
                 color: colors.text.primary,
               }}>
-                Tačke granice: {polygonCoordinates.length}
+                {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
               </Text>
             </View>
           )}

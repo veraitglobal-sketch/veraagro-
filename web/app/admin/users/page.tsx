@@ -95,13 +95,13 @@ export default function UsersManagementPage() {
       });
       
       // Show success message
-      let successMessage = 'Korisnik je uspešno kreiran!';
+      let successMessage = 'User created successfully!';
       if (newUser.passwordGenerated && newUser.password) {
-        successMessage += `\n\nGenerisana šifra: ${newUser.password}`;
+        successMessage += `\n\nGenerated password: ${newUser.password}`;
         if (newUser.emailSent) {
-          successMessage += '\n✅ Šifra je poslata na email.';
+          successMessage += '\n✅ Password sent to email.';
         } else if (formData.sendEmail) {
-          successMessage += '\n⚠️ Email nije poslat (proverite email konfiguraciju).';
+          successMessage += '\n⚠️ Email not sent (check email configuration).';
         }
       }
       
@@ -459,7 +459,7 @@ export default function UsersManagementPage() {
                             }}
                             className="mr-2"
                           />
-                          <span className="text-sm text-gray-700">Automatski generiši šifru</span>
+                          <span className="text-sm text-gray-700">Auto-generate password</span>
                         </label>
                         {!formData.autoGeneratePassword && (
                           <input
@@ -478,7 +478,7 @@ export default function UsersManagementPage() {
                               onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
                               className="mr-2"
                             />
-                            <span className="text-sm text-gray-700">Pošalji šifru na email</span>
+                            <span className="text-sm text-gray-700">Send password to email</span>
                           </label>
                         )}
                       </div>

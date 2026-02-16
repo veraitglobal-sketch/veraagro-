@@ -41,7 +41,7 @@ export class GpsValidatorService {
       if (!estate) {
         return {
           valid: false,
-          reason: 'Farma nije pronađena',
+          reason: 'Farm not found',
         };
       }
 
@@ -53,7 +53,7 @@ export class GpsValidatorService {
         // If no polygon, allow entry but log warning
         return {
           valid: true,
-          reason: 'Farma nema definisane granice. Validacija preskočena.',
+          reason: 'Farm has no defined boundaries. Validation skipped.',
         };
       }
 
@@ -66,7 +66,7 @@ export class GpsValidatorService {
         );
         return {
           valid: true,
-          reason: 'Farma ima nevalidan format granica. Validacija preskočena.',
+          reason: 'Farm has invalid boundary format. Validation skipped.',
         };
       }
 
@@ -101,7 +101,7 @@ export class GpsValidatorService {
       // On error, block entry for security
       return {
         valid: false,
-        reason: 'Greška pri validaciji GPS koordinata',
+        reason: 'GPS validation error',
       };
     }
   }

@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, Circle } from 'lucide-react-native';
 import { ordersAPI, Order } from '../../../lib/api';
@@ -10,6 +11,7 @@ import { theme } from '../../../lib/theme';
  * Vertical timeline design with thin line and outline circles
  */
 export default function OrderTrackingScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
@@ -38,11 +40,11 @@ export default function OrderTrackingScreen() {
 
   const getStatusSteps = () => {
     return [
-      { key: 'PENDING', label: 'Naručeno', completed: true },
-      { key: 'CONFIRMED', label: 'Potvrđeno', completed: order?.status !== 'PENDING' },
-      { key: 'PREPARING', label: 'U pripremi', completed: ['PREPARING', 'IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
-      { key: 'IN_TRANSIT', label: 'Na putu', completed: ['IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
-      { key: 'DELIVERED', label: 'Isporučeno', completed: order?.status === 'DELIVERED' },
+      { key: 'PENDING', label: t('buyer.orders.statusPending'), completed: true },
+      { key: 'CONFIRMED', label: t('buyer.orders.statusConfirmed'), completed: order?.status !== 'PENDING' },
+      { key: 'PREPARING', label: t('buyer.orders.statusPreparing'), completed: ['PREPARING', 'IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
+      { key: 'IN_TRANSIT', label: t('buyer.orders.statusInTransit'), completed: ['IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
+      { key: 'DELIVERED', label: t('buyer.orders.statusDelivered'), completed: order?.status === 'DELIVERED' },
     ];
   };
 
@@ -123,7 +125,7 @@ export default function OrderTrackingScreen() {
               color: theme.colors.text.primary,
               letterSpacing: 1,
             }}>
-              Praćenje porudžbine
+              {t('buyer.orders.tracking')}
             </Text>
             <Text style={{
               fontSize: 11,
@@ -162,7 +164,7 @@ export default function OrderTrackingScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              {order.quantity} {order.unit} × {order.unitPrice.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+              {order.quantity} {order.unit} × {order.unitPrice.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
             </Text>
             <View style={{
               flexDirection: 'row',
@@ -184,7 +186,7 @@ export default function OrderTrackingScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                {order.totalAmount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>

@@ -84,9 +84,9 @@ export default function EstateDetailsScreen() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'CERTIFIED': return 'Sertifikovano';
-      case 'ACTIVE': return 'Aktivno';
-      case 'PENDING_SETUP': return 'U pripremi';
+      case 'CERTIFIED': return 'Certified';
+      case 'ACTIVE': return 'Active';
+      case 'PENDING_SETUP': return 'In progress';
       default: return status;
     }
   };
@@ -188,7 +188,7 @@ export default function EstateDetailsScreen() {
                 color: colors.text.primary,
                 marginLeft: theme.spacing.xs,
               }}>
-                {estate.location || 'Lokacija nije navedena'}
+                {estate.location || t('producer.estates.locationNotSpecified')}
               </Text>
             </View>
             {estate.calculatedArea > 0 && (
@@ -198,7 +198,7 @@ export default function EstateDetailsScreen() {
                 color: colors.text.secondary,
                 marginTop: theme.spacing.xs,
               }}>
-                Površina: {estate.calculatedArea.toFixed(2)} m²
+                {t('producer.estates.area')}: {estate.calculatedArea.toFixed(2)} m²
               </Text>
             )}
           </View>
@@ -268,7 +268,7 @@ export default function EstateDetailsScreen() {
                         color: colors.text.primary,
                         marginLeft: theme.spacing.xs,
                       }}>
-                        {parcel.cropType || 'Nepoznat usev'}
+                        {parcel.cropType || t('producer.products.unknownProduct')}
                       </Text>
                     </View>
                     <Text style={{
@@ -276,7 +276,7 @@ export default function EstateDetailsScreen() {
                       fontWeight: '300',
                       color: colors.text.secondary,
                     }}>
-                      Površina: {parcel.calculatedArea.toFixed(2)} m²
+                      {t('producer.estates.area')}: {parcel.calculatedArea.toFixed(2)} m²
                     </Text>
                     {parcel.plantingDate && (
                       <Text style={{
@@ -285,7 +285,7 @@ export default function EstateDetailsScreen() {
                         color: colors.text.secondary,
                         marginTop: 2,
                       }}>
-                        Sadnja: {new Date(parcel.plantingDate).toLocaleDateString('sr-RS')}
+                        {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString()}
                       </Text>
                     )}
                   </View>
@@ -311,7 +311,7 @@ export default function EstateDetailsScreen() {
                   color: colors.text.primary,
                   marginLeft: theme.spacing.xs,
                 }}>
-                  Sertifikacija
+                  Certification
                 </Text>
               </View>
               <Text style={{
@@ -319,7 +319,7 @@ export default function EstateDetailsScreen() {
                 fontWeight: '300',
                 color: colors.text.secondary,
               }}>
-                Počelo: {new Date(estate.certificationStartDate).toLocaleDateString('sr-RS')}
+                {t('producer.estates.started')}: {new Date(estate.certificationStartDate).toLocaleDateString()}
               </Text>
               {estate.daysRemaining !== undefined && estate.daysRemaining !== null && (
                 <Text style={{
@@ -328,7 +328,7 @@ export default function EstateDetailsScreen() {
                   color: colors.text.secondary,
                   marginTop: 2,
                 }}>
-                  Preostalo dana: {estate.daysRemaining}
+                  {t('producer.estates.daysRemaining', { count: estate.daysRemaining ?? 0 })}
                 </Text>
               )}
             </View>

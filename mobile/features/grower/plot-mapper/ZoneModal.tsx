@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { CROP_TYPES, CROP_STATUSES } from './constants';
@@ -29,6 +30,7 @@ export function ZoneModal({
   onClose,
   onSave,
 }: ZoneModalProps) {
+  const { t } = useTranslation();
   const [zoneCropType, setZoneCropType] = useState('');
   const [zonePlantingDate, setZonePlantingDate] = useState(new Date());
   const [zoneStatus, setZoneStatus] = useState('');
@@ -217,7 +219,7 @@ export function ZoneModal({
                   letterSpacing: 0.5,
                 }}
               >
-                Sačuvaj zonu
+                {t('producer.plotMapper.saveZone')}
               </Text>
             </TouchableOpacity>
           </ScrollView>

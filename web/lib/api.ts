@@ -1046,12 +1046,14 @@ export const contactAPI = {
     message: string;
     phone?: string;
   }): Promise<{ success: boolean; message?: string }> => {
-    // Use same-origin proxy to avoid CORS and env issues
-    const res = await fetch('/api/contact/submit', {
+    // Call backend directly to avoid Vercel's 10s serverless limit (Hobby plan)
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
+    const url = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
+    const res = await fetch(`${url.replace(/\/$/, '')}/contact/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(60000),
     });
     const result = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
     if (!res.ok) {

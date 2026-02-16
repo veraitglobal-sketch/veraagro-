@@ -18,7 +18,7 @@ export class InitiateHandoverDto {
   deliveryId: string;
 
   @IsString()
-  qrCode: string; // QR kod sa vrata magacina ili od menadžera
+  qrCode: string; // QR code from warehouse door or from manager
 }
 
 export class QualityCheckDto {

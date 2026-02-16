@@ -166,7 +166,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
                 textAlign: 'center',
                 letterSpacing: 0.5,
               }}>
-                {product.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </Text>
               <Text style={{
                 fontSize: 12,

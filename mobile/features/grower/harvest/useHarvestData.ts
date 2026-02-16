@@ -72,7 +72,7 @@ export function useHarvestData() {
       const existing = await offlineStorage.getPendingEntries();
       const harvestEntry = {
         id: `harvest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        activityType: 'Žetva' as const,
+        activityType: 'Harvest' as const,
         materialID: undefined,
         photoUri: '',
         location: location!,

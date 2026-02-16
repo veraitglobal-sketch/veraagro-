@@ -22,7 +22,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
     try {
       // Use camera API for barcode scanning
       // For now, prompt for manual input
-      const barcode = prompt('Skeniraj bar-kod (ili unesi ručno):');
+      const barcode = prompt('Scan barcode (or enter manually):');
       if (!barcode) return;
 
       await scanCode(barcode, 'SEED');
@@ -45,7 +45,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
         setTimeout(() => setSuccess(false), 3000);
       }
     } catch (error) {
-      alert('Greška: ' + (error as Error).message);
+      alert('Error: ' + (error as Error).message);
     } finally {
       setScanning(false);
     }
@@ -62,7 +62,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
         {/* Success Message */}
         {success && (
           <div className="mb-6 p-6 bg-[#2D5A27]/20 border-2 border-[#2D5A27] rounded-lg text-center">
-            <p className="text-2xl font-bold text-[#23471f]">✓ Uspešno sačuvano!</p>
+            <p className="text-2xl font-bold text-[#23471f]">✓ Successfully saved!</p>
           </div>
         )}
 
@@ -100,7 +100,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
           <ol className="text-base text-yellow-800 space-y-2 list-decimal list-inside">
             <li>Klikni "SKENIRAJ BAR-KOD"</li>
             <li>Usmeri kameru na bar-kod</li>
-            <li>Podaci će se automatski sačuvati</li>
+            <li>Data will be saved automatically</li>
           </ol>
         </div>
       </div>

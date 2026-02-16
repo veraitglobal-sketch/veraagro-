@@ -90,7 +90,7 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
               onPress={handleSave}
               disabled={saving}
             >
-              <Text style={styles.saveBtnText}>{saving ? 'Čuvam…' : 'Sačuvaj (šalje se kad ima neta)'}</Text>
+              <Text style={styles.saveBtnText}>{saving ? t('producer.products.saving') : t('producer.products.saveToDevice')}</Text>
             </TouchableOpacity>
           </View>
         </>

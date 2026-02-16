@@ -67,7 +67,7 @@ export class ComplianceService {
 
       return {
         compliant: false,
-        reason: 'Skenirani bar-kod đubriva nije na Bio-White-List. Zabranjene hemikalije nisu dozvoljene.',
+        reason: 'Scanned fertilizer barcode is not on Bio-White-List. Prohibited chemicals are not allowed.',
         blocked: true,
         alertSent: true, // Will be sent async
       };
@@ -87,7 +87,7 @@ export class ComplianceService {
 
       return {
         compliant: false,
-        reason: 'Skenirani bar-kod đubriva je deaktiviran na Bio-White-List.',
+        reason: 'Scanned fertilizer barcode is deactivated on Bio-White-List.',
         blocked: true,
         alertSent: true,
       };
@@ -142,7 +142,7 @@ export class ComplianceService {
           userId: admin.id,
           type: 'ALERT' as const,
           title: '🚨 Compliance Violation - Zabranjene Hemikalije',
-          message: `Korisnik ${userName} (${user?.email || 'N/A'}) je pokušao da koristi đubrivo sa bar-kodom koji NIJE na Bio-White-List.\n\nBar-kod: ${data.barcode}\nRazlog: ${data.reason}\n${farmInfo}\n${entryInfo}\n\nUnos je BLOKIRAN.`,
+          message: `User ${userName} (${user?.email || 'N/A'}) attempted to use fertilizer with barcode that is NOT on Bio-White-List.\n\nBarcode: ${data.barcode}\nReason: ${data.reason}\n${farmInfo}\n${entryInfo}\n\nEntry BLOCKED.`,
           actionUrl: `/admin/compliance/violations?barcode=${data.barcode}&userId=${data.userId}`,
         }));
 
@@ -277,7 +277,7 @@ export class ComplianceService {
           requestedQuantity,
           validation: {
             valid: false,
-            reason: `Zahtevana količina (${requestedQuantity}kg) premašuje dozvoljenu količinu za vašu farmu (${maxAllowedQuantity.toFixed(2)}kg za ${areaInHectares.toFixed(2)}ha)`,
+            reason: `Requested quantity (${requestedQuantity}kg) exceeds allowed quantity for your farm (${maxAllowedQuantity.toFixed(2)}kg for ${areaInHectares.toFixed(2)}ha)`,
           },
         };
       }

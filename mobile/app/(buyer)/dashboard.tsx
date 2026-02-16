@@ -679,7 +679,7 @@ function ProductCard({
             letterSpacing: 0.3,
             marginTop: theme.spacing.xs,
           }}>
-            {product.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+            {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
           </Text>
         )}
 

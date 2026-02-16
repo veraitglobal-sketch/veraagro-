@@ -119,7 +119,7 @@ export default function CookiesPage() {
                     to provide a more personalized and convenient experience. They include:
                   </p>
                   <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
-                    <li><strong>Language Preferences:</strong> Remember your selected language (English, Serbian, German)</li>
+                    <li><strong>Language Preferences:</strong> Remember your selected language (English)</li>
                     <li><strong>Display Settings:</strong> Store your UI preferences and display options</li>
                     <li><strong>Accessibility Options:</strong> Remember accessibility settings and accommodations</li>
                     <li><strong>Form Data:</strong> Temporarily store form data to prevent data loss</li>

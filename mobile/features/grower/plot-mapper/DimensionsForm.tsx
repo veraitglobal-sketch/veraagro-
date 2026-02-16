@@ -1,4 +1,5 @@
 import { View, Text, TextInput } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 
 interface DimensionsFormProps {
@@ -16,6 +17,7 @@ export function DimensionsForm({
   onLengthChange,
   onWidthChange,
 }: DimensionsFormProps) {
+  const { t } = useTranslation();
   return (
     <View style={{ marginBottom: 24 }}>
       <Text
@@ -27,7 +29,7 @@ export function DimensionsForm({
           letterSpacing: 0.3,
         }}
       >
-        Dimenzije
+        Dimensions
       </Text>
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1 }}>
@@ -39,7 +41,7 @@ export function DimensionsForm({
               marginBottom: 6,
             }}
           >
-            Dužina (m)
+            {t('producer.plotMapper.length')}
           </Text>
           <TextInput
             value={length}
@@ -67,7 +69,7 @@ export function DimensionsForm({
               marginBottom: 6,
             }}
           >
-            Širina (m)
+            {t('producer.plotMapper.width')}
           </Text>
           <TextInput
             value={width}
@@ -96,7 +98,7 @@ export function DimensionsForm({
             color: colors.text.secondary,
           }}
         >
-          Ukupna površina: {totalArea.toLocaleString()} m²
+          {t('producer.plotMapper.totalArea')}: {totalArea.toLocaleString()} m²
         </Text>
       )}
     </View>

@@ -170,7 +170,7 @@ export function OrdersListScreen() {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Euro size={14} color={theme.colors.text.secondary} strokeWidth={1} />
                       <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginLeft: 4, letterSpacing: 0.2 }}>
-                        {order.totalAmount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                        {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

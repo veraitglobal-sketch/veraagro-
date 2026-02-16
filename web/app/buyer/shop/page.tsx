@@ -55,10 +55,10 @@ export default function ShopPage() {
       };
       await ordersAPI.create(orderData);
       setCart([]);
-      alert('Porudžbina je kreirana!');
+      alert('Order created!');
     } catch (error) {
       console.error('Error creating order:', error);
-      alert('Greška pri kreiranju porudžbine');
+      alert('Error creating order');
     }
   };
 
@@ -193,7 +193,7 @@ export default function ShopPage() {
                   onClick={createOrder}
                   className="w-full bg-[#2D5A27] text-white py-3 rounded-lg hover:bg-[#23471f] font-semibold"
                 >
-                  Poruči ({cart.reduce((sum, item) => sum + (item.price || 0), 0)} RSD)
+                  Order ({cart.reduce((sum, item) => sum + (item.price || 0), 0)} EUR)
                 </button>
               </div>
             )}
