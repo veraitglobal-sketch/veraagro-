@@ -67,7 +67,6 @@ const translations = {
         },
       },
     },
-  },
 };
 
 interface QualityControlLevel {
