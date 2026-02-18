@@ -10,7 +10,7 @@ Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku na mejl), 
 
 *(Proxy je uklonjen – Vercel Hobby ima limit 10s, što je uzrokovalo timeout.)*
 
-Kontakt forma više ne šalje direktno na backend. Zahtev ide na same-origin proxy, pa proxy prosleđuje backendu. To rešava CORS i probleme sa `NEXT_PUBLIC_API_URL` u produkciji.
+Frontend šalje direktno na backend (nema proxy – Vercel ima 10s limit).
 
 ---
 

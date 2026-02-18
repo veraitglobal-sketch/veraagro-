@@ -66,8 +66,15 @@ export default function ContactPage() {
         } else {
           msg = data?.message || 'An error occurred. Please try again.';
         }
-      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      } else if (
+        error.code === 'ECONNABORTED' ||
+        error.message?.includes('timeout') ||
+        error.name === 'TimeoutError' ||
+        error.name === 'AbortError'
+      ) {
         msg = 'Request timed out. Please try again or email us at info@biovera.app';
+      } else if (error.message === 'Failed to fetch') {
+        msg = 'Could not reach server. Please check your connection or email us at info@biovera.app';
       } else if (error.request) {
         msg = 'Could not reach server. Please check your connection or email us at info@biovera.app';
       } else {

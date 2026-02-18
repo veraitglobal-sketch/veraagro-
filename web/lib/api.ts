@@ -1038,6 +1038,9 @@ export const farmerProfileAPI = {
   },
 };
 
+// Production API URL - used when NEXT_PUBLIC_API_URL is missing or invalid at build time
+const CONTACT_API_BASE = 'https://api.biovera.app';
+
 export const contactAPI = {
   submitInquiry: async (data: {
     name: string;
@@ -1047,10 +1050,13 @@ export const contactAPI = {
     phone?: string;
   }): Promise<{ success: boolean; message?: string }> => {
     // Call backend directly to avoid Vercel's 10s serverless limit (Hobby plan)
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app';
-    const url = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
-    const res = await fetch(`${url.replace(/\/$/, '')}/contact/submit`, {
+    const raw = typeof process.env.NEXT_PUBLIC_API_URL === 'string' ? process.env.NEXT_PUBLIC_API_URL.trim() : '';
+    const baseUrl = raw.startsWith('http') ? raw.replace(/\/$/, '') : CONTACT_API_BASE;
+    const url = `${baseUrl}/contact/submit`;
+
+    const res = await fetch(url, {
       method: 'POST',
+      mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
       signal: AbortSignal.timeout(60000),

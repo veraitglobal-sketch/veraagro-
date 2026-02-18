@@ -44,10 +44,15 @@ export class EmailService {
         auth: { user: smtpUser, pass: smtpPass },
       });
     } else {
-      this.logger.warn('Email not configured: no RESEND_API_KEY/SMTP_PASS or SMTP user/pass. Emails will be skipped.');
+      this.logger.warn(
+        'Email not configured: no RESEND_API_KEY/SMTP_PASS or SMTP user/pass. Emails will be skipped.',
+      );
     }
 
     if (this.transporter) {
+      this.logger.log(
+        `Email configured: host=${process.env.SMTP_HOST || (process.env.RESEND_API_KEY ? 'smtp.resend.com' : 'smtp.gmail.com')}`,
+      );
       this.testConnection().catch(() => {});
     }
   }
@@ -280,17 +285,23 @@ Reply to: ${data.email}
       };
 
       if (!this.transporter) {
-        this.logger.warn('Email not configured, skipping contact inquiry email');
+        this.logger.warn(
+          'Email not configured (RESEND_API_KEY or SMTP missing), skipping contact inquiry email',
+        );
         return false;
       }
+      this.logger.log(
+        `Sending contact inquiry email: to=${adminEmail}, from=${fromAddr}, replyTo=${data.email}`,
+      );
       await this.transporter.sendMail(mailOptions);
-      this.logger.log(`Contact inquiry email sent to ${adminEmail} from ${data.email}`);
+      this.logger.log(`Contact inquiry email sent successfully to ${adminEmail} from ${data.email}`);
       return true;
     } catch (error: any) {
       const errMsg = error?.message || String(error);
       const resendErr = error?.response?.body || error?.response?.data;
+      const code = error?.code || error?.response?.status;
       this.logger.error(
-        `Failed to send contact inquiry email: ${errMsg}`,
+        `Failed to send contact inquiry email: ${errMsg}${code ? ` (code=${code})` : ''}`,
         resendErr ? JSON.stringify(resendErr) : '',
       );
       return false;
