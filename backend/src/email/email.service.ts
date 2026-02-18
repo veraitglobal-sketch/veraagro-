@@ -16,17 +16,19 @@ export class EmailService {
     const smtpPort = parseInt(process.env.SMTP_PORT || '587');
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASSWORD;
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
 
-    // Resend: password is RESEND_API_KEY or SMTP_PASS (Resend SMTP always uses user 'resend')
+    // Resend REST API first - Railway blocks SMTP port 587
+    if (resendApiKey && resendApiKey.startsWith('re_')) {
+      this.resend = new Resend(resendApiKey);
+      this.logger.log('Email configured: Resend REST API (contact form uses HTTPS, no SMTP)');
+    } else if (resendApiKey) {
+      this.logger.warn('RESEND_API_KEY set but invalid format (expected re_...), falling back to SMTP');
+    }
+
     const useResend = smtpHost.includes('resend.com') || !!resendApiKey;
     const resendPass = resendApiKey || smtpPass;
 
-    if (useResend && resendApiKey) {
-      // Resend REST API - Railway blocks SMTP port 587, so use HTTPS instead
-      this.resend = new Resend(resendApiKey);
-      this.logger.log('Email configured: Resend REST API (contact form uses HTTPS, no SMTP)');
-    }
     if (useResend && resendPass && !this.resend) {
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.resend.com',
