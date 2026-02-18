@@ -9,6 +9,7 @@ export class EmailService {
   private resend: Resend | null = null;
 
   constructor() {
+    this.logger.log('EmailService v2 (Resend REST API support)');
     // Configure email transporter only when credentials exist (avoids "Missing credentials" in CI)
     // Supports: Resend (RESEND_API_KEY or SMTP_PASS), Gmail, Brevo, Mailgun, etc.
     const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
