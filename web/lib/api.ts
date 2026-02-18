@@ -1049,9 +1049,36 @@ export const contactAPI = {
     message: string;
     phone?: string;
   }): Promise<{ success: boolean; message?: string }> => {
-    // Call backend directly to avoid Vercel's 10s serverless limit (Hobby plan)
+    // Formspree: reliable, no backend needed, no timeout. Use when backend/Resend fails.
+    const formspreeEndpoint = typeof process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT === 'string'
+      ? process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT.trim()
+      : '';
+
+    if (formspreeEndpoint) {
+      const fd = new FormData();
+      fd.append('name', data.name);
+      fd.append('email', data.email);
+      fd.append('subject', data.subject);
+      fd.append('message', data.message);
+      if (data.phone) fd.append('phone', data.phone);
+
+      const res = await fetch(formspreeEndpoint, {
+        method: 'POST',
+        body: fd,
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(15000),
+      });
+      const result = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (res.ok && result.ok !== false) {
+        return { success: true, message: 'Thank you for your message. We will get back to you soon.' };
+      }
+      throw new Error(result?.error || 'Failed to send message');
+    }
+
+    // Backend API (Railway) - production always uses api.biovera.app, never localhost
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     const raw = typeof process.env.NEXT_PUBLIC_API_URL === 'string' ? process.env.NEXT_PUBLIC_API_URL.trim() : '';
-    const baseUrl = raw.startsWith('http') ? raw.replace(/\/$/, '') : CONTACT_API_BASE;
+    const baseUrl = isLocal ? (raw.startsWith('http') ? raw.replace(/\/$/, '') : 'http://localhost:3004') : (raw.startsWith('http') ? raw.replace(/\/$/, '') : CONTACT_API_BASE);
     const url = `${baseUrl}/contact/submit`;
 
     const res = await fetch(url, {
