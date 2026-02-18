@@ -205,10 +205,13 @@ Bio Vera Team
     phone?: string;
   }): Promise<boolean> {
     try {
-      const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
-      // Resend free tier: use onboarding@resend.dev as FROM if no custom domain verified
-      const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER
-        || (process.env.RESEND_API_KEY ? 'onboarding@resend.dev' : 'info@biovera.app');
+      const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
+      // Resend: use onboarding@resend.dev when using Resend API (free tier requires this unless domain verified)
+      // SMTP_USER for Resend is "resend" - not a valid FROM email, so never use it here
+      const customFrom = process.env.EMAIL_FROM;
+      const fromAddr = this.resend
+        ? (customFrom && customFrom.includes('@') ? customFrom : 'onboarding@resend.dev')
+        : (customFrom || process.env.SMTP_USER || 'info@biovera.app');
 
       const mailOptions = {
         from: `"Bio Vera Contact Form" <${fromAddr}>`,
