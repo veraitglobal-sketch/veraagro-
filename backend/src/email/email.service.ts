@@ -16,8 +16,11 @@ export class EmailService {
     const smtpPort = parseInt(process.env.SMTP_PORT || '587');
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASSWORD;
-    const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
-    this.logger.log(`RESEND_API_KEY: ${resendApiKey ? `set (${resendApiKey.length} chars)` : 'NOT SET'}`);
+    // Resend API key: RESEND_API_KEY, or SMTP_PASS/SMTP_PASSWORD when using Resend SMTP (same key works for REST API)
+    const resendApiKey = (
+      (process.env.RESEND_API_KEY || process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '').trim()
+    );
+    this.logger.log(`Resend API key: ${resendApiKey && resendApiKey.startsWith('re_') ? 'found' : 'NOT found'}`);
 
     // Resend REST API first - Railway blocks SMTP port 587
     if (resendApiKey && resendApiKey.startsWith('re_')) {
