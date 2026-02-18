@@ -34,6 +34,55 @@ async function bootstrap() {
       
       // Create index if it doesn't exist
       await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");`);
+
+      // vera_insights - table may be missing if migration was resolved without running
+      try {
+        await prisma.$executeRawUnsafe(`
+          DO $$ BEGIN
+            CREATE TYPE "RiskLevel" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
+          EXCEPTION WHEN duplicate_object THEN NULL;
+          END $$;
+        `);
+        await prisma.$executeRawUnsafe(`
+          DO $$ BEGIN
+            CREATE TYPE "PriceTrend" AS ENUM ('UP', 'DOWN', 'STABLE');
+          EXCEPTION WHEN duplicate_object THEN NULL;
+          END $$;
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS "vera_insights" (
+            "id" TEXT NOT NULL,
+            "cropName" TEXT NOT NULL,
+            "veraScore" INTEGER NOT NULL,
+            "historicalDeficit" DOUBLE PRECISION,
+            "whyText" TEXT NOT NULL,
+            "riskLevel" "RiskLevel" NOT NULL DEFAULT 'MEDIUM',
+            "priceTrend" "PriceTrend" NOT NULL DEFAULT 'STABLE',
+            "seedId" TEXT,
+            "isActive" BOOLEAN NOT NULL DEFAULT true,
+            "createdBy" TEXT NOT NULL,
+            "updatedBy" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            CONSTRAINT "vera_insights_pkey" PRIMARY KEY ("id")
+          );
+        `);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_cropName_idx" ON "vera_insights"("cropName");`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_isActive_idx" ON "vera_insights"("isActive");`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_veraScore_idx" ON "vera_insights"("veraScore");`);
+        try {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_seedId_fkey" FOREIGN KEY ("seedId") REFERENCES "seeds"("id") ON DELETE SET NULL ON UPDATE CASCADE`);
+        } catch (_) {}
+        try {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE`);
+        } catch (_) {}
+        try {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE`);
+        } catch (_) {}
+        console.log('✅ vera_insights table ensured');
+      } catch (viErr: any) {
+        console.warn('vera_insights setup:', viErr?.message || 'skipped');
+      }
       
       await prisma.$disconnect();
       console.log('✅ Farmer profile fields migration applied successfully');
@@ -160,7 +209,9 @@ async function bootstrap() {
   
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Bio Vera Backend running on http://localhost:${port}`);
+  const domain = process.env.RAILWAY_PUBLIC_DOMAIN;
+  const url = domain ? `https://${domain}` : (process.env.NODE_ENV === 'production' ? `port ${port}` : `http://localhost:${port}`);
+  console.log(`Bio Vera Backend running on ${url}`);
 }
 
 bootstrap();
