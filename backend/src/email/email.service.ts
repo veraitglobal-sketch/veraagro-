@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend | null = null;
 
   constructor() {
     // Configure email transporter only when credentials exist (avoids "Missing credentials" in CI)
@@ -19,15 +21,17 @@ export class EmailService {
     const useResend = smtpHost.includes('resend.com') || !!resendApiKey;
     const resendPass = resendApiKey || smtpPass;
 
-    if (useResend && resendPass) {
+    if (useResend && resendApiKey) {
+      // Resend REST API - Railway blocks SMTP port 587, so use HTTPS instead
+      this.resend = new Resend(resendApiKey);
+      this.logger.log('Email configured: Resend REST API (contact form uses HTTPS, no SMTP)');
+    }
+    if (useResend && resendPass && !this.resend) {
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.resend.com',
         port: parseInt(process.env.SMTP_PORT || '587'),
         secure: false,
-        auth: {
-          user: 'resend',
-          pass: resendPass,
-        },
+        auth: { user: 'resend', pass: resendPass },
       });
     } else if (smtpHost.includes('amazonses.com') && smtpUser && smtpPass) {
       this.transporter = nodemailer.createTransport({
@@ -43,15 +47,15 @@ export class EmailService {
         secure: smtpPort === 465,
         auth: { user: smtpUser, pass: smtpPass },
       });
-    } else {
+    } else if (!this.resend) {
       this.logger.warn(
         'Email not configured: no RESEND_API_KEY/SMTP_PASS or SMTP user/pass. Emails will be skipped.',
       );
     }
 
-    if (this.transporter) {
+    if (this.transporter && !this.resend) {
       this.logger.log(
-        `Email configured: host=${process.env.SMTP_HOST || (process.env.RESEND_API_KEY ? 'smtp.resend.com' : 'smtp.gmail.com')}`,
+        `Email configured: host=${process.env.SMTP_HOST || 'smtp.gmail.com'}`,
       );
       this.testConnection().catch(() => {});
     }
@@ -284,6 +288,26 @@ Reply to: ${data.email}
         `,
       };
 
+      if (this.resend) {
+        // Use Resend REST API - no SMTP, works on Railway (port 587 often blocked)
+        this.logger.log(
+          `Sending contact inquiry via Resend API: to=${adminEmail}, from=${fromAddr}`,
+        );
+        const { data: sendData, error } = await this.resend.emails.send({
+          from: `"Bio Vera Contact Form" <${fromAddr}>`,
+          to: adminEmail,
+          replyTo: data.email,
+          subject: `Contact Inquiry: ${data.subject}`,
+          html: mailOptions.html,
+          text: mailOptions.text,
+        });
+        if (error) {
+          this.logger.error(`Resend API error: ${JSON.stringify(error)}`);
+          return false;
+        }
+        this.logger.log(`Contact inquiry email sent via Resend API (id=${sendData?.id})`);
+        return true;
+      }
       if (!this.transporter) {
         this.logger.warn(
           'Email not configured (RESEND_API_KEY or SMTP missing), skipping contact inquiry email',
