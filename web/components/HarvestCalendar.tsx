@@ -1,5 +1,6 @@
 'use client';
 
+import type { LucideIcon } from 'lucide-react';
 import { Leaf, ThermometerSnowflake, ChevronDown, ChevronRight, Apple, Carrot, Wheat } from 'lucide-react';
 import { useState } from 'react';
 
@@ -78,7 +79,7 @@ function CategoryBlock({
 }: {
   id: string;
   title: string;
-  Icon: React.ComponentType<{ className?: string }>;
+  Icon: LucideIcon;
   products: ProductHarvest[];
   defaultOpen: boolean;
 }) {
@@ -92,7 +93,7 @@ function CategoryBlock({
         className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
       >
         <span className="flex items-center gap-2 font-medium text-gray-800">
-          <Icon className="h-5 w-5 text-[#2D5A27]" strokeWidth={1.5} />
+          <Icon className="h-5 w-5 text-[#2D5A27]" />
           {title}
           <span className="text-xs font-normal text-gray-500">({products.length})</span>
         </span>
