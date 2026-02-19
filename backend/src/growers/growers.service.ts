@@ -123,6 +123,34 @@ export class GrowersService {
         doc.y = heroY + heroBoxHeight;
         doc.moveDown(2.5);
 
+        // Benefits at a glance (detailed summary table)
+        const benefitsTableY = doc.y;
+        doc.fontSize(18)
+          .fillColor(veraGreen)
+          .font('Helvetica-Bold')
+          .text('Benefits at a glance', 50, benefitsTableY);
+        doc.moveTo(50, benefitsTableY + 18).lineTo(220, benefitsTableY + 18).stroke(veraGreen, 1.5);
+        doc.y = benefitsTableY + 26;
+        doc.fontSize(10).fillColor(lightGray).font('Helvetica').text('Quick reference – what you get as a Bio Vera grower. Document v2.0 (February 2026).');
+        doc.moveDown(1.2);
+        const tableRows = [
+          { benefit: 'Fixed pricing', detail: 'Seasonal price stability; no daily fluctuations. Prices agreed before season.' },
+          { benefit: 'Logistics priority', detail: 'Frigo-Fleet pickup at scheduled minute; zero wait time; priority from field to market.' },
+          { benefit: 'Automated payments', detail: 'Funds reserved at verification; released within 48h of Hub arrival. Secured by German retail contracts.' },
+          { benefit: 'Group certification', detail: 'GlobalG.A.P. IFA v6 group certification; costs covered; direct German market access.' },
+          { benefit: 'Digital field management', detail: 'Mobile app: estates, parcels, soil/spray logs, GPS validation, QR scanning, full traceability.' },
+          { benefit: 'Quality verification', detail: 'Field Coordinators on-site; MRL at 70% EU limits; only approved batches to packaging.' },
+        ];
+        tableRows.forEach((row, i) => {
+          if (doc.y + 28 > doc.page.height - 50) { doc.addPage(); doc.y = 50; }
+          const rY = doc.y;
+          doc.rect(50, rY, doc.page.width - 100, 24).fill(i % 2 === 0 ? '#FAFAFA' : '#FFFFFF').stroke(veraGreen, 0.5);
+          doc.fontSize(10).fillColor(veraGreen).font('Helvetica-Bold').text(row.benefit, 60, rY + 6, { width: 140 });
+          doc.fontSize(9).fillColor(lightGray).font('Helvetica').text(row.detail, 210, rY + 6, { width: doc.page.width - 270 });
+          doc.y = rY + 26;
+        });
+        doc.moveDown(1.5);
+
         // How It Works Section
         const sectionY = doc.y;
         doc.fontSize(22)
@@ -557,6 +585,35 @@ export class GrowersService {
 
         doc.moveDown(2);
 
+        // Requirements checklist (detailed)
+        if (doc.y + 140 > doc.page.height - 50) {
+          doc.addPage();
+          doc.y = 50;
+        }
+        const reqListY = doc.y;
+        doc.fontSize(18)
+          .fillColor(veraGreen)
+          .font('Helvetica-Bold')
+          .text('Requirements checklist', 50, reqListY);
+        doc.moveTo(50, reqListY + 18).lineTo(240, reqListY + 18).stroke(veraGreen, 1.5);
+        doc.y = reqListY + 26;
+        doc.fontSize(10).fillColor(lightGray).font('Helvetica').text('All of the following are mandatory for network participation.');
+        doc.moveDown(1);
+        const reqChecklist = [
+          'Digital scheduling: announce every harvest 24h in advance; real-time start/stop reporting in app.',
+          'Quality: batches approved on-site by Field Coordinators; MRL at 70% of EU permitted levels.',
+          'Packaging: only Bio Vera reusable crates with QR codes; no manual repacking; packaging at farm.',
+          'Traceability: soil and spray logs uploaded before season; GPS validation for all field entries.',
+          'Certification: compliance with GlobalG.A.P. IFA v6 group requirements (managed by Vera Agrar).',
+        ];
+        reqChecklist.forEach((r, i) => {
+          if (doc.y + 22 > doc.page.height - 50) { doc.addPage(); doc.y = 50; }
+          doc.circle(62, doc.y + 6, 4).fill(veraGreen);
+          doc.fontSize(10).fillColor(darkGray).font('Helvetica').text(r, 76, doc.y, { width: doc.page.width - 130 });
+          doc.moveDown(0.9);
+        });
+        doc.moveDown(1.5);
+
         // Contact & Next Steps Section - check space
         const contactBoxHeight = 80;
         if (doc.y + contactBoxHeight > doc.page.height - 50) {
@@ -584,6 +641,8 @@ export class GrowersService {
             });
         
         doc.y = contactY + contactBoxHeight;
+        doc.moveDown(1.5);
+        doc.fontSize(8).fillColor(lightGray).text('Document v2.0 | Valid as of February 2026. © 2026 Bio Vera.', 50, doc.y, { align: 'left' });
 
         doc.end();
       } catch (error) {
@@ -694,7 +753,7 @@ export class GrowersService {
         doc.fontSize(12)
           .fillColor(lightGray)
           .font('Helvetica')
-          .text('All products must be packaged according to Bio Vera standards to ensure quality, traceability, and brand consistency. This guide provides detailed specifications for proper packaging.', 
+          .text('All products must be packaged according to Bio Vera standards to ensure quality, traceability, and brand consistency. This guide provides detailed specifications for proper packaging. Box dimensions are optimized for 800×1200 mm pallets and 3×3 per level. Document v2.0 (February 2026).', 
             50, doc.y, { 
               align: 'left',
               width: doc.page.width - 100,
@@ -1330,9 +1389,9 @@ export class GrowersService {
         const footerY = doc.page.height - 50;
         doc.fontSize(8)
           .fillColor(lightGray)
-          .text('© 2026 Bio Vera. All rights reserved.', 50, footerY, { align: 'left' });
+          .text('© 2026 Bio Vera. All rights reserved. Document v2.0 | Last updated: February 2026', 50, footerY, { align: 'left' });
         
-        doc.text('Packaging Guidelines v1.0', doc.page.width - 200, footerY, { align: 'right' });
+        doc.text('Packaging Guidelines v2.0 | Feb 2026', doc.page.width - 220, footerY, { align: 'right' });
 
         doc.end();
       } catch (error) {
@@ -1393,7 +1452,7 @@ export class GrowersService {
     const footerY = doc.page.height - 50;
     doc.fontSize(8)
       .fillColor(lightGray)
-      .text('© 2026 Bio Vera. All rights reserved.', 50, footerY, { align: 'left' });
+      .text('© 2026 Bio Vera. All rights reserved. Document v2.0 | Last updated: February 2026', 50, footerY, { align: 'left' });
     doc.text(version, doc.page.width - 200, footerY, { align: 'right' });
   }
 
@@ -1434,7 +1493,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'This guide provides comprehensive instructions for managing your estates, parcels, and field entries using the Bio Vera system. Follow these steps to ensure accurate tracking, compliance, and optimal yield management.',
+          'This guide provides comprehensive instructions for managing your estates, parcels, and field entries using the Bio Vera system. Follow these steps to ensure accurate tracking, compliance, and optimal yield management. All data is stored locally first and syncs automatically when the device is online. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1530,9 +1589,33 @@ export class GrowersService {
           'The Bio Vera mobile app works completely offline. All field entries are stored locally and automatically synchronized when internet connection is restored. No data is ever lost, even if you are offline for 24 hours or more.',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
+        doc.moveDown(1.5);
+
+        // Section 6: Harvest Announcement
+        this.checkPageBreak(doc, 200);
+        doc.fontSize(20).fillColor(veraGreen).font('Helvetica-Bold').text('6. Harvest Announcement (Mandatory)', 50, doc.y);
+        doc.moveDown(1);
+        doc.fontSize(11).fillColor(darkGray).font('Helvetica').text(
+          'All harvests must be announced at least 24 hours in advance via the app. You must report real-time start and stop of harvest so that logistics can coordinate pickup. Field Coordinators verify quality on-site; only approved batches proceed to packaging.',
+          50, doc.y, { width: doc.page.width - 100, align: 'left' }
+        );
+        doc.moveDown(0.8);
+        doc.fontSize(12).fillColor(darkGray).font('Helvetica-Bold').text('Steps:', 50, doc.y);
+        doc.moveDown(0.5);
+        const harvestSteps = [
+          'Open the app and select the parcel you will harvest',
+          'Tap "Announce harvest" and set date and estimated volume',
+          'On harvest day: tap "Start harvest" when you begin',
+          'Tap "Stop harvest" when finished; record actual quantity',
+          'Wait for Field Coordinator approval before packaging'
+        ];
+        harvestSteps.forEach((step, idx) => {
+          doc.fontSize(10).fillColor(lightGray).font('Helvetica').text(`${idx + 1}. ${step}`, 60, doc.y, { width: doc.page.width - 120 });
+          doc.moveDown(0.4);
+        });
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Field Management Guide v1.0');
+        this.addFooter(doc, lightGray, 'Field Management Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating field management guide PDF:', error);
@@ -1568,7 +1651,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'The Bio Vera Protocol defines the standards, requirements, and processes for network participation. Adherence to this protocol ensures quality, traceability, and market access.',
+          'The Bio Vera Protocol defines the standards, requirements, and processes for network participation. Adherence to this protocol ensures quality, traceability, and market access. All products must meet MRL at 70% of EU permitted levels. Cold chain is maintained from field to Hamburg retail. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1623,7 +1706,7 @@ export class GrowersService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Bio Vera Protocol v1.0');
+        this.addFooter(doc, lightGray, 'Bio Vera Protocol v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating protocol PDF:', error);
@@ -1659,7 +1742,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(250, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'Bio Vera provides group certification under GlobalG.A.P. IFA v6 standard. This eliminates individual certification costs and simplifies the certification process for network participants.',
+          'Bio Vera provides group certification under GlobalG.A.P. IFA v6 standard. This eliminates individual certification costs and simplifies the certification process for network participants. Vera Agrar holds the certificate; audits are conducted on an annual cycle. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1706,7 +1789,7 @@ export class GrowersService {
         });
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Certification Requirements v1.0');
+        this.addFooter(doc, lightGray, 'Certification Requirements v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating certification requirements PDF:', error);
@@ -1742,7 +1825,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'The Bio Vera mobile application is designed for farmers of all ages, with large buttons, clear instructions, and offline functionality. This guide will help you navigate the app and manage your fields effectively.',
+          'The Bio Vera mobile application is designed for farmers of all ages, with large buttons (minimum 60px touch targets), clear instructions, and offline functionality. This guide will help you navigate the app and manage your fields effectively. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1797,7 +1880,7 @@ export class GrowersService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Mobile App Guide v1.0');
+        this.addFooter(doc, lightGray, 'Mobile App Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating mobile app guide PDF:', error);
@@ -1833,7 +1916,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(250, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'Bio Vera uses an escrow payment system to ensure secure and timely payments. All transactions are transparent, automated, and protected.',
+          'Bio Vera uses an escrow payment system to ensure secure and timely payments. Funds are released within 48 hours of Hub arrival. Buyer contracts with German retail (60–90 days) secure the flow. All transactions are transparent, automated, and protected. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1898,7 +1981,7 @@ export class GrowersService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Payment Process Guide v1.0');
+        this.addFooter(doc, lightGray, 'Payment Process Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating payment process guide PDF:', error);
@@ -1934,7 +2017,7 @@ export class GrowersService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'Bio Vera maintains strict quality standards for all certified products. These standards ensure consistency, safety, and market acceptance across all product categories.',
+          'Bio Vera maintains strict quality standards for all certified products. These standards ensure consistency, safety, and market acceptance across all product categories. MRL is enforced at 70% of EU permitted levels. Document version: v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -2026,7 +2109,7 @@ export class GrowersService {
         });
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Quality Standards v1.0');
+        this.addFooter(doc, lightGray, 'Quality Standards v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating quality standards PDF:', error);

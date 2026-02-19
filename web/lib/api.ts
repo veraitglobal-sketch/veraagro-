@@ -63,13 +63,14 @@ export const authAPI = {
     return response.data;
   },
   registerBuyer: async (data: {
-    partnerCode: string;
-    email?: string;
+    email: string;
+    partnerCode?: string;
     phone?: string;
     firstName: string;
     lastName: string;
     password: string;
     businessName?: string;
+    companyPosition?: string;
     location?: { latitude: number; longitude: number };
     address?: string;
     city?: string;
@@ -1036,10 +1037,65 @@ export const farmerProfileAPI = {
     });
     return URL.createObjectURL(response.data);
   },
+
+  /** Get QR code image for the logged-in grower (authenticated). Returns blob URL. */
+  getMyQrCodeImage: async () => {
+    const response = await api.get('/farmer-profile/me/qr-image', {
+      responseType: 'blob',
+    });
+    return URL.createObjectURL(response.data);
+  },
 };
 
 // Production API URL - used when NEXT_PUBLIC_API_URL is missing or invalid at build time
 const CONTACT_API_BASE = 'https://api.biovera.app';
+
+/** Get Formspree endpoint from env */
+function getFormspreeEndpoint(): string {
+  return typeof process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT === 'string'
+    ? process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT.trim()
+    : '';
+}
+
+/**
+ * Submit application form (growers, logistics, suppliers) to Formspree.
+ * Uses same endpoint as contact form - add _form_type so you can distinguish in Formspree.
+ */
+export async function submitApplicationForm(
+  formType: string,
+  data: Record<string, string | string[] | boolean | File | null | number | undefined>
+): Promise<{ success: boolean; message?: string }> {
+  const endpoint = getFormspreeEndpoint();
+  if (!endpoint) {
+    throw new Error('Form submissions are not configured. Please contact us at info@biovera.app');
+  }
+  const fd = new FormData();
+  fd.append('_form_type', formType);
+  fd.append('subject', `${formType} Application`);
+  for (const [key, value] of Object.entries(data)) {
+    if (value === undefined || value === null) continue;
+    if (value instanceof File) {
+      fd.append(key, value);
+    } else if (Array.isArray(value)) {
+      fd.append(key, value.join(', '));
+    } else if (typeof value === 'boolean') {
+      fd.append(key, value ? 'Yes' : 'No');
+    } else {
+      fd.append(key, String(value));
+    }
+  }
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: fd,
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(30000),
+  });
+  const result = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+  if (res.ok && result.ok !== false) {
+    return { success: true, message: 'Thank you for your application. We will contact you within 3-5 business days.' };
+  }
+  throw new Error(result?.error || 'Failed to submit application. Please try again or contact info@biovera.app');
+}
 
 export const contactAPI = {
   submitInquiry: async (data: {
@@ -1049,11 +1105,7 @@ export const contactAPI = {
     message: string;
     phone?: string;
   }): Promise<{ success: boolean; message?: string }> => {
-    // Formspree: reliable, no backend needed, no timeout. Use when backend/Resend fails.
-    const formspreeEndpoint = typeof process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT === 'string'
-      ? process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT.trim()
-      : '';
-
+    const formspreeEndpoint = getFormspreeEndpoint();
     if (formspreeEndpoint) {
       const fd = new FormData();
       fd.append('name', data.name);
@@ -1075,10 +1127,14 @@ export const contactAPI = {
       throw new Error(result?.error || 'Failed to send message');
     }
 
-    // Backend API (Railway) - production always uses api.biovera.app, never localhost
+    // Backend API (Railway) - production ALWAYS uses api.biovera.app, never localhost
     const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     const raw = typeof process.env.NEXT_PUBLIC_API_URL === 'string' ? process.env.NEXT_PUBLIC_API_URL.trim() : '';
-    const baseUrl = isLocal ? (raw.startsWith('http') ? raw.replace(/\/$/, '') : 'http://localhost:3004') : (raw.startsWith('http') ? raw.replace(/\/$/, '') : CONTACT_API_BASE);
+    const candidate = raw.startsWith('http') ? raw.replace(/\/$/, '') : '';
+    const isLocalhost = candidate.includes('localhost') || candidate.includes('127.0.0.1');
+    const baseUrl = isLocal
+      ? (candidate && !isLocalhost ? candidate : 'http://localhost:3004')
+      : (candidate && !isLocalhost ? candidate : CONTACT_API_BASE);
     const url = `${baseUrl}/contact/submit`;
 
     const res = await fetch(url, {

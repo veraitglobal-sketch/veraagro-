@@ -4,13 +4,30 @@ Da forma radi (ne ostane na "Sending..." i da stvarno pošalje poruku na mejl), 
 
 ---
 
-## Arhitektura (od 2025)
+## Opcija A: Formspree (preporučeno – radi odmah)
 
-**Frontend → Backend direktno (`/contact/submit`) → Email (Resend)**
+Ako backend/Resend ne radi (timeout, Railway cold start), koristi **Formspree** – bez backenda, bez timeout-a.
 
-*(Proxy je uklonjen – Vercel Hobby ima limit 10s, što je uzrokovalo timeout.)*
+1. Registruj se na [formspree.io](https://formspree.io)
+2. Kreiraj novi form → dobijaš URL tipa `https://formspree.io/f/xxxxxxx`
+3. U **Vercel** dodaj env varijablu: `NEXT_PUBLIC_FORMSPREE_ENDPOINT` = taj URL
+4. Redeploy web aplikacije
 
-Frontend šalje direktno na backend (nema proxy – Vercel ima 10s limit).
+Forma će slati direktno na Formspree, koji šalje email na tvoj inbox. Besplatno 50 submita/mesec.
+
+**Istí Formspree URL koriste i sledeće forme:**
+- **Contact** (`/contact`) – kontakt poruke
+- **Growers** (`/growers`) – Producer Application
+- **Logistics** (`/logistics-partner`) – Partner Application
+- **Suppliers** (`/suppliers`) – Supplier Application
+
+U Formspree Inboxu svaki submit ima polje `_form_type` (Grower, Logistics Partner, Supplier) ili standardna polja (name, email, subject, message) za kontakt formu.
+
+---
+
+## Opcija B: Backend + Resend
+
+**Frontend → Backend direktno (`/contact/submit`) → Resend REST API → Email**
 
 ---
 

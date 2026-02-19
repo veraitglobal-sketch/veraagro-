@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Download } from 'lucide-react';
-import { logisticsPartnerAPI } from '@/lib/api';
+import { logisticsPartnerAPI, submitApplicationForm } from '@/lib/api';
 
 export default function LogisticsPartnerPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +16,8 @@ export default function LogisticsPartnerPage() {
   });
   const [fuelSavings, setFuelSavings] = useState(15); // Default 15% savings
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,10 +37,17 @@ export default function LogisticsPartnerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement API call to submit application
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await submitApplicationForm('Logistics Partner', {
+        companyName: formData.companyName,
+        vehicleCount: formData.vehicleCount,
+        regions: formData.regions,
+        licenseFile: formData.licenseFile,
+        acceptDigitalControl: formData.acceptDigitalControl,
+      });
+      setSubmitted(true);
       setFormData({
         companyName: '',
         vehicleCount: '',
@@ -46,7 +55,12 @@ export default function LogisticsPartnerPage() {
         licenseFile: null,
         acceptDigitalControl: false,
       });
-    }, 3000);
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to submit. Please try again or contact info@biovera.app');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const calculateSavings = (percentage: number) => {
@@ -569,11 +583,15 @@ export default function LogisticsPartnerPage() {
                   </div>
                 </div>
 
+                {submitError && (
+                  <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{submitError}</p>
+                )}
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
+                  disabled={submitting}
+                  className="w-full px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Submit Application
+                  {submitting ? 'Submitting...' : 'Submit Application'}
                 </button>
               </div>
             </form>

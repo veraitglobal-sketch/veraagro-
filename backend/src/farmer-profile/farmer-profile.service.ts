@@ -157,6 +157,20 @@ export class FarmerProfileService {
       throw new NotFoundException('User is not a farmer');
     }
 
+    // Ensure grower has a unique farmerQrCode for their public profile / QR
+    let farmerQrCode = user.farmerQrCode;
+    if (!farmerQrCode) {
+      const code = user.partnerCode || user.id.replace(/-/g, '').slice(0, 8).toUpperCase();
+      farmerQrCode = `FARMER-${code}`;
+      await this.prisma.users.update({
+        where: { id: userId },
+        data: { farmerQrCode },
+      });
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const farmerProfileUrl = `${frontendUrl}/farmer/${farmerQrCode}`;
+
     // Get location from first estate
     const firstEstate = user.estates[0];
     const location = firstEstate?.polygonCoordinates || null;
@@ -181,9 +195,22 @@ export class FarmerProfileService {
           location: this.extractRegionFromLocation(estate.polygonCoordinates || null),
         })),
       },
-      farmerQrCode: user.farmerQrCode,
-      farmerProfileUrl: user.farmerProfileUrl,
+      farmerQrCode,
+      farmerProfileUrl,
     };
+  }
+
+  /**
+   * Get QR code image for the authenticated grower (by user ID).
+   * Ensures farmerQrCode exists, then returns data URL of the QR image.
+   */
+  async getMyQrCodeImageForUserId(userId: string): Promise<string> {
+    const profile = await this.getFarmerProfileByUserId(userId);
+    const qrCode = (profile as any).farmerQrCode;
+    if (!qrCode) {
+      throw new NotFoundException('Farmer QR code not found');
+    }
+    return this.generateFarmerQrCodeImage(qrCode);
   }
 
   /**

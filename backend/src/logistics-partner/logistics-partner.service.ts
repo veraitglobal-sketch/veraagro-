@@ -611,11 +611,41 @@ export class LogisticsPartnerService {
         doc.y = contactY + contactBoxHeight;
         doc.moveDown(2);
 
+        // Next steps – How to apply (detailed)
+        checkPageBreak(140);
+        const nextStepsY = doc.y;
+        doc.fontSize(22)
+          .fillColor(veraGreen)
+          .font('Helvetica-Bold')
+          .text('Next steps – How to apply', 50, nextStepsY);
+        doc.moveTo(50, nextStepsY + 20).lineTo(260, nextStepsY + 20).stroke(veraGreen, 2);
+        doc.y = nextStepsY + 28;
+        doc.fontSize(11).fillColor(lightGray).font('Helvetica').text('Detailed application process for logistics partners.');
+        doc.moveDown(1.5);
+        const nextSteps = [
+          { step: '1. Partner registration', detail: 'Submit company details, vehicle fleet (vans, trucks), and EU transport certifications. We verify compliance with cold chain and safety standards.' },
+          { step: '2. Route assignment', detail: 'Receive guaranteed routes based on capacity and location. Access real-time schedules and pickup/delivery points via the logistics dashboard.' },
+          { step: '3. Digital handover training', detail: 'Training on mobile app: QR scan at pickup, in-transit temperature/GPS logging, and digital handover at hub or retail. All steps recorded with timestamps.' },
+          { step: '4. First mission & payment', detail: 'Complete first mission; payment is released automatically upon delivery confirmation (typically within 24 hours). Build rating and long-term contracts.' },
+        ];
+        nextSteps.forEach((item) => {
+          checkPageBreak(50);
+          const boxY = doc.y;
+          doc.rect(50, boxY, doc.page.width - 100, 42).fill('#FAFAFA').stroke(veraGreen, 1);
+          doc.fontSize(12).fillColor(veraGreen).font('Helvetica-Bold').text(item.step, 70, boxY + 8);
+          doc.fontSize(9).fillColor(lightGray).font('Helvetica').text(item.detail, 70, boxY + 26, { width: doc.page.width - 140 });
+          doc.y = boxY + 46;
+          doc.moveDown(0.5);
+        });
+        doc.moveDown(1);
+        doc.fontSize(8).fillColor(lightGray).text('Document v2.0 | Valid as of February 2026. © 2026 Bio Vera.', 50, doc.y, { align: 'left' });
+        doc.moveDown(1);
+
         // Footer
         doc.fontSize(8)
           .fillColor(lightGray)
           .font('Helvetica')
-          .text('© 2026 Bio Vera. All rights reserved.', 50, doc.page.height - 30, {
+          .text('© 2026 Bio Vera. All rights reserved. Document v2.0 | Last updated: February 2026', 50, doc.page.height - 30, {
             align: 'center',
             width: doc.page.width - 100
           });
@@ -660,7 +690,7 @@ export class LogisticsPartnerService {
    */
   private addFooter(doc: any, lightGray: string, version: string): void {
     const footerY = doc.page.height - 50;
-    doc.fontSize(8).fillColor(lightGray).text('© 2026 Bio Vera. All rights reserved.', 50, footerY, { align: 'left' });
+    doc.fontSize(8).fillColor(lightGray).text('© 2026 Bio Vera. All rights reserved. Document v2.0 | Last updated: February 2026', 50, footerY, { align: 'left' });
     doc.text(version, doc.page.width - 200, footerY, { align: 'right' });
   }
 
@@ -700,7 +730,7 @@ export class LogisticsPartnerService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'This guide provides comprehensive instructions for managing deliveries, digital handovers, and route optimization using the Bio Vera logistics system.',
+          'This guide provides comprehensive instructions for managing deliveries, digital handovers, and route optimization using the Bio Vera logistics system. All handovers are digital; payment is released upon confirmation at Hamburg or designated hub. Document v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -732,7 +762,7 @@ export class LogisticsPartnerService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Transport Operations Guide v1.0');
+        this.addFooter(doc, lightGray, 'Transport Operations Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating transport operations guide PDF:', error);
@@ -767,7 +797,7 @@ export class LogisticsPartnerService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'Maintaining proper temperature control is critical for organic product quality. This protocol defines the standards and requirements for temperature-controlled transport.',
+          'Maintaining proper temperature control is critical for organic product quality. This protocol defines the standards and requirements for temperature-controlled transport. Permitted range: 0°C to +12°C; violations above 8°C for >15 minutes trigger buyer alerts. Document v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -799,7 +829,7 @@ export class LogisticsPartnerService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Cold Chain Protocol v1.0');
+        this.addFooter(doc, lightGray, 'Cold Chain Protocol v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating cold chain protocol PDF:', error);
@@ -834,7 +864,7 @@ export class LogisticsPartnerService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'The Bio Vera mobile application for logistics partners provides real-time mission tracking, delivery confirmations, and route optimization.',
+          'The Bio Vera mobile application for logistics partners provides real-time mission tracking, delivery confirmations, and route optimization. Scan QR at pickup and delivery; digital handover triggers payment release. Document v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -866,7 +896,7 @@ export class LogisticsPartnerService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Mobile App Guide v1.0');
+        this.addFooter(doc, lightGray, 'Mobile App Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating mobile app guide PDF:', error);
@@ -901,7 +931,7 @@ export class LogisticsPartnerService {
         doc.moveTo(50, doc.y).lineTo(250, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'Bio Vera provides automated, fast payments for logistics partners. Payments are released immediately upon successful delivery confirmation.',
+          'Bio Vera provides automated, fast payments for logistics partners. Payments are released upon successful digital handover confirmation, typically within 24 hours. Document v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -933,7 +963,7 @@ export class LogisticsPartnerService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'Payment Process Guide v1.0');
+        this.addFooter(doc, lightGray, 'Payment Process Guide v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating payment process guide PDF:', error);
@@ -968,7 +998,7 @@ export class LogisticsPartnerService {
         doc.moveTo(50, doc.y).lineTo(200, doc.y).stroke(veraGreen, 2);
         doc.moveDown(1);
         doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(
-          'GPS tracking is mandatory for all Bio Vera deliveries. This ensures complete traceability, route optimization, and delivery verification.',
+          'GPS tracking is mandatory for all Bio Vera deliveries. This ensures complete traceability, route optimization, and delivery verification. Position is logged every 5 minutes during active missions; data syncs to the platform in real time. Document v2.0 (February 2026).',
           50, doc.y, { width: doc.page.width - 100, align: 'left' }
         );
         doc.moveDown(2);
@@ -1000,7 +1030,7 @@ export class LogisticsPartnerService {
         );
         doc.moveDown(2);
 
-        this.addFooter(doc, lightGray, 'GPS Tracking Standards v1.0');
+        this.addFooter(doc, lightGray, 'GPS Tracking Standards v2.0');
         doc.end();
       } catch (error) {
         this.logger.error('Error generating GPS tracking standards PDF:', error);

@@ -50,6 +50,26 @@ export class FarmerProfileController {
   }
 
   /**
+   * Get QR code image for the logged-in grower (authenticated).
+   * Returns PNG image. Grower can use this in their dashboard or download it.
+   * GET /farmer-profile/me/qr-image
+   */
+  @Get('me/qr-image')
+  @UseGuards(JwtAuthGuard)
+  async getMyQrCodeImage(@GetUser() user: any, @Res() res: Response) {
+    try {
+      const qrCodeDataUrl = await this.farmerProfileService.getMyQrCodeImageForUserId(user.id);
+      const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
+      const imageBuffer = Buffer.from(base64Data, 'base64');
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Content-Disposition', 'inline; filename="bio-vera-my-qr.png"');
+      res.send(imageBuffer);
+    } catch (error) {
+      res.status(404).json({ message: 'QR code not found' });
+    }
+  }
+
+  /**
    * Update farmer profile (authenticated)
    * PUT /farmer-profile/me
    */

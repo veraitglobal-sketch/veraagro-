@@ -14,7 +14,6 @@ export default function BuyerRegisterPage() {
   const [success, setSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
-    partnerCode: '',
     email: '',
     phone: '',
     firstName: '',
@@ -22,6 +21,7 @@ export default function BuyerRegisterPage() {
     password: '',
     confirmPassword: '',
     businessName: '',
+    companyPosition: '',
     address: '',
     city: '',
   });
@@ -82,8 +82,8 @@ export default function BuyerRegisterPage() {
     setSuccess(false);
 
     // Validation
-    if (!formData.partnerCode || !formData.firstName || !formData.lastName || !formData.password) {
-      setError('Please fill in all required fields');
+    if (!formData.email || !formData.firstName || !formData.lastName || !formData.password) {
+      setError('Please fill in all required fields (email, name, password)');
       return;
     }
 
@@ -107,13 +107,13 @@ export default function BuyerRegisterPage() {
       setLoading(true);
 
       const response = await authAPI.registerBuyer({
-        partnerCode: formData.partnerCode,
-        email: formData.email || undefined,
+        email: formData.email,
         phone: formData.phone || undefined,
         firstName: formData.firstName,
         lastName: formData.lastName,
         password: formData.password,
         businessName: formData.businessName || undefined,
+        companyPosition: formData.companyPosition || undefined,
         location: location || undefined,
         address: formData.address || undefined,
         city: formData.city || undefined,
@@ -174,7 +174,7 @@ export default function BuyerRegisterPage() {
             <div className="text-center mb-8">
               <h1 className="text-3xl font-light text-gray-900 mb-2">Register as Buyer</h1>
               <p className="text-sm text-gray-600">
-                Create your account to browse and order organic products
+                Enter your email and details to create your account. You can browse and order once your profile is verified.
               </p>
             </div>
 
@@ -188,37 +188,21 @@ export default function BuyerRegisterPage() {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="partnerCode" className="block text-sm font-medium text-gray-700 mb-2">
-                      Partner Code *
-                    </label>
-                    <input
-                      id="partnerCode"
-                      type="text"
-                      name="partnerCode"
-                      value={formData.partnerCode}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Enter your partner code"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Name
-                    </label>
-                    <input
-                      id="businessName"
-                      type="text"
-                      name="businessName"
-                      value={formData.businessName}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Your business name (optional)"
-                    />
-                  </div>
+                {/* Email – required for self-registration */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email *
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
+                    placeholder="your@email.com"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -237,7 +221,6 @@ export default function BuyerRegisterPage() {
                       placeholder="First name"
                     />
                   </div>
-
                   <div>
                     <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
                       Last Name *
@@ -255,36 +238,51 @@ export default function BuyerRegisterPage() {
                   </div>
                 </div>
 
+                {/* Company / firm */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
+                    <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
+                      Company / Business name (Firma)
                     </label>
                     <input
-                      id="email"
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                      id="businessName"
+                      type="text"
+                      name="businessName"
+                      value={formData.businessName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="your@email.com (optional)"
+                      placeholder="e.g. Green Market d.o.o."
                     />
                   </div>
-
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
+                    <label htmlFor="companyPosition" className="block text-sm font-medium text-gray-700 mb-2">
+                      Position in company (Pozicija u firmi)
                     </label>
                     <input
-                      id="phone"
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
+                      id="companyPosition"
+                      type="text"
+                      name="companyPosition"
+                      value={formData.companyPosition}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Phone number (optional)"
+                      placeholder="e.g. Purchasing Manager, Owner"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
+                    placeholder="Phone number (optional)"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

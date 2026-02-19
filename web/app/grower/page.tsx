@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { estatesAPI, missionsAPI, financialDashboardAPI } from '@/lib/api';
+import { estatesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/grower/materials', label: 'Materials', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
   { href: '/grower/quality-entry', label: 'Quality Entry', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
   { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+  { href: '/grower/profile', label: 'My Profile', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
 ];
 
 export default function GrowerDashboardPage() {
@@ -25,6 +26,8 @@ export default function GrowerDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [financialData, setFinancialData] = useState<any>(null);
+  const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const [farmerProfileUrl, setFarmerProfileUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -38,14 +41,22 @@ export default function GrowerDashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const [estatesData, missionsData, financialDataResult] = await Promise.all([
+      const [estatesData, missionsData, financialDataResult, profileData] = await Promise.all([
         estatesAPI.getAll(),
-        missionsAPI.getMyMissions().catch(() => []), // Fallback to empty array if fails
-        financialDashboardAPI.getDashboard().catch(() => null), // Fallback to null if fails
+        missionsAPI.getMyMissions().catch(() => []),
+        financialDashboardAPI.getDashboard().catch(() => null),
+        farmerProfileAPI.getMyProfile().catch(() => null),
       ]);
       setEstates(estatesData || []);
       setMissions(missionsData || []);
       setFinancialData(financialDataResult);
+      if (profileData?.farmerQrCode) {
+        setFarmerProfileUrl(profileData.farmerProfileUrl || `/farmer/${profileData.farmerQrCode}`);
+        farmerProfileAPI.getMyQrCodeImage().then(setQrImageUrl).catch(() => setQrImageUrl(null));
+      } else {
+        setFarmerProfileUrl(null);
+        setQrImageUrl(null);
+      }
     } catch (err: any) {
       console.error('Error loading dashboard data:', err);
       setError(err.message || 'Failed to load dashboard data');
@@ -156,6 +167,45 @@ export default function GrowerDashboardPage() {
                 </svg>
               </div>
               <p className="text-3xl font-light text-gray-900">{certifiedEstates}</p>
+            </div>
+          </div>
+
+          {/* Your QR Code – visible in dashboard */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                {qrImageUrl ? (
+                  <div className="flex-shrink-0 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                    <img src={qrImageUrl} alt="Your Bio Vera QR code" className="w-24 h-24" />
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 flex-shrink-0 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-base font-medium text-gray-900">Your QR Code</h3>
+                  <p className="text-sm text-gray-600 font-light mt-0.5">
+                    Customers scan this to open your public farmer profile.
+                  </p>
+                  <Link
+                    href="/grower/profile"
+                    className="inline-block mt-2 text-sm font-medium text-[#2D5A27] hover:underline"
+                  >
+                    View profile & download QR →
+                  </Link>
+                </div>
+              </div>
+              {farmerProfileUrl && (
+                <a
+                  href={farmerProfileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-500 hover:text-[#2D5A27]"
+                >
+                  Open public profile
+                </a>
+              )}
             </div>
           </div>
 

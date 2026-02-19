@@ -81,7 +81,7 @@ export class SuppliersService {
         doc.fontSize(11)
           .fillColor(lightGray)
           .font('Helvetica')
-          .text('Join our network of trusted suppliers and expand your reach to the European market through the Bio Vera platform.', 
+          .text('Join our network of trusted suppliers and expand your reach to the European market through the Bio Vera platform. Pre-agreed pricing, Vera Admin Dashboard for all movements, and automatic alerts when inventory falls below 20%.', 
             70, heroY + 55, { 
               align: 'left', 
               width: doc.page.width - 140 
@@ -106,7 +106,7 @@ export class SuppliersService {
         doc.fontSize(11)
           .fillColor(lightGray)
           .font('Helvetica-Oblique')
-          .text('Understanding the Bio Vera supply chain');
+          .text('Understanding the Bio Vera supply chain. Document v2.0 (February 2026).');
         
         doc.moveDown(2);
 
@@ -964,10 +964,42 @@ export class SuppliersService {
           });
         
         doc.y = logisticsY + logisticsBoxHeight;
+        doc.moveDown(2);
 
-        // Footer - add after all content is written
-        // Note: We'll add footer text on each page after content is complete
-        // For now, we'll add it at the end of the document
+        // Next steps – How to apply (detailed)
+        if (doc.y + 120 > doc.page.height - doc.page.margins.bottom) {
+          doc.addPage();
+          addHeader();
+        }
+        const nextStepsY = doc.y;
+        doc.fontSize(22)
+          .fillColor(veraGreen)
+          .font('Helvetica-Bold')
+          .text('Next steps – How to apply', 50, nextStepsY);
+        doc.moveTo(50, nextStepsY + 20).lineTo(260, nextStepsY + 20).stroke(veraGreen, 2);
+        doc.y = nextStepsY + 28;
+        doc.fontSize(11).fillColor(lightGray).font('Helvetica-Oblique').text('Detailed application process for strategic suppliers.');
+        doc.moveDown(1.5);
+        const nextSteps = [
+          { step: '1. Submit expression of interest', detail: 'Contact Bio Vera with your company profile, product range, and national coverage. Include certifications (e.g. food contact, organic where applicable).' },
+          { step: '2. Documentation review', detail: 'We review your product specifications, pricing structure, and delivery capabilities. Site visit or video call may be scheduled.' },
+          { step: '3. Vera Admin onboarding', detail: 'Access to Vera Admin Dashboard for inventory, orders, and QR-based issuance. Training on system use and reporting (e.g. 20% low-stock alerts).' },
+          { step: '4. First order & go-live', detail: 'First delivery to a Bio Vera distributor; all movements recorded in the system. Ongoing compliance with QR issuance and digital tracking.' },
+        ];
+        nextSteps.forEach((item, index) => {
+          if (doc.y + 45 > doc.page.height - doc.page.margins.bottom) {
+            doc.addPage();
+            addHeader();
+          }
+          const boxY = doc.y;
+          doc.rect(50, boxY, doc.page.width - 100, 40).fill('#FAFAFA').stroke(veraGreen, 1);
+          doc.fontSize(12).fillColor(veraGreen).font('Helvetica-Bold').text(item.step, 70, boxY + 8);
+          doc.fontSize(9).fillColor(lightGray).font('Helvetica').text(item.detail, 70, boxY + 24, { width: doc.page.width - 140 });
+          doc.y = boxY + 44;
+          doc.moveDown(0.5);
+        });
+        doc.moveDown(1.5);
+        doc.fontSize(8).fillColor(lightGray).text('Document v2.0 | Valid as of February 2026. © 2026 Bio Vera. All rights reserved.', 50, doc.y, { align: 'left' });
 
         doc.end();
       } catch (error) {

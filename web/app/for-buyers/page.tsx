@@ -25,6 +25,7 @@ import {
   FileText,
   ChevronDown,
 } from 'lucide-react';
+import HarvestCalendar from '@/components/HarvestCalendar';
 
 export default function ForBuyersPage() {
   const { isAuthenticated, user } = useAuth();
@@ -99,7 +100,7 @@ export default function ForBuyersPage() {
             <p className="text-gray-700 font-light leading-relaxed">
               We are not a standard online store. We work with a clear, transparent process: you see what we offer,
               you provide your company and contact details and consent, and we take every request seriously.
-              Read how we operate below and, when ready, express your interest so we can get in touch.
+              Read how we operate below and, when ready, express your interest at the bottom of the page so we can get in touch.
             </p>
             <a
               href="#how-we-operate"
@@ -107,6 +108,13 @@ export default function ForBuyersPage() {
             >
               <FileText className="h-4 w-4" />
               How we operate
+              <ChevronDown className="h-4 w-4" />
+            </a>
+            <a
+              href="#express-interest"
+              className="inline-flex items-center gap-2 mt-2 ml-0 sm:ml-4 text-sm font-medium text-[#2D5A27] hover:text-[#23471f]"
+            >
+              Express your interest
               <ChevronDown className="h-4 w-4" />
             </a>
           </div>
@@ -147,105 +155,6 @@ export default function ForBuyersPage() {
           </div>
         </section>
 
-        {/* Express interest – data + consent + informator */}
-        <section className="py-12 border-t border-gray-200">
-          <h2 className="text-2xl font-light text-gray-900 mb-2">Express your interest</h2>
-          <p className="text-gray-600 mb-6 max-w-2xl">
-            So we can take your request seriously, please leave your company and contact details and confirm that you have read how we operate and agree to be contacted.
-          </p>
-          {interestSubmitted ? (
-            <div className="max-w-xl p-6 border border-[#2D5A27]/30 rounded-xl bg-[#2D5A27]/5">
-              <p className="text-gray-800 font-medium mb-1">Thank you.</p>
-              <p className="text-sm text-gray-600">
-                We have received your details and will be in touch. If you have not yet registered, you can do so to access the full catalog and place orders once your profile is complete.
-              </p>
-              <Link href="/register/buyer" className="inline-block mt-4 text-sm font-medium text-[#2D5A27] hover:text-[#23471f]">Register as buyer</Link>
-            </div>
-          ) : (
-            <form onSubmit={handleInterestSubmit} className="max-w-xl space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company name <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    required
-                    value={interestForm.companyName}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, companyName: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
-                    placeholder="Your company or trading name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact person <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    required
-                    value={interestForm.contactPerson}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, contactPerson: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
-                    placeholder="Full name"
-                  />
-                </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
-                  <input
-                    type="email"
-                    required
-                    value={interestForm.email}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, email: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
-                    placeholder="business@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    value={interestForm.phone}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, phone: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
-                    placeholder="+49 ..."
-                  />
-                </div>
-              </div>
-              <div className="space-y-3 pt-2">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={interestForm.consentContact}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, consentContact: e.target.checked }))}
-                    className="mt-1 rounded border-gray-300 text-[#2D5A27] focus:ring-[#2D5A27]"
-                  />
-                  <span className="text-sm text-gray-700">
-                    I consent to being contacted by Bio Vera by email and/or phone for the purpose of orders, offers, and business communication. <span className="text-red-500">*</span>
-                  </span>
-                </label>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={interestForm.consentInformator}
-                    onChange={(e) => setInterestForm((f) => ({ ...f, consentInformator: e.target.checked }))}
-                    className="mt-1 rounded border-gray-300 text-[#2D5A27] focus:ring-[#2D5A27]"
-                  />
-                  <span className="text-sm text-gray-700">
-                    I have read and accept the buyer information document (informator). I understand how Bio Vera operates and the ordering process. <span className="text-red-500">*</span>{' '}
-                    <a href="#how-we-operate" className="text-[#2D5A27] hover:text-[#23471f] underline">Read how we operate</a>
-                  </span>
-                </label>
-              </div>
-              <button
-                type="submit"
-                disabled={interestSubmitting || !interestForm.consentContact || !interestForm.consentInformator}
-                className="px-5 py-2.5 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {interestSubmitting ? 'Sending…' : 'Submit'}
-              </button>
-            </form>
-          )}
-        </section>
-
         {/* How purchases work */}
         <section className="py-12 border-t border-gray-200">
           <h2 className="text-2xl font-light text-gray-900 mb-2">How purchases work</h2>
@@ -257,7 +166,7 @@ export default function ForBuyersPage() {
               { step: 1, title: 'Register or log in', body: 'Create a buyer account or sign in. Your dashboard gives you access to the full product catalog and ordering tools.' },
               { step: 2, title: 'Browse and order', body: 'In the dashboard you can browse by category (fruits, vegetables, cereals, other), see origin, harvest info, and pricing. Place direct orders or use Pre-order 2026 for seasonal planning.' },
               { step: 3, title: 'Confirm and pay', body: 'Orders are confirmed through the platform. Payment and delivery terms are clear; we work with secure, traceable flows from farm to you.' },
-              { step: 4, title: 'Delivery and traceability', body: 'Track your batch via the digital passport. You know when it was harvested, who harvested it, and how it was handled until delivery.' },
+              { step: 4, title: 'Delivery and traceability', body: 'Track your batch via the digital passport. You see where it was harvested, when (harvest period), and how it was handled until delivery.' },
             ].map(({ step, title, body }) => (
               <div key={step} className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 bg-[#2D5A27] text-white rounded-full flex items-center justify-center text-sm font-medium">
@@ -295,6 +204,12 @@ export default function ForBuyersPage() {
           <p className="mt-4 text-sm text-gray-500">
             Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.
           </p>
+
+          {/* Harvest calendar – when harvest is, why our produce is not in shock */}
+          <div className="mt-10 pt-10 border-t border-gray-200">
+            <h3 className="text-xl font-light text-gray-900 mb-1">Harvest calendar</h3>
+            <HarvestCalendar />
+          </div>
         </section>
 
         {/* Packaging */}
@@ -400,7 +315,7 @@ export default function ForBuyersPage() {
               <div>
                 <h3 className="font-medium text-gray-900">Product passport</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Each batch has a digital passport: when it was harvested, who harvested it, which farm and location, growing method, and key handling steps. You get full transparency from field to delivery.
+                  Each batch has a digital passport with full information: where it was harvested (region, farm), when (harvest date and period), cold chain, compliance, and the full journey from field to delivery.
                 </p>
               </div>
             </div>
@@ -435,6 +350,105 @@ export default function ForBuyersPage() {
               Pre-order 2026
             </Link>
           </div>
+        </section>
+
+        {/* Express your interest – contact form at the end */}
+        <section id="express-interest" className="py-12 border-t border-gray-200 scroll-mt-20">
+          <h2 className="text-2xl font-light text-gray-900 mb-2">Express your interest</h2>
+          <p className="text-gray-600 mb-6 max-w-2xl">
+            So we can take your request seriously, please leave your company and contact details and confirm that you have read how we operate and agree to be contacted.
+          </p>
+          {interestSubmitted ? (
+            <div className="max-w-xl p-6 border border-[#2D5A27]/30 rounded-xl bg-[#2D5A27]/5">
+              <p className="text-gray-800 font-medium mb-1">Thank you.</p>
+              <p className="text-sm text-gray-600">
+                We have received your details and will be in touch. If you have not yet registered, you can do so to access the full catalog and place orders once your profile is complete.
+              </p>
+              <Link href="/register/buyer" className="inline-block mt-4 text-sm font-medium text-[#2D5A27] hover:text-[#23471f]">Register as buyer</Link>
+            </div>
+          ) : (
+            <form onSubmit={handleInterestSubmit} className="max-w-xl space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Company name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    value={interestForm.companyName}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, companyName: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
+                    placeholder="Your company or trading name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact person <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    value={interestForm.contactPerson}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, contactPerson: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
+                    placeholder="Full name"
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+                  <input
+                    type="email"
+                    required
+                    value={interestForm.email}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, email: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
+                    placeholder="business@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    value={interestForm.phone}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, phone: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
+                    placeholder="+49 ..."
+                  />
+                </div>
+              </div>
+              <div className="space-y-3 pt-2">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={interestForm.consentContact}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, consentContact: e.target.checked }))}
+                    className="mt-1 rounded border-gray-300 text-[#2D5A27] focus:ring-[#2D5A27]"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I consent to being contacted by Bio Vera by email and/or phone for the purpose of orders, offers, and business communication. <span className="text-red-500">*</span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={interestForm.consentInformator}
+                    onChange={(e) => setInterestForm((f) => ({ ...f, consentInformator: e.target.checked }))}
+                    className="mt-1 rounded border-gray-300 text-[#2D5A27] focus:ring-[#2D5A27]"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I have read and accept the buyer information document (informator). I understand how Bio Vera operates and the ordering process. <span className="text-red-500">*</span>{' '}
+                    <a href="#how-we-operate" className="text-[#2D5A27] hover:text-[#23471f] underline">Read how we operate</a>
+                  </span>
+                </label>
+              </div>
+              <button
+                type="submit"
+                disabled={interestSubmitting || !interestForm.consentContact || !interestForm.consentInformator}
+                className="px-5 py-2.5 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {interestSubmitting ? 'Sending…' : 'Submit'}
+              </button>
+            </form>
+          )}
         </section>
         </div>
 

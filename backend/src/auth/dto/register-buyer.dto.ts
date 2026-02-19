@@ -20,13 +20,15 @@ class LocationDto {
 }
 
 export class RegisterBuyerDto {
-  @IsString()
-  @IsNotEmpty()
-  partnerCode: string;
-
+  /** Optional: if omitted, a unique partner code is auto-generated (self-registration) */
   @IsOptional()
+  @IsString()
+  partnerCode?: string;
+
+  /** Required for self-registration; must be unique */
   @IsEmail()
-  email?: string;
+  @IsNotEmpty()
+  email: string;
 
   @IsOptional()
   @IsString()
@@ -44,9 +46,15 @@ export class RegisterBuyerDto {
   @MinLength(PASSWORD_REQUIREMENTS.MIN_LENGTH)
   password: string;
 
+  /** Company / business name (firma) */
   @IsOptional()
   @IsString()
   businessName?: string;
+
+  /** Position in company (pozicija u firmi), e.g. Purchasing Manager, Owner */
+  @IsOptional()
+  @IsString()
+  companyPosition?: string;
 
   @IsOptional()
   @IsObject()

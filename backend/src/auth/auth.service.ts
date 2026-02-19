@@ -66,14 +66,26 @@ export class AuthService {
   }
 
   /**
-   * Register a commercial buyer (mini market, piljarnica)
-   * Automatically creates a Hub location if location data is provided
+   * Register a commercial buyer (self-registration or with partner code)
+   * Email is required; partnerCode is auto-generated if not provided.
+   * Automatically creates a Hub location if location data is provided.
    */
   async registerBuyer(data: RegisterBuyerDto) {
-    // Check if partner code already exists
-    const existingUser = await this.usersService.findByPartnerCode(data.partnerCode);
-    if (existingUser) {
-      throw new ConflictException('Partner code already exists');
+    // Email must be unique
+    const existingEmail = await this.prisma.users.findFirst({ where: { email: data.email } });
+    if (existingEmail) {
+      throw new ConflictException('Email already registered');
+    }
+
+    // Resolve partner code: use provided or generate unique (BUYER-{timestamp}-{random})
+    let partnerCode = (data.partnerCode || '').trim();
+    if (!partnerCode) {
+      partnerCode = `BUYER-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    } else {
+      const existingPartner = await this.usersService.findByPartnerCode(partnerCode);
+      if (existingPartner) {
+        throw new ConflictException('Partner code already exists');
+      }
     }
 
     // Validate location data if provided
@@ -89,11 +101,13 @@ export class AuthService {
       // Create buyer user
       const user = await tx.users.create({
         data: {
-          partnerCode: data.partnerCode,
+          id: crypto.randomUUID(),
+          partnerCode,
           email: data.email,
           phone: data.phone,
           firstName: data.firstName,
           lastName: data.lastName,
+          companyPosition: data.companyPosition,
           passwordHash,
           roles: [UserRole.BUYER],
           status: UserStatus.PENDING_VERIFICATION, // Requires admin approval

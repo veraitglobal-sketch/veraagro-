@@ -988,6 +988,7 @@ model users {
   phone                                        String?
   firstName                                    String
   lastName                                     String
+  companyPosition                              String?                   // e.g. "Purchasing Manager", "Owner" (buyer self-registration)
   roles                                        UserRole[]                @default([FARMER])
   status                                       UserStatus                @default(PENDING_VERIFICATION)
   passwordHash                                 String
