@@ -40,6 +40,21 @@ export default function CookieConsent() {
     }
   }, []);
 
+  useEffect(() => {
+    const openSettings = () => {
+      const consent = localStorage.getItem('cookie-consent');
+      if (consent) {
+        try {
+          setPreferences(JSON.parse(consent));
+        } catch (_) {}
+      }
+      setShowBanner(true);
+      setShowSettings(true);
+    };
+    window.addEventListener('cookie-consent-open', openSettings);
+    return () => window.removeEventListener('cookie-consent-open', openSettings);
+  }, []);
+
   const handleAcceptAll = () => {
     const allAccepted: CookiePreferences = {
       essential: true,
@@ -97,17 +112,22 @@ export default function CookieConsent() {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Cookie className="w-5 h-5 text-green-600" />
+                    <Cookie className="w-5 h-5 text-[#2D5A27]" />
                     <h3 className="text-base font-light text-gray-900">
-                      We use cookies to enhance your experience
+                      Cookie notice
                     </h3>
                   </div>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    We use essential cookies to make our platform work, and optional cookies to improve your experience, 
-                    analyze usage, and assist with marketing. You can choose which cookies to accept. 
-                    <Link href="/cookies" className="text-green-600 hover:underline ml-1">
-                      Learn more
+                    We use <strong>essential</strong> cookies so the platform works (login, security, your consent choice). 
+                    Optional cookies help us improve the site (analytics), remember your preferences (functionality), and, if you allow, support marketing. 
+                    You can accept all, reject non-essential, or choose by category. Full list of cookies, purposes, and retention is in our{' '}
+                    <Link href="/cookies" className="text-[#2D5A27] hover:underline font-medium">
+                      Cookie Policy
                     </Link>
+                    {' '}and{' '}
+                    <Link href="/privacy" className="text-[#2D5A27] hover:underline font-medium">
+                      Privacy Policy
+                    </Link>.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -124,9 +144,9 @@ export default function CookieConsent() {
                   >
                     Reject All
                   </button>
-                  <button
+                    <button
                     onClick={handleAcceptAll}
-                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
                   >
                     Accept All
                   </button>
@@ -160,10 +180,17 @@ export default function CookieConsent() {
                         <span className="text-sm font-light">Always Active</span>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-600 font-light">
-                      These cookies are necessary for authentication, security, and core functionality. 
-                      They cannot be disabled.
+                    <p className="text-xs text-gray-600 font-light mb-2">
+                      Necessary for the platform to work. They cannot be disabled.
                     </p>
+                    <details className="text-xs text-gray-500 font-light">
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
+                      <ul className="mt-2 ml-4 space-y-1 list-disc">
+                        <li><strong>Purpose:</strong> Login session, authentication token (JWT), security (e.g. CSRF), load balancing, and storing this consent choice.</li>
+                        <li><strong>Examples:</strong> Session ID, token (in localStorage), cookie-consent and cookie-consent-date (localStorage).</li>
+                        <li><strong>Retention:</strong> Session (until you close the browser) or up to 1 year for persistent ones (e.g. consent).</li>
+                      </ul>
+                    </details>
                   </div>
 
                   {/* Analytics Cookies */}
@@ -182,12 +209,20 @@ export default function CookieConsent() {
                           onChange={() => togglePreference('analytics')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#2D5A27]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]"></div>
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light">
-                      These cookies collect anonymous usage data to help us improve the platform.
+                    <p className="text-xs text-gray-600 font-light mb-2">
+                      Help us understand how the platform is used so we can improve it.
                     </p>
+                    <details className="text-xs text-gray-500 font-light">
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
+                      <ul className="mt-2 ml-4 space-y-1 list-disc">
+                        <li><strong>Purpose:</strong> Anonymous statistics: page views, navigation paths, device type, and performance (e.g. load times). No identification of individuals.</li>
+                        <li><strong>Examples:</strong> Analytics cookies from tools we may use (e.g. page view counters, session duration).</li>
+                        <li><strong>Retention:</strong> Up to 2 years, depending on the tool. You can turn this category off at any time.</li>
+                      </ul>
+                    </details>
                   </div>
 
                   {/* Functionality Cookies */}
@@ -209,9 +244,17 @@ export default function CookieConsent() {
                         <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light">
-                      These cookies remember your language, display preferences, and other settings.
+                    <p className="text-xs text-gray-600 font-light mb-2">
+                      Remember your choices and settings for a more convenient experience.
                     </p>
+                    <details className="text-xs text-gray-500 font-light">
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
+                      <ul className="mt-2 ml-4 space-y-1 list-disc">
+                        <li><strong>Purpose:</strong> Language, region, display options (e.g. theme), accessibility settings, and temporary form data to avoid data loss.</li>
+                        <li><strong>Examples:</strong> preference_*, language, theme, or similar identifiers stored in localStorage/sessionStorage.</li>
+                        <li><strong>Retention:</strong> Up to 1 year or until you clear site data.</li>
+                      </ul>
+                    </details>
                   </div>
 
                   {/* Marketing Cookies */}
@@ -230,21 +273,33 @@ export default function CookieConsent() {
                           onChange={() => togglePreference('marketing')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]"></div>
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light">
-                      These cookies are used to deliver personalized advertisements and measure campaign effectiveness.
+                    <p className="text-xs text-gray-600 font-light mb-2">
+                      Used for advertising and measuring campaign effectiveness, if we use such tools in the future.
                     </p>
+                    <details className="text-xs text-gray-500 font-light">
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
+                      <ul className="mt-2 ml-4 space-y-1 list-disc">
+                        <li><strong>Purpose:</strong> Personalized ads and measurement of ad performance (e.g. conversions). May involve third-party ad partners.</li>
+                        <li><strong>Examples:</strong> Advertising or marketing cookies set by us or our partners, if we enable them.</li>
+                        <li><strong>Retention:</strong> As per the relevant provider; typically up to 2 years. You can withdraw consent at any time.</li>
+                      </ul>
+                    </details>
                   </div>
                 </div>
 
+                <p className="text-xs text-gray-500 font-light">
+                  Full list of cookies, retention periods, and third-party services: <Link href="/cookies" className="text-[#2D5A27] hover:underline">Cookie Policy</Link>. 
+                  How we use data: <Link href="/privacy" className="text-[#2D5A27] hover:underline">Privacy Policy</Link>.
+                </p>
                 <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
                   <Link
                     href="/cookies"
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    Learn More
+                    Full Cookie Policy
                   </Link>
                   <button
                     onClick={handleRejectAll}
@@ -254,7 +309,7 @@ export default function CookieConsent() {
                   </button>
                   <button
                     onClick={handleSavePreferences}
-                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
                   >
                     Save Preferences
                   </button>

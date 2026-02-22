@@ -16,6 +16,7 @@ interface User {
   phone?: string;
   firstName: string;
   lastName: string;
+  productionCountry?: string | null;
   roles: string[];
   status: string;
   createdAt: string;
@@ -76,6 +77,7 @@ export default function UsersManagementPage() {
     phone: '',
     firstName: '',
     lastName: '',
+    productionCountry: '',
     password: '',
     roles: [] as string[],
     status: 'PENDING_VERIFICATION' as string,
@@ -88,6 +90,7 @@ export default function UsersManagementPage() {
     try {
       const newUser = await usersAPI.create({
         ...formData,
+        productionCountry: formData.productionCountry || undefined,
         password: formData.autoGeneratePassword ? undefined : formData.password,
         roles: formData.roles.length > 0 ? formData.roles : undefined,
         autoGeneratePassword: formData.autoGeneratePassword,
@@ -151,6 +154,7 @@ export default function UsersManagementPage() {
         phone: formData.phone || undefined,
         firstName: formData.firstName || undefined,
         lastName: formData.lastName || undefined,
+        productionCountry: formData.productionCountry || undefined,
         roles: formData.roles.length > 0 ? formData.roles : undefined,
         status: formData.status || undefined,
       });
@@ -169,6 +173,7 @@ export default function UsersManagementPage() {
       phone: '',
       firstName: '',
       lastName: '',
+      productionCountry: '',
       password: '',
       roles: [],
       status: 'PENDING_VERIFICATION',
@@ -185,6 +190,7 @@ export default function UsersManagementPage() {
       phone: user.phone || '',
       firstName: user.firstName,
       lastName: user.lastName,
+      productionCountry: user.productionCountry || '',
       password: '',
       roles: user.roles || [],
       status: user.status,
@@ -443,6 +449,19 @@ export default function UsersManagementPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
+                    {(formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Production country (for QR label)</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Serbia, Italy"
+                          value={formData.productionCountry}
+                          onChange={(e) => setFormData({ ...formData, productionCountry: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                        <p className="text-xs text-gray-500 mt-0.5">Shown as &quot;Produced in [country], Region [X]. Grown to Vera standards.&quot;</p>
+                      </div>
+                    )}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                       <div className="space-y-2">
@@ -682,6 +701,18 @@ export default function UsersManagementPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
+                    {(formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Production country (for QR label)</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Serbia, Italy"
+                          value={formData.productionCountry}
+                          onChange={(e) => setFormData({ ...formData, productionCountry: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                    )}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                       <select

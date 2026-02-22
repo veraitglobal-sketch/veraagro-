@@ -69,7 +69,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
               letterSpacing: 0.2,
             }}
           >
-            {new Date(transaction.createdAt).toLocaleDateString('sr-RS')}
+            {new Date(transaction.createdAt).toLocaleDateString('en-US')}
           </Text>
         </View>
       </View>

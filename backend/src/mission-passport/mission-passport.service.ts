@@ -166,7 +166,7 @@ export class MissionPassportService {
         doc.fontSize(11)
           .fillColor(darkGray)
           .font('Helvetica')
-          .text(mission.pickedUpAt ? new Date(mission.pickedUpAt).toLocaleDateString('sr-RS') : 'Pending', 300, missionY + 30, { align: 'left' });
+          .text(mission.pickedUpAt ? new Date(mission.pickedUpAt).toLocaleDateString('en-US') : 'Pending', 300, missionY + 30, { align: 'left' });
         
         doc.fontSize(10)
           .fillColor(lightGray)
@@ -228,7 +228,7 @@ export class MissionPassportService {
         doc.fontSize(11)
           .fillColor(darkGray)
           .font('Helvetica')
-          .text(new Date(batch.harvestDate).toLocaleDateString('sr-RS'), 300, batchY + 30, { align: 'left' });
+          .text(new Date(batch.harvestDate).toLocaleDateString('en-US'), 300, batchY + 30, { align: 'left' });
         
         doc.fontSize(10)
           .fillColor(lightGray)
@@ -366,7 +366,7 @@ export class MissionPassportService {
           .fillColor(darkGray)
           .font('Helvetica')
           .text(batch.estates.certificationStartDate 
-            ? new Date(batch.estates.certificationStartDate).toLocaleDateString('sr-RS')
+            ? new Date(batch.estates.certificationStartDate).toLocaleDateString('en-US')
             : 'N/A', 300, certY + 30, { align: 'left' });
         
         doc.y = certY + certBoxHeight;
@@ -437,7 +437,7 @@ export class MissionPassportService {
         doc.fontSize(8)
           .fillColor(lightGray)
           .font('Helvetica')
-          .text(`Generated on ${new Date().toLocaleString('sr-RS')} | Bio Vera Digital Passport`, 50, doc.page.height - 30, {
+          .text(`Generated on ${new Date().toLocaleString('en-US')} | Bio Vera Digital Passport`, 50, doc.page.height - 30, {
             align: 'center',
             width: doc.page.width - 100
           });

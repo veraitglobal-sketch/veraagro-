@@ -59,6 +59,7 @@ export class UsersService {
     phone?: string;
     firstName: string;
     lastName: string;
+    productionCountry?: string;
     passwordHash: string;
     roles?: UserRole[]; // Support multiple roles
     role?: UserRole; // Backward compatibility
@@ -92,6 +93,7 @@ export class UsersService {
         status: UserStatus.PENDING_VERIFICATION,
         farmerQrCode: farmerQrCode,
         farmerProfileUrl: farmerProfileUrl,
+        productionCountry: data.productionCountry?.trim() || undefined,
         updatedAt: new Date(),
       },
     });
@@ -142,6 +144,7 @@ export class UsersService {
     phone?: string;
     firstName?: string;
     lastName?: string;
+    productionCountry?: string;
     roles?: UserRole[];
     status?: UserStatus;
   }) {
@@ -151,6 +154,7 @@ export class UsersService {
     if (data.phone !== undefined) updateData.phone = data.phone;
     if (data.firstName !== undefined) updateData.firstName = data.firstName;
     if (data.lastName !== undefined) updateData.lastName = data.lastName;
+    if (data.productionCountry !== undefined) updateData.productionCountry = data.productionCountry?.trim() || null;
     if (data.roles !== undefined) updateData.roles = data.roles;
     if (data.status !== undefined) updateData.status = data.status;
 

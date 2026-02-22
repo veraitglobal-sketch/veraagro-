@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, Package, Award, Image as ImageIcon } from 'lucide-react';
+import { MapPin, Calendar, Package, Award, Image as ImageIcon, Leaf, Droplets, History } from 'lucide-react';
 import Image from 'next/image';
 
 interface FarmerProfileData {
+  producedInLabel?: string; // e.g. "Produced in Serbia, Region X. Grown to Vera standards." (no name)
   farmer: {
     id: string;
     firstName: string;
@@ -80,7 +81,7 @@ export default function FarmerProfilePage() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-6 h-6 border-[1.5px] border-[#1A3021] border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-[#1A3021] text-sm font-light">Učitavanje...</p>
+          <p className="mt-4 text-[#1A3021] text-sm font-light">Loading...</p>
         </div>
       </div>
     );
@@ -91,7 +92,7 @@ export default function FarmerProfilePage() {
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h1 className="text-xl font-light text-[#1A3021] mb-2">Profile not found</h1>
-          <p className="text-sm text-[#1A3021]/60 font-light">{error || 'Farmer profil ne postoji.'}</p>
+          <p className="text-sm text-[#1A3021]/60 font-light">{error || 'Farmer profile not found.'}</p>
         </div>
       </div>
     );
@@ -106,13 +107,13 @@ export default function FarmerProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12 text-center"
         >
-          {/* Farmer Photo */}
+          {/* Farmer Photo (no name shown for privacy) */}
           <div className="mb-6 flex justify-center">
             <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-[#A4C639] shadow-lg">
               {data.farmer.photo ? (
                 <Image
                   src={data.farmer.photo}
-                  alt={`${data.farmer.firstName} ${data.farmer.lastName}`}
+                  alt="Producer"
                   fill
                   className="object-cover"
                 />
@@ -131,13 +132,13 @@ export default function FarmerProfilePage() {
             </p>
           </div>
 
-          {/* Farmer Name */}
-          <h1 className="text-3xl font-light text-[#1A3021] mb-2">
-            {data.farmer.firstName} {data.farmer.lastName}
+          {/* Produced in [Region]. Grown to Vera standards. (no first/last name) */}
+          <h1 className="text-2xl md:text-3xl font-light text-[#1A3021] mb-2">
+            {data.producedInLabel || (data.location.region ? `Produced in ${data.location.region}. Grown to Vera standards.` : 'Grown to Vera standards.')}
           </h1>
 
-          {/* Location */}
-          {data.location.region && (
+          {/* Region only if not already in producedInLabel */}
+          {data.location.region && !data.producedInLabel && (
             <div className="flex items-center justify-center gap-1.5 mb-4">
               <MapPin className="w-4 h-4 text-[#1A3021]/60" strokeWidth={1} />
               <p className="text-sm font-light tracking-[0.15em] text-[#1A3021]/70 uppercase">
@@ -222,7 +223,7 @@ export default function FarmerProfilePage() {
             className="mb-12"
           >
             <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-6">
-              From the Field
+              From the field & photos on tree
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {[...data.photos.field, ...data.photos.growth].slice(0, 8).map((photoUrl, index) => (
@@ -241,6 +242,54 @@ export default function FarmerProfilePage() {
             </div>
           </motion.div>
         )}
+
+        {/* Product passport: chronology, harvest, pesticides, spray, photos on tree, fresh not frozen */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-12 p-6 border border-[#2D5A27]/20 rounded-lg bg-[#2D5A27]/5"
+        >
+          <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-4 flex items-center gap-2">
+            <Package className="w-4 h-4" />
+            Product passport
+          </h2>
+          <p className="text-sm font-light text-[#1A3021] mb-4">
+            Freshly harvested, not frozen. Traceability and chronology below.
+          </p>
+          <ul className="space-y-2 text-sm font-light text-[#1A3021]/80">
+            <li className="flex items-center gap-2">
+              <Leaf className="w-4 h-4 text-[#2D5A27]" />
+              <span>Pesticides used: recorded per batch (see compliance data when available).</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Droplets className="w-4 h-4 text-[#2D5A27]" />
+              <span>Spray dates: recorded with field entries; shown in batch details when available.</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-[#2D5A27]" />
+              <span>Photos on tree: growth and field photos below show produce on the tree and at harvest.</span>
+            </li>
+          </ul>
+          {data.recentHarvests.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-[#1A3021]/10">
+              <p className="text-[10px] font-light tracking-[0.1em] text-[#1A3021]/50 uppercase mb-3 flex items-center gap-1">
+                <History className="w-3 h-3" />
+                Chronology & harvest dates
+              </p>
+              <div className="space-y-2">
+                {data.recentHarvests.slice(0, 5).map((harvest, index) => (
+                  <div key={index} className="flex items-center justify-between text-sm">
+                    <span className="font-light text-[#1A3021]">{harvest.productName}</span>
+                    <span className="text-[#1A3021]/70">
+                      Harvested {new Date(harvest.harvestDate).toLocaleDateString('en-US')} • {harvest.quantity} kg
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </motion.div>
 
         {/* Recent Harvests */}
         {data.recentHarvests.length > 0 && (
@@ -268,7 +317,7 @@ export default function FarmerProfilePage() {
                       <div className="flex items-center gap-3 text-xs text-[#1A3021]/60 mt-1">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" strokeWidth={1} />
-                          <span>{new Date(harvest.harvestDate).toLocaleDateString('sr-RS')}</span>
+                          <span>{new Date(harvest.harvestDate).toLocaleDateString('en-US')}</span>
                         </div>
                         <span>•</span>
                         <span>{harvest.quantity} kg</span>

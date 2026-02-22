@@ -61,6 +61,7 @@ export class UsersController {
     phone?: string;
     firstName: string;
     lastName: string;
+    productionCountry?: string; // e.g. "Serbia", "Italy" – for QR label "Produced in X, Region Y"
     password?: string; // Optional - will be auto-generated if not provided
     roles?: UserRole[];
     role?: UserRole;
@@ -127,6 +128,7 @@ export class UsersController {
       phone?: string;
       firstName?: string;
       lastName?: string;
+      productionCountry?: string;
       roles?: UserRole[];
       status?: UserStatus;
     },

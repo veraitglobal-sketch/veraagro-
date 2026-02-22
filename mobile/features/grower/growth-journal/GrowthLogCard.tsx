@@ -66,7 +66,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
             marginLeft: 4,
           }}
         >
-          {new Date(log.createdAt).toLocaleDateString('sr-RS', {
+          {new Date(log.createdAt).toLocaleDateString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',

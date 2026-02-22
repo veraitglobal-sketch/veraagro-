@@ -35,7 +35,7 @@ export class FieldEntriesService {
     farmId: string
   ): Promise<{ valid: boolean; reason?: string }> {
     if (!location || !location.lat || !location.lng) {
-      return { valid: false, reason: 'GPS lokacija je obavezna' };
+      return { valid: false, reason: 'GPS location is required' };
     }
 
     // Validate GPS coordinates range
@@ -75,7 +75,7 @@ export class FieldEntriesService {
       if (distance > 100) {
         return {
           valid: false,
-          reason: `GPS lokacija je ${distance.toFixed(0)}m udaljena od farme. Maksimalna dozvoljena udaljenost: 100m.`,
+          reason: `GPS location is ${distance.toFixed(0)}m from the farm. Maximum allowed distance: 100m.`,
         };
       }
     }

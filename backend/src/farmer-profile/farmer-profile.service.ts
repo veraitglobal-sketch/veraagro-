@@ -82,13 +82,24 @@ export class FarmerProfileService {
       ? new Date(latestHarvest.harvestDate).getFullYear()
       : new Date().getFullYear();
 
+    // Public label for QR: no name. "Produced in [Country], Region [X]." or "Produced in [Region]." (English only)
+    const country = user.productionCountry?.trim() || null;
+    const producedInLabel = country && region
+      ? `Produced in ${country}, ${region}. Grown to Vera standards.`
+      : country
+        ? `Produced in ${country}. Grown to Vera standards.`
+        : region
+          ? `Produced in ${region}. Grown to Vera standards.`
+          : 'Grown to Vera standards.';
+
     return {
+      producedInLabel,
       farmer: {
         id: user.id,
         firstName: user.firstName,
-        lastName: user.lastName, // Full name for profile (not privacy-protected)
+        lastName: user.lastName,
         photo: user.farmerPhoto,
-        bio: user.farmerBio || `Ovo je domaćinstvo ${user.firstName} ${user.lastName}${region ? ` iz ${region}` : ' iz Evrope'}, gaje ${this.getCropTypes(user.estates)} ${yearsOfExperience ? `već ${yearsOfExperience} godina` : 'dugo godina'}.`,
+        bio: user.farmerBio || `This farm grows ${this.getCropTypes(user.estates)}${region ? ` in ${region}` : ''}${yearsOfExperience ? `, with ${yearsOfExperience} years of experience` : ''}.`,
         generation: user.generation || '3rd',
         yearsOfExperience: yearsOfExperience,
         isVeraPartner: user.isVeraPartner,
@@ -182,7 +193,7 @@ export class FarmerProfileService {
         firstName: user.firstName,
         lastName: user.lastName,
         photo: user.farmerPhoto,
-        bio: user.farmerBio || `Ovo je domaćinstvo ${user.firstName} ${user.lastName}${region ? ` iz ${region}` : ' iz Evrope'}, gaje ${this.getCropTypes(user.estates)} ${user.yearsOfExperience ? `već ${user.yearsOfExperience} godina` : 'dugo godina'}.`,
+        bio: user.farmerBio || `This is the farm of ${user.firstName} ${user.lastName}${region ? ` from ${region}` : ' from Europe'}, growing ${this.getCropTypes(user.estates)} ${user.yearsOfExperience ? `for ${user.yearsOfExperience} years` : 'for many years'}.`,
         generation: user.generation || '3rd',
         yearsOfExperience: user.yearsOfExperience,
         isVeraPartner: user.isVeraPartner,
@@ -287,9 +298,9 @@ export class FarmerProfileService {
     });
     
     const cropArray = Array.from(crops);
-    if (cropArray.length === 0) return 'voće i povrće';
+    if (cropArray.length === 0) return 'fruit and vegetables';
     if (cropArray.length === 1) return cropArray[0].toLowerCase();
-    if (cropArray.length === 2) return `${cropArray[0].toLowerCase()} i ${cropArray[1].toLowerCase()}`;
-    return `${cropArray.slice(0, -1).join(', ').toLowerCase()} i ${cropArray[cropArray.length - 1].toLowerCase()}`;
+    if (cropArray.length === 2) return `${cropArray[0].toLowerCase()} and ${cropArray[1].toLowerCase()}`;
+    return `${cropArray.slice(0, -1).join(', ').toLowerCase()} and ${cropArray[cropArray.length - 1].toLowerCase()}`;
   }
 }

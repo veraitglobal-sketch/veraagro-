@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { buyersAPI, ordersAPI } from '@/lib/api';
+import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
 import {
   ShoppingCart,
   TrendingUp,
@@ -47,6 +47,8 @@ export default function BuyerDashboardPage() {
   const router = useRouter();
   const [statistics, setStatistics] = useState<any>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [upcomingDeliveries, setUpcomingDeliveries] = useState<any[]>([]);
+  const [latestInvoices, setLatestInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,12 +61,31 @@ export default function BuyerDashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const [stats, orders] = await Promise.all([
+      const [stats, orders, deliveries, invoices] = await Promise.all([
         buyersAPI.getStatistics(),
         ordersAPI.getAll(),
+        deliveriesAPI.getBuyerDeliveries().catch(() => []),
+        invoicesAPI.getAll().catch(() => []),
       ]);
       setStatistics(stats);
       setRecentOrders(orders.slice(0, 5));
+      const activeDeliveries = Array.isArray(deliveries)
+        ? deliveries
+            .filter((d: any) => !['CANCELLED', 'COMPLETED', 'CONFIRMED'].includes(d.status))
+            .sort((a: any, b: any) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())
+            .slice(0, 8)
+        : [];
+      setUpcomingDeliveries(activeDeliveries);
+      const invoiceList = Array.isArray(invoices) ? invoices : [];
+      const transformed = invoiceList.map((inv: any) => ({
+        id: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        orderNumber: inv.orders?.orderNumber || inv.invoiceData?.orderNumber || 'N/A',
+        date: new Date(inv.generatedAt || inv.createdAt),
+        amount: inv.orders?.totalAmount ?? inv.invoiceData?.total ?? 0,
+        status: inv.orders?.payments?.[0]?.status ?? 'PENDING',
+      }));
+      setLatestInvoices(transformed.sort((a: any, b: any) => b.date.getTime() - a.date.getTime()).slice(0, 5));
     } catch (err: any) {
       console.error('Error loading dashboard data:', err);
       setError(err.message || 'Failed to load dashboard data');
@@ -145,8 +166,42 @@ export default function BuyerDashboardPage() {
             </div>
           </div>
 
-          {/* Quick actions: Pre-order, Direct orders, Invoices, Deliveries */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Action required / Alerts */}
+          {((latestInvoices.filter((i: any) => i.status === 'PENDING').length > 0) || upcomingDeliveries.length > 0) && (
+            <div className="rounded-lg border border-amber-200/60 bg-amber-50/50 p-4">
+              <h3 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600" strokeWidth={1.5} />
+                Action required
+              </h3>
+              <ul className="space-y-2 text-sm font-light">
+                {latestInvoices.filter((i: any) => i.status === 'PENDING').length > 0 && (
+                  <li>
+                    <Link
+                      href="/buyer-portal/invoices?status=PENDING"
+                      className="text-[#2D5A27] hover:underline flex items-center gap-1.5"
+                    >
+                      {latestInvoices.filter((i: any) => i.status === 'PENDING').length} invoice(s) pending payment
+                      <span className="text-xs">→ Invoices</span>
+                    </Link>
+                  </li>
+                )}
+                {upcomingDeliveries.length > 0 && (
+                  <li>
+                    <Link
+                      href="/buyer-portal/deliveries"
+                      className="text-[#2D5A27] hover:underline flex items-center gap-1.5"
+                    >
+                      {upcomingDeliveries.length} active delivery(ies) — track or confirm on arrival
+                      <span className="text-xs">→ Deliveries</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          {/* Quick actions: Pre-order, Direct orders, Invoices, Deliveries, Analytics */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Link
               href="/pre-order-2026"
               className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/10/50 hover:bg-[#2D5A27]/10 hover:border-[#2D5A27]/40 transition-colors"
@@ -193,6 +248,18 @@ export default function BuyerDashboardPage() {
               <div className="min-w-0">
                 <p className="font-medium text-gray-900">Deliveries</p>
                 <p className="text-sm text-gray-600 font-light">Track your orders</p>
+              </div>
+            </Link>
+            <Link
+              href="/buyer-portal/analytics"
+              className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 flex-shrink-0">
+                <BarChart3 className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">Analytics</p>
+                <p className="text-sm text-gray-600 font-light">Reports & insights</p>
               </div>
             </Link>
           </div>
@@ -385,7 +452,12 @@ export default function BuyerDashboardPage() {
           {/* Recent Orders */}
           <div className="border-b border-[#2D5A27]/20/50 pb-8">
             <div className="border-b border-[#2D5A27]/20/50 pb-6">
-              <h3 className="text-lg font-light text-gray-900 mb-6">Recent Orders</h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-light text-gray-900">Recent Orders</h3>
+                <Link href="/buyer-portal/orders" className="text-sm font-light text-[#2D5A27]/80 hover:text-[#2D5A27]">
+                  View all →
+                </Link>
+              </div>
               <div className="space-y-4">
                 {recentOrders.map((order) => (
                   <div key={order.id} className="flex items-center justify-between pb-4 border-b border-gray-200/50">
@@ -453,29 +525,36 @@ export default function BuyerDashboardPage() {
               </div>
             </div>
 
-            {/* Upcoming Deliveries */}
+            {/* Upcoming Deliveries (from API) */}
             <div className="border-b border-[#2D5A27]/20/50 pb-6">
-              <h3 className="text-lg font-light text-gray-900 mb-6">Upcoming Deliveries</h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-light text-gray-900">Upcoming Deliveries</h3>
+                <Link href="/buyer-portal/deliveries" className="text-sm font-light text-[#2D5A27]/80 hover:text-[#2D5A27]">
+                  View all →
+                </Link>
+              </div>
               <div className="space-y-4">
-                {statistics?.upcomingDeliveries?.map((delivery: any) => (
+                {upcomingDeliveries.slice(0, 5).map((delivery: any) => (
                   <div key={delivery.id} className="flex items-center justify-between pb-4 border-b border-gray-200/50">
                     <div>
                       <p className="text-sm font-light text-gray-900">
-                        {delivery.orderNumber || `Order #${delivery.id.slice(0, 8)}`}
+                        {delivery.deliveryNumber || delivery.orders?.orderNumber || `#${delivery.id?.slice(0, 8) || '—'}`}
                       </p>
                       <p className="text-xs text-gray-500 font-light">
-                        {delivery.productName} • {delivery.quantity} {delivery.unit}
+                        {delivery.orders?.productName || 'Delivery'} • {delivery.orders?.quantity ?? '—'} {delivery.orders?.unit || ''}
                       </p>
-                      {delivery.assignedAt && (
+                      {(delivery.estimatedDeliveryDate || delivery.assignedAt || delivery.updatedAt) && (
                         <p className="text-xs text-gray-400 mt-1 font-light">
-                          Assigned: {new Date(delivery.assignedAt).toLocaleDateString()}
+                          {delivery.estimatedDeliveryDate
+                            ? `ETA: ${new Date(delivery.estimatedDeliveryDate).toLocaleDateString()}`
+                            : `Updated: ${new Date(delivery.updatedAt || delivery.assignedAt).toLocaleDateString()}`}
                         </p>
                       )}
                     </div>
                     <div className="text-right">
                       <span className={`text-xs px-2 py-1 border font-light ${
                         delivery.status === 'IN_TRANSIT' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' :
-                        delivery.status === 'PICKED_UP' ? 'border-gray-200/50 text-gray-600/80' :
+                        delivery.status === 'PICKED_UP' ? 'border-blue-200/50 text-blue-600/80' :
                         'border-gray-200/50 text-gray-600/80'
                       }`}>
                         {delivery.status?.replace(/_/g, ' ')}
@@ -483,10 +562,65 @@ export default function BuyerDashboardPage() {
                     </div>
                   </div>
                 ))}
-                {(!statistics?.upcomingDeliveries || statistics.upcomingDeliveries.length === 0) && (
+                {upcomingDeliveries.length === 0 && (
                   <p className="text-sm text-gray-500 text-center py-4 font-light">No upcoming deliveries</p>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Latest invoices */}
+          <div className="border-b border-[#2D5A27]/20/50 pb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-light text-gray-900">Latest Invoices</h3>
+              <Link href="/buyer-portal/invoices" className="text-sm font-light text-[#2D5A27]/80 hover:text-[#2D5A27]">
+                View all →
+              </Link>
+            </div>
+            <div className="space-y-4">
+              {latestInvoices.map((inv: any) => (
+                <div key={inv.id} className="flex items-center justify-between pb-4 border-b border-gray-200/50">
+                  <div>
+                    <p className="text-sm font-light text-gray-900">{inv.invoiceNumber}</p>
+                    <p className="text-xs text-gray-500 font-light">
+                      Order {inv.orderNumber} · {inv.date.toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-light text-gray-900">€{Number(inv.amount).toFixed(2)}</span>
+                    <span className={`text-xs px-2 py-1 border font-light ${
+                      inv.status === 'PAID' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' : 'border-amber-200/50 text-amber-600/80'
+                    }`}>
+                      {inv.status}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const blob = await invoicesAPI.download(inv.id);
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `${inv.invoiceNumber}.pdf`;
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                          document.body.removeChild(a);
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      }}
+                      className="p-1.5 text-gray-500 hover:text-[#2D5A27] transition-colors"
+                      title="Download PDF"
+                    >
+                      <Download className="w-4 h-4" strokeWidth={1.5} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {latestInvoices.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4 font-light">No invoices yet</p>
+              )}
             </div>
           </div>
 

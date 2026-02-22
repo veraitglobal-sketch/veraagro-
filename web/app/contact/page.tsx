@@ -180,9 +180,14 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-900 mb-1">Phone</h3>
-                      <p className="text-sm text-gray-600 font-light">
-                        Available Monday - Friday<br />
-                        9:00 AM - 6:00 PM CET
+                      <a
+                        href="tel:+4915563740470"
+                        className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
+                      >
+                        +49 155 63740470
+                      </a>
+                      <p className="text-sm text-gray-500 font-light mt-1">
+                        Monday – Friday, 9:00 AM – 6:00 PM CET
                       </p>
                     </div>
                   </div>

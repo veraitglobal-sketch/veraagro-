@@ -161,29 +161,58 @@ export default function LogisticsPartnerPage() {
         </div>
       </section>
 
+      {/* Who can apply — same countries as growers */}
+      <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-xl font-light text-gray-900 mb-1">Who can apply</h2>
+          <p className="text-sm text-gray-500 font-light mb-4">
+            Logistics partners can apply from the same countries where we have growers. Anyone who meets the conditions below can become a Vera logistics partner.
+          </p>
+          <p className="text-sm text-gray-600 font-light leading-relaxed mb-6">
+            {[
+              'Austria', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic',
+              'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece',
+              'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Luxembourg',
+              'Malta', 'Montenegro', 'Netherlands', 'North Macedonia', 'Poland', 'Portugal', 'Romania',
+              'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+            ].map((c, i, arr) => (
+              <span key={c}>
+                {c}{i < arr.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </p>
+          <p className="text-sm text-gray-600 font-light">
+            We work with <strong>small companies</strong>, <strong>large transport companies</strong>, and <strong>independent drivers</strong>. The only requirement is that you can meet our cold chain and tracking standards below.
+          </p>
+        </div>
+      </section>
+
       {/* Requirements Section */}
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">Program Requirements</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">Conditions to become a Vera logistics partner</h2>
             <p className="text-base text-gray-600 font-light">
-              What we expect from our logistics partners
+              You must meet the following. We accept small fleets, large companies, and independent drivers.
             </p>
           </div>
 
+          <p className="text-sm text-gray-600 font-light text-center mb-10 max-w-2xl mx-auto">
+            You need <strong>cooling/refrigeration systems</strong> (cold chain), digital tracking, and reliable delivery. We accept <strong>small companies</strong>, <strong>large companies</strong>, and <strong>independent drivers</strong>.
+          </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 title: 'Bio Vera: From Orchard to Shelf',
-                description: 'Complete end-to-end responsibility from farm pickup to retail shelf delivery. You guarantee full cold chain integrity, GPS tracking, and digital handover at every stage. No partial deliveries - you are responsible for the entire journey from field to final destination.',
+                description: 'Complete end-to-end responsibility from farm pickup to retail shelf delivery. You guarantee full cold chain integrity, GPS tracking, and digital handover at every stage. No partial deliveries — you are responsible for the entire journey from field to final destination.',
               },
               {
-                title: 'Frigo Equipment',
-                description: 'Mandatory refrigeration unit capable of maintaining temperatures between 0°C and +12°C for organic product transport. Open to all vehicle sizes - small vans, medium trucks, and large transport vehicles.',
+                title: 'Cooling systems (cold chain)',
+                description: 'Mandatory refrigeration unit capable of maintaining temperatures between 0°C and +12°C for organic product transport. Required for all partners. We accept small vans, medium trucks, and large transport vehicles — company size does not matter.',
               },
               {
                 title: 'Digital Tracking',
-                description: 'Mandatory installation of Bio Vera sensors for real-time temperature monitoring and GPS tracking throughout the delivery process. Available to independent drivers, small companies, and large logistics partners.',
+                description: 'Mandatory installation of Bio Vera sensors for real-time temperature monitoring and GPS tracking. Same requirement for independent drivers, small companies, and large logistics partners.',
               },
               {
                 title: 'Reliability',

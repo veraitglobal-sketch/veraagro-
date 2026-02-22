@@ -26,7 +26,7 @@ export default function QualityIssuesBlock({ qualityIssues }: { qualityIssues: a
       {text && <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>{text}</Text>}
       {timestamp && (
         <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginTop: theme.spacing.xs }}>
-          Prijavljeno: {new Date(timestamp).toLocaleDateString('sr-RS')}
+          Reported: {new Date(timestamp).toLocaleDateString('en-US')}
         </Text>
       )}
     </View>

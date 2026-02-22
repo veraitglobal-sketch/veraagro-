@@ -30,11 +30,11 @@ export default function LocationHistoryBlock({ locationHistory }: { locationHist
             }}
           >
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-              {entry.hubId || entry.location || 'Nepoznata lokacija'}
+              {entry.hubId || entry.location || 'Unknown location'}
             </Text>
             {entry.timestamp && (
               <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginTop: 2 }}>
-                {new Date(entry.timestamp).toLocaleDateString('sr-RS', dateOpts)}
+                {new Date(entry.timestamp).toLocaleDateString('en-US', dateOpts)}
               </Text>
             )}
           </View>

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
-import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter } from 'lucide-react';
+import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function DeliveriesPage() {
@@ -16,12 +16,13 @@ export default function DeliveriesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDelivery, setSelectedDelivery] = useState<any | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const errorRef = useRef<string | null>(null);
+  errorRef.current = error;
 
   useEffect(() => {
     loadDeliveries();
-    // Refresh every 30 seconds for real-time tracking
     const interval = setInterval(() => {
-      loadDeliveries();
+      if (!errorRef.current) loadDeliveries();
     }, 30000);
     return () => clearInterval(interval);
   }, [statusFilter]);
@@ -31,10 +32,17 @@ export default function DeliveriesPage() {
       setLoading(true);
       setError(null);
       const data = await deliveriesAPI.getBuyerDeliveries(statusFilter !== 'all' ? statusFilter : undefined);
-      setDeliveries(data);
+      setDeliveries(Array.isArray(data) ? data : []);
     } catch (err: any) {
-      console.error('Error loading deliveries:', err);
-      setError(err.message || 'Failed to load deliveries');
+      const isNetworkError =
+        err?.code === 'ERR_NETWORK' ||
+        err?.message === 'Network Error' ||
+        (err?.isAxiosError && !err?.response);
+      const message = isNetworkError
+        ? 'Cannot reach server. Check your connection and that the backend is running (e.g. NEXT_PUBLIC_API_URL).'
+        : err?.response?.data?.message || err?.message || 'Failed to load deliveries';
+      setError(message);
+      setDeliveries([]);
     } finally {
       setLoading(false);
     }
@@ -144,8 +152,16 @@ export default function DeliveriesPage() {
 
           {/* Error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {error}
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="font-light">{error}</p>
+              <button
+                type="button"
+                onClick={() => loadDeliveries()}
+                className="flex items-center gap-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 text-sm font-light rounded border border-red-200 transition-colors shrink-0"
+              >
+                <RefreshCw className="w-4 h-4" strokeWidth={1.5} />
+                Retry
+              </button>
             </div>
           )}
 

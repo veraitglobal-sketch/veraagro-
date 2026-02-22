@@ -227,7 +227,7 @@ export default function FarmerProfilePage() {
               value={formData.farmerBio}
               onChange={(e) => setFormData({ ...formData, farmerBio: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Tell your story... (e.g., 'Ovo je domaćinstvo Petrović iz Arilja, gaje jabuke 40 godina')"
+              placeholder="Tell your story... (e.g., 'This is the farm of the Petrović family from Arilje, growing apples for 40 years')"
             />
             <p className="text-xs text-gray-500 mt-1">
               This will be displayed on your public profile when customers scan your QR code.

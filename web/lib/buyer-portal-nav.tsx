@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingCart, FileText, Building2, Truck } from 'lucide-react';
+import { ShoppingCart, FileText, Building2, Truck, BarChart3 } from 'lucide-react';
 import { ReactNode, createElement } from 'react';
 
 // Localization for navigation items
@@ -12,6 +12,7 @@ const navLabels = {
     directOrders: 'Direct orders',
     invoices: 'Invoices',
     deliveries: 'Deliveries',
+    analytics: 'Analytics',
     companyProfile: 'Company Profile',
   },
   sr: {
@@ -21,6 +22,7 @@ const navLabels = {
     directOrders: 'Direktne porudžbine',
     invoices: 'Računi',
     deliveries: 'Dostave',
+    analytics: 'Analitika',
     companyProfile: 'Profil Kompanije',
   },
   de: {
@@ -30,6 +32,7 @@ const navLabels = {
     directOrders: 'Direktbestellungen',
     invoices: 'Rechnungen',
     deliveries: 'Lieferungen',
+    analytics: 'Analysen',
     companyProfile: 'Firmenprofil',
   },
 };
@@ -55,6 +58,7 @@ export function getBuyerPortalNavItems(_language?: 'en') {
     { href: '/buyer-portal/orders', label: labels.orders, icon: <ShoppingCart className="w-5 h-5" /> },
     { href: '/buyer-portal/invoices', label: labels.invoices, icon: <FileText className="w-5 h-5" /> },
     { href: '/buyer-portal/deliveries', label: labels.deliveries, icon: <Truck className="w-5 h-5" /> },
+    { href: '/buyer-portal/analytics', label: labels.analytics, icon: <BarChart3 className="w-5 h-5" /> },
     { href: '/buyer-portal/profile', label: labels.companyProfile, icon: <Building2 className="w-5 h-5" /> },
   ];
 }

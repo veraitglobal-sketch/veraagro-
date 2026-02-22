@@ -50,6 +50,7 @@ export default function RootLayout({
                 "@type": "ContactPoint",
                 "contactType": "Customer Service",
                 "email": "contact@biovera.app",
+                "telephone": "+4915563740470",
               },
             }),
           }}

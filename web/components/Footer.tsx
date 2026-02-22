@@ -66,6 +66,17 @@ export default function Footer() {
             <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
             <ul className="space-y-1 text-sm text-gray-600">
               <li><Link href="/legal" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+              <li><Link href="/privacy" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
+              <li><Link href="/cookies" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Cookie Policy</Link></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => typeof window !== 'undefined' && window.dispatchEvent(new CustomEvent('cookie-consent-open'))}
+                  className="inline-flex items-center min-h-[44px] py-2 text-left hover:text-[#2D5A27] transition-colors"
+                >
+                  Manage cookies
+                </button>
+              </li>
             </ul>
           </div>
         </div>

@@ -85,7 +85,7 @@ export default function FieldEntryPage() {
                         </span>
                       </div>
                       <div className="text-xs text-gray-600">
-                        {new Date(entry.data.date).toLocaleDateString('sr-RS')}
+                        {new Date(entry.data.date).toLocaleDateString('en-US')}
                       </div>
                       {entry.data.notes && (
                         <div className="text-xs text-gray-500 mt-1 truncate">{entry.data.notes}</div>

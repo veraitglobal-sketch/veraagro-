@@ -142,6 +142,38 @@ export default function CookiesPage() {
             </section>
 
             <section>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">3.1. Summary table of cookies we use</h2>
+              <p className="text-gray-600 font-light leading-relaxed mb-4">
+                Below is a concise list of the main cookies and similar technologies we use, their purpose, and how long they are stored.
+              </p>
+              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 font-medium text-gray-900">Name / Type</th>
+                      <th className="px-4 py-3 font-medium text-gray-900">Purpose</th>
+                      <th className="px-4 py-3 font-medium text-gray-900">Category</th>
+                      <th className="px-4 py-3 font-medium text-gray-900">Retention</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 text-gray-600 font-light">
+                    <tr><td className="px-4 py-3">Session cookie / sessionStorage</td><td className="px-4 py-3">Maintain login session and app state</td><td className="px-4 py-3">Essential</td><td className="px-4 py-3">Session</td></tr>
+                    <tr><td className="px-4 py-3">token (localStorage)</td><td className="px-4 py-3">Authentication (JWT) after login</td><td className="px-4 py-3">Essential</td><td className="px-4 py-3">Until logout or expiry</td></tr>
+                    <tr><td className="px-4 py-3">user (localStorage)</td><td className="px-4 py-3">Cached user profile for the app</td><td className="px-4 py-3">Essential</td><td className="px-4 py-3">Until logout</td></tr>
+                    <tr><td className="px-4 py-3">cookie-consent (localStorage)</td><td className="px-4 py-3">Your cookie consent choices</td><td className="px-4 py-3">Essential</td><td className="px-4 py-3">Up to 1 year</td></tr>
+                    <tr><td className="px-4 py-3">cookie-consent-date (localStorage)</td><td className="px-4 py-3">Date when consent was given</td><td className="px-4 py-3">Essential</td><td className="px-4 py-3">Up to 1 year</td></tr>
+                    <tr><td className="px-4 py-3">Analytics cookies (if enabled)</td><td className="px-4 py-3">Anonymous usage and performance data</td><td className="px-4 py-3">Analytics</td><td className="px-4 py-3">Up to 2 years</td></tr>
+                    <tr><td className="px-4 py-3">Preference / functionality (if enabled)</td><td className="px-4 py-3">Language, theme, display and form draft data</td><td className="px-4 py-3">Functionality</td><td className="px-4 py-3">Up to 1 year</td></tr>
+                    <tr><td className="px-4 py-3">Marketing (if enabled in future)</td><td className="px-4 py-3">Advertising and campaign measurement</td><td className="px-4 py-3">Marketing</td><td className="px-4 py-3">As per provider (e.g. up to 2 years)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-gray-500 text-xs font-light mt-3">
+                Third-party services (e.g. maps, payment, analytics) may set additional cookies; see section 4 and the provider’s privacy policy.
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-2xl font-light text-gray-900 mb-4">4. Third-Party Cookies and Services</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 In addition to our own cookies, we may also use various third-party cookies and services to enhance functionality, 

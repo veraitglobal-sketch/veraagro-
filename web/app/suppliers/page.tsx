@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, Box, Clock, Printer, CheckCircle, Download } from 'lucide-react';
+import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, Download } from 'lucide-react';
 import { suppliersAPI, submitApplicationForm } from '@/lib/api';
 
 export default function SuppliersPage() {
@@ -119,12 +119,11 @@ export default function SuppliersPage() {
       <section className="pt-24 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
-            Become a Strategic Supplier
+            For Our Suppliers
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-            Join our network of trusted suppliers and expand your reach to markets worldwide 
-            through the Bio Vera platform. Source seeds, fertilizers, and packaging materials 
-            both domestically and internationally.
+            Become a Bio Vera supplier: sell our products and our packaging to growers in your country. 
+            You get guaranteed offtake from our producers, and you support them with on-site advice and training.
           </p>
           <button
             onClick={async () => {
@@ -140,6 +139,109 @@ export default function SuppliersPage() {
             <Download className="w-4 h-4" />
             Download Prospect PDF
           </button>
+        </div>
+      </section>
+
+      {/* Who we're looking for + Your role */}
+      <section className="py-16 px-6 lg:px-8 border-t border-gray-200 bg-gray-50/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-10">
+            <div>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">Who should apply</h2>
+              <p className="text-base text-gray-600 font-light leading-relaxed mb-4">
+                Our suppliers sell Bio Vera products and Bio Vera packaging in their country. 
+                We prefer partners who already work in agriculture and have a strong presence across the country.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600 font-light">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>You sell our products (seeds, inputs) to growers</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>You sell our packaging to producers</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>Ideally you already work in agriculture</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>Wide presence in your country is an advantage</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">Your role</h2>
+              <p className="text-base text-gray-600 font-light leading-relaxed mb-4">
+                As our supplier you advise and train users on the ground. You are the local point of contact for producers and support them with on-site guidance. You also procure packaging for our users – including boxes for packing produce – so they have what they need locally.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600 font-light">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>On-site advising and training of users</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>Procure packaging for our users (e.g. boxes for packing)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>First point of contact for farmers in your region</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>Physical verification of received goods</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits — guaranteed offtake first */}
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-light text-gray-900 mb-3">What you get</h2>
+            <p className="text-base text-gray-600 font-light">
+              Benefits of becoming a Bio Vera supplier
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Guaranteed offtake',
+                description: 'Guaranteed offtake from our producers in your country. Our growers source from approved suppliers – you get stable demand and predictable revenue.',
+              },
+              {
+                title: 'Our products & packaging',
+                description: 'You sell Bio Vera products and Bio Vera packaging. One brand, one standard, full traceability via QR and the Vera system.',
+              },
+              {
+                title: 'Price stability',
+                description: 'Pre-agreed pricing structure. No price fluctuations or negotiations per transaction. Predictable margins.',
+              },
+              {
+                title: 'Integrated logistics',
+                description: 'Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometres, lower costs.',
+              },
+              {
+                title: 'National coverage preferred',
+                description: 'We prefer suppliers with strong national presence. Expand your reach and represent Bio Vera across your country.',
+              },
+              {
+                title: 'Exclusive market access',
+                description: 'Direct access to our producer network and to the German market through our vertically integrated chain.',
+              },
+            ].map((item, index) => (
+              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
+                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -163,10 +265,10 @@ export default function SuppliersPage() {
                     1
                   </div>
                   <div>
-                    <h4 className="text-base font-medium text-gray-900 mb-2">Sourcing from Manufacturing Partners</h4>
+                    <h4 className="text-base font-medium text-gray-900 mb-2">Sourcing from approved partners</h4>
                     <p className="text-sm text-gray-600 leading-relaxed font-light">
-                      Suppliers procure goods from our approved manufacturing partners within the country. 
-                      These partners produce seeds, fertilizers, and packaging materials according to Bio Vera specifications.
+                      Suppliers procure goods from our approved partners within the country. 
+                      They also source packaging (e.g. boxes for packing) for our users. Seeds, fertilizers, and packaging meet Bio Vera specifications.
                     </p>
                   </div>
                 </div>
@@ -193,7 +295,7 @@ export default function SuppliersPage() {
                     <p className="text-sm text-gray-600 leading-relaxed font-light">
                       Suppliers distribute products to Bio Vera certified growers in their region. 
                       Every transaction is tracked through QR codes, ensuring complete traceability from 
-                      manufacturing partner to field.
+                      supplier to field.
                     </p>
                   </div>
                 </div>
@@ -217,19 +319,23 @@ export default function SuppliersPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="border border-gray-200 rounded-lg p-6">
-              <h4 className="text-lg font-light text-gray-900 mb-3">For Distributors</h4>
+              <h4 className="text-lg font-light text-gray-900 mb-3">For Suppliers</h4>
               <p className="text-sm text-gray-600 leading-relaxed font-light mb-4">
-                As a distributor, you purchase from our manufacturing partners and sell to growers at 
-                the agreed price. You maintain local inventory and provide regional support to farmers.
+                As a supplier, you purchase from our approved partners and sell to growers at 
+                the agreed price. You maintain local inventory, procure packaging (e.g. boxes) for our users, and provide regional support to farmers.
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
                 <li className="flex items-start gap-2">
                   <span className="text-[#2D5A27] mt-1">•</span>
-                  <span>Purchase from approved manufacturing partners</span>
+                  <span>Purchase from approved partners</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Maintain secure storage facilities</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2D5A27] mt-1">•</span>
+                  <span>Procure packaging (e.g. boxes for packing) for our users</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#2D5A27] mt-1">•</span>
@@ -238,32 +344,6 @@ export default function SuppliersPage() {
                 <li className="flex items-start gap-2">
                   <span className="text-[#2D5A27] mt-1">•</span>
                   <span>Track all transactions via QR codes</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-6">
-              <h4 className="text-lg font-light text-gray-900 mb-3">For Packaging Manufacturers</h4>
-              <p className="text-sm text-gray-600 leading-relaxed font-light mb-4">
-                As a packaging manufacturer, you produce materials according to Bio Vera specifications 
-                and deliver directly to distributors on a just-in-time basis.
-              </p>
-              <ul className="space-y-2 text-sm text-gray-600 font-light">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#2D5A27] mt-1">•</span>
-                  <span>Produce to exact Vera specifications</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#2D5A27] mt-1">•</span>
-                  <span>Print serial numbers/barcodes on each series</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#2D5A27] mt-1">•</span>
-                  <span>Deliver flat-packed within 48 hours</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#2D5A27] mt-1">•</span>
-                  <span>Maintain food contact certification</span>
                 </li>
               </ul>
             </div>
@@ -281,11 +361,11 @@ export default function SuppliersPage() {
             </p>
           </div>
 
-          {/* For Distributors */}
+          {/* For Suppliers */}
           <div className="mb-12">
             <h3 className="text-xl font-light text-gray-900 mb-6 flex items-center gap-2">
               <Warehouse className="w-6 h-6 text-[#2D5A27]" />
-              For Distributors (Agricultural Pharmacies & Wholesalers)
+              For Suppliers
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               {[
@@ -297,56 +377,17 @@ export default function SuppliersPage() {
                 {
                   icon: <QrCode className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'QR Code Issuance',
-                  description: 'Distributor cannot issue goods without scanning the QR code from the farmer\'s app. This is the only way to track consumption per hectare.',
+                  description: 'Supplier cannot issue goods without scanning the QR code from the farmer\'s app. This is the only way to track consumption per hectare.',
                 },
                 {
                   icon: <Users className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Local Support',
-                  description: 'Distributor is the first point of contact for farmers in their region. They perform physical verification of received goods.',
+                  description: 'Supplier is the first point of contact for farmers in their region. They perform physical verification of received goods and provide on-site advice and training.',
                 },
                 {
                   icon: <AlertTriangle className="w-6 h-6 text-[#2D5A27]" />,
                   title: 'Inventory Reporting',
                   description: 'System must automatically notify headquarters in Hamburg when inventory falls below 20%.',
-                },
-              ].map((item, index) => (
-                <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 mt-1">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <h4 className="text-base font-medium text-gray-900 mb-2">{item.title}</h4>
-                      <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* For Packaging Manufacturers */}
-          <div className="mb-12">
-            <h3 className="text-xl font-light text-gray-900 mb-6 flex items-center gap-2">
-              <Box className="w-6 h-6 text-[#2D5A27]" />
-              For Packaging Manufacturers (Cardboard/Producers)
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                {
-                  icon: <CheckCircle className="w-6 h-6 text-[#2D5A27]" />,
-                  title: 'Production to Vera Specification',
-                  description: 'Every box must be made from agreed cardboard weight (e.g., five-layer) with food contact certification.',
-                },
-                {
-                  icon: <Clock className="w-6 h-6 text-[#2D5A27]" />,
-                  title: 'Just-in-Time Delivery',
-                  description: 'Obligation to deliver flat-packed packaging directly to our distributors within 48 hours of order.',
-                },
-                {
-                  icon: <Printer className="w-6 h-6 text-[#2D5A27]" />,
-                  title: 'Barcode Printing',
-                  description: 'Every packaging series must have a printed serial number or barcode that we generate, so we know which farmer used which series of boxes.',
                 },
               ].map((item, index) => (
                 <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-6">
@@ -416,7 +457,7 @@ export default function SuppliersPage() {
                   <div>
                     <h4 className="text-base font-medium text-gray-900 mb-2">Return Pickup</h4>
                     <p className="text-sm text-gray-600 leading-relaxed font-light">
-                      On the return trip, the driver picks up our Vera seeds and fertilizers from our manufacturing partners.
+                      On the return trip, the driver picks up our Vera seeds and fertilizers from our partners.
                     </p>
                   </div>
                 </div>
@@ -440,7 +481,7 @@ export default function SuppliersPage() {
             <div className="border border-gray-200 rounded-lg p-6">
               <h4 className="text-lg font-light text-gray-900 mb-3">For Suppliers</h4>
               <p className="text-sm text-gray-600 leading-relaxed font-light mb-4">
-                Receive regular deliveries of Vera seeds and fertilizers directly from our manufacturing partners, 
+                Receive regular deliveries of Vera seeds and fertilizers directly from our partners, 
                 delivered by our logistics network on return trips.
               </p>
               <ul className="space-y-2 text-sm text-gray-600 font-light">
@@ -480,52 +521,6 @@ export default function SuppliersPage() {
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">What You Get</h2>
-            <p className="text-base text-gray-600 font-light">
-              Benefits of joining the Bio Vera network
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Guaranteed Purchase',
-                description: 'All our growers must purchase from our approved suppliers. Guaranteed demand and stable revenue streams.',
-              },
-              {
-                title: 'International Sourcing via Vera Logistics',
-                description: 'Vera Logistics delivers seedlings and fertilizers from international suppliers directly to you. No need to arrange international shipping - we handle the entire import and delivery process.',
-              },
-              {
-                title: 'National Coverage Preferred',
-                description: 'Main suppliers with good national coverage are highly preferred. Expand your market reach across the region.',
-              },
-              {
-                title: 'Exclusive Market Access',
-                description: 'Direct access to global markets through our vertically integrated network. Your products reach end customers without intermediaries.',
-              },
-              {
-                title: 'Integrated Return Logistics',
-                description: 'Receive regular deliveries of Vera seeds and fertilizers on return trips from our logistics network. No empty kilometers, reduced costs.',
-              },
-              {
-                title: 'Price Stability',
-                description: 'Pre-agreed pricing structure ensures predictable revenue. No price fluctuations or negotiations per transaction.',
-              },
-            ].map((item, index) => (
-              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
-                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -809,7 +804,7 @@ export default function SuppliersPage() {
                   Email: info@biovera.app
                 </li>
                 <li className="text-sm text-gray-600 font-light">
-                  Phone: +381 11 123 4567
+                  Phone: <a href="tel:+4915563740470" className="hover:text-[#2D5A27] transition-colors">+49 155 63740470</a>
                 </li>
               </ul>
             </div>

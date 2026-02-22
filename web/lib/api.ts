@@ -292,6 +292,7 @@ export const usersAPI = {
     phone?: string;
     firstName: string;
     lastName: string;
+    productionCountry?: string;
     password?: string;
     roles?: string[];
     role?: string;
@@ -306,6 +307,7 @@ export const usersAPI = {
     phone?: string;
     firstName?: string;
     lastName?: string;
+    productionCountry?: string;
     roles?: string[];
     status?: string;
   }) => {

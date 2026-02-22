@@ -171,7 +171,64 @@ export default function GrowersPage() {
         </div>
       </section>
 
-      {/* Requirements Section */}
+      {/* Who can apply — compact */}
+      <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-xl font-light text-gray-900 mb-1">Who can apply</h2>
+          <p className="text-sm text-gray-500 font-light mb-6">
+            Producers from these countries can join. Same protocol, same certification.
+          </p>
+          <p className="text-sm text-gray-600 font-light leading-relaxed">
+            {[
+              'Austria', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic',
+              'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece',
+              'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Luxembourg',
+              'Malta', 'Montenegro', 'Netherlands', 'North Macedonia', 'Poland', 'Portugal', 'Romania',
+              'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+            ].map((c, i) => (
+              <span key={c}>
+                {c}{i < 30 ? ', ' : ''}
+              </span>
+            ))}
+          </p>
+        </div>
+      </section>
+
+      {/* 1. Value Proposition — what we offer (motivation first) */}
+      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-light text-gray-900 mb-3">The Value Proposition</h2>
+            <p className="text-base text-gray-600 font-light">
+              What we offer
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Fixed Pricing',
+                description: 'Seasonal price stability. No middleman, no daily price fluctuations. Secure your revenue with predictable pricing throughout the season.',
+              },
+              {
+                title: 'Logistics Priority',
+                description: 'Our Frigo-Fleet picks up your goods at the exact scheduled minute. Zero wait time. Your harvest gets priority treatment from field to market.',
+              },
+              {
+                title: 'Automated Payments',
+                description: 'Funds are reserved upon field verification and released within 48 hours of Hub arrival. No payment delays, no cash flow worries.',
+              },
+            ].map((item, index) => (
+              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
+                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 2. The Bio Vera Protocol — what we require */}
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -202,40 +259,6 @@ export default function GrowersPage() {
             ].map((item, index) => (
               <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
                 <h3 className="text-lg font-light text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">The Value Proposition</h2>
-            <p className="text-base text-gray-600 font-light">
-              What we offer
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Fixed Pricing',
-                description: 'Seasonal price stability. No middleman, no daily price fluctuations. Secure your revenue with predictable pricing throughout the season.',
-              },
-              {
-                title: 'Logistics Priority',
-                description: 'Our Frigo-Fleet picks up your goods at the exact scheduled minute. Zero wait time. Your harvest gets priority treatment from field to market.',
-              },
-              {
-                title: 'Automated Payments',
-                description: 'Funds are reserved upon field verification and released within 48 hours of Hub arrival. No payment delays, no cash flow worries.',
-              },
-            ].map((item, index) => (
-              <div key={index} className="border-b border-[#2D5A27]/20/50 pb-8">
-                <h3 className="text-lg font-light text-[#2D5A27]/80 mb-3">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed font-light">{item.description}</p>
               </div>
             ))}

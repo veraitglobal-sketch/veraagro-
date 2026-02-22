@@ -37,7 +37,7 @@ export class FieldEntriesService {
     farmId: string
   ): Promise<{ valid: boolean; reason?: string }> {
     if (!location || !location.lat || !location.lng) {
-      return { valid: false, reason: 'GPS lokacija je obavezna' };
+      return { valid: false, reason: 'GPS location is required' };
     }
 
     // Get farm with coordinates
