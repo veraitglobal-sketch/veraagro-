@@ -1001,6 +1001,7 @@ model users {
   farmerProfileUrl                              String?
   farmerPhoto                                  String?
   farmerBio                                    String?
+  productionCountry                            String?                   // e.g. "Serbia", "Italy" – for QR label "Produced in X, Region Y"
   yearsOfExperience                            Int?
   generation                                   String?                   // e.g., "3rd", "4th"
   audit_trails                                 audit_trails[]
