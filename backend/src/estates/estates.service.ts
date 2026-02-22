@@ -17,12 +17,15 @@ export class EstatesService {
       : data.polygonCoordinates.coordinates || [];
     
     const calculatedArea = GeometryUtil.calculatePolygonArea(points);
+    const id = crypto.randomUUID();
+    const estateQrCode = `ESTATE-${id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
     return this.prisma.estates.create({
       data: {
-        id: crypto.randomUUID(),
+        id,
         name: data.name,
         ownerId: userId,
+        estateQrCode,
         polygonCoordinates: data.polygonCoordinates,
         calculatedArea,
         status: 'PENDING_SETUP',

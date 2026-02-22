@@ -341,6 +341,7 @@ model estates {
   id                     String              @id
   name                   String
   ownerId                String
+  estateQrCode           String?             @unique
   polygonCoordinates     Json
   calculatedArea         Float
   verifiedArea           Float?

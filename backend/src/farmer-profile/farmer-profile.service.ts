@@ -303,4 +303,116 @@ export class FarmerProfileService {
     if (cropArray.length === 2) return `${cropArray[0].toLowerCase()} and ${cropArray[1].toLowerCase()}`;
     return `${cropArray.slice(0, -1).join(', ').toLowerCase()} and ${cropArray[cropArray.length - 1].toLowerCase()}`;
   }
+
+  /**
+   * Get estate passport by QR code (public). Same response shape as farmer passport so one template works.
+   */
+  async getEstatePassportByQrCode(qrCode: string) {
+    let estate = await this.prisma.estates.findUnique({
+      where: { estateQrCode: qrCode },
+      include: {
+        users: true,
+        parcels: {
+          include: {
+            growth_logs: {
+              orderBy: { createdAt: 'desc' },
+              take: 5,
+            },
+          },
+        },
+        batches: {
+          orderBy: { harvestDate: 'desc' },
+          take: 10,
+        },
+      },
+    });
+
+    if (!estate) {
+      throw new NotFoundException('Estate passport not found');
+    }
+
+    const user = estate.users;
+    const region = this.extractRegionFromLocation(estate.polygonCoordinates || null);
+    const country = user?.productionCountry?.trim() || null;
+    const producedInLabel = country && region
+      ? `Produced in ${country}, ${region}. Grown to Vera standards.`
+      : country
+        ? `Produced in ${country}. Grown to Vera standards.`
+        : region
+          ? `Produced in ${region}. Grown to Vera standards.`
+          : 'Grown to Vera standards.';
+
+    const compliancePhotos = await this.prisma.compliance_photos.findMany({
+      where: { batchId: { in: estate.batches.map(b => b.batchId) } },
+      orderBy: { uploadedAt: 'desc' },
+      take: 10,
+      select: { photoUrl: true },
+    });
+
+    const latestHarvest = estate.batches[0];
+    const harvestYear = latestHarvest?.harvestDate
+      ? new Date(latestHarvest.harvestDate).getFullYear()
+      : new Date().getFullYear();
+    const crops = this.getCropTypes([estate]);
+
+    return {
+      producedInLabel,
+      farmer: {
+        id: user?.id ?? estate.id,
+        firstName: '',
+        lastName: '',
+        photo: user?.farmerPhoto ?? null,
+        bio: `Estate ${estate.name}. Growing ${crops}${region ? ` in ${region}` : ''}.`,
+        generation: user?.generation || '3rd',
+        yearsOfExperience: user?.yearsOfExperience ?? null,
+        isVeraPartner: user?.isVeraPartner ?? false,
+        partnerCode: user?.partnerCode ?? '',
+      },
+      location: {
+        region,
+        estates: [{ name: estate.name, location: region }],
+      },
+      stats: {
+        totalEstates: 1,
+        totalBatches: estate.batches.length,
+        latestHarvestYear: harvestYear,
+        crops,
+      },
+      photos: {
+        profile: user?.farmerPhoto ?? null,
+        field: compliancePhotos.map(p => p.photoUrl),
+        growth: (estate.parcels || []).flatMap((p: any) =>
+          (p.growth_logs || []).filter((l: any) => l.imageUrl).map((l: any) => l.imageUrl),
+        ).slice(0, 10),
+      },
+      recentHarvests: estate.batches.map(b => ({
+        batchId: b.batchId,
+        productName: b.productName ?? 'Product',
+        harvestDate: b.harvestDate,
+        harvestYear: new Date(b.harvestDate).getFullYear(),
+        quantity: b.quantity ?? 0,
+      })),
+    };
+  }
+
+  /**
+   * Generate QR code image for estate (passport URL).
+   */
+  async generateEstateQrCodeImage(qrCode: string): Promise<string> {
+    const estate = await this.prisma.estates.findUnique({
+      where: { estateQrCode: qrCode },
+      select: { id: true },
+    });
+    if (!estate) {
+      throw new NotFoundException('Estate not found');
+    }
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const profileUrl = `${frontendUrl}/estate/${qrCode}`;
+    return QRCode.toDataURL(profileUrl, {
+      errorCorrectionLevel: 'H',
+      type: 'image/png',
+      width: 300,
+      margin: 2,
+    });
+  }
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import PassportView, { PassportData } from '@/components/PassportView';
 
-export default function FarmerProfilePage() {
+export default function EstatePassportPage() {
   const params = useParams();
   const qrCode = params.qrCode as string;
   const [data, setData] = useState<PassportData | null>(null);
@@ -12,19 +12,19 @@ export default function FarmerProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProfile();
+    fetchPassport();
   }, [qrCode]);
 
-  const fetchProfile = async () => {
+  const fetchPassport = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/farmer-profile/qr/${qrCode}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/estate-profile/qr/${qrCode}`
       );
-      if (!response.ok) throw new Error('Profile not found');
-      const profileData = await response.json();
-      setData(profileData);
+      if (!response.ok) throw new Error('Estate passport not found');
+      const passportData = await response.json();
+      setData(passportData);
     } catch (err: any) {
-      setError(err.message || 'Failed to load profile');
+      setError(err.message || 'Failed to load estate passport');
     } finally {
       setLoading(false);
     }
@@ -45,8 +45,8 @@ export default function FarmerProfilePage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-xl font-light text-[#1A3021] mb-2">Profile not found</h1>
-          <p className="text-sm text-[#1A3021]/60 font-light">{error || 'Farmer profile not found.'}</p>
+          <h1 className="text-xl font-light text-[#1A3021] mb-2">Estate passport not found</h1>
+          <p className="text-sm text-[#1A3021]/60 font-light">{error || 'Estate passport not found.'}</p>
         </div>
       </div>
     );
