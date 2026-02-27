@@ -1,10 +1,21 @@
+require("./load-env.js");
 require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
+const path = require("path");
+
+const raw = (process.env.DEPLOYER_PRIVATE_KEY || "").trim().replace(/^0x/i, "");
+const hexOnly = raw.replace(/[^0-9a-fA-F]/g, "");
+if (hexOnly.length !== 64) {
+  throw new Error(
+    "DEPLOYER_PRIVATE_KEY nije postavljen (ima " + hexOnly.length + " hex karaktera, treba 64). " +
+    "Pokreni: DEPLOYER_PRIVATE_KEY=tvoj_64_hex_key npm run deploy:amoy   ili stavi key u blockchain/files/deploy.key (jedan red, samo 64 hex znaka)."
+  );
+}
+process.env.DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY.startsWith("0x") ? process.env.DEPLOYER_PRIVATE_KEY : "0x" + hexOnly;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   paths: {
-    sources: './',
+    sources: './contracts',
     tests: './',
   },
   solidity: {
@@ -22,13 +33,13 @@ module.exports = {
       url: "http://127.0.0.1:8545",
     },
 
-    // ─── Polygon Mumbai Testnet (za testiranje, besplatno) ───────
-    polygonMumbai: {
-      url: process.env.POLYGON_MUMBAI_RPC_URL || "https://rpc-mumbai.maticvigil.com",
+    // ─── Polygon Amoy Testnet (za testiranje, besplatno) – Mumbai je ugašen ───────
+    polygonAmoy: {
+      url: process.env.POLYGON_AMOY_RPC_URL || "https://rpc-amoy.polygon.technology",
       accounts: process.env.DEPLOYER_PRIVATE_KEY
         ? [process.env.DEPLOYER_PRIVATE_KEY]
         : [],
-      chainId: 80001,
+      chainId: 80002,
     },
 
     // ─── Polygon Mainnet (produkcija) ────────────────────────────
@@ -45,7 +56,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       polygon: process.env.POLYGONSCAN_API_KEY || "",
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
+      polygonAmoy: process.env.POLYGONSCAN_API_KEY || "",
     },
   },
 

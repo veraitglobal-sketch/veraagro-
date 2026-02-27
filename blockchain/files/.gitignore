@@ -1,0 +1,14 @@
+# Nikad ne commituj ključeve
+.env
+.env.local
+deploy.key
+*.pem
+
+# Hardhat
+cache/
+artifacts/
+coverage/
+coverage.jsonBytes
+
+# Node
+node_modules/

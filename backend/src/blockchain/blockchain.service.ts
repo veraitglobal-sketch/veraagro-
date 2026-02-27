@@ -79,7 +79,9 @@ export class BlockchainService implements OnModuleInit {
       this.explorerBaseUrl =
         network === 'polygon'
           ? 'https://polygonscan.com'
-          : 'https://mumbai.polygonscan.com';
+          : network === 'polygonAmoy'
+            ? 'https://amoy.polygonscan.com'
+            : 'https://amoy.polygonscan.com';
 
       this.provider = new ethers.JsonRpcProvider(rpcUrl);
       this.wallet = new ethers.Wallet(privateKey, this.provider);

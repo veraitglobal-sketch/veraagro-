@@ -113,12 +113,13 @@ export default function Home() {
       {/* Stats - Minimal */}
       <section className="pt-16 pb-12 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             {[
               { number: '100%', label: 'Traceability' },
               { number: 'EU', label: 'Certified' },
               { number: '24/7', label: 'Monitoring' },
               { number: '0', label: 'Fraud Cases' },
+              { number: 'Polygon', label: 'Blockchain Complete' },
             ].map((stat, index) => (
               <motion.div
                 key={index}
@@ -296,6 +297,11 @@ export default function Home() {
                 description: 'Automated generation of EU certificates. Direct market access without intermediaries.',
                 icon: FileCheck,
               },
+              {
+                title: 'Blockchain verification (Polygon)',
+                description: 'Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete.',
+                icon: Lock,
+              },
             ].map((feature, index) => {
               const IconComponent = feature.icon;
               return (
@@ -338,8 +344,8 @@ export default function Home() {
               {
                 phase: 'Q2 2026',
                 title: 'Feature Expansion',
-                status: 'in-progress',
-                items: ['AI Analytics', 'Advanced Dashboard', 'Integrations', 'EU Certificates', 'Public blockchain verification (Polygon)']
+                status: 'completed',
+                items: ['AI Analytics — Complete', 'Blockchain verification (Polygon) — Complete', 'Advanced Dashboard', 'Integrations', 'EU Certificates']
               },
               {
                 phase: 'Q3-Q4 2026',

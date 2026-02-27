@@ -32,6 +32,7 @@ const navLabels = {
     commandControl: 'Command & Control',
     estates: 'Estate Approval',
     aiConversations: 'AI Conversations',
+    testBatch: 'Test batch',
   },
   de: {
     dashboard: 'Dashboard',
@@ -47,6 +48,7 @@ const navLabels = {
     commandControl: 'Befehls- und Kontrollzentrale',
     estates: 'Grundstücksgenehmigung',
     aiConversations: 'KI-Konversationen',
+    testBatch: 'Test-Batch',
   },
 };
 
@@ -152,6 +154,11 @@ export function getAdminNavItems(_language?: 'en') {
       href: '/admin/ai-conversations', 
       label: labels.aiConversations, 
       icon: <MessageCircle className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/test-batch', 
+      label: labels.testBatch, 
+      icon: <Package className="w-5 h-5" /> 
     },
   ];
 }

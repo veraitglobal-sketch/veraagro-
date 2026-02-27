@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
-    "deploy:mumbai": "hardhat run deploy.js --network polygonMumbai",
+    "deploy:amoy": "hardhat run deploy.js --network polygonAmoy",
     "deploy:polygon": "hardhat run deploy.js --network polygon",
     "test": "hardhat test"
   },

@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, forwardRef, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { BlockchainService } from '../blockchain/blockchain.service';
 import { BatchStatus } from '@prisma/client';
 
 /**
@@ -11,11 +12,14 @@ import { BatchStatus } from '@prisma/client';
  */
 @Injectable()
 export class BatchesService {
+  private readonly logger = new Logger(BatchesService.name);
+
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
     @Inject(forwardRef(() => NotificationsGateway))
     private notificationsGateway: NotificationsGateway,
+    private blockchainService: BlockchainService,
   ) {}
 
   /**
@@ -56,6 +60,35 @@ export class BatchesService {
         ],
       } as any,
     });
+
+    // Register on blockchain if enabled (non-blocking; batch is already created)
+    if (this.blockchainService.isEnabled()) {
+      try {
+        const harvestDateStr =
+          data.harvestDate instanceof Date
+            ? data.harvestDate.toISOString().split('T')[0]
+            : new Date(data.harvestDate).toISOString().split('T')[0];
+        const result = await this.blockchainService.registerBatch({
+          batchId,
+          estateId: data.estateId,
+          harvestDate: harvestDateStr,
+          productType: data.productName,
+        });
+        await this.prisma.batches.update({
+          where: { id: batch.id },
+          data: {
+            blockchainTxHash: result.txHash,
+            blockchainRegisteredAt: result.timestamp,
+            updatedAt: new Date(),
+          },
+        });
+        this.logger.log(`Batch ${batchId} registered on blockchain: ${result.txHash}`);
+        const updated = await this.prisma.batches.findUnique({ where: { id: batch.id } });
+        if (updated) return updated;
+      } catch (err) {
+        this.logger.warn(`Blockchain register failed for batch ${batchId}`, err);
+      }
+    }
 
     return batch;
   }
