@@ -7,10 +7,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { formatFarmerIdentity, getFirstName, extractRegion } from '@/lib/farmer-utils';
+import { BlockchainVerification } from '@/components/BlockchainVerification';
 
 interface VerificationData {
   batch: {
     batchId: string;
+    estateId?: string;
     productName: string;
     quantity: number;
     unit: string;
@@ -261,6 +263,16 @@ export default function VerifyPage() {
             <span>•</span>
             <span>Harvested {formatDate(data.batch.harvestDate)}</span>
           </div>
+          {data.batch.estateId && (
+            <div className="mt-6">
+              <BlockchainVerification
+                batchId={data.batch.batchId}
+                estateId={data.batch.estateId}
+                harvestDate={typeof data.batch.harvestDate === 'string' ? data.batch.harvestDate : new Date(data.batch.harvestDate).toISOString()}
+                productType={data.batch.productName}
+              />
+            </div>
+          )}
         </motion.div>
 
         {/* Live Timeline */}

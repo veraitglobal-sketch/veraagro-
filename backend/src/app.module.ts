@@ -75,6 +75,7 @@ import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
 import { KycModule } from './kyc/kyc.module';
 import { TreatmentLogsModule } from './treatment-logs/treatment-logs.module';
 import { HaccpModule } from './haccp/haccp.module';
+import { BlockchainModule } from './blockchain/blockchain.module';
 
 @Module({
   imports: [
@@ -157,6 +158,7 @@ import { HaccpModule } from './haccp/haccp.module';
     KycModule,
     TreatmentLogsModule,
     HaccpModule,
+    BlockchainModule,
   ],
   providers: [
     {

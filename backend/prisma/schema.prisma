@@ -70,6 +70,8 @@ model batches {
   qualityIssues                              Json?
   inventoryId                                String?
   locationHistory                            Json
+  blockchainTxHash                           String?
+  blockchainRegisteredAt                     DateTime?
   createdAt                                  DateTime               @default(now())
   updatedAt                                  DateTime
   audit_trails                               audit_trails[]

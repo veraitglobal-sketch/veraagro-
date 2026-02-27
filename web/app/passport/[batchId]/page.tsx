@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Shield, Download, MapPin, Package, Camera, Truck, CheckCircle, AlertTriangle, Thermometer, Clock } from 'lucide-react';
 import Image from 'next/image';
 import { getFirstName } from '@/lib/farmer-utils';
+import { BlockchainVerification } from '@/components/BlockchainVerification';
 
 interface Treatment {
   appliedAt: string;
@@ -36,6 +37,7 @@ interface PassportData {
   qrId?: string;
   batch: {
     batchId: string;
+    estateId?: string;
     productName: string;
     quantity: number;
     unit: string;
@@ -139,6 +141,7 @@ export default function ProductPassportPage() {
         qrId: apiData.qrId || undefined,
         batch: {
           batchId: apiData.batch?.batchId || batchId,
+          estateId: apiData.batch?.estateId,
           productName: apiData.batch?.productName || 'Organic Product',
           quantity: apiData.batch?.quantity || 0,
           unit: apiData.batch?.unit || 'kg',
@@ -305,6 +308,16 @@ export default function ProductPassportPage() {
             <div className="mt-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
               <span>Temperature deviation recorded. Check cold chain log.</span>
+            </div>
+          )}
+          {data.batch.estateId && (
+            <div className="mt-6">
+              <BlockchainVerification
+                batchId={data.batch.batchId}
+                estateId={data.batch.estateId}
+                harvestDate={typeof data.batch.harvestDate === 'string' ? data.batch.harvestDate : new Date(data.batch.harvestDate).toISOString()}
+                productType={data.batch.productName}
+              />
             </div>
           )}
         </motion.div>

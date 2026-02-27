@@ -204,6 +204,7 @@ export class QrService {
       batch: {
         id: batch.id,
         batchId: batch.batchId,
+        estateId: batch.estateId,
         productName: batch.productName,
         quantity: batch.quantity,
         unit: batch.unit,

@@ -1,0 +1,16 @@
+{
+  "name": "biovera-blockchain",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:mumbai": "hardhat run deploy.js --network polygonMumbai",
+    "deploy:polygon": "hardhat run deploy.js --network polygon",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.22.0",
+    "dotenv": "^16.3.1"
+  }
+}

@@ -339,7 +339,7 @@ export default function Home() {
                 phase: 'Q2 2026',
                 title: 'Feature Expansion',
                 status: 'in-progress',
-                items: ['AI Analytics', 'Advanced Dashboard', 'Integrations', 'EU Certificates']
+                items: ['AI Analytics', 'Advanced Dashboard', 'Integrations', 'EU Certificates', 'Public blockchain verification (Polygon)']
               },
               {
                 phase: 'Q3-Q4 2026',
@@ -351,7 +351,7 @@ export default function Home() {
                 phase: '2027',
                 title: 'Global Expansion',
                 status: 'planned',
-                items: ['Global Markets', 'Blockchain Integration', 'IoT Sensors', 'AI Predictions']
+                items: ['Global Markets', 'IoT Sensors', 'AI Predictions']
               },
             ].map((plan, index) => (
               <motion.div
