@@ -4,6 +4,7 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
 import { ethers } from 'ethers';
 import * as crypto from 'crypto';
 
@@ -49,6 +50,10 @@ export interface BatchVerificationResult {
   registeredAt?: Date;
   eventCount?: number;
   explorerUrl: string;
+  /** Registration tx hash from DB (if stored) */
+  txHash?: string;
+  /** Direct link to registration transaction on explorer */
+  registrationTxUrl?: string;
 }
 
 @Injectable()
@@ -60,7 +65,10 @@ export class BlockchainService implements OnModuleInit {
   private explorerBaseUrl = 'https://polygonscan.com';
   private enabled = false;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async onModuleInit() {
     const rpcUrl = this.config.get<string>('POLYGON_RPC_URL');
@@ -181,6 +189,14 @@ export class BlockchainService implements OnModuleInit {
     };
   }
 
+  /** Normalize harvest date to YYYY-MM-DD so verify hash matches registration hash */
+  private normalizeHarvestDate(harvestDate: string): string {
+    if (!harvestDate || typeof harvestDate !== 'string') return harvestDate;
+    const d = harvestDate.trim();
+    const iso = d.includes('T') ? d.split('T')[0] : d;
+    return iso.slice(0, 10);
+  }
+
   async verifyBatch(
     batchId: string,
     batchData: {
@@ -192,12 +208,22 @@ export class BlockchainService implements OnModuleInit {
     if (!this.contract) {
       throw new Error('BLOCKCHAIN_NOT_CONFIGURED');
     }
-    const dataHash = this.createBatchHash({ batchId, ...batchData });
+    const harvestDateNorm = this.normalizeHarvestDate(batchData.harvestDate);
+    const dataHash = this.createBatchHash({
+      batchId,
+      estateId: batchData.estateId,
+      harvestDate: harvestDateNorm,
+      productType: batchData.productType,
+    });
     const [isValid, registeredAtTimestamp] = await this.contract.verifyBatch(
       batchId,
       dataHash,
     );
     const batchInfo = isValid ? await this.contract.getBatch(batchId) : null;
+    const dbBatch = await this.prisma.batches
+      .findFirst({ where: { batchId }, select: { blockchainTxHash: true } })
+      .catch(() => null);
+    const txHash = dbBatch?.blockchainTxHash ?? undefined;
     return {
       batchId,
       isVerified: isValid,
@@ -206,6 +232,8 @@ export class BlockchainService implements OnModuleInit {
         : undefined,
       eventCount: batchInfo ? Number(batchInfo.eventCount) : undefined,
       explorerUrl: `${this.explorerBaseUrl}/address/${await this.contract.getAddress()}`,
+      txHash,
+      registrationTxUrl: txHash ? `${this.explorerBaseUrl}/tx/${txHash}` : undefined,
     };
   }
 

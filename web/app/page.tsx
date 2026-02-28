@@ -171,7 +171,8 @@ export default function Home() {
                           alt={partner.alt || `${partner.name} Logo`}
                           width={100}
                           height={50}
-                          className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                          className="max-w-[100px] max-h-[50px] object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                          style={{ width: 'auto', height: 'auto' }}
                         />
                       </a>
                     ) : (
@@ -180,7 +181,8 @@ export default function Home() {
                         alt={partner.alt || `${partner.name} Logo`}
                         width={100}
                         height={50}
-                        className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                        className="max-w-[100px] max-h-[50px] object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all"
+                        style={{ width: 'auto', height: 'auto' }}
                       />
                     )}
                   </motion.div>
@@ -201,7 +203,8 @@ export default function Home() {
                       alt="Bio Vera Partner"
                       width={100}
                       height={50}
-                      className="max-w-[100px] max-h-[50px] w-auto h-auto object-contain opacity-60 grayscale"
+                      className="max-w-[100px] max-h-[50px] object-contain opacity-60 grayscale"
+                      style={{ width: 'auto', height: 'auto' }}
                     />
                   </motion.div>
                 ))
@@ -318,8 +321,48 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Roadmap Section */}
+      {/* Blockchain Trust — zašto koristimo blockchain, vernost kupcima, niko ne može da menja tok */}
       <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#2D5A27]/10 mb-6">
+              <Lock className="w-6 h-6 text-[#2D5A27]" strokeWidth={1.5} />
+            </div>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">Why We Use Blockchain</h2>
+            <p className="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
+              We use a blockchain system so our products stay <strong className="font-normal text-gray-800">faithful to you</strong>—the customer. 
+              Every step of the journey, from harvest to delivery, is recorded in a way that <strong className="font-normal text-gray-800">cannot be changed</strong>. 
+              Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-wrap justify-center gap-6 text-sm"
+          >
+            {[
+              'Immutable record',
+              'No one can edit the trail',
+              'You verify the same data we do',
+            ].map((line, i) => (
+              <span key={i} className="flex items-center gap-2 text-gray-600 font-light">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27]/60" />
+                {line}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Roadmap Section */}
+      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

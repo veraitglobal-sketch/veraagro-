@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef 
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { BlockchainService, ChainEventType } from '../blockchain/blockchain.service';
+import { BatchesService } from '../batches/batches.service';
 import { InitiateHandoverDto, CompleteHandoverDto, DisputeHandoverDto, HandoverStatus, QualityStatus } from './dto/digital-handover.dto';
 import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
@@ -18,6 +20,8 @@ export class DigitalHandoverService {
     private notificationsService: NotificationsService,
     @Inject(forwardRef(() => NotificationsGateway))
     private notificationsGateway: NotificationsGateway,
+    private blockchainService: BlockchainService,
+    private batchesService: BatchesService,
   ) {}
 
   /**
@@ -177,6 +181,30 @@ export class DigitalHandoverService {
       where: { id: handover.deliveries.orderId },
       data: { status: 'DELIVERED' },
     });
+
+    const nowIso = new Date().toISOString();
+    const orderItemsWithBatch = await this.prisma.order_items.findMany({
+      where: { orderId: handover.deliveries.orderId, batchId: { not: null } },
+      include: { batches: { select: { batchId: true } } },
+    });
+    for (const item of orderItemsWithBatch) {
+      if (!item.batches?.batchId) continue;
+      const batchIdStr = item.batches.batchId;
+      try {
+        await this.batchesService.markDelivered(batchIdStr);
+      } catch (e) {
+        console.warn(`markDelivered failed for batch ${batchIdStr}`, e);
+      }
+      if (this.blockchainService.isEnabled()) {
+        try {
+          await this.blockchainService.recordEvent(batchIdStr, ChainEventType.DELIVERY, {
+            timestamp: nowIso,
+          });
+        } catch (e) {
+          console.warn(`Blockchain DELIVERY event failed for ${batchIdStr}`, e);
+        }
+      }
+    }
 
     // Notify admin
     const adminUsers = await this.prisma.users.findMany({

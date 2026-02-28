@@ -33,6 +33,7 @@ const navLabels = {
     estates: 'Estate Approval',
     aiConversations: 'AI Conversations',
     testBatch: 'Test batch',
+    njivaBlockchain: 'Njiva → Blockchain',
   },
   de: {
     dashboard: 'Dashboard',
@@ -49,6 +50,7 @@ const navLabels = {
     estates: 'Grundstücksgenehmigung',
     aiConversations: 'KI-Konversationen',
     testBatch: 'Test-Batch',
+    njivaBlockchain: 'Njiva → Blockchain',
   },
 };
 
@@ -159,6 +161,11 @@ export function getAdminNavItems(_language?: 'en') {
       href: '/admin/test-batch', 
       label: labels.testBatch, 
       icon: <Package className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/njiva-blockchain', 
+      label: labels.njivaBlockchain, 
+      icon: <MapPin className="w-5 h-5" /> 
     },
   ];
 }

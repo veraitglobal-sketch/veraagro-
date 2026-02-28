@@ -8,6 +8,8 @@ interface VerificationResult {
   registeredAt?: string;
   eventCount?: number;
   explorerUrl: string;
+  txHash?: string;
+  registrationTxUrl?: string;
 }
 
 interface JourneyEvent {
@@ -154,7 +156,7 @@ export function BlockchainVerification({ batchId, estateId, harvestDate, product
         </div>
         {verification.isVerified && (
           <a
-            href={verification.explorerUrl}
+            href={verification.registrationTxUrl || verification.explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
             style={styles.polygonBadge}
@@ -162,7 +164,7 @@ export function BlockchainVerification({ batchId, estateId, harvestDate, product
             <svg width="16" height="16" viewBox="0 0 38 33" fill="none">
               <path d="M29 10.2l-9-5.2-9 5.2-9 5.2v10.4l9 5.2 9-5.2 9 5.2 9-5.2V15.4l-9-5.2z" fill="#8247e5"/>
             </svg>
-            Polygon
+            {verification.registrationTxUrl ? 'View transaction' : 'Polygon'}
           </a>
         )}
       </div>

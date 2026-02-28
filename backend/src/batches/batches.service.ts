@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Inject, forwardRef, Logger } from '@nest
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
-import { BlockchainService } from '../blockchain/blockchain.service';
+import { BlockchainService, ChainEventType } from '../blockchain/blockchain.service';
 import { BatchStatus } from '@prisma/client';
 
 /**
@@ -83,6 +83,27 @@ export class BatchesService {
           },
         });
         this.logger.log(`Batch ${batchId} registered on blockchain: ${result.txHash}`);
+        const nowIso = new Date().toISOString();
+        const harvestDateIso =
+          data.harvestDate instanceof Date
+            ? data.harvestDate.toISOString()
+            : new Date(data.harvestDate).toISOString();
+        try {
+          await this.blockchainService.recordEvent(batchId, ChainEventType.HARVEST, {
+            timestamp: harvestDateIso,
+          });
+          this.logger.log(`Batch ${batchId} chain event HARVEST recorded`);
+        } catch (e) {
+          this.logger.warn(`Blockchain HARVEST event failed for ${batchId}`, e);
+        }
+        try {
+          await this.blockchainService.recordEvent(batchId, ChainEventType.PACKAGING, {
+            timestamp: nowIso,
+          });
+          this.logger.log(`Batch ${batchId} chain event PACKAGING recorded`);
+        } catch (e) {
+          this.logger.warn(`Blockchain PACKAGING event failed for ${batchId}`, e);
+        }
         const updated = await this.prisma.batches.findUnique({ where: { id: batch.id } });
         if (updated) return updated;
       } catch (err) {
@@ -123,6 +144,18 @@ export class BatchesService {
         locationHistory,
       },
     });
+
+    if (this.blockchainService.isEnabled()) {
+      try {
+        await this.blockchainService.recordEvent(batchId, ChainEventType.HANDOVER, {
+          timestamp: new Date().toISOString(),
+          locationCode: hubId,
+        });
+        this.logger.log(`Batch ${batchId} chain event HANDOVER recorded`);
+      } catch (err) {
+        this.logger.warn(`Blockchain HANDOVER event failed for ${batchId}`, err);
+      }
+    }
 
     // Notify hub manager
     const hub = await this.prisma.hubs.findUnique({
