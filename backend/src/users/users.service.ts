@@ -4,6 +4,19 @@ import { Prisma, UserRole, UserStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 import * as QRCode from 'qrcode';
 
+/** Subset of `users` for login (password check + JWT). Omits `buyerCompanyProfile` and other
+ * heavy optionals so auth still works if a JSON migration was not run on the DB yet. */
+const AUTH_LOGIN_SELECT: Prisma.usersSelect = {
+  id: true,
+  partnerCode: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  passwordHash: true,
+  status: true,
+  roles: true,
+};
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -22,6 +35,7 @@ export class UsersService {
     // Try to find by email first
     const userByEmail = await this.prisma.users.findFirst({
       where: { email: identifier },
+      select: AUTH_LOGIN_SELECT,
     });
     
     if (userByEmail) {
@@ -31,6 +45,7 @@ export class UsersService {
     // If not found by email, try partnerCode
     return this.prisma.users.findUnique({
       where: { partnerCode: identifier },
+      select: AUTH_LOGIN_SELECT,
     });
   }
 
