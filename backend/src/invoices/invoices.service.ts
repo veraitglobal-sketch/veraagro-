@@ -5,9 +5,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { buildInvoicePdf } from '../common/pdf/simple-documents-pdf';
 import { EmailService } from '../email/email.service';
 
+type OrderWithInvoiceDeps = Awaited<
+  ReturnType<InvoicesService['loadOrderForInvoice']>
+>;
+type DelWithUser = NonNullable<OrderWithInvoiceDeps>['deliveries'];
+
 /**
  * Invoices Service
- * Automatic generation of PDF invoices
+ * Automatic generation of PDF invoices (after payment; optional refresh when delivery is assigned)
  */
 @Injectable()
 export class InvoicesService {
@@ -18,38 +23,27 @@ export class InvoicesService {
     private emailService: EmailService,
   ) {}
 
-  /**
-   * Generate invoice PDF automatically when delivery is assigned
-   */
-  async generateInvoice(orderId: string, deliveryId?: string) {
-    const order = await this.prisma.orders.findUnique({
+  private async loadOrderForInvoice(orderId: string) {
+    return this.prisma.orders.findUnique({
       where: { id: orderId },
       include: {
         estates: true,
         users: true,
         payments: true,
-        deliveries: deliveryId
-          ? {
-              include: {
-                users: true,
-              },
-            }
-          : undefined,
+        deliveries: { include: { users: true } },
       },
     });
+  }
 
-    if (!order) {
-      throw new Error('Order not found');
-    }
-
-    // Generate invoice number
-    const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-
-    // Prepare invoice data
-    const invoiceData = {
-      invoiceNumber,
+  private buildInvoiceData(
+    order: NonNullable<OrderWithInvoiceDeps>,
+    opts: { invoiceNumber: string; issueDate: string; delivery: DelWithUser },
+  ) {
+    const d = opts.delivery;
+    return {
+      invoiceNumber: opts.invoiceNumber,
       orderNumber: order.orderNumber,
-      date: new Date().toISOString(),
+      date: opts.issueDate,
       buyer: {
         name: `${order.users.firstName} ${order.users.lastName}`,
         email: order.users.email,
@@ -66,34 +60,103 @@ export class InvoicesService {
         },
       ],
       subtotal: order.totalAmount,
-      tax: 0, // Can be calculated
+      tax: 0,
       total: order.totalAmount,
       payment: {
         method: order.payments?.paymentMethod,
         status: order.payments?.status,
       },
-      delivery: order.deliveries
+      delivery: d
         ? {
-            deliveryNumber: order.deliveries.deliveryNumber,
-            driver: order.deliveries.users
-              ? `${order.deliveries.users.firstName} ${order.deliveries.users.lastName}`
+            deliveryNumber: d.deliveryNumber,
+            driver: d.users
+              ? `${d.users.firstName} ${d.users.lastName}`
               : null,
           }
         : null,
     };
+  }
+
+  private async enrichInvoiceWithDelivery(
+    invoiceRow: { id: string; invoiceNumber: string; invoiceData: unknown },
+    orderId: string,
+    deliveryId: string,
+  ) {
+    const order = await this.loadOrderForInvoice(orderId);
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    if (!order.deliveries || order.deliveries.id !== deliveryId) {
+      throw new BadRequestException('Delivery does not match this order');
+    }
+    const prior = (invoiceRow.invoiceData || {}) as { date?: string };
+    const invoiceData = this.buildInvoiceData(order, {
+      invoiceNumber: invoiceRow.invoiceNumber,
+      issueDate: prior.date || new Date().toISOString(),
+      delivery: order.deliveries,
+    });
+    const pdfBuffer = await buildInvoicePdf(invoiceData);
+    const pdfHash = createHash('sha256').update(pdfBuffer).digest('hex');
+    return this.prisma.invoices.update({
+      where: { id: invoiceRow.id },
+      data: {
+        deliveryId,
+        pdfHash,
+        invoiceData,
+      },
+    });
+  }
+
+  /**
+   * Create invoice when order is paid; idempotent. When delivery is assigned later, pass
+   * `deliveryId` once to add route/driver lines to the same invoice (and PDF).
+   */
+  async generateInvoice(orderId: string, deliveryId?: string) {
+    const existing = await this.prisma.invoices.findUnique({ where: { orderId } });
+
+    if (existing) {
+      if (existing.deliveryId) {
+        return existing;
+      }
+      if (!deliveryId) {
+        return existing;
+      }
+      return this.enrichInvoiceWithDelivery(existing, orderId, deliveryId);
+    }
+
+    const order = await this.loadOrderForInvoice(orderId);
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    const useDelivery = deliveryId
+      ? order.deliveries && order.deliveries.id === deliveryId
+        ? order.deliveries
+        : null
+      : null;
+    if (deliveryId && !useDelivery) {
+      throw new BadRequestException('Delivery not found for this order');
+    }
+
+    const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    const issueDate = new Date().toISOString();
+    const invoiceData = this.buildInvoiceData(order, {
+      invoiceNumber,
+      issueDate,
+      delivery: useDelivery,
+    });
 
     const id = crypto.randomUUID();
     const pdfBuffer = await buildInvoicePdf(invoiceData);
     const pdfHash = createHash('sha256').update(pdfBuffer).digest('hex');
     const pdfUrl = `/invoices/${id}/download`;
 
-    // Create invoice record
     const invoice = await this.prisma.invoices.create({
       data: {
         id,
         invoiceNumber,
         orderId,
-        deliveryId: deliveryId || null,
+        deliveryId: useDelivery ? useDelivery.id : null,
         pdfUrl,
         pdfHash,
         invoiceData,
@@ -117,7 +180,9 @@ export class InvoicesService {
           data: { sentAt: new Date() },
         });
       }
-      this.logger.warn(`Invoice created (${invoiceNumber}) but email was not sent (mail not configured or send failed).`);
+      this.logger.warn(
+        `Invoice created (${invoiceNumber}) but email was not sent (mail not configured or send failed).`,
+      );
     }
 
     return invoice;

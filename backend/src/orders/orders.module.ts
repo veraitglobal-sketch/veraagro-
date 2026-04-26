@@ -6,6 +6,7 @@ import { PaymentsModule } from '../payments/payments.module';
 import { DeliveriesModule } from '../deliveries/deliveries.module';
 import { EmailModule } from '../email/email.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { InvoicesModule } from '../invoices/invoices.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     DeliveriesModule,
     EmailModule,
     NotificationsModule,
+    InvoicesModule,
   ],
   providers: [OrdersService],
   controllers: [OrdersController],

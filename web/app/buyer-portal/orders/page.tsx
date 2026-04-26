@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { ordersAPI, deliveriesAPI } from '@/lib/api';
+import { ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
 import {
   getBuyerOrderStatusLabel,
   getBuyerOrderStatusDescription,
@@ -104,6 +104,21 @@ export default function OrdersPage() {
     } catch (err: any) {
       console.error('Error loading order details:', err);
       alert('Failed to load order details');
+    }
+  };
+
+  const downloadInvoicePdf = async (invoiceId: string, invoiceNumber: string) => {
+    try {
+      const blob = await invoicesAPI.download(invoiceId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${invoiceNumber}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      alert('Could not download invoice. Try the Invoices page.');
     }
   };
 
@@ -283,6 +298,29 @@ export default function OrdersPage() {
                     </div>
                   </div>
 
+                  {order.invoices && (
+                    <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+                      <FileText className="w-4 h-4 text-[#2D5A27]/60" strokeWidth={1} />
+                      <span className="text-gray-600 font-light">Invoice:</span>
+                      <span className="font-light text-gray-900">{order.invoices.invoiceNumber}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void downloadInvoicePdf(order.invoices.id, order.invoices.invoiceNumber)
+                        }
+                        className="text-[#2D5A27] underline font-light hover:text-[#234a20]"
+                      >
+                        Download PDF
+                      </button>
+                      <Link
+                        href="/buyer-portal/invoices"
+                        className="text-gray-500 font-light hover:text-gray-800"
+                      >
+                        Invoice history
+                      </Link>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="flex items-center gap-2 text-sm">
                       <Package className="w-4 h-4 text-gray-400" strokeWidth={1} />
@@ -387,6 +425,36 @@ export default function OrdersPage() {
                         orderNumber={selectedOrder.orderNumber}
                         totalAmount={Number(selectedOrder.totalAmount)}
                       />
+                    )}
+                    {selectedOrder.invoices && (
+                      <div className="mb-4 p-3 rounded border border-[#2D5A27]/20 bg-[#2D5A27]/5 flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-sm text-gray-800">
+                          <FileText className="w-4 h-4 text-[#2D5A27]" strokeWidth={1} />
+                          <span>
+                            Invoice <strong className="font-medium">{selectedOrder.invoices.invoiceNumber}</strong>
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              void downloadInvoicePdf(
+                                selectedOrder.invoices.id,
+                                selectedOrder.invoices.invoiceNumber,
+                              )
+                            }
+                            className="text-sm font-light border border-[#2D5A27]/40 px-3 py-1.5 rounded text-[#2D5A27] hover:bg-[#2D5A27]/5"
+                          >
+                            Download PDF
+                          </button>
+                          <Link
+                            href="/buyer-portal/invoices"
+                            className="text-sm font-light text-gray-600 hover:text-gray-900 py-1.5"
+                          >
+                            All invoices
+                          </Link>
+                        </div>
+                      </div>
                     )}
                     <h3 className="text-sm font-light text-gray-500 mb-4 mt-2">Progress</h3>
                     <div className="space-y-3">

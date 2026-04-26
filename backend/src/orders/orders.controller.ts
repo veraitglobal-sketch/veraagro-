@@ -48,6 +48,17 @@ export class OrdersController {
     return this.ordersService.approveOrderByAdmin(id);
   }
 
+  /** Bookkeeping: wire received on BioVera account → IN_ESCROW + order PAID (then logistics can assign delivery) */
+  @Post('admin/:id/confirm-bank-payment')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async confirmBankPayment(
+    @Param('id') id: string,
+    @Body() body: { transactionId?: string },
+  ) {
+    return this.ordersService.confirmBankPaymentByAdmin(id, body);
+  }
+
   @Patch('admin/:id/fulfillment')
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')

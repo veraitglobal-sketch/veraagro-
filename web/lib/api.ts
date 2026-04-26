@@ -161,6 +161,12 @@ export const ordersAPI = {
     const response = await api.post(`/orders/admin/${id}/approve`);
     return response.data;
   },
+  confirmBankPaymentAdmin: async (id: string, transactionId?: string) => {
+    const response = await api.post(`/orders/admin/${id}/confirm-bank-payment`, {
+      transactionId: transactionId || undefined,
+    });
+    return response.data;
+  },
 };
 
 // Missions API

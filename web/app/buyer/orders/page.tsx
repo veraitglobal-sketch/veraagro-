@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/lib/auth';
 import { useEffect, useState } from 'react';
-import { ordersAPI } from '@/lib/api';
+import { ordersAPI, invoicesAPI } from '@/lib/api';
 import { getBuyerOrderStatusLabel, getBuyerStatusBadgeClass } from '@/lib/buyer-order-status';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,6 +12,21 @@ export default function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const downloadInvoicePdf = async (invoiceId: string, invoiceNumber: string) => {
+    try {
+      const blob = await invoicesAPI.download(invoiceId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${invoiceNumber}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      alert('Could not download invoice. Open the buyer portal → Invoices.');
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -110,6 +125,25 @@ export default function OrdersPage() {
                     {process.env.NEXT_PUBLIC_BIOVERA_BANK_IBAN
                       ? ' or see details configured for this site.'
                       : ' (or contact us for account details).'}
+                  </div>
+                )}
+                {order.invoices && (
+                  <div className="mt-4 p-3 rounded-lg bg-white border border-gray-200 text-sm text-gray-800">
+                    <span className="font-semibold">Invoice {order.invoices.invoiceNumber}</span>
+                    <span className="mx-2">·</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        void downloadInvoicePdf(order.invoices.id, order.invoices.invoiceNumber)
+                      }
+                      className="text-[#2D5A27] font-medium underline"
+                    >
+                      Download PDF
+                    </button>
+                    <span className="mx-2">·</span>
+                    <Link href="/buyer-portal/invoices" className="text-gray-600 hover:text-gray-900">
+                      Invoice history
+                    </Link>
                   </div>
                 )}
               </div>

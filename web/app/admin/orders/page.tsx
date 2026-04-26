@@ -31,6 +31,11 @@ export default function OrdersManagementPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [bankModal, setBankModal] = useState<{
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
+  const [bankTxId, setBankTxId] = useState('');
 
   useEffect(() => {
     loadOrders();
@@ -81,6 +86,30 @@ export default function OrdersManagementPage() {
     } catch (err: any) {
       console.error('approveOrder', err);
       setError(err.response?.data?.message || err.message || 'Failed to accept order');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const confirmBankPayment = async () => {
+    if (!bankModal) return;
+    try {
+      setSavingId(bankModal.orderId);
+      setError(null);
+      const updated = await ordersAPI.confirmBankPaymentAdmin(
+        bankModal.orderId,
+        bankTxId.trim() || undefined,
+      );
+      setOrders((prev) =>
+        prev.map((o) => (o.id === bankModal.orderId ? { ...o, ...updated } : o)),
+      );
+      setBankModal(null);
+      setBankTxId('');
+    } catch (err: any) {
+      console.error('confirmBankPayment', err);
+      setError(
+        err.response?.data?.message || err.message || 'Failed to confirm bank payment',
+      );
     } finally {
       setSavingId(null);
     }
@@ -191,6 +220,18 @@ export default function OrdersManagementPage() {
                           >
                             Accept order
                           </button>
+                        ) : order.status === 'APPROVED' && !order.payments ? (
+                          <button
+                            type="button"
+                            disabled={savingId === order.id}
+                            onClick={() => {
+                              setBankTxId('');
+                              setBankModal({ orderId: order.id, orderNumber: order.orderNumber });
+                            }}
+                            className="text-xs font-medium rounded-md px-3 py-1.5 bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50"
+                          >
+                            Confirm bank payment
+                          </button>
                         ) : (
                           <span className="text-xs text-gray-400">—</span>
                         )}
@@ -236,6 +277,59 @@ export default function OrdersManagementPage() {
             </div>
           )}
         </div>
+
+        {bankModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="bank-modal-title"
+          >
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 space-y-4">
+              <h2 id="bank-modal-title" className="text-lg font-medium text-gray-900">
+                Confirm bank transfer received
+              </h2>
+              <p className="text-sm text-gray-600">
+                Order <span className="font-mono">{bankModal.orderNumber}</span> will be
+                marked PAID and an escrow payment record will be created. Use this when the
+                amount is visible on the BioVera account.
+              </p>
+              <div>
+                <label htmlFor="bank-tx" className="block text-sm font-medium text-gray-700 mb-1">
+                  Bank reference (optional)
+                </label>
+                <input
+                  id="bank-tx"
+                  value={bankTxId}
+                  onChange={(e) => setBankTxId(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  placeholder="e.g. payment order number"
+                  autoComplete="off"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBankModal(null);
+                    setBankTxId('');
+                  }}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={savingId === bankModal.orderId}
+                  onClick={() => void confirmBankPayment()}
+                  className="px-4 py-2 text-sm rounded-md bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50"
+                >
+                  {savingId === bankModal.orderId ? 'Saving…' : 'Mark as PAID'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </SidebarLayout>
     </AuthGuard>
   );

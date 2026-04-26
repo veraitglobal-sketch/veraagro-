@@ -11,6 +11,7 @@ import { PaymentsService } from '../payments/payments.service';
 import { EmailService } from '../email/email.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ensureVeraPlatformEstateId, isSystemEstateId } from './order-fulfillment.util';
+import { InvoicesService } from '../invoices/invoices.service';
 
 @Injectable()
 export class OrdersService {
@@ -21,6 +22,7 @@ export class OrdersService {
     private paymentsService: PaymentsService,
     private emailService: EmailService,
     private notificationsService: NotificationsService,
+    private invoicesService: InvoicesService,
   ) {}
 
   async create(buyerId: string, data: {
@@ -168,6 +170,14 @@ export class OrdersService {
         estates: true,
         fulfilling_estate: true,
         payments: true,
+        invoices: {
+          select: {
+            id: true,
+            invoiceNumber: true,
+            pdfUrl: true,
+            generatedAt: true,
+          },
+        },
         deliveries: {
           include: {
             users: {
@@ -238,6 +248,78 @@ export class OrdersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  /**
+   * Admin / accounting: money visible on the bank account → record escrow + mark order PAID (for planning delivery).
+   * Use after APPROVED, when the buyer’s wire is reconciled. Idempotent: fails if a payment already exists.
+   */
+  async confirmBankPaymentByAdmin(
+    orderId: string,
+    body?: { transactionId?: string },
+  ) {
+    const order = await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: { payments: true },
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    if (order.status !== 'APPROVED') {
+      throw new BadRequestException(
+        `Bank transfer can only be confirmed when the order is APPROVED (current: ${order.status})`,
+      );
+    }
+    if (order.payments) {
+      throw new BadRequestException(
+        'A payment is already registered for this order. Use the existing payment record.',
+      );
+    }
+    const tx = body?.transactionId?.trim() || undefined;
+    await this.paymentsService.createEscrowPayment(orderId, order.totalAmount, {
+      paymentMethod: 'BANK_TRANSFER',
+      transactionId: tx,
+    });
+    await this.prisma.orders.update({
+      where: { id: orderId },
+      data: { status: 'PAID', updatedAt: new Date() },
+    });
+    try {
+      await this.invoicesService.generateInvoice(orderId);
+    } catch (e: any) {
+      this.logger.error(
+        `generateInvoice after bank payment failed for ${orderId}: ${e?.message || e}`,
+      );
+    }
+    const withRelations = await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: {
+        users: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            partnerCode: true,
+            email: true,
+          },
+        },
+        estates: { select: { id: true, name: true } },
+        fulfilling_estate: { select: { id: true, name: true } },
+        payments: true,
+        invoices: true,
+        deliveries: {
+          include: {
+            users: {
+              select: { id: true, firstName: true, lastName: true },
+            },
+          },
+        },
+      },
+    });
+    if (!withRelations) {
+      throw new NotFoundException('Order not found');
+    }
+    return withRelations;
   }
 
   /**
@@ -349,6 +431,14 @@ export class OrdersService {
       where: { id: orderId },
       data: { status: 'PAID' },
     });
+
+    try {
+      await this.invoicesService.generateInvoice(orderId);
+    } catch (e: any) {
+      this.logger.error(
+        `generateInvoice after buyer payment failed for ${orderId}: ${e?.message || e}`,
+      );
+    }
 
     return payment;
   }
