@@ -35,6 +35,13 @@ interface MaterialType {
   description: string | null;
 }
 
+interface LabelRollRow {
+  serialNumber: string;
+  status: string;
+  soldAt: string | null;
+  productName: string;
+}
+
 export default function GrowerMaterialsPage() {
   const { user } = useAuth();
   const [balance, setBalance] = useState<MaterialBalance | null>(null);
@@ -46,6 +53,29 @@ export default function GrowerMaterialsPage() {
   const [error, setError] = useState<string | null>(null);
   const [typesError, setTypesError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
+  const [serialsError, setSerialsError] = useState<string | null>(null);
+
+  const loadLabelRolls = async () => {
+    try {
+      setSerialsError(null);
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch(`${WEB_API_BASE}/material-control/my-label-rolls`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLabelRolls(Array.isArray(data) ? data : []);
+      } else {
+        setLabelRolls([]);
+        const err = await res.json().catch(() => ({}));
+        setSerialsError(messageFromApiPayload(err) || 'Could not load label roll numbers');
+      }
+    } catch {
+      setLabelRolls([]);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,7 +139,8 @@ export default function GrowerMaterialsPage() {
       }
     };
 
-    fetchData();
+    void fetchData();
+    void loadLabelRolls();
   }, []);
 
   const handlePurchase = async () => {
@@ -149,11 +180,20 @@ export default function GrowerMaterialsPage() {
         );
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        balance: MaterialBalance;
+        message: string;
+        newSerials?: string[];
+      };
       setBalance(data.balance);
-      setSuccess(data.message);
+      const extra =
+        Array.isArray(data.newSerials) && data.newSerials.length > 0
+          ? ` Serial numbers: ${data.newSerials.join(', ')}.`
+          : '';
+      setSuccess(`${data.message}${extra}`);
       setSelectedMaterial('');
       setQuantity('');
+      void loadLabelRolls();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -191,8 +231,9 @@ export default function GrowerMaterialsPage() {
               (partners, B2B, serials, harvest, transport).
             </li>
             <li>
-              Serials from <strong>label roll</strong> purchases are used on{' '}
-              <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
+              After purchase, your <strong>label roll IDs</strong> are listed in{' '}
+              <a href="#label-roll-ids" className="text-[#2D5A27] font-medium underline">the block below on this page</a>{' '}
+              and on <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
             </li>
             <li>
               B2B with partners:{' '}
@@ -251,6 +292,41 @@ export default function GrowerMaterialsPage() {
             <p className="text-sm text-green-800">{success}</p>
           </motion.div>
         )}
+
+        <div
+          id="label-roll-ids"
+          className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
+        >
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">Your label roll IDs (Sticker Roll ID)</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            These codes are created when you buy <strong>label rolls</strong> below. Use the same value in{' '}
+            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium hover:underline">
+              Compliance photos
+            </Link>
+            .
+          </p>
+          {serialsError && <p className="text-sm text-amber-800 mb-2">{serialsError}</p>}
+          {labelRolls.length === 0 && !serialsError ? (
+            <p className="text-sm text-gray-500">
+              No label rolls in your account yet — purchase at least one in the form below, then the IDs appear here.
+            </p>
+          ) : (
+            <ul className="divide-y divide-gray-100 border border-gray-100 rounded-md">
+              {labelRolls.map((r) => (
+                <li
+                  key={r.serialNumber}
+                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm"
+                >
+                  <code className="font-mono text-xs sm:text-sm text-gray-900 break-all">{r.serialNumber}</code>
+                  <span className="text-xs text-gray-500 shrink-0">
+                    {r.status}
+                    {r.soldAt ? ` · ${new Date(r.soldAt).toLocaleString()}` : ''}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         {/* Material Balance */}
         <motion.div

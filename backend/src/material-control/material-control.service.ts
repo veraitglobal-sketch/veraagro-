@@ -212,11 +212,37 @@ export class MaterialControlService {
       },
     });
 
+    const newSerials = inventoryEntries.map((e) => e.serialNumber).filter((s): s is string => Boolean(s));
+
     return {
       success: true,
       message: `Purchased ${dto.quantity} ${materialType.name}`,
       balance: await this.getFarmerMaterialBalance(userId),
+      /** Sticker / crate / film IDs for this purchase (copy to Compliance, etc.) */
+      newSerials,
     };
+  }
+
+  /**
+   * Label roll serial numbers sold to this grower (for Compliance "Sticker Roll ID" field)
+   */
+  async getMyLabelRollSerials(userId: string) {
+    const rows = await this.prisma.material_inventory.findMany({
+      where: {
+        soldToUserId: userId,
+        material_types: { type: 'LABEL' },
+      },
+      include: { material_types: { select: { name: true } } },
+      orderBy: { soldAt: 'desc' },
+    });
+    return rows
+      .filter((r) => r.serialNumber)
+      .map((r) => ({
+        serialNumber: r.serialNumber as string,
+        status: r.status,
+        soldAt: r.soldAt?.toISOString() ?? null,
+        productName: r.material_types?.name ?? 'Label roll',
+      }));
   }
 
   /**

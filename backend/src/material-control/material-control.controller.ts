@@ -38,6 +38,12 @@ export class MaterialControlController {
     return this.materialControlService.getFarmerMaterialBalance(user.id);
   }
 
+  @Get('my-label-rolls')
+  @Roles('GROWER', 'FARMER')
+  async getMyLabelRolls(@GetUser() user: any) {
+    return this.materialControlService.getMyLabelRollSerials(user.id);
+  }
+
   @Post('purchase')
   @Roles('GROWER')
   async purchaseMaterials(
