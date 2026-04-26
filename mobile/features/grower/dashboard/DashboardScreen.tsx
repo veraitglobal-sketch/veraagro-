@@ -24,7 +24,7 @@ export default function DashboardScreen() {
 
   const farmerHandlers = {
     onParcels: () => router.push('/(producer)/estates'),
-    onPlantingSteps: () => router.push('/(producer)/field-season'),
+    onPlantingSteps: () => router.push('/(producer)/(tabs)/steps'),
     onFieldDiary: () => router.push('/(producer)/(tabs)/field-log'),
     onAllowedMaterials: () => router.push('/(producer)/materials'),
     onBanned: () => router.push('/(producer)/(tabs)/banned-substances'),
@@ -93,7 +93,7 @@ export default function DashboardScreen() {
           onAddField={() => router.push('/(producer)/estates/new')}
           onAddParcel={() => router.push('/(producer)/estates')}
           onMissions={() => router.push('/(producer)/missions')}
-          onSteps={() => router.push('/(producer)/field-season')}
+          onSteps={() => router.push('/(producer)/(tabs)/steps')}
           onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
         />
         {hasAlerts ? (

@@ -1,12 +1,11 @@
 import { Tabs } from 'expo-router';
-import { Home, Package, User } from 'lucide-react-native';
+import { Home, ListOrdered, Package, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Producer (farmer) – 3 glavna taba: Home, Products, Profile.
- * Ostalo dostupno preko dashboarda (quick actions).
+ * Producer: Home → Steps (season manual) → Products → Profile. Rest via dashboard.
  */
 export default function ProducerTabsLayout() {
   const { t } = useTranslation();
@@ -51,6 +50,14 @@ export default function ProducerTabsLayout() {
           title: t('producer.tabs.dashboard'),
           tabBarLabel: t('producer.tabs.home'),
           tabBarIcon: ({ color, size }) => <Home size={size || 22} color={color} strokeWidth={1.5} />,
+        }}
+      />
+      <Tabs.Screen
+        name="steps"
+        options={{
+          title: t('producer.tabs.steps'),
+          tabBarLabel: t('producer.tabs.steps'),
+          tabBarIcon: ({ color, size }) => <ListOrdered size={size || 22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tabs.Screen

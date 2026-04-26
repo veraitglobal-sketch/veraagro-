@@ -104,6 +104,7 @@
     "tabs": {
       "home": "Home",
       "dashboard": "Home",
+      "steps": "Steps",
       "products": "Products",
       "profile": "Profile",
       "costCalculator": "Costs",
@@ -168,7 +169,7 @@
         "alertMissions": "{{count}} transport tasks",
         "alertBatches": "{{count}} batches",
         "alertsOpen": "Open — messages, tasks, batches",
-        "profileMore": "Wallet, suppliers map, costs, tips, settings — in Profile (bottom right).",
+        "profileMore": "Use the Steps tab (second) for the full season path. Wallet, map, costs, settings — in Profile.",
         "alsoPartnerOrders": "Partner orders (inputs)"
       },
       "partnerOrders": {

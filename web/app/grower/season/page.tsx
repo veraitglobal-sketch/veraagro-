@@ -7,6 +7,7 @@ import { estatesAPI, parcelsAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import GrowerSeasonJourney from '@/components/grower/GrowerSeasonJourney';
 
 export default function GrowerFieldSeasonPage() {
   const [loading, setLoading] = useState(true);
@@ -51,66 +52,41 @@ export default function GrowerFieldSeasonPage() {
         <div className="p-6 bg-gray-50 min-h-screen">
           <div className="mb-6">
             <h1 className="text-3xl font-light text-gray-900">Steps</h1>
-            <p className="text-sm text-gray-600 mt-1">Parcels → approval → work &amp; harvest</p>
+            <p className="text-sm text-gray-600 mt-1 max-w-3xl">
+              Full path from first setup to the end of a harvest. The sidebar is ordered the same:{' '}
+              <strong>Dashboard</strong> → <strong>Steps</strong> → <strong>My fields</strong> … through{' '}
+              <strong>Mission tracker</strong> → <strong>Profile</strong>.
+            </p>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+          )}
+
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-7 h-7 animate-spin text-[#2D5A27]" />
+            </div>
+          ) : (
+            <div className="mb-6 rounded-lg border border-amber-200/80 bg-amber-50/60 p-4 sm:p-5 text-sm text-amber-950">
+              <p className="font-medium text-amber-950">Your parcels at a glance</p>
+              <p className="mt-1 text-amber-900/90">
+                {hasApprovedParcel
+                  ? 'At least one parcel is approved — you can proceed with work and batches as rules allow.'
+                  : hasParcel
+                    ? `${pendingCount} parcel(s) still waiting for administrator approval. Some actions stay locked until a parcel is approved.`
+                    : 'No parcel yet. Start in My fields: add a parcel and crop block.'}
+              </p>
+              <p className="mt-2">
+                <Link href="/grower/fields" className="font-semibold text-[#23471f] underline">
+                  My fields
+                </Link>
+              </p>
+            </div>
+          )}
+
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">Three steps</h2>
-            <p className="text-sm text-gray-500 mb-6">Follow the order below to get from map to harvest.</p>
-
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
-            )}
-
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-7 h-7 animate-spin text-[#2D5A27]" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800">
-                  <span className="font-semibold text-gray-900">1. Add parcels</span>
-                  <p className="text-gray-600 mt-1 mb-2">Name fields and add crop blocks in My fields.</p>
-                  <Link href="/grower/fields" className="text-[#2D5A27] font-medium text-sm hover:underline">
-                    Open My fields →
-                  </Link>
-                </div>
-                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800">
-                  <span className="font-semibold text-gray-900">2. Admin approval</span>
-                  <p className="text-gray-600 mt-1">
-                    {hasApprovedParcel
-                      ? 'You are approved — continue to the right.'
-                      : hasParcel
-                        ? `${pendingCount} waiting for approval.`
-                        : 'Add a parcel first (step 1).'}
-                  </p>
-                </div>
-                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800 md:col-span-1">
-                  <span className="font-semibold text-gray-900">3. Then</span>
-                  {hasApprovedParcel ? (
-                    <ul className="mt-2 space-y-2 list-none">
-                      <li>
-                        <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
-                          Materials
-                        </Link>
-                      </li>
-                      <li className="text-gray-600">Field diary &amp; seed — mobile app</li>
-                      <li>
-                        <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-                          Report harvest (batch)
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/grower/batches" className="text-gray-700 hover:underline">
-                          My batches
-                        </Link>
-                      </li>
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500 mt-1">Unlocked after step 2.</p>
-                  )}
-                </div>
-              </div>
-            )}
+            <GrowerSeasonJourney />
           </div>
         </div>
       </SidebarLayout>
