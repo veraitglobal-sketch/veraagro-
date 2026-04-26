@@ -18,7 +18,16 @@ export function getPublicPaymentConfig() {
   };
 }
 
-export function hasAnyPaymentConfig(): boolean {
-  const c = getPublicPaymentConfig();
-  return Boolean(c.beneficiary || c.iban || c.bankName);
+export type PublicPaymentConfig = ReturnType<typeof getPublicPaymentConfig>;
+
+export function hasAnyPaymentConfig(c?: PublicPaymentConfig): boolean {
+  const x = c ?? getPublicPaymentConfig();
+  return Boolean(x.beneficiary || x.iban || x.bankName);
+}
+
+/** Human-readable IBAN (groups of 4) */
+export function formatIbanDisplay(iban: string): string {
+  const raw = (iban || '').replace(/\s/g, '');
+  if (raw.length < 8) return raw;
+  return raw.replace(/(.{4})/g, '$1 ').trim();
 }
