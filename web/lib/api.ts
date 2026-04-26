@@ -1135,11 +1135,26 @@ export const farmerProfileAPI = {
   uploadPhoto: async (file: File) => {
     const formData = new FormData();
     formData.append('photo', file);
-    
+    // Do not set Content-Type manually: the instance defaults to application/json, and
+    // "multipart/form-data" without a boundary breaks parsing. Let the browser set
+    // multipart/form-data; boundary=... for FormData.
     const response = await api.post('/farmer-profile/me/photo', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+      transformRequest: [
+        (data, headers) => {
+          if (data instanceof FormData) {
+            const h = headers as { delete?: (k: string) => void; [key: string]: unknown };
+            if (typeof h.delete === 'function') {
+              h.delete('Content-Type');
+            } else {
+              delete h['Content-Type'];
+              delete h['content-type'];
+            }
+          }
+          return data;
+        },
+      ],
     });
     return response.data;
   },

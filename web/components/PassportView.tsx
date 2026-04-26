@@ -55,6 +55,11 @@ function isRemoteImage(src: string) {
   return src.startsWith('http://') || src.startsWith('https://');
 }
 
+/** next/image: data URLs and huge base64 need unoptimized; remote http(s) too. */
+function imageUnoptimized(src: string) {
+  return isRemoteImage(src) || src.startsWith('data:');
+}
+
 const vera = {
   main: '#2D5A27',
   hover: '#23471f',
@@ -101,7 +106,7 @@ export default function PassportView({ data }: { data: PassportData }) {
                       fill
                       className="object-cover"
                       sizes="160px"
-                      unoptimized={isRemoteImage(photo)}
+                      unoptimized={imageUnoptimized(photo)}
                     />
                   ) : (
                     <div
@@ -220,7 +225,7 @@ export default function PassportView({ data }: { data: PassportData }) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 50vw, 200px"
-                    unoptimized={isRemoteImage(photoUrl)}
+                    unoptimized={imageUnoptimized(photoUrl)}
                   />
                 </div>
               ))}

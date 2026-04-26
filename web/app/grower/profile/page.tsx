@@ -28,9 +28,10 @@ export default function FarmerProfilePage() {
     loadProfile();
   }, []);
 
-  const loadProfile = async () => {
+  const loadProfile = async (options?: { skipLoading?: boolean }) => {
+    const skip = options?.skipLoading === true;
     try {
-      setLoading(true);
+      if (!skip) setLoading(true);
       const data = await farmerProfileAPI.getMyProfile();
       setProfile(data);
       setFormData({
@@ -53,7 +54,7 @@ export default function FarmerProfilePage() {
       console.error('Error loading profile:', error);
       alert('Failed to load profile');
     } finally {
-      setLoading(false);
+      if (!skip) setLoading(false);
     }
   };
 
@@ -83,11 +84,8 @@ export default function FarmerProfilePage() {
     // Upload photo
     try {
       setUploading(true);
-      const result = await farmerProfileAPI.uploadPhoto(file);
-      setProfile((prev: any) => ({
-        ...prev,
-        farmer: { ...prev?.farmer, photo: result.farmerPhoto },
-      }));
+      await farmerProfileAPI.uploadPhoto(file);
+      await loadProfile({ skipLoading: true });
       alert('Photo uploaded successfully!');
     } catch (error: any) {
       console.error('Error uploading photo:', error);
@@ -181,6 +179,9 @@ export default function FarmerProfilePage() {
                     alt="Profile photo"
                     fill
                     className="object-cover"
+                    unoptimized={
+                      photoPreview.startsWith('data:') || /^https?:\/\//.test(photoPreview)
+                    }
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">

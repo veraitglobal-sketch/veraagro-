@@ -117,9 +117,11 @@ export class FarmerProfileController {
     // Convert buffer to base64
     const base64Image = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
 
-    // Update farmer profile with photo
-    return this.farmerProfileService.updateFarmerProfile(user.id, {
+    // Persist photo; return a small body — the full user row includes huge base64 and can
+    // bloat the response and the client. Clients should refetch /farmer-profile/me if needed.
+    await this.farmerProfileService.updateFarmerProfile(user.id, {
       farmerPhoto: base64Image,
     });
+    return { success: true as const };
   }
 }
