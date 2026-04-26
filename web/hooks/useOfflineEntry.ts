@@ -160,7 +160,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!hasScan && !options?.seedSerialNumber && !options?.packagingBarcode) {
           return {
             success: false,
-            error: 'Morate prvo skenirati bar-kod semena ili ambalaže pre unosa podataka.',
+            error: 'Scan a seed or packaging barcode first before entering data.',
           };
         }
 
@@ -172,7 +172,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!seedSerialNumber && !packagingBarcode) {
           return {
             success: false,
-            error: 'Nedostaje serijski broj semena ili bar-kod ambalaže.',
+            error: 'Seed serial number or packaging barcode is missing.',
           };
         }
 
@@ -183,7 +183,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
             if (!complianceResult.compliant || complianceResult.blocked) {
               return {
                 success: false,
-                error: complianceResult.reason || 'Compliance check failed. Unos je blokiran.',
+                error: complianceResult.reason || 'Compliance check failed. Entry blocked.',
               };
             }
           } catch (complianceError: any) {
@@ -203,7 +203,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!farmId) {
           return {
             success: false,
-            error: 'Farm ID je obavezan.',
+            error: 'Farm ID is required.',
           };
         }
 

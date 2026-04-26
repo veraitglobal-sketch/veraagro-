@@ -7,22 +7,7 @@ import {
 } from './offline-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Platform } from 'react-native';
-
-// For iOS simulator, use localhost. For physical devices, use the network IP
-const getApiUrl = () => {
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
-  }
-  // iOS simulator can use localhost
-  if (Platform.OS === 'ios' && __DEV__) {
-    return 'http://localhost:3000';
-  }
-  // Default to network IP for physical devices
-  return 'http://192.168.178.27:3000';
-};
-
-const API_URL = getApiUrl();
+import { API_URL } from './api-url';
 
 // Create API instance for sync
 const syncApi = axios.create({
@@ -107,11 +92,15 @@ export const syncService = {
         entry.status = 'syncing';
         await this.updateEntryStatus(entry.id, 'syncing');
 
-        // Map activity type to backend format
+        // Map activity type to backend format (legacy Serbian labels kept for old offline data)
         const activityTypeMap: Record<string, string> = {
-          'Setva': 'SETVA',
+          Planting: 'SETVA',
+          Fertilizing: 'PRSKANJE',
+          Spraying: 'PRSKANJE',
+          Harvest: 'BERBA',
+          Setva: 'SETVA',
           'Đubrenje': 'PRSKANJE',
-          'Prskanje': 'PRSKANJE',
+          Prskanje: 'PRSKANJE',
           'Žetva': 'BERBA',
         };
 

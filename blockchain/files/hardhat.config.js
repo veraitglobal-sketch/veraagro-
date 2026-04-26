@@ -6,8 +6,8 @@ const raw = (process.env.DEPLOYER_PRIVATE_KEY || "").trim().replace(/^0x/i, "");
 const hexOnly = raw.replace(/[^0-9a-fA-F]/g, "");
 if (hexOnly.length !== 64) {
   throw new Error(
-    "DEPLOYER_PRIVATE_KEY nije postavljen (ima " + hexOnly.length + " hex karaktera, treba 64). " +
-    "Pokreni: DEPLOYER_PRIVATE_KEY=tvoj_64_hex_key npm run deploy:amoy   ili stavi key u blockchain/files/deploy.key (jedan red, samo 64 hex znaka)."
+    "DEPLOYER_PRIVATE_KEY is missing or wrong length (has " + hexOnly.length + " hex characters, need 64). " +
+    "Set DEPLOYER_PRIVATE_KEY=your_64_char_hex or put the key in blockchain/files/deploy.key (one line, 64 hex characters only), then: npm run deploy:amoy"
   );
 }
 process.env.DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY.startsWith("0x") ? process.env.DEPLOYER_PRIVATE_KEY : "0x" + hexOnly;

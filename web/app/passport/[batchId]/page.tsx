@@ -15,6 +15,10 @@ interface Treatment {
   waterVolume: number | null;
   reason: string | null;
   deviceTimestamp: string;
+  gpsLatitude?: number;
+  gpsLongitude?: number;
+  gpsAccuracyM?: number | null;
+  needsAudit?: boolean;
 }
 interface GrowthLog {
   networkTimestamp: string;
@@ -22,6 +26,9 @@ interface GrowthLog {
   growthStage: string | null;
   notes: string | null;
   labTestDate: string | null;
+  gpsLatitude?: number;
+  gpsLongitude?: number;
+  gpsAccuracyM?: number | null;
 }
 interface HarvestAnnouncement {
   estimatedDate: string;
@@ -55,6 +62,12 @@ interface PassportData {
     location: string;
     harvestLocation?: string;
     harvestPeriod?: string | null;
+    regionLabel?: string;
+    productionCountry?: string | null;
+    estateCalculatedAreaHa?: number;
+    parcelCalculatedAreaHa?: number | null;
+    estateMapCenter?: { lat: number; lng: number } | null;
+    parcelMapCenter?: { lat: number; lng: number } | null;
   };
   farmer: { name: string; photo: string | null; farmerProfileUrl?: string | null };
   photos?: { url: string; type: string; verified: boolean }[];
@@ -90,7 +103,31 @@ interface PassportData {
   missions?: {
     missionNumber?: string;
     status?: string;
-    vehicle?: { vehicleNumber?: string; licensePlate?: string };
+    pickupAddress?: string;
+    estimatedPickupTime?: string | null;
+    assignedAt?: string | null;
+    acceptedAt?: string | null;
+    logisticsPartner?: { name: string } | null;
+    vehicle?: {
+      vehicleNumber?: string;
+      licensePlate?: string;
+      type?: string;
+      make?: string;
+      model?: string;
+    };
+    locationLogs?: {
+      timestamp: string;
+      latitude: number;
+      longitude: number;
+      accuracy: number | null;
+      address: string | null;
+    }[];
+    borderWaits?: {
+      borderName: string | null;
+      borderArrivalTime: string;
+      borderExitTime: string;
+      waitTimeMinutes: number;
+    }[];
     pickedUpAt?: string | null;
     deliveredAt?: string | null;
   }[];
@@ -100,7 +137,13 @@ interface PassportData {
     brandingSlogan?: string;
   } | null;
   labReport?: { url: string; available: boolean };
-  parcelInfo?: { cropType: string | null; plantingDate: string | null; expectedHarvestDate: string | null } | null;
+  parcelInfo?: {
+    cropType: string | null;
+    plantingDate: string | null;
+    expectedHarvestDate: string | null;
+    calculatedAreaHa?: number;
+    mapCenter?: { lat: number; lng: number } | null;
+  } | null;
   treatments?: Treatment[];
   growthLogs?: GrowthLog[];
   harvestAnnouncements?: HarvestAnnouncement[];
@@ -159,6 +202,12 @@ export default function ProductPassportPage() {
           location: apiData.origin?.location || apiData.origin?.harvestRegion || '',
           harvestLocation: apiData.origin?.harvestLocation,
           harvestPeriod: apiData.origin?.harvestPeriod || harvestPeriod,
+          regionLabel: apiData.origin?.regionLabel || apiData.origin?.harvestRegion || apiData.origin?.location,
+          productionCountry: apiData.origin?.productionCountry ?? null,
+          estateCalculatedAreaHa: apiData.origin?.estateCalculatedAreaHa,
+          parcelCalculatedAreaHa: apiData.origin?.parcelCalculatedAreaHa ?? null,
+          estateMapCenter: apiData.origin?.estateMapCenter ?? null,
+          parcelMapCenter: apiData.origin?.parcelMapCenter ?? null,
         },
         farmer: {
           name: getFirstName(apiData.farmer?.name || apiData.origin?.ownerName || ''),
@@ -194,29 +243,98 @@ export default function ProductPassportPage() {
         } : null,
         freshness: apiData.freshness ? { remainingShelfLifeHours: apiData.freshness.remainingShelfLifeHours, expiresAt: apiData.freshness.expiresAt != null ? (typeof apiData.freshness.expiresAt === 'string' ? apiData.freshness.expiresAt : new Date(apiData.freshness.expiresAt).toISOString()) : undefined, timestampHarvested: apiData.freshness.timestampHarvested != null ? (typeof apiData.freshness.timestampHarvested === 'string' ? apiData.freshness.timestampHarvested : new Date(apiData.freshness.timestampHarvested).toISOString()) : undefined, isExpired: apiData.freshness.isExpired } : null,
         sustainability: apiData.sustainability ? { totalDistanceKm: apiData.sustainability.totalDistanceKm, sustainabilityScore: apiData.sustainability.sustainabilityScore, route: apiData.sustainability.route } : null,
-        missions: apiData.missions?.map((m: any) => ({ missionNumber: m.missionNumber, status: m.status, vehicle: m.vehicle, pickedUpAt: m.pickedUpAt != null ? (typeof m.pickedUpAt === 'string' ? m.pickedUpAt : new Date(m.pickedUpAt).toISOString()) : null, deliveredAt: m.deliveredAt != null ? (typeof m.deliveredAt === 'string' ? m.deliveredAt : new Date(m.deliveredAt).toISOString()) : null })),
+        missions: apiData.missions?.map((m: any) => ({
+          missionNumber: m.missionNumber,
+          status: m.status,
+          pickupAddress: m.pickupAddress,
+          estimatedPickupTime: m.estimatedPickupTime != null ? (typeof m.estimatedPickupTime === 'string' ? m.estimatedPickupTime : new Date(m.estimatedPickupTime).toISOString()) : null,
+          assignedAt: m.assignedAt != null ? (typeof m.assignedAt === 'string' ? m.assignedAt : new Date(m.assignedAt).toISOString()) : null,
+          acceptedAt: m.acceptedAt != null ? (typeof m.acceptedAt === 'string' ? m.acceptedAt : new Date(m.acceptedAt).toISOString()) : null,
+          logisticsPartner: m.logisticsPartner || null,
+          vehicle: m.vehicle,
+          locationLogs: (m.locationLogs || []).map((ll: any) => ({
+            timestamp: typeof ll.timestamp === 'string' ? ll.timestamp : new Date(ll.timestamp).toISOString(),
+            latitude: ll.latitude,
+            longitude: ll.longitude,
+            accuracy: ll.accuracy ?? null,
+            address: ll.address ?? null,
+          })),
+          borderWaits: (m.borderWaits || []).map((b: any) => ({
+            borderName: b.borderName ?? null,
+            borderArrivalTime: typeof b.borderArrivalTime === 'string' ? b.borderArrivalTime : new Date(b.borderArrivalTime).toISOString(),
+            borderExitTime: typeof b.borderExitTime === 'string' ? b.borderExitTime : new Date(b.borderExitTime).toISOString(),
+            waitTimeMinutes: b.waitTimeMinutes,
+          })),
+          pickedUpAt: m.pickedUpAt != null ? (typeof m.pickedUpAt === 'string' ? m.pickedUpAt : new Date(m.pickedUpAt).toISOString()) : null,
+          deliveredAt: m.deliveredAt != null ? (typeof m.deliveredAt === 'string' ? m.deliveredAt : new Date(m.deliveredAt).toISOString()) : null,
+        })),
         protocol360: apiData.protocol360 || null,
         labReport: { url: apiData.labReport?.url || '#', available: apiData.labReport?.available !== false },
-        parcelInfo: apiData.parcelInfo ? {
-          cropType: apiData.parcelInfo.cropType ?? null,
-          plantingDate: apiData.parcelInfo.plantingDate != null ? (typeof apiData.parcelInfo.plantingDate === 'string' ? apiData.parcelInfo.plantingDate : new Date(apiData.parcelInfo.plantingDate).toISOString()) : null,
-          expectedHarvestDate: apiData.parcelInfo.expectedHarvestDate != null ? (typeof apiData.parcelInfo.expectedHarvestDate === 'string' ? apiData.parcelInfo.expectedHarvestDate : new Date(apiData.parcelInfo.expectedHarvestDate).toISOString()) : null,
-        } : null,
-        treatments: (apiData.treatments || []).map((t: { appliedAt: string | Date; productName: string; dosage: string; waterVolume?: number | null; reason?: string | null; deviceTimestamp: string | Date }) => ({
-          appliedAt: typeof t.appliedAt === 'string' ? t.appliedAt : new Date(t.appliedAt).toISOString(),
-          productName: t.productName,
-          dosage: t.dosage,
-          waterVolume: t.waterVolume ?? null,
-          reason: t.reason ?? null,
-          deviceTimestamp: typeof t.deviceTimestamp === 'string' ? t.deviceTimestamp : new Date(t.deviceTimestamp).toISOString(),
-        })),
-        growthLogs: (apiData.growthLogs || []).map((g: { networkTimestamp: string | Date; deviceTimestamp: string | Date; growthStage?: string | null; notes?: string | null; labTestDate?: string | Date | null }) => ({
-          networkTimestamp: typeof g.networkTimestamp === 'string' ? g.networkTimestamp : new Date(g.networkTimestamp).toISOString(),
-          deviceTimestamp: typeof g.deviceTimestamp === 'string' ? g.deviceTimestamp : new Date(g.deviceTimestamp).toISOString(),
-          growthStage: g.growthStage ?? null,
-          notes: g.notes ?? null,
-          labTestDate: g.labTestDate != null ? (typeof g.labTestDate === 'string' ? g.labTestDate : new Date(g.labTestDate).toISOString()) : null,
-        })),
+        parcelInfo: apiData.parcelInfo
+          ? {
+              cropType: apiData.parcelInfo.cropType ?? null,
+              plantingDate:
+                apiData.parcelInfo.plantingDate != null
+                  ? typeof apiData.parcelInfo.plantingDate === 'string'
+                    ? apiData.parcelInfo.plantingDate
+                    : new Date(apiData.parcelInfo.plantingDate).toISOString()
+                  : null,
+              expectedHarvestDate:
+                apiData.parcelInfo.expectedHarvestDate != null
+                  ? typeof apiData.parcelInfo.expectedHarvestDate === 'string'
+                    ? apiData.parcelInfo.expectedHarvestDate
+                    : new Date(apiData.parcelInfo.expectedHarvestDate).toISOString()
+                  : null,
+              calculatedAreaHa: apiData.parcelInfo.calculatedAreaHa,
+              mapCenter: apiData.parcelInfo.mapCenter ?? null,
+            }
+          : null,
+        treatments: (apiData.treatments || []).map(
+          (t: {
+            appliedAt: string | Date;
+            productName: string;
+            dosage: string;
+            waterVolume?: number | null;
+            reason?: string | null;
+            deviceTimestamp: string | Date;
+            gpsLatitude?: number;
+            gpsLongitude?: number;
+            gpsAccuracyM?: number | null;
+            needsAudit?: boolean;
+          }) => ({
+            appliedAt: typeof t.appliedAt === 'string' ? t.appliedAt : new Date(t.appliedAt).toISOString(),
+            productName: t.productName,
+            dosage: t.dosage,
+            waterVolume: t.waterVolume ?? null,
+            reason: t.reason ?? null,
+            deviceTimestamp: typeof t.deviceTimestamp === 'string' ? t.deviceTimestamp : new Date(t.deviceTimestamp).toISOString(),
+            gpsLatitude: t.gpsLatitude,
+            gpsLongitude: t.gpsLongitude,
+            gpsAccuracyM: t.gpsAccuracyM ?? null,
+            needsAudit: t.needsAudit,
+          }),
+        ),
+        growthLogs: (apiData.growthLogs || []).map(
+          (g: {
+            networkTimestamp: string | Date;
+            deviceTimestamp: string | Date;
+            growthStage?: string | null;
+            notes?: string | null;
+            labTestDate?: string | Date | null;
+            gpsLatitude?: number;
+            gpsLongitude?: number;
+            gpsAccuracyM?: number | null;
+          }) => ({
+            networkTimestamp: typeof g.networkTimestamp === 'string' ? g.networkTimestamp : new Date(g.networkTimestamp).toISOString(),
+            deviceTimestamp: typeof g.deviceTimestamp === 'string' ? g.deviceTimestamp : new Date(g.deviceTimestamp).toISOString(),
+            growthStage: g.growthStage ?? null,
+            notes: g.notes ?? null,
+            labTestDate: g.labTestDate != null ? (typeof g.labTestDate === 'string' ? g.labTestDate : new Date(g.labTestDate).toISOString()) : null,
+            gpsLatitude: g.gpsLatitude,
+            gpsLongitude: g.gpsLongitude,
+            gpsAccuracyM: g.gpsAccuracyM ?? null,
+          }),
+        ),
         harvestAnnouncements: (apiData.harvestAnnouncements || []).map((h: { estimatedDate: string | Date; actualDate?: string | Date | null; cropType: string; estimatedQuantity?: number | null; actualQuantity?: number | null; status: string; notes?: string | null }) => ({
           estimatedDate: typeof h.estimatedDate === 'string' ? h.estimatedDate : new Date(h.estimatedDate).toISOString(),
           actualDate: h.actualDate != null ? (typeof h.actualDate === 'string' ? h.actualDate : new Date(h.actualDate).toISOString()) : null,
@@ -267,7 +385,7 @@ export default function ProductPassportPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-6 h-6 border-[1.5px] border-[#2D5A27] border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600 text-sm font-light">Učitavanje...</p>
+          <p className="mt-4 text-gray-600 text-sm font-light">Loading…</p>
         </div>
       </div>
     );
@@ -277,8 +395,8 @@ export default function ProductPassportPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-xl font-light text-gray-900 mb-2">Podaci nisu pronađeni</h1>
-          <p className="text-sm text-gray-600 font-light">{error || 'Passport podaci ne postoje.'}</p>
+          <h1 className="text-xl font-light text-gray-900 mb-2">Data not found</h1>
+          <p className="text-sm text-gray-600 font-light">{error || 'Passport data is not available.'}</p>
         </div>
       </div>
     );
@@ -322,6 +440,62 @@ export default function ProductPassportPage() {
           )}
         </motion.div>
 
+        {/* Region & place of origin – full traceability */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.02 }}
+          className="mb-10 pb-8 border-b border-gray-200"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Region &amp; place of origin</span>
+          </div>
+          <div className="rounded-xl border border-[#2D5A27]/20 bg-white p-4 space-y-3 text-sm">
+            <div>
+              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-0.5">Region (where it is grown)</p>
+              <p className="text-lg font-light text-gray-900">{data.origin.regionLabel || data.origin.location || data.harvest.where}</p>
+              {data.origin.productionCountry && (
+                <p className="text-[12px] text-gray-600 mt-1">Country: {data.origin.productionCountry}</p>
+              )}
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3 text-[12px] text-gray-700 border-t border-gray-100 pt-3">
+              <p>
+                <span className="text-gray-500">Estate / farm name</span>
+                <br />
+                <span className="font-medium text-gray-900">{data.origin.farmName}</span>
+              </p>
+              {(data.origin.estateCalculatedAreaHa != null || data.origin.parcelCalculatedAreaHa != null) && (
+                <p>
+                  <span className="text-gray-500">Surface</span>
+                  <br />
+                  {data.origin.estateCalculatedAreaHa != null && (
+                    <span className="font-mono text-gray-900">Field: {Number(data.origin.estateCalculatedAreaHa).toFixed(2)} ha</span>
+                  )}
+                  {data.origin.parcelCalculatedAreaHa != null && (
+                    <span className="font-mono text-gray-900 block sm:inline sm:ml-2">· Plot: {Number(data.origin.parcelCalculatedAreaHa).toFixed(2)} ha</span>
+                  )}
+                </p>
+              )}
+            </div>
+            {(data.origin.parcelMapCenter || data.origin.estateMapCenter) && (
+              <div className="text-[11px] font-mono text-gray-600 border-t border-gray-100 pt-3">
+                <span className="text-gray-500 font-sans block mb-1">Approx. map centre (verified polygon)</span>
+                {data.origin.parcelMapCenter && (
+                  <span className="block">
+                    Plot: {data.origin.parcelMapCenter.lat.toFixed(5)}, {data.origin.parcelMapCenter.lng.toFixed(5)}
+                  </span>
+                )}
+                {data.origin.estateMapCenter && (
+                  <span className="block">
+                    Field: {data.origin.estateMapCenter.lat.toFixed(5)}, {data.origin.estateMapCenter.lng.toFixed(5)}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* 2. Where & When harvested – detailed */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -330,17 +504,17 @@ export default function ProductPassportPage() {
           className="mb-10 pb-8 border-b border-gray-200"
         >
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Harvest</span>
+            <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Harvest (this batch)</span>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">Where harvested</p>
+              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">Where harvested (full line)</p>
               <p className="text-[15px] font-light text-gray-900">{data.harvest.where}</p>
               {data.origin.farmName && data.origin.farmName !== data.harvest.where && (
                 <p className="text-[11px] font-light text-gray-600 mt-1">Estate: {data.origin.farmName}</p>
               )}
-              {data.origin.location && <p className="text-[11px] font-light text-gray-600">Region: {data.origin.location}</p>}
+              {data.origin.location && <p className="text-[11px] font-light text-gray-600">Region label: {data.origin.location}</p>}
             </div>
             <div>
               <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">When harvested</p>
@@ -350,54 +524,62 @@ export default function ProductPassportPage() {
           </div>
         </motion.div>
 
-        {/* 2b. Aktivnosti po periodu – šta je radjeno kada (raw detailed chronology) */}
+        {/* 2b. Chronology – activities in order */}
         {(() => {
           const chronologyEvents: { sortKey: number; displayDate: string; label: string; detail: string }[] = [];
           if (data.parcelInfo?.plantingDate) {
             chronologyEvents.push({
               sortKey: new Date(data.parcelInfo.plantingDate).getTime(),
               displayDate: formatDateTime(data.parcelInfo.plantingDate),
-              label: 'Sadnja (Planting)',
-              detail: `Period uzgoja započet. ${data.parcelInfo.cropType ? `Kultura: ${data.parcelInfo.cropType}.` : ''}`,
+              label: 'Planting',
+              detail: `Growing period started. ${data.parcelInfo.cropType ? `Crop: ${data.parcelInfo.cropType}.` : ''}`,
             });
           }
           if (data.parcelInfo?.expectedHarvestDate) {
             chronologyEvents.push({
               sortKey: new Date(data.parcelInfo.expectedHarvestDate).getTime(),
               displayDate: formatDate(data.parcelInfo.expectedHarvestDate),
-              label: 'Očekivana berba (Expected harvest)',
-              detail: `Planirani kraj perioda uzgoja.`,
+              label: 'Expected harvest',
+              detail: `Planned end of the growing period.`,
             });
           }
           (data.treatments || []).forEach((t) => {
+            const gps =
+              t.gpsLatitude != null && t.gpsLongitude != null
+                ? ` · GPS: ${t.gpsLatitude.toFixed(5)}, ${t.gpsLongitude.toFixed(5)}${t.gpsAccuracyM != null ? ` (±${t.gpsAccuracyM}m)` : ''}`
+                : '';
             chronologyEvents.push({
               sortKey: new Date(t.appliedAt).getTime(),
               displayDate: formatDateTime(t.appliedAt),
-              label: 'Primena sredstva (Treatment)',
-              detail: `${t.productName} · doza: ${t.dosage}${t.waterVolume != null ? ` · voda: ${t.waterVolume} L` : ''}${t.reason ? ` · razlog: ${t.reason}` : ''}`,
+              label: 'Treatment application',
+              detail: `${t.productName} · rate: ${t.dosage}${t.waterVolume != null ? ` · water: ${t.waterVolume} L` : ''}${t.reason ? ` · reason: ${t.reason}` : ''}${gps} · device time: ${formatDateTime(t.deviceTimestamp)}`,
             });
           });
           (data.growthLogs || []).forEach((g) => {
+            const gGps =
+              g.gpsLatitude != null && g.gpsLongitude != null
+                ? `GPS: ${g.gpsLatitude.toFixed(5)}, ${g.gpsLongitude.toFixed(5)}${g.gpsAccuracyM != null ? ` (±${g.gpsAccuracyM}m)` : ''}`
+                : '';
             chronologyEvents.push({
               sortKey: new Date(g.networkTimestamp).getTime(),
               displayDate: formatDateTime(g.networkTimestamp),
-              label: 'Zapis rasta (Growth log)',
-              detail: [g.growthStage && `Faza: ${g.growthStage}`, g.notes].filter(Boolean).join(' · ') || 'Zapis u terenu',
+              label: 'Growth log',
+              detail: [g.growthStage && `Stage: ${g.growthStage}`, g.notes, gGps, `Device: ${formatDateTime(g.deviceTimestamp)}`].filter(Boolean).join(' · ') || 'Field record',
             });
           });
           (data.harvestAnnouncements || []).forEach((h) => {
             chronologyEvents.push({
               sortKey: new Date(h.estimatedDate).getTime(),
               displayDate: formatDate(h.estimatedDate),
-              label: 'Najava berbe (Harvest announcement)',
-              detail: `${h.cropType} · procena: ${formatDate(h.estimatedDate)}${h.actualDate ? ` · stvarno: ${formatDate(h.actualDate)}` : ''} · ${h.status}`,
+              label: 'Harvest announcement',
+              detail: `${h.cropType} · estimate: ${formatDate(h.estimatedDate)}${h.actualDate ? ` · actual: ${formatDate(h.actualDate)}` : ''} · ${h.status}`,
             });
           });
           if (data.timeline?.harvested) {
             chronologyEvents.push({
               sortKey: new Date(data.timeline.harvested).getTime(),
               displayDate: formatDateTime(data.timeline.harvested),
-              label: 'Ubrano (Harvested)',
+              label: 'Harvested',
               detail: data.harvest.where,
             });
           }
@@ -405,7 +587,7 @@ export default function ProductPassportPage() {
             chronologyEvents.push({
               sortKey: new Date(data.qualityEntry.preCoolingStartTime).getTime(),
               displayDate: formatDateTime(data.qualityEntry.preCoolingStartTime),
-              label: 'Predhladnjenje / kontrola kvaliteta',
+              label: 'Pre-cooling / quality check',
               detail: `Status: ${data.qualityEntry.status}`,
             });
           }
@@ -413,16 +595,16 @@ export default function ProductPassportPage() {
             chronologyEvents.push({
               sortKey: new Date(data.timeline.verified).getTime(),
               displayDate: formatDateTime(data.timeline.verified),
-              label: 'Kontrola kvaliteta verifikovana',
-              detail: 'Prošao kontrolu.',
+              label: 'Quality check verified',
+              detail: 'Passed check.',
             });
           }
           if (data.timeline?.loaded) {
             chronologyEvents.push({
               sortKey: new Date(data.timeline.loaded).getTime(),
               displayDate: formatDateTime(data.timeline.loaded),
-              label: 'Preuzeto za transport (Picked up)',
-              detail: data.timeline.transport ? `Vozilo: ${data.timeline.transport.vehicleNumber}` : '—',
+              label: 'Picked up for transport',
+              detail: data.timeline.transport ? `Vehicle: ${data.timeline.transport.vehicleNumber}` : '—',
             });
           }
           const arrivedAt = data.timeline?.arrived || data.timeline?.arrival?.estimated;
@@ -430,8 +612,8 @@ export default function ProductPassportPage() {
             chronologyEvents.push({
               sortKey: new Date(arrivedAt).getTime(),
               displayDate: formatDateTime(arrivedAt),
-              label: 'Dolazak (Arrival)',
-              detail: data.timeline?.arrival?.location || 'Destinacija',
+              label: 'Arrival',
+              detail: data.timeline?.arrival?.location || 'Destination',
             });
           }
           chronologyEvents.sort((a, b) => a.sortKey - b.sortKey);
@@ -446,17 +628,17 @@ export default function ProductPassportPage() {
             >
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-                <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Aktivnosti po periodu – šta je radjeno kada</span>
+                <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Activities in chronological order</span>
               </div>
-              <p className="text-xs font-light text-gray-600 mb-4">Hronološki pregled svih zabeleženih aktivnosti za ovaj batch (datum i vreme, aktivnost, detalj).</p>
+              <p className="text-xs font-light text-gray-600 mb-4">Chronological list of all recorded activities for this batch (date and time, activity, detail).</p>
               <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
                 <div className="max-h-[400px] overflow-y-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                       <tr>
-                        <th className="py-3 px-4 font-medium text-gray-700">Datum i vreme</th>
-                        <th className="py-3 px-4 font-medium text-gray-700">Aktivnost</th>
-                        <th className="py-3 px-4 font-medium text-gray-700">Detalj</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">Date & time</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">Activity</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">Detail</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -475,7 +657,7 @@ export default function ProductPassportPage() {
           );
         })()}
 
-        {/* 2c. Korišćena sredstva (treatments) – full detail */}
+        {/* 2c. Treatments (inputs) – full detail */}
         {data.treatments && data.treatments.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -485,29 +667,37 @@ export default function ProductPassportPage() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Korišćena sredstva (Inputs / Treatments)</span>
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Applied inputs (treatments)</span>
             </div>
-            <p className="text-xs font-light text-gray-600 mb-4">Sva sredstva primenjena na parceli u periodu uzgoja: proizvod, doza, količina vode, razlog, tačan datum i vreme primene.</p>
+            <p className="text-xs font-light text-gray-600 mb-4">Product, rate, water, reason, server time and device time, GPS point where spraying was recorded.</p>
             <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-              <div className="max-h-[360px] overflow-y-auto">
-                <table className="w-full text-left text-sm">
+              <div className="max-h-[480px] overflow-x-auto overflow-y-auto">
+                <table className="w-full text-left text-sm min-w-[900px]">
                   <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                     <tr>
-                      <th className="py-3 px-4 font-medium text-gray-700">Datum i vreme primene</th>
-                      <th className="py-3 px-4 font-medium text-gray-700">Proizvod</th>
-                      <th className="py-3 px-4 font-medium text-gray-700">Doza</th>
-                      <th className="py-3 px-4 font-medium text-gray-700">Voda (L)</th>
-                      <th className="py-3 px-4 font-medium text-gray-700">Razlog</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Applied (server)</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Device (time)</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Product</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Rate</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Water (L)</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">Reason</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">GPS (lat, lng)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {data.treatments.map((t, i) => (
                       <tr key={i} className="hover:bg-gray-50/50">
-                        <td className="py-2.5 px-4 font-mono text-xs text-gray-600 whitespace-nowrap">{formatDateTime(t.appliedAt)}</td>
-                        <td className="py-2.5 px-4 font-medium text-gray-900">{t.productName}</td>
-                        <td className="py-2.5 px-4 text-gray-700">{t.dosage}</td>
-                        <td className="py-2.5 px-4 text-gray-700">{t.waterVolume != null ? t.waterVolume : '—'}</td>
-                        <td className="py-2.5 px-4 text-gray-700">{t.reason || '—'}</td>
+                        <td className="py-2.5 px-2 font-mono text-xs text-gray-600 whitespace-nowrap">{formatDateTime(t.appliedAt)}</td>
+                        <td className="py-2.5 px-2 font-mono text-xs text-gray-600 whitespace-nowrap">{formatDateTime(t.deviceTimestamp)}</td>
+                        <td className="py-2.5 px-2 font-medium text-gray-900">{t.productName}</td>
+                        <td className="py-2.5 px-2 text-gray-700">{t.dosage}</td>
+                        <td className="py-2.5 px-2 text-gray-700">{t.waterVolume != null ? t.waterVolume : '—'}</td>
+                        <td className="py-2.5 px-2 text-gray-700">{t.reason || '—'}</td>
+                        <td className="py-2.5 px-2 font-mono text-xs text-gray-700">
+                          {t.gpsLatitude != null && t.gpsLongitude != null
+                            ? `${t.gpsLatitude.toFixed(5)}, ${t.gpsLongitude.toFixed(5)}${t.gpsAccuracyM != null ? ` (±${t.gpsAccuracyM}m)` : ''}`
+                            : '—'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -660,7 +850,7 @@ export default function ProductPassportPage() {
               <div className="relative">
                 <div className="absolute left-[-23px] top-1 w-3 h-3 bg-[#2D5A27] rounded-full border-2 border-white"></div>
                 <div>
-                  <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Ubrano (Harvested)</p>
+                  <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Harvested</p>
                   <p className="text-[11px] font-light text-[gray-900]">{formatDateTime(data.timeline.harvested)}</p>
                 </div>
               </div>
@@ -669,7 +859,7 @@ export default function ProductPassportPage() {
                 <div className="relative">
                   <div className="absolute left-[-23px] top-1 w-3 h-3 bg-[#2D5A27] rounded-full border-2 border-white"></div>
                   <div>
-                    <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Kontrola kvaliteta (Quality check)</p>
+                    <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Quality check</p>
                     <p className="text-[11px] font-light text-[gray-900]">{formatDateTime(data.timeline.verified)}</p>
                   </div>
                 </div>
@@ -679,7 +869,7 @@ export default function ProductPassportPage() {
                 <div className="relative">
                   <div className="absolute left-[-23px] top-1 w-3 h-3 bg-[#2D5A27] rounded-full border-2 border-white"></div>
                   <div>
-                    <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Preuzeto (Picked up)</p>
+                    <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">Picked up</p>
                     <p className="text-[11px] font-light text-[gray-900]">{formatDateTime(data.timeline.loaded)}</p>
                   </div>
                 </div>
@@ -691,7 +881,7 @@ export default function ProductPassportPage() {
                   <div className="absolute left-[-23px] top-1 w-3 h-3 bg-[#2D5A27] rounded-full border-2 border-white"></div>
                   <div>
                     <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">
-                      Skladišteno
+                      Stored
                     </p>
                     <p className="text-[11px] font-light text-[gray-900]">
                       {formatDateTime(data.timeline.stored.date)}
@@ -722,7 +912,7 @@ export default function ProductPassportPage() {
                   <div className="absolute left-[-23px] top-1 w-3 h-3 bg-[#2D5A27] rounded-full border-2 border-white"></div>
                   <div>
                     <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-1">
-                      Dolazak
+                      Arrival
                     </p>
                     <p className="text-[11px] font-light text-[gray-900]">
                       {formatDateTime(data.timeline.arrival.estimated)}
@@ -757,7 +947,7 @@ export default function ProductPassportPage() {
           </motion.div>
         )}
 
-        {/* Missions – detailed */}
+        {/* Transport & missions – full chain */}
         {data.missions && data.missions.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -765,20 +955,80 @@ export default function ProductPassportPage() {
             transition={{ delay: 0.18 }}
             className="mb-10 pb-8 border-b border-gray-200"
           >
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2">
               <Truck className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-              <span className="text-[10px] font-light tracking-[0.2em] text-[gray-900]/60 uppercase">Missions</span>
+              <span className="text-[10px] font-light tracking-[0.2em] text-[gray-900]/60 uppercase">Transport (carrier, vehicle, routes)</span>
             </div>
-            <div className="space-y-4">
+            <p className="text-xs text-gray-600 mb-4">Who carried the load, when assigned / accepted / picked up / delivered, pickup address, route GPS, border waits if any.</p>
+            <div className="space-y-6">
               {data.missions.map((m, i) => (
-                <div key={i} className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
-                  <p className="text-[11px] font-medium text-[gray-900] mb-2">{m.missionNumber || `Mission ${i + 1}`} · {m.status || '—'}</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[gray-900]/80">
-                    {m.vehicle?.vehicleNumber && <span>Vehicle: {m.vehicle.vehicleNumber}</span>}
-                    {m.vehicle?.licensePlate && <span>Plate: {m.vehicle.licensePlate}</span>}
+                <div key={i} className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    {m.missionNumber || `Transport ${i + 1}`} · <span className="text-gray-600 font-normal">{m.status || '—'}</span>
+                  </p>
+                  {m.logisticsPartner?.name && (
+                    <p className="text-sm text-gray-800">
+                      <span className="text-gray-500">Carrier / logistics:</span> {m.logisticsPartner.name}
+                    </p>
+                  )}
+                  {m.pickupAddress && (
+                    <p className="text-sm text-gray-800">
+                      <span className="text-gray-500">Pickup address:</span> {m.pickupAddress}
+                    </p>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[11px] text-gray-800">
+                    {m.estimatedPickupTime && <span>Est. pickup: {formatDateTime(m.estimatedPickupTime)}</span>}
+                    {m.assignedAt && <span>Assigned: {formatDateTime(m.assignedAt)}</span>}
+                    {m.acceptedAt && <span>Accepted: {formatDateTime(m.acceptedAt)}</span>}
                     {m.pickedUpAt && <span>Picked up: {formatDateTime(m.pickedUpAt)}</span>}
                     {m.deliveredAt && <span>Delivered: {formatDateTime(m.deliveredAt)}</span>}
                   </div>
+                  {m.vehicle && (
+                    <p className="text-[12px] text-gray-800">
+                      <span className="text-gray-500">Vehicle:</span> {[m.vehicle.make, m.vehicle.model, m.vehicle.type].filter(Boolean).join(' ')} · {m.vehicle.vehicleNumber} · plate{' '}
+                      {m.vehicle.licensePlate}
+                    </p>
+                  )}
+                  {m.borderWaits && m.borderWaits.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-[9px] uppercase text-gray-500 mb-1">Border / wait</p>
+                      <ul className="text-[11px] space-y-1">
+                        {m.borderWaits.map((b, j) => (
+                          <li key={j} className="text-gray-800">
+                            {b.borderName || 'Border'}: in {formatDateTime(b.borderArrivalTime)} → out {formatDateTime(b.borderExitTime)} · {b.waitTimeMinutes} min
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {m.locationLogs && m.locationLogs.length > 0 && (
+                    <div>
+                      <p className="text-[9px] uppercase text-gray-500 mb-2">Route GPS log (chronological)</p>
+                      <div className="max-h-48 overflow-auto rounded border border-gray-100">
+                        <table className="w-full text-[10px] text-left">
+                          <thead className="bg-gray-50 sticky top-0">
+                            <tr>
+                              <th className="py-1.5 px-2">Time</th>
+                              <th className="py-1.5 px-2">Lat / Lng</th>
+                              <th className="py-1.5 px-2">Address</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {m.locationLogs.map((row, j) => (
+                              <tr key={j}>
+                                <td className="py-1 px-2 font-mono whitespace-nowrap">{formatDateTime(row.timestamp)}</td>
+                                <td className="py-1 px-2 font-mono">
+                                  {row.latitude.toFixed(5)}, {row.longitude.toFixed(5)}
+                                  {row.accuracy != null ? ` (±${row.accuracy}m)` : ''}
+                                </td>
+                                <td className="py-1 px-2 text-gray-700">{row.address || '—'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -827,7 +1077,7 @@ export default function ProductPassportPage() {
           >
             <Download className="w-3.5 h-3.5" strokeWidth={1.5} />
             <span className="text-[11px] font-light tracking-wider uppercase">
-              Preuzmi pasoš (PDF) – detaljan izveštaj
+              Download passport (PDF) – full report
             </span>
           </a>
           {data.labReport?.available && (
@@ -838,7 +1088,7 @@ export default function ProductPassportPage() {
             >
               <Download className="w-3.5 h-3.5 text-gray-900 group-hover:text-[#2D5A27] transition-colors" strokeWidth={1.5} />
               <span className="text-[11px] font-light text-gray-900 tracking-wider uppercase">
-                Preuzmi laboratorijski nalaz (PDF)
+                Download lab report (PDF)
               </span>
             </a>
           )}

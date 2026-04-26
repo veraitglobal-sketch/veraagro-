@@ -1,7 +1,7 @@
 /**
  * Farm Detail API – aggregate farmer data for admin view
  * Single farmer overview: field photos, lab results, Sedex status
- * Uses existing api; backend may add GET /admin/farm/:farmerId later
+ * Prefers GET /admin/farm/:farmerId (server aggregate); falls back if needed
  */
 
 const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';

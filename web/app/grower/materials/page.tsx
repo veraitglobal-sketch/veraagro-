@@ -4,15 +4,10 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
+import { growerNavItems } from '@/lib/grower-nav';
+import { WEB_API_BASE } from '@/lib/api-base';
 
-const navItems = [
-  { href: '/grower', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
-  { href: '/grower/portal', label: 'Mission Tracker', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg> },
-  { href: '/grower/batches', label: 'My Batches', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
-  { href: '/grower/materials', label: 'Materials', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
-  { href: '/grower/quality-entry', label: 'Quality Entry', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-  { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
-];
+const navItems = growerNavItems;
 
 interface MaterialBalance {
   crateBalance: number;
@@ -43,28 +38,42 @@ export default function GrowerMaterialsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setError(null);
       try {
         const token = localStorage.getItem('token');
+        const auth = { Authorization: `Bearer ${token}` };
         const [balanceRes, typesRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/balance`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/material-types`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(`${WEB_API_BASE}/material-control/balance`, { headers: auth }),
+          fetch(`${WEB_API_BASE}/material-control/material-types`, { headers: auth }),
         ]);
 
-        const balanceData = await balanceRes.json();
-        setBalance(balanceData);
+        if (balanceRes.ok) {
+          const balanceData = await balanceRes.json();
+          setBalance(balanceData);
+        }
 
-        // Mock material types - in production, fetch from API
-        setMaterialTypes([
-          { id: '1', name: 'Bio Vera Crate', type: 'CRATE', unit: 'piece', unitPrice: 0.50, description: 'Official Bio Vera reusable crate' },
-          { id: '2', name: 'Bio Vera Label Roll', type: 'LABEL', unit: 'roll', unitPrice: 0.10, description: 'Official Bio Vera label roll with QR codes' },
-          { id: '3', name: 'Bio Vera Protective Film', type: 'FILM', unit: 'meter', unitPrice: 0.05, description: 'Official Bio Vera protective film' },
-        ]);
+        if (typesRes.ok) {
+          const types = await typesRes.json();
+          if (Array.isArray(types)) {
+            setMaterialTypes(
+              types.map((t: { id: string; name: string; type: string; unit: string; unitPrice: number; description?: string | null }) => ({
+                id: t.id,
+                name: t.name,
+                type: t.type,
+                unit: t.unit,
+                unitPrice: Number(t.unitPrice) || 0,
+                description: t.description ?? null,
+              })),
+            );
+          } else {
+            setMaterialTypes([]);
+          }
+        } else {
+          setError('Could not load material types');
+        }
       } catch (err) {
         console.error('Error fetching data:', err);
+        setError('Failed to load material data');
       } finally {
         setLoading(false);
       }
@@ -85,7 +94,7 @@ export default function GrowerMaterialsPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/purchase`, {
+      const response = await fetch(`${WEB_API_BASE}/material-control/purchase`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

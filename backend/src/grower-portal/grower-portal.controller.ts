@@ -11,6 +11,11 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 export class GrowerPortalController {
   constructor(private readonly growerPortalService: GrowerPortalService) {}
 
+  @Get('required-certifications')
+  getRequiredCertifications() {
+    return this.growerPortalService.getRequiredCertifications();
+  }
+
   @Get('mission-tracker')
   async getMissionTracker(
     @GetUser() user: any,

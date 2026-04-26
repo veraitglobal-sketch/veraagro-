@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, Inject, forwardRef, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef, Logger } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
@@ -489,5 +490,45 @@ export class BatchesService {
         createdAt: 'desc',
       },
     });
+  }
+
+  /**
+   * Record mobile packing-flow completion (GPS + time in audit trail).
+   * batchRef is internal batch UUID or public batchId (e.g. BATCH-2026-0001).
+   */
+  async recordPackingFlowCheck(
+    userId: string,
+    batchRef: string,
+    dto: { latitude: number; longitude: number; completedAt?: string },
+  ) {
+    const batch = await this.prisma.batches.findFirst({
+      where: {
+        OR: [{ id: batchRef }, { batchId: batchRef }],
+        harvestedByUserId: userId,
+      },
+    });
+    if (!batch) {
+      throw new NotFoundException('Batch not found or you do not have access');
+    }
+    const at = dto.completedAt ? new Date(dto.completedAt) : new Date();
+    await this.prisma.audit_trails.create({
+      data: {
+        id: randomUUID(),
+        eventType: 'QUALITY_CHECK',
+        entityType: 'Batch',
+        entityId: batch.id,
+        batchId: batch.id,
+        performedByUserId: userId,
+        newValue: {
+          source: 'mobile_packing_flow',
+          gps: { lat: dto.latitude, lng: dto.longitude },
+          completedAt: at.toISOString(),
+        },
+        isCompliant: true,
+        location: { lat: dto.latitude, lng: dto.longitude },
+        timestamp: at,
+      } as any,
+    });
+    return { success: true, batchId: batch.batchId, id: batch.id };
   }
 }

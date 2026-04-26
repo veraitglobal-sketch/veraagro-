@@ -1,6 +1,6 @@
 // ============================================================
-// Bio Vera - Blockchain Service (NestJS)
-// Fajl: src/blockchain/blockchain.service.ts
+// Bio Vera - Blockchain service (NestJS)
+// (Mirror of src/blockchain/blockchain.service.ts in main app)
 // ============================================================
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { ethers } from 'ethers';
 import * as crypto from 'crypto';
 
-// ABI - samo funkcije koje koristimo
+// ABI – only the functions we use
 const CONTRACT_ABI = [
   "function registerBatch(string calldata batchId, bytes32 dataHash) external",
   "function recordEvent(string calldata batchId, uint8 eventType, bytes32 dataHash) external",

@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  type TextStyle,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react-native';
@@ -173,13 +184,13 @@ export default function RegisterScreen() {
   );
 }
 
-const labelStyle = {
+const labelStyle: TextStyle = {
   fontSize: 12,
   fontWeight: '500',
   color: theme.colors.text.secondary,
   marginBottom: 6,
 };
-const inputStyle = {
+const inputStyle: TextStyle = {
   backgroundColor: theme.colors.surface,
   borderWidth: 1,
   borderColor: theme.colors.border,

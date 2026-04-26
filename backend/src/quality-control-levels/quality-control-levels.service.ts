@@ -78,7 +78,7 @@ export class QualityControlLevelsService {
       take: 100, // Get recent entries
     });
 
-    // Level 1: Eco-Safe Provera
+    // Level 1: Eco-Safe Audit
     const level1 = await this.checkLevel1_EcoSafe(batch, fieldEntries);
 
     // Level 2: Biometric & Visual Scan
@@ -107,7 +107,7 @@ export class QualityControlLevelsService {
   }
 
   /**
-   * Level 1: Eco-Safe Provera (Field Level)
+   * Level 1: Eco-Safe Audit (Field Level)
    * Checks: Heavy metals absence, nitrate levels, PH value, moisture levels
    */
   private async checkLevel1_EcoSafe(
@@ -203,7 +203,7 @@ export class QualityControlLevelsService {
 
     return {
       level: 1,
-      name: 'Eco-Safe Provera',
+      name: 'Eco-Safe Audit',
       status: hasClassB
         ? 'CLASS_B'
         : hasFailures

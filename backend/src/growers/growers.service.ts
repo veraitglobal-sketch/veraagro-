@@ -2076,7 +2076,7 @@ export class GrowersService {
         );
         doc.moveDown(0.8);
         const protocolLevels = [
-          'Level 1: Eco-Safe Verification (Field) - Heavy metals, nitrates, pH, moisture',
+          'Level 1: Eco-Safe Audit (Field) - Heavy metals, nitrates, pH, moisture',
           'Level 2: Biometric & Visual Scan (Packaging Center) - Calibration, firmness, film integrity',
           'Level 3: Logistics Guard (Transport) - Thermal shock monitoring, CO2 footprint tracking'
         ];

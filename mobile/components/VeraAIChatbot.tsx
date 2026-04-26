@@ -1,6 +1,6 @@
 /**
  * Vera AI Chatbot / Intelligence Terminal – mobilna verzija
- * Us klađeno sa web komponentom: ticker, kategorije, chat, #2D5A27.
+ * Aligned with web: ticker, categories, chat, #2D5A27.
  */
 import { useState, useRef, useEffect } from 'react';
 import {

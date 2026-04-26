@@ -125,7 +125,7 @@ export function QualityForm({
         <TextInput
           value={qualityScore}
           onChangeText={setQualityScore}
-          placeholder="npr. 85"
+          placeholder="e.g. 85"
           keyboardType="numeric"
           style={{
             fontSize: 15,

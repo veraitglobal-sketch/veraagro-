@@ -21,8 +21,15 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      await login(partnerCode, password);
-      router.replace('/(tabs)/dashboard');
+      const response = await login(partnerCode, password);
+      const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
+      if (userRoles.some((role: string) => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
+        router.replace('/(producer)/(tabs)');
+      } else if (userRoles.some((role: string) => ['BUYER', 'CUSTOMER'].includes(role))) {
+        router.replace('/(buyer)/shop');
+      } else {
+        router.replace('/(buyer)/shop');
+      }
     } catch (error: any) {
       Alert.alert(t('error'), error.message || t('login.failed'));
     } finally {

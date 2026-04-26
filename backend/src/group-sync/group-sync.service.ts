@@ -5,9 +5,9 @@ import * as crypto from 'crypto';
 
 /**
  * Group Sync Service
- * 
- * Alat koji šalje istu instrukciju (npr. 'Sutra prskanje zbog vlage')
- * svim farmerima u grupi jednim klikom.
+ *
+ * Sends the same instruction (e.g. “Spray tomorrow due to humidity”) to all
+ * farmers in a group in one action.
  */
 @Injectable()
 export class GroupSyncService {

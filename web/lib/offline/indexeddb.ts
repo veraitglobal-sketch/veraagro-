@@ -1,5 +1,5 @@
 // IndexedDB utility for offline storage
-// Stores field entries (prskanje, setva, berba) locally
+// Stores field entries (spraying, planting, harvest) locally
 
 const DB_NAME = 'BioVeraOfflineDB';
 const DB_VERSION = 1;

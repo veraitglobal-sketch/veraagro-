@@ -40,7 +40,7 @@ export default function Navigation() {
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
-          {/* Logo — levo */}
+          {/* Logo — left */}
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
             <Image
               src="/logo1.png"
@@ -53,7 +53,7 @@ export default function Navigation() {
             />
           </Link>
 
-          {/* Desktop Navigation — centrirani linkovi, na užim ekranima manji gap da ne prelome */}
+          {/* Desktop nav — centered links; tighter gap on narrow widths to avoid wrap */}
           <div className="hidden md:flex flex-1 justify-center items-center gap-4 lg:gap-6 h-full flex-nowrap">
             {navLinks.map((link) => (
               <Link
@@ -114,7 +114,7 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Mobile menu button - desno, 44px min touch target */}
+          {/* Mobile menu — right, 44px min touch target */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

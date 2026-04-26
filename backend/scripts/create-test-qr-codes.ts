@@ -10,7 +10,7 @@ async function createTestQRCodes() {
   console.log('🌾 Creating test QR codes for Farmer Field Management...\n');
 
   try {
-    // 1. Kreiraj test seed
+    // 1. Create test seed
     const testSeed = await prisma.seeds.upsert({
       where: { serialNumber: 'SEED-TEST-001' },
       update: {},
@@ -29,7 +29,7 @@ async function createTestQRCodes() {
 
     console.log('✅ Test seed created:', testSeed.serialNumber);
 
-    // 2. Dodaj test fertilizer u Bio-White-List
+    // 2. Add test fertilizer to Bio-White-List
     const testFertilizer = await (prisma as any).bioWhiteList.upsert({
       where: { barcode: 'TEST-FERT-001' },
       update: {},
@@ -45,7 +45,7 @@ async function createTestQRCodes() {
 
     console.log('✅ Test fertilizer created:', testFertilizer.barcode);
 
-    // 3. Generiši QR kodove
+    // 3. Generate QR codes
     const seedQRData = `SEED:${testSeed.serialNumber}`;
     const fertQRData = `FERTILIZER:${testFertilizer.barcode}`;
 
@@ -61,7 +61,7 @@ async function createTestQRCodes() {
       margin: 2,
     });
 
-    // 4. Sačuvaj QR kodove kao fajlove
+    // 4. Save QR codes to files
     const outputDir = path.join(__dirname, '../test-qr-codes');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
@@ -93,7 +93,7 @@ async function createTestQRCodes() {
     console.log('   3. Test Integrity Guard validation');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    // 5. Prikaži QR kodove u konzoli (ASCII art)
+    // 5. Print QR codes to the console (ASCII)
     console.log('📱 QR Code Preview (ASCII):');
     console.log('\nSeed QR Code:');
     await QRCode.toString(seedQRData, { type: 'terminal', small: true });

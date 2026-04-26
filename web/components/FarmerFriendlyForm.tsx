@@ -56,7 +56,7 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
       <div className="max-w-md mx-auto">
         {/* Large Title */}
         <h1 className="text-3xl font-bold text-center mb-8 mt-8">
-          Unos Berbe
+          Harvest entry
         </h1>
 
         {/* Success Message */}
@@ -72,14 +72,14 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
           disabled={scanning}
           className="w-full h-24 bg-[#2D5A27] text-white text-2xl font-bold rounded-lg shadow-lg hover:bg-[#23471f] active:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed mb-6"
         >
-          {scanning ? 'Skeniranje...' : '📷 SKENIRAJ BAR-KOD'}
+          {scanning ? 'Scanning…' : '📷 SCAN BARCODE'}
         </button>
 
         {/* Latest Scan Info */}
         {latestScannedCode && (
           <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
             <p className="text-lg font-semibold text-blue-900">
-              Poslednji skenirani: {latestScannedCode.code}
+              Last scanned: {latestScannedCode.code}
             </p>
           </div>
         )}
@@ -89,17 +89,17 @@ export default function FarmerFriendlyForm({ farmId }: { farmId: string }) {
           onClick={syncNow}
           className="w-full h-16 bg-gray-600 text-white text-xl font-semibold rounded-lg shadow hover:bg-gray-700"
         >
-          🔄 Sinhronizuj
+          🔄 Sync now
         </button>
 
         {/* Instructions */}
         <div className="mt-8 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
           <p className="text-lg font-semibold text-yellow-900 mb-2">
-            Uputstvo:
+            How to:
           </p>
           <ol className="text-base text-yellow-800 space-y-2 list-decimal list-inside">
-            <li>Klikni "SKENIRAJ BAR-KOD"</li>
-            <li>Usmeri kameru na bar-kod</li>
+            <li>Tap &quot;SCAN BARCODE&quot;</li>
+            <li>Point the camera at the barcode</li>
             <li>Data will be saved automatically</li>
           </ol>
         </div>

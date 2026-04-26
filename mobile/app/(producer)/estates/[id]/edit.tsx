@@ -162,7 +162,7 @@ export default function EditEstateScreen() {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder="npr. Glavna njiva"
+              placeholder="e.g. North field"
               style={{
                 fontSize: 15,
                 fontWeight: '300',

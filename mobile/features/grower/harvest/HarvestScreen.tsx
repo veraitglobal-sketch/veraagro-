@@ -1,7 +1,7 @@
 import HarvestForm from './HarvestForm';
 
 /**
- * Harvest – prijava berbe, offline-first. UI u HarvestForm.
+ * Harvest report entry, offline-first. UI in HarvestForm.
  */
 export default function HarvestScreen() {
   return <HarvestForm />;

@@ -1,10 +1,9 @@
-import { View, Text, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { QrCode, Package, MapPin, Calendar, CheckCircle2, X, Truck } from 'lucide-react-native';
+import { QrCode, Package, X, Truck } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { inventoryAPI, Product, passportAPI, batchesAPI, BatchAvailability } from '../../lib/api';
+import { inventoryAPI, Product, batchesAPI, BatchAvailability } from '../../lib/api';
 import { theme } from '../../lib/theme';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
@@ -37,7 +36,6 @@ interface FieldStory {
  * Stories, Catalog, QR Scanner, Order Pulse
  */
 export default function BuyerDashboard() {
-  const { t } = useTranslation();
   const router = useRouter();
   const [products, setProducts] = useState<EnhancedProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,10 +52,10 @@ export default function BuyerDashboard() {
 
   // Mock field stories - in production, fetch from backend
   const fieldStories: FieldStory[] = [
-    { id: '1', farmerName: 'Marko', location: 'Šumadija', activity: 'Harvest' },
-    { id: '2', farmerName: 'Petar', location: 'Vojvodina', activity: 'Quality Check' },
-    { id: '3', farmerName: 'Jovan', location: 'Srbija', activity: 'Loading' },
-    { id: '4', farmerName: 'Milan', location: 'Banat', activity: 'Harvest' },
+  { id: '1', farmerName: 'Marko', location: 'Central region', activity: 'Harvest' },
+  { id: '2', farmerName: 'Petar', location: 'North plain', activity: 'Quality Check' },
+  { id: '3', farmerName: 'Jovan', location: 'National', activity: 'Loading' },
+  { id: '4', farmerName: 'Milan', location: 'Eastern region', activity: 'Harvest' },
   ];
 
   // Mock active delivery
@@ -193,13 +191,6 @@ export default function BuyerDashboard() {
       return scoreB - scoreA;
     });
   }, [products, activeFilter]);
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${date.getDate()}. ${months[date.getMonth()]}`;
-  };
 
   const handleProductPress = (product: EnhancedProduct) => {
     if (product.status === 'incoming' || product.status === 'reservations') {
@@ -349,7 +340,6 @@ export default function BuyerDashboard() {
             <ProductCard
               product={item}
               onPress={() => handleProductPress(item)}
-              formatDate={formatDate}
               availability={item.batchId ? batchAvailabilities[item.batchId] : null}
               onReserve={() => {
                 setSelectedProduct(item);
@@ -552,13 +542,11 @@ export default function BuyerDashboard() {
 function ProductCard({
   product,
   onPress,
-  formatDate,
   availability,
   onReserve,
 }: {
   product: EnhancedProduct;
   onPress: () => void;
-  formatDate: (date?: string) => string;
   availability: BatchAvailability | null;
   onReserve: () => void;
 }) {

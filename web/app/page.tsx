@@ -43,7 +43,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - fiksna min-visina da ne treperi pri učitavanju */}
+      {/* Hero — min-height to reduce layout shift while loading */}
       <section className="min-h-[50vh] sm:min-h-[55vh] pt-20 sm:pt-28 md:pt-40 pb-16 md:pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
@@ -321,7 +321,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blockchain Trust — zašto koristimo blockchain, vernost kupcima, niko ne može da menja tok */}
+      {/* Blockchain Trust – why we use chain, customer assurance, tamper resistance */}
       <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
         <div className="max-w-4xl mx-auto">
           <motion.div

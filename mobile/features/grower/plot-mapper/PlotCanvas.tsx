@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
@@ -25,6 +26,7 @@ export function PlotCanvas({
   onCanvasPress,
   onZonePress,
 }: PlotCanvasProps) {
+  const { t } = useTranslation();
   const vertCount = partitions.filter((p) => p.type === 'VERTICAL').length + 1;
   const horzCount = partitions.filter((p) => p.type === 'HORIZONTAL').length + 1;
   const zoneWidth = CANVAS_WIDTH / vertCount;
@@ -48,7 +50,7 @@ export function PlotCanvas({
             letterSpacing: 0.3,
           }}
         >
-          Plan parcele
+          {t('producer.plotMapper.canvasPlanLabel')}
         </Text>
         <TouchableOpacity
           onPress={onAddPartition}
@@ -77,7 +79,7 @@ export function PlotCanvas({
               color: partitionMode ? colors.primary : colors.text.secondary,
             }}
           >
-            Dodaj podelu
+            Add partition
           </Text>
         </TouchableOpacity>
       </View>

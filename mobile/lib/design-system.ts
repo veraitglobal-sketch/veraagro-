@@ -1,5 +1,5 @@
 /**
- * Design system – usklađen sa webom (Bio Vera #2D5A27, gray paleta)
+ * Design system – aligned with web (Bio Vera #2D5A27, gray palette)
  */
 export const colors = {
   primary: {

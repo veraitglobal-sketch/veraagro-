@@ -13,6 +13,7 @@ import {
   MapPin,
   MessageCircle,
   ClipboardCheck,
+  CalendarRange,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -33,8 +34,9 @@ const navLabels = {
     estates: 'Estate Approval',
     aiConversations: 'AI Conversations',
     testBatch: 'Test batch',
-    njivaBlockchain: 'Njiva → Blockchain',
+    njivaBlockchain: 'Field → Blockchain',
     parcelsPending: 'Parcels pending',
+    harvestPlans: 'Harvest plans',
   },
   de: {
     dashboard: 'Dashboard',
@@ -51,8 +53,9 @@ const navLabels = {
     estates: 'Grundstücksgenehmigung',
     aiConversations: 'KI-Konversationen',
     testBatch: 'Test-Batch',
-    njivaBlockchain: 'Njiva → Blockchain',
+    njivaBlockchain: 'Feld → Blockchain',
     parcelsPending: 'Parzellen (Freigabe)',
+    harvestPlans: 'Erntepläne',
   },
 };
 
@@ -173,6 +176,11 @@ export function getAdminNavItems(_language?: 'en') {
       href: '/admin/parcels-pending', 
       label: labels.parcelsPending, 
       icon: <MapPin className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/harvest-plans', 
+      label: labels.harvestPlans, 
+      icon: <CalendarRange className="w-5 h-5" /> 
     },
   ];
 }

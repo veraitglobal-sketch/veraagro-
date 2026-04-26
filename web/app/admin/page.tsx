@@ -16,6 +16,7 @@ import {
   ArrowRight,
   MapPin,
   CheckCircle,
+  Calendar,
 } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
@@ -43,6 +44,7 @@ interface Statistics {
   };
   estates?: {
     total: number;
+    pendingSetup?: number;
   };
   parcels?: {
     total: number;
@@ -107,6 +109,7 @@ export default function AdminDashboard() {
   }
 
   const pendingParcelApprovalCount = statistics?.parcels?.pendingApproval ?? 0;
+  const pendingEstateSetupCount = statistics?.estates?.pendingSetup ?? 0;
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
@@ -201,9 +204,12 @@ export default function AdminDashboard() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Estates (Njive)</p>
+                  <p className="text-sm font-medium text-gray-600">Estates</p>
                   <p className="text-2xl font-semibold text-gray-900 mt-1">
                     {statistics?.estates?.total ?? 0}
+                  </p>
+                  <p className="text-xs text-amber-600 mt-1">
+                    {pendingEstateSetupCount} pending setup
                   </p>
                 </div>
                 <MapPin className="w-8 h-8 text-[#2D5A27]" />
@@ -218,12 +224,12 @@ export default function AdminDashboard() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Parcels (Parcele)</p>
+                  <p className="text-sm font-medium text-gray-600">Parcels</p>
                   <p className="text-2xl font-semibold text-gray-900 mt-1">
                     {statistics?.parcels?.total ?? 0}
                   </p>
                   <p className="text-xs text-amber-600 mt-1">
-                    {statistics?.parcels?.pendingApproval ?? 0} čeka odobrenje
+                    {statistics?.parcels?.pendingApproval ?? 0} awaiting approval
                   </p>
                 </div>
                 <MapPin className="w-8 h-8 text-gray-500" />
@@ -271,7 +277,7 @@ export default function AdminDashboard() {
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-[#2D5A27]" />
-                  <span className="text-sm font-medium text-gray-900">Odobri parcele</span>
+                  <span className="text-sm font-medium text-gray-900">Approve parcels</span>
                   {pendingParcelApprovalCount > 0 && (
                     <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
                       {pendingParcelApprovalCount}
@@ -286,21 +292,36 @@ export default function AdminDashboard() {
               >
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-[#2D5A27]" />
-                  <span className="text-sm font-medium text-gray-900">Estates / Njive</span>
+                  <span className="text-sm font-medium text-gray-900">Estates / fields</span>
+                  {pendingEstateSetupCount > 0 && (
+                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+                      {pendingEstateSetupCount} setup
+                    </span>
+                  )}
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Link>
+              <Link
+                href="/admin/harvest-plans"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-[#2D5A27]" />
+                  <span className="text-sm font-medium text-gray-900">Harvest plans</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </Link>
             </div>
           </div>
 
-          {/* Parcele na čekanju + Recent Batches */}
+          {/* Pending parcels + Recent Batches */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Parcele na čekanju */}
+            {/* Pending parcels */}
             <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Parcele na čekanju</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Parcels pending approval</h2>
                 <Link href="/admin/parcels-pending" className="text-sm text-green-600 hover:text-green-700">
-                  Odobri sve
+                  Approve all
                 </Link>
               </div>
               <div className="space-y-3">
@@ -309,7 +330,7 @@ export default function AdminDashboard() {
                     <div key={parcel.id} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
                       <div>
                         <p className="text-sm font-medium text-gray-900">
-                          {parcel.estates?.name || 'Estate'} — {parcel.cropType || 'Parcula'}
+                          {parcel.estates?.name || 'Estate'} — {parcel.cropType || 'Parcel'}
                         </p>
                         <p className="text-xs text-gray-500">
                           {parcel.estates?.users
@@ -321,12 +342,12 @@ export default function AdminDashboard() {
                         href="/admin/parcels-pending"
                         className="text-xs font-medium text-[#2D5A27] hover:underline"
                       >
-                        Odobri
+                        Approve
                       </Link>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">Nema parcela na čekanju</p>
+                  <p className="text-sm text-gray-500">No parcels waiting for approval</p>
                 )}
               </div>
             </div>

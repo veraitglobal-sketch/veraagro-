@@ -3,13 +3,18 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   Param,
   Query,
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { HarvestAnnouncementsService, CreateHarvestAnnouncementDto } from './harvest-announcements.service';
+import {
+  HarvestAnnouncementsService,
+  CreateHarvestAnnouncementDto,
+  AdminUpdateHarvestAnnouncementDto,
+} from './harvest-announcements.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -55,6 +60,26 @@ export class HarvestAnnouncementsController {
       announcementType,
       cropType,
     });
+  }
+
+  /**
+   * Single announcement (Admin)
+   */
+  @Get('admin/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  async getOneAdmin(@Param('id') id: string) {
+    return this.announcementsService.findOneAdmin(id);
+  }
+
+  /**
+   * Update announcement (Admin) — status, logistics, QC, internal notes
+   */
+  @Patch('admin/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  async adminPatch(@Param('id') id: string, @Body() body: AdminUpdateHarvestAnnouncementDto) {
+    return this.announcementsService.adminUpdate(id, body);
   }
 
   /**

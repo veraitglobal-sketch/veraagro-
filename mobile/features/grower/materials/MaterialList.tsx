@@ -102,13 +102,13 @@ export function MaterialList({
                   width: 40,
                   height: 40,
                   borderRadius: theme.borderRadius.sm,
-                  backgroundColor: `${getTypeColor(material.type)}15`,
+                  backgroundColor: `${getTypeColor(material.type ?? 'OTHER')}15`,
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginRight: theme.spacing.sm,
                 }}
               >
-                <Package size={20} color={getTypeColor(material.type)} strokeWidth={1} />
+                <Package size={20} color={getTypeColor(material.type ?? 'OTHER')} strokeWidth={1} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{
@@ -142,12 +142,12 @@ export function MaterialList({
                 paddingHorizontal: theme.spacing.sm,
                 paddingVertical: 4,
                 borderRadius: theme.borderRadius.sm,
-                backgroundColor: `${getTypeColor(material.type)}15`,
+                backgroundColor: `${getTypeColor(material.type ?? 'OTHER')}15`,
               }}>
                 <Text style={{
                   fontSize: 10,
                   fontWeight: '300',
-                  color: getTypeColor(material.type),
+                  color: getTypeColor(material.type ?? 'OTHER'),
                   letterSpacing: 0.3,
                 }}>
                   {material.type === 'FERTILIZER' ? t('producer.materials.fertilizer') : material.type === 'PESTICIDE' ? t('producer.materials.pesticide') : material.type === 'SEED' ? t('producer.materials.seed') : t('producer.materials.other')}

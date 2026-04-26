@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import {
@@ -7,12 +8,15 @@ import {
   estatesAPI,
   Estate,
 } from '../../../lib/api';
+import { getOrCreateDeviceId } from '../../../lib/device-id';
+import { sha256HexFromImageUri } from '../../../lib/image-hash';
 
 export function useGrowthJournalData() {
   const [logs, setLogs] = useState<GrowthLog[]>([]);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [filterEstate, setFilterEstate] = useState<string>('all');
   const [filterParcel, setFilterParcel] = useState<string>('all');
 
@@ -21,15 +25,18 @@ export function useGrowthJournalData() {
       setLoading(true);
       const estatesData = await estatesAPI.getAll();
       setEstates(Array.isArray(estatesData) ? estatesData : []);
-      if (Array.isArray(estatesData) && estatesData.length > 0 && filterEstate === 'all') {
-        setFilterEstate(estatesData[0].id);
-      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (estates.length > 0 && filterEstate === 'all') {
+      setFilterEstate(estates[0].id);
+    }
+  }, [estates, filterEstate]);
 
   const loadLogs = useCallback(async () => {
     if (filterEstate === 'all') {
@@ -70,11 +77,18 @@ export function useGrowthJournalData() {
 
   const handleAddPhoto = useCallback(async () => {
     if (estates.length === 0) return;
+    if (filterEstate === 'all' || !filterEstate) {
+      Alert.alert('Estate', 'Select an estate first (use the filters below).');
+      return;
+    }
 
     const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
     const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
 
-    if (cameraStatus !== 'granted' || locationStatus !== 'granted') return;
+    if (cameraStatus !== 'granted' || locationStatus !== 'granted') {
+      Alert.alert('Permissions', 'Camera and location access are required.');
+      return;
+    }
 
     let location: { lat: number; lng: number } | null = null;
     try {
@@ -83,25 +97,57 @@ export function useGrowthJournalData() {
       });
       location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
     } catch {
+      Alert.alert('Location', 'Could not read GPS. Try again outdoors.');
       return;
     }
 
+    let result: ImagePicker.ImagePickerResult;
     try {
-      const result = await ImagePicker.launchCameraAsync({
+      result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
       });
-
-      if (!result.canceled && result.assets[0] && location) {
-        // TODO: Upload to backend with GPS metadata
-        console.log('Photo taken:', result.assets[0].uri, location);
-      }
     } catch (error) {
       console.error('Camera error:', error);
+      return;
     }
-  }, [estates.length]);
+
+    if (result.canceled || !result.assets[0] || !location) return;
+
+    const asset = result.assets[0];
+    setUploading(true);
+    try {
+      const imageHash = await sha256HexFromImageUri(asset.uri);
+      const deviceId = await getOrCreateDeviceId();
+      const deviceTimestamp = new Date().toISOString();
+      const parcelId =
+        filterParcel !== 'all' && filterParcel ? filterParcel : undefined;
+      // Placeholder until a dedicated public image CDN URL exists for this capture
+      const imageUrl = `https://app.biovera.app/growth-log#${imageHash}`;
+
+      await growthLogsAPI.create({
+        estateId: filterEstate,
+        parcelId,
+        imageUrl,
+        imageHash,
+        gpsLatitude: location.lat,
+        gpsLongitude: location.lng,
+        deviceId,
+        deviceTimestamp,
+        notes: 'Growth journal (mobile)',
+      });
+      await loadLogs();
+      Alert.alert('Saved', 'Growth log entry was submitted.');
+    } catch (e: any) {
+      const msg = e?.response?.data?.message || e?.message || 'Failed to save growth log';
+      Alert.alert('Error', String(msg));
+      console.error('Growth log submit:', e);
+    } finally {
+      setUploading(false);
+    }
+  }, [estates.length, filterEstate, filterParcel, loadLogs]);
 
   const selectedEstate = estates.find((e) => e.id === filterEstate);
   const parcels = selectedEstate?.parcels || [];
@@ -114,6 +160,7 @@ export function useGrowthJournalData() {
     logs: sortedLogs,
     loading,
     refreshing,
+    uploading,
     filterEstate,
     filterParcel,
     setFilterEstate,

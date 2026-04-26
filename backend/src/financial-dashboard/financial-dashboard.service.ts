@@ -3,11 +3,11 @@ import { PrismaService } from '../prisma/prisma.service';
 
 /**
  * Financial Dashboard Service
- * 
- * Prikazuje:
- * - Akumulirani profit od marže (seed margin, transport margin)
- * - Uštede na grupnoj sertifikaciji (group certification savings)
- * - Provizije od ambalaže (packaging commissions)
+ *
+ * Shows:
+ * - Cumulative margin profit (seed margin, transport margin)
+ * - Group certification savings
+ * - Packaging commissions
  */
 @Injectable()
 export class FinancialDashboardService {

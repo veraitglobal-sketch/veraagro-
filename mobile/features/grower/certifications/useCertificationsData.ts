@@ -1,23 +1,20 @@
 import { useState, useCallback } from 'react';
+import { growerPortalAPI, type RequiredCertification } from '../../../lib/api';
 import { offlineStorage, PendingCertificatePhoto } from '../../../lib/offline-storage';
 
 export type CertStatus = 'not_done' | 'pending' | 'done';
 
-export interface RequiredCert {
-  id: string;
-  title: string;
-  description?: string;
-}
+export type RequiredCert = RequiredCertification;
 
-/** Mock lista obaveznih sertifikata – u produkciji GET /grower-portal/required-certifications */
-const MOCK_REQUIRED: RequiredCert[] = [
-  { id: 'cert_1', title: 'Obuka – dobra poljoprivredna praksa', description: 'Završena obuka' },
-  { id: 'cert_2', title: 'Sertifikat o proizvodnji', description: 'Dokaz o načinu proizvodnje' },
-  { id: 'cert_3', title: 'GlobalG.A.P. (ako je primenjivo)', description: 'Opciono' },
+/** Used when the API is unreachable or not deployed yet. */
+const FALLBACK_REQUIRED: RequiredCert[] = [
+  { id: 'cert_1', title: 'Training – good agricultural practice', description: 'Completed training' },
+  { id: 'cert_2', title: 'Production certificate', description: 'Proof of production method' },
+  { id: 'cert_3', title: 'GlobalG.A.P. (if applicable)', description: 'Optional' },
 ];
 
 export function useCertificationsData() {
-  const [requiredCerts, setRequiredCerts] = useState<RequiredCert[]>(MOCK_REQUIRED);
+  const [requiredCerts, setRequiredCerts] = useState<RequiredCert[]>(FALLBACK_REQUIRED);
   const [pendingPhotos, setPendingPhotos] = useState<PendingCertificatePhoto[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +23,13 @@ export function useCertificationsData() {
     try {
       const list = await offlineStorage.getPendingCertificatePhotos();
       setPendingPhotos(list);
-      setRequiredCerts(MOCK_REQUIRED);
+      try {
+        const fromApi = await growerPortalAPI.getRequiredCertifications();
+        setRequiredCerts(fromApi);
+      } catch (e) {
+        console.warn('Required certifications (using fallback):', e);
+        setRequiredCerts(FALLBACK_REQUIRED);
+      }
     } catch (error) {
       console.error('Error loading certifications:', error);
       setPendingPhotos([]);

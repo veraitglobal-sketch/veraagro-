@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,8 @@ import {
 import { theme } from '../../../lib/theme';
 import StepInstructions from './StepInstructions';
 import StepCamera from './StepCamera';
-import StepGps from './StepGps';
+import StepGps, { type GpsCapturePayload } from './StepGps';
+import { batchesAPI } from '../../../lib/api';
 
 const STEPS = [
   { id: 'instructions', icon: FileText, titleKey: 'packingFlow.step1.title' },
@@ -45,13 +47,14 @@ export default function PackingFlowScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [qualityPhotoUri, setQualityPhotoUri] = useState<string | null>(null);
   const [gpsCaptured, setGpsCaptured] = useState(false);
+  const [gpsPayload, setGpsPayload] = useState<GpsCapturePayload | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const currentStepId = STEPS[step]?.id ?? 'instructions';
   const canProceed = (() => {
     if (step === 0) return instructionsViewed;
     if (step === 1) return !!photoUri && !!qualityPhotoUri;
-    if (step === 2) return gpsCaptured;
+    if (step === 2) return gpsCaptured && !!gpsPayload;
     return false;
   })();
 
@@ -70,12 +73,43 @@ export default function PackingFlowScreen() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    const batchRef = params.batchId ? String(params.batchId) : '';
+    if (!batchRef) {
+      Alert.alert(
+        t('alerts.warning', { defaultValue: 'Notice' }),
+        t('packingFlow.needBatch', {
+          defaultValue: 'Open this screen from a batch so the packing check is saved to the server.',
+        }),
+        [{ text: t('common.ok', { defaultValue: 'OK' }) }],
+      );
+      setSubmitting(false);
+      return;
+    }
+    if (!gpsPayload) {
+      setSubmitting(false);
+      return;
+    }
     try {
-      // TODO: Call shared backend-service.submitPackingRecord()
-      // For now just go back
-      router.back();
-    } catch (err) {
+      await batchesAPI.recordPackingFlow(batchRef, {
+        latitude: gpsPayload.lat,
+        longitude: gpsPayload.lng,
+        completedAt: gpsPayload.timestamp,
+      });
+      Alert.alert(
+        t('packingFlow.submittedTitle', { defaultValue: 'Packing check complete' }),
+        t('packingFlow.submittedServer', {
+          defaultValue: 'Location logged on the server for this batch.',
+        }),
+        [{ text: t('common.ok', { defaultValue: 'OK' }), onPress: () => router.back() }],
+      );
+    } catch (err: unknown) {
       console.error('Submit packing record:', err);
+      const msg = err && typeof err === 'object' && 'message' in err ? String((err as Error).message) : '';
+      Alert.alert(
+        t('error', { defaultValue: 'Error' }),
+        msg || t('packingFlow.submitFailed', { defaultValue: 'Could not save. Try again or check your connection.' }),
+        [{ text: t('common.ok', { defaultValue: 'OK' }) }],
+      );
     } finally {
       setSubmitting(false);
     }
@@ -139,7 +173,12 @@ export default function PackingFlowScreen() {
           />
         )}
         {currentStepId === 'gps' && (
-          <StepGps onCaptured={() => setGpsCaptured(true)} />
+          <StepGps
+            onCaptured={(p) => {
+              setGpsPayload(p);
+              setGpsCaptured(true);
+            }}
+          />
         )}
       </ScrollView>
 

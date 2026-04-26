@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 
 /**
- * Growers nema Shop – preusmeri na Moji proizvodi.
+ * Growers have no Shop tab — redirect to My products.
  * Ruta ostaje zbog Expo Router; odmah redirect.
  */
 export default function ShopRedirect() {

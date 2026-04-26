@@ -9,8 +9,10 @@ import { MapPin, Check } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { theme } from '../../../lib/theme';
 
+export type GpsCapturePayload = { lat: number; lng: number; timestamp: string };
+
 interface Props {
-  onCaptured: () => void;
+  onCaptured: (payload: GpsCapturePayload) => void;
 }
 
 export default function StepGps({ onCaptured }: Props) {
@@ -31,10 +33,12 @@ export default function StepGps({ onCaptured }: Props) {
       const loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
-      setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
-      setTimestamp(new Date().toISOString());
+      const ts = new Date().toISOString();
+      const payload = { lat: loc.coords.latitude, lng: loc.coords.longitude, timestamp: ts };
+      setLocation({ lat: payload.lat, lng: payload.lng });
+      setTimestamp(ts);
       setCaptured(true);
-      onCaptured();
+      onCaptured(payload);
     } catch (err) {
       console.error('GPS capture:', err);
       Alert.alert(t('error'), t('estates.getLocationFailed'));

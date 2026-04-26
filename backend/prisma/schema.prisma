@@ -741,28 +741,36 @@ model parcels {
 }
 
 model harvest_announcements {
-  id                String    @id
-  parcelId          String
-  userId            String
-  announcementType  String
-  cropType          String
-  estimatedDate     DateTime
-  estimatedQuantity Float?
-  actualDate        DateTime?
-  actualQuantity    Float?
-  status            String    @default("PENDING")
-  notes             String?
-  notifiedAt        DateTime?
-  confirmedAt       DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime
-  parcel            parcels   @relation(fields: [parcelId], references: [id])
-  user              users     @relation(fields: [userId], references: [id])
+  id                 String    @id
+  parcelId           String
+  userId             String
+  announcementType   String
+  cropType           String
+  estimatedDate      DateTime
+  estimatedQuantity   Float?
+  plannedLoadingStart DateTime?
+  plannedLoadingEnd   DateTime?
+  loadQuantityKg      Float?
+  marketChannel       String?
+  qualityGrade        String?
+  sortingSpec         String?
+  adminNotes          String?
+  actualDate         DateTime?
+  actualQuantity     Float?
+  status             String    @default("PENDING")
+  notes              String?
+  notifiedAt         DateTime?
+  confirmedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime
+  parcel             parcels   @relation(fields: [parcelId], references: [id])
+  user               users     @relation(fields: [userId], references: [id])
 
   @@index([parcelId])
   @@index([userId])
   @@index([estimatedDate])
   @@index([status])
+  @@index([marketChannel])
 }
 
 model payments {

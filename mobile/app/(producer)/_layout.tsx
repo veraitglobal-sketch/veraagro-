@@ -20,6 +20,7 @@ export default function ProducerLayout() {
             headerTitle: 'Scan Barcode',
           }} 
         />
+        <Stack.Screen name="field-season" />
         <Stack.Screen name="estates" />
         <Stack.Screen name="estates/new" />
         <Stack.Screen name="estates/[id]" />

@@ -35,7 +35,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
 
   const handleScan = async () => {
     if (!scanInput.trim()) {
-      alert('Unesite bar-kod');
+      alert('Please enter a barcode');
       return;
     }
 
@@ -99,7 +99,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Unos Podataka sa Njive</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Field data entry</h2>
         <div className="flex items-center gap-4 text-sm">
           <span className={`px-3 py-1 rounded-full ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
             {isOnline ? '🟢 Online' : '🔴 Offline'}
@@ -114,7 +114,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
 
       {/* Scan Code Section */}
       <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-        <h3 className="font-semibold text-gray-700 mb-3">1. Skeniranje Bar-koda</h3>
+        <h3 className="font-semibold text-gray-700 mb-3">1. Barcode scan</h3>
         <div className="flex gap-2 mb-3">
           <select
             value={scanType}
@@ -160,16 +160,16 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
       {/* Entry Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tip Unosa</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Entry type</label>
           <select
             value={entryType}
             onChange={(e) => setEntryType(e.target.value as EntryType)}
             className="w-full px-3 py-2 border rounded-md"
             required
           >
-            <option value="SETVA">Setva</option>
-            <option value="PRSKANJE">Prskanje</option>
-            <option value="BERBA">Berba</option>
+            <option value="SETVA">Sowing</option>
+            <option value="PRSKANJE">Spraying</option>
+            <option value="BERBA">Harvest</option>
           </select>
         </div>
 
@@ -185,13 +185,13 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Napomene (opciono)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border rounded-md"
-            placeholder="Dodatne napomene..."
+            placeholder="Additional notes…"
           />
         </div>
 
@@ -219,7 +219,7 @@ export default function OfflineEntryForm({ farmId, onSuccess }: OfflineEntryForm
               onClick={syncNow}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-              Sinhronizuj ({pendingSync})
+              Sync ({pendingSync})
             </button>
           )}
         </div>

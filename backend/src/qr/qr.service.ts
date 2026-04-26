@@ -118,6 +118,7 @@ export class QrService {
               },
             },
             vehicles: true,
+            border_wait_times: true,
             location_logs: {
               orderBy: {
                 timestamp: 'asc',
@@ -199,6 +200,10 @@ export class QrService {
     // Check if batch is compromised
     const isCompromised = await this.checkBatchCompromised(batch.id);
 
+    const regionName = this.extractRegionFromAddress(batch.estates.name);
+    const country = batch.estates.users.productionCountry ?? null;
+    const regionLabel = [regionName, country].filter(Boolean).join(' · ');
+
     return {
       qrId,
       batch: {
@@ -214,15 +219,23 @@ export class QrService {
       },
       origin: {
         farmName: batch.estates.name,
+        /** Human-readable “where in the world” for the passport (region + country). */
+        regionLabel: regionLabel || regionName,
+        productionCountry: country,
         // Where harvested: region + farm (for passport headline; no producer name)
-        harvestLocation: `${batch.estates.name}${this.extractRegionFromAddress(batch.estates.name) ? `, ${this.extractRegionFromAddress(batch.estates.name)}` : ''}`,
-        harvestRegion: this.extractRegionFromAddress(batch.estates.name),
+        harvestLocation: `${batch.estates.name}${regionName ? `, ${regionName}` : ''}`,
+        harvestRegion: regionName,
         // When harvested: date and period (e.g. "June 2026")
         harvestDate: batch.harvestDate,
         harvestPeriod: batch.harvestDate ? this.formatHarvestPeriod(batch.harvestDate) : null,
         ownerName: batch.estates.users.firstName,
         ownerLastName: undefined,
-        location: this.extractRegionFromAddress(batch.estates.name),
+        location: regionName,
+        /** Field (estate) and plot (parcel) size in ha + map centroids (traceability). */
+        estateCalculatedAreaHa: batch.estates.calculatedArea,
+        parcelCalculatedAreaHa: batch.parcels?.calculatedArea ?? null,
+        estateMapCenter: this.polygonCentroid(batch.estates.polygonCoordinates as unknown),
+        parcelMapCenter: this.polygonCentroid(batch.parcels?.polygonCoordinates as unknown),
         gpsLocation: undefined,
         address: undefined,
       },
@@ -245,15 +258,43 @@ export class QrService {
         expiresAt: batch.freshness_trackers.expiresAt,
         isExpired: batch.freshness_trackers.isExpired,
       } : null,
-      missions: batch.missions.map(m => ({
+      missions: (batch.missions ?? []).map((m) => ({
         id: m.id,
         missionNumber: m.missionNumber,
         status: m.status,
-        vehicle: m.vehicles ? {
-          id: m.vehicles.id,
-          vehicleNumber: m.vehicles.vehicleNumber,
-          licensePlate: m.vehicles.licensePlate,
-        } : null,
+        pickupAddress: m.pickupAddress,
+        pickupLocation: m.pickupLocation,
+        estimatedPickupTime: m.estimatedPickupTime,
+        assignedAt: m.assignedAt,
+        acceptedAt: m.acceptedAt,
+        logisticsPartner: m.users_missions_logisticsPartnerIdTousers
+          ? {
+              name: `${m.users_missions_logisticsPartnerIdTousers.firstName} ${m.users_missions_logisticsPartnerIdTousers.lastName}`.trim(),
+            }
+          : null,
+        vehicle: m.vehicles
+          ? {
+              id: m.vehicles.id,
+              vehicleNumber: m.vehicles.vehicleNumber,
+              licensePlate: m.vehicles.licensePlate,
+              type: m.vehicles.type,
+              make: m.vehicles.make,
+              model: m.vehicles.model,
+            }
+          : null,
+        locationLogs: (m.location_logs ?? []).map((ll) => ({
+          timestamp: ll.timestamp,
+          latitude: ll.latitude,
+          longitude: ll.longitude,
+          accuracy: ll.accuracy,
+          address: ll.address,
+        })),
+        borderWaits: (m.border_wait_times ?? []).map((b) => ({
+          borderName: b.borderName,
+          borderArrivalTime: b.borderArrivalTime,
+          borderExitTime: b.borderExitTime,
+          waitTimeMinutes: b.waitTimeMinutes,
+        })),
         pickedUpAt: m.pickedUpAt,
         deliveredAt: m.completedAt,
       })),
@@ -279,11 +320,15 @@ export class QrService {
       // Protocol 360: Quality Control Levels
       protocol360: await this.getProtocol360Data(batch.id),
       // Parcel & raw chronology: planting period, treatments (sredstva), growth logs, harvest announcements
-      parcelInfo: batch.parcels ? {
-        cropType: batch.parcels.cropType ?? null,
-        plantingDate: batch.parcels.plantingDate ?? null,
-        expectedHarvestDate: batch.parcels.expectedHarvestDate ?? null,
-      } : null,
+      parcelInfo: batch.parcels
+        ? {
+            cropType: batch.parcels.cropType ?? null,
+            plantingDate: batch.parcels.plantingDate ?? null,
+            expectedHarvestDate: batch.parcels.expectedHarvestDate ?? null,
+            calculatedAreaHa: batch.parcels.calculatedArea,
+            mapCenter: this.polygonCentroid(batch.parcels.polygonCoordinates as unknown),
+          }
+        : null,
       treatments: (batch.parcels?.treatment_logs ?? []).map((t) => ({
         appliedAt: t.appliedAt,
         productName: t.productName,
@@ -291,6 +336,10 @@ export class QrService {
         waterVolume: t.waterVolume,
         reason: t.reason ?? null,
         deviceTimestamp: t.deviceTimestamp,
+        gpsLatitude: t.gpsLatitude,
+        gpsLongitude: t.gpsLongitude,
+        gpsAccuracyM: t.gpsAccuracy,
+        needsAudit: t.needsAudit,
       })),
       growthLogs: (batch.parcels?.growth_logs ?? []).map((g) => ({
         networkTimestamp: g.networkTimestamp,
@@ -298,6 +347,9 @@ export class QrService {
         growthStage: g.growthStage ?? null,
         notes: g.notes ?? null,
         labTestDate: g.labTestDate ?? null,
+        gpsLatitude: g.gpsLatitude,
+        gpsLongitude: g.gpsLongitude,
+        gpsAccuracyM: g.gpsAccuracy,
       })),
       harvestAnnouncements: (batch.parcels?.harvest_announcements ?? []).map((h) => ({
         estimatedDate: h.estimatedDate,
@@ -408,6 +460,32 @@ export class QrService {
    * Extract region from address (privacy protection)
    * Returns only region/city, not exact address
    */
+  /** Approximate center of a polygon or point list (for passport “where on the map”). */
+  private polygonCentroid(coords: unknown): { lat: number; lng: number } | null {
+    if (coords == null) return null;
+    const raw = coords as { lat?: number; lng?: number; coordinates?: unknown } | unknown[];
+    const points = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { coordinates?: unknown }).coordinates)
+        ? ((raw as { coordinates: unknown[] }).coordinates as unknown[])
+        : [];
+    if (!Array.isArray(points) || points.length === 0) return null;
+    let sumLat = 0;
+    let sumLng = 0;
+    let n = 0;
+    for (const p of points) {
+      const pt = p as { lat?: number; lng?: number };
+      const lat = typeof pt?.lat === 'number' ? pt.lat : Array.isArray(p) ? (p as number[])[1] : undefined;
+      const lng = typeof pt?.lng === 'number' ? pt.lng : Array.isArray(p) ? (p as number[])[0] : undefined;
+      if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+        sumLat += lat;
+        sumLng += lng;
+        n++;
+      }
+    }
+    return n > 0 ? { lat: sumLat / n, lng: sumLng / n } : null;
+  }
+
   private extractRegionFromAddress(address?: string): string {
     if (!address) return 'Unknown Region';
     
@@ -548,27 +626,27 @@ export class QrService {
         // 3. Chronology (activities) – with sortKey for correct ordering
         const chronology: { sortKey: number; date: string; activity: string; detail: string }[] = [];
         const push = (sortKey: number, date: string, activity: string, detail: string) => chronology.push({ sortKey, date, activity, detail });
-        if (data.parcelInfo?.plantingDate) push(new Date(data.parcelInfo.plantingDate).getTime(), formatDateTime(data.parcelInfo.plantingDate), 'Sadnja (Planting)', data.parcelInfo.cropType ? `Kultura: ${data.parcelInfo.cropType}` : '—');
-        if (data.parcelInfo?.expectedHarvestDate) push(new Date(data.parcelInfo.expectedHarvestDate).getTime(), formatDate(data.parcelInfo.expectedHarvestDate), 'Očekivana berba', '—');
-        (data.treatments || []).forEach((t: any) => push(new Date(t.appliedAt).getTime(), formatDateTime(t.appliedAt), 'Primena sredstva', `${t.productName} · ${t.dosage}${t.reason ? ` · ${t.reason}` : ''}`));
-        (data.growthLogs || []).forEach((g: any) => push(new Date(g.networkTimestamp).getTime(), formatDateTime(g.networkTimestamp), 'Zapis rasta', g.growthStage || g.notes || '—'));
-        (data.harvestAnnouncements || []).forEach((h: any) => push(new Date(h.estimatedDate).getTime(), formatDate(h.estimatedDate), 'Najava berbe', `${h.cropType} · ${h.status}`));
-        if (data.timeline?.harvested) push(new Date(data.timeline.harvested).getTime(), formatDateTime(data.timeline.harvested), 'Ubrano (Harvested)', data.origin?.harvestLocation ?? '—');
-        if (data.qualityEntry?.preCoolingStartTime) push(new Date(data.qualityEntry.preCoolingStartTime).getTime(), formatDateTime(data.qualityEntry.preCoolingStartTime), 'Predhladnjenje / kontrola', data.qualityEntry.status);
-        if (data.timeline?.verified) push(new Date(data.timeline.verified).getTime(), formatDateTime(data.timeline.verified), 'Kontrola verifikovana', '—');
-        if (data.timeline?.loaded) push(new Date(data.timeline.loaded).getTime(), formatDateTime(data.timeline.loaded), 'Preuzeto (Picked up)', data.missions?.[0]?.vehicle?.vehicleNumber ?? '—');
-        if (data.timeline?.arrived || data.missions?.[0]?.deliveredAt) push(new Date(data.timeline?.arrived || data.missions?.[0]?.deliveredAt).getTime(), formatDateTime(data.timeline?.arrived || data.missions?.[0]?.deliveredAt), 'Dolazak (Arrival)', '—');
+        if (data.parcelInfo?.plantingDate) push(new Date(data.parcelInfo.plantingDate).getTime(), formatDateTime(data.parcelInfo.plantingDate), 'Planting', data.parcelInfo.cropType ? `Crop: ${data.parcelInfo.cropType}` : '—');
+        if (data.parcelInfo?.expectedHarvestDate) push(new Date(data.parcelInfo.expectedHarvestDate).getTime(), formatDate(data.parcelInfo.expectedHarvestDate), 'Expected harvest', '—');
+        (data.treatments || []).forEach((t: any) => push(new Date(t.appliedAt).getTime(), formatDateTime(t.appliedAt), 'Treatment', `${t.productName} · ${t.dosage}${t.reason ? ` · ${t.reason}` : ''}`));
+        (data.growthLogs || []).forEach((g: any) => push(new Date(g.networkTimestamp).getTime(), formatDateTime(g.networkTimestamp), 'Growth log', g.growthStage || g.notes || '—'));
+        (data.harvestAnnouncements || []).forEach((h: any) => push(new Date(h.estimatedDate).getTime(), formatDate(h.estimatedDate), 'Harvest announcement', `${h.cropType} · ${h.status}`));
+        if (data.timeline?.harvested) push(new Date(data.timeline.harvested).getTime(), formatDateTime(data.timeline.harvested), 'Harvested', data.origin?.harvestLocation ?? '—');
+        if (data.qualityEntry?.preCoolingStartTime) push(new Date(data.qualityEntry.preCoolingStartTime).getTime(), formatDateTime(data.qualityEntry.preCoolingStartTime), 'Pre-cooling / quality', data.qualityEntry.status);
+        if (data.timeline?.verified) push(new Date(data.timeline.verified).getTime(), formatDateTime(data.timeline.verified), 'Quality verified', '—');
+        if (data.timeline?.loaded) push(new Date(data.timeline.loaded).getTime(), formatDateTime(data.timeline.loaded), 'Picked up', data.missions?.[0]?.vehicle?.vehicleNumber ?? '—');
+        if (data.timeline?.arrived || data.missions?.[0]?.deliveredAt) push(new Date(data.timeline?.arrived || data.missions?.[0]?.deliveredAt).getTime(), formatDateTime(data.timeline?.arrived || data.missions?.[0]?.deliveredAt), 'Arrival', '—');
         chronology.sort((a, b) => a.sortKey - b.sortKey);
 
         if (chronology.length > 0) {
           checkPage(120);
-          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('3. Aktivnosti po periodu (šta je radjeno kada)', 50, doc.y);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('3. Chronology (what happened when)', 50, doc.y);
           doc.moveDown(0.5);
           const tableTop = doc.y;
           doc.fontSize(9).fillColor(lightGray);
-          doc.text('Datum i vreme', 50, tableTop);
-          doc.text('Aktivnost', 180, tableTop);
-          doc.text('Detalj', 320, tableTop);
+          doc.text('Date & time', 50, tableTop);
+          doc.text('Activity', 180, tableTop);
+          doc.text('Detail', 320, tableTop);
           doc.moveTo(50, tableTop + 12).lineTo(doc.page.width - 50, tableTop + 12).stroke(veraGreen, 0.5);
           doc.y = tableTop + 18;
           chronology.slice(0, 20).forEach((row, i) => {
@@ -578,23 +656,23 @@ export class QrService {
             doc.text(row.detail, 320, doc.y, { width: doc.page.width - 370 });
             doc.y += 14;
           });
-          if (chronology.length > 20) doc.fontSize(8).fillColor(lightGray).text(`+ ${chronology.length - 20} više zapisa`, 50, doc.y);
+          if (chronology.length > 20) doc.fontSize(8).fillColor(lightGray).text(`+ ${chronology.length - 20} more entries`, 50, doc.y);
           doc.y += 12;
           doc.moveDown(1);
         }
 
-        // 4. Korišćena sredstva (treatments)
+        // 4. Applied inputs (treatments)
         if (data.treatments && data.treatments.length > 0) {
           checkPage(100);
-          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4. Korišćena sredstva (Inputs / Treatments)', 50, doc.y);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4. Applied inputs (treatments)', 50, doc.y);
           doc.moveDown(0.5);
           const tTop = doc.y;
           doc.fontSize(9).fillColor(lightGray);
-          doc.text('Datum primene', 50, tTop);
-          doc.text('Proizvod', 160, tTop);
-          doc.text('Doza', 300, tTop);
-          doc.text('Voda (L)', 380, tTop);
-          doc.text('Razlog', 430, tTop);
+          doc.text('Applied (server time)', 50, tTop);
+          doc.text('Product', 160, tTop);
+          doc.text('Rate', 300, tTop);
+          doc.text('Water (L)', 380, tTop);
+          doc.text('Reason', 430, tTop);
           doc.moveTo(50, tTop + 12).lineTo(doc.page.width - 50, tTop + 12).stroke(veraGreen, 0.5);
           doc.y = tTop + 18;
           data.treatments.forEach((t: any) => {

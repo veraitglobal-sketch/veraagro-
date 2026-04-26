@@ -1,20 +1,40 @@
-import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { useState, useEffect, useMemo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Leaf, MapPin, Package, MapPinned, Check, ChevronRight } from 'lucide-react-native';
+import { Leaf, MapPin, MapPinned, Check, ChevronRight } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { useAuth } from '../hooks/useAuth';
+
+const PRODUCER_ROLES = ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'] as const;
 
 export default function LandingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [pulseAnim] = useState(() => new Animated.Value(1));
+
+  const redirectTarget = useMemo(() => {
+    if (authLoading || !user) return null;
+    const userRoles = user.roles || (user.role ? [user.role] : []);
+    const isProducer = userRoles.some((r) =>
+      (PRODUCER_ROLES as readonly string[]).includes(r)
+    );
+    if (isProducer) return '/(producer)/(tabs)' as const;
+    if (userRoles.includes('BUYER') || userRoles.includes('CUSTOMER')) {
+      return '/(buyer)/shop' as const;
+    }
+    return null;
+  }, [user, authLoading]);
+
+  useEffect(() => {
+    if (!redirectTarget) return;
+    router.replace(redirectTarget);
+  }, [redirectTarget, router]);
 
   useEffect(() => {
     AsyncStorage.getItem('grower_journey_completed_steps').then((s) => {
@@ -22,7 +42,9 @@ export default function LandingScreen() {
         try {
           const arr = JSON.parse(s) as number[];
           if (Array.isArray(arr)) setCompletedSteps(arr);
-        } catch (_) {}
+        } catch {
+          // ignore bad JSON
+        }
       }
     });
   }, []);
@@ -48,6 +70,14 @@ export default function LandingScreen() {
   }, [completedSteps.length, pulseAnim]);
 
   const currentStep = completedSteps.length + 1;
+
+  if (authLoading || redirectTarget) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   const handleStep1 = () => router.push('/register');
   const handleStep2 = () => {

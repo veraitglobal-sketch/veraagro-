@@ -25,10 +25,10 @@ export default function NjivaBlockchainPage() {
 
   const [njiva, setNjiva] = useState({ name: '' });
   const [createdEstate, setCreatedEstate] = useState<{ id: string; name: string } | null>(null);
-  const [parcel, setParcel] = useState({ cropType: 'Malina' });
+  const [parcel, setParcel] = useState({ cropType: 'Raspberry' });
   const [createdParcel, setCreatedParcel] = useState<{ id: string; cropType?: string } | null>(null);
   const [unos, setUnos] = useState({
-    productName: 'Organska malina',
+    productName: 'Organic raspberry',
     quantity: 50,
     unit: 'kg',
     harvestDate: new Date().toISOString().split('T')[0],
@@ -44,7 +44,7 @@ export default function NjivaBlockchainPage() {
     e.preventDefault();
     setError(null);
     if (!njiva.name.trim()) {
-      setError('Unesite naziv njive.');
+      setError('Enter a field name.');
       return;
     }
     try {
@@ -56,7 +56,7 @@ export default function NjivaBlockchainPage() {
       setCreatedEstate({ id: estate.id, name: estate.name || njiva.name.trim() });
       setStep('unos');
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Greška pri kreiranju njive.');
+      setError(err.response?.data?.message || err.message || 'Failed to create field.');
     } finally {
       setSubmitting(false);
     }
@@ -73,7 +73,7 @@ export default function NjivaBlockchainPage() {
       });
       setCreatedParcel({ id: p.id, cropType: p.cropType || undefined });
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Greška pri kreiranju parcele.');
+      setError(err.response?.data?.message || err.message || 'Failed to create parcel.');
     } finally {
       setSubmitting(false);
     }
@@ -84,7 +84,7 @@ export default function NjivaBlockchainPage() {
     setError(null);
     if (!createdEstate) return;
     if (!unos.productName.trim()) {
-      setError('Unesite naziv proizvoda.');
+      setError('Enter a product name.');
       return;
     }
     try {
@@ -104,7 +104,7 @@ export default function NjivaBlockchainPage() {
       });
       setStep('result');
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Greška pri kreiranju batch-a (unos).');
+      setError(err.response?.data?.message || err.message || 'Failed to create batch.');
     } finally {
       setSubmitting(false);
     }
@@ -117,9 +117,9 @@ export default function NjivaBlockchainPage() {
     setCreatedBatch(null);
     setError(null);
     setNjiva({ name: '' });
-    setParcel({ cropType: 'Malina' });
+    setParcel({ cropType: 'Raspberry' });
     setUnos({
-      productName: 'Organska malina',
+      productName: 'Organic raspberry',
       quantity: 50,
       unit: 'kg',
       harvestDate: new Date().toISOString().split('T')[0],
@@ -128,29 +128,29 @@ export default function NjivaBlockchainPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN', 'GROWER']}>
-      <SidebarLayout title="Njiva → Unos → Blockchain" navItems={adminNavItems}>
+      <SidebarLayout title="Field → Entry → Blockchain" navItems={adminNavItems}>
         <div className="max-w-2xl mx-auto space-y-8">
           <div>
-            <h1 className="text-2xl font-light text-gray-900">Njiva, unos i rezultat na blockchainu</h1>
+            <h1 className="text-2xl font-light text-gray-900">Field, harvest entry, and blockchain result</h1>
             <p className="text-sm text-gray-600 mt-1">
-              Korak 1: kreiraj njivu (estate). Korak 2: opciono dodaj parcelu. Korak 3: unesi batch (berba). Batch se automatski registruje na blockchainu; na kraju vidi rezultat na passport / verify stranici.
+              Step 1: create a field (estate). Step 2: optionally add a parcel. Step 3: create a harvest batch. The batch is registered on chain; then open the passport or verify page to see the result.
             </p>
           </div>
 
-          {/* Step 1: Kreiranje njive */}
+          {/* Step 1: create field */}
           {step === 'njiva' && (
             <form onSubmit={handleCreateNjiva} className="bg-white rounded-xl shadow border border-gray-200 p-6 space-y-4">
               <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                 <MapPin className="w-5 h-5" />
-                <h2 className="text-lg font-medium">1. Kreiraj njivu</h2>
+                <h2 className="text-lg font-medium">1. Create field</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Naziv njive *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Field name *</label>
                 <input
                   type="text"
                   value={njiva.name}
                   onChange={(e) => setNjiva({ name: e.target.value })}
-                  placeholder="npr. Moja njiva 1"
+                  placeholder="e.g. North field 1"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D5A27]"
                   required
                 />
@@ -164,29 +164,29 @@ export default function NjivaBlockchainPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
-                {submitting ? 'Kreiranje…' : 'Kreiraj njivu'}
+                {submitting ? 'Creating…' : 'Create field'}
               </button>
             </form>
           )}
 
-          {/* Step 2: Parcela (opciono) + Unos batch-a */}
+          {/* Step 2: optional parcel + batch */}
           {step === 'unos' && createdEstate && (
             <>
               <div className="bg-white rounded-xl shadow border border-gray-200 p-6 space-y-4">
                 <div className="flex items-center gap-2 text-[#2D5A27] mb-2">
                   <MapPin className="w-5 h-5" />
-                  <h2 className="text-lg font-medium">Njiva kreirana</h2>
+                  <h2 className="text-lg font-medium">Field created</h2>
                 </div>
                 <p className="text-sm text-gray-600">
                   <strong>{createdEstate.name}</strong> (ID: {createdEstate.id.slice(0, 8)}…)
                 </p>
                 <div className="flex items-center gap-2">
-                  <label className="block text-sm font-medium text-gray-700">Parcula (opciono)</label>
+                  <label className="block text-sm font-medium text-gray-700">Parcel (optional)</label>
                   <input
                     type="text"
                     value={parcel.cropType}
                     onChange={(e) => setParcel({ cropType: e.target.value })}
-                    placeholder="npr. Malina"
+                    placeholder="e.g. Raspberry"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D5A27]"
                   />
                   <button
@@ -195,21 +195,21 @@ export default function NjivaBlockchainPage() {
                     disabled={submitting}
                     className="px-3 py-2 border border-[#2D5A27] text-[#2D5A27] text-sm rounded-lg hover:bg-[#2D5A27]/5 disabled:opacity-50"
                   >
-                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Dodaj parcelu'}
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add parcel'}
                   </button>
                 </div>
                 {createdParcel && (
-                  <p className="text-sm text-green-700">Parcula kreirana ({createdParcel.cropType || '—'}).</p>
+                  <p className="text-sm text-green-700">Parcel created ({createdParcel.cropType || '—'}).</p>
                 )}
               </div>
 
               <form onSubmit={handleCreateBatch} className="bg-white rounded-xl shadow border border-gray-200 p-6 space-y-4">
                 <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                   <FileText className="w-5 h-5" />
-                  <h2 className="text-lg font-medium">2. Unos – batch (berba)</h2>
+                  <h2 className="text-lg font-medium">2. Batch (harvest)</h2>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Proizvod *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Product *</label>
                   <input
                     type="text"
                     value={unos.productName}
@@ -220,7 +220,7 @@ export default function NjivaBlockchainPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Količina *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
                     <input
                       type="number"
                       min={0.1}
@@ -231,7 +231,7 @@ export default function NjivaBlockchainPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Jedinica *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
                     <input
                       type="text"
                       value={unos.unit}
@@ -242,7 +242,7 @@ export default function NjivaBlockchainPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Datum berbe *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Harvest date *</label>
                   <input
                     type="date"
                     value={unos.harvestDate}
@@ -259,33 +259,33 @@ export default function NjivaBlockchainPage() {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Package className="w-4 h-4" />}
-                  {submitting ? 'Kreiranje batch-a i registracija na blockchainu…' : 'Kreiraj batch (unos) i vidi na blockchainu'}
+                  {submitting ? 'Creating batch and registering on chain…' : 'Create batch and register on chain'}
                 </button>
               </form>
             </>
           )}
 
-          {/* Step 3: Rezultat na blockchainu */}
+          {/* Step 3: on-chain result */}
           {step === 'result' && createdBatch && (
             <div className="bg-green-50 border border-[#2D5A27]/30 rounded-xl p-6 space-y-4">
               <div className="flex items-center gap-2 text-[#2D5A27]">
                 <CheckCircle className="w-6 h-6" />
-                <h2 className="text-xl font-medium">Rezultat na blockchainu</h2>
+                <h2 className="text-xl font-medium">On-chain result</h2>
               </div>
               <p className="text-sm text-gray-700">
                 <strong>Batch ID:</strong> {createdBatch.batchId}
               </p>
               {createdBatch.blockchainTxHash ? (
                 <p className="text-sm text-gray-700">
-                  <strong>Blockchain:</strong> Batch je registrovan na lanacu (tx sačuvan). Možeš videti verifikaciju i putanju proizvoda na stranicama ispod.
+                  <strong>Blockchain:</strong> Batch was registered on chain (tx saved). You can open verification and product journey on the pages below.
                 </p>
               ) : (
                 <p className="text-sm text-amber-700">
-                  Blockchain nije konfigurisan ili registracija nije uspela. Batch je ipak kreiran; možeš otvoriti passport/verify.
+                  Blockchain is not configured or registration failed. The batch was still created; you can open passport/verify.
                 </p>
               )}
               <p className="text-sm text-gray-600">
-                Otvori passport ili verify stranicu da vidiš podatke i blockchain verifikaciju (isto kao pri skeniranju QR batch-a):
+                Open the passport or verify page to see data and on-chain proof (same as when scanning a batch QR):
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
@@ -295,7 +295,7 @@ export default function NjivaBlockchainPage() {
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-[#2D5A27]/40 text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  Passport (putanja + blockchain)
+                  Passport (journey + chain)
                 </Link>
                 <Link
                   href={`/verify/${createdBatch.batchId}`}
@@ -304,7 +304,7 @@ export default function NjivaBlockchainPage() {
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-[#2D5A27]/40 text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  Verify (verifikacija + blockchain)
+                  Verify (proof + chain)
                 </Link>
               </div>
               <button
@@ -312,7 +312,7 @@ export default function NjivaBlockchainPage() {
                 onClick={resetFlow}
                 className="mt-4 text-sm text-gray-600 hover:text-[#2D5A27] underline"
               >
-                Kreiraj novu njivu i novi unos
+                Start a new field and entry
               </button>
             </div>
           )}

@@ -54,7 +54,6 @@ export default function BuyerLoginScreen() {
   };
 
   const handleGoogleLogin = async () => {
-    // TODO: Implement Google OAuth
     Alert.alert(t('info'), t('buyerLogin.googleComingSoon'));
   };
 

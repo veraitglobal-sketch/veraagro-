@@ -553,7 +553,7 @@ export default function LogisticsPartnerPage() {
                     required
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                    placeholder="List the regions, cities, or routes you cover (e.g., Belgrade, Novi Sad, Niš)"
+                    placeholder="List the regions, cities, or routes you cover (e.g., Belgrade, Novi Sad, Nis)"
                   />
                 </div>
 

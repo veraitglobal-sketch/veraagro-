@@ -138,12 +138,26 @@ export default function MarketPricesPage() {
   };
 
   const handleApplySurgePricing = async () => {
+    if (!selectedProductForSurge?.trim()) {
+      alert('Select a product (crop) first');
+      return;
+    }
     try {
-      // TODO: Implement surge pricing logic
-      alert('Surge pricing feature coming soon');
+      const result = await buyerTradePanelAPI.applySurgePricing(
+        selectedProductForSurge.trim(),
+        surgePercent,
+      );
+      const newP = result?.newPrice;
+      alert(
+        typeof newP === 'number'
+          ? `Surge applied. New sell price: €${newP.toFixed(2)} (was €${result?.oldPrice?.toFixed?.(2) ?? '—'})`
+          : 'Surge pricing applied.',
+      );
       setShowSurgeModal(false);
+      loadPrices();
     } catch (err: any) {
-      alert(err.message || 'Failed to apply surge pricing');
+      const msg = err?.response?.data?.message || err?.message || 'Failed to apply surge pricing';
+      alert(typeof msg === 'string' ? msg : 'Failed to apply surge pricing');
     }
   };
 

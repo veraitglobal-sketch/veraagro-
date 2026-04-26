@@ -15,16 +15,6 @@ const navLabels = {
     analytics: 'Analytics',
     companyProfile: 'Company Profile',
   },
-  sr: {
-    dashboard: 'Kontrolna Tabla',
-    orders: 'Porudžbine',
-    preOrder2026: 'Pre-order 2026',
-    directOrders: 'Direktne porudžbine',
-    invoices: 'Računi',
-    deliveries: 'Dostave',
-    analytics: 'Analitika',
-    companyProfile: 'Profil Kompanije',
-  },
   de: {
     dashboard: 'Dashboard',
     orders: 'Bestellungen',

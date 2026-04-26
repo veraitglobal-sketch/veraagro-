@@ -4,15 +4,11 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI, batchesAPI } from '@/lib/api';
+import { growerNavItems } from '@/lib/grower-nav';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 
-const navItems = [
-  { href: '/grower', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
-  { href: '/grower/portal', label: 'Mission Tracker', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg> },
-  { href: '/grower/missions/create', label: 'Request Transport', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/batches', label: 'My Batches', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
-];
+const navItems = growerNavItems;
 
 interface Batch {
   id: string;

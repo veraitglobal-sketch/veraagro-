@@ -96,7 +96,7 @@ export default function LogisticsMissionsPage() {
           {loading ? (
             <p className="text-gray-500 text-sm">Loading...</p>
           ) : acceptedMissions.length === 0 ? (
-            <p className="text-gray-500 text-sm">Nema aktivnih misija.</p>
+            <p className="text-gray-500 text-sm">No active missions.</p>
           ) : (
             <div className="space-y-4">
               {acceptedMissions.map((mission) => (
@@ -145,9 +145,9 @@ export default function LogisticsMissionsPage() {
           transition={{ delay: 0.1 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Dostupne misije</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Available missions</h2>
           {availableMissions.length === 0 ? (
-            <p className="text-gray-500 text-sm">Trenutno nema dostupnih misija.</p>
+            <p className="text-gray-500 text-sm">No missions available right now.</p>
           ) : (
             <div className="space-y-4">
               {availableMissions.map((mission) => (

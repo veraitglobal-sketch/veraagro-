@@ -73,13 +73,13 @@
   },
   "partnerLogin": {
     "subtitle": "Sign in",
-    "partnerCode": "Your code",
-    "partnerCodePlaceholder": "Code",
+    "partnerCode": "Partner code",
+    "partnerCodePlaceholder": "Enter your partner code",
     "password": "Password",
     "passwordPlaceholder": "Password",
     "button": "Sign in",
-    "loading": "Wait...",
-    "fillAllFields": "Fill in",
+    "loading": "Signing in...",
+    "fillAllFields": "Please fill in all fields",
     "failed": "Wrong code or password",
     "notProducer": "Not a farmer account",
     "backToMarketplace": "Back"
@@ -103,7 +103,7 @@
       "home": "Home",
       "dashboard": "Home",
       "products": "Products",
-      "profile": "Me",
+      "profile": "Profile",
       "costCalculator": "Costs",
       "certifications": "Certificates",
       "bannedSubstances": "Banned substances",
@@ -116,8 +116,33 @@
     },
     "dashboard": {
       "partner": "Code",
-      "quickActions": "Do",
+      "nextStep": {
+        "eyebrow": "What to do now",
+        "addFieldTitle": "Name your first field",
+        "addFieldBody": "One field is enough to start. You can add more later.",
+        "addFieldCta": "Add field",
+        "addParcelTitle": "Add a parcel",
+        "addParcelBody": "A parcel is one crop area on that field. The team can then approve it.",
+        "addParcelCta": "My fields",
+        "missionsTitle": "Active transport",
+        "missionsBody": "You have a live pickup or delivery — open tasks to see details.",
+        "missionsCta": "Open tasks",
+        "pendingTitle": "{{count}} waiting for approval",
+        "pendingBody": "The team reviews parcels. You can keep the journal if you are already approved for another parcel.",
+        "pendingCta": "View steps",
+        "syncTitle": "{{count}} to upload",
+        "syncBody": "You saved work offline. Connect or pull to refresh to send it.",
+        "syncCta": "Open journal",
+        "logWorkTitle": "Log today's work",
+        "logWorkBody": "What you do in the field (spray, plant, harvest) stays in your story.",
+        "logWorkCta": "Open journal",
+        "defaultTitle": "Three steps",
+        "defaultBody": "Add parcels, wait for OK, then work and harvest. Keep it in one place.",
+        "defaultCta": "Open steps"
+      },
+      "quickActions": "Quick actions",
       "more": "More",
+      "fieldSeasonDesc": "Parcels, approval, then work",
       "myProducts": "My products",
       "myProductsDesc": "Scan or add",
       "costCalculator": "Costs",
@@ -133,10 +158,30 @@
       "reportHarvest": "Harvest",
       "veraInsights": "Tips",
       "veraInsightsDesc": "Good ideas",
-      "parcelMapping": "My fields"
+      "parcelMapping": "My fields",
+      "fieldSeason": "Steps"
+    },
+    "fieldSeason": {
+      "title": "Steps",
+      "intro": "Three steps: parcels, approval, then the rest.",
+      "loadError": "Could not load",
+      "step1Title": "1. Add parcels",
+      "step1Body": "In My fields.",
+      "openFields": "My fields",
+      "step2Title": "2. Admin approval",
+      "step2Ok": "You are approved. Continue below.",
+      "step2Pending": "{{count}} waiting for approval.",
+      "step2NeedStep1": "Add a parcel first.",
+      "step3Title": "3. Then",
+      "step3Body": "Log work and report harvest. Materials and other tools are on Home.",
+      "step3Locked": "After approval.",
+      "openMaterials": "Materials",
+      "openSeedRegistration": "Seed",
+      "openFieldLog": "Field log",
+      "openHarvest": "Harvest"
     },
     "liveInfo": {
-      "title": "Now",
+      "title": "Live",
       "missions": "Tasks",
       "batches": "Batches",
       "notifications": "Messages",
@@ -155,7 +200,7 @@
       "nextPayout": "Next payout"
     },
     "recentActivity": {
-      "title": "Last",
+      "title": "Recent",
       "noActivity": "Nothing yet",
       "planting": "Planting",
       "spraying": "Spray",
@@ -217,9 +262,26 @@
       "cropSelection": "What?",
       "variety": "Which kind?",
       "saveEstate": "Save",
-      "myFields": "My fields"
+      "myFields": "My fields",
+      "parcelsWithCount": "Parcels ({{count}})"
     },
     "harvest": {
+      "planIntro": "Send an official harvest plan to the team: date, quantity, load window, channel, and quality. They will confirm in the admin panel.",
+      "sendPlan": "Send harvest plan",
+      "planSent": "Your plan was sent. The team will review it.",
+      "selectParcel": "Parcel (approved)",
+      "noApprovedParcels": "You need at least one approved parcel. Open Steps or My fields.",
+      "plannedLoadDate": "Planned load day (optional)",
+      "loadQuantity": "Quantity for that load (kg, optional)",
+      "loadQuantityHint": "Same as expected if empty",
+      "channel": "Industrial / retail",
+      "qualityGrade": "Quality / class",
+      "qualityPlaceholder": "e.g. Extra, Class I, retail punnet",
+      "sortingSpec": "Sorting & packaging",
+      "sortingPlaceholder": "Size sort, film, punnet type…",
+      "notesOptional": "Notes for the team",
+      "notesPlaceholder": "Truck access, cold room…",
+      "gpsOptional": "Optional — add GPS to notes for traceability",
       "reportHarvest": "Report harvest",
       "locationFailed": "Could not get location",
       "saved": "Harvest report saved. It will be sent when you are online.",
@@ -267,6 +329,8 @@
       "transactions": "Transactions"
     },
     "plotMapper": {
+      "veraPlanTitle": "Vera parcel plan",
+      "canvasPlanLabel": "Parcel plan",
       "missingParcelId": "Missing parcel ID",
       "savePlanFailed": "Could not save plan",
       "required": "Required",
@@ -388,7 +452,10 @@
       "done": "Done",
       "sendPhoto": "Send certificate photo",
       "subtitle": "Required certificates – send photo, we confirm",
-      "photosPending": "{{count}} photo(s) waiting to be sent. Pull down on dashboard to send."
+      "photosPending": "{{count}} photo(s) waiting to be sent. Pull down on dashboard to send.",
+      "takePhoto": "Take photo",
+      "chooseFromGallery": "Choose from gallery",
+      "removePhoto": "Remove"
     },
     "products": {
       "savedOnDevice": "Saved on device",
@@ -400,12 +467,17 @@
       "quantity": "Quantity",
       "saving": "Saving…",
       "saveToDevice": "Save to device",
-      "units": "kg,l,pcs,bag,package"
+      "units": "kg,l,pcs,bag,pack",
+      "enteredListTitle": "Items you added"
     },
     "growthJournal": {
       "loading": "Loading…",
       "noLogs": "No growth logs",
-      "addPhotosToTrack": "Add photos to track crop growth"
+      "addPhotosToTrack": "Add photos to track crop growth",
+      "estateLabel": "Estate:",
+      "parcelLabel": "Parcel:",
+      "parcelShort": "Parcel {{id}}",
+      "parcelWithType": "Parcel: {{type}}"
     },
     "settings": {
       "orderNotifications": "Order and status notifications",
@@ -447,7 +519,9 @@
       "statusDelivered": "Delivered",
       "statusCancelled": "Cancelled",
       "paymentStatus": "Payment status",
-      "tracking": "Order tracking"
+      "tracking": "Order tracking",
+      "currentStep": "Current",
+      "deliveryAddressHeading": "Delivery address"
     },
     "veraStandard": {
       "title": "Bio Vera Standard",
@@ -490,7 +564,8 @@
     "close": "Close",
     "retry": "Try again",
     "next": "Next",
-    "ok": "OK"
+    "ok": "OK",
+    "all": "All"
   },
   "login": {
     "subtitle": "Sign in to access your account",
@@ -516,7 +591,7 @@
     "firstName": "First name",
     "firstNamePlaceholder": "e.g. Petar",
     "lastName": "Last name",
-    "lastNamePlaceholder": "e.g. Petrović",
+    "lastNamePlaceholder": "e.g. Smith",
     "email": "Email",
     "emailPlaceholder": "your@email.com",
     "hectares": "Hectares",

@@ -54,10 +54,12 @@ export function useMaterialsData() {
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(m =>
-        m.barcode.toLowerCase().includes(query) ||
-        m.name.toLowerCase().includes(query) ||
-        (m.manufacturer?.toLowerCase().includes(query) ?? false)
+      filtered = filtered.filter(
+        m =>
+          m.barcode.toLowerCase().includes(query) ||
+          (m.name?.toLowerCase().includes(query) ?? false) ||
+          (m.productName?.toLowerCase().includes(query) ?? false) ||
+          (m.manufacturer?.toLowerCase().includes(query) ?? false)
       );
     }
 

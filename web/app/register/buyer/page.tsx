@@ -238,11 +238,11 @@ export default function BuyerRegisterPage() {
                   </div>
                 </div>
 
-                {/* Company / firm */}
+                {/* Company / business */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Company / Business name (Firma)
+                      Company / business name
                     </label>
                     <input
                       id="businessName"
@@ -256,7 +256,7 @@ export default function BuyerRegisterPage() {
                   </div>
                   <div>
                     <label htmlFor="companyPosition" className="block text-sm font-medium text-gray-700 mb-2">
-                      Position in company (Pozicija u firmi)
+                      Position in company
                     </label>
                     <input
                       id="companyPosition"

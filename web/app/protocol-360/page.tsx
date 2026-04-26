@@ -37,7 +37,7 @@ const translations = {
     },
     levels: {
       level1: {
-        name: 'Eco-Safe Provera',
+        name: 'Eco-Safe Audit',
         location: 'Field',
         checks: {
           heavyMetals: 'Heavy metals absence',
@@ -443,7 +443,7 @@ function Protocol360Content() {
         </div>
       </section>
 
-      {/* Branding Slogans - U našem stilu */}
+      {/* Branding slogans section */}
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">

@@ -5,6 +5,9 @@ import { useAuth } from '@/lib/auth';
 import { farmerProfileAPI } from '@/lib/api';
 import Image from 'next/image';
 import { Camera, Save, Loader2, QrCode, Download, Copy, Check, ExternalLink, Smartphone, Package, Share2 } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
+import SidebarLayout from '@/components/SidebarLayout';
+import { growerNavItems } from '@/lib/grower-nav';
 
 export default function FarmerProfilePage() {
   const { user } = useAuth();
@@ -147,16 +150,21 @@ export default function FarmerProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-      </div>
+      <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
+        <SidebarLayout title="My Profile" navItems={growerNavItems}>
+          <div className="flex items-center justify-center min-h-[40vh]">
+            <Loader2 className="w-8 h-8 animate-spin text-[#2D5A27]" />
+          </div>
+        </SidebarLayout>
+      </AuthGuard>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-sm p-6">
+    <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
+      <SidebarLayout title="My Profile" navItems={growerNavItems}>
+        <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">My Farmer Profile</h1>
 
           {/* Photo Upload Section */}
@@ -227,7 +235,7 @@ export default function FarmerProfilePage() {
               value={formData.farmerBio}
               onChange={(e) => setFormData({ ...formData, farmerBio: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Tell your story... (e.g., 'This is the farm of the Petrović family from Arilje, growing apples for 40 years')"
+              placeholder="Tell your story... (e.g., a family farm in a hill region, growing fruit for 40 years)"
             />
             <p className="text-xs text-gray-500 mt-1">
               This will be displayed on your public profile when customers scan your QR code.
@@ -405,7 +413,8 @@ export default function FarmerProfilePage() {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
+      </SidebarLayout>
+    </AuthGuard>
   );
 }

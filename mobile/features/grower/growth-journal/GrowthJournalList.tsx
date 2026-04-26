@@ -58,7 +58,7 @@ export function GrowthJournalList({
                 color: colors.text.secondary,
               }}
             >
-              Nema growth logova
+              {t('producer.growthJournal.noLogs')}
             </Text>
             <Text
               style={{
@@ -68,7 +68,7 @@ export function GrowthJournalList({
                 color: colors.text.secondary,
               }}
             >
-              Dodajte fotografije da biste pratili rast useva
+              {t('producer.growthJournal.addPhotosToTrack')}
             </Text>
           </View>
         ) : (

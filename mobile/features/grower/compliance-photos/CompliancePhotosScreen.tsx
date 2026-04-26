@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useCompliancePhotosData } from './useCompliancePhotosData';
@@ -10,6 +11,7 @@ import { CompliancePhotosList } from './CompliancePhotosList';
  * Uses useCompliancePhotosData once and passes data to blocks.
  */
 export function CompliancePhotosScreen() {
+  const { t } = useTranslation();
   const data = useCompliancePhotosData();
 
   return (
@@ -47,7 +49,7 @@ export function CompliancePhotosScreen() {
                   color: data.filterEstate === 'all' ? colors.primary : colors.text.secondary,
                   letterSpacing: 0.3,
                 }}>
-                  Sve
+                  {t('common.all')}
                 </Text>
               </TouchableOpacity>
               {data.estates.map((estate) => (

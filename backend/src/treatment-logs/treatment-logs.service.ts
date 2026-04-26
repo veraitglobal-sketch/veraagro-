@@ -52,6 +52,11 @@ export class TreatmentLogsService {
       include: { estates: true },
     });
     if (!parcel) throw new NotFoundException('Parcel not found or access denied');
+    if (!parcel.approvedAt) {
+      throw new ForbiddenException(
+        'This parcel is not approved yet. Spraying and other field work are available after an administrator approves the parcel.',
+      );
+    }
 
     const product = await this.prisma.bio_white_list.findFirst({
       where: { id: dto.productId, isActive: true },

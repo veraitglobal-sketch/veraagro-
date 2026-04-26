@@ -1,83 +1,90 @@
-# Bio Vera Web Aplikacija
+# Bio Vera Web Application
 
-Next.js web aplikacija za Bio Vera platformu.
+Next.js web app for the Bio Vera platform.
 
-## 🚀 Pokretanje
+## Running locally
 
-### 1. Instaliraj zavisnosti
+### 1. Install dependencies
+
 ```bash
 cd web
 npm install
 ```
 
-### 2. Postavi environment varijable
-Kreiraj `.env.local` fajl:
+### 2. Environment variables
+
+Create a `.env.local` file:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_BASE_URL=http://localhost:3001
 ```
 
-### 3. Pokreni development server
+### 3. Start the dev server
+
 ```bash
 npm run dev
 ```
 
-Aplikacija će biti dostupna na `http://localhost:3001`
+The app will be available at `http://localhost:3001`
 
-## 📁 Struktura
+## Project layout
 
 ```
 web/
 ├── app/
-│   ├── page.tsx              # Landing page (marketplace)
-│   ├── login/[type]/         # Login stranice (buyer/producer)
+│   ├── page.tsx              # Landing (marketplace)
+│   ├── login/[type]/         # Login (buyer/producer)
 │   ├── buyer/
-│   │   ├── shop/             # Shop sa proizvodima
-│   │   └── orders/           # Istorija porudžbina
+│   │   ├── shop/             # Product shop
+│   │   └── orders/           # Order history
 │   └── producer/
 │       ├── dashboard/        # Producer dashboard
-│       └── scanner/          # QR kod scanner
+│       └── scanner/          # QR scanner
 ├── lib/
-│   ├── api.ts                # API funkcije za komunikaciju sa backend-om
-│   └── auth.tsx              # Auth context i hook
+│   ├── api.ts                # API helpers (backend)
+│   └── auth.tsx              # Auth context and hook
 └── package.json
 ```
 
-## 🔑 Funkcionalnosti
+## Features
 
-### Landing Page
-- Marketplace sa katalogom proizvoda
-- Linkovi za login (buyer/producer)
-- Pregled dostupnih proizvoda
+### Landing
 
-### Buyer Interface
-- **Shop**: Pregled proizvoda, dodavanje u korpu, kreiranje porudžbine
-- **Orders**: Istorija porudžbina sa statusima
+- Marketplace product catalog
+- Links to buyer/producer login
+- Product overview
 
-### Producer Interface
-- **Dashboard**: Pregled njiva, parcela, statistika
-- **Scanner**: QR kod skeniranje za seme
+### Buyer
 
-## 🔌 API Integracija
+- **Shop**: Browse products, cart, place orders
+- **Orders**: Order history and status
 
-Web aplikacija koristi backend API na `http://localhost:3000`:
+### Producer
 
-- `POST /auth/login` - Prijava
-- `GET /inventory/available` - Dostupni proizvodi
-- `GET /orders` - Porudžbine
-- `POST /orders` - Kreiranje porudžbine
-- `GET /estates` - Njive
-- `POST /smart-lock/scan` - QR skeniranje
+- **Dashboard**: Estates, parcels, stats
+- **Scanner**: QR scan for seed tracking
 
-## 🎨 Tech Stack
+## API
 
-- **Next.js 16** - React framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Axios** - HTTP client
+The web app talks to the backend at `http://localhost:3000`:
 
-## 📝 Napomene
+- `POST /auth/login` — Sign in
+- `GET /inventory/available` — Available products
+- `GET /orders` — Orders
+- `POST /orders` — Create order
+- `GET /estates` — Estates
+- `POST /smart-lock/scan` — QR scan
 
-- Backend mora biti pokrenut na portu 3000
-- Auth token se čuva u `localStorage`
-- Za produkciju, promeniti `NEXT_PUBLIC_API_URL` na produkcijski URL
+## Stack
+
+- **Next.js** — React framework
+- **TypeScript**
+- **Tailwind CSS**
+- **Axios** — HTTP client
+
+## Notes
+
+- Run the backend on port 3000
+- Auth token is stored in `localStorage`
+- For production, set `NEXT_PUBLIC_API_URL` to the production API URL

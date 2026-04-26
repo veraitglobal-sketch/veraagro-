@@ -12,7 +12,7 @@ interface ProductEntryFormProps {
   initialSource?: Source;
 }
 
-const UNITS = ['kg', 'l', 'kom', 'vreća', 'pakovanje'];
+const UNITS = ['kg', 'l', 'pcs', 'bag', 'pack'];
 
 export default function ProductEntryForm({
   onSubmit,
@@ -61,7 +61,7 @@ export default function ProductEntryForm({
           style={[styles.sourceBtn, source === 'manual' && styles.sourceBtnActive]}
           onPress={() => setSource('manual')}
         >
-          <Text style={[styles.sourceBtnText, source === 'manual' && styles.sourceBtnTextActive]}>Ručni unos</Text>
+          <Text style={[styles.sourceBtnText, source === 'manual' && styles.sourceBtnTextActive]}>Manual</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.sourceBtn, source === 'qr' && styles.sourceBtnActive]}
@@ -74,7 +74,7 @@ export default function ProductEntryForm({
       {source === 'qr' && (
         <TextInput
           style={styles.input}
-          placeholder="QR kod (opciono)"
+          placeholder="QR code (optional)"
           placeholderTextColor={theme.colors.text.tertiary}
           value={qrCode}
           onChangeText={setQrCode}
@@ -84,7 +84,7 @@ export default function ProductEntryForm({
 
       <TextInput
         style={styles.input}
-        placeholder="Naziv proizvoda *"
+        placeholder="Product name *"
         placeholderTextColor={theme.colors.text.tertiary}
         value={name}
         onChangeText={setName}
@@ -92,7 +92,7 @@ export default function ProductEntryForm({
 
       <TextInput
         style={[styles.input, styles.textArea]}
-        placeholder="Šta proizvod sadrži (sastav)"
+        placeholder="What the product contains (composition)"
         placeholderTextColor={theme.colors.text.tertiary}
         value={contents}
         onChangeText={setContents}
@@ -103,7 +103,7 @@ export default function ProductEntryForm({
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.inputQuantity]}
-          placeholder="Količina"
+          placeholder="Quantity"
           placeholderTextColor={theme.colors.text.tertiary}
           value={quantity}
           onChangeText={setQuantity}
@@ -124,7 +124,7 @@ export default function ProductEntryForm({
 
       <TextInput
         style={styles.input}
-        placeholder="Parcela / njiva (opciono)"
+        placeholder="Parcel / estate (optional)"
         placeholderTextColor={theme.colors.text.tertiary}
         value={parcelOrEstate}
         onChangeText={setParcelOrEstate}
@@ -133,7 +133,7 @@ export default function ProductEntryForm({
       <View style={styles.actions}>
         {onCancel && (
           <TouchableOpacity style={styles.cancelBtn} onPress={onCancel} disabled={saving}>
-            <Text style={styles.cancelBtnText}>Odustani</Text>
+            <Text style={styles.cancelBtnText}>Cancel</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
@@ -141,7 +141,7 @@ export default function ProductEntryForm({
           onPress={handleSubmit}
           disabled={!name.trim() || saving}
         >
-          <Text style={styles.submitBtnText}>{saving ? 'Čuvam…' : 'Sačuvaj u telefonu'}</Text>
+          <Text style={styles.submitBtnText}>{saving ? 'Saving…' : 'Save on device'}</Text>
         </TouchableOpacity>
       </View>
     </View>

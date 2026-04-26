@@ -1,34 +1,34 @@
-# Offline-First Field Entry System
+# Offline-first field entry
 
-## 📋 Pregled
+## Overview
 
-Offline-first sistem za unos podataka sa njive (prskanje, setva, berba) koji koristi IndexedDB za lokalno čuvanje i automatski sync kada je dostupna internet konekcija.
+Offline-first flow for field data (spray, sowing, harvest) using IndexedDB for local storage and automatic sync when the network is available.
 
-## 🎯 Ključne Funkcionalnosti
+## Features
 
-1. **Offline Storage** - IndexedDB za lokalno čuvanje podataka
-2. **Auto Sync** - Automatska sinhronizacija kada se konekcija vrati
-3. **Validation** - Validacija da je bar-kod skeniran pre unosa
-4. **Real-time Status** - Praćenje online/offline statusa i pending sync-a
+1. **Offline storage** — IndexedDB for local records
+2. **Auto sync** — Sync when connectivity returns
+3. **Validation** — Barcode must be scanned before submitting an entry
+4. **Status** — Online/offline and pending sync counts
 
-## 📁 Struktura Fajlova
+## File layout
 
 ```
 lib/offline/
-├── indexeddb.ts      # IndexedDB utility functions
+├── indexeddb.ts      # IndexedDB helpers
 ├── sync.ts           # Sync service
-└── README.md         # Dokumentacija
+└── README.md
 
 hooks/
-└── useOfflineEntry.ts # React Hook za offline entry
+└── useOfflineEntry.ts
 
 components/
-└── OfflineEntryForm.tsx # React komponenta za form
+└── OfflineEntryForm.tsx
 ```
 
-## 🚀 Kako Koristiti
+## Usage
 
-### 1. Osnovna Upotreba
+### 1. Hook
 
 ```tsx
 import { useOfflineEntry } from '@/hooks/useOfflineEntry';
@@ -46,7 +46,7 @@ function MyComponent() {
   const handleAddEntry = async () => {
     const result = await addEntry('SETVA', {
       date: new Date().toISOString(),
-      notes: 'Setva pšenice',
+      notes: 'Winter wheat sowing',
     });
 
     if (result.success) {
@@ -58,16 +58,16 @@ function MyComponent() {
 
   return (
     <div>
-      {!hasValidScan && <p>Morate skenirati bar-kod pre unosa</p>}
+      {!hasValidScan && <p>Scan a barcode before adding an entry</p>}
       <button onClick={handleAddEntry} disabled={!hasValidScan}>
-        Dodaj Unos
+        Add entry
       </button>
     </div>
   );
 }
 ```
 
-### 2. Koristeći Komponentu
+### 2. Form component
 
 ```tsx
 import OfflineEntryForm from '@/components/OfflineEntryForm';
@@ -77,48 +77,50 @@ function FieldEntryPage() {
 }
 ```
 
-## 🔧 API Reference
+## API: `useOfflineEntry(options)`
 
-### `useOfflineEntry(options)`
+**Options**
 
-**Options:**
-- `farmId?: string` - ID farme
-- `autoSync?: boolean` - Auto-sync kada se konekcija vrati (default: true)
-- `syncInterval?: number` - Interval za periodic sync u ms (default: 30000)
+- `farmId?: string` — Farm ID
+- `autoSync?: boolean` — Auto-sync when back online (default: `true`)
+- `syncInterval?: number` — Periodic sync interval in ms (default: `30000`)
 
-**Returns:**
-- `entries: FieldEntry[]` - Svi unosi
-- `scannedCodes: ScannedCode[]` - Skenirani bar-kodovi
-- `latestScannedCode: ScannedCode | null` - Poslednji skenirani kod
-- `isOnline: boolean` - Online status
-- `hasValidScan: boolean` - Da li postoji validan skenirani kod
-- `loading: boolean` - Loading state
-- `error: string | null` - Error message
-- `pendingSync: number` - Broj unsynced unosa
-- `scanCode(code, type)` - Skeniraj bar-kod
-- `addEntry(type, data, options?)` - Dodaj unos
-- `deleteEntry(id)` - Obriši unos
-- `syncNow()` - Sinhronizuj sada
-- `refresh()` - Refresh data
+**Returns**
+
+- `entries`, `scannedCodes`, `latestScannedCode`, `isOnline`, `hasValidScan`, `loading`, `error`, `pendingSync`
+- `scanCode(code, type)` — Record a scan
+- `addEntry(type, data, options?)` — Save an entry
+- `deleteEntry(id)` — Delete an entry
+- `syncNow()` — Sync immediately
+- `refresh()` — Reload local data
 
 ### `addEntry(type, data, options?)`
 
-**Parameters:**
+**Parameters**
+
 - `type: 'PRSKANJE' | 'SETVA' | 'BERBA'`
-- `data: { date: string; notes?: string; [key: string]: any }`
+- `data: { date: string; notes?: string; ... }`
 - `options?: { seedSerialNumber?: string; packagingBarcode?: string }`
 
-**Returns:**
-```typescript
+**Returns**
+
+```ts
 { success: boolean; error?: string; entryId?: string }
 ```
 
-**Validation:**
-- Mora postojati skenirani bar-kod (seed ili packaging)
-- Mora postojati farmId
-- Mora postojati datum
+**Validation**
 
-## 📊 IndexedDB Schema
+- A scanned barcode (seed or packaging) is required
+- `farmId` is required
+- Date is required
+
+**Example error (from the app)**
+
+```
+"Scan a seed or packaging barcode first before entering data."
+```
+
+## IndexedDB schema
 
 ### Store: `fieldEntries`
 
@@ -129,12 +131,7 @@ function FieldEntryPage() {
   farmId: string;
   seedSerialNumber?: string;
   packagingBarcode?: string;
-  data: {
-    date: string;
-    location?: { lat: number; lng: number };
-    notes?: string;
-    [key: string]: any;
-  };
+  data: { date: string; location?: { lat: number; lng: number }; notes?: string; ... };
   synced: boolean;
   createdAt: string;
   syncedAt?: string;
@@ -153,47 +150,30 @@ function FieldEntryPage() {
 }
 ```
 
-## 🔄 Sync Flow
+## Sync flow
 
-1. **Offline Entry** → Saved to IndexedDB with `synced: false`
-2. **Connection Restored** → Auto-sync triggers
-3. **Sync Process** → Each unsynced entry sent to server
-4. **Success** → Entry marked as `synced: true`
-5. **Failure** → Entry remains unsynced, retry on next sync
+1. Entry saved locally with `synced: false`
+2. When connection is back, auto-sync runs
+3. Each unsynced entry is sent to the server
+4. On success → `synced: true`
+5. On failure → remains unsynced; retried on next sync
 
-## ⚠️ Validacija
+## Testing offline
 
-**Bar-kod Validacija:**
-- Seljak **MORA** skenirati bar-kod semena ili ambalaže pre unosa
-- Validacija se proverava pri svakom `addEntry()` pozivu
-- Ako nema skeniranog koda, unos se blokira sa porukom greške
+1. DevTools → Network → Offline
+2. Create entries
+3. Confirm they are stored in IndexedDB
+4. Set Network → Online
+5. Confirm they sync
 
-**Primer greške:**
-```
-"Morate prvo skenirati bar-kod semena ili ambalaže pre unosa podataka."
-```
-
-## 🧪 Testiranje
-
-### Test Offline Mode
-
-1. Otvori DevTools → Network tab
-2. Postavi na "Offline"
-3. Unesi podatke
-4. Proveri da su sačuvani u IndexedDB
-5. Postavi na "Online"
-6. Proveri da se automatski sync-uju
-
-### Proveri IndexedDB
+### Inspect IndexedDB (browser console)
 
 ```javascript
-// U browser console
 const db = await new Promise((resolve, reject) => {
   const request = indexedDB.open('BioVeraOfflineDB', 1);
   request.onsuccess = () => resolve(request.result);
   request.onerror = () => reject(request.error);
 });
-
 const transaction = db.transaction(['fieldEntries'], 'readonly');
 const store = transaction.objectStore('fieldEntries');
 const entries = await new Promise((resolve) => {
@@ -203,27 +183,19 @@ const entries = await new Promise((resolve) => {
 console.log(entries);
 ```
 
-## 🔗 Backend Endpoint
+## Backend
 
-Backend treba da ima endpoint:
+Expected endpoint:
 
 ```
 POST /field-entries
 Headers: Authorization: Bearer <token>
-Body: {
-  type: 'PRSKANJE' | 'SETVA' | 'BERBA',
-  farmId: string,
-  seedSerialNumber?: string,
-  packagingBarcode?: string,
-  data: { ... },
-  createdAt: string
-}
+Body: { type, farmId, seedSerialNumber?, packagingBarcode?, data, createdAt }
 ```
 
-## 📝 Napomene
+## Notes
 
-- IndexedDB je asinhron, sve operacije vraćaju Promise
-- Sync se dešava automatski kada se konekcija vrati
-- Periodic sync se izvršava svakih 30 sekundi (ako je online)
-- Skenirani kodovi se čuvaju trajno (mogu se obrisati ručno)
-- Unosi se ne brišu automatski nakon sync-a (može se dodati cleanup)
+- IndexedDB is async; all helpers return Promises
+- Sync runs when connectivity returns; periodic sync about every 30s while online
+- Scanned codes persist until cleared
+- Entries are not deleted automatically after sync (add cleanup if needed)

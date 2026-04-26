@@ -4,14 +4,8 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
-import {
-  MapPin,
-  Package,
-  Plus,
-  Clock,
-  CheckCircle,
-  Loader2,
-} from 'lucide-react';
+import { growerNavItems } from '@/lib/grower-nav';
+import { MapPin, Plus, Clock, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const DEFAULT_POLYGON = [
@@ -20,18 +14,6 @@ const DEFAULT_POLYGON = [
   { lat: 44.7886, lng: 20.4509 },
   { lat: 44.7866, lng: 20.4489 },
 ];
-
-const navItemsGrower = [
-  { href: '/grower', label: 'Dashboard', icon: <MapPin className="w-5 h-5" /> },
-  { href: '/grower/portal', label: 'Mission Tracker', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/batches', label: 'My Batches', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/fields', label: 'My Fields', icon: <MapPin className="w-5 h-5" /> },
-  { href: '/grower/materials', label: 'Materials', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/quality-entry', label: 'Quality Entry', icon: <CheckCircle className="w-5 h-5" /> },
-  { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/profile', label: 'My Profile', icon: <MapPin className="w-5 h-5" /> },
-];
-
 
 interface Parcel {
   id: string;
@@ -147,12 +129,10 @@ export default function GrowerFieldsPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title="My Fields" navItems={navItemsGrower}>
+      <SidebarLayout title="My Fields" navItems={growerNavItems}>
         <div className="p-6 max-w-4xl mx-auto">
-          <h1 className="text-2xl font-light text-gray-900 mb-1">My Fields (Njive i parcele)</h1>
-          <p className="text-sm text-gray-600 mb-6">
-            Dodajte njivu i parcele. Parcela mora biti odobrena od strane administratora pre nego što možete da formirate batch i radite na njoj.
-          </p>
+          <h1 className="text-2xl font-light text-gray-900 mb-1">My fields & parcels</h1>
+          <p className="text-sm text-gray-600 mb-6">Add parcels here. Admin must approve before batches and field work.</p>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
@@ -164,13 +144,13 @@ export default function GrowerFieldsPage() {
             </div>
           ) : estates.length === 0 ? (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
-              <p className="text-gray-600 mb-4">Nemate još nijednu njivu. Dodajte prvu.</p>
+              <p className="text-gray-600 mb-4">You have no fields yet. Add your first one.</p>
               <form onSubmit={handleAddEstate} className="flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
-                  placeholder="Naziv njive"
+                  placeholder="Field name"
                   className="px-3 py-2 border border-gray-300 rounded-lg w-56 focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
@@ -179,7 +159,7 @@ export default function GrowerFieldsPage() {
                   className="inline-flex items-center gap-1 px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  Dodaj njivu
+                  Add field
                 </button>
               </form>
             </div>
@@ -190,7 +170,7 @@ export default function GrowerFieldsPage() {
                   type="text"
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
-                  placeholder="Naziv nove njive"
+                  placeholder="New field name"
                   className="px-3 py-2 border border-gray-300 rounded-lg w-48 text-sm focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
@@ -200,7 +180,7 @@ export default function GrowerFieldsPage() {
                   className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  Dodaj njivu
+                  Add field
                 </button>
               </div>
               {estates.map((estate) => (
@@ -217,26 +197,26 @@ export default function GrowerFieldsPage() {
                         className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100"
                       >
                         <div>
-                          <span className="font-medium text-gray-900">{parcel.cropType || 'Parcula'}</span>
+                          <span className="font-medium text-gray-900">{parcel.cropType || 'Parcel'}</span>
                           <span className="ml-2 text-xs text-gray-500">({parcel.id.slice(0, 8)}…)</span>
                         </div>
                         <div className="flex items-center gap-2">
                           {parcel.approvedAt ? (
                             <>
                               <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
-                                <CheckCircle className="w-3 h-3" /> Odobreno
+                                <CheckCircle className="w-3 h-3" /> Approved
                               </span>
                               <button
                                 type="button"
                                 onClick={() => handleFormBatch(estate.id, parcel.id, estate.name, parcel.cropType || undefined)}
                                 className="text-sm font-medium text-[#2D5A27] hover:underline"
                               >
-                                Formiraj batch
+                                Create batch
                               </button>
                             </>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded">
-                              <Clock className="w-3 h-3" /> Čeka odobrenje
+                              <Clock className="w-3 h-3" /> Pending approval
                             </span>
                           )}
                         </div>
@@ -250,7 +230,7 @@ export default function GrowerFieldsPage() {
                       value={addingParcel === estate.id ? newParcelCrop : ''}
                       onChange={(e) => setNewParcelCrop(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddParcel(estate.id)}
-                      placeholder="Tip useva (npr. Malina)"
+                      placeholder="Crop type (e.g. Raspberry)"
                       className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-48 focus:ring-2 focus:ring-[#2D5A27]"
                     />
                     <button
@@ -260,7 +240,7 @@ export default function GrowerFieldsPage() {
                       className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                     >
                       {addingParcel === estate.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                      Dodaj parcelu
+                      Add parcel
                     </button>
                   </div>
                 </div>
@@ -272,13 +252,13 @@ export default function GrowerFieldsPage() {
           {formBatchParcel && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setFormBatchParcel(null)}>
               <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Formiraj batch</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Create batch</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Njiva: {formBatchParcel.estateName}. Parcela je odobrena; unesite podatke berbe.
+                  Field: {formBatchParcel.estateName}. The parcel is approved; enter harvest details.
                 </p>
                 <form onSubmit={handleCreateBatch} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Proizvod *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product *</label>
                     <input
                       type="text"
                       value={batchForm.productName}
@@ -289,7 +269,7 @@ export default function GrowerFieldsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Količina *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
                       <input
                         type="number"
                         min={0.1}
@@ -300,7 +280,7 @@ export default function GrowerFieldsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Jedinica *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
                       <input
                         type="text"
                         value={batchForm.unit}
@@ -310,7 +290,7 @@ export default function GrowerFieldsPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Datum berbe *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Harvest date *</label>
                     <input
                       type="date"
                       value={batchForm.harvestDate}
@@ -325,14 +305,14 @@ export default function GrowerFieldsPage() {
                       onClick={() => setFormBatchParcel(null)}
                       className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                     >
-                      Odustani
+                      Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={submittingBatch}
                       className="flex-1 px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                     >
-                      {submittingBatch ? 'Kreiranje…' : 'Kreiraj batch'}
+                      {submittingBatch ? 'Creating…' : 'Create batch'}
                     </button>
                   </div>
                 </form>

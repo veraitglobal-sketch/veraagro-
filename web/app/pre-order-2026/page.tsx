@@ -20,7 +20,7 @@ const CATEGORIES: { id: string; name: string; articles: Article[] }[] = [
     articles: [
       { id: 'apple', name: 'Apple', unit: 'kg', varieties: [{ id: 'golden', name: 'Golden Delicious' }, { id: 'gala', name: 'Gala' }, { id: 'idared', name: 'Idared' }, { id: 'granny', name: 'Granny Smith' }, { id: 'jonagold', name: 'Jonagold' }, { id: 'fuji', name: 'Fuji' }, { id: 'braeburn', name: 'Braeburn' }, { id: 'other', name: 'Other' }] },
       { id: 'pear', name: 'Pear', unit: 'kg', varieties: [{ id: 'conference', name: 'Conference' }, { id: 'williams', name: 'Williams' }, { id: 'abate', name: 'Abate Fetel' }, { id: 'comice', name: 'Comice' }, { id: 'other', name: 'Other' }] },
-      { id: 'plum', name: 'Plum', unit: 'kg', varieties: [{ id: 'stanley', name: 'Stanley' }, { id: 'president', name: 'President' }, { id: 'cacak', name: 'Čačak' }, { id: 'other', name: 'Other' }] },
+      { id: 'plum', name: 'Plum', unit: 'kg', varieties: [{ id: 'stanley', name: 'Stanley' }, { id: 'president', name: 'President' }, { id: 'cacak', name: 'Cacak' }, { id: 'other', name: 'Other' }] },
       { id: 'cherry', name: 'Cherry', unit: 'kg', varieties: [{ id: 'sweet', name: 'Sweet' }, { id: 'sour', name: 'Sour' }, { id: 'other', name: 'Other' }] },
       { id: 'peach', name: 'Peach', unit: 'kg', varieties: [{ id: 'yellow', name: 'Yellow' }, { id: 'white', name: 'White' }, { id: 'nectarine', name: 'Nectarine' }, { id: 'other', name: 'Other' }] },
       { id: 'apricot', name: 'Apricot', unit: 'kg', varieties: [{ id: 'bergeron', name: 'Bergeron' }, { id: 'other', name: 'Other' }] },

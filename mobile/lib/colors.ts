@@ -1,4 +1,4 @@
-// Bio Vera paleta – isto kao na webu
+// Bio Vera palette – same as web
 export const VERA_GREEN = '#2D5A27';
 export const VERA_GREEN_DARK = '#23471f';
 

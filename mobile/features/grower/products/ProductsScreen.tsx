@@ -80,7 +80,7 @@ export default function ProductsScreen() {
 
       <View style={styles.listHeader}>
         <Package size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.listTitle}>Lista unetih</Text>
+        <Text style={styles.listTitle}>{t('producer.products.enteredListTitle')}</Text>
       </View>
       <ProductList products={products} loading={loading} onRefresh={load} />
     </View>

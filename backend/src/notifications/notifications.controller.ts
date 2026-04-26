@@ -12,6 +12,11 @@ export class NotificationsController {
     return this.notificationsService.findAllByUser(req.user.id);
   }
 
+  @Patch('read-all')
+  async markAllAsRead(@Request() req: any) {
+    return this.notificationsService.markAllAsRead(req.user.id);
+  }
+
   @Patch(':id/read')
   async markAsRead(@Param('id') id: string, @Request() req: any) {
     return this.notificationsService.markAsRead(id, req.user.id);

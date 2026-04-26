@@ -41,8 +41,8 @@ export default function CartScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <ScrollView style={{ flex: 1 }}>
         <View style={{ padding: theme.spacing.lg }}>
-          {items.map((item, index) => (
-            <View key={item.product.id}>
+          {items.map((item) => (
+            <View key={`${item.product.id}-${item.lineKind}`}>
               <View style={{
                 flexDirection: 'row',
                 paddingVertical: theme.spacing.lg,
@@ -59,6 +59,9 @@ export default function CartScreen() {
                     letterSpacing: 0.3,
                   }}>
                     {item.product.productName}
+                    {item.lineKind === 'reservation' && (
+                      <Text style={{ fontSize: 12, color: theme.colors.primary }}> · reservation</Text>
+                    )}
                   </Text>
                   <Text style={{
                     fontSize: 13,
@@ -75,7 +78,7 @@ export default function CartScreen() {
                 {/* Quantity Controls */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
                   <TouchableOpacity
-                    onPress={() => updateQuantity(item.product.id, item.quantity - 1)}
+                    onPress={() => updateQuantity(item.product.id, item.quantity - 1, item.lineKind)}
                     style={{ padding: theme.spacing.xs }}
                   >
                     <Minus size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
@@ -91,7 +94,7 @@ export default function CartScreen() {
                     {item.quantity}
                   </Text>
                   <TouchableOpacity
-                    onPress={() => updateQuantity(item.product.id, item.quantity + 1)}
+                    onPress={() => updateQuantity(item.product.id, item.quantity + 1, item.lineKind)}
                     style={{ padding: theme.spacing.xs }}
                   >
                     <Plus size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
@@ -100,7 +103,7 @@ export default function CartScreen() {
 
                 {/* Remove Button */}
                 <TouchableOpacity
-                  onPress={() => removeFromCart(item.product.id)}
+                  onPress={() => removeFromCart(item.product.id, item.lineKind)}
                   style={{ marginLeft: theme.spacing.md, padding: theme.spacing.xs }}
                 >
                   <Trash2 size={18} color={theme.colors.error} strokeWidth={1} />

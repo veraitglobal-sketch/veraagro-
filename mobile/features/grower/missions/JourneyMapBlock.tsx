@@ -54,7 +54,7 @@ export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
             <Marker
               key={index}
               coordinate={{ latitude: point.latitude, longitude: point.longitude }}
-              title={point.name ?? `Tačka ${index + 1}`}
+              title={point.name ?? `Point ${index + 1}`}
             />
           ))}
           {route.length > 1 && (

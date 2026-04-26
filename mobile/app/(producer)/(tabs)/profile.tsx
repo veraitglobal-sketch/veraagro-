@@ -3,7 +3,6 @@ import { useAuth } from '../../../hooks/useAuth';
 import { Wallet, Settings, LogOut, MapPin, Package, Truck, Bell, Image as ImageIcon, CheckCircle, FileText, Camera } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { useState, useEffect } from 'react';
 import { estatesAPI, Estate } from '../../../lib/api';
@@ -41,7 +40,6 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     await logout();
-    await AsyncStorage.clear();
     router.replace('/');
   };
 
@@ -189,6 +187,17 @@ export default function ProfileScreen() {
                 }}>
                   Estates
                 </Text>
+                {estates.length > 0 && (
+                  <Text style={{
+                    fontSize: 10,
+                    fontWeight: '300',
+                    color: theme.colors.text.secondary,
+                    marginTop: 2,
+                    letterSpacing: 0.2,
+                  }}>
+                    {estates.length} {estates.length === 1 ? 'estate' : 'estates'}
+                  </Text>
+                )}
               </View>
             </TouchableOpacity>
 

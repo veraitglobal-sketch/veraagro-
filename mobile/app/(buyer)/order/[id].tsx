@@ -265,7 +265,7 @@ export default function OrderTrackingScreen() {
                           marginTop: 2,
                           letterSpacing: 0.2,
                         }}>
-                          Trenutno
+                          {t('buyer.orders.currentStep')}
                         </Text>
                       )}
                     </View>
@@ -290,7 +290,7 @@ export default function OrderTrackingScreen() {
                 marginBottom: theme.spacing.md,
                 textTransform: 'uppercase',
               }}>
-                Adresa za dostavu
+                {t('buyer.orders.deliveryAddressHeading')}
               </Text>
               <Text style={{
                 fontSize: 13,

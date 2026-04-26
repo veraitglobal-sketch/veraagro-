@@ -137,7 +137,7 @@ export default function ShopPage() {
                     <span className="text-6xl">🌾</span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{product.productName || product.name || 'Bio Proizvod'}</h3>
+                    <h3 className="font-semibold text-lg mb-2">{product.productName || product.name || 'Bio Vera product'}</h3>
                     
                     {/* VERA PRODUCER Brand & Farmer Identity */}
                     {product.estate?.owner && (
@@ -162,7 +162,7 @@ export default function ShopPage() {
                       </div>
                     )}
                     
-                    <p className="text-gray-600 text-sm mb-2">{product.description || 'Organski proizvod'}</p>
+                    <p className="text-gray-600 text-sm mb-2">{product.description || 'Organic product'}</p>
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-[#2D5A27] font-bold">{product.price || 'N/A'} RSD</span>
                       <span className="text-sm text-gray-500">{product.quantity || 0} kg</span>
@@ -171,7 +171,7 @@ export default function ShopPage() {
                       onClick={() => addToCart(product)}
                       className="w-full bg-[#2D5A27] text-white py-2 rounded-lg hover:bg-[#23471f] transition-colors"
                     >
-                      Dodaj u korpu
+                      Add to cart
                     </button>
                   </div>
                 </div>

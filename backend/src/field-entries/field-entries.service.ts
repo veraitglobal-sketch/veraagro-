@@ -124,6 +124,32 @@ export class FieldEntriesService {
     return (degrees * Math.PI) / 180;
   }
 
+  /**
+   * Planting, spraying, and harvest log entries require at least one admin-approved parcel on the estate.
+   */
+  private async assertEstateHasApprovedParcelForFieldWork(farmId: string, type: EntryType) {
+    const needsApproval: EntryType[] = ['SETVA', 'PRSKANJE', 'BERBA'];
+    if (!needsApproval.includes(type)) {
+      return;
+    }
+    const parcelCount = await this.prisma.parcels.count({
+      where: { estateId: farmId },
+    });
+    if (parcelCount === 0) {
+      throw new ForbiddenException(
+        'Add at least one parcel under your field, get it approved by an administrator, then you can add field diary entries (planting, spraying, harvest).',
+      );
+    }
+    const approved = await this.prisma.parcels.count({
+      where: { estateId: farmId, approvedAt: { not: null } },
+    });
+    if (approved === 0) {
+      throw new ForbiddenException(
+        'Field diary entries (planting, spraying, harvest) are available after an administrator has approved at least one of your parcels.',
+      );
+    }
+  }
+
   async create(userId: string, dto: CreateFieldEntryDto) {
     // Validate farm ownership (using Estate model)
     const farm = await this.prisma.estates.findFirst({
@@ -136,6 +162,8 @@ export class FieldEntriesService {
     if (!farm) {
       throw new NotFoundException('Farm not found or you do not have access');
     }
+
+    await this.assertEstateHasApprovedParcelForFieldWork(dto.farmId, dto.type);
 
     // SECURITY FIX: Validate GPS location against farm boundaries
     if (dto.data.location) {

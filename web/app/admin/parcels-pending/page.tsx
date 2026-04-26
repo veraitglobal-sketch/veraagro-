@@ -49,9 +49,10 @@ export default function AdminParcelsPendingPage() {
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
       <SidebarLayout title="Parcels pending approval" navItems={adminNavItems}>
         <div className="p-6 max-w-4xl">
-          <h1 className="text-2xl font-light text-gray-900 mb-1">Parcele na čekanju</h1>
+          <h1 className="text-2xl font-light text-gray-900 mb-1">Parcels pending approval</h1>
           <p className="text-sm text-gray-600 mb-6">
-            Farmer dodaje njivu i parcelu; vi odobravate parcelu. Posle odobrenja farmer može da radi na njivi i da formira batch.
+            The grower adds a field and a parcel; you approve the parcel. After approval, the grower can work the field
+            and create batches.
           </p>
 
           {error && (
@@ -64,7 +65,7 @@ export default function AdminParcelsPendingPage() {
             </div>
           ) : parcels.length === 0 ? (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center text-gray-600">
-              Nema parcela na čekanju.
+              No parcels waiting for approval.
             </div>
           ) : (
             <ul className="space-y-4">
@@ -77,7 +78,7 @@ export default function AdminParcelsPendingPage() {
                     <MapPin className="w-5 h-5 text-gray-400" />
                     <div>
                       <p className="font-medium text-gray-900">
-                        {p.estates?.name || 'Estate'} — {p.cropType || 'Parcula'}
+                        {p.estates?.name || 'Estate'} — {p.cropType || 'Parcel'}
                       </p>
                       <p className="text-xs text-gray-500">ID: {p.id}</p>
                     </div>
@@ -89,7 +90,7 @@ export default function AdminParcelsPendingPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                   >
                     {approvingId === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                    Odobri
+                    Approve
                   </button>
                 </li>
               ))}

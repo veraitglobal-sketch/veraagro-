@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRouter, useSegments } from 'expo-router';
+import { useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { theme } from '../lib/theme';
@@ -18,15 +18,19 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
   const { user, loading } = useAuth();
   const router = useRouter();
   const segments = useSegments();
+  const rootNav = useRootNavigationState();
 
   useEffect(() => {
     if (loading) return; // Wait for auth to load
+    if (!rootNav?.key) return; // Don’t run redirects before navigator is mounted (iOS back gesture)
+    const path = segments as string[];
+    if (path.length === 0) return; // Transient [] during stack transitions — avoids false “logged out” redirect
 
     // Check if user is authenticated
     if (!user) {
       // Determine which login screen to show based on route
-      const isProducerRoute = segments[0] === '(producer)';
-      const isBuyerRoute = segments[0] === '(buyer)';
+      const isProducerRoute = path[0] === '(producer)';
+      const isBuyerRoute = path[0] === '(buyer)';
       
       if (isProducerRoute) {
         router.replace('/partner-login');
@@ -45,8 +49,8 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
       
       if (!hasRequiredRole) {
         // User doesn't have required role, redirect to appropriate login
-        const isProducerRoute = segments[0] === '(producer)';
-        if (isProducerRoute) {
+        const isProducerRoute2 = path[0] === '(producer)';
+        if (isProducerRoute2) {
           router.replace('/partner-login');
         } else {
           router.replace('/buyer-login');
@@ -54,7 +58,7 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
         return;
       }
     }
-  }, [user, loading, requiredRole, router, segments, redirectTo]);
+  }, [user, loading, requiredRole, router, segments, redirectTo, rootNav?.key]);
 
   // Show loading while checking auth
   if (loading) {

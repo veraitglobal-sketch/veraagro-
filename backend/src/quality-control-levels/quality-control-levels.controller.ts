@@ -32,7 +32,7 @@ export class QualityControlLevelsController {
       levels: [
         {
           level: 1,
-          name: 'Eco-Safe Provera',
+          name: 'Eco-Safe Audit',
           location: 'Field',
           badgeText: 'ORIGIN VERIFIED | ECO-SAFE AUDIT PASS',
           checks: [

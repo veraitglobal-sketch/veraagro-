@@ -251,4 +251,17 @@ export class NotificationsService {
       },
     });
   }
+
+  async markAllAsRead(userId: string) {
+    return this.prisma.notifications.updateMany({
+      where: {
+        userId,
+        status: 'UNREAD',
+      },
+      data: {
+        status: 'READ',
+        readAt: new Date(),
+      },
+    });
+  }
 }

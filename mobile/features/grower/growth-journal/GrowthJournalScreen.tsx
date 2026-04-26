@@ -7,7 +7,7 @@ import { GrowthJournalList } from './GrowthJournalList';
 
 /**
  * Growth Journal – hronologija dokaza rasta sa GPS metapodacima.
- * App route: app/(producer)/growth-journal.tsx samo renderuje ovaj screen.
+ * App route: app/(producer)/growth-journal.tsx renders this screen.
  */
 export default function GrowthJournalScreen() {
   const {
@@ -22,6 +22,7 @@ export default function GrowthJournalScreen() {
     parcels,
     onRefresh,
     handleAddPhoto,
+    uploading,
   } = useGrowthJournalData();
 
   return (
@@ -52,7 +53,7 @@ export default function GrowthJournalScreen() {
         </Text>
         <TouchableOpacity
           onPress={handleAddPhoto}
-          disabled={estates.length === 0}
+          disabled={estates.length === 0 || uploading}
           style={{
             width: 40,
             height: 40,

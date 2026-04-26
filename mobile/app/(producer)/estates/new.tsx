@@ -1,8 +1,18 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, MapPin, ChevronRight } from 'lucide-react-native';
+import { ArrowLeft, Save, ChevronRight } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import MapView, { Polygon, Marker } from 'react-native-maps';
 import { colors } from '../../../lib/colors';
@@ -45,7 +55,9 @@ export default function NewEstateScreen() {
         const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
         setCurrentLocation(userLocation);
         setRegion({ latitude: userLocation.lat, longitude: userLocation.lng, latitudeDelta: 0.01, longitudeDelta: 0.01 });
-      } catch (_) {}
+      } catch {
+        // ignore
+      }
     })();
   }, []);
 
@@ -269,8 +281,13 @@ export default function NewEstateScreen() {
   );
 }
 
-const labelStyle = { fontSize: 13, fontWeight: '500', color: colors.text.secondary, marginBottom: 6 };
-const inputStyle = {
+const labelStyle: TextStyle = {
+  fontSize: 13,
+  fontWeight: '500',
+  color: colors.text.secondary,
+  marginBottom: 6,
+};
+const inputStyle: TextStyle = {
   fontSize: 15,
   color: colors.text.primary,
   borderWidth: 0.5,
@@ -279,7 +296,7 @@ const inputStyle = {
   padding: theme.spacing.md,
   backgroundColor: colors.background,
 };
-const infoBoxStyle = {
+const infoBoxStyle: ViewStyle = {
   backgroundColor: `${colors.primary}10`,
   borderRadius: theme.borderRadius.md,
   padding: theme.spacing.md,
@@ -287,26 +304,26 @@ const infoBoxStyle = {
   borderWidth: 0.5,
   borderColor: colors.primary,
 };
-const buttonStyle = {
+const buttonStyle: ViewStyle = {
   flex: 1,
   padding: theme.spacing.md,
   borderRadius: theme.borderRadius.sm,
   backgroundColor: colors.background,
   borderWidth: 0.5,
   borderColor: colors.border,
-  alignItems: 'center' as const,
+  alignItems: 'center',
 };
-const buttonTextStyle = { fontSize: 13, fontWeight: '500', color: colors.text.primary };
-const primaryButtonStyle = {
-  flexDirection: 'row' as const,
-  alignItems: 'center' as const,
+const buttonTextStyle: TextStyle = { fontSize: 13, fontWeight: '500', color: colors.text.primary };
+const primaryButtonStyle: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
   justifyContent: 'center',
   gap: 8,
   backgroundColor: colors.primary,
   paddingVertical: 14,
   borderRadius: theme.borderRadius.md,
 };
-const optionCardStyle = {
+const optionCardStyle: ViewStyle = {
   padding: theme.spacing.lg,
   borderRadius: theme.borderRadius.lg,
   borderWidth: 1,
@@ -314,10 +331,15 @@ const optionCardStyle = {
   backgroundColor: colors.background,
   marginBottom: theme.spacing.md,
 };
-const optionCardActiveStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}08` };
-const optionCardTitleStyle = { fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 4 };
-const optionCardDescStyle = { fontSize: 13, color: colors.text.secondary };
-const chipStyle = {
+const optionCardActiveStyle: ViewStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}08` };
+const optionCardTitleStyle: TextStyle = {
+  fontSize: 16,
+  fontWeight: '600',
+  color: colors.text.primary,
+  marginBottom: 4,
+};
+const optionCardDescStyle: TextStyle = { fontSize: 13, color: colors.text.secondary };
+const chipStyle: ViewStyle = {
   paddingHorizontal: 14,
   paddingVertical: 10,
   borderRadius: theme.borderRadius.md,
@@ -325,5 +347,5 @@ const chipStyle = {
   borderColor: colors.border,
   backgroundColor: colors.background,
 };
-const chipActiveStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}10` };
-const chipTextStyle = { fontSize: 14, fontWeight: '500', color: colors.text.primary };
+const chipActiveStyle: ViewStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}10` };
+const chipTextStyle: TextStyle = { fontSize: 14, fontWeight: '500', color: colors.text.primary };

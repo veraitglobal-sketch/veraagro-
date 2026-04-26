@@ -246,7 +246,7 @@ export default function EstateDetailsScreen() {
                 marginBottom: theme.spacing.sm,
                 letterSpacing: 0.3,
               }}>
-                Parcele ({estate.parcels.length})
+                {t('producer.estates.parcelsWithCount', { count: estate.parcels.length })}
               </Text>
               <View style={{ gap: theme.spacing.sm }}>
                 {estate.parcels.map((parcel) => (

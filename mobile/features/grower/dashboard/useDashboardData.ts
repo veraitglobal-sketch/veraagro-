@@ -10,9 +10,11 @@ import {
   batchesAPI,
   notificationsAPI,
   Notification,
+  parcelsAPI,
 } from '../../../lib/api';
 import { syncService } from '../../../lib/sync-service';
 import { useSocket } from '../../../hooks/useSocket';
+import { API_URL } from '../../../lib/api-url';
 
 export interface FinancialData {
   totalEarned: number;
@@ -32,6 +34,13 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [unreadCount, setUnreadCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [financialData, setFinancialData] = useState<FinancialData | null>(null);
+  const [parcelSteps, setParcelSteps] = useState<{
+    loaded: boolean;
+    total: number;
+    pending: number;
+    approved: number;
+  }>({ loaded: false, total: 0, pending: 0, approved: 0 });
+  const [offlinePending, setOfflinePending] = useState(0);
 
   const loadEstates = useCallback(async () => {
     try {
@@ -39,6 +48,39 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       setEstates(Array.isArray(data) ? data : []);
     } catch {
       setEstates([]);
+    }
+  }, []);
+
+  const loadParcelSteps = useCallback(async () => {
+    try {
+      const list = await estatesAPI.getAll();
+      const estates = Array.isArray(list) ? list : [];
+      let total = 0;
+      let pending = 0;
+      let approved = 0;
+      for (const e of estates) {
+        const parcels = await parcelsAPI.getByEstate(e.id).catch(() => []);
+        for (const p of parcels || []) {
+          total += 1;
+          if (p.approvedAt) {
+            approved += 1;
+          } else {
+            pending += 1;
+          }
+        }
+      }
+      setParcelSteps({ loaded: true, total, pending, approved });
+    } catch {
+      setParcelSteps({ loaded: true, total: 0, pending: 0, approved: 0 });
+    }
+  }, []);
+
+  const loadOfflinePending = useCallback(async () => {
+    try {
+      const st = await syncService.getSyncStatus();
+      setOfflinePending(st.pendingCount || 0);
+    } catch {
+      setOfflinePending(0);
     }
   }, []);
 
@@ -95,7 +137,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     try {
       const token = await AsyncStorage.getItem('auth_token');
       if (!token) return;
-      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.178.27:3000';
       const response = await fetch(`${API_URL}/wallets/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -122,9 +163,15 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   }, [loadMissions, loadBatches, loadNotifications, loadFinancialData]);
 
   const loadData = useCallback(async () => {
-    await Promise.all([loadEstates(), loadRecentEntries(), loadLiveData()]);
+    await Promise.all([
+      loadEstates(),
+      loadParcelSteps(),
+      loadOfflinePending(),
+      loadRecentEntries(),
+      loadLiveData(),
+    ]);
     if (user?.trustScore) setTrustScore(user.trustScore);
-  }, [user?.trustScore, loadEstates, loadRecentEntries, loadLiveData]);
+  }, [user?.trustScore, loadEstates, loadParcelSteps, loadOfflinePending, loadRecentEntries, loadLiveData]);
 
   useEffect(() => {
     loadData();
@@ -141,7 +188,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         const unique = merged.filter((n, i, self) => self.findIndex((t) => t.id === n.id) === i);
         return unique;
       });
-      const unread = socketNotifications.filter((n: any) => !(n as any).read).length;
+      const unread = socketNotifications.filter((n) => n.read !== true).length;
       setUnreadCount((prev) => prev + unread);
       loadLiveData();
     }
@@ -157,6 +204,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   }, [loadData]);
 
   return {
+    connected,
     estates,
     trustScore,
     recentEntries,
@@ -165,6 +213,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     notifications,
     unreadCount,
     financialData,
+    parcelSteps,
+    offlinePending,
     refreshing,
     onRefresh,
     loadData,

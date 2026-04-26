@@ -37,8 +37,8 @@ export default function OperationsCenterPage() {
       { retailer: 'Edeka Store B', quantity: 1500, status: 'CONFIRMED' },
     ],
     harvests: [
-      { farmer: 'Farm Petrović', quantity: 5000, status: 'CONFIRMED' },
-      { farmer: 'Farm Jovanović', quantity: 4000, status: 'CONFIRMED' },
+      { farmer: 'Hill Orchards Co-op', quantity: 5000, status: 'CONFIRMED' },
+      { farmer: 'Valley Berries', quantity: 4000, status: 'CONFIRMED' },
     ],
   });
 

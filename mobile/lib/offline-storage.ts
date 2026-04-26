@@ -6,9 +6,11 @@ const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
 const WHITELIST_KEY = 'material_whitelist';
 
+export type FieldActivityType = 'Planting' | 'Fertilizing' | 'Spraying' | 'Harvest';
+
 export interface PendingFieldEntry {
   id: string;
-  activityType: 'Setva' | 'Đubrenje' | 'Prskanje' | 'Žetva';
+  activityType: FieldActivityType;
   materialID?: string;
   photoUri: string;
   location: {
@@ -20,13 +22,13 @@ export interface PendingFieldEntry {
   error?: string;
 }
 
-/** Proizvod unet offline (QR ili ručno) – šta proizvod sadrži */
+/** Offline product (QR or manual). */
 export interface PendingProduct {
   id: string;
   source: 'qr' | 'manual';
   qrCode?: string;
   name: string;
-  contents: string; // šta sadrži
+  contents: string;
   quantity: number;
   unit: string;
   parcelOrEstate?: string;
@@ -35,7 +37,7 @@ export interface PendingProduct {
   error?: string;
 }
 
-/** Trošak unet u kalkulator (preneseni proizvod ili ručni iznos) */
+/** Cost entry in calculator (from product or manual). */
 export interface PendingCost {
   id: string;
   type: 'product' | 'manual';
@@ -48,10 +50,10 @@ export interface PendingCost {
   error?: string;
 }
 
-/** Fotografija sertifikata – čeka slanje na server */
+/** Certificate photo waiting for upload. */
 export interface PendingCertificatePhoto {
   id: string;
-  certificateId: string; // id obaveznog sertifikata (iz admin liste)
+  certificateId: string;
   certificateTitle: string;
   photoUri: string;
   timestamp: string;
@@ -59,7 +61,7 @@ export interface PendingCertificatePhoto {
   error?: string;
 }
 
-// Mock whitelist - u produkciji bi se učitavala sa servera
+// Dev whitelist; production loads from server
 const MOCK_WHITELIST = [
   'BIO-001-2024',
   'BIO-002-2024',
@@ -67,12 +69,32 @@ const MOCK_WHITELIST = [
   'ORG-SEED-001',
 ];
 
+const LEGACY_ACTIVITY_TO_EN: Record<string, FieldActivityType> = {
+  Setva: 'Planting',
+  'Đubrenje': 'Fertilizing',
+  Prskanje: 'Spraying',
+  Žetva: 'Harvest',
+  Planting: 'Planting',
+  Fertilizing: 'Fertilizing',
+  Spraying: 'Spraying',
+  Harvest: 'Harvest',
+};
+
+function normalizeFieldActivity(raw: string): FieldActivityType {
+  return LEGACY_ACTIVITY_TO_EN[raw] ?? 'Spraying';
+}
+
 export const offlineStorage = {
   // Get all pending entries
   async getPendingEntries(): Promise<PendingFieldEntry[]> {
     try {
       const data = await AsyncStorage.getItem(PENDING_ENTRIES_KEY);
-      return data ? JSON.parse(data) : [];
+      if (!data) return [];
+      const parsed: PendingFieldEntry[] = JSON.parse(data);
+      return parsed.map((e) => ({
+        ...e,
+        activityType: normalizeFieldActivity(String(e.activityType)),
+      }));
     } catch (error) {
       console.error('Error getting pending entries:', error);
       return [];
@@ -185,7 +207,7 @@ export const offlineStorage = {
     }
   },
 
-  // --- Pending costs (Kalkulator troškova) ---
+  // --- Pending costs (cost calculator) ---
   async getPendingCosts(): Promise<PendingCost[]> {
     try {
       const data = await AsyncStorage.getItem(PENDING_COSTS_KEY);

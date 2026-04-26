@@ -1,28 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
-
-// For iOS simulator, use localhost. For physical devices, use the network IP
-const getApiUrl = () => {
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
-  }
-  // iOS simulator can use localhost
-  if (Platform.OS === 'ios' && __DEV__) {
-    return 'http://localhost:3000';
-  }
-  // Default to network IP for physical devices
-  return 'http://192.168.178.27:3000';
-};
-
-const API_URL = getApiUrl();
+import { API_URL } from '../lib/api-url';
 
 interface Notification {
   id: string;
   type: 'ACTION_REQUIRED' | 'REMINDER' | 'ALERT' | 'SYSTEM';
   title: string;
   message: string;
+  read?: boolean;
   actionUrl?: string;
   missionId?: string;
   batchId?: string;
@@ -30,29 +17,38 @@ interface Notification {
 }
 
 /**
- * Socket.io hook for real-time notifications
- * Connects to backend and listens for live updates
+ * Socket.io hook for real-time notifications.
+ * Call once per screen tree (e.g. only inside `useDashboardData`) to avoid duplicate connections
+ * and connect/disconnect churn.
  */
 export function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const socketRef = useRef<Socket | null>(null);
+  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {
     let mounted = true;
 
     const connectSocket = async () => {
       try {
-        // Get auth token
         const token = await AsyncStorage.getItem('auth_token');
-        
+
         if (!token) {
           console.warn('No auth token found, skipping socket connection');
           return;
         }
 
-        // Create socket connection
+        if (socketRef.current?.connected) {
+          return;
+        }
+        if (socketRef.current) {
+          socketRef.current.removeAllListeners();
+          socketRef.current.disconnect();
+          socketRef.current = null;
+        }
+
         const newSocket = io(`${API_URL}/notifications`, {
           auth: {
             token,
@@ -60,12 +56,13 @@ export function useSocket() {
           transports: ['websocket', 'polling'],
           reconnection: true,
           reconnectionDelay: 1000,
-          reconnectionAttempts: 5,
+          reconnectionDelayMax: 10_000,
+          reconnectionAttempts: Infinity,
+          timeout: 20_000,
         });
 
         socketRef.current = newSocket;
 
-        // Connection events
         newSocket.on('connect', () => {
           console.log('Socket connected');
           if (mounted) {
@@ -74,8 +71,8 @@ export function useSocket() {
           }
         });
 
-        newSocket.on('disconnect', () => {
-          console.log('Socket disconnected');
+        newSocket.on('disconnect', (reason) => {
+          console.log('Socket disconnected', reason);
           if (mounted) {
             setConnected(false);
           }
@@ -88,11 +85,10 @@ export function useSocket() {
           }
         });
 
-        // Notification events
         newSocket.on('notification', (notification: Notification) => {
           console.log('Received notification:', notification);
           if (mounted) {
-            setNotifications(prev => [notification, ...prev]);
+            setNotifications((prev) => [notification, ...prev]);
           }
         });
 
@@ -102,18 +98,31 @@ export function useSocket() {
             setNotifications(notificationsList);
           }
         });
-
       } catch (error) {
         console.error('Error connecting socket:', error);
       }
     };
 
-    connectSocket();
+    void connectSocket();
 
-    // Cleanup on unmount
+    const sub = AppState.addEventListener('change', (next) => {
+      const prev = appStateRef.current;
+      appStateRef.current = next;
+      if (prev.match(/inactive|background/) && next === 'active') {
+        const s = socketRef.current;
+        if (s && !s.connected) {
+          s.connect();
+        } else if (!s) {
+          void connectSocket();
+        }
+      }
+    });
+
     return () => {
       mounted = false;
+      sub.remove();
       if (socketRef.current) {
+        socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
         socketRef.current = null;
       }

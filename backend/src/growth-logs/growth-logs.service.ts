@@ -18,10 +18,17 @@ export class GrowthLogsService {
     gpsLatitude: number;
     gpsLongitude: number;
     deviceId: string;
-    deviceTimestamp: Date;
+    deviceTimestamp: Date | string;
     notes?: string;
     growthStage?: string;
   }) {
+    const deviceTimestamp =
+      data.deviceTimestamp instanceof Date
+        ? data.deviceTimestamp
+        : new Date(String(data.deviceTimestamp));
+    if (Number.isNaN(deviceTimestamp.getTime())) {
+      throw new BadRequestException('Invalid deviceTimestamp');
+    }
     // Verify estate ownership
     const estate = await this.prisma.estates.findFirst({
       where: {
@@ -34,11 +41,37 @@ export class GrowthLogsService {
       throw new ForbiddenException('Estate not found or access denied');
     }
 
+    if (data.parcelId) {
+      const parcel = await this.prisma.parcels.findFirst({
+        where: { id: data.parcelId, estateId: data.estateId },
+      });
+      if (!parcel) {
+        throw new ForbiddenException('Parcel not found on this estate');
+      }
+      if (!parcel.approvedAt) {
+        throw new ForbiddenException(
+          'This parcel is not approved yet. Growth journal entries are available after an administrator approves the parcel.',
+        );
+      }
+    } else {
+      const approved = await this.prisma.parcels.count({
+        where: { estateId: data.estateId, approvedAt: { not: null } },
+      });
+      const anyParcel = await this.prisma.parcels.count({
+        where: { estateId: data.estateId },
+      });
+      if (anyParcel > 0 && approved === 0) {
+        throw new ForbiddenException(
+          'Journal entries require at least one administrator-approved parcel on this field.',
+        );
+      }
+    }
+
     // Anti-fraud validation
     const fraudValidation = await this.antiFraudService.validateGrowthLogSubmission({
       gpsLatitude: data.gpsLatitude,
       gpsLongitude: data.gpsLongitude,
-      deviceTimestamp: data.deviceTimestamp,
+      deviceTimestamp,
       deviceId: data.deviceId,
       imageHash: data.imageHash,
     });
@@ -50,7 +83,7 @@ export class GrowthLogsService {
     // Calculate time offset
     const networkTimestamp = new Date();
     const timestampValidation = this.antiFraudService.validateTimestamp(
-      data.deviceTimestamp,
+      deviceTimestamp,
       networkTimestamp,
     );
 
@@ -97,7 +130,7 @@ export class GrowthLogsService {
         gpsLongitude: data.gpsLongitude,
         deviceId: data.deviceId,
         networkTimestamp,
-        deviceTimestamp: data.deviceTimestamp,
+        deviceTimestamp,
         timeOffset: timestampValidation.timeOffset,
         notes: data.notes,
         growthStage: data.growthStage,

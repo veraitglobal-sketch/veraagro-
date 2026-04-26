@@ -75,7 +75,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
     setUploading(true);
     try {
       // Create watermark with VERA logo and timestamp
-      const timestamp = new Date().toLocaleString( {
+      const timestamp = new Date().toLocaleString('en-GB', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',

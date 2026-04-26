@@ -468,6 +468,18 @@ export class GrowerPortalService {
   }
 
   /**
+   * Checklist of certification / compliance document slots for the grower app.
+   * Static list for now; can be moved to configuration or per-grower policy later.
+   */
+  getRequiredCertifications() {
+    return [
+      { id: 'cert_1', title: 'Training – good agricultural practice', description: 'Completed training' },
+      { id: 'cert_2', title: 'Production certificate', description: 'Proof of production method' },
+      { id: 'cert_3', title: 'GlobalG.A.P. (if applicable)', description: 'Optional' },
+    ];
+  }
+
+  /**
    * Generate excellence certificate
    */
   private async generateExcellenceCertificate(

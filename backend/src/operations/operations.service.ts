@@ -96,12 +96,12 @@ export class OperationsService {
       sponsoredFarmers: [
         {
           farmerId: 'FARMER-001',
-          farmerName: 'Farm Petrović',
+          farmerName: 'Hill Orchards Co-op',
           packagingMaterialsProvided: 500, // crates
         },
         {
           farmerId: 'FARMER-002',
-          farmerName: 'Farm Jovanović',
+          farmerName: 'Valley Berries',
           packagingMaterialsProvided: 300, // crates
         },
       ],
@@ -143,7 +143,7 @@ export class OperationsService {
         harvests: [
           {
             farmerId: 'FARMER-001',
-            farmerName: 'Farm Petrović',
+            farmerName: 'Hill Orchards Co-op',
             quantity: 5000,
             sku: 'BIO-VERA-RASP-125G-PREM',
             harvestDate: new Date('2024-01-10'),
@@ -151,7 +151,7 @@ export class OperationsService {
           },
           {
             farmerId: 'FARMER-002',
-            farmerName: 'Farm Jovanović',
+            farmerName: 'Valley Berries',
             quantity: 4000,
             sku: 'BIO-VERA-BLACK-250G-PREM',
             harvestDate: new Date('2024-01-11'),

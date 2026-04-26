@@ -1,8 +1,18 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, Package, Award, Image as ImageIcon, Leaf, Droplets, History } from 'lucide-react';
+import {
+  MapPin,
+  Calendar,
+  Package,
+  Award,
+  Image as ImageIcon,
+  Leaf,
+  Droplets,
+  Sprout,
+} from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export interface PassportData {
   producedInLabel?: string;
@@ -41,161 +51,290 @@ export interface PassportData {
   }>;
 }
 
+function isRemoteImage(src: string) {
+  return src.startsWith('http://') || src.startsWith('https://');
+}
+
+const vera = {
+  main: '#2D5A27',
+  hover: '#23471f',
+  text: '#1A3021',
+  soft: 'rgba(45, 90, 39, 0.08)',
+  border: 'rgba(45, 90, 39, 0.18)',
+};
+
 export default function PassportView({ data }: { data: PassportData }) {
+  const displayName = [data.farmer.firstName, data.farmer.lastName].filter(Boolean).join(' ').trim() || 'Vera partner';
+  const photo = data.farmer.photo || data.photos.profile;
+  const allGallery = [...data.photos.field, ...data.photos.growth].filter(Boolean);
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+    <div className="min-h-screen bg-gradient-to-b from-[#f4f7f4] via-white to-gray-50/40">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-16">
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 text-center"
+          className="text-center text-xs font-medium tracking-[0.2em] uppercase text-gray-500 mb-6"
         >
-          <div className="mb-6 flex justify-center">
-            <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-[#A4C639] shadow-lg">
-              {data.farmer.photo ? (
-                <Image src={data.farmer.photo} alt="Producer" fill className="object-cover" />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[#2D5A27]/10 to-[#2D5A27]/20 flex items-center justify-center">
-                  <span className="text-6xl">🌱</span>
+          Bio Vera · digital producer profile
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-gray-200/90 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04),0_12px_40px_-12px_rgba(26,48,33,0.12)] overflow-hidden"
+        >
+          <div
+            className="h-1.5 w-full"
+            style={{ background: `linear-gradient(90deg, ${vera.main} 0%, #3d7a34 50%, #5a8f52 100%)` }}
+            aria-hidden
+          />
+
+          <div className="p-6 sm:p-8 md:p-10">
+            <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-10">
+              <div className="flex justify-center md:justify-start flex-shrink-0">
+                <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-2xl overflow-hidden ring-2 ring-[#2D5A27]/20 ring-offset-2 ring-offset-white">
+                  {photo ? (
+                    <Image
+                      src={photo}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="160px"
+                      unoptimized={isRemoteImage(photo)}
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ background: `linear-gradient(145deg, ${vera.soft}, white)` }}
+                    >
+                      <Sprout className="w-16 h-16 text-[#2D5A27]/35" strokeWidth={1.25} aria-hidden />
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+
+              <div className="flex-1 text-center md:text-left min-w-0">
+                <p className="text-[10px] sm:text-xs font-medium tracking-[0.22em] uppercase text-[#2D5A27] mb-2">
+                  Vera partner
+                </p>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 tracking-tight leading-tight mb-2">
+                  {displayName}
+                </h1>
+                {data.farmer.partnerCode && (
+                  <p className="text-sm font-mono text-gray-500 mb-3">{data.farmer.partnerCode}</p>
+                )}
+                <p className="text-base sm:text-lg text-gray-600 font-light leading-relaxed mb-4">
+                  {data.producedInLabel ||
+                    (data.location.region
+                      ? `Produced in ${data.location.region}. Grown to Vera standards.`
+                      : 'Grown to Vera standards.')}
+                </p>
+                {data.location.region && (
+                  <div className="inline-flex items-center gap-1.5 text-sm text-gray-600 font-light mb-4">
+                    <MapPin className="w-4 h-4 text-[#2D5A27] flex-shrink-0" strokeWidth={1.5} aria-hidden />
+                    <span className="uppercase tracking-wide text-xs sm:text-sm">{data.location.region}</span>
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1 text-xs text-gray-500 font-light mb-4">
+                  {data.farmer.generation && <span>{data.farmer.generation} generation grower</span>}
+                  {data.farmer.yearsOfExperience != null && (
+                    <span>
+                      {data.farmer.generation ? '· ' : null}
+                      {data.farmer.yearsOfExperience} years of experience
+                    </span>
+                  )}
+                </div>
+                {data.farmer.bio && (
+                  <p className="text-sm sm:text-base text-gray-700 font-light leading-relaxed border-t border-gray-100 pt-5">
+                    {data.farmer.bio}
+                  </p>
+                )}
+                {data.farmer.isVeraPartner && (
+                  <div className="mt-5 flex justify-center md:justify-start">
+                    <div
+                      className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium tracking-wide"
+                      style={{ borderColor: vera.border, backgroundColor: vera.soft, color: vera.text }}
+                    >
+                      <Award className="w-4 h-4 text-[#2D5A27] flex-shrink-0" strokeWidth={1.5} />
+                      <span>Verified Vera Partner</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <div className="mb-3">
-            <p className="text-[10px] font-light tracking-[0.2em] text-[#1A3021]/50 uppercase">VERA PRODUCER</p>
-          </div>
-          <h1 className="text-2xl md:text-3xl font-light text-[#1A3021] mb-2">
-            {data.producedInLabel || (data.location.region ? `Produced in ${data.location.region}. Grown to Vera standards.` : 'Grown to Vera standards.')}
-          </h1>
-          {data.location.region && !data.producedInLabel && (
-            <div className="flex items-center justify-center gap-1.5 mb-4">
-              <MapPin className="w-4 h-4 text-[#1A3021]/60" strokeWidth={1} />
-              <p className="text-sm font-light tracking-[0.15em] text-[#1A3021]/70 uppercase">{data.location.region}</p>
-            </div>
-          )}
-          <div className="flex items-center justify-center gap-4 text-xs text-[#1A3021]/60 mb-6">
-            {data.farmer.generation && <span>{data.farmer.generation} generation grower</span>}
-            {data.farmer.yearsOfExperience != null && <span>• {data.farmer.yearsOfExperience} years of experience</span>}
-          </div>
-          <p className="text-base font-light text-[#1A3021] leading-relaxed max-w-2xl mx-auto mb-8">{data.farmer.bio}</p>
-          {data.farmer.isVeraPartner && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#A4C639]/10 border border-[#A4C639]/30 rounded-full">
-              <Award className="w-4 h-4 text-[#A4C639]" strokeWidth={1.5} />
-              <span className="text-xs font-light tracking-[0.1em] text-[#1A3021] uppercase">Vera Partner</span>
-            </div>
-          )}
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-white border border-black/10 p-6 text-center">
-            <p className="text-[9px] font-light text-[#1A3021]/40 mb-2 uppercase tracking-wider">Estates</p>
-            <p className="text-2xl font-light text-[#1A3021]">{data.stats.totalEstates}</p>
-          </div>
-          <div className="bg-white border border-black/10 p-6 text-center">
-            <p className="text-[9px] font-light text-[#1A3021]/40 mb-2 uppercase tracking-wider">Harvests</p>
-            <p className="text-2xl font-light text-[#1A3021]">{data.stats.totalBatches}</p>
-          </div>
-          <div className="bg-white border border-black/10 p-6 text-center">
-            <p className="text-[9px] font-light text-[#1A3021]/40 mb-2 uppercase tracking-wider">Latest Year</p>
-            <p className="text-2xl font-light text-[#1A3021]">{data.stats.latestHarvestYear}</p>
-          </div>
-          <div className="bg-white border border-black/10 p-6 text-center">
-            <p className="text-[9px] font-light text-[#1A3021]/40 mb-2 uppercase tracking-wider">Crops</p>
-            <p className="text-sm font-light text-[#1A3021]">{data.stats.crops}</p>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-6"
+        >
+          {[
+            { label: 'Estates', value: data.stats.totalEstates },
+            { label: 'Listed harvests', value: data.stats.totalBatches },
+            { label: 'Latest year', value: data.stats.latestHarvestYear },
+            { label: 'Crops', value: data.stats.crops, small: true },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-2xl border border-gray-200 bg-white/90 px-4 py-5 text-center shadow-sm"
+            >
+              <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                {item.label}
+              </p>
+              <p
+                className={
+                  'small' in item && item.small
+                    ? 'text-sm sm:text-base font-light text-gray-900 leading-snug line-clamp-2'
+                    : 'text-2xl sm:text-3xl font-light text-gray-900 tabular-nums'
+                }
+              >
+                {item.value}
+              </p>
+            </div>
+          ))}
         </motion.div>
 
-        {(data.photos.field.length > 0 || data.photos.growth.length > 0) && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-12">
-            <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-6">From the field & photos on tree</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {[...data.photos.field, ...data.photos.growth].slice(0, 8).map((photoUrl, index) => (
-                <div key={index} className="relative aspect-square overflow-hidden border border-black/10 rounded">
-                  <Image src={photoUrl} alt={`Field photo ${index + 1}`} fill className="object-cover" />
+        {allGallery.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="mt-10"
+          >
+            <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
+              From the field
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+              {allGallery.slice(0, 8).map((photoUrl, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gray-100"
+                >
+                  <Image
+                    src={photoUrl}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, 200px"
+                    unoptimized={isRemoteImage(photoUrl)}
+                  />
                 </div>
               ))}
             </div>
           </motion.div>
         )}
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mb-12 p-6 border border-[#2D5A27]/20 rounded-lg bg-[#2D5A27]/5">
-          <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-4 flex items-center gap-2">
-            <Package className="w-4 h-4" /> Product passport
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.16 }}
+          className="mt-10 rounded-2xl border p-6 sm:p-8"
+          style={{ borderColor: vera.border, backgroundColor: vera.soft }}
+        >
+          <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-800 uppercase mb-3 flex items-center gap-2">
+            <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} aria-hidden />
+            Product traceability
           </h2>
-          <p className="text-sm font-light text-[#1A3021] mb-4">Freshly harvested, not frozen. Traceability and chronology below.</p>
-          <ul className="space-y-2 text-sm font-light text-[#1A3021]/80">
-            <li className="flex items-center gap-2">
-              <Leaf className="w-4 h-4 text-[#2D5A27]" />
-              <span>Pesticides used: recorded per batch (see compliance data when available).</span>
+          <p className="text-sm text-gray-700 font-light leading-relaxed mb-5">
+            Fresh, traceable produce. Pesticide and spray records, and full batch details, are available on each
+            product&apos;s digital passport when you scan the batch QR.
+          </p>
+          <ul className="space-y-2.5 text-sm text-gray-700 font-light">
+            <li className="flex items-start gap-2.5">
+              <Leaf className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+              <span>Inputs and treatments are recorded per batch in the Vera platform.</span>
             </li>
-            <li className="flex items-center gap-2">
-              <Droplets className="w-4 h-4 text-[#2D5A27]" />
-              <span>Spray dates: recorded with field entries; shown in batch details when available.</span>
+            <li className="flex items-start gap-2.5">
+              <Droplets className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+              <span>Field applications are logged with the batch passport when you open it from the product.</span>
             </li>
-            <li className="flex items-center gap-2">
-              <ImageIcon className="w-4 h-4 text-[#2D5A27]" />
-              <span>Photos on tree: growth and field photos below show produce on the tree and at harvest.</span>
+            <li className="flex items-start gap-2.5">
+              <ImageIcon className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+              <span>Photos above show the farm and growth stages leading to harvest.</span>
             </li>
           </ul>
-          {data.recentHarvests.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-[#1A3021]/10">
-              <p className="text-[10px] font-light tracking-[0.1em] text-[#1A3021]/50 uppercase mb-3 flex items-center gap-1">
-                <History className="w-3 h-3" /> Chronology & harvest dates
-              </p>
-              <div className="space-y-2">
-                {data.recentHarvests.slice(0, 5).map((harvest, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <span className="font-light text-[#1A3021]">{harvest.productName}</span>
-                    <span className="text-[#1A3021]/70">
-                      Harvested {new Date(harvest.harvestDate).toLocaleDateString('en-US')} • {harvest.quantity} kg
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </motion.div>
 
         {data.recentHarvests.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-12">
-            <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-6">Recent Harvests</h2>
-            <div className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-10"
+          >
+            <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
+              Batch passports
+            </h2>
+            <div className="space-y-2">
               {data.recentHarvests.map((harvest, index) => (
-                <div key={index} className="bg-white border border-black/10 p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Package className="w-5 h-5 text-[#A4C639]" strokeWidth={1} />
-                    <div>
-                      <p className="text-sm font-light text-[#1A3021]">{harvest.productName}</p>
-                      <div className="flex items-center gap-3 text-xs text-[#1A3021]/60 mt-1">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" strokeWidth={1} />
-                          <span>{new Date(harvest.harvestDate).toLocaleDateString('en-US')}</span>
-                        </div>
-                        <span>•</span>
+                <Link
+                  key={index}
+                  href={`/passport/${encodeURIComponent(harvest.batchId)}`}
+                  className="group flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-[#2D5A27]/30 hover:shadow"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0"
+                      style={{ backgroundColor: vera.soft }}
+                    >
+                      <Package className="w-5 h-5 text-[#2D5A27]" strokeWidth={1.25} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{harvest.productName}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                        <Calendar className="w-3.5 h-3.5 flex-shrink-0" strokeWidth={1.5} />
+                        <span>{new Date(harvest.harvestDate).toLocaleDateString('en-GB')}</span>
+                        <span>·</span>
                         <span>{harvest.quantity} kg</span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-xs font-light text-[#1A3021]/40">{harvest.harvestYear}</div>
-                </div>
+                  <span className="text-xs font-medium text-[#2D5A27] flex-shrink-0 group-hover:underline">
+                    Open passport
+                  </span>
+                </Link>
               ))}
             </div>
           </motion.div>
         )}
 
         {data.location.estates.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="pt-8 border-t border-black/10">
-            <h2 className="text-xs font-light tracking-[0.15em] text-[#1A3021]/60 uppercase mb-6">Estates</h2>
-            <div className="grid md:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.24 }}
+            className="mt-10 pt-10 border-t border-gray-200"
+          >
+            <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
+              Estates
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
               {data.location.estates.map((estate, index) => (
-                <div key={index} className="bg-white border border-black/10 p-4">
-                  <p className="text-sm font-light text-[#1A3021] mb-1">{estate.name}</p>
-                  {estate.location && <p className="text-xs text-[#1A3021]/60">{estate.location}</p>}
+                <div
+                  key={index}
+                  className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm"
+                >
+                  <p className="text-sm font-medium text-gray-900 mb-0.5">{estate.name}</p>
+                  {estate.location && <p className="text-xs text-gray-500 font-light">{estate.location}</p>}
                 </div>
               ))}
             </div>
           </motion.div>
         )}
+
+        <footer className="mt-12 pt-8 border-t border-gray-200 text-center">
+          <Link
+            href="/"
+            className="inline-flex text-sm font-medium text-[#2D5A27] hover:text-[#23471f] transition-colors"
+          >
+            biovera.app
+          </Link>
+          <p className="text-xs text-gray-400 font-light mt-2">From seed to market — with full traceability.</p>
+        </footer>
       </div>
     </div>
   );

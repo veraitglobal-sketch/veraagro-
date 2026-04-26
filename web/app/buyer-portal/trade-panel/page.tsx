@@ -161,19 +161,30 @@ export default function TradePanelPage() {
     const name = productName.toLowerCase();
     
     // Fruits
-    const fruits = ['raspberry', 'blackberry', 'blueberry', 'strawberry', 'apple', 'jabuka', 'pear', 'plum', 'cherry', 'peach', 'apricot', 'grape', 'currant', 'malina', 'kupina', 'borovnica', 'jagoda', 'kruška', 'šljiva', 'trešnja', 'breskva', 'kajsija', 'grožđe', 'ribizla'];
+    const fruits = [
+      'raspberry', 'blackberry', 'blueberry', 'strawberry', 'apple', 'pear', 'plum', 'cherry', 'peach', 'apricot', 'grape', 'currant',
+      'citrus', 'orange', 'lemon', 'lime', 'grapefruit', 'mandarin', 'banana', 'mango', 'fig', 'date', 'kiwi', 'melon', 'watermelon',
+      'cranberry', 'pomegranate', 'elderberry', 'gooseberry', 'mulberry', 'persimmon', 'quince', 'nectarine',
+    ];
     if (fruits.some(fruit => name.includes(fruit))) {
       return 'Fruits';
     }
     
     // Vegetables
-    const vegetables = ['pepper', 'paprika', 'tomato', 'paradajz', 'cucumber', 'krastavac', 'zucchini', 'tikvica', 'onion', 'luk', 'garlic', 'beli luk', 'carrot', 'šargarepa', 'potato', 'krompir', 'cabbage', 'kupus', 'lettuce', 'salata', 'spinach', 'spanać', 'broccoli', 'cauliflower', 'bean', 'pasulj', 'pea', 'grašak', 'celery', 'celer', 'beet', 'cvekla'];
+    const vegetables = [
+      'pepper', 'capsicum', 'chili', 'tomato', 'cucumber', 'zucchini', 'aubergine', 'eggplant', 'squash', 'pumpkin', 'onion', 'leek', 'shallot', 'garlic', 'scallion', 'chive',
+      'carrot', 'potato', 'sweet potato', 'cabbage', 'kale', 'lettuce', 'arugula', 'rocket', 'romaine', 'spinach', 'chard', 'bok choy', 'broccoli', 'cauliflower', 'brussels',
+      'bean', 'broad bean', 'green bean', 'snap pea', 'pea', 'edamame', 'celery', 'celeriac', 'beet', 'beetroot', 'turnip', 'radish', 'parsnip', 'fennel', 'asparagus', 'artichoke', 'okra', 'mushroom', 'corn',
+    ];
     if (vegetables.some(veg => name.includes(veg))) {
       return 'Vegetables';
     }
     
     // Grains
-    const grains = ['wheat', 'pšenica', 'corn', 'kukuruz', 'barley', 'ječam', 'oats', 'zob', 'rye', 'raž', 'rice', 'pirinač', 'millet', 'proso', 'buckwheat', 'heljda', 'quinoa'];
+    const grains = [
+      'wheat', 'barley', 'oats', 'rye', 'rice', 'millet', 'sorghum', 'buckwheat', 'quinoa', 'amaranth', 'spelt', 'farro', 'teff', 'triticale',
+      'maize', 'bulgur', 'couscous', 'bran', 'germ', 'flour', 'semolina', 'polenta',
+    ];
     if (grains.some(grain => name.includes(grain))) {
       return 'Grains';
     }

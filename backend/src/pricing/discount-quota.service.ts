@@ -43,7 +43,7 @@ export class DiscountQuotaService {
       });
 
       if (estates.length === 0) {
-        throw new ForbiddenException('Farmer nema registrovane farme');
+        throw new ForbiddenException('Farmer has no registered estates');
       }
 
       // Calculate total farm area in hectares

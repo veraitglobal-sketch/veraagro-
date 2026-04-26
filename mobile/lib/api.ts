@@ -1,21 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { API_URL } from './api-url';
 
-// For iOS simulator, use localhost. For physical devices, use the network IP
-const getApiUrl = () => {
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
-  }
-  // iOS simulator can use localhost
-  if (Platform.OS === 'ios' && __DEV__) {
-    return 'http://localhost:3000';
-  }
-  // Default to network IP for physical devices
-  return 'http://192.168.178.27:3000';
-};
-
-const API_URL = getApiUrl();
+export { getApiUrl, API_URL, PRODUCTION_API_URL } from './api-url';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -38,17 +25,10 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Error interceptor
+// Error interceptor — do not clear session on 401; only explicit Logout should sign the user out.
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      AsyncStorage.removeItem('auth_token');
-      AsyncStorage.removeItem('auth_user');
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Types
@@ -101,6 +81,8 @@ export interface Parcel {
   calculatedArea: number;
   plantingDate?: string;
   status: string;
+  /** Set when an administrator has approved the parcel; required for batches and field diary sync */
+  approvedAt?: string | null;
 }
 
 export interface Category {
@@ -250,6 +232,32 @@ export const parcelsAPI = {
   },
 };
 
+export interface CreateHarvestPlanBody {
+  parcelId: string;
+  announcementType: 'HARVEST' | 'PLANTING';
+  cropType: string;
+  estimatedDate: string;
+  estimatedQuantity?: number;
+  plannedLoadingStart?: string;
+  plannedLoadingEnd?: string;
+  loadQuantityKg?: number;
+  marketChannel?: string;
+  qualityGrade?: string;
+  sortingSpec?: string;
+  notes?: string;
+}
+
+export const harvestAnnouncementsAPI = {
+  create: async (data: CreateHarvestPlanBody) => {
+    const response = await api.post('/harvest-announcements', data);
+    return response.data;
+  },
+  getMy: async () => {
+    const response = await api.get('/harvest-announcements/my-announcements');
+    return response.data || [];
+  },
+};
+
 // Market Prices API (Public)
 export const marketPricesAPI = {
   getAllActive: async () => {
@@ -375,6 +383,21 @@ export const growthLogsAPI = {
       return [];
     }
   },
+  create: async (data: {
+    estateId: string;
+    parcelId?: string;
+    imageUrl: string;
+    imageHash: string;
+    gpsLatitude: number;
+    gpsLongitude: number;
+    deviceId: string;
+    deviceTimestamp: string;
+    notes?: string;
+    growthStage?: string;
+  }): Promise<GrowthLog> => {
+    const response = await api.post('/growth-logs', data);
+    return response.data;
+  },
 };
 
 // Orders API
@@ -418,47 +441,105 @@ export const ordersAPI = {
   },
 };
 
-// Digital Passport API (Public - no auth required for QR scanning)
+/**
+ * Same payload as web /passport — GET /qr/verify/:batchId (full traceability).
+ */
 export interface ProductPassport {
+  qrId?: string;
   batch: {
     batchId: string;
     productName: string;
     quantity: number;
     unit: string;
     harvestDate: string;
+    status?: string;
+    isCompromised?: boolean;
   };
   origin: {
-    estate: {
-      name: string;
-      location: any;
-    };
-    parcel: {
-      cropType: string;
-      coordinates: any;
-    } | null;
-    farmer: {
-      name: string;
-      trustScore: number;
-    };
+    farmName: string;
+    regionLabel?: string;
+    productionCountry?: string | null;
+    harvestLocation?: string;
+    harvestRegion?: string;
+    harvestPeriod?: string | null;
+    estateCalculatedAreaHa?: number;
+    parcelCalculatedAreaHa?: number | null;
+    estateMapCenter?: { lat: number; lng: number } | null;
+    parcelMapCenter?: { lat: number; lng: number } | null;
   };
-  timeline: Array<{
-    stage: string;
-    date: string | Date;
-    location: string;
-    farmer: string | null;
+  farmer: {
+    name: string;
+    photo?: string | null;
+    farmerProfileUrl?: string | null;
+  };
+  /** High-level journey timestamps (same as backend timeline object) */
+  timeline: {
+    harvested: string;
+    verified?: string | null;
+    loaded?: string | null;
+    arrived?: string | null;
+  };
+  treatments?: Array<{
+    appliedAt: string;
+    productName: string;
+    dosage: string;
+    waterVolume?: number | null;
+    reason?: string | null;
+    deviceTimestamp: string;
+    gpsLatitude?: number;
+    gpsLongitude?: number;
+    gpsAccuracyM?: number | null;
   }>;
-  map: {
-    center: { latitude: number; longitude: number } | null;
-    polygon: any;
+  missions?: Array<{
+    id?: string;
+    missionNumber?: string;
+    status?: string;
+    pickupAddress?: string;
+    estimatedPickupTime?: string | null;
+    assignedAt?: string | null;
+    acceptedAt?: string | null;
+    logisticsPartner?: { name: string } | null;
+    vehicle?: {
+      vehicleNumber?: string;
+      licensePlate?: string;
+      type?: string;
+      make?: string;
+      model?: string;
+    };
+    locationLogs?: Array<{
+      timestamp: string;
+      latitude: number;
+      longitude: number;
+      accuracy: number | null;
+      address: string | null;
+    }>;
+    borderWaits?: Array<{
+      borderName: string | null;
+      borderArrivalTime: string;
+      borderExitTime: string;
+      waitTimeMinutes: number;
+    }>;
+    pickedUpAt?: string | null;
+    deliveredAt?: string | null;
+  }>;
+  coldChainProof?: {
+    temperatureData?: Array<{ timestamp: string; temperature: number; location?: string }>;
+    minTemp?: number | null;
+    maxTemp?: number | null;
+    avgTemp?: number | null;
   };
-  trustScore: number;
+  sustainability?: { totalDistanceKm?: string };
+  protocol360?: {
+    overallStatus?: string;
+    levels?: Array<{ level: number; name: string; status: string; badgeText?: string }>;
+  };
 }
 
 export const passportAPI = {
   getByBatchId: async (batchId: string): Promise<ProductPassport> => {
     try {
-      // Public endpoint - no auth token needed
-      const response = await axios.get(`${API_URL}/digital-passports/batch/${batchId}`);
+      const id = encodeURIComponent(batchId);
+      const response = await axios.get(`${API_URL}/qr/verify/${id}`);
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 404) {
@@ -512,6 +593,14 @@ export const batchesAPI = {
     harvestDate: string;
   }): Promise<any> => {
     const response = await api.post('/batches', data);
+    return response.data;
+  },
+  /** Log packing wizard completion (GPS) — batchRef is internal id or public batchId */
+  recordPackingFlow: async (
+    batchRef: string,
+    body: { latitude: number; longitude: number; completedAt?: string },
+  ): Promise<{ success: boolean; batchId: string; id: string }> => {
+    const response = await api.post(`/batches/${encodeURIComponent(batchRef)}/packing-flow`, body);
     return response.data;
   },
 };
@@ -621,6 +710,26 @@ export const notificationsAPI = {
   },
   markAsRead: async (id: string): Promise<void> => {
     await api.patch(`/notifications/${id}/read`);
+  },
+};
+
+/** Grower checklist items (compliance / certification photos in app). */
+export interface RequiredCertification {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+export const growerPortalAPI = {
+  getRequiredCertifications: async (): Promise<RequiredCertification[]> => {
+    const response = await api.get('/grower-portal/required-certifications');
+    const data = response.data;
+    if (!Array.isArray(data)) return [];
+    return data.map((c: { id: string; title: string; description?: string }) => ({
+      id: String(c.id),
+      title: String(c.title),
+      description: c.description,
+    }));
   },
 };
 

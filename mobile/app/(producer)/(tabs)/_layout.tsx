@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, Package, User, FileText, Calculator, Award, ShieldAlert, MapPin } from 'lucide-react-native';
+import { Home, Package, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -72,9 +72,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen name="cost-calculator" options={{ title: t('producer.tabs.costCalculator'), href: null }} />
       <Tabs.Screen name="certifications" options={{ title: t('producer.tabs.certifications'), href: null }} />
       <Tabs.Screen name="banned-substances" options={{ title: t('producer.tabs.bannedSubstances'), href: null }} />
-      <Tabs.Screen name="estates" options={{ title: t('producer.tabs.estates'), href: null }} />
       <Tabs.Screen name="field-log" options={{ title: t('producer.tabs.fieldLog'), href: null }} />
-      <Tabs.Screen name="batches" options={{ title: t('producer.tabs.batches'), href: null }} />
       <Tabs.Screen name="shop" options={{ href: null }} />
       <Tabs.Screen name="harvest" options={{ title: t('producer.tabs.harvest'), href: null }} />
       <Tabs.Screen name="wallet" options={{ title: t('producer.tabs.wallet'), href: null }} />

@@ -9,7 +9,7 @@ const VERA_GREEN = '#2D5A27';
 
 type CategoryKey = 'buyers' | 'growers' | 'logistics' | 'suppliers';
 
-// Kada korisnik klikne na kategoriju, prikaže se panel sa naslovom, 2x2 akcijama i velikim CTA dugmetom
+// When a category is selected, a panel shows the title, a 2×2 action grid, and a main CTA.
 const categoryPanels: Record<CategoryKey, {
   title: string;
   ctaLabel: string;
@@ -66,7 +66,7 @@ const CITIES = ['Hamburg', 'Vienna', 'Munich', 'Berlin', 'Zagreb', 'Ljubljana'];
 
 const INITIAL_TICKER = { newOrders: 6, inTransit: 8, toHamburg: 3, delivered: 78 };
 
-// Live ticker: ref drži stanje da ne koristimo setState(prev =>) – izbegava grešku sa brojem umesto objekta
+// Live ticker: ref holds state (avoid setState callback returning a number instead of the next state object)
 function useTicker() {
   const [ticker, setTicker] = useState(INITIAL_TICKER);
   const tickerRef = useRef(INITIAL_TICKER);
@@ -152,7 +152,7 @@ async function sendChatQuery(query: string, sessionId?: string): Promise<{ answe
   }
 }
 
-// Podrazumevano true da na mobilnom prvom frame-u ne bude animacija (opacity 0→1)
+// Default true so the first frame on mobile has no jarring animation (opacity 0→1)
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(true);
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Scroll lock bez pomeranja: body postaje fixed sa trenutnim scrollY da ništa ne skoči
+  // Scroll lock without jump: keep body position fixed with current scrollY
   useEffect(() => {
     if (open) {
       const scrollY = window.scrollY;
@@ -279,12 +279,12 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
       <AnimatePresence>
         {open && (
           <>
-            {/* Bela pozadina – na mobilnom bez ikakve animacije */}
+            {/* White overlay — on mobile, no extra animation */}
             <div
               className="fixed inset-0 z-[70] bg-white md:bg-black/20 h-[100dvh] min-h-[100dvh] min-[768px]:h-[100vh] min-[768px]:min-h-[100vh]"
               aria-hidden
             />
-            {/* Na mobilnom bottom sheet (dole), na desktopu mali prozor dole desno */}
+            {/* Mobile: bottom sheet; desktop: small window bottom-right */}
             {isMobile ? (
               <div
                 className="fixed inset-0 z-[80] flex flex-col justify-end h-[100dvh] min-[768px]:h-[100vh]"
@@ -296,7 +296,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                 }}
               >
-            {/* Live Ticker – fiksna visina da chat ne skače */}
+            {/* Live ticker — fixed height so layout does not jump */}
             <div
               className="flex-shrink-0 flex flex-col gap-0.5 px-2 py-1.5 border-b font-mono text-[10px] border-gray-100 w-full min-h-[3rem]"
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}
@@ -348,7 +348,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </div>
             </div>
 
-            {/* Kategorije */}
+            {/* Categories */}
             <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[80px] md:min-h-[110px]">
               <AnimatePresence mode="wait">
                 {view === 'main' ? (
@@ -417,7 +417,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               </AnimatePresence>
             </div>
 
-            {/* Sredina: chat — više mesta za tekst, break-words da se ne prelama layout */}
+            {/* Main chat area — room for long text, break-words to avoid layout overflow */}
             <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-2 md:p-3 space-y-2 md:space-y-3">
               {messages.length === 0 && (
                 <p className="text-center text-xs md:text-sm text-gray-500 py-3 md:py-4 font-light px-2">
@@ -453,7 +453,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input – 16px font na mobilnom da iOS ne zumira pri fokusu, safe-area dole */}
+            {/* Input — 16px font on mobile to avoid iOS input zoom, safe-area padding at bottom */}
             <div className="flex-shrink-0 flex gap-1.5 md:gap-2 border-t border-gray-100 p-2 md:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-white">
               <div className="relative flex-1 min-w-0">
                 <Search
@@ -499,7 +499,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                     boxShadow: '0 25px 50px -12px rgba(45, 90, 39, 0.25)',
                   }}
                 >
-                  {/* Ticker – fiksna visina */}
+                  {/* Ticker — fixed height */}
                   <div
                     className="flex-shrink-0 flex flex-col gap-0.5 px-2 py-1.5 border-b font-mono text-[10px] border-gray-100 w-full min-h-[3rem]"
                     style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}

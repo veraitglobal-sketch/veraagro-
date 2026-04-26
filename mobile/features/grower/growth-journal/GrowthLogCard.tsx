@@ -1,4 +1,5 @@
 import { View, Text, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
@@ -9,6 +10,7 @@ interface GrowthLogCardProps {
 }
 
 export function GrowthLogCard({ log }: GrowthLogCardProps) {
+  const { t } = useTranslation();
   return (
     <View
       style={{
@@ -131,7 +133,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
               color: colors.text.secondary,
             }}
           >
-            Parcela: {log.parcel.cropType}
+            {t('producer.growthJournal.parcelWithType', { type: log.parcel.cropType || '—' })}
           </Text>
         </View>
       )}

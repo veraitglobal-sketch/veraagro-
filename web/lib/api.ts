@@ -239,6 +239,26 @@ export const parcelsAPI = {
   },
 };
 
+// Harvest plans (harvest_announcements — grower notifies admin)
+export const harvestAnnouncementsAPI = {
+  getAll: async (params?: { status?: string; announcementType?: string; cropType?: string }) => {
+    const response = await api.get('/harvest-announcements/admin/all', { params });
+    return response.data || [];
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/harvest-announcements/admin/${id}`);
+    return response.data;
+  },
+  updateAdmin: async (id: string, data: Record<string, unknown>) => {
+    const response = await api.patch(`/harvest-announcements/admin/${id}`, data);
+    return response.data;
+  },
+  setStatus: async (id: string, status: string) => {
+    const response = await api.put(`/harvest-announcements/${id}/status`, { status });
+    return response.data;
+  },
+};
+
 // Smart Lock API
 export const smartLockAPI = {
   scanSeed: async (data: {
@@ -525,6 +545,30 @@ export const buyerTradePanelAPI = {
   },
   setCriticalThreshold: async (productName: string, threshold: number) => {
     const response = await api.post('/buyer-trade-panel/critical-threshold', { productName, threshold });
+    return response.data;
+  },
+};
+
+// Command & control (admin)
+export const commandControlAPI = {
+  getDashboard: async () => {
+    const response = await api.get('/command-control/dashboard');
+    return response.data;
+  },
+  getStatus: async () => {
+    const response = await api.get('/command-control/status');
+    return response.data;
+  },
+  pause: async (reason: string) => {
+    const response = await api.post('/command-control/pause', { reason });
+    return response.data;
+  },
+  resume: async () => {
+    const response = await api.post('/command-control/resume', {});
+    return response.data;
+  },
+  reassign: async (missionId: string, newDriverId: string, reason: string) => {
+    const response = await api.post(`/command-control/reassign/${missionId}`, { newDriverId, reason });
     return response.data;
   },
 };

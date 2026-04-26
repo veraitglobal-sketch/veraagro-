@@ -72,19 +72,19 @@ export default function ProducerDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="text-3xl mb-2">🌾</div>
-            <h3 className="font-semibold text-lg mb-1">Ukupno Njiva</h3>
+            <h3 className="font-semibold text-lg mb-1">Total fields</h3>
             <p className="text-3xl font-bold text-green-600">{estates.length}</p>
           </div>
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="text-3xl mb-2">📦</div>
-            <h3 className="font-semibold text-lg mb-1">Aktivne Parcele</h3>
+            <h3 className="font-semibold text-lg mb-1">Active parcels</h3>
             <p className="text-3xl font-bold text-green-600">
               {estates.reduce((sum, e) => sum + (e.parcels?.length || 0), 0)}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="text-3xl mb-2">✅</div>
-            <h3 className="font-semibold text-lg mb-1">Sertifikovano</h3>
+            <h3 className="font-semibold text-lg mb-1">Certified</h3>
             <p className="text-3xl font-bold text-green-600">
               {estates.filter((e: any) => e.certificationStatus === 'CERTIFIED').length}
             </p>
@@ -96,7 +96,7 @@ export default function ProducerDashboard() {
             href="/producer/estates/new"
             className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
           >
-            + Dodaj Novu Njivu
+            + Add new field
           </Link>
         </div>
 
@@ -110,7 +110,7 @@ export default function ProducerDashboard() {
               <div key={estate.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <h3 className="font-semibold text-xl mb-2">{estate.name}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  {estate.parcels?.length || 0} parcela
+                  {estate.parcels?.length || 0} parcel(s)
                 </p>
                 <div className="flex items-center justify-between mb-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -125,19 +125,19 @@ export default function ProducerDashboard() {
                   href={`/producer/estates/${estate.id}`}
                   className="text-green-600 hover:text-green-700 font-semibold text-sm"
                 >
-                  Detalji →
+                  Details →
                 </Link>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-12 bg-white rounded-lg shadow-md">
-            <p className="text-gray-600 mb-4">Nemate ni jedna njiva.</p>
+            <p className="text-gray-600 mb-4">You have no fields yet.</p>
             <Link
               href="/producer/estates/new"
               className="text-green-600 hover:text-green-700 font-semibold"
             >
-              Dodajte prvu njivu →
+              Add your first field →
             </Link>
           </div>
         )}

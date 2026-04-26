@@ -10,8 +10,8 @@ import { ZonesList } from './ZonesList';
 import { ZoneModal } from './ZoneModal';
 
 /**
- * Plot Mapper – digitalizacija parcele sa zonama i usevima.
- * App route: app/(producer)/plot-mapper.tsx samo renderuje ovaj screen.
+ * Plot mapper – digital parcel layout with zones and crops.
+ * App route: app/(producer)/plot-mapper.tsx renders this screen.
  */
 export default function PlotMapperScreen() {
   const { t } = useTranslation();
@@ -77,7 +77,7 @@ export default function PlotMapperScreen() {
               letterSpacing: 0.5,
             }}
           >
-            Vera Plan parcele
+            {t('producer.plotMapper.veraPlanTitle')}
           </Text>
           <TouchableOpacity
             onPress={handleSaveBlueprint}

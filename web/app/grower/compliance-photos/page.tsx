@@ -4,15 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
+import { growerNavItems } from '@/lib/grower-nav';
+import { batchesAPI } from '@/lib/api';
+import { WEB_API_BASE } from '@/lib/api-base';
+import Link from 'next/link';
 
-const navItems = [
-  { href: '/grower', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
-  { href: '/grower/portal', label: 'Mission Tracker', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg> },
-  { href: '/grower/batches', label: 'My Batches', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
-  { href: '/grower/materials', label: 'Materials', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
-  { href: '/grower/quality-entry', label: 'Quality Entry', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-  { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
-];
+const navItems = growerNavItems;
 
 const REQUIRED_PHOTOS = [
   { type: 'PUNNETS', label: 'Punnets with Bio Vera Logo', description: 'Show our logo on the crates' },
@@ -34,11 +31,30 @@ export default function CompliancePhotosPage() {
     fileInputRefs.current[index] = el;
   };
 
-  // Mock batches - in production, fetch from API
-  const [batches] = useState([
-    { id: 'BATCH-001', batchId: 'BATCH-2024-001', productName: 'Raspberry', quantity: 500 },
-    { id: 'BATCH-002', batchId: 'BATCH-2024-002', productName: 'Blackberry', quantity: 300 },
-  ]);
+  const [batches, setBatches] = useState<{ id: string; batchId: string; productName: string; quantity: number; unit?: string }[]>([]);
+  const [batchesLoading, setBatchesLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await batchesAPI.getAll();
+        const list = Array.isArray(data) ? data : [];
+        setBatches(
+          list.map((b: any) => ({
+            id: b.id,
+            batchId: b.batchId,
+            productName: b.productName,
+            quantity: b.quantity,
+            unit: b.unit,
+          })),
+        );
+      } catch {
+        setBatches([]);
+      } finally {
+        setBatchesLoading(false);
+      }
+    })();
+  }, []);
 
   const handlePhotoUpload = (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,7 +82,7 @@ export default function CompliancePhotosPage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/verify-sticker`,
+        `${WEB_API_BASE}/material-control/verify-sticker`,
         {
           method: 'POST',
           headers: {
@@ -108,7 +124,7 @@ export default function CompliancePhotosPage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/compliance-photos`,
+        `${WEB_API_BASE}/material-control/compliance-photos`,
         {
           method: 'POST',
           headers: {
@@ -167,10 +183,10 @@ export default function CompliancePhotosPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo-Verification Checklist</h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Upload 3 compliance photos before activating 'Ready for Pickup' status.
-          </p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo-Verification Checklist</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Upload 3 compliance photos before activating 'Ready for Pickup' status.
+            </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
@@ -178,19 +194,31 @@ export default function CompliancePhotosPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Batch *
               </label>
-              <select
-                value={selectedBatch}
-                onChange={(e) => setSelectedBatch(e.target.value)}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                <option value="">-- Select Batch --</option>
-                {batches.map((batch) => (
-                  <option key={batch.id} value={batch.id}>
-                    {batch.batchId} - {batch.productName} ({batch.quantity} kg)
-                  </option>
-                ))}
-              </select>
+              {batchesLoading ? (
+                <p className="text-sm text-gray-500">Loading batches…</p>
+              ) : batches.length === 0 ? (
+                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                  No batches yet.{' '}
+                  <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
+                    Create a batch
+                  </Link>{' '}
+                  for an approved parcel first.
+                </p>
+              ) : (
+                <select
+                  value={selectedBatch}
+                  onChange={(e) => setSelectedBatch(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">-- Select Batch --</option>
+                  {batches.map((batch) => (
+                    <option key={batch.id} value={batch.id}>
+                      {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit || 'kg'})
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             {/* Sticker Roll ID */}

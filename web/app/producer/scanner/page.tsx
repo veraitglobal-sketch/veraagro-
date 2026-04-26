@@ -30,7 +30,7 @@ export default function ScannerPage() {
 
   const handleScan = async () => {
     if (!serialNumber) {
-      setError('Unesite serial number');
+      setError('Please enter a serial number');
       return;
     }
 
@@ -90,20 +90,20 @@ export default function ScannerPage() {
                 value={serialNumber}
                 onChange={(e) => setSerialNumber(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder="Skeniraj ili unesi QR kod"
+                placeholder="Scan or type QR code"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parcel ID (opciono)
+                Parcel ID (optional)
               </label>
               <input
                 type="text"
                 value={parcelId}
                 onChange={(e) => setParcelId(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder="ID parcele"
+                placeholder="Parcel ID"
               />
             </div>
 
@@ -125,7 +125,7 @@ export default function ScannerPage() {
               disabled={loading}
               className="w-full bg-[#2D5A27] text-white py-3 rounded-lg font-semibold hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? 'Skeniranje...' : 'Skeniraj QR Kod'}
+              {loading ? 'Scanning…' : 'Scan QR code'}
             </button>
           </div>
         </div>

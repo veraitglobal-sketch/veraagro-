@@ -4,16 +4,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CART_STORAGE_KEY = 'shopping_cart';
 
+export type CartLineKind = 'purchase' | 'reservation';
+
 export interface CartItem {
   product: Product;
   quantity: number;
+  lineKind: CartLineKind;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addToCart: (product: Product, quantity: number, options?: { lineKind?: CartLineKind }) => void;
+  removeFromCart: (productId: string, lineKind: CartLineKind) => void;
+  updateQuantity: (productId: string, quantity: number, lineKind: CartLineKind) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
@@ -33,7 +36,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const data = await AsyncStorage.getItem(CART_STORAGE_KEY);
       if (data) {
-        setItems(JSON.parse(data));
+        const parsed: CartItem[] = JSON.parse(data);
+        setItems(
+          parsed.map((it) => ({
+            ...it,
+            lineKind: it.lineKind || 'purchase',
+          }))
+        );
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -49,34 +58,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addToCart = (product: Product, quantity: number) => {
-    const existingItem = items.find(item => item.product.id === product.id);
-    
+  const addToCart = (product: Product, quantity: number, options?: { lineKind?: CartLineKind }) => {
+    const lineKind: CartLineKind = options?.lineKind ?? 'purchase';
+    const existingItem = items.find(
+      (item) => item.product.id === product.id && item.lineKind === lineKind
+    );
+
     if (existingItem) {
-      const updatedItems = items.map(item =>
-        item.product.id === product.id
+      const updatedItems = items.map((item) =>
+        item.product.id === product.id && item.lineKind === lineKind
           ? { ...item, quantity: item.quantity + quantity }
           : item
       );
       saveCart(updatedItems);
     } else {
-      saveCart([...items, { product, quantity }]);
+      saveCart([...items, { product, quantity, lineKind }]);
     }
   };
 
-  const removeFromCart = (productId: string) => {
-    const updatedItems = items.filter(item => item.product.id !== productId);
+  const removeFromCart = (productId: string, lineKind: CartLineKind) => {
+    const updatedItems = items.filter(
+      (item) => !(item.product.id === productId && item.lineKind === lineKind)
+    );
     saveCart(updatedItems);
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number, lineKind: CartLineKind) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, lineKind);
       return;
     }
-    
-    const updatedItems = items.map(item =>
-      item.product.id === productId
+
+    const updatedItems = items.map((item) =>
+      item.product.id === productId && item.lineKind === lineKind
         ? { ...item, quantity }
         : item
     );

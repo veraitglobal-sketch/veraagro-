@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TrustScoreService, TrustScoreEvent } from '../trust-score/trust-score.service';
+import { MissionStatus } from '@prisma/client';
 
 @Injectable()
 export class CommandControlService {
@@ -79,6 +80,92 @@ export class CommandControlService {
    */
   isSystemPaused(): boolean {
     return this.systemPaused;
+  }
+
+  /**
+   * Admin dashboard: live missions, non-compliant audit rows, trust score buckets
+   */
+  async getCommandDashboard() {
+    const liveStatuses: MissionStatus[] = [
+      'PENDING',
+      'ASSIGNED',
+      'ACCEPTED',
+      'IN_PROGRESS',
+      'PICKED_UP',
+      'IN_TRANSIT',
+      'READY_FOR_LOADING',
+    ];
+
+    const [missions, violations, blocked, atRisk, healthy] = await Promise.all([
+      this.prisma.missions.findMany({
+        where: { status: { in: liveStatuses } },
+        orderBy: { updatedAt: 'desc' },
+        take: 50,
+        include: {
+          users_missions_logisticsPartnerIdTousers: {
+            select: { id: true, firstName: true, lastName: true, partnerCode: true },
+          },
+        },
+      }),
+      this.prisma.audit_trails.findMany({
+        where: { isCompliant: false },
+        orderBy: { timestamp: 'desc' },
+        take: 20,
+        select: {
+          id: true,
+          eventType: true,
+          entityType: true,
+          entityId: true,
+          changeReason: true,
+          newValue: true,
+          timestamp: true,
+        },
+      }),
+      this.prisma.trust_scores.count({ where: { currentScore: { lt: 70 } } }),
+      this.prisma.trust_scores.count({
+        where: { currentScore: { gte: 70, lt: 80 } },
+      }),
+      this.prisma.trust_scores.count({ where: { currentScore: { gte: 80 } } }),
+    ]);
+
+    return {
+      paused: this.isSystemPaused(),
+      missions: missions.map((m) => {
+        const p = m.users_missions_logisticsPartnerIdTousers;
+        const driverName = p
+          ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() || p.partnerCode || '—'
+          : 'Unassigned';
+        return {
+          id: m.id,
+          missionNumber: m.missionNumber,
+          status: m.status,
+          pickupAddress: m.pickupAddress,
+          driverName,
+          logisticsPartnerId: m.logisticsPartnerId,
+        };
+      }),
+      violations: violations.map((v) => {
+        let summary = v.changeReason?.trim() || '';
+        if (!summary && v.newValue != null) {
+          try {
+            summary =
+              typeof v.newValue === 'string' ? v.newValue : JSON.stringify(v.newValue);
+          } catch {
+            summary = 'Audit entry';
+          }
+        }
+        if (!summary) summary = 'Compliance flag';
+        return {
+          id: v.id,
+          type: v.eventType,
+          entityType: v.entityType,
+          entityId: v.entityId,
+          summary: summary.length > 200 ? `${summary.slice(0, 200)}…` : summary,
+          timestamp: v.timestamp,
+        };
+      }),
+      trustSummary: { blocked, atRisk, healthy },
+    };
   }
 
   /**

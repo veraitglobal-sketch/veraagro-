@@ -7,10 +7,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPS, materialValidator } from '../../../lib/integrity-guard';
 import { estatesAPI, Estate } from '../../../lib/api';
+import type { PendingFieldEntry } from '../../../lib/offline-storage';
 
 export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
 
-const ACTIVITY_TYPE_MAP: Record<ActivityType, string> = {
+/** Maps UI activity to offline storage (English; sync maps to backend enums). */
+const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType']> = {
   PLANTING: 'Planting',
   FERTILIZING: 'Fertilizing',
   SPRAYING: 'Spraying',
@@ -39,8 +41,9 @@ export function useFieldLogData() {
   const loadEstates = useCallback(async () => {
     try {
       const data = await estatesAPI.getAll();
-      setEstates(Array.isArray(data) ? data : []);
-      if (data.length > 0) setCurrentEstate(data[0]);
+      const list = Array.isArray(data) ? data : [];
+      setEstates(list);
+      if (list.length > 0) setCurrentEstate(list[0]);
     } catch (error) {
       console.error('Error loading estates:', error);
       setEstates([]);
@@ -162,7 +165,7 @@ export function useFieldLogData() {
     try {
       setLoading(true);
       await offlineStorage.savePendingEntry({
-        activityType: ACTIVITY_TYPE_MAP[activityType as ActivityType] as 'Planting' | 'Fertilizing' | 'Spraying' | 'Harvest',
+        activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
         materialID: materialID || undefined,
         photoUri: photoUri!,
         location: location!,

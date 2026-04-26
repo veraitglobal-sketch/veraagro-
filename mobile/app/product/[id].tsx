@@ -40,15 +40,10 @@ export default function ProductDetailScreen() {
 
   const handleAddToCart = () => {
     if (product) {
-      if (isReservationMode) {
-        // TODO: Implement reservation logic
-        // For now, just add to cart with a flag
-        addToCart(product, quantity);
-        router.back();
-      } else {
-        addToCart(product, quantity);
-        router.back();
-      }
+      addToCart(product, quantity, {
+        lineKind: isReservationMode ? 'reservation' : 'purchase',
+      });
+      router.back();
     }
   };
 

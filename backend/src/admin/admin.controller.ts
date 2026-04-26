@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,5 +18,10 @@ export class AdminController {
   @Get('recent-activities')
   async getRecentActivities(@Query('limit') limit?: string) {
     return this.adminService.getRecentActivities(limit ? parseInt(limit) : 10);
+  }
+
+  @Get('farm/:id')
+  async getFarmDetail(@Param('id') id: string) {
+    return this.adminService.getFarmDetailByFarmerId(id);
   }
 }

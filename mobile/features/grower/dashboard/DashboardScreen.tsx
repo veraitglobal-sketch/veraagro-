@@ -2,11 +2,11 @@ import React from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../hooks/useAuth';
-import { useSocket } from '../../../hooks/useSocket';
 import TrustScoreWidget from '../../../components/TrustScoreWidget';
 import { theme } from '../../../lib/theme';
 import { useDashboardData } from './useDashboardData';
 import DashboardHeader from './DashboardHeader';
+import NextStepCard from './NextStepCard';
 import QuickActionsSection from './QuickActionsSection';
 import LiveInformationSection from './LiveInformationSection';
 import FinancialSummarySection from './FinancialSummarySection';
@@ -15,10 +15,12 @@ import RecentActivitySection from './RecentActivitySection';
 export default function DashboardScreen() {
   const { user } = useAuth();
   const router = useRouter();
-  const { connected } = useSocket();
   const data = useDashboardData(user);
 
   const farmName = data.estates[0]?.name || 'My Farm';
+
+  const estateCount = data.estates.length;
+  const ps = data.parcelSteps;
 
   const handlers = {
     onMyProducts: () => router.push('/(producer)/(tabs)/products'),
@@ -34,6 +36,7 @@ export default function DashboardScreen() {
     onViewNotifications: () => router.push('/(producer)/notifications'),
     onViewWallet: () => router.push('/(producer)/(tabs)/wallet'),
     onEstates: () => router.push('/(producer)/estates'),
+    onFieldSeason: () => router.push('/(producer)/field-season'),
   };
 
   return (
@@ -51,9 +54,23 @@ export default function DashboardScreen() {
       <DashboardHeader
         farmName={farmName}
         partnerCode={user?.partnerCode}
-        connected={connected}
+        connected={data.connected}
       />
       <View style={{ padding: theme.spacing.md }}>
+        <NextStepCard
+          ready={ps.loaded}
+          estateCount={estateCount}
+          totalParcels={ps.total}
+          pendingApproval={ps.pending}
+          approved={ps.approved}
+          activeMissions={data.activeMissions.length}
+          offlinePending={data.offlinePending}
+          onAddField={() => router.push('/(producer)/estates/new')}
+          onAddParcel={() => router.push('/(producer)/estates')}
+          onMissions={handlers.onViewMissions}
+          onSteps={handlers.onFieldSeason}
+          onFieldLog={handlers.onNewEntry}
+        />
         <View
           style={{
             backgroundColor: theme.colors.surfaceElevated,

@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const NotificationCenter = dynamic(() => import('@/components/NotificationCenter'), { ssr: false });
 
 interface SidebarLayoutProps {
   children: ReactNode;
@@ -115,6 +118,7 @@ export default function SidebarLayout({ children, title, navItems }: SidebarLayo
             </svg>
           </button>
           <h1 className="text-lg md:text-xl font-semibold text-gray-900 truncate flex-1">{title}</h1>
+          {user?.id ? <NotificationCenter userId={user.id} /> : null}
         </header>
 
         {/* Page Content */}

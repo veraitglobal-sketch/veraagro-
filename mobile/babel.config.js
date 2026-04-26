@@ -5,7 +5,7 @@ module.exports = function(api) {
   
   const cssInteropConfig = cssInteropBabel();
   
-  // Filtriraj pluginove i ukloni duplikate
+  // Filter plugins and remove duplicates
   // react-native-reanimated/plugin već uključuje react-native-worklets/plugin
   const seenPlugins = new Set();
   const plugins = cssInteropConfig.plugins

@@ -15,7 +15,7 @@ interface Photo {
 
 /**
  * Vera Bag – digitalna torba za vizuelne dokaze (growers).
- * App route: app/(producer)/vera-bag.tsx samo renderuje ovaj screen.
+ * App route: app/(producer)/vera-bag.tsx renders this screen.
  */
 export default function VeraBagScreen() {
   const router = useRouter();

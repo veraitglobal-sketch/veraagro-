@@ -21,6 +21,7 @@ export function GrowthJournalFilters({
   onEstateChange,
   onParcelChange,
 }: GrowthJournalFiltersProps) {
+  const { t } = useTranslation();
   if (estates.length === 0) return null;
 
   return (
@@ -49,7 +50,7 @@ export function GrowthJournalFilters({
               marginRight: theme.spacing.xs,
             }}
           >
-            Njiva:
+            {t('producer.growthJournal.estateLabel')}
           </Text>
           {estates.map((estate) => (
             <TouchableOpacity
@@ -91,7 +92,7 @@ export function GrowthJournalFilters({
                 marginRight: theme.spacing.xs,
               }}
             >
-              Parcela:
+              {t('producer.growthJournal.parcelLabel')}
             </Text>
             <TouchableOpacity
               onPress={() => onParcelChange('all')}
@@ -112,7 +113,7 @@ export function GrowthJournalFilters({
                   letterSpacing: 0.3,
                 }}
               >
-                Sve
+                {t('common.all')}
               </Text>
             </TouchableOpacity>
             {parcels.map((parcel) => (
@@ -137,7 +138,8 @@ export function GrowthJournalFilters({
                     letterSpacing: 0.3,
                   }}
                 >
-                  {parcel.cropType || `Parcela ${parcel.id.slice(0, 4)}`}
+                  {parcel.cropType ||
+                    t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) })}
                 </Text>
               </TouchableOpacity>
             ))}

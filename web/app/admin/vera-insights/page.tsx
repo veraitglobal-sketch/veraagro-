@@ -242,7 +242,7 @@ export default function AdminVeraInsightsPage() {
                     onChange={(e) => setFormData({ ...formData, cropName: e.target.value })}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                    placeholder="e.g., Lešnik"
+                    placeholder="e.g., Hazelnut"
                   />
                 </div>
                 <div>

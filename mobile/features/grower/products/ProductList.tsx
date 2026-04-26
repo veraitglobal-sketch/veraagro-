@@ -10,7 +10,7 @@ interface ProductListProps {
 }
 
 function ProductItem({ item }: { item: PendingProduct }) {
-  const statusLabel = item.status === 'pending' ? 'Sačuvano u telefonu' : item.status === 'syncing' ? 'Šalje se…' : item.status;
+  const statusLabel = item.status === 'pending' ? 'Saved on device' : item.status === 'syncing' ? 'Uploading…' : item.status;
   return (
     <View style={styles.item}>
       <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
@@ -28,7 +28,7 @@ export default function ProductList({ products, loading, onRefresh }: ProductLis
   if (loading && products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.secondary}>Učitavanje…</Text>
+        <Text style={styles.secondary}>Loading…</Text>
       </View>
     );
   }
@@ -36,7 +36,7 @@ export default function ProductList({ products, loading, onRefresh }: ProductLis
   if (products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.secondary}>Nema unetih proizvoda. Dodajte QR ili ručni unos.</Text>
+        <Text style={styles.secondary}>No products yet. Add via QR or manual entry.</Text>
       </View>
     );
   }

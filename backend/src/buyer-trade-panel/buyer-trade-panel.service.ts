@@ -188,8 +188,8 @@ export class BuyerTradePanelService {
   }
 
   /**
-   * Apply Surge Pricing
-   * Admin može da primeni skok cene za određeni proizvod
+   * Apply surge pricing
+   * Admin can increase price for a specific product
    */
   async applySurgePricing(
     productName: string,
@@ -362,8 +362,8 @@ export class BuyerTradePanelService {
   }
 
   /**
-   * Pre-Order & Lock Price
-   * Kupac može da naruči unapred i zaključa cenu
+   * Pre-order and lock price
+   * Buyer can order ahead and lock the current price
    */
   async createPreOrder(
     buyerId: string,
@@ -530,8 +530,7 @@ export class BuyerTradePanelService {
   }
 
   /**
-   * Get Real-Time Prices with Categories and Availability Status
-   * Vraća trenutne cene za sve proizvode sa kategorijama i statusom dostupnosti
+   * Get real-time prices with categories and availability status
    */
   async getRealTimePrices() {
     const prices = await this.prisma.market_prices.findMany({

@@ -627,7 +627,7 @@ BioVera is a vertically integrated agrotech platform connecting European agricul
 
 ### Three-Tier Quality Control
 
-**Level 1: Eco-Safe Provera (Field)**
+**Level 1: Eco-Safe Audit (Field)**
 - Heavy metals absence check
 - Nitrate levels verification
 - PH value testing

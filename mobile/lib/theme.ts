@@ -1,16 +1,16 @@
 /**
- * Bio Vera Mobile Theme – usklađen sa web stilom (biovera.app)
- * Primarna boja #2D5A27, čist i minimalan izgled
+ * Bio Vera mobile theme – aligned with web (biovera.app)
+ * Primary #2D5A27, clean minimal look
  */
 export const theme = {
   colors: {
-    // Brand – isto kao na webu
+    // Brand – same as web
     primary: '#2D5A27',
     primaryHover: '#23471f',
     primaryLight: 'rgba(45, 90, 39, 0.08)',
-    accent: '#2D5A27', // isto kao primary, za kompatibilnost
+    accent: '#2D5A27', // same as primary (compat)
 
-    // Neutral – kao web (white, gray-200, gray-600, gray-900)
+    // Neutral – match web (white, gray-200, gray-600, gray-900)
     background: '#FFFFFF',
     surface: '#F8F9FA',
     surfaceElevated: '#FFFFFF',
@@ -32,7 +32,7 @@ export const theme = {
     info: '#3B82F6',
     infoLight: '#DBEAFE',
 
-    // Border – kao web (gray-200)
+    // Border – match web (gray-200)
     border: '#E5E7EB',
     borderLight: '#F3F4F6',
 
@@ -120,6 +120,14 @@ export const theme = {
       shadowOpacity: 0.1,
       shadowRadius: 8,
       elevation: 8,
+    },
+    /** Bottom sheets / modals (alias of lg, stronger than md) */
+    xl: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.12,
+      shadowRadius: 12,
+      elevation: 12,
     },
   },
 };

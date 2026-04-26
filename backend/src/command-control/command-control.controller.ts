@@ -18,6 +18,12 @@ export class CommandControlController {
     };
   }
 
+  @Get('dashboard')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'COORDINATOR')
+  async getDashboard() {
+    return this.commandControlService.getCommandDashboard();
+  }
+
   @Post('pause')
   @Roles('SUPER_ADMIN')
   async pauseSystem(

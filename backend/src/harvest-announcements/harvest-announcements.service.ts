@@ -8,9 +8,32 @@ export interface CreateHarvestAnnouncementDto {
   parcelId: string;
   announcementType: 'HARVEST' | 'PLANTING';
   cropType: string;
-  estimatedDate: string; // ISO date string
-  estimatedQuantity?: number; // kg
+  /** Planned harvest (picker) */
+  estimatedDate: string; // ISO date or datetime
+  estimatedQuantity?: number; // kg expected
+  /** Planned loading window (optional) */
+  plannedLoadingStart?: string; // ISO
+  plannedLoadingEnd?: string; // ISO
+  /** Load quantity (kg) — defaults to estimated quantity in UI if omitted */
+  loadQuantityKg?: number;
+  /** INDUSTRIAL | RETAIL | MIXED */
+  marketChannel?: string;
+  qualityGrade?: string;
+  sortingSpec?: string;
   notes?: string;
+}
+
+export interface AdminUpdateHarvestAnnouncementDto {
+  status?: string;
+  adminNotes?: string;
+  actualDate?: string;
+  actualQuantity?: number;
+  plannedLoadingStart?: string | null;
+  plannedLoadingEnd?: string | null;
+  loadQuantityKg?: number | null;
+  marketChannel?: string | null;
+  qualityGrade?: string | null;
+  sortingSpec?: string | null;
 }
 
 @Injectable()
@@ -42,6 +65,11 @@ export class HarvestAnnouncementsService {
     if (!parcel) {
       throw new ForbiddenException('Parcel not found or access denied');
     }
+    if (!parcel.approvedAt) {
+      throw new ForbiddenException(
+        'Harvest and planting announcements require an administrator-approved parcel.',
+      );
+    }
 
     // 2. PHI Check: Block harvest if Pre-Harvest Interval not elapsed
     const { date: earliestHarvest, reason } = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
@@ -62,6 +90,12 @@ export class HarvestAnnouncementsService {
         cropType: dto.cropType,
         estimatedDate: new Date(dto.estimatedDate),
         estimatedQuantity: dto.estimatedQuantity,
+        plannedLoadingStart: dto.plannedLoadingStart ? new Date(dto.plannedLoadingStart) : undefined,
+        plannedLoadingEnd: dto.plannedLoadingEnd ? new Date(dto.plannedLoadingEnd) : undefined,
+        loadQuantityKg: dto.loadQuantityKg ?? undefined,
+        marketChannel: dto.marketChannel ?? undefined,
+        qualityGrade: dto.qualityGrade ?? undefined,
+        sortingSpec: dto.sortingSpec ?? undefined,
         notes: dto.notes,
         status: 'PENDING',
         updatedAt: new Date(),
@@ -152,6 +186,54 @@ export class HarvestAnnouncementsService {
       data: {
         status,
         confirmedAt: status === 'CONFIRMED' ? new Date() : announcement.confirmedAt,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  async findOneAdmin(announcementId: string) {
+    const a = await this.prisma.harvest_announcements.findUnique({
+      where: { id: announcementId },
+      include: {
+        parcel: { include: { estates: { include: { users: true } } } },
+        user: true,
+      },
+    });
+    if (!a) {
+      throw new NotFoundException('Announcement not found');
+    }
+    return a;
+  }
+
+  async adminUpdate(announcementId: string, dto: AdminUpdateHarvestAnnouncementDto) {
+    await this.findOneAdmin(announcementId);
+    return this.prisma.harvest_announcements.update({
+      where: { id: announcementId },
+      data: {
+        ...(dto.status != null
+          ? {
+              status: dto.status,
+              ...(dto.status === 'CONFIRMED' ? { confirmedAt: new Date() } : {}),
+            }
+          : {}),
+        ...(dto.adminNotes !== undefined ? { adminNotes: dto.adminNotes } : {}),
+        ...(dto.actualDate ? { actualDate: new Date(dto.actualDate) } : {}),
+        ...(dto.actualQuantity != null ? { actualQuantity: dto.actualQuantity } : {}),
+        ...(dto.plannedLoadingStart !== undefined
+          ? { plannedLoadingStart: dto.plannedLoadingStart ? new Date(dto.plannedLoadingStart) : null }
+          : {}),
+        ...(dto.plannedLoadingEnd !== undefined
+          ? { plannedLoadingEnd: dto.plannedLoadingEnd ? new Date(dto.plannedLoadingEnd) : null }
+          : {}),
+        ...(dto.loadQuantityKg !== undefined ? { loadQuantityKg: dto.loadQuantityKg } : {}),
+        ...(dto.marketChannel !== undefined ? { marketChannel: dto.marketChannel } : {}),
+        ...(dto.qualityGrade !== undefined ? { qualityGrade: dto.qualityGrade } : {}),
+        ...(dto.sortingSpec !== undefined ? { sortingSpec: dto.sortingSpec } : {}),
+        updatedAt: new Date(),
+      },
+      include: {
+        parcel: { include: { estates: { include: { users: true } } } },
+        user: true,
       },
     });
   }
@@ -170,16 +252,19 @@ export class HarvestAnnouncementsService {
     });
 
     const farmerName = `${announcement.user?.firstName || ''} ${announcement.user?.lastName || ''}`.trim();
-    const estateName = announcement.parcel?.estates?.name || 'Unknown Estate';
-    const announcementTypeLabel = announcement.announcementType === 'HARVEST' ? 'branje' : 'sadnicu';
+    const estateName = announcement.parcel?.estates?.name || 'Unknown estate';
+    const typeLabel = announcement.announcementType === 'HARVEST' ? 'Harvest plan' : 'Planting plan';
+    const ch = announcement.marketChannel
+      ? ` · ${String(announcement.marketChannel).toLowerCase()}`
+      : '';
 
     for (const admin of admins) {
       await this.notificationsService.create({
         userId: admin.id,
         type: 'ACTION_REQUIRED',
-        title: `New harvest announcement: ${announcementTypeLabel}`,
-        message: `${farmerName} announced ${announcementTypeLabel}: ${announcement.cropType} - ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (${announcement.estimatedQuantity}kg)` : ''}`,
-        actionUrl: `/admin/harvest-announcements/${announcement.id}`,
+        title: `New ${typeLabel.toLowerCase()}: ${estateName}`,
+        message: `${farmerName}: ${announcement.cropType} — ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (~${announcement.estimatedQuantity} kg)` : ''}${ch}. Review in Harvest plans.`,
+        actionUrl: `/admin/harvest-announcements?id=${announcement.id}`,
       });
     }
   }

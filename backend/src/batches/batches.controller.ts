@@ -34,6 +34,16 @@ export class BatchesController {
     return this.batchesService.reportQualityIssue(batchId, req.user.id, body.issue);
   }
 
+  @Post(':batchId/packing-flow')
+  @UseGuards(JwtAuthGuard)
+  async recordPackingFlow(
+    @Param('batchId') batchId: string,
+    @Body() body: { latitude: number; longitude: number; completedAt?: string },
+    @Request() req: any,
+  ) {
+    return this.batchesService.recordPackingFlowCheck(req.user.id, batchId, body);
+  }
+
   @Get(':batchId/traceability')
   async getTraceability(@Param('batchId') batchId: string) {
     return this.batchesService.getBatchTraceability(batchId);

@@ -72,10 +72,10 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.btn} onPress={takePhoto}>
             <Camera size={24} color={theme.colors.primary} strokeWidth={1} />
-            <Text style={styles.btnText}>Uslikaj</Text>
+            <Text style={styles.btnText}>{t('producer.certifications.takePhoto')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btn} onPress={pickImage}>
-            <Text style={styles.btnText}>Izaberi iz galerije</Text>
+            <Text style={styles.btnText}>{t('producer.certifications.chooseFromGallery')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -83,7 +83,7 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
           <Image source={{ uri: photoUri }} style={styles.preview} resizeMode="cover" />
           <View style={styles.actions}>
             <TouchableOpacity onPress={() => setPhotoUri(null)} style={styles.cancelBtn}>
-              <Text style={styles.cancelBtnText}>Ukloni</Text>
+              <Text style={styles.cancelBtnText}>{t('producer.certifications.removePhoto')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.saveBtn, saving && styles.saveBtnDisabled]}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Package, Camera, FilePlus, Award, Calculator, ShieldAlert, TrendingUp, MapPinned } from 'lucide-react-native';
+import { Package, Camera, FilePlus, Award, Calculator, ShieldAlert, TrendingUp, MapPinned, Sprout } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
 export interface QuickActionsHandlers {
@@ -14,6 +14,7 @@ export interface QuickActionsHandlers {
   onReportHarvest: () => void;
   onVeraInsights: () => void;
   onEstates: () => void;
+  onFieldSeason: () => void;
 }
 
 const cardStyle = {
@@ -37,6 +38,15 @@ export default function QuickActionsSection({ handlers }: { handlers: QuickActio
           {t('producer.dashboard.quickActions')}
         </Text>
         <View style={{ gap: theme.spacing.sm }}>
+          <TouchableOpacity onPress={handlers.onFieldSeason} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
+              <Sprout size={22} color={theme.colors.primary} strokeWidth={1.5} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.fieldSeason')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.dashboard.fieldSeasonDesc')}</Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handlers.onMyProducts} activeOpacity={0.7} style={cardStyle}>
             <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
               <Package size={22} color={theme.colors.primary} strokeWidth={1.5} />

@@ -10,8 +10,8 @@ import { materialValidator } from '../../lib/integrity-guard';
 
 /**
  * QR/Barcode Scanner Screen
- * - returnTo=products: za Moji proizvodi – skenirani QR se šalje u formu (bez whitelist provere)
- * - inače: validacija prema whitelist-u (field log / materijali)
+ * - returnTo=products: for My products – scanned QR is passed to the form (no whitelist)
+ * - otherwise: validate against whitelist (field log / materials)
  */
 export default function ScannerScreen() {
   const { t } = useTranslation();

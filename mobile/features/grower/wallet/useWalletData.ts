@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.178.27:3000';
+import { API_URL } from '../../../lib/api-url';
 
 export interface WalletData {
   id: string;

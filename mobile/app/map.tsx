@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';

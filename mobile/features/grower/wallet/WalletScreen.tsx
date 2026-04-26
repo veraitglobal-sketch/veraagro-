@@ -15,7 +15,7 @@ import { TransactionItem } from './TransactionItem';
 
 /**
  * Wallet – prikaz stanja i transakcija (growers).
- * App route: app/(producer)/(tabs)/wallet.tsx samo renderuje ovaj screen.
+ * App route: app/(producer)/(tabs)/wallet.tsx renders this screen.
  */
 export default function WalletScreen() {
   const { t } = useTranslation();

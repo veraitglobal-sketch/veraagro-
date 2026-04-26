@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, standardEngineAPI } from '@/lib/api';
+import { growerNavItems } from '@/lib/grower-nav';
 import { useAuth } from '@/lib/auth';
 import {
   Package,
@@ -20,14 +21,7 @@ import {
   QrCode,
 } from 'lucide-react';
 
-const navItems = [
-  { href: '/grower', label: 'Dashboard', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/portal', label: 'Mission Tracker', icon: <Truck className="w-5 h-5" /> },
-  { href: '/grower/batches', label: 'My Batches', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/materials', label: 'Materials', icon: <Package className="w-5 h-5" /> },
-  { href: '/grower/quality-entry', label: 'Quality Entry', icon: <CheckCircle className="w-5 h-5" /> },
-  { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <AlertCircle className="w-5 h-5" /> },
-];
+const navItems = growerNavItems;
 
 interface Batch {
   id: string;

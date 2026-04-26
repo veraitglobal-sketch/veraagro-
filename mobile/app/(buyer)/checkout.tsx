@@ -42,6 +42,15 @@ export default function CheckoutScreen() {
       // Create order for each product (or combine into one order)
       // For simplicity, we'll create one order with all items
       const firstItem = items[0];
+      const hasReservation = items.some((i) => i.lineKind === 'reservation');
+      const deliveryNotes = [
+        hasReservation
+          ? 'Cart includes reserved lines — treat delivery timing as subject to harvest confirmation.'
+          : null,
+        notes.trim() || null,
+      ]
+        .filter(Boolean)
+        .join('\n\n');
       const orderData = {
         estateId: firstItem.product.estate.id,
         productName: firstItem.product.productName,
@@ -54,7 +63,7 @@ export default function CheckoutScreen() {
           postalCode,
           country,
         },
-        deliveryNotes: notes,
+        deliveryNotes: deliveryNotes || undefined,
       };
 
       const order = await ordersAPI.create(orderData);
