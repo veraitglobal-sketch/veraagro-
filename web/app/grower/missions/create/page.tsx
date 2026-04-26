@@ -49,6 +49,15 @@ export default function CreateMissionPage() {
     loadBatches();
   }, []);
 
+  // After filtering to PACKED / QUALITY_VERIFIED, clear selection if that lot is no longer in the list
+  useEffect(() => {
+    setFormData((prev) => {
+      if (!prev.batchId) return prev;
+      if (batches.some((b) => b.id === prev.batchId)) return prev;
+      return { ...prev, batchId: '' };
+    });
+  }, [batches]);
+
   const loadBatches = async () => {
     try {
       setBatchesLoading(true);

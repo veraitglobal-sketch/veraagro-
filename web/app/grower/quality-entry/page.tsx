@@ -41,7 +41,9 @@ export default function QualityEntryPage() {
         const data = await batchesAPI.getAll();
         const list = Array.isArray(data) ? data : [];
         setBatches(
-          list.map((b: any) => ({
+          list
+            .filter((b: any) => b?.id)
+            .map((b: any) => ({
             id: b.id,
             batchId: b.batchId,
             productName: b.productName,
@@ -56,6 +58,13 @@ export default function QualityEntryPage() {
       }
     })();
   }, []);
+
+  // Stale lot after status change / navigation: <select> value must still exist in options
+  useEffect(() => {
+    if (!selectedBatch) return;
+    if (batches.some((b) => b.id === selectedBatch)) return;
+    setSelectedBatch('');
+  }, [batches, selectedBatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;

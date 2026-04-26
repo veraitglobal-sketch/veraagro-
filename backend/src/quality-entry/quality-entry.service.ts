@@ -34,9 +34,9 @@ export class QualityEntryService {
    * — Simple (grower app): `qualityScore` and/or `notes` only; optional photos/weather can be added later in web.
    */
   async createQualityEntry(userId: string, dto: CreateQualityEntryDto) {
-    // Verify batch exists and belongs to user
-    const batch = await this.prisma.batches.findUnique({
-      where: { id: dto.batchId },
+    // Internal UUID or public lot code (e.g. BATCH-2026-0001) — list UIs may send either
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: dto.batchId }, { batchId: dto.batchId }] },
       include: {
         estates: {
           include: {
@@ -50,12 +50,17 @@ export class QualityEntryService {
       throw new BadRequestException(`Batch ${dto.batchId} not found`);
     }
 
-    if (batch.estates.users.id !== userId) {
+    const ownerId = batch.estates?.users?.id;
+    const isEstateOwner = ownerId === userId;
+    const isHarvester = batch.harvestedByUserId === userId;
+    if (!isEstateOwner && !isHarvester) {
       throw new ForbiddenException('You can only create quality entries for your own batches');
     }
 
+    const batchIdFk = batch.id;
+
     const existing = await this.prisma.quality_entries.findUnique({
-      where: { batchId: dto.batchId },
+      where: { batchId: batchIdFk },
     });
 
     if (existing) {
@@ -91,7 +96,7 @@ export class QualityEntryService {
       const qualityEntry = await this.prisma.quality_entries.create({
         data: {
           id: crypto.randomUUID(),
-          batchId: dto.batchId,
+          batchId: batchIdFk,
           preCoolingStartTime: new Date(dto.preCoolingStartTime!),
           weatherAtHarvest: dto.weatherAtHarvest as any,
           visualGradePhotos: dto.visualGradePhotos!,
@@ -105,7 +110,7 @@ export class QualityEntryService {
       });
 
       await this.prisma.batches.update({
-        where: { id: dto.batchId },
+        where: { id: batchIdFk },
         data: { status: 'QUALITY_VERIFIED' },
       });
 
@@ -114,8 +119,8 @@ export class QualityEntryService {
           id: crypto.randomUUID(),
           eventType: 'QUALITY_ENTRY',
           entityType: 'Batch',
-          entityId: dto.batchId,
-          batchId: dto.batchId,
+          entityId: batchIdFk,
+          batchId: batchIdFk,
           performedByUserId: userId,
           newValue: {
             qualityEntryId: qualityEntry.id,
@@ -146,7 +151,7 @@ export class QualityEntryService {
     const qualityEntry = await this.prisma.quality_entries.create({
       data: {
         id: crypto.randomUUID(),
-        batchId: dto.batchId,
+        batchId: batchIdFk,
         preCoolingStartTime: new Date(),
         weatherAtHarvest: weatherPlaceholder as any,
         visualGradePhotos: [],
@@ -160,7 +165,7 @@ export class QualityEntryService {
     });
 
     await this.prisma.batches.update({
-      where: { id: dto.batchId },
+      where: { id: batchIdFk },
       data: { status: 'QUALITY_VERIFIED' },
     });
 
@@ -169,8 +174,8 @@ export class QualityEntryService {
         id: crypto.randomUUID(),
         eventType: 'QUALITY_ENTRY',
         entityType: 'Batch',
-        entityId: dto.batchId,
-        batchId: dto.batchId,
+        entityId: batchIdFk,
+        batchId: batchIdFk,
         performedByUserId: userId,
         newValue: {
           qualityEntryId: qualityEntry.id,

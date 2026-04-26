@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
+import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 
 const navItems = growerNavItems;
 
@@ -180,32 +181,28 @@ export default function GrowerMaterialsPage() {
           </p>
         </div>
 
+        <GrowerSupplyFlowCard context="materials" />
+
         <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-800 shadow-sm">
-          <p className="font-medium text-gray-900 mb-2">How this relates to suppliers</p>
+          <p className="font-medium text-gray-900 mb-2">Quick refs</p>
           <ul className="list-disc space-y-1.5 pl-5 text-gray-700">
             <li>
-              <strong>Materials (this page)</strong> is the in-app <strong>catalog</strong>: when you &quot;Purchase&quot; here, the
-              platform increases your <strong>balances</strong> and (for each label roll) records a <strong>serial number</strong> in
-              the system. Those IDs are what you use on <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
+              <a href="#supply-flow" className="text-[#2D5A27] font-medium underline">Full supply &amp; transport path</a>{' '}
+              (partners, B2B, serials, harvest, transport).
             </li>
             <li>
-              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
-                Suppliers &amp; orders
-              </Link>{' '}
-              is for B2B: <strong>messages and orders with your approved material partners / distributors</strong> (regional
-              supply, paperwork, or when the catalog is empty). It does not replace the balances here by itself—use both if
-              you pick up stock offline and the platform should reflect it, contact your partner or support.
+              Serials from <strong>label roll</strong> purchases are used on{' '}
+              <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
             </li>
             <li>
-              If you cannot order here or the page errors, go to{' '}
-              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
-                Suppliers &amp; orders
-              </Link>{' '}
-              to reach your supplier, or{' '}
-              <Link href="/contact" className="text-[#2D5A27] font-medium underline">
-                Contact
-              </Link>
-              .
+              B2B with partners:{' '}
+              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">Suppliers &amp; orders</Link>{' '}
+              (directory, orders, <strong>Received at farm</strong>).
+            </li>
+            <li>
+              Problems with this page:{' '}
+              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">message your partner</Link>{' '}
+              or <Link href="/contact" className="text-[#2D5A27] font-medium underline">Contact</Link>.
             </li>
           </ul>
         </div>

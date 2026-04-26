@@ -48,7 +48,9 @@ export default function CompliancePhotosPage() {
         const data = await batchesAPI.getAll();
         const list = Array.isArray(data) ? data : [];
         setBatches(
-          list.map((b: any) => ({
+          list
+            .filter((b: any) => b?.id)
+            .map((b: any) => ({
             id: b.id,
             batchId: b.batchId,
             productName: b.productName,
@@ -63,6 +65,12 @@ export default function CompliancePhotosPage() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (!selectedBatch) return;
+    if (batches.some((b) => b.id === selectedBatch)) return;
+    setSelectedBatch('');
+  }, [batches, selectedBatch]);
 
   const handlePhotoUpload = (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

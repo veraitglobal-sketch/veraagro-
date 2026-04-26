@@ -9,6 +9,7 @@ import { usersAPI } from '@/lib/api';
 import Link from 'next/link';
 import { Info, List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
 import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
+import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 
 type MapItem = {
   id: string;
@@ -239,6 +240,9 @@ export default function GrowerWhereToBuyPage() {
             <h1 className="text-3xl font-light text-gray-900">Suppliers &amp; orders</h1>
             <p className="text-sm text-gray-600 mt-1">Directory, material orders, and partner messages in one place.</p>
           </div>
+
+          <GrowerSupplyFlowCard context="suppliers" />
+
           <section className="rounded-lg border border-gray-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
             <p className="text-sm text-gray-700 leading-relaxed">
               Choose a <strong>country</strong> and optionally a <strong>city</strong>. Use{' '}

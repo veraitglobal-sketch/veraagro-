@@ -28,9 +28,14 @@ export function useQualityEntryData() {
     try {
       setLoading(true);
       const data = await batchesAPI.getAll();
-      const packedBatches = (data || []).filter((b: BatchItem) => b.status === 'PACKED');
+      const raw = Array.isArray(data) ? data : [];
+      const packedBatches = raw.filter((b: BatchItem) => b.status === 'PACKED');
       setBatches(packedBatches);
-      setSelectedBatchId(prev => prev || (packedBatches[0]?.id ?? ''));
+      // Keep prior selection if still in list; else first packed batch or clear (stale id → form must not break)
+      setSelectedBatchId((prev) => {
+        if (prev && packedBatches.some((b) => b.id === prev)) return prev;
+        return packedBatches[0]?.id ?? '';
+      });
     } catch (error) {
       console.error('Error loading batches:', error);
     } finally {

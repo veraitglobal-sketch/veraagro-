@@ -104,13 +104,16 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
           Direct material orders and conversations with partners. Find new suppliers in the list on the left.
         </p>
         <p className="text-xs text-gray-500 font-light mt-2 leading-relaxed">
-          Flow: the <strong>supplier</strong> updates the order status (e.g. CONFIRMED, FULFILLED). When the physical
-          goods reach your farm, you click <strong>Received at farm</strong> so the system records that the line is
-          available to you. (This is separate from the in-app{' '}
+          <strong>Status</strong> is updated by the supplier. Use <strong>Received at farm</strong> when the shipment
+          arrives. For the full end-to-end path (B2B → balances → barcodes → harvest → transport), see the{' '}
+          <a href="#supply-flow" className="text-[#2D5A27] underline">
+            step-by-step block
+          </a>{' '}
+          at the top of this page, and{' '}
           <Link href="/grower/materials" className="text-[#2D5A27] underline">
             Materials
           </Link>{' '}
-          catalog balances, which you top up with Purchase on that page unless your contract says otherwise.)
+          for the in-app catalog and serials.
         </p>
       </div>
 
