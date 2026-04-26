@@ -29,12 +29,15 @@ export default function PartnerLoginScreen() {
     try {
       const response = await login(username, password);
       
-      // Verify user is a producer (FARMER or PARTNER role)
       const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      const isProducer = userRoles.some((role: string) => 
-        ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role)
+      if (userRoles.includes('MATERIAL_SUPPLIER')) {
+        router.replace('/(supplier)/dashboard' as any);
+        return;
+      }
+      const isProducer = userRoles.some((role: string) =>
+        ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role),
       );
-      
+
       if (isProducer) {
         if (params.redirect === 'estates/new') {
           router.replace('/(producer)/estates/new');
@@ -46,7 +49,7 @@ export default function PartnerLoginScreen() {
       } else {
         Alert.alert(
           t('error') || 'Error',
-          t('partnerLogin.notProducer') || 'This account is not authorized for producer access'
+          t('partnerLogin.notProducer') || 'This account is not authorized for producer or partner store access',
         );
         await logout();
       }

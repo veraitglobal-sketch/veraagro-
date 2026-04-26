@@ -30,7 +30,9 @@ export default function LoginScreen() {
     try {
       const response = await login(username, password);
       const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      if (userRoles.some((role: string) => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
+      if (userRoles.includes('MATERIAL_SUPPLIER')) {
+        router.replace('/(supplier)/dashboard' as any);
+      } else if (userRoles.some((role: string) => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
         router.replace('/(producer)/(tabs)');
       } else if (userRoles.some((role: string) => ['BUYER', 'CUSTOMER'].includes(role))) {
         router.replace('/(buyer)/shop');

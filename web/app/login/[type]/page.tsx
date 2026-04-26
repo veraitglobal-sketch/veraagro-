@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
+import { getPathAfterWebLogin } from '@/lib/post-login-redirect';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-export default function LoginPage() {
+function LoginTypePageInner() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
   const [partnerCode, setPartnerCode] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -25,9 +28,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(partnerCode, password);
-      // Redirect to home page after login (Navigation will show Dashboard link)
-      router.push('/');
+      const u = await login(partnerCode, password);
+      router.push(getPathAfterWebLogin(u, returnTo));
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -195,5 +197,19 @@ export default function LoginPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <p className="text-sm text-gray-500">Loading…</p>
+        </div>
+      }
+    >
+      <LoginTypePageInner />
+    </Suspense>
   );
 }

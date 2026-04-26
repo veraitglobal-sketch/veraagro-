@@ -1,0 +1,131 @@
+import { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { b2bSuppliersAPI } from '../../lib/api';
+import { theme } from '../../lib/theme';
+
+export default function SupplierMessagesScreen() {
+  const [threads, setThreads] = useState<any[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+
+  const loadThreads = async () => {
+    try {
+      const t = await b2bSuppliersAPI.getMyThreads();
+      setThreads(Array.isArray(t) ? t : []);
+    } catch (e) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'Load failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadThreads();
+  }, []);
+
+  const openThread = async (id: string) => {
+    setActiveId(id);
+    try {
+      const m = await b2bSuppliersAPI.getThreadMessages(id);
+      setMessages(Array.isArray(m) ? m : []);
+    } catch (e) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'Failed');
+    }
+  };
+
+  const send = async () => {
+    if (!activeId || !text.trim()) return;
+    setSending(true);
+    try {
+      await b2bSuppliersAPI.postMessage(activeId, text.trim());
+      setText('');
+      setMessages((await b2bSuppliersAPI.getThreadMessages(activeId)) || []);
+      await loadThreads();
+    } catch (e) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'Send failed');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <ScrollView style={{ width: '38%', maxWidth: 200, borderRightWidth: 1, borderColor: theme.colors.border }}>
+          {threads.map((t) => (
+            <TouchableOpacity
+              key={t.id}
+              onPress={() => void openThread(t.id)}
+              style={{
+                padding: 12,
+                backgroundColor: activeId === t.id ? theme.colors.primaryLight : 'transparent',
+              }}
+            >
+              <Text style={{ fontSize: 12, color: theme.colors.text.primary }} numberOfLines={2}>
+                {t.farmer
+                  ? `${t.farmer.firstName || ''} ${t.farmer.lastName || ''}\n${t.farmer.partnerCode || ''}`
+                  : t.id}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <View style={{ flex: 1, padding: 8 }}>
+          {!activeId ? (
+            <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 32 }}>Select a thread</Text>
+          ) : (
+            <>
+              <ScrollView style={{ flex: 1, marginBottom: 8 }} keyboardShouldPersistTaps="handled">
+                {messages.map((m) => (
+                  <View key={m.id} style={{ marginBottom: 10 }}>
+                    <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{m.body}</Text>
+                    <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginTop: 2 }}>
+                      {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+              <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                <TextInput
+                  value={text}
+                  onChangeText={setText}
+                  placeholder="Reply…"
+                  style={{
+                    flex: 1,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    borderRadius: 8,
+                    padding: 10,
+                    fontSize: 14,
+                    maxHeight: 100,
+                  }}
+                  multiline
+                />
+                <TouchableOpacity
+                  onPress={() => void send()}
+                  disabled={sending}
+                  style={{ backgroundColor: theme.colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8 }}
+                >
+                  <Text style={{ color: '#fff' }}>Send</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+}

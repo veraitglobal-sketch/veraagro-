@@ -555,9 +555,13 @@ export default function SuppliersPage() {
               your application. Our team will contact you to schedule a meeting; when you are approved we create
               your partner store account.
             </p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-gray-500 mt-2 space-x-3">
               <Link href="/suppliers/status" className="text-[#2D5A27] underline">
                 Check status with your reference
+              </Link>
+              <span className="text-gray-300">·</span>
+              <Link href="/login" className="text-[#2D5A27] underline">
+                Partner store login
               </Link>
             </p>
           </div>

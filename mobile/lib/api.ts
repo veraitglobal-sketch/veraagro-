@@ -372,6 +372,30 @@ export const b2bSuppliersAPI = {
     const response = await api.post('/b2b-suppliers/orders', payload);
     return response.data;
   },
+  getMyProfile: async () => {
+    const response = await api.get('/b2b-suppliers/my/profile');
+    return response.data;
+  },
+  getIncomingOrders: async () => {
+    const response = await api.get('/b2b-suppliers/orders/incoming');
+    return response.data || [];
+  },
+  getMyThreads: async () => {
+    const response = await api.get('/b2b-suppliers/threads/mine-as-supplier');
+    return response.data || [];
+  },
+  getThreadMessages: async (threadId: string) => {
+    const response = await api.get(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`);
+    return response.data || [];
+  },
+  postMessage: async (threadId: string, body: string) => {
+    const response = await api.post(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`, { body });
+    return response.data;
+  },
+  patchOrderStatus: async (orderId: string, data: { status: string; noteFromSupplier?: string }) => {
+    const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
+    return response.data;
+  },
 };
 
 // Field Entries API

@@ -442,6 +442,45 @@ export const partnerApplicationsAdminAPI = {
   },
 };
 
+/** Logged-in material supplier: orders + threads + own profile (web + mobile) */
+export const b2bSupplierPortalAPI = {
+  getMyProfile: async () => {
+    const response = await api.get('/b2b-suppliers/my/profile');
+    return response.data as Record<string, unknown> | null;
+  },
+  getIncomingOrders: async () => {
+    const response = await api.get('/b2b-suppliers/orders/incoming');
+    return (response.data || []) as Array<{
+      id: string;
+      status: string;
+      createdAt: string;
+      items: unknown;
+      noteFromFarmer?: string;
+      farmer?: { firstName?: string; lastName?: string; partnerCode?: string };
+    }>;
+  },
+  getMyThreads: async () => {
+    const response = await api.get('/b2b-suppliers/threads/mine-as-supplier');
+    return (response.data || []) as Array<{
+      id: string;
+      lastMessageAt: string;
+      farmer?: { firstName?: string; lastName?: string; partnerCode?: string };
+    }>;
+  },
+  getThreadMessages: async (threadId: string) => {
+    const response = await api.get(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`);
+    return (response.data || []) as Array<{ id: string; body: string; createdAt: string }>;
+  },
+  postMessage: async (threadId: string, body: string) => {
+    const response = await api.post(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`, { body });
+    return response.data;
+  },
+  patchOrderStatus: async (orderId: string, data: { status: string; noteFromSupplier?: string }) => {
+    const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
+    return response.data;
+  },
+};
+
 export const b2bSuppliersAdminAPI = {
   createStore: async (data: {
     partnerCode?: string;

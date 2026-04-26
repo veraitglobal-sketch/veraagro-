@@ -13,7 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (partnerCode: string, password: string) => Promise<void>;
+  login: (partnerCode: string, password: string) => Promise<User | null>;
   logout: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -33,7 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (partnerCode: string, password: string) => {
     const response = await authAPI.login(partnerCode, password);
-    setUser(response.user);
+    const u = (response as { user?: User }).user ?? null;
+    if (u) setUser(u);
+    return u;
   };
 
   const logout = () => {
