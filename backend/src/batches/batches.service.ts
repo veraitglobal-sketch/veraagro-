@@ -60,8 +60,18 @@ export class BatchesService {
       Math.floor(Math.random() * 10000),
     ).padStart(4, '0')}`;
 
+    const harvestDate =
+      data.harvestDate instanceof Date
+        ? data.harvestDate
+        : new Date(data.harvestDate as string | number);
+    if (Number.isNaN(harvestDate.getTime())) {
+      throw new BadRequestException('Invalid harvest date');
+    }
+
+    const now = new Date();
     const batch = await this.prisma.batches.create({
       data: {
+        id: randomUUID(),
         batchId,
         estateId: data.estateId,
         parcelId: data.parcelId,
@@ -69,26 +79,24 @@ export class BatchesService {
         productName: data.productName,
         quantity: data.quantity,
         unit: data.unit,
-        harvestDate: data.harvestDate,
+        harvestDate,
         status: 'PACKED',
+        updatedAt: now,
         locationHistory: [
           {
             hubId: null,
-            timestamp: new Date().toISOString(),
+            timestamp: now.toISOString(),
             status: 'PACKED',
             driverId: null,
           },
         ],
-      } as any,
+      },
     });
 
     // Register on blockchain if enabled (non-blocking; batch is already created)
     if (this.blockchainService.isEnabled()) {
       try {
-        const harvestDateStr =
-          data.harvestDate instanceof Date
-            ? data.harvestDate.toISOString().split('T')[0]
-            : new Date(data.harvestDate).toISOString().split('T')[0];
+        const harvestDateStr = harvestDate.toISOString().split('T')[0];
         const result = await this.blockchainService.registerBatch({
           batchId,
           estateId: data.estateId,
@@ -105,10 +113,7 @@ export class BatchesService {
         });
         this.logger.log(`Batch ${batchId} registered on blockchain: ${result.txHash}`);
         const nowIso = new Date().toISOString();
-        const harvestDateIso =
-          data.harvestDate instanceof Date
-            ? data.harvestDate.toISOString()
-            : new Date(data.harvestDate).toISOString();
+        const harvestDateIso = harvestDate.toISOString();
         try {
           await this.blockchainService.recordEvent(batchId, ChainEventType.HARVEST, {
             timestamp: harvestDateIso,

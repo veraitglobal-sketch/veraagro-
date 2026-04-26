@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { Truck } from 'lucide-react';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -100,17 +101,18 @@ interface FinancialStatus {
 }
 
 export default function GrowerPortalPage() {
-  const { user } = useAuth();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [missions, setMissions] = useState<MissionTracker[]>([]);
   const [journeyMap, setJourneyMap] = useState<JourneyMap | null>(null);
   const [consumerFeedback, setConsumerFeedback] = useState<ConsumerFeedback | null>(null);
   const [financialStatus, setFinancialStatus] = useState<FinancialStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setListError(null);
         const token = localStorage.getItem('token');
         const [missionsRes, feedbackRes, financialRes] = await Promise.all([
           fetch(
@@ -138,7 +140,15 @@ export default function GrowerPortalPage() {
         ]);
 
         const missionsData = await missionsRes.json();
-        setMissions(missionsData);
+        if (!missionsRes.ok) {
+          const msg =
+            (missionsData && typeof missionsData.message === 'string' && missionsData.message) ||
+            `Could not load missions (${missionsRes.status})`;
+          setListError(msg);
+          setMissions([]);
+        } else {
+          setMissions(Array.isArray(missionsData) ? missionsData : []);
+        }
 
         if (selectedBatch && feedbackRes) {
           const feedbackData = await feedbackRes.json();
@@ -151,6 +161,8 @@ export default function GrowerPortalPage() {
         }
       } catch (err) {
         console.error('Error fetching data:', err);
+        setListError('Network error while loading missions. Check that the API is running and your connection.');
+        setMissions([]);
       } finally {
         setLoading(false);
       }
@@ -204,46 +216,99 @@ export default function GrowerPortalPage() {
   return (
     <SidebarLayout title="Mission Tracker" navItems={navItems}>
       <div className="space-y-6">
+        <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-700">
+          <p className="font-medium text-gray-900">What is this?</p>
+          <p className="mt-1 text-gray-600">
+            A <strong>mission</strong> is a transport run: when you request pickup (from{' '}
+            <Link href="/grower/missions/create" className="text-[#2D5A27] underline font-medium">
+              Request Transport
+            </Link>
+            ), logistics gets a job to collect your batch. Here you follow that job—status, route on the map, and
+            after delivery you can see buyer feedback and payout-related info for the selected batch.
+          </p>
+        </div>
+
         {/* Mission Selector */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Active Missions</h2>
-          <div className="space-y-3">
-            {missions.map((mission) => (
-              <button
-                key={mission.missionId}
-                onClick={() => handleMissionSelect(mission.missionId)}
-                className={`w-full text-left p-4 rounded-lg border transition-colors ${
-                  selectedBatch === mission.batchId
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 hover:border-green-300'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{mission.missionNumber}</p>
-                    <p className="text-sm text-gray-600">
-                      {mission.productName} • {mission.quantity} {mission.unit}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Current: {mission.currentMilestone}
-                    </p>
+          <h2 className="text-lg font-semibold text-gray-900">Your active missions</h2>
+          <p className="text-sm text-gray-500 mt-1 mb-4">
+            Open a mission to load the journey map and (when available) ratings and financial status for that batch.
+          </p>
+
+          {listError && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+              {listError}
+            </div>
+          )}
+
+          <div className="space-y-3 min-h-[8rem]">
+            {missions.length > 0 ? (
+              missions.map((mission) => (
+                <button
+                  key={mission.missionId}
+                  type="button"
+                  onClick={() => handleMissionSelect(mission.missionId)}
+                  className={`w-full text-left p-4 rounded-lg border transition-colors ${
+                    selectedBatch === mission.batchId
+                      ? 'border-green-600 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{mission.missionNumber}</p>
+                      <p className="text-sm text-gray-600">
+                        {mission.productName} • {mission.quantity} {mission.unit}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Current: {mission.currentMilestone}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span
+                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                          mission.status === 'COMPLETED'
+                            ? 'bg-green-100 text-green-800'
+                            : mission.status === 'IN_TRANSIT'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {mission.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      mission.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                      mission.status === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {mission.status}
-                    </span>
-                  </div>
+                </button>
+              ))
+            ) : !listError ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50/80 px-6 py-10 text-center">
+                <Truck className="h-10 w-10 text-gray-300 mb-3" strokeWidth={1.25} />
+                <p className="text-gray-900 font-medium">No active missions yet</p>
+                <p className="text-sm text-gray-600 mt-2 max-w-md">
+                  When you mark a batch ready and request transport, the pickup job appears here so you can track
+                  driver status and the route.
+                </p>
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/grower/missions/create"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#234a20]"
+                  >
+                    <Truck className="h-4 w-4" />
+                    Request transport
+                  </Link>
+                  <Link
+                    href="/grower/batches"
+                    className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    My batches
+                  </Link>
                 </div>
-              </button>
-            ))}
+              </div>
+            ) : null}
           </div>
         </motion.div>
 
