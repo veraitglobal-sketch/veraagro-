@@ -51,6 +51,16 @@ export default function CreateMissionPage() {
     stickerRollId: string | null;
   } | null>(null);
   const [complianceLoading, setComplianceLoading] = useState(false);
+  /**
+   * Track where the user last set values from — helps debug "where does this come from?"
+   * Coords are never loaded from the estate/batch in DB; they are only browser GPS or manual.
+   */
+  const [lineage, setLineage] = useState<{
+    coordFrom: 'none' | 'browser-gps' | 'typed';
+    addressFrom: 'none' | 'nominatim' | 'placeholder' | 'typed';
+  }>({ coordFrom: 'none', addressFrom: 'none' });
+  /** Nominatim often has no house number in OpenStreetMap at this pin — show hint */
+  const [addressMissingHouseNo, setAddressMissingHouseNo] = useState(false);
 
   useEffect(() => {
     loadBatches();
@@ -131,6 +141,7 @@ export default function CreateMissionPage() {
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+        setLineage((p) => ({ ...p, coordFrom: 'browser-gps' }));
         setFormData((prev) => ({
           ...prev,
           pickupLat: lat.toString(),
@@ -156,20 +167,36 @@ export default function CreateMissionPage() {
   const reverseGeocode = async (lat: number, lng: number) => {
     setAddressLookupLoading(true);
     setLocationHint(null);
+    setAddressMissingHouseNo(false);
     try {
       const response = await fetch(
         `/api/reverse-geocode?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lng))}`
       );
-      const data = (await response.json()) as { displayName?: string | null; error?: string };
+      const data = (await response.json()) as {
+        displayName?: string | null;
+        hasHouseNumber?: boolean;
+        error?: string;
+      };
       if (data.displayName) {
+        setLineage((p) => ({ ...p, addressFrom: 'nominatim' }));
+        if (data.hasHouseNumber === false) {
+          setAddressMissingHouseNo(true);
+        }
         setFormData((prev) => ({
           ...prev,
           pickupAddress: data.displayName as string,
           pickupLat: prev.pickupLat || String(lat),
           pickupLng: prev.pickupLng || String(lng),
         }));
+        if (process.env.NODE_ENV === 'development') {
+          // eslint-disable-next-line no-console
+          console.log('[Request transport] Address from Nominatim (OSM) for', lat, lng, {
+            hasHouseNumber: data.hasHouseNumber,
+          });
+        }
         return;
       }
+      setLineage((p) => ({ ...p, addressFrom: 'placeholder' }));
       setFormData((prev) => ({
         ...prev,
         pickupAddress:
@@ -181,6 +208,7 @@ export default function CreateMissionPage() {
       setLocationHint('Address lookup did not return a name. We filled a placeholder — please edit the address.');
     } catch (error) {
       console.error('Error reverse geocoding:', error);
+      setLineage((p) => ({ ...p, addressFrom: 'placeholder' }));
       setFormData((prev) => ({
         ...prev,
         pickupAddress:
@@ -454,6 +482,30 @@ export default function CreateMissionPage() {
                 </p>
               )}
               <p className="text-xs text-gray-500 mb-2">Or type lat/lng and address manually—no need to use GPS.</p>
+              <div className="mb-3 rounded-md border border-gray-200 bg-gray-50/80 px-3 py-2 text-xs text-gray-600 space-y-1">
+                <p className="font-medium text-gray-700">Data source (not from your batch in the database)</p>
+                <p>
+                  <span className="text-gray-500">Coordinates:</span>{' '}
+                  {lineage.coordFrom === 'browser-gps' && 'last set from this browser’s GPS (WGS-84).'}
+                  {lineage.coordFrom === 'typed' && 'you typed (or edited) the numbers in the fields.'}
+                  {lineage.coordFrom === 'none' && 'not set yet. Use the button or type lat/lng.'}
+                </p>
+                <p>
+                  <span className="text-gray-500">Address:</span>{' '}
+                  {lineage.addressFrom === 'nominatim' && 'from OpenStreetMap (Nominatim) after GPS. Street + number only if that point exists in the map data — not 100% from GPS.'}
+                  {lineage.addressFrom === 'placeholder' && 'a temporary line we filled when the geocoder had no name — you should fix it to the real farm gate if needed.'}
+                  {lineage.addressFrom === 'typed' && 'you typed in the box (or last edit was by you).'}
+                  {lineage.addressFrom === 'none' && 'not set from lookup yet — add it yourself for the driver.'}
+                </p>
+                <details className="pt-1 text-gray-500">
+                  <summary className="cursor-pointer text-[#2D5A27]">How to double-check in the browser</summary>
+                  <p className="mt-1 pl-0">
+                    Open <strong>DevTools</strong> (F12) → <strong>Network</strong> → after clicking the green button, look for
+                    the request to <code className="text-gray-800">/api/reverse-geocode</code> — that is the address lookup.
+                    The mission send goes to your API <code className="text-gray-800">POST /missions</code> (see axios in Network).
+                  </p>
+                </details>
+              </div>
 
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>
@@ -462,7 +514,10 @@ export default function CreateMissionPage() {
                     type="number"
                     step="any"
                     value={formData.pickupLat}
-                    onChange={(e) => setFormData({ ...formData, pickupLat: e.target.value })}
+                    onChange={(e) => {
+                      setLineage((p) => ({ ...p, coordFrom: 'typed' }));
+                      setFormData({ ...formData, pickupLat: e.target.value });
+                    }}
                     placeholder="e.g., 44.7866"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
                       errors.location ? 'border-red-500' : 'border-gray-300'
@@ -475,7 +530,10 @@ export default function CreateMissionPage() {
                     type="number"
                     step="any"
                     value={formData.pickupLng}
-                    onChange={(e) => setFormData({ ...formData, pickupLng: e.target.value })}
+                    onChange={(e) => {
+                      setLineage((p) => ({ ...p, coordFrom: 'typed' }));
+                      setFormData({ ...formData, pickupLng: e.target.value });
+                    }}
                     placeholder="e.g., 20.4489"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
                       errors.location ? 'border-red-500' : 'border-gray-300'
@@ -493,7 +551,11 @@ export default function CreateMissionPage() {
               </label>
               <textarea
                 value={formData.pickupAddress}
-                onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
+                onChange={(e) => {
+                  setLineage((p) => ({ ...p, addressFrom: 'typed' }));
+                  setAddressMissingHouseNo(false);
+                  setFormData({ ...formData, pickupAddress: e.target.value });
+                }}
                 placeholder="Enter full pickup address (e.g., Farm Name, Street, City, Country)"
                 rows={3}
                 required
@@ -502,6 +564,13 @@ export default function CreateMissionPage() {
                 }`}
               />
               {errors.pickupAddress && <p className="text-red-500 text-xs mt-1">{errors.pickupAddress}</p>}
+              {addressMissingHouseNo && (
+                <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mt-2">
+                  <strong>House or gate number not in the address.</strong> The public map (OpenStreetMap) often has no
+                  building number at your GPS point. Add the exact street and number, or a farm / gate name, so the
+                  driver knows where to stop.
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}

@@ -48,6 +48,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? (exceptionResponse as any).error || 'Error'
         : 'Error';
 
+    const isProd = process.env.NODE_ENV === 'production';
+    /** In dev: surface real unhandled error message; never send stack/DB details in production body. */
+    const debugUnwrapped =
+      !isProd &&
+      !(exception instanceof HttpException) &&
+      exception != null
+        ? {
+            name: (exception as Error)?.name,
+            message: (exception as Error)?.message || String(exception),
+          }
+        : undefined;
+
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
@@ -59,6 +71,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       (exceptionResponse as any).errors
         ? { errors: (exceptionResponse as any).errors }
         : {}),
+      ...(debugUnwrapped ? { debug: debugUnwrapped } : {}),
     });
   }
 }
