@@ -7,7 +7,7 @@ import { growerNavItems } from '@/lib/grower-nav';
 import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
 import Link from 'next/link';
-import { Info, List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
+import { List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
 import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 
@@ -89,6 +89,9 @@ export default function GrowerWhereToBuyPage() {
   const [nearMe, setNearMe] = useState(false);
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
+  const [geoHint, setGeoHint] = useState<string | null>(null);
+  /** On small screens: one primary pane at a time; desktop shows both columns. */
+  const [mobilePanel, setMobilePanel] = useState<'directory' | 'orders'>('directory');
 
   const load = useCallback(async () => {
     setErr(null);
@@ -209,77 +212,124 @@ export default function GrowerWhereToBuyPage() {
 
   const requestNearMe = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
-      alert('Location is not available in this browser.');
+      setGeoHint('Location is not available in this browser. Enter your city with the country filter, or type coordinates in another tool and pick the nearest result.');
       return;
     }
+    setGeoHint(null);
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setNearMe(true);
-        setLocating(false);
-      },
-      () => {
-        setLocating(false);
-        alert('Could not get your position. Check browser permissions and try again.');
-      },
-      { enableHighAccuracy: false, timeout: 18_000, maximumAge: 5 * 60_000 },
-    );
+    const ok = (pos: GeolocationPosition) => {
+      setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      setNearMe(true);
+      setLocating(false);
+      setGeoHint(null);
+    };
+    const fail = (msg: string) => {
+      setLocating(false);
+      setGeoHint(msg);
+    };
+    const opts: PositionOptions = { enableHighAccuracy: true, timeout: 40_000, maximumAge: 2 * 60_000 };
+    navigator.geolocation.getCurrentPosition(ok, (err) => {
+      if (err && typeof err === 'object' && 'code' in err && (err as GeolocationPositionError).code === 1) {
+        fail('Location permission was denied. Allow location for this site in the browser, or use country / city filters instead of “Nearest to me”.');
+        return;
+      }
+      // Retry once with looser settings (faster on weak GPS / Wi‑Fi)
+      navigator.geolocation.getCurrentPosition(
+        ok,
+        () =>
+          fail(
+            'Could not get GPS in time. Try again outdoors or with Wi‑Fi on, or sort by country / city; you can still use the list without “Nearest to me”.',
+          ),
+        { enableHighAccuracy: false, timeout: 25_000, maximumAge: 10 * 60_000 },
+      );
+    }, opts);
   };
 
   const clearNearMe = () => {
     setNearMe(false);
     setUserPos(null);
+    setGeoHint(null);
   };
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
       <SidebarLayout title="Suppliers & orders" navItems={growerNavItems}>
-        <div className="p-6 bg-gray-50 min-h-screen space-y-6">
-          <div className="mb-2">
-            <h1 className="text-3xl font-light text-gray-900">Suppliers &amp; orders</h1>
-            <p className="text-sm text-gray-600 mt-1">Directory, material orders, and partner messages in one place.</p>
-          </div>
+        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+          <div className="max-w-6xl mx-auto space-y-5">
+            <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Suppliers &amp; orders</h1>
+                <p className="text-sm text-gray-600 mt-1 max-w-2xl">
+                  Find a partner on the <strong>left</strong> (on desktop) or the <strong>Directory</strong> tab; track
+                  B2B lines on the <strong>right</strong> or <strong>My orders</strong> tab.
+                </p>
+              </div>
+              {!loading && productionCountry && (
+                <p className="text-xs text-gray-500 shrink-0 max-w-sm sm:text-right">
+                  Profile: <span className="font-medium text-gray-700">{productionCountry}</span>
+                  {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
+                    <span> — similar regions first (unless you use “Nearest to me”).</span>
+                  ) : (
+                    <span> — no directory rows for that country yet.</span>
+                  )}
+                </p>
+              )}
+            </header>
 
-          <GrowerSupplyFlowCard context="suppliers" variant="collapsible" />
-
-          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between gap-2 text-sm text-gray-600">
-            <p>
-              Filter the list by place, or open{' '}
-              <a href="#my-orders" className="text-[#2D5A27] font-medium underline">
-                My orders &amp; messages
-              </a>{' '}
-              for B2B status and threads.
-            </p>
-            {!loading && productionCountry && (
-              <p className="text-xs text-gray-500 sm:text-right">
-                Profile: <span className="font-medium text-gray-700">{productionCountry}</span>
-                {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
-                  <span> — similar regions first (unless Nearest to me).</span>
-                ) : (
-                  <span> — no rows for that country yet (after approval they show here).</span>
-                )}
-              </p>
+            {err && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
             )}
-          </div>
 
-          <details className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 shadow-sm list-none">
-            <summary className="cursor-pointer font-medium text-gray-800 list-none flex items-center gap-2 py-1 [&::-webkit-details-marker]:hidden">
-              <Info className="h-4 w-4 shrink-0 text-amber-700" />
-              When a partner or retail row appears in the directory
-            </summary>
-            <p className="pl-6 pb-1 text-xs text-gray-600 leading-relaxed">
-              Partner stores need an address <strong>approved</strong> for the public list. Retail pickup points come
-              from hub records.
+            {/* Mobile / tablet: switch between the two main jobs without endless scrolling */}
+            <div
+              className="flex gap-1 p-1 rounded-xl bg-white border border-gray-200 shadow-sm lg:hidden"
+              role="tablist"
+              aria-label="Section"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobilePanel === 'directory'}
+                onClick={() => setMobilePanel('directory')}
+                className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  mobilePanel === 'directory'
+                    ? 'bg-[#2D5A27] text-white shadow'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Directory
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobilePanel === 'orders'}
+                onClick={() => {
+                  setMobilePanel('orders');
+                  if (typeof document !== 'undefined') {
+                    const el = document.getElementById('my-orders');
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  mobilePanel === 'orders'
+                    ? 'bg-[#2D5A27] text-white shadow'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                My orders &amp; messages
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-500 -mt-1 lg:hidden">
+              Tip: on a large screen both columns are visible; here pick the tab you need.
             </p>
-          </details>
 
-          {err && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
-          )}
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 min-w-0 flex flex-col min-h-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+            <div
+              className={`${
+                mobilePanel === 'directory' ? 'block' : 'hidden'
+              } lg:block bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 min-w-0 flex flex-col min-h-0`}
+            >
               {loading ? (
                 <p className="text-sm text-gray-500">Loading directory…</p>
               ) : items.length === 0 ? (
@@ -300,10 +350,16 @@ export default function GrowerWhereToBuyPage() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-base font-semibold text-gray-900">Supplier directory</h2>
-                  <p className="text-xs text-gray-500 mt-1 mb-4">
-                    Filter by place, then open a partner to order materials or start a message thread.
-                  </p>
+                  <div className="mb-4">
+                    <h2 className="text-lg font-semibold text-gray-900">Supplier directory</h2>
+                    <p className="text-sm text-gray-600 mt-0.5">
+                      Filter by country, optionally city; open a <strong>Partner store</strong> to order or message.
+                    </p>
+                    <p className="text-xs text-amber-900/80 mt-2 rounded-md bg-amber-50 border border-amber-100/80 px-2.5 py-1.5">
+                      Listings use <strong>approved</strong> partner addresses and retail hub data — if someone is
+                      missing, it is not yet on the public map.
+                    </p>
+                  </div>
               <div className="mb-4 space-y-3">
                 <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" />
@@ -352,33 +408,37 @@ export default function GrowerWhereToBuyPage() {
                 </div>
               )}
 
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                {!nearMe ? (
-                  <button
-                    type="button"
-                    onClick={() => void requestNearMe()}
-                    disabled={locating}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
-                  >
-                    <Navigation className="h-4 w-4" />
-                    {locating ? 'Getting location…' : 'Nearest to me'}
-                  </button>
-                ) : (
-                  <>
-                    <span className="text-sm text-gray-600">
-                      Sorted by distance
-                      {userPos
-                        ? ` — ${sortedForList.length} result(s)`
-                        : ''}
-                    </span>
+              <div className="mb-3 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {!nearMe ? (
                     <button
                       type="button"
-                      onClick={clearNearMe}
-                      className="text-sm text-[#2D5A27] underline"
+                      onClick={() => void requestNearMe()}
+                      disabled={locating}
+                      className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
                     >
-                      Clear
+                      <Navigation className="h-4 w-4" />
+                      {locating ? 'Getting location…' : 'Nearest to me'}
                     </button>
-                  </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-600">
+                        Sorted by distance{userPos ? ` — ${sortedForList.length} result(s)` : ''}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={clearNearMe}
+                        className="text-sm text-[#2D5A27] font-medium hover:underline"
+                      >
+                        Clear
+                      </button>
+                    </>
+                  )}
+                </div>
+                {geoHint && (
+                  <p className="text-xs text-amber-900/90 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                    {geoHint}
+                  </p>
                 )}
               </div>
 
@@ -461,7 +521,16 @@ export default function GrowerWhereToBuyPage() {
               )}
             </div>
 
-            <PartnerB2BPanel />
+            <div
+              className={`${
+                mobilePanel === 'orders' ? 'block' : 'hidden'
+              } lg:block min-w-0`}
+            >
+              <PartnerB2BPanel />
+            </div>
+          </div>
+
+            <GrowerSupplyFlowCard context="suppliers" variant="compact" />
           </div>
         </div>
       </SidebarLayout>

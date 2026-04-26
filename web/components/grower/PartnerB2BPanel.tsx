@@ -97,22 +97,19 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
     >
       <div>
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1">
-          <Inbox className="h-5 w-5 text-[#2D5A27]" />
+          <Inbox className="h-5 w-5 text-[#2D5A27] shrink-0" />
           My orders &amp; messages
         </h2>
-        <p className="text-sm text-gray-600 font-light">
-          Direct material orders and threads. New partners: use the list on the left.
+        <p className="text-sm text-gray-600">
+          B2B order status, <strong>Received at farm</strong>, and partner threads. New partner? Pick them in the
+          directory first.
         </p>
-        <p className="text-xs text-gray-500 font-light mt-2">
-          The supplier updates status. Tap <strong>Received at farm</strong> when the shipment arrives. Full path:{' '}
-          <a href="#supply-flow" className="text-[#2D5A27] underline">
-            steps
-          </a>
-          ,{' '}
-          <Link href="/grower/materials" className="text-[#2D5A27] underline">
+        <p className="text-xs text-gray-500 mt-1.5">
+          Balances in{' '}
+          <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
             Materials
           </Link>
-          .
+          . Full process: <a href="#supply-flow" className="text-[#2D5A27] font-medium hover:underline">steps below</a>.
         </p>
       </div>
 

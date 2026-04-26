@@ -12,8 +12,9 @@ type Props = {
   /**
    * `collapsible` keeps the directory page scannable: short intro + expandable steps.
    * `default` shows the full guide (e.g. Materials, where people expect the long path).
+   * `compact` = one <details> block only (e.g. bottom of Suppliers page).
    */
-  variant?: 'default' | 'collapsible';
+  variant?: 'default' | 'collapsible' | 'compact';
 };
 
 const steps = (context: 'suppliers' | 'materials') => (
@@ -87,6 +88,42 @@ const steps = (context: 'suppliers' | 'materials') => (
  * (partner & B2B → receipt → in-app stock & serials → harvest & packing → pre-transport).
  */
 export default function GrowerSupplyFlowCard({ context, className = '', variant = 'default' }: Props) {
+  if (variant === 'compact') {
+    return (
+      <section
+        id="supply-flow"
+        className={`rounded-lg border border-gray-200 bg-white p-0 shadow-sm ${className}`.trim()}
+      >
+        <details className="group">
+          <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-lg [&::-webkit-details-marker]:hidden">
+            B2B, catalog balances, and transport — <span className="text-[#2D5A27]">show the 5 steps</span>
+          </summary>
+          <div className="px-4 pb-4 pt-0 border-t border-gray-100 space-y-3 text-sm text-gray-600">
+            <p className="pt-2 font-light">
+              <span className="font-medium text-gray-800">This page</span> = find partners;{' '}
+              <Link href={materialsHref} className="text-[#2D5A27] font-medium underline">
+                Materials
+              </Link>{' '}
+              = your serials and stock; they work as one process.
+            </p>
+            {steps(context)}
+            <p className="text-xs text-gray-500 border-t border-gray-100 pt-2">
+              Partner locations show after admin approval. Need help?{' '}
+              <Link href="#my-orders" className="text-[#2D5A27] underline">
+                Orders &amp; messages
+              </Link>
+              ,{' '}
+              <Link href="/grower/materials" className="text-[#2D5A27] underline">
+                Materials
+              </Link>
+              .
+            </p>
+          </div>
+        </details>
+      </section>
+    );
+  }
+
   if (variant === 'collapsible') {
     return (
       <section
