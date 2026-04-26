@@ -14,6 +14,8 @@ import {
   TrendingUp,
   Activity,
   ArrowRight,
+  MapPin,
+  CheckCircle,
 } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
@@ -38,6 +40,13 @@ interface Statistics {
   security: {
     total: number;
     pending: number;
+  };
+  estates?: {
+    total: number;
+  };
+  parcels?: {
+    total: number;
+    pendingApproval: number;
   };
 }
 
@@ -102,7 +111,7 @@ export default function AdminDashboard() {
       <SidebarLayout title="Admin Dashboard" navItems={adminNavItems}>
         <div className="space-y-6">
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -181,6 +190,43 @@ export default function AdminDashboard() {
                 <AlertTriangle className="w-8 h-8 text-red-600" />
               </div>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Estates (Njive)</p>
+                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                    {statistics?.estates?.total ?? 0}
+                  </p>
+                </div>
+                <MapPin className="w-8 h-8 text-[#2D5A27]" />
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Parcels (Parcele)</p>
+                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                    {statistics?.parcels?.total ?? 0}
+                  </p>
+                  <p className="text-xs text-amber-600 mt-1">
+                    {statistics?.parcels?.pendingApproval ?? 0} čeka odobrenje
+                  </p>
+                </div>
+                <MapPin className="w-8 h-8 text-gray-500" />
+              </div>
+            </motion.div>
           </div>
 
           {/* Quick Actions */}
@@ -217,6 +263,99 @@ export default function AdminDashboard() {
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </Link>
+              <Link
+                href="/admin/parcels-pending"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-[#2D5A27]" />
+                  <span className="text-sm font-medium text-gray-900">Odobri parcele</span>
+                  {(statistics?.parcels?.pendingApproval ?? 0) > 0 && (
+                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+                      {statistics.parcels.pendingApproval}
+                    </span>
+                  )}
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Link>
+              <Link
+                href="/admin/estates"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-[#2D5A27]" />
+                  <span className="text-sm font-medium text-gray-900">Estates / Njive</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Parcele na čekanju + Recent Batches */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Parcele na čekanju */}
+            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Parcele na čekanju</h2>
+                <Link href="/admin/parcels-pending" className="text-sm text-green-600 hover:text-green-700">
+                  Odobri sve
+                </Link>
+              </div>
+              <div className="space-y-3">
+                {recentActivities?.pendingParcels?.length > 0 ? (
+                  recentActivities.pendingParcels.map((parcel: any) => (
+                    <div key={parcel.id} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {parcel.estates?.name || 'Estate'} — {parcel.cropType || 'Parcula'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {parcel.estates?.users
+                            ? `${parcel.estates.users.firstName} ${parcel.estates.users.lastName} (${parcel.estates.users.partnerCode})`
+                            : 'Farmer'}
+                        </p>
+                      </div>
+                      <Link
+                        href="/admin/parcels-pending"
+                        className="text-xs font-medium text-[#2D5A27] hover:underline"
+                      >
+                        Odobri
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">Nema parcela na čekanju</p>
+                )}
+              </div>
+            </div>
+
+            {/* Recent Batches */}
+            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Recent Batches</h2>
+                <Link href="/admin/test-batch" className="text-sm text-green-600 hover:text-green-700">
+                  Test batch
+                </Link>
+              </div>
+              <div className="space-y-3">
+                {recentActivities?.recentBatches?.length > 0 ? (
+                  recentActivities.recentBatches.map((batch: any) => (
+                    <div key={batch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{batch.batchId}</p>
+                        <p className="text-xs text-gray-500">
+                          {batch.estates?.name || '—'} · {batch.productName} · {batch.quantity} {batch.unit}
+                        </p>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {batch.harvestDate ? new Date(batch.harvestDate).toLocaleDateString() : '—'}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">No recent batches</p>
+                )}
+              </div>
             </div>
           </div>
 

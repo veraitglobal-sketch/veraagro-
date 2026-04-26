@@ -23,7 +23,8 @@ export class BatchesService {
   ) {}
 
   /**
-   * Create new batch (when farmer packs produce)
+   * Create new batch (when farmer packs produce).
+   * If parcelId is provided, the parcel must be approved by admin before the farmer can form a batch.
    */
   async createBatch(data: {
     estateId: string;
@@ -34,6 +35,22 @@ export class BatchesService {
     unit: string;
     harvestDate: Date;
   }) {
+    if (data.parcelId) {
+      const parcel = await this.prisma.parcels.findFirst({
+        where: { id: data.parcelId, estateId: data.estateId },
+        include: { estates: { select: { ownerId: true } } },
+      });
+      if (!parcel) {
+        throw new NotFoundException('Parcel not found or does not belong to this estate');
+      }
+      if (parcel.estates.ownerId !== data.harvestedByUserId) {
+        throw new ForbiddenException('You can only create batches from your own estate parcels');
+      }
+      if (!parcel.approvedAt) {
+        throw new ForbiddenException('Parcel must be approved before you can form a batch. Wait for admin approval.');
+      }
+    }
+
     // Generate batch ID
     const batchId = `BATCH-${new Date().getFullYear()}-${String(
       Math.floor(Math.random() * 10000),

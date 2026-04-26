@@ -18,6 +18,9 @@ export class AdminService {
       todayRevenue,
       activeMissions,
       pendingSecurityAlerts,
+      totalEstates,
+      totalParcels,
+      pendingParcelsCount,
     ] = await Promise.all([
       this.prisma.users.count(),
       this.prisma.users.count({
@@ -69,6 +72,9 @@ export class AdminService {
           status: 'PENDING',
         },
       }),
+      this.prisma.estates.count(),
+      this.prisma.parcels.count(),
+      this.prisma.parcels.count({ where: { approvedAt: null } }),
     ]);
 
     return {
@@ -93,11 +99,18 @@ export class AdminService {
         total: totalSecurityAlerts,
         pending: pendingSecurityAlerts,
       },
+      estates: {
+        total: totalEstates,
+      },
+      parcels: {
+        total: totalParcels,
+        pendingApproval: pendingParcelsCount,
+      },
     };
   }
 
   async getRecentActivities(limit: number = 10) {
-    const [recentOrders, recentMissions, recentAlerts] = await Promise.all([
+    const [recentOrders, recentMissions, recentAlerts, pendingParcels, recentBatches] = await Promise.all([
       this.prisma.orders.findMany({
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -144,12 +157,54 @@ export class AdminService {
           },
         },
       }),
+      this.prisma.parcels.findMany({
+        where: { approvedAt: null },
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          estates: {
+            select: {
+              id: true,
+              name: true,
+              ownerId: true,
+              users: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  partnerCode: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.batches.findMany({
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          estates: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          parcels: {
+            select: {
+              id: true,
+              cropType: true,
+            },
+          },
+        },
+      }),
     ]);
 
     return {
       orders: recentOrders,
       missions: recentMissions,
       alerts: recentAlerts,
+      pendingParcels,
+      recentBatches,
     };
   }
 }

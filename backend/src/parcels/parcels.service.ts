@@ -37,7 +37,44 @@ export class ParcelsService {
         polygonCoordinates: data.polygonCoordinates,
         calculatedArea,
         cropType: data.cropType,
-        status: 'INVALID', // Will be validated when seed is scanned
+        status: 'INVALID',
+        approvedAt: null, // Admin must approve before farmer can use for batch / field work
+        approvedByUserId: null,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  /** Admin: list parcels pending approval (no approvedAt) */
+  async findAllPending() {
+    return this.prisma.parcels.findMany({
+      where: { approvedAt: null },
+      include: {
+        estates: { select: { id: true, name: true, ownerId: true } },
+        _count: { select: { growth_logs: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  /** Admin: approve parcel so farmer can work on it and form batches */
+  async approve(parcelId: string, approvedByUserId: string) {
+    const parcel = await this.prisma.parcels.findUnique({
+      where: { id: parcelId },
+      include: { estates: true },
+    });
+    if (!parcel) {
+      throw new NotFoundException('Parcel not found');
+    }
+    if (parcel.approvedAt) {
+      throw new ForbiddenException('Parcel is already approved');
+    }
+    return this.prisma.parcels.update({
+      where: { id: parcelId },
+      data: {
+        approvedAt: new Date(),
+        approvedByUserId,
+        status: 'ACTIVE',
         updatedAt: new Date(),
       },
     });

@@ -34,6 +34,7 @@ const navLabels = {
     aiConversations: 'AI Conversations',
     testBatch: 'Test batch',
     njivaBlockchain: 'Njiva → Blockchain',
+    parcelsPending: 'Parcels pending',
   },
   de: {
     dashboard: 'Dashboard',
@@ -51,6 +52,7 @@ const navLabels = {
     aiConversations: 'KI-Konversationen',
     testBatch: 'Test-Batch',
     njivaBlockchain: 'Njiva → Blockchain',
+    parcelsPending: 'Parzellen (Freigabe)',
   },
 };
 
@@ -165,6 +167,11 @@ export function getAdminNavItems(_language?: 'en') {
     { 
       href: '/admin/njiva-blockchain', 
       label: labels.njivaBlockchain, 
+      icon: <MapPin className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/parcels-pending', 
+      label: labels.parcelsPending, 
       icon: <MapPin className="w-5 h-5" /> 
     },
   ];

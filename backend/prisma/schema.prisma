@@ -717,6 +717,8 @@ model parcels {
   cropType              String?
   plantingDate          DateTime?
   expectedHarvestDate   DateTime?
+  approvedAt            DateTime?
+  approvedByUserId      String?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime
   batches               batches[]
@@ -730,10 +732,12 @@ model parcels {
   plot_blueprints       plot_blueprints?
   seed_scans            seed_scans[]
   treatment_logs        treatment_logs[]
+  users_parcels_approvedByUserIdTousers users?   @relation("parcels_approvedByUserId", fields: [approvedByUserId], references: [id])
 
   @@index([estateId])
   @@index([inputSerialNumber])
   @@index([status])
+  @@index([approvedByUserId])
 }
 
 model harvest_announcements {
@@ -1042,6 +1046,7 @@ model users {
   vera_insights_vera_insights_createdByTousers vera_insights[]           @relation("vera_insights_createdByTousers")
   vera_insights_vera_insights_updatedByTousers vera_insights[]           @relation("vera_insights_updatedByTousers")
   wallets                                      wallets?
+  parcels_approvedByUserId                     parcels[]                 @relation("parcels_approvedByUserId")
 
   @@index([partnerCode])
 }

@@ -229,6 +229,14 @@ export const parcelsAPI = {
     const response = await api.get(`/parcels/estate/${estateId}`);
     return response.data;
   },
+  getPending: async () => {
+    const response = await api.get('/parcels/admin/pending');
+    return response.data;
+  },
+  approve: async (parcelId: string) => {
+    const response = await api.put(`/parcels/${parcelId}/approve`);
+    return response.data;
+  },
 };
 
 // Smart Lock API
