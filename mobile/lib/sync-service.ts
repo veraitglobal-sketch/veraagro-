@@ -8,6 +8,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from './api-url';
+import i18n from '../i18n/config';
 
 // Create API instance for sync
 const syncApi = axios.create({
@@ -340,7 +341,7 @@ export const syncService = {
       JSON.stringify({
         syncing: false,
         lastSyncTime: new Date().toISOString(),
-        lastError: totalFailed > 0 ? `${totalFailed} stavki nije poslato` : null,
+        lastError: totalFailed > 0 ? i18n.t('producer.sync.itemsNotSent', { count: totalFailed }) : null,
       })
     );
 

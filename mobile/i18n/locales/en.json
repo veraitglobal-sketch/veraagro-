@@ -1,4 +1,10 @@
 {
+  "integrity": {
+    "barcodeRequired": "Barcode is required",
+    "voidBarcode": "This barcode is voided in the system. Contact the supplier.",
+    "supplierRegisteredDefault": "Supplier-registered code",
+    "notWhitelisted": "Material is not on the whitelist and is not a supplier-registered code. Contact an administrator or the store."
+  },
   "marketplace": {
     "about": {
       "intro": "From seed to shelf—complete traceability, quality assurance, and direct market access for European producers."
@@ -262,7 +268,11 @@
       "placeBarcode": "Point at QR code",
       "successTitle": "Success",
       "barcodeNotOnWhitelist": "Not allowed",
-      "checkingPermissions": "Wait..."
+      "checkingPermissions": "Checking permissions…",
+      "cameraPermissionTitle": "Camera access required",
+      "cameraPermissionBody": "We need access to the camera to scan barcodes.",
+      "allowCamera": "Allow camera",
+      "validBarcodeMessage": "Barcode is valid: {{code}}"
     },
     "estates": {
       "newEstate": "Add field",
@@ -476,6 +486,7 @@
       "enRouteToDestination": "En route to destination"
     },
     "materials": {
+      "screenTitle": "Material whitelist",
       "mapBannerTitle": "Need seeds, boxes, or packaging? See suppliers on the map.",
       "mapBannerCta": "Open map",
       "fertilizer": "Fertilizer",
@@ -537,7 +548,8 @@
       "syncing": "Syncing data…",
       "savedOnDevice": "Saved on device: {{count}} item",
       "savedOnDevice_plural": "Saved on device: {{count}} items",
-      "allSent": "All sent"
+      "allSent": "All sent",
+      "itemsNotSent": "Could not send {{count}} item(s)."
     }
   },
   "buyer": {

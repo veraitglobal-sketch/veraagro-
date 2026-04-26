@@ -127,22 +127,22 @@ export default function LogisticsHandoverPage() {
     for (let i = 0; i < files.length; i += 1) {
       const f = files[i];
       if (!f.type.startsWith('image/')) {
-        setPhotoError('Samo slike (JPEG, PNG, WebP) / Only image files are allowed');
+        setPhotoError('Only image files are allowed (JPEG, PNG, WebP).');
         return;
       }
       if (f.size > MAX_PHOTO_BYTES) {
-        setPhotoError('Maks. 5MB po slici / Max 5MB per photo');
+        setPhotoError('Max 5MB per photo.');
         return;
       }
       if (next.length >= MAX_PHOTOS_PER_GROUP) {
-        setPhotoError(`Maks. ${MAX_PHOTOS_PER_GROUP} slika po grupi / Max ${MAX_PHOTOS_PER_GROUP} photos per group`);
+        setPhotoError(`Max ${MAX_PHOTOS_PER_GROUP} photos per group.`);
         return;
       }
       try {
         const dataUrl = await readFileAsDataUrl(f);
         next.push(dataUrl);
       } catch {
-        setPhotoError('Čitanje fajla nije uspelo / Could not read file');
+        setPhotoError('Could not read file.');
         return;
       }
     }
@@ -178,12 +178,12 @@ export default function LogisticsHandoverPage() {
     }
 
     if (palletPhotos.length < 1) {
-      setError('Dodajte bar jednu fotografiju paleta / Add at least one pallet photo');
+      setError('Add at least one pallet photo.');
       setSubmitting(false);
       return;
     }
     if (truckInteriorPhotos.length < 1) {
-      setError('Dodajte bar jednu fotografiju unutrašnjosti kamiona / Add at least one inside-truck photo');
+      setError('Add at least one inside-truck photo.');
       setSubmitting(false);
       return;
     }
@@ -248,11 +248,11 @@ export default function LogisticsHandoverPage() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-blue-800">Dokumentacija pre „spremno za isporuku“ / Before ready for shipment</p>
+              <p className="text-sm font-medium text-blue-800">Documentation before &quot;ready for shipment&quot;</p>
               <p className="text-sm text-blue-700 mt-1">
-                Unutrašnja temperatura kamiona ({STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C), bar jedna fotografija utovarenih
-                paleta i bar jedna unutrašnjosti kamiona obavezni su. Sve se čuva u sistemu, pa tek onda status može biti
-                završen (READY FOR LOADING). Truck must be in range, with pallet and inside-truck photos on record.
+                Inside truck temperature ({STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C), at least one photo of loaded pallets, and
+                at least one photo of the truck interior are required. All of this is stored in the system; only then can the
+                mission move to <strong>READY FOR LOADING</strong>.
               </p>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function LogisticsHandoverPage() {
             className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg"
           >
             <p className="text-sm text-[#23471f]">
-              ✓ Dokumentacija sačuvana. Utovar / isporuka može da nastavi. / Evidence saved. Loading can proceed.
+              ✓ Evidence saved. Loading can proceed.
             </p>
           </motion.div>
         )}
@@ -287,8 +287,8 @@ export default function LogisticsHandoverPage() {
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Logistics Handover</h2>
           <p className="text-sm text-gray-600 mb-6">
-            Unesite temperaturu, dodajte fotografije paleta i unutrašnjosti kamiona. Bez svega toga se ne završava zapis
-            (finish). / Enter temperature and photos; the handover is only complete with all three.
+            Enter the temperature and add photos of pallets and the truck interior. The handover is only complete when
+            all three (temperature in range, pallet photos, inside-truck photos) are provided.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -362,9 +362,9 @@ export default function LogisticsHandoverPage() {
             {/* Pallet photos */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fotografije paleta / Pallet photos *
+                Pallet photos *
               </label>
-              <p className="text-xs text-gray-500 mb-2">Bar jedna, do {MAX_PHOTOS_PER_GROUP} (max 5MB po fajlu)</p>
+              <p className="text-xs text-gray-500 mb-2">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
               <input
                 type="file"
                 accept="image/*"
@@ -394,9 +394,9 @@ export default function LogisticsHandoverPage() {
             {/* Inside truck photos */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fotografije unutrašnjosti kamiona / Inside the truck *
+                Inside the truck *
               </label>
-              <p className="text-xs text-gray-500 mb-2">Bar jedna, do {MAX_PHOTOS_PER_GROUP} (max 5MB po fajlu)</p>
+              <p className="text-xs text-gray-500 mb-2">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
               <input
                 type="file"
                 accept="image/*"
@@ -446,9 +446,7 @@ export default function LogisticsHandoverPage() {
                 disabled={submitting || !handoverComplete}
                 className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {submitting
-                  ? 'Snimam… / Saving…'
-                  : 'Završi dokumentaciju / Finish loading handover'}
+                {submitting ? 'Saving…' : 'Finish loading handover'}
               </button>
               {temperatureStatus === 'invalid' && (
                 <p className="text-sm text-red-600 mt-2 text-center">
@@ -457,7 +455,7 @@ export default function LogisticsHandoverPage() {
               )}
               {temperatureStatus === 'valid' && (palletPhotos.length < 1 || truckInteriorPhotos.length < 1) && (
                 <p className="text-sm text-gray-600 mt-2 text-center">
-                  Dodajte palete i unutrašnjost kamiona da biste završili. / Add pallet and inside-truck photos to finish.
+                  Add pallet and inside-truck photos to finish.
                 </p>
               )}
             </div>

@@ -6,9 +6,9 @@ import * as Device from 'expo-device';
 export const PRODUCTION_API_URL = 'https://api.biovera.app';
 
 /**
- * Lokalni backend port kada nije postavljen EXPO_PUBLIC_API_URL.
- * Uskladi sa `PORT` u `backend` (default u main.ts: 3000; monorepo web često koristi 3004).
- * Ako API radi na 3004: postavi EXPO_PUBLIC_DEV_API_PORT=3004
+ * Local backend port when EXPO_PUBLIC_API_URL is not set.
+ * Match `PORT` in `backend` (default in main.ts: 3000; monorepo web often uses 3004).
+ * If the API runs on 3004: set EXPO_PUBLIC_DEV_API_PORT=3004
  */
 function getDevBackendPort(): number {
   const raw = process.env.EXPO_PUBLIC_DEV_API_PORT;

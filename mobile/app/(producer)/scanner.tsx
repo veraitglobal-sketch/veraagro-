@@ -53,7 +53,7 @@ export default function ScannerScreen() {
 
       if (result.valid) {
         await AsyncStorage.setItem('last_scanned_barcode', data);
-        Alert.alert(t('producer.scanner.successTitle'), `Bar-kod je validan: ${data}`, [
+        Alert.alert(t('producer.scanner.successTitle'), t('producer.scanner.validBarcodeMessage', { code: data }), [
           { text: t('alerts.ok'), onPress: () => router.back() },
         ]);
       } else {
@@ -89,7 +89,7 @@ export default function ScannerScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color={colors.accent} />
-        <Text style={[styles.text, { marginTop: 16 }]}>Proveravam dozvole...</Text>
+        <Text style={[styles.text, { marginTop: 16 }]}>{t('producer.scanner.checkingPermissions')}</Text>
       </View>
     );
   }
@@ -98,17 +98,17 @@ export default function ScannerScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <Text style={[styles.text, styles.title, { marginBottom: 16 }]}>
-          Potrebna je dozvola za kameru
+          {t('producer.scanner.cameraPermissionTitle')}
         </Text>
         <Text style={[styles.text, { marginBottom: 24, textAlign: 'center', paddingHorizontal: 32 }]}>
-          Da bismo mogli da skeniramo bar-kodove, potrebna je dozvola za pristup kameri.
+          {t('producer.scanner.cameraPermissionBody')}
         </Text>
         <TouchableOpacity
           onPress={requestPermission}
           style={[styles.button, { backgroundColor: colors.accent }]}
         >
           <Text style={[styles.buttonText, { color: colors.background }]}>
-            Dozvoli pristup kameri
+            {t('producer.scanner.allowCamera')}
           </Text>
         </TouchableOpacity>
       </View>

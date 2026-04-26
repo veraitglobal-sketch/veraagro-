@@ -3,34 +3,17 @@
 import { ShoppingCart, FileText, Building2, Truck, BarChart3 } from 'lucide-react';
 import { ReactNode, createElement } from 'react';
 
-// Localization for navigation items
+// Buyer portal nav labels (English only for web UI)
 const navLabels = {
-  en: {
-    dashboard: 'Dashboard',
-    orders: 'Orders',
-    preOrder2026: 'Pre-order 2026',
-    directOrders: 'Direct orders',
-    invoices: 'Invoices',
-    deliveries: 'Deliveries',
-    analytics: 'Analytics',
-    companyProfile: 'Company Profile',
-  },
-  de: {
-    dashboard: 'Dashboard',
-    orders: 'Bestellungen',
-    preOrder2026: 'Pre-order 2026',
-    directOrders: 'Direktbestellungen',
-    invoices: 'Rechnungen',
-    deliveries: 'Lieferungen',
-    analytics: 'Analysen',
-    companyProfile: 'Firmenprofil',
-  },
+  dashboard: 'Dashboard',
+  orders: 'Orders',
+  preOrder2026: 'Pre-order 2026',
+  directOrders: 'Direct orders',
+  invoices: 'Invoices',
+  deliveries: 'Deliveries',
+  analytics: 'Analytics',
+  companyProfile: 'Company Profile',
 };
-
-// English localization only
-function getCurrentLanguage(): 'en' {
-  return 'en';
-}
 
 // Dashboard icon component - returns JSX element
 const DashboardIcon = () => (
@@ -41,7 +24,7 @@ const DashboardIcon = () => (
 
 // Function to get navigation items with localization
 export function getBuyerPortalNavItems(_language?: 'en') {
-  const labels = navLabels.en;
+  const labels = navLabels;
 
   return [
     { href: '/buyer-portal/dashboard', label: labels.dashboard, icon: <DashboardIcon /> },

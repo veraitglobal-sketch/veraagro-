@@ -32,7 +32,7 @@ function countriesLikelyMatch(profileCountry: string, itemCountry: string | unde
   if (p === i) return true;
   if (p.includes(i) || i.includes(p)) return true;
   const serbia = ['serbia', 'srbija', 'rs'];
-  const germany = ['germany', 'deutschland', 'njemač', 'germ'];
+  const germany = ['germany', 'deutschland', 'germ', 'german', 'de'];
   const inSet = (s: string, set: string[]) => set.some((x) => s.includes(x));
   if (inSet(p, serbia) && inSet(i, serbia)) return true;
   if (inSet(p, germany) && inSet(i, germany)) return true;

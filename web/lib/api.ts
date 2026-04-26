@@ -798,7 +798,6 @@ export const b2bSuppliersAdminAPI = {
       passwordGenerated: boolean;
     };
   },
-  /** Snabdevači + povezani proizvođači (niti, porudžbine) */
   /** Set supplier visible on the public grower map (after address is correct). */
   approveSupplierMap: async (supplierUserId: string) => {
     const response = await api.post(

@@ -1,32 +1,55 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
 import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { en } from '@/lib/messages';
 import Link from 'next/link';
 
 const navItems = growerNavItems;
+const c = en.common;
+const m = en.grower.compliancePhotos;
 
-const REQUIRED_PHOTOS = [
-  { type: 'PUNNETS', label: 'Punnets with Bio Vera Logo', description: 'Show our logo on the crates' },
-  { type: 'LABELING', label: 'Labeling Close-up', description: 'Close-up of our official sticker with QR code' },
-  { type: 'PALLETIZATION', label: 'Palletization', description: 'Showing our specific protective film is used' },
-];
+const PHOTO_ORDER = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
+
+const REQUIRED_PHOTOS = PHOTO_ORDER.map((type) => ({
+  type,
+  label: m.photoTypes[type].label,
+  description: m.photoTypes[type].description,
+}));
+
+type LabelRoll = {
+  serialNumber: string;
+  status: string;
+  soldAt: string | null;
+  productName: string;
+};
+
+type ComplianceStatus = {
+  publicBatchId: string;
+  complete: boolean;
+  requiredPhotoTypes: string[];
+  uploadedPhotoTypes: string[];
+  missingPhotoTypes: string[];
+  stickerRollId: string | null;
+  stickerStatus: string | null;
+  lastComplianceAt: string | null;
+};
 
 function messageFromApiPayload(data: unknown): string {
-  if (!data || typeof data !== 'object') return 'Request failed';
-  const m = (data as { message?: unknown }).message;
-  if (Array.isArray(m)) return m.filter(Boolean).join(' ');
-  if (typeof m === 'string') return m;
-  return 'Request failed';
+  if (!data || typeof data !== 'object') return c.requestFailed;
+  const msg = (data as { message?: unknown }).message;
+  if (Array.isArray(msg)) return msg.filter(Boolean).join(' ');
+  if (typeof msg === 'string') return msg;
+  return c.requestFailed;
 }
 
 export default function CompliancePhotosPage() {
-  const { user } = useAuth();
+  useAuth();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [stickerRollId, setStickerRollId] = useState<string>('');
   const [photos, setPhotos] = useState<{ [key: string]: string }>({});
@@ -35,12 +58,50 @@ export default function CompliancePhotosPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  const [batches, setBatches] = useState<
+    { id: string; batchId: string; productName: string; quantity: number; unit?: string }[]
+  >([]);
+  const [batchesLoading, setBatchesLoading] = useState(true);
+  const [labelRolls, setLabelRolls] = useState<LabelRoll[]>([]);
+  const [complianceStatus, setComplianceStatus] = useState<ComplianceStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [showReplaceForm, setShowReplaceForm] = useState(false);
+
   const setFileInputRef = (index: number) => (el: HTMLInputElement | null) => {
     fileInputRefs.current[index] = el;
   };
 
-  const [batches, setBatches] = useState<{ id: string; batchId: string; productName: string; quantity: number; unit?: string }[]>([]);
-  const [batchesLoading, setBatchesLoading] = useState(true);
+  const pickableSerials = useMemo(() => {
+    return new Set(
+      labelRolls
+        .filter(
+          (r) =>
+            r.status === 'SOLD' ||
+            (r.status === 'USED' && r.serialNumber === complianceStatus?.stickerRollId)
+        )
+        .map((r) => r.serialNumber)
+    );
+  }, [labelRolls, complianceStatus?.stickerRollId]);
+
+  const fetchComplianceStatus = useCallback(async (batchInternalId: string) => {
+    setStatusLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${WEB_API_BASE}/material-control/compliance-status/${batchInternalId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setComplianceStatus(null);
+        return;
+      }
+      const data = (await res.json()) as ComplianceStatus;
+      setComplianceStatus(data);
+    } catch {
+      setComplianceStatus(null);
+    } finally {
+      setStatusLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -49,14 +110,14 @@ export default function CompliancePhotosPage() {
         const list = Array.isArray(data) ? data : [];
         setBatches(
           list
-            .filter((b: any) => b?.id)
-            .map((b: any) => ({
-            id: b.id,
-            batchId: b.batchId,
-            productName: b.productName,
-            quantity: b.quantity,
-            unit: b.unit,
-          })),
+            .filter((b: { id?: string }) => b?.id)
+            .map((b: { id: string; batchId: string; productName: string; quantity: number; unit?: string }) => ({
+              id: b.id,
+              batchId: b.batchId,
+              productName: b.productName,
+              quantity: b.quantity,
+              unit: b.unit,
+            }))
         );
       } catch {
         setBatches([]);
@@ -67,17 +128,71 @@ export default function CompliancePhotosPage() {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLabelRolls([]);
+          return;
+        }
+        const res = await fetch(`${WEB_API_BASE}/material-control/my-label-rolls`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          setLabelRolls([]);
+          return;
+        }
+        const data = (await res.json()) as LabelRoll[];
+        setLabelRolls(Array.isArray(data) ? data : []);
+      } catch {
+        setLabelRolls([]);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedBatch) {
+      setComplianceStatus(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      if (cancelled) return;
+      await fetchComplianceStatus(selectedBatch);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedBatch, fetchComplianceStatus]);
+
+  useEffect(() => {
     if (!selectedBatch) return;
     if (batches.some((b) => b.id === selectedBatch)) return;
     setSelectedBatch('');
   }, [batches, selectedBatch]);
+
+  useEffect(() => {
+    if (!complianceStatus?.stickerRollId) return;
+    if (showReplaceForm) {
+      setStickerRollId((prev) => (prev ? prev : complianceStatus.stickerRollId || ''));
+    }
+  }, [complianceStatus?.stickerRollId, showReplaceForm]);
+
+  const handleBatchChange = (id: string) => {
+    setSelectedBatch(id);
+    setShowReplaceForm(false);
+    setPhotos({});
+    setStickerRollId('');
+    setError(null);
+    setSuccess(null);
+  };
 
   const handlePhotoUpload = (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      alert('Photo size must be less than 10MB');
+      alert(m.errors.photoSize);
       return;
     }
 
@@ -91,35 +206,33 @@ export default function CompliancePhotosPage() {
 
   const handleVerifySticker = async () => {
     if (!selectedBatch || !stickerRollId) {
-      setError('Please select a batch and enter sticker roll ID');
+      setError(m.errors.selectBatchAndSticker);
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${WEB_API_BASE}/material-control/verify-sticker`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            stickerRollId,
-            batchId: selectedBatch,
-          }),
-        }
-      );
+      const response = await fetch(`${WEB_API_BASE}/material-control/verify-sticker`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          stickerRollId,
+          batchId: selectedBatch,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(messageFromApiPayload(errorData) || 'Failed to verify sticker roll');
+        throw new Error(messageFromApiPayload(errorData) || m.errors.verifyFailed);
       }
 
-      setSuccess('Sticker roll verified successfully!');
-    } catch (err: any) {
-      setError(err.message);
+      setSuccess(m.feedback.stickerVerified);
+      setError(null);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : m.errors.verificationFailed);
     }
   };
 
@@ -129,50 +242,58 @@ export default function CompliancePhotosPage() {
     setError(null);
     setSuccess(null);
 
-    // Verify all photos are uploaded
     const missingPhotos = REQUIRED_PHOTOS.filter((photo) => !photos[photo.type]);
     if (missingPhotos.length > 0) {
-      setError(`Please upload all required photos: ${missingPhotos.map((p) => p.label).join(', ')}`);
+      setError(
+        m.errors.missingPhotos.replace(
+          '{labels}',
+          missingPhotos.map((p) => p.label).join(', ')
+        )
+      );
       setUploading(false);
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${WEB_API_BASE}/material-control/compliance-photos`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            batchId: selectedBatch,
-            stickerRollId,
-            photos: REQUIRED_PHOTOS.map((photo) => photos[photo.type]),
-          }),
-        }
-      );
+      const response = await fetch(`${WEB_API_BASE}/material-control/compliance-photos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          batchId: selectedBatch,
+          stickerRollId,
+          photos: REQUIRED_PHOTOS.map((photo) => photos[photo.type]),
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(messageFromApiPayload(errorData) || 'Failed to upload compliance photos');
+        throw new Error(messageFromApiPayload(errorData) || m.errors.uploadFailed);
       }
 
-      setSuccess('Compliance photos uploaded successfully! Your batch is now ready for pickup.');
-      // Reset form
+      setSuccess(m.feedback.saveSuccess);
       setPhotos({});
-      setStickerRollId('');
-    } catch (err: any) {
-      setError(err.message);
+      setShowReplaceForm(false);
+      await fetchComplianceStatus(selectedBatch);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : m.errors.genericUploadError);
     } finally {
       setUploading(false);
     }
   };
 
+  const showForm =
+    Boolean(selectedBatch) &&
+    (complianceStatus == null || !complianceStatus.complete || showReplaceForm) &&
+    !statusLoading;
+
+  const selectedBatchLabel = batches.find((b) => b.id === selectedBatch);
+
   return (
-    <SidebarLayout title="Compliance Photos" navItems={navItems}>
+    <SidebarLayout title={m.pageTitle} navItems={navItems}>
       <div className="space-y-6">
         {error && (
           <motion.div
@@ -199,143 +320,252 @@ export default function CompliancePhotosPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo-Verification Checklist</h2>
-            <p className="text-sm text-gray-600 mb-6">
-              Upload 3 compliance photos before activating &apos;Ready for Pickup&apos; status.
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{m.checklistHeading}</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            {m.introBeforeStrong}
+            <strong>{m.introStrong}</strong>
+            {m.introAfterStrong}
+            <strong>{m.introEmphasisOne}</strong>
+            {m.introEnd}
+          </p>
+
+          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 text-sm text-gray-800">
+            <p className="font-medium text-gray-900 mb-2">{m.explainerTitle}</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              {m.explainerBullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-gray-700">
+              {m.idFormatHint}{' '}
+              <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
+                {m.materialsLink}
+              </Link>
+              . {m.idFormatExample}{' '}
+              <code className="rounded bg-white px-1 py-0.5 text-xs">LABEL-ROLL-…</code>
             </p>
+          </div>
 
-            <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 text-sm text-gray-800">
-              <p className="font-medium text-gray-900 mb-2">Where do I find Sticker Roll ID?</p>
-              <p className="mb-2">
-                The ID is the <strong>serial number of your official Bio Vera label roll</strong> — it is created in the system when you{' '}
-                <strong>order label rolls</strong> from the platform (e.g.{' '}
-                <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
-                  Materials
-                </Link>
-                ). It usually looks like <code className="rounded bg-white px-1 py-0.5 text-xs">LABEL-ROLL-…</code>, and may also appear on the roll packaging or supplier paperwork.
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">{m.selectLot}</label>
+            {batchesLoading ? (
+              <p className="text-sm text-gray-500">{m.loadingBatches}</p>
+            ) : batches.length === 0 ? (
+              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                {m.noBatches}{' '}
+                <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
+                  {m.createBatch}
+                </Link>{' '}
+                {m.noBatchesSuffix}
               </p>
-              <p className="text-gray-700">
-                You must enter the exact ID that was <strong>sold to your account</strong>. A random number will not verify — order a label roll first, then use the ID from that purchase.
-              </p>
-            </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Batch Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Batch *
-              </label>
-              {batchesLoading ? (
-                <p className="text-sm text-gray-500">Loading batches…</p>
-              ) : batches.length === 0 ? (
-                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
-                  No batches yet.{' '}
-                  <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
-                    Create a batch
-                  </Link>{' '}
-                  for an approved parcel first.
-                </p>
-              ) : (
-                <select
-                  value={selectedBatch}
-                  onChange={(e) => setSelectedBatch(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">-- Select Batch --</option>
-                  {batches.map((batch) => (
-                    <option key={batch.id} value={batch.id}>
-                      {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit || 'kg'})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            {/* Sticker Roll ID */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sticker Roll ID *
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={stickerRollId}
-                  onChange={(e) => setStickerRollId(e.target.value)}
-                  placeholder="Enter or scan Label Roll ID"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <button
-                  type="button"
-                  onClick={handleVerifySticker}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Verify
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Every roll of Bio Vera labels has a unique ID. Enter or scan it, then click Verify. The system checks that this roll was issued to you when you ordered materials.
-              </p>
-            </div>
-
-            {/* Compliance Photos */}
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Required Compliance Photos</h3>
-              <div className="space-y-4">
-                {REQUIRED_PHOTOS.map((photo, index) => (
-                  <div key={photo.type} className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      {photo.label} *
-                    </label>
-                    <p className="text-xs text-gray-500 mb-2">{photo.description}</p>
-                    <div className="relative">
-                      <input
-                        ref={setFileInputRef(index)}
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handlePhotoUpload(photo.type, e)}
-                        className="hidden"
-                        id={`photo-${photo.type}`}
-                      />
-                      <label
-                        htmlFor={`photo-${photo.type}`}
-                        className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-center"
-                      >
-                        {photos[photo.type] ? (
-                          <div className="space-y-2">
-                            <img
-                              src={photos[photo.type]}
-                              alt={photo.label}
-                              className="w-full h-48 object-cover rounded mt-2"
-                            />
-                            <p className="text-sm text-green-600">Photo uploaded</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <svg className="w-12 h-12 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p className="text-sm text-gray-500">Click to upload</p>
-                          </div>
-                        )}
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="border-t border-gray-200 pt-6">
-              <button
-                type="submit"
-                disabled={uploading || !selectedBatch || !stickerRollId || Object.keys(photos).length !== REQUIRED_PHOTOS.length}
-                className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            ) : (
+              <select
+                value={selectedBatch}
+                onChange={(e) => handleBatchChange(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
-                {uploading ? 'Uploading...' : 'Upload Compliance Photos'}
+                <option value="">{m.selectBatchPlaceholder}</option>
+                {batches.map((batch) => (
+                  <option key={batch.id} value={batch.id}>
+                    {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit || c.unitKg})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {selectedBatch && statusLoading && <p className="text-sm text-gray-500 mb-4">{m.loadingStatus}</p>}
+
+          {selectedBatch && !statusLoading && complianceStatus?.complete && !showReplaceForm && (
+            <div className="mb-6 rounded-xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">{m.resolvedBadge}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mt-1">{m.complianceCompleteTitle}</h3>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {m.resolvedLotPrefix}{' '}
+                    <span className="font-mono font-medium">{complianceStatus.publicBatchId}</span>{' '}
+                    {m.resolvedBody}
+                  </p>
+                </div>
+                <div className="shrink-0 text-3xl" aria-hidden>
+                  ✓
+                </div>
+              </div>
+              <dl className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                <div>
+                  <dt className="text-gray-500">{m.stickerRollDt}</dt>
+                  <dd className="font-mono font-medium text-gray-900">
+                    {complianceStatus.stickerRollId || c.emDash}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-gray-500">{m.lastUpdated}</dt>
+                  <dd className="text-gray-900">
+                    {complianceStatus.lastComplianceAt
+                      ? new Date(complianceStatus.lastComplianceAt).toLocaleString()
+                      : c.emDash}
+                  </dd>
+                </div>
+                <div className="sm:col-span-2">
+                  <dt className="text-gray-500">{m.photoTypesOnFile}</dt>
+                  <dd className="text-gray-900">
+                    {complianceStatus.uploadedPhotoTypes?.length
+                      ? complianceStatus.uploadedPhotoTypes.join(', ')
+                      : c.emDash}
+                  </dd>
+                </div>
+              </dl>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowReplaceForm(true);
+                  setStickerRollId(complianceStatus.stickerRollId || '');
+                  setError(null);
+                  setSuccess(null);
+                }}
+                className="mt-4 w-full sm:w-auto px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50"
+              >
+                {m.updatePhotosCta}
               </button>
             </div>
-          </form>
+          )}
+
+          {showForm && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{m.stickerRollLabel}</label>
+                <select
+                  value={pickableSerials.has(stickerRollId) ? stickerRollId : ''}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v) setStickerRollId(v);
+                  }}
+                  className="w-full px-4 py-2 mb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">{m.pickRollPlaceholder}</option>
+                  {labelRolls
+                    .filter(
+                      (r) =>
+                        r.status === 'SOLD' ||
+                        (r.status === 'USED' && r.serialNumber === complianceStatus?.stickerRollId)
+                    )
+                    .map((r) => (
+                      <option key={r.serialNumber} value={r.serialNumber}>
+                        {r.serialNumber} {r.status === 'SOLD' ? m.rollAvailable : m.rollOnLot}
+                      </option>
+                    ))}
+                </select>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={stickerRollId}
+                    onChange={(e) => setStickerRollId(e.target.value)}
+                    placeholder={m.stickerInputPlaceholder}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifySticker}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    {m.verify}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{m.stickerHelp}</p>
+              </div>
+
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="text-base font-semibold text-gray-900 mb-4">{m.requiredPhotosHeading}</h3>
+                <div className="space-y-4">
+                  {REQUIRED_PHOTOS.map((photo, index) => (
+                    <div key={photo.type} className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">{photo.label} *</label>
+                      <p className="text-xs text-gray-500 mb-2">{photo.description}</p>
+                      <div className="relative">
+                        <input
+                          ref={setFileInputRef(index)}
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handlePhotoUpload(photo.type, e)}
+                          className="hidden"
+                          id={`photo-${photo.type}`}
+                        />
+                        <label
+                          htmlFor={`photo-${photo.type}`}
+                          className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-center"
+                        >
+                          {photos[photo.type] ? (
+                            <div className="space-y-2">
+                              <img
+                                src={photos[photo.type]}
+                                alt={photo.label}
+                                className="w-full h-48 object-cover rounded mt-2"
+                              />
+                              <p className="text-sm text-green-600">{m.photoAddedPending}</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <svg
+                                className="w-12 h-12 text-gray-400 mx-auto"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">{m.clickToUpload}</p>
+                            </div>
+                          )}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-6">
+                {showReplaceForm && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReplaceForm(false);
+                      setPhotos({});
+                      setStickerRollId(complianceStatus?.stickerRollId || '');
+                      setError(null);
+                      setSuccess(null);
+                    }}
+                    className="mb-3 text-sm text-gray-600 hover:text-gray-900 underline"
+                  >
+                    {m.cancelKeep}
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={
+                    uploading || !selectedBatch || !stickerRollId || Object.keys(photos).length !== REQUIRED_PHOTOS.length
+                  }
+                  className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {uploading ? m.uploading : m.saveSubmit}
+                </button>
+                {showReplaceForm && selectedBatchLabel && (
+                  <p className="text-xs text-amber-800 mt-2">
+                    {m.replaceWarning.replace('{batchId}', selectedBatchLabel.batchId)}
+                  </p>
+                )}
+              </div>
+            </form>
+          )}
+
+          {selectedBatch && !statusLoading && complianceStatus === null && (
+            <p className="text-sm text-amber-800">{m.statusLoadError}</p>
+          )}
         </motion.div>
       </div>
     </SidebarLayout>

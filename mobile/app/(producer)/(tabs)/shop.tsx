@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 
 /**
  * Growers have no Shop tab — redirect to My products.
- * Ruta ostaje zbog Expo Router; odmah redirect.
+ * Route kept for Expo Router; redirects immediately.
  */
 export default function ShopRedirect() {
   const router = useRouter();

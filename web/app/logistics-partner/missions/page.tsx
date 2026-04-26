@@ -111,7 +111,7 @@ export default function LogisticsMissionsPage() {
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                           isLoadingStatus(mission.status) ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
                         }`}>
-                          {isLoadingStatus(mission.status) ? 'Utovar' : 'U putu'}
+                          {isLoadingStatus(mission.status) ? 'Loading' : 'In transit'}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">

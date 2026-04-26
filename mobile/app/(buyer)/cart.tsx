@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useCart } from '../../hooks/useCart';
 import { theme } from '../../lib/theme';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-native';
@@ -9,6 +10,7 @@ import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-nativ
  * Minimalist design with thin lines and simple quantity controls
  */
 export default function CartScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
 
@@ -30,7 +32,7 @@ export default function CartScreen() {
             marginTop: theme.spacing.lg,
             letterSpacing: 0.5,
           }}>
-            Korpa je prazna
+            {t('buyer.checkout.cartEmpty')}
           </Text>
         </View>
       </View>

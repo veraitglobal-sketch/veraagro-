@@ -53,6 +53,12 @@ export class MaterialControlController {
     return this.materialControlService.purchaseMaterials(user.id, dto);
   }
 
+  @Get('compliance-status/:batchId')
+  @Roles('GROWER', 'FARMER')
+  async getComplianceStatus(@Param('batchId') batchId: string, @GetUser() user: any) {
+    return this.materialControlService.getComplianceBatchStatus(user.id, batchId);
+  }
+
   @Post('verify-sticker')
   @Roles('GROWER')
   async verifyStickerRoll(

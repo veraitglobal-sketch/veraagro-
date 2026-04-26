@@ -70,7 +70,7 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Login / Dashboard — desno */}
+          {/* Login / Dashboard (right) */}
           <div className="hidden md:flex flex-shrink-0 items-center gap-4 ml-auto">
             {isAuthenticated ? (
               <>

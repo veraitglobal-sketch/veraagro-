@@ -76,7 +76,7 @@ function useTicker() {
     tickerRef.current = ticker;
   }, [ticker]);
 
-  // Kamioni / brojke – menja se na 20–45 s, povezana logika (bez setState(prev =>))
+  // Ticker (orders / in transit / etc.): random walk every 20–45s; avoid setState(functional updaters) in interval
   useEffect(() => {
     const intervalMs = 20000 + Math.random() * 25000;
     const id = setInterval(() => {

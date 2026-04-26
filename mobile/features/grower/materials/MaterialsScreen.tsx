@@ -23,7 +23,7 @@ export function MaterialsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <BioVeraSubpageHeader
-        title="Whitelist Materijala"
+        title={t('producer.materials.screenTitle')}
         left="back"
         right={
           data.lastSync ? (

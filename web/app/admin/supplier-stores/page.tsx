@@ -265,7 +265,7 @@ export default function AdminSupplierStoresPage() {
                 />
               </label>
               <label className="block text-xs text-gray-600">
-                No. (broj)
+                No. (street number)
                 <input
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
                   placeholder="e.g. 12"
@@ -276,7 +276,7 @@ export default function AdminSupplierStoresPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label className="block text-xs text-gray-600">
-                Postal / ZIP (poštanski broj) *
+                Postal / ZIP *
                 <input
                   required
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
@@ -286,7 +286,7 @@ export default function AdminSupplierStoresPage() {
                 />
               </label>
               <label className="block text-xs text-gray-600">
-                City (grad) *
+                City *
                 <input
                   required
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
@@ -296,7 +296,7 @@ export default function AdminSupplierStoresPage() {
               </label>
             </div>
             <label className="block text-xs text-gray-600">
-              Country (država) *
+              Country *
               <input
                 required
                 className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"

@@ -1,4 +1,5 @@
 import { offlineStorage } from './offline-storage';
+import i18n from '../i18n/config';
 
 export interface FarmBoundary {
   polygonCoordinates: Array<{ lat: number; lng: number }>;
@@ -45,7 +46,7 @@ export async function materialValidator(
   type?: 'SEED' | 'FERTILIZER' | 'PESTICIDE'
 ): Promise<{ valid: boolean; message?: string }> {
   if (!barcode || barcode.trim().length === 0) {
-    return { valid: false, message: 'Barkod je obavezan' };
+    return { valid: false, message: i18n.t('integrity.barcodeRequired') };
   }
 
   const trimmedBarcode = barcode.trim();
@@ -99,9 +100,11 @@ export async function materialValidator(
       };
       if (data.registered) {
         if (data.status === 'VOID') {
-          return { valid: false, message: 'Ovaj je barkod poništen u sistemu. Kontaktirajte dobavljača.' };
+          return { valid: false, message: i18n.t('integrity.voidBarcode') };
         }
-        const label = [data.businessName, data.productName].filter(Boolean).join(' · ') || 'Registrovan kod snabdevača';
+        const label =
+          [data.businessName, data.productName].filter(Boolean).join(' · ') ||
+          i18n.t('integrity.supplierRegisteredDefault');
         return { valid: true, message: `${label} (${data.status})` };
       }
     }
@@ -111,6 +114,6 @@ export async function materialValidator(
 
   return {
     valid: false,
-    message: 'Materijal nije na whitelist-i i nije registrovani kod snabdevača. Kontaktirajte administratora ili apoteku.',
+    message: i18n.t('integrity.notWhitelisted'),
   };
 }

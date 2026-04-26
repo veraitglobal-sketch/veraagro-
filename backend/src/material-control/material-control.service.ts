@@ -246,6 +246,48 @@ export class MaterialControlService {
   }
 
   /**
+   * One lot = one set of compliance photos + one label roll ID on file. Used to show "done" in the grower UI
+   * and avoid re-doing the whole flow when everything is already submitted.
+   */
+  async getComplianceBatchStatus(userId: string, batchInternalId: string) {
+    const batch = await this.prisma.batches.findFirst({
+      where: { id: batchInternalId, estates: { ownerId: userId } },
+      include: {
+        compliance_photos: { orderBy: { uploadedAt: 'desc' } },
+      },
+    });
+    if (!batch) {
+      throw new NotFoundException('Batch not found');
+    }
+    const standard = await this.getBioVeraStandard();
+    const required = standard.requiredPhotoTypes || ['PUNNETS', 'LABELING', 'PALLETIZATION'];
+    const uploadedTypes = [...new Set(batch.compliance_photos.map((p) => p.photoType))];
+    const missing = required.filter((t) => !uploadedTypes.includes(t));
+    const labelRow = await this.prisma.material_inventory.findFirst({
+      where: {
+        usedInBatchId: batchInternalId,
+        material_types: { type: 'LABEL' },
+      },
+      select: { serialNumber: true, status: true, usedAt: true },
+    });
+
+    const complete = missing.length === 0 && labelRow != null;
+
+    return {
+      publicBatchId: batch.batchId,
+      complete,
+      requiredPhotoTypes: required,
+      uploadedPhotoTypes: uploadedTypes,
+      missingPhotoTypes: missing,
+      stickerRollId: labelRow?.serialNumber ?? null,
+      stickerStatus: labelRow?.status ?? null,
+      lastComplianceAt: batch.compliance_photos[0]
+        ? batch.compliance_photos[0].uploadedAt.toISOString()
+        : null,
+    };
+  }
+
+  /**
    * Verify sticker roll ID
    */
   async verifyStickerRoll(userId: string, dto: VerifyStickerRollDto) {
@@ -269,6 +311,14 @@ export class MaterialControlService {
     }
 
     if (inventory.status === 'USED') {
+      if (inventory.usedInBatchId === dto.batchId && inventory.soldToUserId === userId) {
+        return {
+          success: true,
+          verified: true,
+          stickerRollId: dto.stickerRollId,
+          batchId: dto.batchId,
+        };
+      }
       throw new BadRequestException('This sticker roll has already been used');
     }
 
