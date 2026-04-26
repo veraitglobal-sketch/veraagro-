@@ -167,16 +167,19 @@ export class MaterialControlService {
       throw new NotFoundException('Material type not found or inactive');
     }
 
-    // Create inventory entries
+    // Create inventory entries (each row needs id + updatedAt)
+    const now = new Date();
     const inventoryEntries = [];
     for (let i = 0; i < dto.quantity; i++) {
       const serialNumber = this.generateSerialNumber(materialType.type, i);
       inventoryEntries.push({
+        id: crypto.randomUUID(),
         materialTypeId: dto.materialTypeId,
         serialNumber,
-        status: 'SOLD',
+        status: 'SOLD' as const,
         soldToUserId: userId,
-        soldAt: new Date(),
+        soldAt: now,
+        updatedAt: now,
       });
     }
 
@@ -344,21 +347,40 @@ export class MaterialControlService {
       );
     }
 
-    // Create compliance photos
-    const photos = await Promise.all(
-      dto.photos.map((photo, index) =>
-        this.prisma.compliance_photos.create({
-          data: {
-            id: crypto.randomUUID(),
-            batchId: dto.batchId,
-            photoType: requiredTypes[index],
-            photoUrl: photo,
-            photoHash: this.generateHash(photo),
-            uploadedBy: userId,
-          },
-        })
-      )
-    );
+    // Replace existing compliance rows for this batch (same types) so re-upload does not duplicate
+    const photos = await this.prisma.$transaction(async (tx) => {
+      await tx.compliance_photos.deleteMany({
+        where: {
+          batchId: dto.batchId,
+          photoType: { in: requiredTypes },
+        },
+      });
+
+      return Promise.all(
+        dto.photos.map((photo, index) =>
+          tx.compliance_photos.create({
+            data: {
+              id: crypto.randomUUID(),
+              batchId: dto.batchId,
+              photoType: requiredTypes[index],
+              photoUrl: photo,
+              photoHash: this.generateHash(photo),
+              uploadedBy: userId,
+            },
+          })
+        )
+      );
+    });
+
+    const inv = await this.prisma.material_inventory.findUnique({
+      where: { serialNumber: dto.stickerRollId },
+    });
+    if (inv) {
+      await this.prisma.material_inventory.update({
+        where: { id: inv.id },
+        data: { status: 'USED', usedInBatchId: dto.batchId, usedAt: new Date() },
+      });
+    }
 
     return {
       success: true,
@@ -467,7 +489,6 @@ export class MaterialControlService {
    * Generate hash for photo verification
    */
   private generateHash(data: string): string {
-    // In production, use crypto.createHash('sha256')
-    return `hash-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
   }
 }

@@ -48,6 +48,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [receiving, setReceiving] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -69,6 +70,22 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
     }
   }, []);
 
+  const markReceivedAtFarm = async (orderId: string) => {
+    setReceiving(orderId);
+    setErr(null);
+    try {
+      await growerSupplierB2bAPI.markOrderReceivedAtFarm(orderId);
+      await load();
+    } catch (e) {
+      const msg =
+        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
+      const text = Array.isArray(msg) ? msg.join(' ') : msg;
+      setErr(text || (e instanceof Error ? e.message : 'Could not mark receipt'));
+    } finally {
+      setReceiving(null);
+    }
+  };
+
   useEffect(() => {
     void load();
   }, [load]);
@@ -85,6 +102,15 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
         </h2>
         <p className="text-sm text-gray-600 font-light">
           Direct material orders and conversations with partners. Find new suppliers in the list on the left.
+        </p>
+        <p className="text-xs text-gray-500 font-light mt-2 leading-relaxed">
+          Flow: the <strong>supplier</strong> updates the order status (e.g. CONFIRMED, FULFILLED). When the physical
+          goods reach your farm, you click <strong>Received at farm</strong> so the system records that the line is
+          available to you. (This is separate from the in-app{' '}
+          <Link href="/grower/materials" className="text-[#2D5A27] underline">
+            Materials
+          </Link>{' '}
+          catalog balances, which you top up with Purchase on that page unless your contract says otherwise.)
         </p>
       </div>
 
@@ -142,6 +168,25 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                       <p className="text-xs text-gray-600">
                         <span className="text-gray-500">Partner:</span> {o.noteFromSupplier}
                       </p>
+                    )}
+                    {o.farmerReceivedAt && (
+                      <p className="text-xs font-medium text-emerald-800 mt-2">
+                        Received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+                      </p>
+                    )}
+                    {!o.farmerReceivedAt &&
+                      (o.status === 'CONFIRMED' || o.status === 'FULFILLED') && (
+                        <button
+                          type="button"
+                          disabled={receiving === o.id}
+                          onClick={() => void markReceivedAtFarm(o.id)}
+                          className="mt-2 inline-flex items-center rounded-lg border border-[#2D5A27] bg-white px-3 py-1.5 text-xs font-medium text-[#23471f] hover:bg-[#2D5A27]/5 disabled:opacity-50"
+                        >
+                          {receiving === o.id ? 'Saving…' : 'Received at farm'}
+                        </button>
+                      )}
+                    {!o.farmerReceivedAt && o.status === 'PENDING' && (
+                      <p className="text-xs text-amber-800/90 mt-2">Waiting for supplier to confirm the order…</p>
                     )}
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Link

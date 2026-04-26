@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray, IsBoolean, IsOptional, Min } from 'class-validator';
+import { IsString, IsNumber, IsArray, IsBoolean, IsOptional, Min, Max } from 'class-validator';
 
 export class PurchaseMaterialDto {
   @IsString()
@@ -6,6 +6,7 @@ export class PurchaseMaterialDto {
 
   @IsNumber()
   @Min(1)
+  @Max(200)
   quantity: number;
 }
 

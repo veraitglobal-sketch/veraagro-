@@ -17,6 +17,14 @@ const REQUIRED_PHOTOS = [
   { type: 'PALLETIZATION', label: 'Palletization', description: 'Showing our specific protective film is used' },
 ];
 
+function messageFromApiPayload(data: unknown): string {
+  if (!data || typeof data !== 'object') return 'Request failed';
+  const m = (data as { message?: unknown }).message;
+  if (Array.isArray(m)) return m.filter(Boolean).join(' ');
+  if (typeof m === 'string') return m;
+  return 'Request failed';
+}
+
 export default function CompliancePhotosPage() {
   const { user } = useAuth();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
@@ -97,8 +105,8 @@ export default function CompliancePhotosPage() {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to verify sticker roll');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(messageFromApiPayload(errorData) || 'Failed to verify sticker roll');
       }
 
       setSuccess('Sticker roll verified successfully!');
@@ -140,8 +148,8 @@ export default function CompliancePhotosPage() {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to upload compliance photos');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(messageFromApiPayload(errorData) || 'Failed to upload compliance photos');
       }
 
       setSuccess('Compliance photos uploaded successfully! Your batch is now ready for pickup.');
@@ -185,8 +193,23 @@ export default function CompliancePhotosPage() {
         >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo-Verification Checklist</h2>
             <p className="text-sm text-gray-600 mb-6">
-              Upload 3 compliance photos before activating 'Ready for Pickup' status.
+              Upload 3 compliance photos before activating &apos;Ready for Pickup&apos; status.
             </p>
+
+            <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 text-sm text-gray-800">
+              <p className="font-medium text-gray-900 mb-2">Where do I find Sticker Roll ID?</p>
+              <p className="mb-2">
+                The ID is the <strong>serial number of your official Bio Vera label roll</strong> — it is created in the system when you{' '}
+                <strong>order label rolls</strong> from the platform (e.g.{' '}
+                <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
+                  Materials
+                </Link>
+                ). It usually looks like <code className="rounded bg-white px-1 py-0.5 text-xs">LABEL-ROLL-…</code>, and may also appear on the roll packaging or supplier paperwork.
+              </p>
+              <p className="text-gray-700">
+                You must enter the exact ID that was <strong>sold to your account</strong>. A random number will not verify — order a label roll first, then use the ID from that purchase.
+              </p>
+            </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
@@ -243,7 +266,7 @@ export default function CompliancePhotosPage() {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Every roll of Bio Vera labels has a unique ID. Enter the ID to verify it was sold to you.
+                Every roll of Bio Vera labels has a unique ID. Enter or scan it, then click Verify. The system checks that this roll was issued to you when you ordered materials.
               </p>
             </div>
 

@@ -6,8 +6,17 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import Link from 'next/link';
 
 const navItems = growerNavItems;
+
+function messageFromApiPayload(data: unknown): string {
+  if (!data || typeof data !== 'object') return '';
+  const m = (data as { message?: unknown }).message;
+  if (Array.isArray(m)) return m.filter(Boolean).join(' ');
+  if (typeof m === 'string') return m;
+  return '';
+}
 
 interface MaterialBalance {
   crateBalance: number;
@@ -53,7 +62,11 @@ export default function GrowerMaterialsPage() {
           const balanceData = await balanceRes.json();
           setBalance(balanceData);
         } else {
-          setError('Could not load your material balance. Check that you are logged in.');
+          const errJson = await balanceRes.json().catch(() => ({}));
+          setError(
+            messageFromApiPayload(errJson) ||
+              'Could not load your material balance. Check that you are logged in.',
+          );
         }
 
         if (typesRes.ok) {
@@ -71,7 +84,7 @@ export default function GrowerMaterialsPage() {
             );
             if (types.length === 0) {
               setTypesError(
-                'No products in the catalog. Refresh the page; if the list stays empty, ask a Bio Vera admin to enable material types.',
+                'No products in the catalog. Contact your approved supplier in Suppliers & orders, or use Help / contact — an admin may need to enable material types.',
               );
             } else {
               setTypesError(null);
@@ -81,7 +94,11 @@ export default function GrowerMaterialsPage() {
             setTypesError('Invalid response from the server for material types.');
           }
         } else {
-          setTypesError('Could not load the list of materials (network or API).');
+          const errJson = await typesRes.json().catch(() => ({}));
+          setTypesError(
+            messageFromApiPayload(errJson) ||
+              'Could not load the list of materials. Try again, or go to Suppliers & orders and message your material partner if the list stays empty.',
+          );
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -95,8 +112,13 @@ export default function GrowerMaterialsPage() {
   }, []);
 
   const handlePurchase = async () => {
-    if (!selectedMaterial || !quantity || parseInt(quantity) <= 0) {
+    const n = parseInt(quantity, 10);
+    if (!selectedMaterial || !quantity || Number.isNaN(n) || n <= 0) {
       setError('Please select a material and enter a valid quantity');
+      return;
+    }
+    if (n > 200) {
+      setError('Maximum 200 units per order. Lower the quantity and try again.');
       return;
     }
 
@@ -114,13 +136,16 @@ export default function GrowerMaterialsPage() {
         },
         body: JSON.stringify({
           materialTypeId: selectedMaterial,
-          quantity: parseInt(quantity),
+          quantity: n,
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to purchase materials');
+        const errorData = await response.json().catch(() => ({}));
+        const msg = messageFromApiPayload(errorData) || 'Failed to purchase materials';
+        throw new Error(
+          `${msg} If this keeps happening, open "Suppliers & orders" to contact your material partner, or use Help / contact.`,
+        );
       }
 
       const data = await response.json();
@@ -151,9 +176,56 @@ export default function GrowerMaterialsPage() {
         <div className="mb-2">
           <h1 className="text-3xl font-light text-gray-900">Materials</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Order official Bio Vera packaging here (crates, label rolls, film). Purchases add to the balances above the form.
+            Order official Bio Vera packaging here (crates, label rolls, film). Purchases add to the balances and create label roll IDs for compliance.
           </p>
         </div>
+
+        <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-800 shadow-sm">
+          <p className="font-medium text-gray-900 mb-2">How this relates to suppliers</p>
+          <ul className="list-disc space-y-1.5 pl-5 text-gray-700">
+            <li>
+              <strong>Materials (this page)</strong> is the in-app <strong>catalog</strong>: when you &quot;Purchase&quot; here, the
+              platform increases your <strong>balances</strong> and (for each label roll) records a <strong>serial number</strong> in
+              the system. Those IDs are what you use on <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
+            </li>
+            <li>
+              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
+                Suppliers &amp; orders
+              </Link>{' '}
+              is for B2B: <strong>messages and orders with your approved material partners / distributors</strong> (regional
+              supply, paperwork, or when the catalog is empty). It does not replace the balances here by itself—use both if
+              you pick up stock offline and the platform should reflect it, contact your partner or support.
+            </li>
+            <li>
+              If you cannot order here or the page errors, go to{' '}
+              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
+                Suppliers &amp; orders
+              </Link>{' '}
+              to reach your supplier, or{' '}
+              <Link href="/contact" className="text-[#2D5A27] font-medium underline">
+                Contact
+              </Link>
+              .
+            </li>
+          </ul>
+        </div>
+
+        {balance &&
+          balance.crateBalance === 0 &&
+          balance.labelRollBalance === 0 &&
+          balance.filmMeterBalance === 0 && (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+              <p className="font-medium">Your material balances are 0</p>
+              <p className="mt-1">
+                Order using the form below, or if you usually buy through a local distributor, open{' '}
+                <Link href="/grower/where-to-buy" className="font-semibold text-[#23471f] underline">
+                  Suppliers &amp; orders
+                </Link>{' '}
+                to message them, then ensure your balance here is updated (via purchase or support).
+              </p>
+            </div>
+          )}
+
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -245,9 +317,11 @@ export default function GrowerMaterialsPage() {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 min="1"
+                max="200"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="Enter quantity"
+                placeholder="1–200 per order"
               />
+              <p className="text-xs text-gray-500 mt-1">Max 200 units per order (e.g. 100 label rolls = 100 serial numbers in the system).</p>
             </div>
             {selectedMaterial && quantity && (
               <div className="p-4 bg-gray-50 rounded-lg">

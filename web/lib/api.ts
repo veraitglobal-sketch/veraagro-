@@ -518,10 +518,18 @@ export const growerSupplierB2bAPI = {
       items: unknown;
       noteFromFarmer: string | null;
       noteFromSupplier: string | null;
+      farmerReceivedAt: string | null;
       createdAt: string;
       updatedAt: string;
       supplier: { firstName: string | null; lastName: string | null; partnerCode: string | null } | null;
     }>;
+  },
+  /** After goods arrive: grower marks receipt (does not change supplier status) */
+  markOrderReceivedAtFarm: async (orderId: string) => {
+    const response = await api.post(
+      `/b2b-suppliers/orders/${encodeURIComponent(orderId)}/farmer-received`,
+    );
+    return response.data as { id: string; farmerReceivedAt: string | null; status: string };
   },
   /** Logged-in grower: message threads with material suppliers. */
   getMyThreads: async () => {
@@ -617,6 +625,7 @@ export const b2bSupplierPortalAPI = {
       createdAt: string;
       items: unknown;
       noteFromFarmer?: string;
+      farmerReceivedAt?: string | null;
       farmer?: { firstName?: string; lastName?: string; partnerCode?: string };
     }>;
   },

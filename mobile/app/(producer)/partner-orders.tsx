@@ -32,6 +32,7 @@ type Order = {
   status: string;
   items: unknown;
   noteFromFarmer: string | null;
+  farmerReceivedAt?: string | null;
   createdAt: string;
   supplier: { firstName: string | null; lastName: string | null; partnerCode: string | null } | null;
 };
@@ -71,6 +72,7 @@ export default function GrowerPartnerOrdersScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [receivingId, setReceivingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -99,6 +101,20 @@ export default function GrowerPartnerOrdersScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     void load();
+  };
+
+  const markReceived = async (orderId: string) => {
+    setReceivingId(orderId);
+    setErr(null);
+    try {
+      await b2bSuppliersAPI.markOrderReceivedAtFarm(orderId);
+      await load();
+    } catch (e) {
+      const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setErr(typeof msg === 'string' ? msg : e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setReceivingId(null);
+    }
   };
 
   return (
@@ -199,6 +215,36 @@ export default function GrowerPartnerOrdersScreen() {
                   • {line}
                 </Text>
               ))}
+              {o.farmerReceivedAt ? (
+                <Text style={{ fontSize: 12, color: '#166534', marginTop: theme.spacing.sm, fontWeight: '600' }}>
+                  Received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+                </Text>
+              ) : null}
+              {!o.farmerReceivedAt && (o.status === 'CONFIRMED' || o.status === 'FULFILLED') ? (
+                <TouchableOpacity
+                  onPress={() => void markReceived(o.id)}
+                  disabled={receivingId === o.id}
+                  style={{
+                    marginTop: theme.spacing.sm,
+                    alignSelf: 'flex-start',
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    borderRadius: theme.borderRadius.md,
+                    borderWidth: 1,
+                    borderColor: theme.colors.primary,
+                    opacity: receivingId === o.id ? 0.6 : 1,
+                  }}
+                >
+                  <Text style={{ fontSize: 13, color: theme.colors.primary, fontWeight: '600' }}>
+                    {receivingId === o.id ? '…' : 'Received at farm'}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+              {!o.farmerReceivedAt && o.status === 'PENDING' ? (
+                <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: theme.spacing.sm }}>
+                  Waiting for supplier to confirm…
+                </Text>
+              ) : null}
               <TouchableOpacity
                 onPress={() => router.push(`/b2b-supplier/${o.supplierUserId}` as any)}
                 style={{ marginTop: theme.spacing.sm, flexDirection: 'row', alignItems: 'center' }}

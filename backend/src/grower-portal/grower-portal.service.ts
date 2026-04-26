@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { QrService } from '../qr/qr.service';
 import {
@@ -9,6 +10,8 @@ import {
 
 @Injectable()
 export class GrowerPortalService {
+  private readonly logger = new Logger(GrowerPortalService.name);
+
   constructor(
     private prisma: PrismaService,
     private qrService: QrService,
@@ -18,41 +21,116 @@ export class GrowerPortalService {
    * Get grower's mission tracker data
    */
   async getMissionTracker(growerId: string, batchId?: string) {
-    const where: any = { growerId };
+    if (!growerId) {
+      throw new BadRequestException('Invalid session');
+    }
+
+    const where: Prisma.missionsWhereInput = { growerId };
     if (batchId) {
       where.batchId = batchId;
     }
 
-    // Only include relations used by `buildMissionTrackerData` / `buildMilestones`. Omit large or
-    // optional nested rows (e.g. quality_entries) that can make Prisma fail on legacy DB data.
-    const missions = await this.prisma.missions.findMany({
-      where,
-      include: {
-        batches: {
-          include: {
-            distributor_arrivals: {
-              orderBy: { arrivalTime: 'desc' },
-              take: 1,
-            },
+    // Relations needed by buildMilestones; cap nested rows. If Prisma errors on a legacy row (bad FK,
+    // broken join), fall back to a slimmer include so the list can still load.
+    const fullInclude: Prisma.missionsInclude = {
+      batches: {
+        include: {
+          distributor_arrivals: {
+            orderBy: { arrivalTime: 'desc' },
+            take: 1,
           },
-        },
-        users_missions_logisticsPartnerIdTousers: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            phone: true,
-          },
-        },
-        vehicles: true,
-        border_wait_times: {
-          orderBy: { borderArrivalTime: 'desc' },
         },
       },
-      orderBy: { createdAt: 'desc' },
-    });
+      users_missions_logisticsPartnerIdTousers: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+        },
+      },
+      vehicles: { select: { vehicleNumber: true } },
+      border_wait_times: {
+        orderBy: { borderArrivalTime: 'desc' },
+        take: 32,
+      },
+    };
 
-    return missions.map((mission) => this.buildMissionTrackerData(mission));
+    let missions: Awaited<ReturnType<typeof this.prisma.missions.findMany>>;
+    try {
+      missions = await this.prisma.missions.findMany({
+        where,
+        include: fullInclude,
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (err) {
+      this.logger.warn(
+        `getMissionTracker full include failed, retrying minimal: ${(err as Error).message}`,
+      );
+      missions = await this.prisma.missions.findMany({
+        where,
+        include: {
+          batches: {
+            select: {
+              batchId: true,
+              productName: true,
+              quantity: true,
+              unit: true,
+            },
+          },
+          users_missions_logisticsPartnerIdTousers: {
+            select: {
+              firstName: true,
+              lastName: true,
+              phone: true,
+            },
+          },
+          vehicles: { select: { vehicleNumber: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    return missions.map((mission) => {
+      try {
+        return this.buildMissionTrackerData(mission);
+      } catch (err) {
+        this.logger.error(
+          `buildMissionTrackerData failed for mission ${(mission as { id: string }).id}: ${(err as Error).message}`,
+          (err as Error).stack,
+        );
+        return this.buildMissionTrackerDataFallback(mission);
+      }
+    });
+  }
+
+  /**
+   * Safe row when milestone logic cannot run on a mission (avoids 500 for the whole list)
+   */
+  private buildMissionTrackerDataFallback(mission: any) {
+    const p = (v: string | null | undefined) => (v == null || v === '' ? '' : String(v).trim());
+    const driver = mission.users_missions_logisticsPartnerIdTousers
+      ? p(`${p(mission.users_missions_logisticsPartnerIdTousers.firstName)} ${p(
+          mission.users_missions_logisticsPartnerIdTousers.lastName,
+        )}`) || 'Not assigned'
+      : 'Not assigned';
+    return {
+      missionId: mission.id,
+      missionNumber: mission.missionNumber,
+      batchId: mission.batches?.batchId ?? null,
+      productName: mission.batches?.productName ?? '—',
+      quantity: mission.batches?.quantity ?? null,
+      unit: mission.batches?.unit ?? null,
+      status: mission.status,
+      currentMilestone: '—',
+      milestones: [],
+      driver,
+      vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
+      requestedAt: mission.requestedAt,
+      pickedUpAt: mission.pickedUpAt,
+      completedAt: mission.completedAt,
+      trackerPartial: true,
+    };
   }
 
   /**
@@ -273,7 +351,10 @@ export class GrowerPortalService {
       currentMilestone: currentMilestone?.name,
       milestones,
       driver: mission.users_missions_logisticsPartnerIdTousers
-        ? `${mission.users_missions_logisticsPartnerIdTousers.firstName} ${mission.users_missions_logisticsPartnerIdTousers.lastName}`
+        ? [mission.users_missions_logisticsPartnerIdTousers.firstName, mission.users_missions_logisticsPartnerIdTousers.lastName]
+            .filter(Boolean)
+            .join(' ')
+            .trim() || 'Not assigned'
         : 'Not assigned',
       vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
       requestedAt: mission.requestedAt,

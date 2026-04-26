@@ -128,6 +128,37 @@ BioVera is a vertically integrated agrotech platform connecting European agricul
 - Quality entry system
 - Batch management
 
+### GROWER WEB DASHBOARD (LOGGED-IN) – MENI, RUTE, SMISAO
+Kada je proizvođač (grower) ulogovan na webu, levi meni vodi do istih sadržaja na svim stranicama. Glavne rute (prefiks /grower):
+- **/grower** – Dashboard, pregled i prečice
+- **/grower/portal** – **Mission Tracker**: transportne misije (status prevoza, vozač, vozilo, etape puta). Ako lista ne učita, pokušaj osvežavanje; ovo nije stranica digitalnog pasoša proizvoda, već **transport**
+- **/grower/missions/create** – **Request transport** (prijava prevoza / pickup). Obrati pažnju na poruke forme: možda ne možeš da naručiš transport dok nisu rešeni materijali, compliance fotografije itd. (form obično objašnjava šta fali)
+- **/grower/batches** – **My Batches** (lotovi posle berbe, QR, status, povezivanje s misijama)
+- **/grower/fields** – **My Fields** (gazdinstva, parcele, kreiranje lotova; parcele mogu biti u čekanju admin odobrenja)
+- **/grower/season** – **Steps** (koraci sezone / poljski tok u toku sezone)
+- **/grower/where-to-buy** – **Suppliers & orders (B2B)**: **ovde grower pronalazi odobrene Vera dobavljače materijala** i naručuje, vidi porudžbine i po mogućnosti poruke. Ovo nije „Google Maps udaljenost u km” – mreža je partnerska (whitelist). Za „najbliži” u smislu geografske udaljenosti, aplikacija ne mora uvek imati mapu: prvo otvori ovu stranicu, biraš/dobijaš dodeljenog partnera; ako nema stavke, proveri odobrenje naloga, **Materials** i podršku
+- **/grower/materials** – katalog (kutije, etikete, filmovi…) – povezano s pravilima platforme
+- **/grower/quality-entry** – **Quality entry** (potpuni upis: vreme/klime, pre-cool, 3 fotografije kutija, potvrda). **Jedan unos kvaliteta po lotu (batch)** – drugi pokušaj: sistem prijavljuje da unos već postoji; onda ne ponovo slati isto, već **Request transport** ili **My Batches**
+- **/grower/compliance-photos** – uskladu/compliance slike
+- **/grower/profile** – profil
+Digitalni **paspoš (passport) javnog lanca** obično ide preko koda/ID-ja (npr. /passport/[batchId] gde je batchId stvarni lot ID), ne u Mission Trackeru
+
+### ČESTA PITANJA I „ZAŠTO JE OVAKO” (GROWER, GREŠKE, SLEDEĆI KORAC)
+- **Gde da nađem najbližeg suppliera?** (grower) – Nisi na javnoj mapi. Uloguj se, otvori **Suppliers & orders** = /grower/where-to-buy. Tamo B2B dobavljači odobreni od strane platforme, porudžbine i komunikacija. Ako nemaš listing, moguć razlog: nalog, prazen katalog tipova, ili prvo popuni **Materials** / očekuj dodelu – **Help** ili /contact ako treba
+- **Prijava berbe dva puta (harvest već poslat)** – Za istu **parcelu** ne treba slati dva aktivna plana berbe. Poruka: berba već prijavljena. Sledeći korak: **Request transport** (/grower/missions/create) i **Mission Tracker** (/grower/portal)
+- **Quality entry: Internal server error / već postoji** – Ako već postoji: ne duplirati, nastavi transport / lot. Ako greška servera: proveri polja, 3 fotke, pokušaj posle, pa podrška ako ostane
+- **Mission Tracker: Internal server error** – Greška servera pri učitavanju liste **misija**; osvežavanje, kasnije ponovo, ili podrška. Nije to isto kao greška na pasošu
+- **Request transport blokiran** – Često zato što fali uslov (npr. **Materials** ili **compliance-photos**); pročitaj crvene poruke na formi i linkove u istoj stranici
+- **Prazan Materials / Select material** – Mogu prvo da budu inicijalizovani tipovi materijala; ako je prazno, podrška ili admin. Grower bira u skladu s whitelist-om
+- **Passport nema podataka** – Uveri se da koristiš **stvaran batchId** (identifikator lota) u URL-u, ne proizvoljan string; otvori lot iz **My Batches**
+- Uvek može **Help Center** /help-center, **FAQ** /faq, **Kontakt** /contact kada nešto nije u bazi
+
+### GROWER WEB (EN – mirror for the model)
+- **Suppliers (nearest / where to find)**: As a **logged-in grower**, use **Suppliers & orders** at /grower/where-to-buy for B2B approved suppliers and orders. It is not a public "nearest on map" search; use the in-app list and your assigned partner where applicable.
+- **Duplicate harvest** → **Request transport** and **Mission Tracker**; do not register harvest again for the same active parcel.
+- **Quality entry**: one per batch; if already exists, proceed with **Request transport** or **My Batches**.
+- **Mission Tracker errors**: refresh; server issues are separate from digital passport.
+
 **Resources Available:**
 - Grower Prospect PDF
 - Packaging Guidelines
@@ -712,6 +743,18 @@ BioVera is a vertically integrated agrotech platform connecting European agricul
    */
   private getQuickResponses(): Record<string, string> {
     return {
+      najbli: `**Grower: gde je "najbliži" dobavljač / supplier?** Na Bio Vera platformi ulogovani proizvođač ne traži dobavljača preko javne mape udaljenosti. Otvori levi meni **Suppliers & orders** (putanja \`/grower/where-to-buy\`). Tu su **B2B odobreni dobavljači** (materijal, porudžbine, poruke). Ako lista nije puna, proveri odobrenje naloga i stranicu **Materials**; za pomoć koristi **Help Center** (\`/help-center\`) ili **Contact** (\`/contact\`). / **English:** As a logged-in grower, use **Suppliers & orders** at \`/grower/where-to-buy\` for approved B2B suppliers—not a public "nearest on map" search.`,
+
+      dobavlj: `**Grower i dobavljači (materijal):** Porudžbine prema odobrenim partnerima: **Suppliers & orders** → \`/grower/where-to-buy\`. **Ako želiš da postaneš dobavljač platforme** (kompanija koja snabdeva Veru), to je odvojeno: stranica **/suppliers** (prijava partnera). Ne mešaj ta dva toka.`,
+
+      'mission tracker': `**Mission Tracker** (\`/grower/portal\`) prikazuje **transportne misije** (pickup, vozač, status). Ako vidiš grešku servera, osveži stranicu ili pokušaj kasnije; u toku je učitavanje liste misija. Naredni korak posle prijave berbe obično uključuje **Request transport** (\`/grower/missions/create\`). Pasoš proizvoda je u **My Batches** / passport linku, ne u Mission Trackeru.`,
+
+      'quality entry': `**Quality entry** (\`/grower/quality-entry\`): jedan puni unos po lotu (batch). Ako piše da unos već postoji, ne dupliraj—nastavi sa **Request transport** ili proveri **My Batches**. Greška servera: proveri polja, 3 fotografije, pokušaj ponovo; ako ostane, kontaktiraj podršku.`,
+
+      berba: `**Prijava berbe (harvest plan):** Ako sistem kaže da je berba već prijavljena za parcelu, ne šalji isto ponovo. Sledeći korak: **Request transport** (\`/grower/missions/create\`) i prati status u **Mission Tracker** (\`/grower/portal\`).`,
+
+      suppl: `**Supplier – dve stvari:** (1) **Grower** koji traži od koga da kupi materijal (kutije, folija…): meni **Suppliers & orders** → \`/grower/where-to-buy\` (B2B odobreni partneri). (2) **Kompanija** koja želi da postane dobavljač platformi: \`/suppliers\` (posebna prijava). Ako si grower i pitaš "najbliži", platforma ne mora imati mapu km – prvo B2B lista na \`/grower/where-to-buy\`.`,
+
       'empty mile': `**Empty Mile Reduction** - Our system automatically matches return trips with new pickups, reducing empty truck journeys by up to 40%. This saves fuel costs, reduces carbon footprint, and increases your revenue per trip. After delivery, the system automatically finds nearby pickups and suggests optimal return routes with cargo. [Learn more about logistics]`,
       
       'eco route': `**Eco-Route Planning** - AI-powered route optimization that considers traffic, weather, and distance to minimize fuel consumption and reduce carbon emissions. Features include automatic route calculation, traffic-aware routing, weather-based adjustments, and real-time GPS tracking. [View logistics partner page]`,
@@ -804,15 +847,15 @@ Your role: Provide helpful information with PRIMARY FOCUS on buyers and growers,
 
 Priority Order (from most important to least):
 1. **Buyers/Distributors** (PRIMARY FOCUS) - Information about becoming a buyer, ordering process, product availability, pre-orders, how to purchase, product traceability, QR code verification
-2. **Growers/Producers** (SECONDARY FOCUS) - Information about becoming a grower, certification, field management, payment process, quality standards, mobile app usage, how to join
-3. **Suppliers** - Information about becoming a supplier, requirements, integration process
+2. **Growers/Producers** (SECONDARY FOCUS) - Information about becoming a grower, certification, field management, **the logged-in grower web app** (routes under /grower), payment process, quality standards, mobile app usage, how to join, **what to do when an error or warning appears, and the next step in the flow (harvest → transport → mission tracker, quality entry, B2B suppliers)**
+3. **Suppliers** - Information about becoming a supplier, requirements, integration process. **Distinguish:** (A) a company that wants to **sell to Vera** = public /suppliers; (B) a **logged-in grower** looking to **order materials** = /grower/where-to-buy (B2B), NOT the public suppliers page
 4. **Logistics Partners** - Load optimization analysis, empty mile reduction, route efficiency, packaging integrity, mathematical proof of efficiency
 
 Your persona:
 - Professional and helpful assistant
 - PRIMARY focus on buyers and growers - they are the most important users
 - For buyers: Emphasize ease of ordering, product quality, traceability, how to get started
-- For growers: Emphasize support, certification help, payment process, how to join
+- For growers: Emphasize support, certification help, payment process, how to join, and **concrete in-app paths** from the knowledge base (Mission Tracker, Request transport, Suppliers & orders, Quality entry, Materials)
 - For logistics questions: Use technical terms like "load optimization", "empty mile reduction", "packaging integrity" and provide mathematical proof
 - For other questions: Be informative, clear, and supportive
 - Speak in the SAME LANGUAGE as the user's question (default to English if unclear)
@@ -863,7 +906,7 @@ IMPORTANT RULES:
 1. Answer in the SAME LANGUAGE as the user's question (default to English)
 2. PRIORITY ORDER: Buyers (most important) → Growers (second) → Suppliers → Logistics (least priority)
 3. For BUYERS: Focus on ordering process, product availability, how to purchase, traceability, getting started
-4. For GROWERS: Focus on how to join, certification help, payment process, support available
+4. For GROWERS: Focus on how to join, certification help, payment process, support available, and **operational help** (menu paths /grower/..., errors, next steps after harvest, quality entry, transport)
 5. For logistics questions: IMMEDIATELY run calculations and show results with mathematical proof
 6. For buyers/growers questions: Be informative, clear, and supportive - provide detailed information from knowledge base
 7. ALWAYS provide specific numbers, percentages, and calculations for logistics questions - never vague statements
@@ -874,7 +917,9 @@ IMPORTANT RULES:
 12. Do NOT use emojis in your responses
 13. If calculation is needed, show the formula and result (e.g., "Fill percentage: (1,200 boxes / 1,980 boxes) × 100 = 60.6%")
 14. Always suggest optimizations when order is below 85% fill (for logistics questions)
-15. If you don't know something, say "I don't have that information, but you can contact our support team at /contact"
+15. **Never** answer with a generic "I don't have that information" for: grower **where to find suppliers / nearest supplier** (use **/grower/where-to-buy** and explain B2B list), **duplicate harvest**, **quality entry already exists** or **internal error** (use the knowledge base: next steps, refresh, help). Only fall back to /help-center and /contact when the question is **not** covered in the knowledge base or needs account-specific data
+16. When the user says they are a **grower** and ask **where** to find a supplier, **nearest** supplier, or **dobavljač**: direct them to **Suppliers & orders** in the app menu, URL **/grower/where-to-buy**. Explain the platform uses **approved** B2B partners (not a public distance map)
+17. For **"why"** or **"what should I do"** about errors (mission tracker, quality entry, transport blocked): use section **"ČESTA PITANJA I ZAŠTO JE OVAKO"** and **"GROWER WEB DASHBOARD"** in the knowledge base; give 2–3 concrete actions (which menu item, which route)
 
 Calculation Formulas (use these):
 - Truck fill percentage: (Order quantity / 1,980 boxes) × 100
@@ -910,7 +955,7 @@ ${knowledgeBase}`;
           },
         ],
         temperature: 0.7,
-        max_tokens: 600,
+        max_tokens: 900,
       });
 
       let answer = completion.choices[0].message.content;
@@ -951,6 +996,14 @@ ${knowledgeBase}`;
     
     const actionPatterns = [
       { pattern: /\/growers/g, label: 'Visit Growers Page', url: '/growers' },
+      { pattern: /\/grower\/where-to-buy/g, label: 'Grower: Suppliers & orders (B2B)', url: '/grower/where-to-buy' },
+      { pattern: /\/grower\/portal/g, label: 'Grower: Mission Tracker', url: '/grower/portal' },
+      { pattern: /\/grower\/missions\/create/g, label: 'Grower: Request transport', url: '/grower/missions/create' },
+      { pattern: /\/grower\/quality-entry/g, label: 'Grower: Quality entry', url: '/grower/quality-entry' },
+      { pattern: /\/grower\/materials/g, label: 'Grower: Materials', url: '/grower/materials' },
+      { pattern: /\/grower\/batches/g, label: 'Grower: My Batches', url: '/grower/batches' },
+      { pattern: /\/grower\/fields/g, label: 'Grower: My Fields', url: '/grower/fields' },
+      { pattern: /\/grower\/season/g, label: 'Grower: Steps (season)', url: '/grower/season' },
       { pattern: /\/suppliers/g, label: 'Visit Suppliers Page', url: '/suppliers' },
       { pattern: /\/register\/buyer/g, label: 'Register as Buyer', url: '/register/buyer' },
       { pattern: /\/logistics-partner/g, label: 'Become Logistics Partner', url: '/logistics-partner' },
@@ -976,8 +1029,12 @@ ${knowledgeBase}`;
     const lowerQuery = query.toLowerCase();
     const actions: Array<{ label: string; query: string }> = [];
 
-    if (lowerQuery.includes('grower') || lowerQuery.includes('producer')) {
+    if (lowerQuery.includes('grower') || lowerQuery.includes('producer') || lowerQuery.includes('proizvo')) {
       actions.push(
+        { label: 'Where are suppliers (logged in)', query: 'I am a grower. Where do I find suppliers and order materials in the app?' },
+        { label: 'After harvest registered', query: 'I already registered harvest. What should I do next on Bio Vera?' },
+        { label: 'Mission Tracker error', query: 'Mission Tracker shows an error. What is it and what should I do?' },
+        { label: 'Quality entry problem', query: 'Quality entry fails or says already exists. What should I do?' },
         { label: 'Application Process', query: 'How do I apply to become a grower?' },
         { label: 'Insurance Options', query: 'What insurance options are available for growers?' },
         { label: 'Payment Process', query: 'How does the payment process work for growers?' },

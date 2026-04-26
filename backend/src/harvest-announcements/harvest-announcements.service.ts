@@ -75,6 +75,22 @@ export class HarvestAnnouncementsService {
       );
     }
 
+    if (dto.announcementType === 'HARVEST') {
+      const activeHarvest = await this.prisma.harvest_announcements.findFirst({
+        where: {
+          parcelId: dto.parcelId,
+          announcementType: 'HARVEST',
+          status: { notIn: ['COMPLETED', 'CANCELLED'] },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (activeHarvest) {
+        throw new BadRequestException(
+          'Berba je već prijavljena za ovu parcelu — nije potrebno ponovo slanje. Sledeći korak: otvorite Request transport (ili Missions) da prijavite prevoz, ili proverite Mission Tracker. / Harvest is already registered for this parcel. Next: open Request transport (Missions) to book pickup, or check Mission tracker.',
+        );
+      }
+    }
+
     // 2. PHI Check: Block harvest if Pre-Harvest Interval not elapsed
     const { date: earliestHarvest, reason } = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
     const harvestDate = new Date(dto.estimatedDate);

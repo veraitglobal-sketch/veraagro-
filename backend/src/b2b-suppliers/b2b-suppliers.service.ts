@@ -636,6 +636,35 @@ export class B2bSuppliersService {
     });
   }
 
+  /**
+   * Grower confirms physical receipt at the farm. Does not change `status` (that stays the supplier’s workflow: PENDING → CONFIRMED → FULFILLED…).
+   * This timestamp is the “dostupno / received” signal for the grower in the B2B UI.
+   */
+  async markFarmerReceived(farmerId: string, orderId: string) {
+    this.assertGrower((await this.prisma.users.findUniqueOrThrow({ where: { id: farmerId } })).roles);
+    const o = await this.prisma.supplier_direct_orders.findFirst({
+      where: { id: orderId, farmerId },
+    });
+    if (!o) {
+      throw new NotFoundException('Order not found');
+    }
+    if (o.status === 'PENDING') {
+      throw new BadRequestException(
+        'The supplier has not confirmed this order yet. Wait for status CONFIRMED (or FULFILLED) before marking receipt.',
+      );
+    }
+    if (o.status === 'REJECTED' || o.status === 'CANCELLED') {
+      throw new BadRequestException('This order was not fulfilled; you cannot mark receipt.');
+    }
+    if (o.farmerReceivedAt) {
+      return o;
+    }
+    return this.prisma.supplier_direct_orders.update({
+      where: { id: orderId },
+      data: { farmerReceivedAt: new Date() },
+    });
+  }
+
   async listMyCatalog(supplierUserId: string) {
     this.assertSupplier(
       (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,

@@ -251,6 +251,13 @@ export class B2bSuppliersController {
     return this.svc.listOrdersForSupplier(u.id);
   }
 
+  @Post('orders/:orderId/farmer-received')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'SUPER_ADMIN', 'ADMIN')
+  markFarmerReceived(@GetUser() u: { id: string }, @Param('orderId') orderId: string) {
+    return this.svc.markFarmerReceived(u.id, orderId);
+  }
+
   @Patch('orders/:orderId/status')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('MATERIAL_SUPPLIER')

@@ -48,7 +48,12 @@ export default function SupplierOrdersPage() {
       requiredRoles={['MATERIAL_SUPPLIER']}
       redirectTo="/login?returnTo=%2Fsupplier%2Forders"
     >
-      <h1 className="text-xl font-light text-gray-900 mb-4">Incoming orders</h1>
+      <h1 className="text-xl font-light text-gray-900 mb-1">Incoming orders</h1>
+      <p className="text-sm text-gray-500 font-light mb-4 max-w-2xl">
+        You set the workflow status. When the grower physically receives the goods, they can press{' '}
+        <strong>Received at farm</strong> on their side — you will see that timestamp below. That is separate from
+        FULFILLED (e.g. you may set FULFILLED when you dispatch; they confirm when it arrives).
+      </p>
       {loading && <p className="text-sm text-gray-500">Loading…</p>}
       {err && <p className="text-sm text-red-600 mb-3">{err}</p>}
       <div className="space-y-3">
@@ -70,6 +75,11 @@ export default function SupplierOrdersPage() {
             <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto mb-3 text-gray-700">
               {JSON.stringify(o.items, null, 2)}
             </pre>
+            {o.farmerReceivedAt && (
+              <p className="text-xs text-emerald-800 font-medium mb-2">
+                Grower received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-gray-500">Status: {o.status}</span>
               <select

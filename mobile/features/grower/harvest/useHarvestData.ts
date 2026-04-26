@@ -173,8 +173,9 @@ export function useHarvestData() {
         setLocation(null);
         setGpsWarning(false);
       } catch (e: any) {
-        const msg = e?.response?.data?.message || e?.message || t('producer.harvest.saveFailed');
-        Alert.alert(t('error'), String(msg));
+        const raw = e?.response?.data?.message || e?.message || t('producer.harvest.saveFailed');
+        const msg = Array.isArray(raw) ? raw.join(' ') : String(raw);
+        Alert.alert(t('error'), msg);
       } finally {
         setLoading(false);
       }

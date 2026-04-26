@@ -256,7 +256,12 @@ export default function CreateMissionPage() {
                 <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
                   Materials
                 </Link>{' '}
-                — enough Bio Vera crate balance (about one crate per 10 kg of product).
+                — enough Bio Vera crate balance (about one crate per 10 kg of product). The catalog here updates your
+                balances; if you source stock from a local distributor, also use{' '}
+                <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
+                  Suppliers &amp; orders
+                </Link>{' '}
+                to coordinate with them.
               </li>
             </ul>
           </div>
@@ -273,9 +278,17 @@ export default function CreateMissionPage() {
                 <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
                   Compliance photos
                 </Link>
-                . Order crates:{' '}
+                . Order crates / stock:{' '}
                 <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline">
                   Materials
+                </Link>
+                . Message your material partner:{' '}
+                <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline">
+                  Suppliers &amp; orders
+                </Link>
+                . Still stuck:{' '}
+                <Link href="/contact" className="font-semibold text-[#2D5A27] underline">
+                  Contact
                 </Link>
                 .
               </p>

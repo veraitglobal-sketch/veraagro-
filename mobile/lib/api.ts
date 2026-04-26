@@ -377,6 +377,10 @@ export const b2bSuppliersAPI = {
     const response = await api.get('/b2b-suppliers/orders/mine');
     return response.data || [];
   },
+  markOrderReceivedAtFarm: async (orderId: string) => {
+    const response = await api.post(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/farmer-received`);
+    return response.data;
+  },
   /** Logged-in grower: message threads with material suppliers. */
   getMyThreadsAsFarmer: async () => {
     const response = await api.get('/b2b-suppliers/threads/mine');

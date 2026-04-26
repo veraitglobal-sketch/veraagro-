@@ -1234,6 +1234,8 @@ model supplier_direct_orders {
   items               Json
   noteFromFarmer     String?
   noteFromSupplier   String?
+  /// Grower marked goods received at the farm (independent of supplier workflow status)
+  farmerReceivedAt   DateTime?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   thread             supplier_threads? @relation(fields: [threadId], references: [id], onDelete: SetNull)
