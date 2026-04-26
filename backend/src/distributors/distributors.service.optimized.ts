@@ -2,6 +2,7 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { UserStatus } from '@prisma/client';
 
 @Injectable()
 export class DistributorsService {
@@ -26,10 +27,16 @@ export class DistributorsService {
       return cached.data;
     }
 
-    // Query only needed fields (optimized)
-    // Note: Adjust based on actual Hub model fields
+    // Retail / pickup points: system hubs (no manager) or hubs whose manager (buyer) is admin-approved.
+    // Buyer self-registration is PENDING_VERIFICATION until approved — those hubs stay off the public map.
     const hubs = await this.prisma.hubs.findMany({
-      where: country ? { city: { contains: country, mode: 'insensitive' } } : {},
+      where: {
+        ...(country ? { city: { contains: country, mode: 'insensitive' } } : {}),
+        OR: [
+          { managerId: null },
+          { users: { status: UserStatus.ACTIVE } },
+        ],
+      },
       select: {
         id: true,
         name: true,

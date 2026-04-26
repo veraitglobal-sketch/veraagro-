@@ -37,6 +37,7 @@ export default function DashboardScreen() {
     onViewWallet: () => router.push('/(producer)/(tabs)/wallet'),
     onEstates: () => router.push('/(producer)/estates'),
     onFieldSeason: () => router.push('/(producer)/field-season'),
+    onSuppliersMap: () => router.push('/map'),
   };
 
   return (

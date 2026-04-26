@@ -148,6 +148,8 @@ export default function FieldSeasonScreen() {
             hasApprovedParcel ? (
               <>
                 <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4, marginBottom: 4 }}>{t('producer.fieldSeason.step3Body')}</Text>
+                {link(t('producer.fieldSeason.openSuppliersMap'), () => router.push('/map'))}
+                {link(t('producer.fieldSeason.openMaterials'), () => router.push('/(producer)/materials'))}
                 {link(t('producer.fieldSeason.openFieldLog'), () => router.push('/(producer)/(tabs)/field-log'))}
                 {link(t('producer.fieldSeason.openHarvest'), () => router.push('/(producer)/(tabs)/harvest'))}
               </>

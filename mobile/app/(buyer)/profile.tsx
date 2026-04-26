@@ -201,7 +201,7 @@ export default function ProfileScreen() {
           onPress: async () => {
             await logout();
             await AsyncStorage.removeItem('shopping_cart');
-            router.replace('/');
+            router.replace('/buyer-login');
           },
         },
       ]

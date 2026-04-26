@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Download } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, Download, MapPin, ChevronRight } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useMaterialsData } from './useMaterialsData';
@@ -12,6 +13,7 @@ import { MaterialList } from './MaterialList';
  * Uses useMaterialsData once and passes data to WhitelistSearch and MaterialList.
  */
 export function MaterialsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const data = useMaterialsData();
 
@@ -49,6 +51,41 @@ export function MaterialsScreen() {
             <Download size={20} color={colors.text.secondary} strokeWidth={1} />
           </TouchableOpacity>
         )}
+      </View>
+
+      <View style={{ paddingHorizontal: theme.spacing.md, paddingBottom: theme.spacing.sm }}>
+        <TouchableOpacity
+          onPress={() => router.push('/map')}
+          activeOpacity={0.75}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: theme.spacing.md,
+            backgroundColor: '#FFF7ED',
+            borderRadius: theme.borderRadius.lg,
+            borderWidth: 1,
+            borderColor: '#FDBA74',
+            gap: theme.spacing.sm,
+          }}
+        >
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: theme.borderRadius.md,
+              backgroundColor: '#FFEDD5',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <MapPin size={22} color="#C2410C" strokeWidth={1.5} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text.primary }}>{t('producer.materials.mapBannerTitle')}</Text>
+            <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 4, fontWeight: '500' }}>{t('producer.materials.mapBannerCta')}</Text>
+          </View>
+          <ChevronRight size={20} color={colors.text.secondary} strokeWidth={1.5} />
+        </TouchableOpacity>
       </View>
 
       <WhitelistSearch

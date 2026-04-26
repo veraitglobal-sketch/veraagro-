@@ -1,9 +1,9 @@
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { useState, useEffect } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { retailLocationsAPI, RetailLocation } from '../lib/api';
+import { retailLocationsAPI, b2bSuppliersAPI, RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
-import { MapPin, ShoppingBag } from 'lucide-react-native';
+import { ShoppingBag, Sprout } from 'lucide-react-native';
 
 interface SuppliersMapProps {
   onMarkerPress?: (location: RetailLocation) => void;
@@ -31,13 +31,19 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
   const loadRetailLocations = async () => {
     try {
       setLoading(true);
-      const data = await retailLocationsAPI.getAllPublic();
-      
-      // Filter locations with valid coordinates
-      const validLocations = data.filter(location => {
-        return location.latitude && location.longitude && 
-               location.latitude !== 0 && location.longitude !== 0;
-      });
+      const [retail, suppliers] = await Promise.all([
+        retailLocationsAPI.getAllPublic(),
+        b2bSuppliersAPI.getPublicMap(),
+      ]);
+      const retailMapped = (retail || []).map((r) => ({ ...r, kind: 'retail' as const }));
+      const merged = [...retailMapped, ...(suppliers || [])].filter(
+        (location) =>
+          location.latitude &&
+          location.longitude &&
+          location.latitude !== 0 &&
+          location.longitude !== 0
+      );
+      const validLocations = merged;
       
       setLocations(validLocations);
       
@@ -87,10 +93,12 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
       >
         {locations.map((location) => {
           if (!location.latitude || !location.longitude) return null;
-          
+          const isSupplier = location.kind === 'supplier';
+          const key = `${location.kind ?? 'retail'}-${location.id}`;
+
           return (
             <Marker
-              key={location.id}
+              key={key}
               coordinate={{
                 latitude: location.latitude,
                 longitude: location.longitude,
@@ -98,8 +106,20 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
               onPress={() => onMarkerPress?.(location)}
             >
               <View style={styles.markerContainer}>
-                <View style={styles.marker}>
-                  <ShoppingBag size={22} color={theme.colors.primary} strokeWidth={1.5} />
+                <View
+                  style={[
+                    styles.marker,
+                    isSupplier && {
+                      borderColor: '#C2410C',
+                      backgroundColor: '#FFF7ED',
+                    },
+                  ]}
+                >
+                  {isSupplier ? (
+                    <Sprout size={22} color="#C2410C" strokeWidth={1.5} />
+                  ) : (
+                    <ShoppingBag size={22} color={theme.colors.primary} strokeWidth={1.5} />
+                  )}
                 </View>
               </View>
             </Marker>

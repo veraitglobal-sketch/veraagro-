@@ -384,6 +384,36 @@ export const usersAPI = {
   },
 };
 
+/** B2B partner stores (e.g. agri pharmacies) — admin creates login + map profile, no self-registration. */
+export const b2bSuppliersAdminAPI = {
+  createStore: async (data: {
+    partnerCode?: string;
+    email: string;
+    phone?: string;
+    firstName: string;
+    lastName: string;
+    password?: string;
+    autoGeneratePassword?: boolean;
+    businessName: string;
+    description?: string;
+    address: string;
+    city: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+    mapApproved?: boolean;
+    isVeraPartner?: boolean;
+  }) => {
+    const response = await api.post('/b2b-suppliers/admin/create-store', data);
+    return response.data as {
+      user: Record<string, unknown>;
+      profile: Record<string, unknown>;
+      password?: string;
+      passwordGenerated: boolean;
+    };
+  },
+};
+
 // Security Alerts API
 export const securityAlertsAPI = {
   getAll: async (filters?: {

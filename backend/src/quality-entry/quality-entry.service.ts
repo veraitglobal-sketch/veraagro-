@@ -6,8 +6,26 @@ import { CreateQualityEntryDto, LogisticsHandoverDto } from './dto/quality-entry
 export class QualityEntryService {
   private readonly STANDARD_TRUCK_TEMP_MIN = 2; // °C
   private readonly STANDARD_TRUCK_TEMP_MAX = 8; // °C
+  /** Per-image cap for data URLs / long URL strings (bytes as sent in JSON). */
+  private readonly MAX_PHOTO_STRING_LENGTH = 5 * 1024 * 1024;
 
   constructor(private prisma: PrismaService) {}
+
+  private assertHandoverPhotos(photos: string[], label: string) {
+    for (const p of photos) {
+      if (typeof p !== 'string' || p.length < 20) {
+        throw new BadRequestException(`${label}: invalid photo entry`);
+      }
+      if (p.length > this.MAX_PHOTO_STRING_LENGTH) {
+        throw new BadRequestException(`${label}: each image must be under 5MB`);
+      }
+      if (!p.startsWith('data:image/') && !p.startsWith('http://') && !p.startsWith('https://')) {
+        throw new BadRequestException(
+          `${label}: photos must be image data URLs (data:image/...) or http(s) URLs`,
+        );
+      }
+    }
+  }
 
   /**
    * Create quality entry for a batch (Farmer's responsibility)
@@ -98,7 +116,8 @@ export class QualityEntryService {
   }
 
   /**
-   * Logistics handover - Driver enters truck temperature before loading
+   * Logistics handover: truck temperature + pallet photos + inside-truck photos.
+   * All must be satisfied before the mission is set to READY_FOR_LOADING (ready for the loading / shipment step).
    */
   async logisticsHandover(userId: string, dto: LogisticsHandoverDto) {
     // Verify mission exists
@@ -112,11 +131,18 @@ export class QualityEntryService {
         },
         vehicles: true,
         users_missions_logisticsPartnerIdTousers: true,
+        logistics_handovers: true,
       },
     });
 
     if (!mission) {
       throw new BadRequestException(`Mission ${dto.missionId} not found`);
+    }
+
+    if (mission.logistics_handovers) {
+      throw new BadRequestException(
+        'Loading handover for this mission is already complete. Pallet and truck photos were recorded.',
+      );
     }
 
     // Verify user is the assigned logistics partner
@@ -129,6 +155,9 @@ export class QualityEntryService {
       throw new BadRequestException('Quality entry must be completed before loading. Please wait for farmer to complete quality entry.');
     }
 
+    this.assertHandoverPhotos(dto.palletPhotos, 'Pallet photos');
+    this.assertHandoverPhotos(dto.truckInteriorPhotos, 'Inside-truck photos');
+
     // Check truck temperature against standard (2°C - 8°C)
     const isWithinStandard = 
       dto.insideTruckTemperature >= this.STANDARD_TRUCK_TEMP_MIN &&
@@ -140,12 +169,14 @@ export class QualityEntryService {
       );
     }
 
-    // Create handover record
+    // Create handover record (evidence: temperature + pallet + inside-truck photos)
     const handover = await this.prisma.logistics_handovers.create({
       data: {
         id: crypto.randomUUID(),
         missionId: dto.missionId,
         insideTruckTemperature: dto.insideTruckTemperature,
+        palletPhotos: dto.palletPhotos,
+        truckInteriorPhotos: dto.truckInteriorPhotos,
         verifiedBy: userId,
         notes: dto.notes,
         status: 'APPROVED',
@@ -191,8 +222,11 @@ export class QualityEntryService {
         newValue: {
           handoverId: handover.id,
           insideTruckTemperature: dto.insideTruckTemperature,
+          palletPhotoCount: dto.palletPhotos.length,
+          truckInteriorPhotoCount: dto.truckInteriorPhotos.length,
         },
-        changeReason: 'Driver verified truck temperature before loading',
+        changeReason:
+          'Driver completed loading handover: temperature, pallet photos, and inside-truck photos',
         isCompliant: true,
         timestamp: new Date(),
       } as any,
@@ -201,7 +235,8 @@ export class QualityEntryService {
     return {
       success: true,
       handover,
-      message: 'Truck temperature verified. Loading can proceed.',
+      message:
+        'Loading evidence saved (temperature, pallet and inside-truck photos). Mission is ready for loading.',
     };
   }
 

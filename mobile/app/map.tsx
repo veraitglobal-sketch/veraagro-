@@ -6,7 +6,7 @@ import SuppliersMap from '../components/SuppliersMap';
 import { RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
 import Card from '../components/ui/Card';
-import { ArrowLeft, ShoppingBag, Info } from 'lucide-react-native';
+import { ArrowLeft, ShoppingBag, Info, Sprout } from 'lucide-react-native';
 
 /**
  * Retail Locations Map Page
@@ -16,6 +16,7 @@ export default function MapScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<RetailLocation | null>(null);
+  const isSupplierPin = (loc: RetailLocation) => loc.kind === 'supplier';
 
   const handleMarkerPress = (location: RetailLocation) => {
     setSelectedLocation(location);
@@ -141,9 +142,22 @@ export default function MapScreen() {
                 borderWidth: 1,
                 borderColor: `${theme.colors.primary}20`,
               }}>
-                <ShoppingBag size={26} color={theme.colors.primary} strokeWidth={1.5} />
+                {isSupplierPin(selectedLocation) ? (
+                  <Sprout size={26} color="#C2410C" strokeWidth={1.5} />
+                ) : (
+                  <ShoppingBag size={26} color={theme.colors.primary} strokeWidth={1.5} />
+                )}
               </View>
               <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontSize: 11,
+                  fontWeight: '600',
+                  color: isSupplierPin(selectedLocation) ? '#C2410C' : theme.colors.text.tertiary,
+                  textTransform: 'uppercase',
+                  marginBottom: 4,
+                }}>
+                  {isSupplierPin(selectedLocation) ? 'Material supplier (seeds, inputs)' : 'Retail / pickup'}
+                </Text>
                 <Text style={{
                   fontSize: 18,
                   fontWeight: '600',
@@ -181,6 +195,26 @@ export default function MapScreen() {
                   }}>
                     {selectedLocation.address}
                   </Text>
+                )}
+                {isSupplierPin(selectedLocation) && (selectedLocation.supplierUserId || selectedLocation.id) && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      router.push(
+                        `/b2b-supplier/${selectedLocation.supplierUserId || selectedLocation.id}` as any
+                      )
+                    }
+                    style={{
+                      marginTop: theme.spacing.md,
+                      backgroundColor: '#C2410C',
+                      paddingVertical: 12,
+                      borderRadius: theme.borderRadius.md,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
+                      Contact & order
+                    </Text>
+                  </TouchableOpacity>
                 )}
               </View>
             </View>

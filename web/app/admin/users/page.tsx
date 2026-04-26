@@ -284,6 +284,7 @@ export default function UsersManagementPage() {
                 <option value="GROWER">Grower</option>
                 <option value="BUYER">Buyer</option>
                 <option value="LOGISTICS_PARTNER">Logistics Partner</option>
+                <option value="MATERIAL_SUPPLIER">Material supplier (B2B map)</option>
                 <option value="ADMIN">Admin</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
               </select>
@@ -548,7 +549,7 @@ export default function UsersManagementPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
                       <div className="space-y-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"
@@ -771,7 +772,7 @@ export default function UsersManagementPage() {
                     <div className="col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
                       <div className="grid grid-cols-3 gap-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"

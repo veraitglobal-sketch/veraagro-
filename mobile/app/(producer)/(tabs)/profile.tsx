@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
-import { Wallet, Settings, LogOut, MapPin, Package, Truck, Bell, Image as ImageIcon, CheckCircle, FileText, Camera } from 'lucide-react-native';
+import { Wallet, Settings, LogOut, MapPin, Map, Package, Truck, Bell, Image as ImageIcon, CheckCircle, FileText, Camera } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useRouter } from 'expo-router';
 import { offlineStorage } from '../../../lib/offline-storage';
@@ -13,6 +14,7 @@ import { estatesAPI, Estate } from '../../../lib/api';
  * Matches buyer dashboard styling
  */
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const router = useRouter();
   const [pendingCount, setPendingCount] = useState(0);
@@ -40,7 +42,8 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     await logout();
-    router.replace('/');
+    // Root `replace('/')` resolves to `index` and fails from nested (tabs) navigator — go to root login screen
+    router.replace('/partner-login');
   };
 
   return (
@@ -164,6 +167,41 @@ export default function ProfileScreen() {
             Quick Access
           </Text>
           <View style={{ gap: theme.spacing.sm }}>
+            <TouchableOpacity
+              onPress={() => router.push('/map')}
+              activeOpacity={0.7}
+              style={{
+                backgroundColor: theme.colors.surface,
+                borderRadius: theme.borderRadius.md,
+                padding: theme.spacing.sm,
+                borderWidth: 0.5,
+                borderColor: 'rgba(0, 0, 0, 0.05)',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <Map size={20} color={theme.colors.text.secondary} strokeWidth={1} />
+              <View style={{ marginLeft: theme.spacing.sm, flex: 1 }}>
+                <Text style={{
+                  fontSize: 11,
+                  fontWeight: '300',
+                  color: theme.colors.text.primary,
+                  letterSpacing: 0.3,
+                }}>
+                  {t('producer.dashboard.suppliersMap')}
+                </Text>
+                <Text style={{
+                  fontSize: 10,
+                  fontWeight: '300',
+                  color: theme.colors.text.secondary,
+                  marginTop: 2,
+                  letterSpacing: 0.2,
+                }}>
+                  {t('producer.dashboard.suppliersMapDesc')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => router.push('/(producer)/estates')}
               activeOpacity={0.7}

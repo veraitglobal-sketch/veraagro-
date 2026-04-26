@@ -524,6 +524,9 @@ model logistics_handovers {
   id                     String                  @id
   missionId              String                  @unique
   insideTruckTemperature Float
+  /// Loading documentation: at least one per category required before READY_FOR_LOADING
+  palletPhotos           Json?
+  truckInteriorPhotos    Json?
   verifiedBy             String
   notes                  String?
   timestamp              DateTime                @default(now())
@@ -1062,8 +1065,87 @@ model users {
   vera_insights_vera_insights_updatedByTousers vera_insights[]           @relation("vera_insights_updatedByTousers")
   wallets                                      wallets?
   parcels_approvedByUserId                     parcels[]                 @relation("parcels_approvedByUserId")
+  /// B2B material supplier: seeds, inputs — shown on grower "where to buy" map when mapApproved
+  material_supplier_profile                    material_supplier_profiles? @relation("MaterialSupplierUser")
+  supplier_threads_as_farmer                  supplier_threads[]         @relation("SupplierThreadFarmer")
+  supplier_threads_as_supplier                supplier_threads[]         @relation("SupplierThreadSupplier")
+  supplier_thread_messages                    supplier_thread_messages[] @relation("SupplierMessageSender")
+  supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
+  supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
 
   @@index([partnerCode])
+}
+
+/// Snabdevač inputa (semena, đubriva, ambalaža) – lokacija na mapi nakon admin odobravanja
+model material_supplier_profiles {
+  id               String    @id @default(uuid())
+  userId           String    @unique
+  businessName     String
+  description      String?
+  address          String
+  city             String
+  country          String
+  /// { "lat": number, "lng": number }
+  location         Json
+  mapApproved      Boolean   @default(false)
+  approvedAt       DateTime?
+  approvedByUserId String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  user             users     @relation("MaterialSupplierUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([mapApproved, country])
+  @@index([city])
+}
+
+model supplier_threads {
+  id               String   @id @default(uuid())
+  farmerId         String
+  supplierUserId   String
+  lastMessageAt    DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  farmer           users    @relation("SupplierThreadFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
+  supplier         users    @relation("SupplierThreadSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  messages         supplier_thread_messages[]
+  direct_orders    supplier_direct_orders[]
+
+  @@unique([farmerId, supplierUserId])
+  @@index([supplierUserId])
+  @@index([farmerId])
+}
+
+model supplier_thread_messages {
+  id        String   @id @default(uuid())
+  threadId  String
+  senderId  String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  thread    supplier_threads @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender    users    @relation("SupplierMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+}
+
+model supplier_direct_orders {
+  id                 String    @id @default(uuid())
+  threadId            String?
+  farmerId            String
+  supplierUserId     String
+  status              SupplierDirectOrderStatus @default(PENDING)
+  /// [{ "label": "...", "quantity": 1, "unit": "bag" }]
+  items               Json
+  noteFromFarmer     String?
+  noteFromSupplier   String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  thread             supplier_threads? @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  farmer             users     @relation("SupplierOrderFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
+  supplier           users     @relation("SupplierOrderSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId, createdAt])
+  @@index([supplierUserId, status])
 }
 
 model email_verification_tokens {
@@ -1458,6 +1540,16 @@ enum UserRole {
   COORDINATOR
   GROWER
   LOGISTICS_PARTNER
+  /// B2B: seeds, fertilizer, packaging – appears on grower map when profile mapApproved
+  MATERIAL_SUPPLIER
+}
+
+enum SupplierDirectOrderStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  FULFILLED
+  CANCELLED
 }
 
 enum UserStatus {

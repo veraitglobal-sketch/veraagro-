@@ -290,7 +290,12 @@ export interface RetailLocation {
   latitude: number;
   longitude: number;
   type: string;
-  status: string;
+  status?: string;
+  /** Merged map: retail from distributors / hubs */
+  kind?: 'retail' | 'supplier';
+  /** B2B material supplier (seeds, inputs) — same as `id` for API calls */
+  supplierUserId?: string;
+  description?: string;
 }
 
 export const retailLocationsAPI = {
@@ -316,6 +321,56 @@ export const retailLocationsAPI = {
       console.warn('Error fetching retail locations:', error.message || error);
       return [];
     }
+  },
+};
+
+/** B2B material suppliers (seeds, inputs) – public map + grower contact / orders */
+export const b2bSuppliersAPI = {
+  getPublicMap: async (): Promise<RetailLocation[]> => {
+    try {
+      const response = await api.get('/b2b-suppliers/public/map');
+      const list = (response.data || []) as any[];
+      return list.map((p) => ({
+        id: p.id,
+        name: p.name,
+        city: p.city,
+        country: p.country,
+        address: p.address,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        type: p.type || 'MATERIAL_SUPPLIER',
+        kind: 'supplier' as const,
+        supplierUserId: p.id,
+        description: p.description,
+      }));
+    } catch {
+      return [];
+    }
+  },
+  getPublic: async (userId: string) => {
+    const response = await api.get(`/b2b-suppliers/public/${encodeURIComponent(userId)}`);
+    return response.data;
+  },
+  getOrCreateThread: async (supplierUserId: string) => {
+    const response = await api.post('/b2b-suppliers/threads', { supplierUserId });
+    return response.data as { id: string };
+  },
+  getMessages: async (threadId: string) => {
+    const response = await api.get(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`);
+    return response.data;
+  },
+  postMessage: async (threadId: string, body: string) => {
+    const response = await api.post(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`, { body });
+    return response.data;
+  },
+  createOrder: async (payload: {
+    supplierUserId: string;
+    items: { label: string; quantity: number; unit?: string }[];
+    note?: string;
+    threadId?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/orders', payload);
+    return response.data;
   },
 };
 

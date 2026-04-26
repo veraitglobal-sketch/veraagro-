@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsDateString, IsBoolean, IsArray, IsOptional, Min, Max } from 'class-validator';
+import { IsString, IsNumber, IsDateString, IsBoolean, IsArray, IsOptional, Min, Max, ArrayMinSize, ArrayMaxSize } from 'class-validator';
 
 export class WeatherAtHarvestDto {
   @IsNumber()
@@ -44,6 +44,19 @@ export class LogisticsHandoverDto {
   @Min(-10)
   @Max(15)
   insideTruckTemperature: number; // Celsius
+
+  /** At least one photo per category required (data URL or public URL) before ready-for-shipment (READY_FOR_LOADING). */
+  @IsArray()
+  @ArrayMinSize(1, { message: 'At least one pallet photo is required' })
+  @ArrayMaxSize(20, { message: 'At most 20 pallet photos' })
+  @IsString({ each: true })
+  palletPhotos: string[];
+
+  @IsArray()
+  @ArrayMinSize(1, { message: 'At least one inside-truck photo is required' })
+  @ArrayMaxSize(20, { message: 'At most 20 inside-truck photos' })
+  @IsString({ each: true })
+  truckInteriorPhotos: string[];
 
   @IsString()
   @IsOptional()

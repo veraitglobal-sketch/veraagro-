@@ -153,10 +153,20 @@ export class BatchHistoryService {
           licensePlate: mission.vehicles.licensePlate,
           type: mission.vehicles.type,
         } : null,
-        handover: mission.logistics_handovers ? {
-          insideTruckTemperature: mission.logistics_handovers.insideTruckTemperature,
-          verifiedAt: mission.logistics_handovers.timestamp,
-        } : null,
+        handover: mission.logistics_handovers
+          ? {
+              insideTruckTemperature: mission.logistics_handovers.insideTruckTemperature,
+              verifiedAt: mission.logistics_handovers.timestamp,
+              palletPhotoCount: Array.isArray(mission.logistics_handovers.palletPhotos as unknown[])
+                ? (mission.logistics_handovers.palletPhotos as unknown[]).length
+                : 0,
+              truckInteriorPhotoCount: Array.isArray(
+                mission.logistics_handovers.truckInteriorPhotos as unknown[],
+              )
+                ? (mission.logistics_handovers.truckInteriorPhotos as unknown[]).length
+                : 0,
+            }
+          : null,
         pickupLocation: mission.pickupLocation,
         pickupAddress: mission.pickupAddress,
         requestedAt: mission.requestedAt,
@@ -333,11 +343,19 @@ export class BatchHistoryService {
       }
 
       if (mission.logistics_handovers) {
+        const pCount = Array.isArray(mission.logistics_handovers.palletPhotos)
+          ? (mission.logistics_handovers.palletPhotos as unknown[]).length
+          : 0;
+        const tCount = Array.isArray(mission.logistics_handovers.truckInteriorPhotos)
+          ? (mission.logistics_handovers.truckInteriorPhotos as unknown[]).length
+          : 0;
         events.push({
           type: 'TRUCK_TEMPERATURE_VERIFIED',
           timestamp: mission.logistics_handovers.timestamp,
-          actor: mission.users_missions_logisticsPartnerIdTousers ? `${mission.users_missions_logisticsPartnerIdTousers.firstName} ${mission.users_missions_logisticsPartnerIdTousers.lastName}` : 'Driver',
-          description: `Truck temperature verified: ${mission.logistics_handovers.insideTruckTemperature}°C`,
+          actor: mission.users_missions_logisticsPartnerIdTousers
+            ? `${mission.users_missions_logisticsPartnerIdTousers.firstName} ${mission.users_missions_logisticsPartnerIdTousers.lastName}`
+            : 'Driver',
+          description: `Loading handover: ${mission.logistics_handovers.insideTruckTemperature}°C · ${pCount} pallet photo(s) · ${tCount} inside-truck photo(s)`,
         });
       }
 

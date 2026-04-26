@@ -73,6 +73,8 @@
   },
   "partnerLogin": {
     "subtitle": "Sign in",
+    "username": "Username / email / partner code",
+    "usernamePlaceholder": "Enter username, email or partner code",
     "partnerCode": "Partner code",
     "partnerCodePlaceholder": "Enter your partner code",
     "password": "Password",
@@ -159,7 +161,9 @@
       "veraInsights": "Tips",
       "veraInsightsDesc": "Good ideas",
       "parcelMapping": "My fields",
-      "fieldSeason": "Steps"
+      "fieldSeason": "Steps",
+      "suppliersMap": "Suppliers & where to buy",
+      "suppliersMapDesc": "Map: seeds, boxes, industrial packaging — message and order"
     },
     "fieldSeason": {
       "title": "Steps",
@@ -176,6 +180,7 @@
       "step3Body": "Log work and report harvest. Materials and other tools are on Home.",
       "step3Locked": "After approval.",
       "openMaterials": "Materials",
+      "openSuppliersMap": "Suppliers on map (seeds, boxes, packaging)",
       "openSeedRegistration": "Seed",
       "openFieldLog": "Field log",
       "openHarvest": "Harvest"
@@ -430,6 +435,8 @@
       "enRouteToDestination": "En route to destination"
     },
     "materials": {
+      "mapBannerTitle": "Need seeds, boxes, or packaging? See suppliers on the map.",
+      "mapBannerCta": "Open map",
       "fertilizer": "Fertilizer",
       "pesticide": "Pesticide",
       "seed": "Seed",
@@ -606,7 +613,7 @@
   },
   "map": {
     "title": "Where to Buy",
-    "subtitle": "Find BioVera retail locations near you"
+    "subtitle": "Retail pickup points (green) and approved material suppliers — seeds, inputs (orange)"
   },
   "register": {
     "title": "Register",

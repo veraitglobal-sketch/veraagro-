@@ -34,6 +34,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ headerShown: false }} />
+        <Stack.Screen name="b2b-supplier/[userId]" options={{ headerShown: false }} />
         <Stack.Screen name="supplier-map" options={{ headerShown: false }} />
         <Stack.Screen name="seed-registration" options={{ headerShown: false }} />
         <Stack.Screen name="scan-qr" options={{ headerShown: false, presentation: 'modal' }} />

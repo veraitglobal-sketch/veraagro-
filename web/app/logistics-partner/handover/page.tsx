@@ -14,7 +14,20 @@ const navItems = [
   { href: '/logistics-partner/handover', label: 'Loading Handover', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg> },
 ];
 
-const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
+/** Statuses where handover (temp + photos) is not done yet. After handover, mission is READY_FOR_LOADING and leaves this list. */
+const PENDING_HANDOVER_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
+
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTOS_PER_GROUP = 20;
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = () => reject(new Error('Failed to read file'));
+    r.readAsDataURL(file);
+  });
+}
 
 interface Mission {
   id: string;
@@ -36,6 +49,9 @@ export default function LogisticsHandoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [temperatureStatus, setTemperatureStatus] = useState<'valid' | 'invalid' | null>(null);
+  const [palletPhotos, setPalletPhotos] = useState<string[]>([]);
+  const [truckInteriorPhotos, setTruckInteriorPhotos] = useState<string[]>([]);
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -50,15 +66,29 @@ export default function LogisticsHandoverPage() {
     }
   }, [isAuthenticated, isLoading, user, router]);
 
+  const refreshMissions = () => {
+    if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    missionsAPI
+      .getMyMissions()
+      .then((data: Mission[]) => {
+        const needHandover = (Array.isArray(data) ? data : []).filter((m) =>
+          PENDING_HANDOVER_STATUSES.includes(m.status)
+        );
+        setMissions(needHandover);
+      })
+      .catch(() => setMissions([]));
+  };
+
   useEffect(() => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     let cancelled = false;
+    setMissionsLoading(true);
     missionsAPI
       .getMyMissions()
       .then((data: Mission[]) => {
         if (!cancelled) {
           const needHandover = (Array.isArray(data) ? data : []).filter((m) =>
-            LOADING_STATUSES.includes(m.status)
+            PENDING_HANDOVER_STATUSES.includes(m.status)
           );
           setMissions(needHandover);
         }
@@ -88,6 +118,45 @@ export default function LogisticsHandoverPage() {
     }
   }, [truckTemperature]);
 
+  const addPhotoFiles = async (files: FileList | null, kind: 'pallet' | 'truck') => {
+    setPhotoError(null);
+    if (!files?.length) return;
+    const current = kind === 'pallet' ? palletPhotos : truckInteriorPhotos;
+    const setFn = kind === 'pallet' ? setPalletPhotos : setTruckInteriorPhotos;
+    const next: string[] = [...current];
+    for (let i = 0; i < files.length; i += 1) {
+      const f = files[i];
+      if (!f.type.startsWith('image/')) {
+        setPhotoError('Samo slike (JPEG, PNG, WebP) / Only image files are allowed');
+        return;
+      }
+      if (f.size > MAX_PHOTO_BYTES) {
+        setPhotoError('Maks. 5MB po slici / Max 5MB per photo');
+        return;
+      }
+      if (next.length >= MAX_PHOTOS_PER_GROUP) {
+        setPhotoError(`Maks. ${MAX_PHOTOS_PER_GROUP} slika po grupi / Max ${MAX_PHOTOS_PER_GROUP} photos per group`);
+        return;
+      }
+      try {
+        const dataUrl = await readFileAsDataUrl(f);
+        next.push(dataUrl);
+      } catch {
+        setPhotoError('Čitanje fajla nije uspelo / Could not read file');
+        return;
+      }
+    }
+    setFn(next);
+  };
+
+  const removePhoto = (kind: 'pallet' | 'truck', index: number) => {
+    const setFn = kind === 'pallet' ? setPalletPhotos : setTruckInteriorPhotos;
+    setFn((prev) => prev.filter((_, j) => j !== index));
+  };
+
+  const handoverComplete =
+    temperatureStatus === 'valid' && palletPhotos.length >= 1 && truckInteriorPhotos.length >= 1;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -108,6 +177,17 @@ export default function LogisticsHandoverPage() {
       return;
     }
 
+    if (palletPhotos.length < 1) {
+      setError('Dodajte bar jednu fotografiju paleta / Add at least one pallet photo');
+      setSubmitting(false);
+      return;
+    }
+    if (truckInteriorPhotos.length < 1) {
+      setError('Dodajte bar jednu fotografiju unutrašnjosti kamiona / Add at least one inside-truck photo');
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${WEB_API_BASE}/quality-entry/handover`, {
@@ -119,7 +199,9 @@ export default function LogisticsHandoverPage() {
         body: JSON.stringify({
           missionId: selectedMission,
           insideTruckTemperature: temp,
-          notes: notes,
+          palletPhotos,
+          truckInteriorPhotos,
+          notes: notes || undefined,
         }),
       });
 
@@ -129,11 +211,14 @@ export default function LogisticsHandoverPage() {
       }
 
       setSuccess(true);
+      setPalletPhotos([]);
+      setTruckInteriorPhotos([]);
       setTimeout(() => {
         setSelectedMission('');
         setTruckTemperature('');
         setNotes('');
         setSuccess(false);
+        refreshMissions();
       }, 3000);
     } catch (err: any) {
       setError(err.message || 'Failed to complete handover');
@@ -163,9 +248,11 @@ export default function LogisticsHandoverPage() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-blue-800">Temperature Standard</p>
+              <p className="text-sm font-medium text-blue-800">Dokumentacija pre „spremno za isporuku“ / Before ready for shipment</p>
               <p className="text-sm text-blue-700 mt-1">
-                Truck temperature must be between {STANDARD_TEMP_MIN}°C and {STANDARD_TEMP_MAX}°C before loading can proceed.
+                Unutrašnja temperatura kamiona ({STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C), bar jedna fotografija utovarenih
+                paleta i bar jedna unutrašnjosti kamiona obavezni su. Sve se čuva u sistemu, pa tek onda status može biti
+                završen (READY FOR LOADING). Truck must be in range, with pallet and inside-truck photos on record.
               </p>
             </div>
           </div>
@@ -188,7 +275,7 @@ export default function LogisticsHandoverPage() {
             className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg"
           >
             <p className="text-sm text-[#23471f]">
-              ✓ Truck temperature verified. Loading can proceed.
+              ✓ Dokumentacija sačuvana. Utovar / isporuka može da nastavi. / Evidence saved. Loading can proceed.
             </p>
           </motion.div>
         )}
@@ -200,7 +287,8 @@ export default function LogisticsHandoverPage() {
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Logistics Handover</h2>
           <p className="text-sm text-gray-600 mb-6">
-            Enter the inside truck temperature before loading. Loading will be blocked if temperature is outside standard range.
+            Unesite temperaturu, dodajte fotografije paleta i unutrašnjosti kamiona. Bez svega toga se ne završava zapis
+            (finish). / Enter temperature and photos; the handover is only complete with all three.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -271,6 +359,72 @@ export default function LogisticsHandoverPage() {
               </p>
             </div>
 
+            {/* Pallet photos */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fotografije paleta / Pallet photos *
+              </label>
+              <p className="text-xs text-gray-500 mb-2">Bar jedna, do {MAX_PHOTOS_PER_GROUP} (max 5MB po fajlu)</p>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-[#2D5A27]/10 file:text-[#2D5A27]"
+                onChange={(e) => void addPhotoFiles(e.target.files, 'pallet')}
+              />
+              {palletPhotos.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {palletPhotos.map((src, index) => (
+                    <div key={`p-${index}`} className="relative w-20 h-20 rounded border border-gray-200 overflow-hidden group">
+                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto('pallet', index)}
+                        className="absolute top-0 right-0 bg-black/60 text-white text-xs px-1 rounded-bl"
+                        aria-label="Remove"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Inside truck photos */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fotografije unutrašnjosti kamiona / Inside the truck *
+              </label>
+              <p className="text-xs text-gray-500 mb-2">Bar jedna, do {MAX_PHOTOS_PER_GROUP} (max 5MB po fajlu)</p>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-[#2D5A27]/10 file:text-[#2D5A27]"
+                onChange={(e) => void addPhotoFiles(e.target.files, 'truck')}
+              />
+              {truckInteriorPhotos.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {truckInteriorPhotos.map((src, index) => (
+                    <div key={`t-${index}`} className="relative w-20 h-20 rounded border border-gray-200 overflow-hidden">
+                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto('truck', index)}
+                        className="absolute top-0 right-0 bg-black/60 text-white text-xs px-1 rounded-bl"
+                        aria-label="Remove"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {photoError && <p className="text-sm text-amber-700">{photoError}</p>}
+
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -289,14 +443,21 @@ export default function LogisticsHandoverPage() {
             <div className="border-t border-gray-200 pt-6">
               <button
                 type="submit"
-                disabled={submitting || temperatureStatus !== 'valid'}
+                disabled={submitting || !handoverComplete}
                 className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {submitting ? 'Verifying...' : 'Verify Temperature & Proceed'}
+                {submitting
+                  ? 'Snimam… / Saving…'
+                  : 'Završi dokumentaciju / Finish loading handover'}
               </button>
               {temperatureStatus === 'invalid' && (
                 <p className="text-sm text-red-600 mt-2 text-center">
                   Cannot proceed: Temperature must be within standard range
+                </p>
+              )}
+              {temperatureStatus === 'valid' && (palletPhotos.length < 1 || truckInteriorPhotos.length < 1) && (
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  Dodajte palete i unutrašnjost kamiona da biste završili. / Add pallet and inside-truck photos to finish.
                 </p>
               )}
             </div>

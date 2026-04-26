@@ -64,6 +64,7 @@ import { StandardEngineModule } from './standard-engine/standard-engine.module';
 import { FinancialDashboardModule } from './financial-dashboard/financial-dashboard.module';
 import { GroupSyncModule } from './group-sync/group-sync.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
+import { B2bSuppliersModule } from './b2b-suppliers/b2b-suppliers.module';
 import { GrowersModule } from './growers/growers.module';
 import { LogisticsPartnerModule } from './logistics-partner/logistics-partner.module';
 import { FarmerProfileModule } from './farmer-profile/farmer-profile.module';
@@ -147,6 +148,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
     FinancialDashboardModule,
     GroupSyncModule,
     SuppliersModule,
+    B2bSuppliersModule,
     GrowersModule,
     LogisticsPartnerModule,
     FarmerProfileModule,

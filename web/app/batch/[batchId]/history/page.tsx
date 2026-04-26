@@ -67,6 +67,8 @@ interface BatchHistoryData {
     handover: {
       insideTruckTemperature: number;
       verifiedAt: string;
+      palletPhotoCount: number;
+      truckInteriorPhotoCount: number;
     } | null;
     pickupLocation: any;
     pickupAddress: string;
@@ -335,9 +337,13 @@ export default function BatchHistoryPage() {
 
                 {mission.handover && (
                   <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm font-medium text-blue-900">Truck Temperature at Pickup</p>
+                    <p className="text-sm font-medium text-blue-900">Truck temperature & loading photos</p>
                     <p className="text-lg font-bold text-blue-600">
                       {mission.handover.insideTruckTemperature}°C
+                    </p>
+                    <p className="text-xs text-blue-800 mt-1">
+                      Pallet photos: {mission.handover.palletPhotoCount} · Inside truck:{' '}
+                      {mission.handover.truckInteriorPhotoCount}
                     </p>
                     <p className="text-xs text-blue-700 mt-1">
                       Verified: {new Date(mission.handover.verifiedAt).toLocaleString()}

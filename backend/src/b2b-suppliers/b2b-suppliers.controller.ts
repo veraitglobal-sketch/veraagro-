@@ -1,0 +1,139 @@
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { B2bSuppliersService } from './b2b-suppliers.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import {
+  AdminCreateSupplierStoreDto,
+  CreateB2bSupplierProfileDto,
+  CreateDirectOrderDto,
+  CreateThreadDto,
+  PostMessageDto,
+  UpdateOrderStatusDto,
+} from './dto/b2b-suppliers.dto';
+
+@Controller('b2b-suppliers')
+export class B2bSuppliersController {
+  constructor(private readonly svc: B2bSuppliersService) {}
+
+  @Get('public/map')
+  getPublicMap() {
+    return this.svc.getPublicMapPins();
+  }
+
+  @Get('public/:userId')
+  getPublicOne(@Param('userId') userId: string) {
+    return this.svc.getPublicSupplier(userId);
+  }
+
+  @Get('my/profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  getMyProfile(@GetUser() u: { id: string }) {
+    return this.svc.getMyProfile(u.id);
+  }
+
+  @Post('my/profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  upsertMyProfile(@GetUser() u: { id: string }, @Body() dto: CreateB2bSupplierProfileDto) {
+    return this.svc.upsertMyProfile(u.id, dto);
+  }
+
+  @Post('admin/create-store')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminCreateStore(@GetUser() u: { id: string }, @Body() dto: AdminCreateSupplierStoreDto) {
+    return this.svc.adminCreateSupplierStore(u.id, dto);
+  }
+
+  @Post('admin/approve/:supplierUserId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  approve(
+    @GetUser() u: { id: string },
+    @Param('supplierUserId') supplierUserId: string,
+  ) {
+    return this.svc.approveMap(u.id, supplierUserId);
+  }
+
+  @Post('threads')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'SUPER_ADMIN', 'ADMIN')
+  createThread(@GetUser() u: { id: string }, @Body() dto: CreateThreadDto) {
+    return this.svc.getOrCreateThread(u.id, dto.supplierUserId);
+  }
+
+  @Get('threads/mine')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'SUPER_ADMIN', 'ADMIN')
+  myThreadsAsFarmer(@GetUser() u: { id: string }) {
+    return this.svc.listMyThreadsAsFarmer(u.id);
+  }
+
+  @Get('threads/mine-as-supplier')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  myThreadsAsSupplier(@GetUser() u: { id: string }) {
+    return this.svc.listMyThreadsAsSupplier(u.id);
+  }
+
+  @Get('threads/:threadId/messages')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'MATERIAL_SUPPLIER', 'SUPER_ADMIN', 'ADMIN')
+  messages(
+    @GetUser() u: { id: string },
+    @Param('threadId') threadId: string,
+  ) {
+    return this.svc.listMessages(u.id, threadId);
+  }
+
+  @Post('threads/:threadId/messages')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'MATERIAL_SUPPLIER', 'SUPER_ADMIN', 'ADMIN')
+  postMessage(
+    @GetUser() u: { id: string },
+    @Param('threadId') threadId: string,
+    @Body() dto: PostMessageDto,
+  ) {
+    return this.svc.postMessage(u.id, threadId, dto.body);
+  }
+
+  @Post('orders')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'SUPER_ADMIN', 'ADMIN')
+  createOrder(@GetUser() u: { id: string }, @Body() dto: CreateDirectOrderDto) {
+    return this.svc.createDirectOrder(u.id, {
+      supplierUserId: dto.supplierUserId,
+      items: dto.items,
+      note: dto.note,
+      threadId: dto.threadId,
+    });
+  }
+
+  @Get('orders/mine')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER', 'SUPER_ADMIN', 'ADMIN')
+  myOrdersFarmer(@GetUser() u: { id: string }) {
+    return this.svc.listOrdersForFarmer(u.id);
+  }
+
+  @Get('orders/incoming')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  incomingOrders(@GetUser() u: { id: string }) {
+    return this.svc.listOrdersForSupplier(u.id);
+  }
+
+  @Patch('orders/:orderId/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  patchOrder(
+    @GetUser() u: { id: string },
+    @Param('orderId') orderId: string,
+    @Body() dto: UpdateOrderStatusDto,
+  ) {
+    return this.svc.updateOrderStatus(u.id, orderId, dto.status, dto.noteFromSupplier);
+  }
+}

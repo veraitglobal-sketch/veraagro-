@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Package, Camera, FilePlus, Award, Calculator, ShieldAlert, TrendingUp, MapPinned, Sprout } from 'lucide-react-native';
+import { Package, Camera, FilePlus, Award, Calculator, ShieldAlert, TrendingUp, MapPinned, Sprout, Map } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
 export interface QuickActionsHandlers {
@@ -15,6 +15,8 @@ export interface QuickActionsHandlers {
   onVeraInsights: () => void;
   onEstates: () => void;
   onFieldSeason: () => void;
+  /** Map: B2B suppliers (seeds, boxes, industrial packaging) + retail points */
+  onSuppliersMap: () => void;
 }
 
 const cardStyle = {
@@ -38,6 +40,15 @@ export default function QuickActionsSection({ handlers }: { handlers: QuickActio
           {t('producer.dashboard.quickActions')}
         </Text>
         <View style={{ gap: theme.spacing.sm }}>
+          <TouchableOpacity onPress={handlers.onSuppliersMap} activeOpacity={0.7} style={cardStyle}>
+            <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: '#FFF7ED', alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm, borderWidth: 1, borderColor: '#FDBA74' }}>
+              <Map size={22} color="#C2410C" strokeWidth={1.5} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>{t('producer.dashboard.suppliersMap')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.dashboard.suppliersMapDesc')}</Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handlers.onFieldSeason} activeOpacity={0.7} style={cardStyle}>
             <View style={{ width: 44, height: 44, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.sm }}>
               <Sprout size={22} color={theme.colors.primary} strokeWidth={1.5} />
