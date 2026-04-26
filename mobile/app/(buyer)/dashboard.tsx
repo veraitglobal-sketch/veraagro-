@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal, StyleSheet } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { QrCode, Package, X, Truck } from 'lucide-react-native';
@@ -424,85 +424,83 @@ export default function BuyerDashboard() {
         >
           <View style={{ flex: 1, backgroundColor: '#000' }}>
             <CameraView
-              style={{ flex: 1 }}
+              style={StyleSheet.absoluteFill}
               facing="back"
               onBarcodeScanned={handleBarcodeScanned}
               barcodeScannerSettings={{
                 barcodeTypes: ['qr', 'ean13', 'ean8', 'code128'],
               }}
+            />
+            <View
+              style={[StyleSheet.absoluteFill, { justifyContent: 'space-between' }]}
+              pointerEvents="box-none"
             >
+              {/* Top Bar */}
               <View style={{
-                flex: 1,
-                backgroundColor: 'transparent',
+                paddingTop: 60,
+                paddingHorizontal: theme.spacing.lg,
+                paddingBottom: theme.spacing.md,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                flexDirection: 'row',
+                alignItems: 'center',
                 justifyContent: 'space-between',
               }}>
-                {/* Top Bar */}
-                <View style={{
-                  paddingTop: 60,
-                  paddingHorizontal: theme.spacing.lg,
-                  paddingBottom: theme.spacing.md,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '300',
+                  color: theme.colors.text.inverse,
+                  letterSpacing: 0.5,
                 }}>
-                  <Text style={{
-                    fontSize: 16,
-                    fontWeight: '300',
-                    color: theme.colors.text.inverse,
-                    letterSpacing: 0.5,
-                  }}>
-                    Scan Bio Vera Code
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => setShowQRScanner(false)}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 16,
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <X size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Scanning Frame */}
-                <View style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <View style={{
-                    width: 250,
-                    height: 250,
-                    borderWidth: 0.5,
-                    borderColor: theme.colors.primary,
-                    borderRadius: theme.borderRadius.md,
-                    backgroundColor: 'transparent',
-                  }} />
-                </View>
-
-                {/* Bottom Info */}
-                <View style={{
-                  padding: theme.spacing.lg,
-                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                  alignItems: 'center',
-                }}>
-                  <Text style={{
-                    fontSize: 12,
-                    fontWeight: '300',
-                    color: theme.colors.text.inverse,
-                    textAlign: 'center',
-                    letterSpacing: 0.3,
-                  }}>
-                    Position QR code within the frame
-                  </Text>
-                </View>
+                  Scan Bio Vera Code
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setShowQRScanner(false)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <X size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
+                </TouchableOpacity>
               </View>
-            </CameraView>
+
+              {/* Scanning Frame */}
+              <View style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <View style={{
+                  width: 250,
+                  height: 250,
+                  borderWidth: 0.5,
+                  borderColor: theme.colors.primary,
+                  borderRadius: theme.borderRadius.md,
+                  backgroundColor: 'transparent',
+                }} />
+              </View>
+
+              {/* Bottom Info */}
+              <View style={{
+                padding: theme.spacing.lg,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                alignItems: 'center',
+              }}>
+                <Text style={{
+                  fontSize: 12,
+                  fontWeight: '300',
+                  color: theme.colors.text.inverse,
+                  textAlign: 'center',
+                  letterSpacing: 0.3,
+                }}>
+                  Position QR code within the frame
+                </Text>
+              </View>
+            </View>
           </View>
         </Modal>
       )}

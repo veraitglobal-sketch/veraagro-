@@ -117,89 +117,87 @@ export default function ScannerScreen() {
     <View style={styles.container}>
       <CameraView
         ref={cameraRef}
-        style={styles.camera}
+        style={StyleSheet.absoluteFill}
         facing="back"
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: ['qr', 'ean13', 'ean8', 'code128', 'code39'],
         }}
-      >
-        {/* Overlay */}
-        <View style={styles.overlay}>
-          {/* Top bar */}
-          <View style={styles.topBar}>
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.closeButton}
-            >
-              <X size={24} color={colors.text.inverse} strokeWidth={1.5} />
-            </TouchableOpacity>
-            <Text style={styles.overlayTitle}>{t('producer.scanner.scanBarcode')}</Text>
-            <View style={{ width: 40 }} />
-          </View>
+      />
+      <View style={[StyleSheet.absoluteFill, styles.overlay]} pointerEvents="box-none">
+        {/* Top bar */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.closeButton}
+          >
+            <X size={24} color={colors.text.inverse} strokeWidth={1.5} />
+          </TouchableOpacity>
+          <Text style={styles.overlayTitle}>{t('producer.scanner.scanBarcode')}</Text>
+          <View style={{ width: 40 }} />
+        </View>
 
-          {/* Scanning area */}
-          <View style={styles.scanArea}>
-            <View style={styles.scanFrame}>
-              {/* Corner indicators */}
-              <View style={[styles.corner, styles.topLeft]} />
-              <View style={[styles.corner, styles.topRight]} />
-              <View style={[styles.corner, styles.bottomLeft]} />
-              <View style={[styles.corner, styles.bottomRight]} />
-              
-              {/* Scanning line animation */}
-              {!scanned && (
-                <View style={styles.scanLine}>
-                  <ScanLine size={200} color={colors.accent} strokeWidth={2} />
-                </View>
-              )}
-            </View>
-          </View>
-
-          {/* Bottom info */}
-          <View style={styles.bottomInfo}>
-            {validating ? (
-              <View style={styles.statusContainer}>
-                <ActivityIndicator size="small" color={colors.accent} />
-                <Text style={styles.statusText}>{t('producer.scanner.validating')}</Text>
+        {/* Scanning area */}
+        <View style={styles.scanArea}>
+          <View style={styles.scanFrame}>
+            {/* Corner indicators */}
+            <View style={[styles.corner, styles.topLeft]} />
+            <View style={[styles.corner, styles.topRight]} />
+            <View style={[styles.corner, styles.bottomLeft]} />
+            <View style={[styles.corner, styles.bottomRight]} />
+            
+            {/* Scanning line animation */}
+            {!scanned && (
+              <View style={styles.scanLine}>
+                <ScanLine size={200} color={colors.accent} strokeWidth={2} />
               </View>
-            ) : scanned && barcode ? (
-              <View style={styles.statusContainer}>
-                {isValid ? (
-                  <>
-                    <Check size={20} color={colors.success} strokeWidth={2} />
-                    <Text style={[styles.statusText, { color: colors.success }]}>
-                      {t('producer.scanner.validBarcode')}
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <X size={20} color={colors.error} strokeWidth={2} />
-                    <Text style={[styles.statusText, { color: colors.error }]}>
-                      {t('producer.scanner.barcodeInvalid')}
-                    </Text>
-                  </>
-                )}
-              </View>
-            ) : (
-              <Text style={styles.instructionText}>
-                {t('producer.scanner.placeBarcode')}
-              </Text>
-            )}
-
-            {scanned && (
-              <TouchableOpacity
-                onPress={handleReset}
-                style={[styles.resetButton, { borderColor: colors.border }]}
-              >
-                <Text style={[styles.resetButtonText, { color: colors.text.primary }]}>
-                  {t('producer.scanner.scanAgain')}
-                </Text>
-              </TouchableOpacity>
             )}
           </View>
         </View>
-      </CameraView>
+
+        {/* Bottom info */}
+        <View style={styles.bottomInfo}>
+          {validating ? (
+            <View style={styles.statusContainer}>
+              <ActivityIndicator size="small" color={colors.accent} />
+              <Text style={styles.statusText}>{t('producer.scanner.validating')}</Text>
+            </View>
+          ) : scanned && barcode ? (
+            <View style={styles.statusContainer}>
+              {isValid ? (
+                <>
+                  <Check size={20} color={colors.success} strokeWidth={2} />
+                  <Text style={[styles.statusText, { color: colors.success }]}>
+                    {t('producer.scanner.validBarcode')}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <X size={20} color={colors.error} strokeWidth={2} />
+                  <Text style={[styles.statusText, { color: colors.error }]}>
+                    {t('producer.scanner.barcodeInvalid')}
+                  </Text>
+                </>
+              )}
+            </View>
+          ) : (
+            <Text style={styles.instructionText}>
+              {t('producer.scanner.placeBarcode')}
+            </Text>
+          )}
+
+          {scanned && (
+            <TouchableOpacity
+              onPress={handleReset}
+              style={[styles.resetButton, { borderColor: colors.border }]}
+            >
+              <Text style={[styles.resetButtonText, { color: colors.text.primary }]}>
+                {t('producer.scanner.scanAgain')}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -212,9 +210,6 @@ const styles = StyleSheet.create({
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  camera: {
-    flex: 1,
   },
   overlay: {
     flex: 1,

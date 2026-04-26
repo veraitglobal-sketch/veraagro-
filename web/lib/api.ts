@@ -345,6 +345,8 @@ export const usersAPI = {
     productionCountry?: string;
     roles?: string[];
     status?: string;
+    /** Same shape as /buyers/company-profile — for BUYER users */
+    buyerCompanyProfile?: Record<string, unknown> | null;
   }) => {
     const response = await api.put(`/users/admin/${id}`, userData);
     return response.data;
@@ -397,6 +399,34 @@ export const buyersAPI = {
   },
   getSuppliers: async () => {
     const response = await api.get('/buyers/suppliers');
+    return response.data;
+  },
+  getCompanyProfile: async () => {
+    const response = await api.get('/buyers/company-profile');
+    return response.data as {
+      company: {
+        legalEntity: string;
+        taxId: string;
+        headquarters: string;
+        generalDirector: string;
+        financeManager: string;
+      };
+      deliveryLocations: unknown[];
+      authorizedPersonnel: unknown[];
+    };
+  },
+  updateCompanyProfile: async (body: {
+    company: {
+      legalEntity: string;
+      taxId: string;
+      headquarters: string;
+      generalDirector: string;
+      financeManager: string;
+    };
+    deliveryLocations: unknown[];
+    authorizedPersonnel: unknown[];
+  }) => {
+    const response = await api.put('/buyers/company-profile', body);
     return response.data;
   },
 };

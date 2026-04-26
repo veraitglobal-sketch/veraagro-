@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
-import { MapPin, Plus, X, Building2, Users, Truck } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
+import { MapPin, Plus, X, Building2, Users, Truck, Loader2 } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { buyersAPI } from '@/lib/api';
 
 interface DeliveryLocation {
   id: string;
@@ -44,89 +46,72 @@ export default function BuyerProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showStaffModal, setShowStaffModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Company Core Data
+  // Company Core Data (persisted: same document admin sees on /users)
   const [companyData, setCompanyData] = useState({
-    legalEntity: 'Aldi Nord',
-    taxId: 'DE123456789',
-    headquarters: 'Essen, Germany',
-    generalDirector: 'Dr. Michael Kretz',
-    financeManager: 'Sarah Weber',
+    legalEntity: '',
+    taxId: '',
+    headquarters: '',
+    generalDirector: '',
+    financeManager: '',
   });
 
-  // Delivery Locations
-  const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocation[]>([
-    {
-      id: '1',
-      alias: 'Glavni Distributivni Centar - Hamburg',
-      address: 'Hamburger Straße 123',
-      city: 'Hamburg',
-      postalCode: '20095',
-      country: 'Germany',
-      latitude: 53.5511,
-      longitude: 9.9937,
-      responsiblePerson: 'Klaus Schmidt',
-      responsiblePhone: '+49 40 12345678',
-      operatingHours: {
-        monday: '08:00 - 18:00',
-        tuesday: '08:00 - 18:00',
-        wednesday: '08:00 - 18:00',
-        thursday: '08:00 - 18:00',
-        friday: '08:00 - 18:00',
-        saturday: '09:00 - 14:00',
-        sunday: 'Closed',
-      },
-    },
-    {
-      id: '2',
-      alias: 'Market Eimsbüttel',
-      address: 'Eimsbütteler Chaussee 45',
-      city: 'Hamburg',
-      postalCode: '20259',
-      country: 'Germany',
-      latitude: 53.5714,
-      longitude: 9.9602,
-      responsiblePerson: 'Anna Müller',
-      responsiblePhone: '+49 40 98765432',
-      operatingHours: {
-        monday: '07:00 - 20:00',
-        tuesday: '07:00 - 20:00',
-        wednesday: '07:00 - 20:00',
-        thursday: '07:00 - 20:00',
-        friday: '07:00 - 20:00',
-        saturday: '07:00 - 20:00',
-        sunday: '10:00 - 18:00',
-      },
-    },
-  ]);
+  const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocation[]>([]);
+  const [authorizedPersonnel, setAuthorizedPersonnel] = useState<AuthorizedPerson[]>([]);
 
-  // Authorized Personnel
-  const [authorizedPersonnel, setAuthorizedPersonnel] = useState<AuthorizedPerson[]>([
-    {
-      id: '1',
-      firstName: 'Thomas',
-      lastName: 'Klein',
-      email: 'thomas.klein@aldinord.de',
-      phone: '+49 201 123456',
-      role: 'Purchasing Manager',
+  const persist = useCallback(
+    async (override?: {
+      company?: typeof companyData;
+      deliveryLocations?: DeliveryLocation[];
+      authorizedPersonnel?: AuthorizedPerson[];
+    }) => {
+      setSaving(true);
+      try {
+        await buyersAPI.updateCompanyProfile({
+          company: override?.company ?? companyData,
+          deliveryLocations: override?.deliveryLocations ?? deliveryLocations,
+          authorizedPersonnel: override?.authorizedPersonnel ?? authorizedPersonnel,
+        });
+      } finally {
+        setSaving(false);
+      }
     },
-    {
-      id: '2',
-      firstName: 'Maria',
-      lastName: 'Schneider',
-      email: 'maria.schneider@aldinord.de',
-      phone: '+49 201 234567',
-      role: 'Warehouse Lead',
-    },
-    {
-      id: '3',
-      firstName: 'Peter',
-      lastName: 'Fischer',
-      email: 'peter.fischer@aldinord.de',
-      phone: '+49 201 345678',
-      role: 'Accountant',
-    },
-  ]);
+    [companyData, deliveryLocations, authorizedPersonnel],
+  );
+
+  const handleSaveGeneral = async () => {
+    try {
+      await persist();
+      setIsEditing(false);
+    } catch {
+      alert('Failed to save profile');
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoadError(null);
+      setLoading(true);
+      try {
+        const data = await buyersAPI.getCompanyProfile();
+        if (cancelled) return;
+        setCompanyData(data.company);
+        setDeliveryLocations((data.deliveryLocations || []) as DeliveryLocation[]);
+        setAuthorizedPersonnel((data.authorizedPersonnel || []) as AuthorizedPerson[]);
+      } catch {
+        if (!cancelled) setLoadError('Could not load company profile. Please try again.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // New Location Form
   const [newLocation, setNewLocation] = useState<Partial<DeliveryLocation>>({
@@ -159,7 +144,7 @@ export default function BuyerProfilePage() {
     role: '',
   });
 
-  const handleAddLocation = () => {
+  const handleAddLocation = async () => {
     if (newLocation.alias && newLocation.address && newLocation.city) {
       const location: DeliveryLocation = {
         id: Date.now().toString(),
@@ -182,7 +167,8 @@ export default function BuyerProfilePage() {
           sunday: 'Closed',
         },
       };
-      setDeliveryLocations([...deliveryLocations, location]);
+      const next = [...deliveryLocations, location];
+      setDeliveryLocations(next);
       setNewLocation({
         alias: '',
         address: '',
@@ -204,10 +190,19 @@ export default function BuyerProfilePage() {
         },
       });
       setShowLocationModal(false);
+      try {
+        await buyersAPI.updateCompanyProfile({
+          company: companyData,
+          deliveryLocations: next,
+          authorizedPersonnel,
+        });
+      } catch {
+        alert('Could not save location to server. Please try again.');
+      }
     }
   };
 
-  const handleAddStaff = () => {
+  const handleAddStaff = async () => {
     if (newStaff.firstName && newStaff.lastName && newStaff.email && newStaff.role) {
       const staff: AuthorizedPerson = {
         id: Date.now().toString(),
@@ -217,7 +212,8 @@ export default function BuyerProfilePage() {
         phone: newStaff.phone || '',
         role: newStaff.role,
       };
-      setAuthorizedPersonnel([...authorizedPersonnel, staff]);
+      const next = [...authorizedPersonnel, staff];
+      setAuthorizedPersonnel(next);
       setNewStaff({
         firstName: '',
         lastName: '',
@@ -226,20 +222,63 @@ export default function BuyerProfilePage() {
         role: '',
       });
       setShowStaffModal(false);
+      try {
+        await buyersAPI.updateCompanyProfile({
+          company: companyData,
+          deliveryLocations,
+          authorizedPersonnel: next,
+        });
+      } catch {
+        alert('Could not save contact to server. Please try again.');
+      }
     }
   };
 
-  const handleDeleteLocation = (id: string) => {
-    setDeliveryLocations(deliveryLocations.filter(loc => loc.id !== id));
+  const handleDeleteLocation = async (id: string) => {
+    const next = deliveryLocations.filter((loc) => loc.id !== id);
+    setDeliveryLocations(next);
+    try {
+      await buyersAPI.updateCompanyProfile({
+        company: companyData,
+        deliveryLocations: next,
+        authorizedPersonnel,
+      });
+    } catch {
+      alert('Could not update server. Reverting is not automatic — please refresh.');
+    }
   };
 
-  const handleDeleteStaff = (id: string) => {
-    setAuthorizedPersonnel(authorizedPersonnel.filter(staff => staff.id !== id));
+  const handleDeleteStaff = async (id: string) => {
+    const next = authorizedPersonnel.filter((staff) => staff.id !== id);
+    setAuthorizedPersonnel(next);
+    try {
+      await buyersAPI.updateCompanyProfile({
+        company: companyData,
+        deliveryLocations,
+        authorizedPersonnel: next,
+      });
+    } catch {
+      alert('Could not update server. Please try again.');
+    }
   };
 
   return (
+    <AuthGuard requiredRoles={['BUYER']}>
     <SidebarLayout title="Company Profile" navItems={buyerPortalNavItems}>
       <div className="space-y-6">
+        {loadError && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-lg text-sm">
+            {loadError}
+          </div>
+        )}
+        {loading ? (
+          <div className="flex items-center justify-center py-24 gap-2 text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-sm font-light">Loading profile…</span>
+          </div>
+        ) : null}
+        {!loading && (
+          <>
         {/* Tabs */}
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8">
@@ -273,10 +312,19 @@ export default function BuyerProfilePage() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-light text-gray-900">Company Core</h2>
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="px-4 py-2 text-sm font-light text-gray-700 bg-white border border-[0.5px] border-black/10 rounded-lg hover:bg-gray-50 transition-colors"
+                  type="button"
+                  disabled={saving}
+                  onClick={async () => {
+                    if (isEditing) {
+                      await handleSaveGeneral();
+                    } else {
+                      setIsEditing(true);
+                    }
+                  }}
+                  className="px-4 py-2 text-sm font-light text-gray-700 bg-white border border-[0.5px] border-black/10 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
                 >
-                  {isEditing ? 'Save Changes' : 'Edit'}
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {isEditing ? 'Save changes' : 'Edit'}
                 </button>
               </div>
 
@@ -719,7 +767,10 @@ export default function BuyerProfilePage() {
               </div>
             </div>
           )}
+          </>
+        )}
       </div>
     </SidebarLayout>
+    </AuthGuard>
   );
 }

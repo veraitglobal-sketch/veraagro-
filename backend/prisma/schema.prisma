@@ -1004,6 +1004,8 @@ model users {
   firstName                                    String
   lastName                                     String
   companyPosition                              String?                   // e.g. "Purchasing Manager", "Owner" (buyer self-registration)
+  /// Company, delivery locations, authorized staff — shared between buyer portal and admin
+  buyerCompanyProfile                          Json?
   roles                                        UserRole[]                @default([FARMER])
   status                                       UserStatus                @default(PENDING_VERIFICATION)
   passwordHash                                 String

@@ -342,6 +342,151 @@ Reply to: ${data.email}
     }
   }
 
+  private escapeForEmail(s: string | undefined | null): string {
+    if (s == null || s === '') return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /**
+   * Notify operations (e.g. info@biovera.app) of a new buyer order or pre-order.
+   * Target: ORDERS_NOTIFY_EMAIL → ADMIN_EMAIL → info@biovera.app
+   */
+  async sendNewOrderAdminNotification(data: {
+    orderNumber: string;
+    productName: string;
+    quantity: number;
+    unit: string;
+    unitPrice: number | null;
+    totalAmount: number | null;
+    buyerName: string;
+    buyerEmail?: string | null;
+    estateName: string;
+    isPreOrder?: boolean;
+    extraNotes?: string | null;
+  }): Promise<boolean> {
+    try {
+      const toAddr =
+        process.env.ORDERS_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || 'info@biovera.app';
+      const customFrom = process.env.EMAIL_FROM;
+      const fromAddr = this.resend
+        ? customFrom && customFrom.includes('@')
+          ? customFrom
+          : 'onboarding@resend.dev'
+        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
+
+      const h = (v: string | undefined | null) => this.escapeForEmail(v);
+      const subj = data.isPreOrder
+        ? `Pre-order: ${data.orderNumber}`
+        : `New order: ${data.orderNumber}`;
+      const tot =
+        data.totalAmount != null ? `€${data.totalAmount.toFixed(2)}` : '—';
+      const up =
+        data.unitPrice != null ? `€${data.unitPrice.toFixed(2)}` : '—';
+      const kind = data.isPreOrder ? 'Pre-order' : 'New order';
+      const notesBlock = data.extraNotes
+        ? `<p><span class="label">Notes:</span> ${h(data.extraNotes)}</p>`
+        : '';
+
+      const mailOptions = {
+        from: `"Bio Vera Orders" <${fromAddr}>`,
+        to: toAddr,
+        replyTo: data.buyerEmail || undefined,
+        subject: subj,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #2D5A27; color: white; padding: 20px; text-align: center; }
+              .content { background-color: #f9f9f9; padding: 30px; }
+              .info-box { background-color: white; border-left: 4px solid #2D5A27; padding: 15px; margin: 15px 0; }
+              .label { font-weight: bold; color: #2D5A27; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Bio Vera</h1>
+                <p>${h(kind)}</p>
+              </div>
+              <div class="content">
+                <div class="info-box">
+                  <p><span class="label">Order #</span> ${h(data.orderNumber)}</p>
+                  <p><span class="label">Product</span> ${h(data.productName)}</p>
+                  <p><span class="label">Quantity</span> ${h(String(data.quantity))} ${h(data.unit)}</p>
+                  <p><span class="label">Unit price</span> ${up}</p>
+                  <p><span class="label">Total</span> ${tot}</p>
+                  <p><span class="label">Buyer</span> ${h(data.buyerName)}${
+                    data.buyerEmail
+                      ? ` — <a href="mailto:${String(data.buyerEmail).replace(
+                          /"/g,
+                          '',
+                        )}">${h(data.buyerEmail)}</a>`
+                      : ''
+                  }</p>
+                  <p><span class="label">Estate / context</span> ${h(
+                    data.estateName,
+                  )}</p>
+                  ${notesBlock}
+                </div>
+                <p style="color:#666;font-size:12px;">Open the admin panel → Orders to manage this order.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        text: `${kind} ${data.orderNumber}
+Product: ${data.productName}
+Quantity: ${data.quantity} ${data.unit}
+Unit price: ${up}
+Total: ${tot}
+Buyer: ${data.buyerName}${data.buyerEmail ? ` <${data.buyerEmail}>` : ''}
+Estate / context: ${data.estateName}
+${data.extraNotes ? `Notes: ${data.extraNotes}\n` : ''}`,
+      };
+
+      if (this.resend) {
+        this.logger.log(
+          `Sending new-order email via Resend: to=${toAddr}, from=${fromAddr}`,
+        );
+        const { error } = await this.resend.emails.send({
+          from: mailOptions.from,
+          to: toAddr,
+          replyTo: data.buyerEmail || undefined,
+          subject: mailOptions.subject,
+          html: mailOptions.html,
+          text: mailOptions.text,
+        });
+        if (error) {
+          this.logger.error(`Resend new-order error: ${JSON.stringify(error)}`);
+          return false;
+        }
+        this.logger.log(`New order notification sent to ${toAddr}`);
+        return true;
+      }
+      if (!this.transporter) {
+        this.logger.warn(
+          'Email not configured, skipping new order notification',
+        );
+        return false;
+      }
+      await this.transporter.sendMail(mailOptions);
+      this.logger.log(`New order notification sent via SMTP to ${toAddr}`);
+      return true;
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to send new order notification: ${error?.message || error}`,
+      );
+      return false;
+    }
+  }
+
   /**
    * Send email verification link for grower registration
    */

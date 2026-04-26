@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, UserStatus } from '@prisma/client';
+import { Prisma, UserRole, UserStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 import * as QRCode from 'qrcode';
 
@@ -147,8 +147,10 @@ export class UsersService {
     productionCountry?: string;
     roles?: UserRole[];
     status?: UserStatus;
+    /** Buyer company profile JSON (admin + synced with buyer portal) */
+    buyerCompanyProfile?: Prisma.InputJsonValue | null;
   }) {
-    const updateData: any = { updatedAt: new Date() };
+    const updateData: Prisma.usersUpdateInput = { updatedAt: new Date() };
     
     if (data.email !== undefined) updateData.email = data.email;
     if (data.phone !== undefined) updateData.phone = data.phone;
@@ -157,6 +159,9 @@ export class UsersService {
     if (data.productionCountry !== undefined) updateData.productionCountry = data.productionCountry?.trim() || null;
     if (data.roles !== undefined) updateData.roles = data.roles;
     if (data.status !== undefined) updateData.status = data.status;
+    if (data.buyerCompanyProfile !== undefined) {
+      updateData.buyerCompanyProfile = data.buyerCompanyProfile;
+    }
 
     return this.prisma.users.update({
       where: { id },

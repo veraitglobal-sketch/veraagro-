@@ -50,10 +50,12 @@ export function useSocket() {
         }
 
         const newSocket = io(`${API_URL}/notifications`, {
+          path: '/socket.io',
           auth: {
             token,
           },
-          transports: ['websocket', 'polling'],
+          // Polling first: works through more CDNs / proxies; RN is less flaky than WS-only
+          transports: ['polling', 'websocket'],
           reconnection: true,
           reconnectionDelay: 1000,
           reconnectionDelayMax: 10_000,
@@ -78,10 +80,19 @@ export function useSocket() {
           }
         });
 
+        let connectErrorLogCount = 0;
         newSocket.on('connect_error', (error) => {
-          console.error('Socket connection error:', error);
+          // Do not use console.error: React Native LogBox shows it as a blocking "Console Error" overlay
           if (mounted) {
             setConnected(false);
+          }
+          connectErrorLogCount += 1;
+          if (connectErrorLogCount === 1 || connectErrorLogCount % 6 === 0) {
+            const msg = error instanceof Error ? error.message : String(error);
+            const hint = __DEV__
+              ? ' On a real device, set EXPO_PUBLIC_API_URL to http://<LAN-IP> (same host/port as the REST API).'
+              : '';
+            console.warn(`[notifications] Socket connect issue (reconnecting): ${msg}.${hint}`);
           }
         });
 
@@ -99,7 +110,7 @@ export function useSocket() {
           }
         });
       } catch (error) {
-        console.error('Error connecting socket:', error);
+        console.warn('Error setting up socket:', error instanceof Error ? error.message : error);
       }
     };
 

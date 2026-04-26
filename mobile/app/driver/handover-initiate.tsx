@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Camera, QrCode } from 'lucide-react-native';
@@ -82,15 +82,19 @@ export default function HandoverInitiateScreen() {
           </Text>
         </View>
 
-        <CameraView
-          style={{ flex: 1 }}
-          facing="back"
-          onBarcodeScanned={handleBarcodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: ['qr'],
-          }}
-        >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ flex: 1, position: 'relative' }}>
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            onBarcodeScanned={handleBarcodeScanned}
+            barcodeScannerSettings={{
+              barcodeTypes: ['qr'],
+            }}
+          />
+          <View
+            style={[StyleSheet.absoluteFill, { justifyContent: 'center', alignItems: 'center' }]}
+            pointerEvents="box-none"
+          >
             <View
               style={{
                 width: 250,
@@ -116,7 +120,7 @@ export default function HandoverInitiateScreen() {
               Position QR code within frame
             </Text>
           </View>
-        </CameraView>
+        </View>
 
         <TouchableOpacity
           onPress={() => setScanning(false)}

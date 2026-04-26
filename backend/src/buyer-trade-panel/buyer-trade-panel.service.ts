@@ -1,12 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
+import { EmailService } from '../email/email.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class BuyerTradePanelService {
   private readonly logger = new Logger(BuyerTradePanelService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   /**
    * Live Supply & Demand Graph
@@ -412,6 +418,49 @@ export class BuyerTradePanelService {
         updatedAt: new Date(),
       },
     });
+
+    const buyer = await this.prisma.users.findUnique({
+      where: { id: buyerId },
+      select: { firstName: true, lastName: true, email: true },
+    });
+    const buyerLabel =
+      [buyer?.firstName, buyer?.lastName].filter(Boolean).join(' ').trim() ||
+      buyer?.email ||
+      'Buyer';
+    const extraNotes = lockPrice
+      ? `Pre-order with locked price: €${unitPrice}/${unit}`
+      : 'Pre-order - price subject to change';
+
+    void this.emailService
+      .sendNewOrderAdminNotification({
+        orderNumber: preOrder.orderNumber,
+        productName,
+        quantity,
+        unit,
+        unitPrice: lockPrice ? unitPrice : null,
+        totalAmount,
+        buyerName: buyerLabel,
+        buyerEmail: buyer?.email,
+        estateName: 'Pre-order (no estate yet)',
+        isPreOrder: true,
+        extraNotes,
+      })
+      .catch((e) =>
+        this.logger.error(`sendNewOrderAdminNotification (pre-order): ${e}`),
+      );
+
+    void this.notificationsService
+      .notifyAdminsForNewOrder({
+        orderNumber: preOrder.orderNumber,
+        productName,
+        totalAmount,
+        buyerLabel,
+        estateLabel: 'Pre-order',
+        isPreOrder: true,
+      })
+      .catch((e) =>
+        this.logger.error(`notifyAdminsForNewOrder (pre-order): ${e}`),
+      );
 
     return {
       success: true,

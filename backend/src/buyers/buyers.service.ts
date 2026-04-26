@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, UserRole } from '@prisma/client';
 
 @Injectable()
 export class BuyersService {
@@ -399,5 +400,82 @@ export class BuyersService {
       }
       return a.estateName.localeCompare(b.estateName);
     });
+  }
+
+  private emptyCompanyProfile() {
+    return {
+      company: {
+        legalEntity: '',
+        taxId: '',
+        headquarters: '',
+        generalDirector: '',
+        financeManager: '',
+      },
+      deliveryLocations: [] as unknown[],
+      authorizedPersonnel: [] as unknown[],
+    };
+  }
+
+  private normalizeCompanyProfile(raw: unknown) {
+    const d = this.emptyCompanyProfile();
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      return d;
+    }
+    const o = raw as Record<string, unknown>;
+    const c =
+      o.company && typeof o.company === 'object' && !Array.isArray(o.company)
+        ? (o.company as Record<string, unknown>)
+        : {};
+    return {
+      company: {
+        ...d.company,
+        legalEntity: String(c.legalEntity ?? d.company.legalEntity),
+        taxId: String(c.taxId ?? d.company.taxId),
+        headquarters: String(c.headquarters ?? d.company.headquarters),
+        generalDirector: String(c.generalDirector ?? d.company.generalDirector),
+        financeManager: String(c.financeManager ?? d.company.financeManager),
+      },
+      deliveryLocations: Array.isArray(o.deliveryLocations) ? o.deliveryLocations : [],
+      authorizedPersonnel: Array.isArray(o.authorizedPersonnel) ? o.authorizedPersonnel : [],
+    };
+  }
+
+  /**
+   * Buyer portal + admin: one JSON document per buyer user
+   */
+  async getCompanyProfile(buyerId: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: buyerId },
+      select: { id: true, roles: true, buyerCompanyProfile: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.roles.includes(UserRole.BUYER)) {
+      throw new ForbiddenException('Not a buyer account');
+    }
+    return this.normalizeCompanyProfile(user.buyerCompanyProfile);
+  }
+
+  async updateCompanyProfile(buyerId: string, body: unknown) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: buyerId },
+      select: { roles: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.roles.includes(UserRole.BUYER)) {
+      throw new ForbiddenException('Not a buyer account');
+    }
+    const normalized = this.normalizeCompanyProfile(body);
+    await this.prisma.users.update({
+      where: { id: buyerId },
+      data: {
+        buyerCompanyProfile: normalized as Prisma.InputJsonValue,
+        updatedAt: new Date(),
+      },
+    });
+    return normalized;
   }
 }

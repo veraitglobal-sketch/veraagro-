@@ -94,7 +94,9 @@ export default function MarketPricesPage() {
       resetForm();
       loadPrices();
     } catch (err: any) {
-      alert(err.message || 'Failed to create market price');
+      const body = err.response?.data?.message;
+      const msg = Array.isArray(body) ? body.join(' ') : body || err.message || 'Failed to create market price';
+      alert(msg);
     }
   };
 

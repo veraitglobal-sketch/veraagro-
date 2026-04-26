@@ -1,13 +1,24 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaymentsService } from '../payments/payments.service';
+import { EmailService } from '../email/email.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
+
   constructor(
     private prisma: PrismaService,
     private paymentsService: PaymentsService,
+    private emailService: EmailService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(buyerId: string, data: {
@@ -53,6 +64,52 @@ export class OrdersService {
         updatedAt: new Date(),
       },
     });
+
+    const buyer = await this.prisma.users.findUnique({
+      where: { id: buyerId },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        partnerCode: true,
+      },
+    });
+    const buyerLabel =
+      [buyer?.firstName, buyer?.lastName].filter(Boolean).join(' ').trim() ||
+      buyer?.email ||
+      'Buyer';
+    const estateName = estate.name || data.estateId;
+
+    void this.emailService
+      .sendNewOrderAdminNotification({
+        orderNumber: order.orderNumber,
+        productName: data.productName,
+        quantity: data.quantity,
+        unit: data.unit,
+        unitPrice: data.unitPrice,
+        totalAmount,
+        buyerName: buyerLabel,
+        buyerEmail: buyer?.email,
+        estateName,
+        isPreOrder: false,
+        extraNotes: data.deliveryNotes,
+      })
+      .catch((e) =>
+        this.logger.error(`sendNewOrderAdminNotification failed: ${e}`),
+      );
+
+    void this.notificationsService
+      .notifyAdminsForNewOrder({
+        orderNumber: order.orderNumber,
+        productName: data.productName,
+        totalAmount,
+        buyerLabel,
+        estateLabel: estateName,
+        isPreOrder: false,
+      })
+      .catch((e) =>
+        this.logger.error(`notifyAdminsForNewOrder failed: ${e}`),
+      );
 
     return order;
   }

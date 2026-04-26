@@ -20,6 +20,8 @@ interface User {
   roles: string[];
   status: string;
   createdAt: string;
+  /** Buyer portal company profile (same as /buyers/company-profile) */
+  buyerCompanyProfile?: Record<string, unknown> | null;
   _count?: {
     estates: number;
   };
@@ -83,6 +85,7 @@ export default function UsersManagementPage() {
     status: 'PENDING_VERIFICATION' as string,
     autoGeneratePassword: false,
     sendEmail: true,
+    buyerCompanyProfileJson: '' as string,
   });
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -149,6 +152,16 @@ export default function UsersManagementPage() {
     if (!editingUser) return;
     
     try {
+      let buyerCompanyProfile: Record<string, unknown> | undefined;
+      if (formData.roles.includes('BUYER') && formData.buyerCompanyProfileJson.trim()) {
+        try {
+          buyerCompanyProfile = JSON.parse(formData.buyerCompanyProfileJson) as Record<string, unknown>;
+        } catch {
+          alert('Buyer company profile must be valid JSON');
+          return;
+        }
+      }
+
       await usersAPI.update(editingUser.id, {
         email: formData.email || undefined,
         phone: formData.phone || undefined,
@@ -157,6 +170,9 @@ export default function UsersManagementPage() {
         productionCountry: formData.productionCountry || undefined,
         roles: formData.roles.length > 0 ? formData.roles : undefined,
         status: formData.status || undefined,
+        ...(formData.roles.includes('BUYER') && formData.buyerCompanyProfileJson.trim()
+          ? { buyerCompanyProfile }
+          : {}),
       });
       setEditingUser(null);
       resetForm();
@@ -179,11 +195,37 @@ export default function UsersManagementPage() {
       status: 'PENDING_VERIFICATION',
       autoGeneratePassword: false,
       sendEmail: true,
+      buyerCompanyProfileJson: '',
     });
   };
 
-  const openEditModal = (user: User) => {
+  const openEditModal = async (user: User) => {
     setEditingUser(user);
+    let profileJson = '';
+    if (user.roles.includes('BUYER')) {
+      try {
+        const full = await usersAPI.getOne(user.id);
+        profileJson = full?.buyerCompanyProfile
+          ? JSON.stringify(full.buyerCompanyProfile, null, 2)
+          : JSON.stringify(
+              {
+                company: {
+                  legalEntity: '',
+                  taxId: '',
+                  headquarters: '',
+                  generalDirector: '',
+                  financeManager: '',
+                },
+                deliveryLocations: [],
+                authorizedPersonnel: [],
+              },
+              null,
+              2,
+            );
+      } catch {
+        profileJson = '';
+      }
+    }
     setFormData({
       partnerCode: user.partnerCode,
       email: user.email || '',
@@ -196,6 +238,7 @@ export default function UsersManagementPage() {
       status: user.status,
       autoGeneratePassword: false,
       sendEmail: false,
+      buyerCompanyProfileJson: profileJson,
     });
   };
 
@@ -747,6 +790,22 @@ export default function UsersManagementPage() {
                         ))}
                       </div>
                     </div>
+                    {formData.roles.includes('BUYER') && (
+                      <div className="col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Buyer company profile (JSON)
+                        </label>
+                        <p className="text-xs text-gray-500 mb-2">
+                          Same data as in the buyer portal under Company profile. Use valid JSON: company, deliveryLocations, authorizedPersonnel.
+                        </p>
+                        <textarea
+                          value={formData.buyerCompanyProfileJson}
+                          onChange={(e) => setFormData({ ...formData, buyerCompanyProfileJson: e.target.value })}
+                          rows={12}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-3 justify-end pt-4 border-t">
                     <button

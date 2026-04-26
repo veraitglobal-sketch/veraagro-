@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationTrigger, UserRole } from '@prisma/client';
@@ -9,6 +9,8 @@ import { NotificationTrigger, UserRole } from '@prisma/client';
  */
 @Injectable()
 export class NotificationsService {
+  private readonly logger = new Logger(NotificationsService.name);
+
   constructor(private prisma: PrismaService) {}
 
   /**
@@ -32,6 +34,50 @@ export class NotificationsService {
         status: 'UNREAD',
       },
     });
+  }
+
+  /**
+   * In-app alert for all SUPER_ADMIN / ADMIN users (admin panel bell feed).
+   */
+  async notifyAdminsForNewOrder(data: {
+    orderNumber: string;
+    productName: string;
+    totalAmount: number | null;
+    buyerLabel: string;
+    estateLabel: string;
+    isPreOrder?: boolean;
+  }): Promise<void> {
+    const title = data.isPreOrder ? 'New pre-order' : 'New order';
+    const amt =
+      data.totalAmount != null ? `€${data.totalAmount.toFixed(2)}` : '—';
+    const message = `${data.orderNumber} — ${data.productName} — ${data.buyerLabel} · ${amt} · ${data.estateLabel}`;
+
+    const admins = await this.prisma.users.findMany({
+      where: {
+        OR: [
+          { roles: { has: 'SUPER_ADMIN' } },
+          { roles: { has: 'ADMIN' } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    for (const a of admins) {
+      try {
+        await this.create({
+          userId: a.id,
+          type: 'SYSTEM',
+          title,
+          message,
+          actionUrl: '/admin/orders',
+        });
+      } catch (e) {
+        this.logger.warn(
+          `notifyAdminsForNewOrder: failed for user ${a.id}`,
+          e,
+        );
+      }
+    }
   }
 
   /**

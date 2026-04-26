@@ -53,35 +53,34 @@ export default function ScanQRScreen() {
     <View style={styles.container}>
       <CameraView
         ref={cameraRef}
-        style={styles.camera}
+        style={StyleSheet.absoluteFill}
         facing="back"
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: ['qr', 'ean13', 'ean8', 'code128', 'code39'],
         }}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.topBar}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-              <X size={24} color="#fff" strokeWidth={1.5} />
-            </TouchableOpacity>
-            <Text style={styles.overlayTitle}>Scan</Text>
-            <View style={{ width: 40 }} />
-          </View>
-          <View style={styles.scanArea}>
-            <View style={styles.scanFrame}>
-              {!scanned && (
-                <View style={styles.scanLine}>
-                  <ScanLine size={200} color={theme.colors.primary} strokeWidth={2} />
-                </View>
-              )}
-            </View>
-          </View>
-          <View style={styles.bottomInfo}>
-            <Text style={styles.instruction}>Point at QR code</Text>
+      />
+      <View style={[StyleSheet.absoluteFill, styles.overlay]} pointerEvents="box-none">
+        <View style={styles.topBar}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
+            <X size={24} color="#fff" strokeWidth={1.5} />
+          </TouchableOpacity>
+          <Text style={styles.overlayTitle}>Scan</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <View style={styles.scanArea}>
+          <View style={styles.scanFrame}>
+            {!scanned && (
+              <View style={styles.scanLine}>
+                <ScanLine size={200} color={theme.colors.primary} strokeWidth={2} />
+              </View>
+            )}
           </View>
         </View>
-      </CameraView>
+        <View style={styles.bottomInfo}>
+          <Text style={styles.instruction}>Point at QR code</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -93,7 +92,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
   btn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
   btnText: { fontSize: 14, fontWeight: '500' },
-  camera: { flex: 1 },
   overlay: { flex: 1, backgroundColor: 'transparent' },
   topBar: {
     flexDirection: 'row',
