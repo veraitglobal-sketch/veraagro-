@@ -50,25 +50,47 @@ export class GrowerPortalService {
   }
 
   /**
-   * Get grower's mission tracker data
+   * Prisma/Decimal/Date in nested objects can make Express JSON encoding throw → global filter returns 500.
+   * This runs the same path as the HTTP response and normalizes to plain JSON types.
    */
-  async getMissionTracker(growerId: string, batchId?: string) {
-    if (!growerId?.trim()) {
-      throw new BadRequestException('Invalid session');
+  private toApiJson<T>(value: T): T {
+    try {
+      return JSON.parse(
+        JSON.stringify(value, (_k, v) => {
+          if (v == null) return v;
+          if (typeof v === 'bigint') return v.toString();
+          if (v instanceof Date) return v.toISOString();
+          if (typeof v === 'object') {
+            const ctor = (v as object).constructor?.name;
+            const dec = v as { toNumber?: () => number; toString?: () => string };
+            if (ctor === 'Decimal' && typeof dec.toNumber === 'function') {
+              try {
+                return dec.toNumber();
+              } catch {
+                return dec.toString?.() ?? null;
+              }
+            }
+          }
+          return v;
+        }),
+      ) as T;
+    } catch (e) {
+      this.logger.error(`toApiJson: ${(e as Error).message}`);
+      return (Array.isArray(value) ? ([] as unknown) : (null as unknown)) as T;
     }
-    const gid = growerId.trim();
+  }
 
-    const where: Prisma.missionsWhereInput = { growerId: gid };
+  /** Core query + DTO build (may throw) */
+  private async getMissionTrackerRows(growerId: string, batchId?: string): Promise<any[]> {
+    const where: Prisma.missionsWhereInput = { growerId };
     if (batchId?.trim()) {
-      const internalId = await this.resolveBatchIdForGrower(batchId, gid);
+      const internalId = await this.resolveBatchIdForGrower(batchId, growerId);
       if (!internalId) {
         return [];
       }
       where.batchId = internalId;
     }
 
-    // Relations needed by buildMilestones; cap nested rows. If Prisma errors on a legacy row (bad FK,
-    // broken join), fall back to a slimmer include so the list can still load.
     const fullInclude: Prisma.missionsInclude = {
       batches: {
         include: {
@@ -128,22 +150,45 @@ export class GrowerPortalService {
           orderBy: { createdAt: 'desc' },
         });
       }
-
-      return missions.map((mission) => {
-        try {
-          return this.buildMissionTrackerData(mission);
-        } catch (err) {
-          this.logger.error(
-            `buildMissionTrackerData failed for mission ${(mission as { id: string }).id}: ${(err as Error).message}`,
-            (err as Error).stack,
-          );
-          return this.buildMissionTrackerDataFallback(mission);
-        }
-      });
     } catch (err) {
       this.logger.error(
-        `getMissionTracker failed for grower ${growerId}: ${(err as Error).message}`,
+        `getMissionTracker findMany for grower ${growerId}: ${(err as Error).message}`,
         (err as Error).stack,
+      );
+      return [];
+    }
+
+    return missions.map((mission) => {
+      try {
+        return this.buildMissionTrackerData(mission);
+      } catch (err) {
+        this.logger.error(
+          `buildMissionTrackerData failed for mission ${(mission as { id: string }).id}: ${(err as Error).message}`,
+          (err as Error).stack,
+        );
+        return this.buildMissionTrackerDataFallback(mission);
+      }
+    });
+  }
+
+  /**
+   * Get grower's mission tracker data
+   */
+  async getMissionTracker(growerId: string, batchId?: string) {
+    if (!growerId?.trim()) {
+      throw new BadRequestException('Invalid session');
+    }
+    const gid = growerId.trim();
+    try {
+      const rows = await this.getMissionTrackerRows(gid, batchId);
+      return this.toApiJson(rows);
+    } catch (e) {
+      if (e instanceof BadRequestException) {
+        throw e;
+      }
+      this.logger.error(
+        `getMissionTracker: ${(e as Error).message}`,
+        (e as Error).stack,
       );
       return [];
     }
@@ -164,7 +209,12 @@ export class GrowerPortalService {
       missionNumber: mission.missionNumber,
       batchId: mission.batches?.batchId ?? null,
       productName: mission.batches?.productName ?? '—',
-      quantity: mission.batches?.quantity ?? null,
+      quantity:
+        mission.batches?.quantity == null
+          ? null
+          : typeof mission.batches.quantity === 'number'
+            ? mission.batches.quantity
+            : Number(mission.batches.quantity),
       unit: mission.batches?.unit ?? null,
       status: mission.status,
       currentMilestone: '—',
@@ -393,12 +443,13 @@ export class GrowerPortalService {
     const milestones = this.buildMilestones(mission);
     const currentMilestone = milestones.find((m) => m.isCurrent) || milestones[0];
 
+    const qty = mission.batches?.quantity;
     return {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
       batchId: mission.batches?.batchId,
       productName: mission.batches?.productName,
-      quantity: mission.batches?.quantity,
+      quantity: qty == null || typeof qty === 'number' ? qty : Number(qty),
       unit: mission.batches?.unit,
       status: mission.status,
       currentMilestone: currentMilestone?.name,
