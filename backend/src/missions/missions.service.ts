@@ -171,15 +171,23 @@ export class MissionsService {
             'Invalid link to batch, vehicle, or user. Check your selection and retry.',
           );
         }
-        /** DB behind API deploy — missing table/column vs schema (e.g. `missions.harvestAnnouncementId`) */
+        /** DB behind API deploy — missing table/column vs Prisma schema (e.g. `missions.harvestAnnouncementId`) */
         if (e.code === 'P2021' || e.code === 'P2022') {
           this.logger.error(
             `DB schema out of date (${e.code}): ${e.message} meta=${JSON.stringify(e.meta)}`,
           );
+          const meta = e.meta as { table?: string; column?: string } | undefined;
+          const target =
+            meta?.column != null
+              ? String(meta.column)
+              : meta?.table != null
+                ? `table ${String(meta.table)}`
+                : 'unknown (see server logs for meta)';
           throw new ServiceUnavailableException(
-            'The server database is not up to date with the app (missing table or column). ' +
-              'An administrator must run Prisma migrations on the API, e.g. in the `backend` folder: `npx prisma migrate deploy` with production DATABASE_URL. ' +
-              `Prisma ${e.code}.`,
+            'The API database is missing a table or column that the app expects. ' +
+              'This is not a problem with the pickup address you typed — the server must run the latest Prisma migrations. ' +
+              `Prisma ${e.code} (${e.code === 'P2022' ? 'missing column' : 'missing table'}: ${target}). ` +
+              'Administrator: in `backend/`, with production `DATABASE_URL`, run `npx prisma migrate deploy` and restart the API.',
           );
         }
         // Any other Prisma client error: show code for support
