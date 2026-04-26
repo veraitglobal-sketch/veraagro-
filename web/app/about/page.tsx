@@ -45,7 +45,7 @@ export default function AboutPage() {
               About Bio Vera
             </h1>
             <p className="text-lg text-gray-600 font-light leading-relaxed">
-              An organized grower network with integrated logistics, finance, and traceability—not software alone
+              Transforming agriculture through technology, transparency, and trust
             </p>
           </motion.div>
 
@@ -61,14 +61,16 @@ export default function AboutPage() {
               <div className="flex items-start gap-4 mb-6">
                 <Target className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our mission</h2>
+                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our Mission</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    Run a <strong className="font-medium text-gray-800">reliable ag supply chain</strong>: clear standards, guaranteed offtake for farmers who 
-                    follow them, and coordinated operations so good produce is not lost to chaos at harvest or in transport.
+                    Bio Vera is on a mission to revolutionize the agricultural supply chain by connecting 
+                    producers worldwide directly with markets, ensuring complete transparency, quality assurance, 
+                    and fair compensation at every step.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
-                    Technology supports the model—waybills, invoices, batch records—but the point is a business you can 
-                    plan against: stable roles for growers, partners, and buyers, with documentation that matches reality.
+                    We believe that technology can bridge the gap between traditional farming and modern 
+                    market demands, creating a sustainable ecosystem where farmers thrive, buyers trust, 
+                    and consumers benefit from truly traceable, high-quality products.
                   </p>
                 </div>
               </div>
@@ -86,14 +88,15 @@ export default function AboutPage() {
               <div className="flex items-start gap-4 mb-6">
                 <Globe className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our vision</h2>
+                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our Vision</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    Expand a <strong className="font-medium text-gray-800">standards-based network</strong> in which offtake, cold chain, documents, and payment 
-                    are one system—so more regions can export fresh produce with less friction and more trust.
+                    To become the leading vertically integrated agrotech platform worldwide, setting new 
+                    standards for traceability, quality assurance, and sustainable agriculture.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
-                    We want every box to be traceable to a real field and a real handover, and every farmer in the 
-                    network to know how and when they get paid—not to chase the next middleman.
+                    We envision a future where every product on the shelf has a complete digital passport, 
+                    where farmers receive fair compensation for their work, and where consumers can trust 
+                    the origin and quality of what they purchase.
                   </p>
                 </div>
               </div>
@@ -204,10 +207,10 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center"
           >
-            <h2 className="text-2xl font-light text-gray-900 mb-4">Work inside the network</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">Join Us on This Journey</h2>
             <p className="text-gray-600 font-light leading-relaxed mb-6">
-              Whether you grow, supply inputs, run transport, or buy for your channels—start with the role that fits you. 
-              We build the chain together; we do not just hand you another login.
+              Whether you're a grower, supplier, logistics partner, or buyer, Bio Vera offers a platform 
+              designed for your success.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -242,8 +245,8 @@ export default function AboutPage() {
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
-                Organized grower network with guaranteed offtake, integrated logistics and finance, 
-                and full traceability from field to payment.
+                Vertically integrated agrotech platform for Bio-Ready certification 
+                and EU market compliance.
               </p>
             </div>
             <div>

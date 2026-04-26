@@ -219,32 +219,37 @@ export class AdminService {
         }))
       : [];
 
-    const needFullEstates = W('estates');
-    const needBatchHeavy = W('batches') || W('compliancePhotos');
-    const needBatchSummary = W('batchesSummary');
-    const needEstateContext = needFullEstates || needBatchHeavy || needBatchSummary || W('treatmentLogs');
+    let estatesFull: any[] = [];
+    let estateIds: string[] = [];
+    let parcelIds: string[] = [];
 
-    let estateRows: Awaited<ReturnType<typeof this.prisma.estates.findMany>> = [] as any;
-    if (needFullEstates) {
-      estateRows = await this.prisma.estates.findMany({
+    if (W('estates')) {
+      estatesFull = await this.prisma.estates.findMany({
         where: { ownerId: farmerId },
         include: { parcels: { orderBy: { createdAt: 'desc' } } },
         orderBy: { createdAt: 'desc' },
       });
-    } else if (needEstateContext) {
-      estateRows = (await this.prisma.estates.findMany({
-        where: { ownerId: farmerId },
-        select: { id: true, parcels: { select: { id: true } } },
-      })) as any;
+      estateIds = estatesFull.map((e) => e.id);
+      parcelIds = estatesFull.flatMap((e) => e.parcels.map((p) => p.id));
+    } else {
+      const needEstateIds =
+        W('batches') || W('batchesSummary') || W('compliancePhotos') || W('treatmentLogs');
+      if (needEstateIds) {
+        const slim = await this.prisma.estates.findMany({
+          where: { ownerId: farmerId },
+          select: { id: true, parcels: { select: { id: true } } },
+        });
+        estateIds = slim.map((e) => e.id);
+        parcelIds = slim.flatMap((e) => e.parcels.map((p) => p.id));
+      }
     }
-
-    const estateIds = (estateRows as { id: string; parcels: { id: string }[] }[]).map((e) => e.id);
-    const parcelIds = (estateRows as { id: string; parcels: { id: string }[] }[]).flatMap((e) => e.parcels.map((p) => p.id));
 
     const wantGrowth = W('fieldPhotos') || W('growthLogs') || W('labResults');
 
-    let batchesList: Awaited<ReturnType<typeof this.prisma.batches.findMany>> = [] as any;
-    if (needBatchHeavy && estateIds.length) {
+    let batchesList: any[] = [];
+    let compliancePhotosOnly: { id: string; photoUrl: string; photoType: string; batchId: string }[] = [];
+
+    if (W('batches') && estateIds.length) {
       batchesList = await this.prisma.batches.findMany({
         where: { estateId: { in: estateIds } },
         orderBy: { createdAt: 'desc' },
@@ -256,7 +261,7 @@ export class AdminService {
           parcels: { select: { id: true, cropType: true } },
         },
       });
-    } else if (needBatchSummary && !needBatchHeavy && estateIds.length) {
+    } else if (W('batchesSummary') && !W('batches') && estateIds.length) {
       batchesList = await this.prisma.batches.findMany({
         where: { estateId: { in: estateIds } },
         orderBy: { createdAt: 'desc' },
@@ -264,30 +269,23 @@ export class AdminService {
         select: {
           id: true,
           batchId: true,
-          estateId: true,
-          parcelId: true,
           productName: true,
           quantity: true,
-          unit: true,
-          harvestDate: true,
           status: true,
-          harvestedByUserId: true,
-          currentHubId: true,
-          createdAt: true,
-          updatedAt: true,
-          compliance_photos: { orderBy: { uploadedAt: 'desc' } },
-          quality_entries: true,
-          estates: { select: { id: true, name: true } },
-          parcels: { select: { id: true, cropType: true } },
         },
       });
-    } else if (W('compliancePhotos') && !needBatchHeavy && estateIds.length) {
+    } else if (W('compliancePhotos') && !W('batches') && estateIds.length) {
       const cps = await this.prisma.compliance_photos.findMany({
         where: { batches: { estateId: { in: estateIds } } },
         orderBy: { uploadedAt: 'desc' },
         take: 200,
       });
-      (this as any).__cpsOnly = cps;
+      compliancePhotosOnly = cps.map((c) => ({
+        id: c.id,
+        photoUrl: c.photoUrl,
+        photoType: c.photoType,
+        batchId: c.batchId,
+      }));
     }
 
     const [growthLogs, treatmentLogs, harvestAnn, complianceLogs, missions] = await Promise.all([
@@ -336,63 +334,70 @@ export class AdminService {
         : Promise.resolve([] as Awaited<ReturnType<typeof this.prisma.missions.findMany>>),
     ]);
 
-    const batches: FarmerAdminDetailResponse['batches'] = batchesList.map((b) => {
-      const qe = b.quality_entries;
-      return {
-        id: b.id,
-        batchId: b.batchId,
-        estateId: b.estateId,
-        estateName: b.estates?.name ?? null,
-        parcelId: b.parcelId,
-        parcelCropType: b.parcels?.cropType ?? null,
-        productName: b.productName,
-        quantity: b.quantity,
-        unit: b.unit,
-        harvestDate: b.harvestDate.toISOString(),
-        status: b.status,
-        harvestedByUserId: b.harvestedByUserId,
-        currentHubId: b.currentHubId,
-        createdAt: b.createdAt.toISOString(),
-        updatedAt: b.updatedAt.toISOString(),
-        compliance_photos: b.compliance_photos.map((c) => ({
-          id: c.id,
-          batchId: c.batchId,
-          photoType: c.photoType,
-          photoUrl: c.photoUrl,
-          isVerified: c.isVerified,
-          uploadedAt: c.uploadedAt.toISOString(),
-          uploadedBy: c.uploadedBy,
-        })),
-        qualityEntry: qe
-          ? {
-              id: qe.id,
-              status: qe.status,
-              preCoolingStartTime: qe.preCoolingStartTime.toISOString(),
-              standardConfirmation: qe.standardConfirmation,
-              createdAt: qe.createdAt.toISOString(),
-            }
-          : null,
-      };
-    });
+    const batches: FarmerAdminDetailResponse['batches'] = W('batches')
+      ? (batchesList as any[]).map((b) => {
+          const qe = b.quality_entries;
+          return {
+            id: b.id,
+            batchId: b.batchId,
+            estateId: b.estateId,
+            estateName: b.estates?.name ?? null,
+            parcelId: b.parcelId,
+            parcelCropType: b.parcels?.cropType ?? null,
+            productName: b.productName,
+            quantity: b.quantity,
+            unit: b.unit,
+            harvestDate: b.harvestDate.toISOString(),
+            status: b.status,
+            harvestedByUserId: b.harvestedByUserId,
+            currentHubId: b.currentHubId,
+            createdAt: b.createdAt.toISOString(),
+            updatedAt: b.updatedAt.toISOString(),
+            compliance_photos: (b.compliance_photos || []).map((c: any) => ({
+              id: c.id,
+              batchId: c.batchId,
+              photoType: c.photoType,
+              photoUrl: c.photoUrl,
+              isVerified: c.isVerified,
+              uploadedAt: c.uploadedAt.toISOString(),
+              uploadedBy: c.uploadedBy,
+            })),
+            qualityEntry: qe
+              ? {
+                  id: qe.id,
+                  status: qe.status,
+                  preCoolingStartTime: qe.preCoolingStartTime.toISOString(),
+                  standardConfirmation: qe.standardConfirmation,
+                  createdAt: qe.createdAt.toISOString(),
+                }
+              : null,
+          };
+        })
+      : [];
 
-    const compliancePhotosFlat: FarmerAdminDetailResponse['compliancePhotos'] = batchesList.flatMap((b) =>
-      b.compliance_photos.map((c) => ({
-        id: c.id,
-        photoUrl: c.photoUrl,
-        photoType: c.photoType,
-        batchId: c.batchId,
-      })),
-    );
+    const compliancePhotosFlat: FarmerAdminDetailResponse['compliancePhotos'] = W('batches')
+      ? (batchesList as any[]).flatMap((b) =>
+          (b.compliance_photos || []).map((c: any) => ({
+            id: c.id,
+            photoUrl: c.photoUrl,
+            photoType: c.photoType,
+            batchId: c.batchId,
+          })),
+        )
+      : compliancePhotosOnly;
 
-    const fieldPhotos: FarmerAdminDetailResponse['fieldPhotos'] = growthLogs.map((g) => ({
+    const fieldPhotos: FarmerAdminDetailResponse['fieldPhotos'] = W('fieldPhotos')
+      ? growthLogs.map((g) => ({
       id: g.id,
       imageUrl: g.imageUrl,
       imageHash: g.imageHash,
       createdAt: g.createdAt.toISOString(),
       growthStage: g.growthStage ?? undefined,
-    }));
+    }))
+      : [];
 
-    const growthLogsOut: FarmerAdminDetailResponse['growthLogs'] = growthLogs.map((g) => ({
+    const growthLogsOut: FarmerAdminDetailResponse['growthLogs'] = W('growthLogs')
+      ? growthLogs.map((g) => ({
       id: g.id,
       estateId: g.estateId,
       parcelId: g.parcelId,
@@ -403,18 +408,22 @@ export class AdminService {
       createdAt: g.createdAt.toISOString(),
       labResultUrl: g.labResultUrl,
       labTestDate: g.labTestDate?.toISOString() ?? null,
-    }));
+    }))
+      : [];
 
-    const labResults: FarmerAdminDetailResponse['labResults'] = growthLogs
-      .filter((g) => g.labResultUrl)
-      .map((g) => ({
-        id: g.id,
-        labResultUrl: g.labResultUrl!,
-        labTestDate: g.labTestDate?.toISOString(),
-        source: 'growth_log' as const,
-      }));
+    const labResults: FarmerAdminDetailResponse['labResults'] = W('labResults')
+      ? growthLogs
+          .filter((g) => g.labResultUrl)
+          .map((g) => ({
+            id: g.id,
+            labResultUrl: g.labResultUrl!,
+            labTestDate: g.labTestDate?.toISOString(),
+            source: 'growth_log' as const,
+          }))
+      : [];
 
-    const estates: FarmerAdminDetailResponse['estates'] = estateRows.map((e) => ({
+    const estates: FarmerAdminDetailResponse['estates'] = W('estates')
+      ? (estatesFull as any[]).map((e) => ({
       id: e.id,
       name: e.name,
       status: e.status,
@@ -440,9 +449,11 @@ export class AdminService {
         createdAt: p.createdAt.toISOString(),
         updatedAt: p.updatedAt.toISOString(),
       })),
-    }));
+    }))
+      : [];
 
-    const treatmentOut: FarmerAdminDetailResponse['treatmentLogs'] = treatmentLogs.map((t) => ({
+    const treatmentOut: FarmerAdminDetailResponse['treatmentLogs'] = W('treatmentLogs')
+      ? treatmentLogs.map((t) => ({
       id: t.id,
       parcelId: t.parcelId,
       productId: t.productId,
@@ -457,9 +468,11 @@ export class AdminService {
       deviceTimestamp: t.deviceTimestamp.toISOString(),
       needsAudit: t.needsAudit,
       createdAt: t.createdAt.toISOString(),
-    }));
+    }))
+      : [];
 
-    const complianceOut: FarmerAdminDetailResponse['complianceLogs'] = complianceLogs.map((c) => ({
+    const complianceOut: FarmerAdminDetailResponse['complianceLogs'] = W('complianceLogs')
+      ? complianceLogs.map((c) => ({
       id: c.id,
       estateId: c.estateId,
       parcelId: c.parcelId,
@@ -472,9 +485,11 @@ export class AdminService {
       isWithinFarm: c.isWithinFarm,
       deviceTimestamp: c.deviceTimestamp.toISOString(),
       createdAt: c.createdAt.toISOString(),
-    }));
+    }))
+      : [];
 
-    const harvestOut: FarmerAdminDetailResponse['harvestAnnouncements'] = harvestAnn.map((h) => ({
+    const harvestOut: FarmerAdminDetailResponse['harvestAnnouncements'] = W('harvestAnnouncements')
+      ? harvestAnn.map((h) => ({
       id: h.id,
       parcelId: h.parcelId,
       announcementType: h.announcementType,
@@ -486,52 +501,96 @@ export class AdminService {
       qualityGrade: h.qualityGrade,
       adminNotes: h.adminNotes,
       createdAt: h.createdAt.toISOString(),
-    }));
+    }))
+      : [];
 
-    const missionsOut: FarmerAdminDetailResponse['missions'] = missions.map((m) => ({
-      id: m.id,
-      missionNumber: m.missionNumber,
-      status: m.status,
-      batchId: m.batchId,
-      pickupAddress: m.pickupAddress,
-      createdAt: m.createdAt.toISOString(),
-    }));
+    const missionsOut: FarmerAdminDetailResponse['missions'] = W('missions')
+      ? missions.map((m) => ({
+          id: m.id,
+          missionNumber: m.missionNumber,
+          status: m.status,
+          batchId: m.batchId,
+          pickupAddress: m.pickupAddress,
+          createdAt: m.createdAt.toISOString(),
+        }))
+      : [];
 
-    const totalParcels = estateRows.reduce((n, e) => n + e.parcels.length, 0);
+    const totalParcels = W('estates')
+      ? estatesFull.reduce((n: number, e: { parcels: { id: string }[] }) => n + e.parcels.length, 0)
+      : 0;
 
-    return {
-      meta: { schemaVersion: 1, generatedAt: new Date().toISOString() },
-      farmer,
-      materialBalance,
-      trust,
-      kycDocuments,
-      estates,
-      batches,
-      compliancePhotos: compliancePhotosFlat,
-      treatmentLogs: treatmentOut,
-      complianceLogs: complianceOut,
-      fieldPhotos,
-      growthLogs: growthLogsOut,
-      labResults,
-      harvestAnnouncements: harvestOut,
-      missions: missionsOut,
-      batchesSummary: batchesList.map((b) => ({
-        id: b.id,
-        batchId: b.batchId,
-        productName: b.productName,
-        quantity: b.quantity,
-        status: b.status,
-      })),
-      counts: {
-        estates: estateRows.length,
+    const batchesSummary: FarmerAdminDetailResponse['batchesSummary'] =
+      W('batches') || W('batchesSummary')
+        ? (batchesList as { id: string; batchId: string; productName: string; quantity: number; status: string }[]).map(
+            (b) => ({
+              id: b.id,
+              batchId: b.batchId,
+              productName: b.productName,
+              quantity: b.quantity,
+              status: b.status,
+            }),
+          )
+        : [];
+
+    const meta = { schemaVersion: 1 as const, generatedAt: new Date().toISOString() };
+    let counts: FarmerAdminDetailResponse['counts'] | undefined;
+    if (I === null) {
+      counts = {
+        estates: (estatesFull as any[]).length,
         parcels: totalParcels,
         batches: batchesList.length,
         treatmentLogs: treatmentLogs.length,
         complianceLogs: complianceLogs.length,
         growthLogs: growthLogs.length,
         missions: missions.length,
-      },
-    };
+      };
+    } else if (W('counts')) {
+      counts = await this.getFarmerResourceCounts(farmerId);
+    }
+
+    if (I === null) {
+      return {
+        meta,
+        farmer,
+        materialBalance,
+        trust,
+        kycDocuments,
+        estates,
+        batches,
+        compliancePhotos: compliancePhotosFlat,
+        treatmentLogs: treatmentOut,
+        complianceLogs: complianceOut,
+        fieldPhotos,
+        growthLogs: growthLogsOut,
+        labResults,
+        harvestAnnouncements: harvestOut,
+        missions: missionsOut,
+        batchesSummary,
+        counts,
+      } as FarmerAdminDetailResponse;
+    }
+
+    const out: Record<string, unknown> = { meta, farmer };
+    if (W('counts') && counts !== undefined) out.counts = counts;
+    if (W('materialBalance')) out.materialBalance = materialBalance;
+    if (W('trust')) out.trust = trust;
+    if (W('kycDocuments')) out.kycDocuments = kycDocuments;
+    if (W('estates')) out.estates = estates;
+    if (W('batches')) out.batches = batches;
+    if (W('compliancePhotos') || W('batches')) out.compliancePhotos = compliancePhotosFlat;
+    if (W('treatmentLogs')) out.treatmentLogs = treatmentOut;
+    if (W('complianceLogs')) out.complianceLogs = complianceOut;
+    if (W('fieldPhotos')) out.fieldPhotos = fieldPhotos;
+    if (W('growthLogs')) out.growthLogs = growthLogsOut;
+    if (W('labResults')) out.labResults = labResults;
+    if (W('harvestAnnouncements')) out.harvestAnnouncements = harvestOut;
+    if (W('missions')) out.missions = missionsOut;
+    if (W('batchesSummary') || W('batches')) out.batchesSummary = batchesSummary;
+
+    for (const k of Object.keys(out)) {
+      if (out[k] === undefined) delete out[k];
+    }
+    return out as unknown as FarmerAdminDetailResponse;
   }
 
   async getRecentActivities(limit: number = 10) {

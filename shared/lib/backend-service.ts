@@ -119,20 +119,29 @@ export function createBackendService(config: BackendServiceConfig) {
       });
     },
 
-    // Farm detail (admin) – single farmer overview
-    async getFarmDetail(farmerId: string) {
+    // Farm detail (admin) – single farmer overview. Optional `include` = comma list of sections.
+    async getFarmDetail(farmerId: string, include?: string) {
+      const q = include
+        ? `?include=${encodeURIComponent(include)}`
+        : '';
       return request<{
+        meta?: { schemaVersion: number; generatedAt: string };
         farmer: unknown;
+        materialBalance?: unknown;
+        trust?: unknown;
+        kycDocuments?: unknown[];
+        counts?: unknown;
         estates: unknown[];
-        parcels: unknown[];
         fieldPhotos: unknown[];
         compliancePhotos: unknown[];
+        complianceLogs?: unknown[];
         labResults: unknown[];
-        sedexStatus?: unknown;
         treatmentLogs: unknown[];
         harvestAnnouncements: unknown[];
         batches: unknown[];
-      }>(baseURL, `/admin/farmers/${farmerId}`, { getToken, timeout });
+        batchesSummary?: unknown[];
+        missions?: unknown[];
+      }>(baseURL, `/admin/farmers/${farmerId}${q}`, { getToken, timeout });
     },
 
     // Packing flow – submit packing record

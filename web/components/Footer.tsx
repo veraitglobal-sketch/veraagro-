@@ -21,8 +21,8 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
-              An organized producer network with guaranteed offtake, integrated logistics
-              and finance, and full traceability from field to payment.
+              Vertically integrated agrotech platform for Bio-Ready certification
+              and EU market compliance.
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">

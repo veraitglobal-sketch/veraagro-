@@ -1,5 +1,7 @@
 /**
  * Response shape for GET /admin/farmers/:id (and GET /admin/farm/:id).
+ * Optional `?include=` = comma‑separated sections to shrink the JSON; omit or `all` = full payload.
+ * Response always includes `meta` and `farmer` when successful. Aliases: `kyc` → kycDocuments, `compliance` → complianceLogs.
  * Maps Prisma models: users, estates, parcels, batches, compliance_photos, treatment_logs,
  * compliance_logs, growth_logs, harvest_announcements, quality_entries, missions (grower),
  * farmer_material_balances, trust_scores, kyc_documents.

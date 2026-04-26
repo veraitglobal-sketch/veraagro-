@@ -20,15 +20,18 @@ export class AdminController {
     return this.adminService.getRecentActivities(limit ? parseInt(limit) : 10);
   }
 
-  /** Single grower (farmer) dossier: estates, parcels, batches, compliance, treatments, field evidence, KYC, trust, material balance, missions. */
+  /**
+   * Single grower (farmer) dossier. Optional `?include=` comma list (e.g. `counts,trust,kyc,estates`) returns only those
+   * sections; omit for full payload. Aliases: `kyc` → kycDocuments, `compliance` → complianceLogs.
+   */
   @Get('farmers/:id')
-  async getFarmerById(@Param('id') id: string) {
-    return this.adminService.getFarmerAdminDetail(id);
+  async getFarmerById(@Param('id') id: string, @Query('include') include?: string) {
+    return this.adminService.getFarmerAdminDetail(id, include);
   }
 
-  /** @deprecated Use GET /admin/farmers/:id — same payload */
+  /** @deprecated Use GET /admin/farmers/:id — same query params */
   @Get('farm/:id')
-  async getFarmDetail(@Param('id') id: string) {
-    return this.adminService.getFarmerAdminDetail(id);
+  async getFarmDetail(@Param('id') id: string, @Query('include') include?: string) {
+    return this.adminService.getFarmerAdminDetail(id, include);
   }
 }

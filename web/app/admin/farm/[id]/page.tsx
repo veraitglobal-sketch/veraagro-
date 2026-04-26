@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { getFarmDetail, FarmDetailData } from '@/lib/farm-detail-api';
+import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
 import { getAdminNavItems } from '@/lib/admin-nav';
 import {
   User,
@@ -18,9 +18,12 @@ import {
   FlaskConical,
   Shield,
   Package,
-  FileText,
   ChevronLeft,
   ExternalLink,
+  BarChart3,
+  Fingerprint,
+  HeartHandshake,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function FarmDetailPage() {
@@ -41,7 +44,7 @@ export default function FarmDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const result = await getFarmDetail(farmerId);
+      const result = await getFarmDetailSplit(farmerId);
       setData(result);
     } catch (err: any) {
       setError(err.message || 'Failed to load farm detail');
@@ -81,7 +84,20 @@ export default function FarmDetailPage() {
     );
   }
 
-  const { farmer, estates, fieldPhotos, compliancePhotos, labResults, sedexStatus } = data;
+  const {
+    farmer,
+    estates,
+    fieldPhotos,
+    compliancePhotos,
+    labResults,
+    sedexStatus,
+    counts,
+    trust,
+    kycDocuments,
+    materialBalance,
+    complianceLogs,
+    batches,
+  } = data;
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
@@ -114,6 +130,189 @@ export default function FarmDetailPage() {
               </div>
             </div>
           </div>
+
+          {counts && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 mb-6">
+              {(
+                [
+                  ['Estates', counts.estates],
+                  ['Parcels', counts.parcels],
+                  ['Batches', counts.batches],
+                  ['Treatments', counts.treatmentLogs],
+                  ['Compliance', counts.complianceLogs],
+                  ['Growth', counts.growthLogs],
+                  ['Missions', counts.missions],
+                ] as const
+              ).map(([label, n]) => (
+                <div
+                  key={label}
+                  className="bg-white rounded-lg border border-gray-200 p-3 text-center"
+                >
+                  <div className="text-2xl font-semibold text-[#2D5A27] tabular-nums">{n}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {(materialBalance != null || trust != null) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {materialBalance && (
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BarChart3 className="w-5 h-5 text-[#2D5A27]" />
+                    <h2 className="font-semibold text-gray-900">Material balance (Bio Vera stock)</h2>
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1.5">
+                    <li>Crates: {materialBalance.crateBalance}</li>
+                    <li>Label rolls: {materialBalance.labelRollBalance}</li>
+                    <li>Film (m): {materialBalance.filmMeterBalance}</li>
+                    <li className="text-xs text-gray-500 pt-1">
+                      Updated: {new Date(materialBalance.lastUpdated).toLocaleString()}
+                    </li>
+                  </ul>
+                </div>
+              )}
+              {trust && (
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <HeartHandshake className="w-5 h-5 text-[#2D5A27]" />
+                    <h2 className="font-semibold text-gray-900">Trust & ratings</h2>
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1.5">
+                    <li>Current score: {trust.currentScore}</li>
+                    <li>Farmer score: {trust.farmerScore ?? '—'}</li>
+                    <li>
+                      Avg rating: {trust.averageRating} ({trust.totalRatings} total)
+                    </li>
+                    <li className="text-xs text-gray-500">
+                      Last updated: {new Date(trust.lastUpdated).toLocaleString()}
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {kycDocuments && kycDocuments.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Fingerprint className="w-5 h-5 text-[#2D5A27]" />
+                <h2 className="font-semibold text-gray-900">KYC documents</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-gray-500 border-b border-gray-100">
+                      <th className="py-2 pr-4">Type</th>
+                      <th className="py-2 pr-4">Status</th>
+                      <th className="py-2 pr-4">Created</th>
+                      <th className="py-2">Verified</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {kycDocuments.map((d) => (
+                      <tr key={d.id} className="border-b border-gray-50">
+                        <td className="py-2 pr-4 text-gray-900">{d.docType}</td>
+                        <td className="py-2 pr-4">
+                          <span
+                            className={
+                              d.status === 'APPROVED' || d.status === 'VERIFIED'
+                                ? 'text-green-700'
+                                : d.status === 'REJECTED'
+                                ? 'text-red-600'
+                                : 'text-amber-700'
+                            }
+                          >
+                            {d.status}
+                          </span>
+                        </td>
+                        <td className="py-2 pr-4 text-gray-600">
+                          {d.createdAt ? new Date(d.createdAt).toLocaleString() : '—'}
+                        </td>
+                        <td className="py-2 text-gray-600">
+                          {d.verifiedAt ? new Date(d.verifiedAt).toLocaleString() : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {complianceLogs && complianceLogs.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <ClipboardList className="w-5 h-5 text-[#2D5A27]" />
+                <h2 className="font-semibold text-gray-900">Field diary & scan compliance (recent)</h2>
+              </div>
+              <div className="overflow-x-auto max-h-72 overflow-y-auto text-sm">
+                <table className="min-w-full">
+                  <thead className="sticky top-0 bg-white z-10">
+                    <tr className="text-left text-gray-500 border-b border-gray-100">
+                      <th className="py-2 pr-3">Time</th>
+                      <th className="py-2 pr-3">Type</th>
+                      <th className="py-2 pr-3">Status</th>
+                      <th className="py-2">Compliant</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {complianceLogs.slice(0, 30).map((c) => (
+                      <tr key={c.id} className="border-b border-gray-50">
+                        <td className="py-1.5 pr-3 text-gray-600 whitespace-nowrap">
+                          {c.createdAt ? new Date(c.createdAt).toLocaleString() : '—'}
+                        </td>
+                        <td className="py-1.5 pr-3 text-gray-900">{c.entryType}</td>
+                        <td className="py-1.5 pr-3">{c.complianceStatus}</td>
+                        <td className="py-1.5">{c.isCompliant ? 'Yes' : 'No'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {batches && batches.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Package className="w-5 h-5 text-[#2D5A27]" />
+                <h2 className="font-semibold text-gray-900">Recent batches</h2>
+              </div>
+              <div className="overflow-x-auto text-sm">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="text-left text-gray-500 border-b border-gray-100">
+                      <th className="py-2 pr-3">Batch ID</th>
+                      <th className="py-2 pr-3">Product</th>
+                      <th className="py-2 pr-3">Quantity</th>
+                      <th className="py-2 pr-3">Harvest</th>
+                      <th className="py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {batches.slice(0, 25).map((b) => (
+                      <tr key={b.id} className="border-b border-gray-50">
+                        <td className="py-2 pr-3 font-mono text-gray-900">{b.batchId}</td>
+                        <td className="py-2 pr-3 text-gray-800">{b.productName}</td>
+                        <td className="py-2 pr-3 text-gray-700">
+                          {b.quantity}
+                          {b.unit != null && b.unit !== '' ? ` ${b.unit}` : ''}
+                        </td>
+                        <td className="py-2 pr-3 text-gray-600 whitespace-nowrap">
+                          {b.harvestDate
+                            ? new Date(b.harvestDate).toLocaleDateString()
+                            : '—'}
+                        </td>
+                        <td className="py-2 text-gray-800">{b.status ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Field photos */}

@@ -1,22 +1,71 @@
 /**
  * Farm Detail API – aggregate farmer data for admin view
- * Single farmer overview: field photos, lab results, Sedex status
- * Prefers GET /admin/farmers/:farmerId (or /admin/farm/:farmerId — same payload); falls back if needed
+ * GET /admin/farmers/:id (optional ?include=) — fallback GET /admin/farm/:id
  */
 
 const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
 
+export interface FarmerProfileBlock {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  partnerCode?: string | null;
+  phone?: string | null;
+  roles?: string[];
+  status?: string;
+}
+
+export interface FarmDetailCounts {
+  estates: number;
+  parcels: number;
+  batches: number;
+  treatmentLogs: number;
+  complianceLogs: number;
+  growthLogs: number;
+  missions: number;
+}
+
+export interface TrustRow {
+  currentScore: number;
+  farmerScore: number | null;
+  averageRating: number;
+  totalRatings: number;
+  lastUpdated: string;
+}
+
+export interface KycDocRow {
+  id: string;
+  docType: string;
+  status: string;
+  createdAt: string;
+  verifiedAt: string | null;
+}
+
+export interface MaterialBalanceRow {
+  crateBalance: number;
+  labelRollBalance: number;
+  filmMeterBalance: number;
+  lastUpdated: string;
+}
+
+export interface ComplianceLogListItem {
+  id: string;
+  estateId: string;
+  parcelId: string | null;
+  entryType: string;
+  isCompliant: boolean;
+  complianceStatus: string;
+  createdAt: string;
+}
+
 export interface FarmDetailData {
-  farmer: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email?: string;
-    partnerCode?: string;
-    phone?: string;
-    roles?: string[];
-    status?: string;
-  };
+  meta?: { schemaVersion: number; generatedAt: string };
+  farmer: FarmerProfileBlock;
+  materialBalance?: MaterialBalanceRow | null;
+  trust?: TrustRow | null;
+  kycDocuments?: KycDocRow[];
+  counts?: FarmDetailCounts;
   estates: Array<{
     id: string;
     name: string;
@@ -69,33 +118,140 @@ export interface FarmDetailData {
     batchId: string;
     productName: string;
     quantity: number;
+    unit?: string;
     status?: string;
+    harvestDate?: string;
   }>;
+  complianceLogs?: ComplianceLogListItem[];
 }
 
+const EMPTY: Omit<FarmDetailData, 'farmer'> = {
+  estates: [],
+  fieldPhotos: [],
+  compliancePhotos: [],
+  labResults: [],
+  treatmentLogs: [],
+  harvestAnnouncements: [],
+  batches: [],
+  complianceLogs: [],
+};
+
+const INCLUDE_SUMMARY =
+  'meta,farmer,counts,materialBalance,trust,kycDocuments,estates,complianceLogs';
+const INCLUDE_GALLERY =
+  'batches,compliancePhotos,treatmentLogs,fieldPhotos,growthLogs,labResults,harvestAnnouncements,missions,batchesSummary';
+
 /**
- * Fetch farm detail – tries dedicated endpoint first, falls back to multiple calls
+ * Single fetch: full dossier, or a subset with `?include=`
  */
-export async function getFarmDetail(farmerId: string): Promise<FarmDetailData> {
+export async function getFarmDetail(
+  farmerId: string,
+  options?: { include?: string }
+): Promise<FarmDetailData> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
+  const q = options?.include
+    ? `?include=${encodeURIComponent(options.include)}`
+    : '';
+
   try {
-    let res = await fetch(`${base}/admin/farmers/${farmerId}`, { headers });
+    let res = await fetch(`${base}/admin/farmers/${encodeURIComponent(farmerId)}${q}`, { headers });
     if (!res.ok) {
-      res = await fetch(`${base}/admin/farm/${farmerId}`, { headers });
+      res = await fetch(`${base}/admin/farm/${encodeURIComponent(farmerId)}${q}`, { headers });
     }
     if (res.ok) {
-      return res.json();
+      return normalizeAdminFarmerResponse(await res.json());
     }
-  } catch (_) {
-    // Fall through to aggregate
+  } catch {
+    // Fall through
   }
 
   return aggregateFarmDetail(farmerId);
+}
+
+/**
+ * Two parallel calls: smaller first paint (summary + compliance) and gallery/trace rest.
+ */
+export async function getFarmDetailSplit(farmerId: string): Promise<FarmDetailData> {
+  const [head, tail] = await Promise.all([
+    getFarmDetail(farmerId, { include: INCLUDE_SUMMARY }),
+    getFarmDetail(farmerId, { include: INCLUDE_GALLERY }),
+  ]);
+  return {
+    ...EMPTY,
+    ...head,
+    ...tail,
+    farmer: head.farmer?.id ? head.farmer : tail.farmer,
+    estates: (head.estates?.length ? head.estates : tail.estates) ?? [],
+    meta: head.meta ?? tail.meta,
+  };
+}
+
+function normalizeAdminFarmerResponse(json: any): FarmDetailData {
+  const f = json.farmer;
+  if (!f) {
+    return {
+      ...EMPTY,
+      farmer: { id: '', firstName: '', lastName: '' },
+    };
+  }
+  return {
+    meta: json.meta,
+    farmer: {
+      id: f.id,
+      firstName: f.firstName,
+      lastName: f.lastName,
+      email: f.email,
+      partnerCode: f.partnerCode,
+      phone: f.phone,
+      roles: f.roles,
+      status: f.status,
+    },
+    materialBalance: json.materialBalance,
+    trust: json.trust,
+    kycDocuments: json.kycDocuments ?? [],
+    counts: json.counts,
+    estates: Array.isArray(json.estates) ? json.estates : [],
+    fieldPhotos: Array.isArray(json.fieldPhotos) ? json.fieldPhotos : [],
+    compliancePhotos: Array.isArray(json.compliancePhotos) ? json.compliancePhotos : [],
+    labResults: Array.isArray(json.labResults) ? json.labResults : [],
+    treatmentLogs: Array.isArray(json.treatmentLogs) ? json.treatmentLogs : [],
+    harvestAnnouncements: Array.isArray(json.harvestAnnouncements) ? json.harvestAnnouncements : [],
+    batches: Array.isArray(json.batches)
+      ? json.batches.map((b: any) => ({
+          id: b.id,
+          batchId: b.batchId,
+          productName: b.productName,
+          quantity: b.quantity,
+          unit: b.unit,
+          status: b.status,
+          harvestDate: typeof b.harvestDate === 'string' ? b.harvestDate : b.harvestDate?.toISOString?.(),
+        }))
+      : Array.isArray(json.batchesSummary)
+        ? json.batchesSummary.map((b: any) => ({
+            id: b.id,
+            batchId: b.batchId,
+            productName: b.productName,
+            quantity: b.quantity,
+            status: b.status,
+          }))
+        : [],
+    complianceLogs: Array.isArray(json.complianceLogs) ? mapComplianceForUi(json.complianceLogs) : [],
+  };
+}
+
+function mapComplianceForUi(logs: any[]): ComplianceLogListItem[] {
+  return logs.map((c) => ({
+    id: c.id,
+    estateId: c.estateId,
+    parcelId: c.parcelId,
+    entryType: c.entryType,
+    isCompliant: c.isCompliant,
+    complianceStatus: c.complianceStatus,
+    createdAt: c.createdAt,
+  }));
 }
 
 async function aggregateFarmDetail(farmerId: string): Promise<FarmDetailData> {
@@ -137,14 +293,8 @@ async function aggregateFarmDetail(farmerId: string): Promise<FarmDetailData> {
   );
 
   return {
+    ...EMPTY,
     farmer,
     estates: estatesWithParcels,
-    fieldPhotos: [],
-    compliancePhotos: [],
-    labResults: [],
-    sedexStatus: undefined,
-    treatmentLogs: [],
-    harvestAnnouncements: [],
-    batches: [],
   };
 }
