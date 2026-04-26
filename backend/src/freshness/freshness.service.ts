@@ -34,7 +34,10 @@ export class FreshnessService {
       throw new NotFoundException(`Batch with ID ${batchId} not found`);
     }
 
-    const cropTypeUpper = cropType.toUpperCase();
+    const cropTypeUpper = (cropType != null && String(cropType).trim() !== ''
+      ? String(cropType)
+      : 'UNKNOWN'
+    ).toUpperCase();
     const shelfLifeHours = SHELF_LIFE_HOURS[cropTypeUpper] || 48; // Default 48 hours
 
     const harvest = batch.harvestDate ? new Date(batch.harvestDate) : new Date();

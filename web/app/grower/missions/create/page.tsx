@@ -208,6 +208,14 @@ export default function CreateMissionPage() {
 
     if (!formData.pickupLat || !formData.pickupLng) {
       newErrors.location = 'Please get your location or enter coordinates manually';
+    } else {
+      const la = parseFloat(formData.pickupLat);
+      const ln = parseFloat(formData.pickupLng);
+      if (!Number.isFinite(la) || !Number.isFinite(ln)) {
+        newErrors.location = 'Latitude and longitude must be valid numbers';
+      } else if (Math.abs(la) > 90 || Math.abs(ln) > 180) {
+        newErrors.location = 'Coordinates are out of range (lat ±90, lng ±180)';
+      }
     }
 
     setErrors(newErrors);

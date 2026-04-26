@@ -7,6 +7,7 @@ import {
   forwardRef,
   Logger,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMissionDto, AcceptMissionDto } from './dto/mission.dto';
 import { FreshnessService } from '../freshness/freshness.service';
@@ -31,7 +32,34 @@ export class MissionsService {
 
   /** DB uses FARMER (default) and/or GROWER; both may create transport missions. */
   private isGrowerAccount(roles: string[]): boolean {
-    return roles.some((r) => r === 'GROWER' || r === 'FARMER');
+    const list = Array.isArray(roles) ? roles : [];
+    return list.some((r) => r === 'GROWER' || r === 'FARMER');
+  }
+
+  /**
+   * Coordinates must be finite numbers. Strips `address` from odd client payloads; prevents NaN/undefined in Prisma JSON.
+   */
+  private static sanitizePickupLocation(dto: CreateMissionDto): {
+    lat: number;
+    lng: number;
+    address?: string;
+  } {
+    const lat = Number((dto as any).pickupLocation?.lat);
+    const lng = Number((dto as any).pickupLocation?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new BadRequestException(
+        'Pickup coordinates must be valid numbers (use GPS or enter latitude and longitude).',
+      );
+    }
+    if (Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+      throw new BadRequestException('Pickup coordinates are out of range.');
+    }
+    const rawAddr = (dto as any).pickupLocation?.address;
+    const out: { lat: number; lng: number; address?: string } = { lat, lng };
+    if (typeof rawAddr === 'string' && rawAddr.trim().length > 0) {
+      out.address = rawAddr.trim().slice(0, 4000);
+    }
+    return out;
   }
 
   /**
@@ -39,6 +67,8 @@ export class MissionsService {
    * Automatically finds nearest Logistics Partner
    */
   async createMission(growerId: string, dto: CreateMissionDto) {
+    const pickupLocation = MissionsService.sanitizePickupLocation(dto);
+
     const grower = await this.prisma.users.findUnique({
       where: { id: growerId },
     });
@@ -81,45 +111,63 @@ export class MissionsService {
 
     // Find nearest available logistics partner with frigo vehicle
     const logisticsPartner = await this.findNearestLogisticsPartner(
-      dto.pickupLocation.lat,
-      dto.pickupLocation.lng,
+      pickupLocation.lat,
+      pickupLocation.lng,
     );
 
     // Calculate optimal route (using simple distance calculation for now)
     const routeCalc = await this.calculateOptimalRoute(
-      dto.pickupLocation,
+      pickupLocation,
       logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
     );
-    // Prisma Json must not embed non-JSON-native values; Date breaks some runtimes.
+    // Prisma JSON: no Date/undefined/NaN in stored objects
     const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
 
     // Generate mission number
     const missionNumber = await this.generateMissionNumber();
 
     // Create mission
-    const mission = await this.prisma.missions.create({
-      data: {
-        id: crypto.randomUUID(),
-        missionNumber,
-        growerId,
-        batchId: dto.batchId,
-        pickupLocation: dto.pickupLocation as any,
-        pickupAddress: dto.pickupAddress,
-        logisticsPartnerId: logisticsPartner?.id,
-        vehicleId: logisticsPartner?.vehicleId,
-        optimalRoute: optimalRoute as any,
-        estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
-        status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
-        assignedAt: logisticsPartner ? new Date() : null,
-        updatedAt: new Date(),
-      },
-      include: {
-        users_missions_growerIdTousers: true,
-        users_missions_logisticsPartnerIdTousers: true,
-        vehicles: true,
-        batches: true,
-      },
-    });
+    let mission;
+    try {
+      mission = await this.prisma.missions.create({
+        data: {
+          id: crypto.randomUUID(),
+          missionNumber,
+          growerId,
+          batchId: dto.batchId,
+          pickupLocation: pickupLocation as any,
+          pickupAddress: (dto.pickupAddress || '').trim() || '—',
+          logisticsPartnerId: logisticsPartner?.id ?? null,
+          vehicleId: logisticsPartner?.vehicleId ?? null,
+          optimalRoute: optimalRoute as Prisma.InputJsonValue,
+          estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
+          status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
+          assignedAt: logisticsPartner ? new Date() : null,
+          updatedAt: new Date(),
+        },
+        include: {
+          users_missions_growerIdTousers: true,
+          users_missions_logisticsPartnerIdTousers: true,
+          vehicles: true,
+          batches: true,
+        },
+      });
+    } catch (e: unknown) {
+      const pe = e as Prisma.PrismaClientKnownRequestError;
+      this.logger.error(
+        `missions.create failed: ${pe?.code} ${(e as Error)?.message}`,
+        (e as Error)?.stack,
+      );
+      if (pe?.code === 'P2002') {
+        throw new BadRequestException(
+          'Could not assign a unique mission number. Please try again in a few seconds.',
+        );
+      }
+      if (pe?.code === 'P2003') {
+        throw new BadRequestException('Invalid link to batch, vehicle, or user. Check your selection and retry.');
+      }
+      throw e;
+    }
 
     // If batch exists, create freshness tracker (idempotent; duplicate batchId must not break mission)
     if (batch) {
@@ -139,7 +187,7 @@ export class MissionsService {
         entityId: mission.id,
         performedByUserId: growerId,
         newValue: { status: mission.status, missionNumber: mission.missionNumber },
-        location: dto.pickupLocation,
+        location: { lat: pickupLocation.lat, lng: pickupLocation.lng },
       });
     } catch (e) {
       this.logger.warn(
@@ -272,12 +320,27 @@ export class MissionsService {
     waypoints: unknown[];
     estimatedArrival: Date | null;
   }): { distance: string | null; duration: string | null; waypoints: unknown[]; estimatedArrival: string | null } {
-    // Invalid Date is still truthy — never call toISOString() without a finite time check (was causing RangeError → 500).
     const ar = MissionsService.toSafeDateTime(route.estimatedArrival);
     return {
-      ...route,
+      distance: route.distance,
+      duration: route.duration,
+      waypoints: MissionsService.sanitizeWaypointsForJson(route.waypoints),
       estimatedArrival: ar ? ar.toISOString() : null,
     };
+  }
+
+  private static sanitizeWaypointsForJson(waypoints: unknown[]): unknown[] {
+    return (waypoints || []).map((w) => {
+      if (w && typeof w === 'object' && 'lat' in w && 'lng' in w) {
+        const o = w as { lat: unknown; lng: unknown };
+        const la = Number(o.lat);
+        const ln = Number(o.lng);
+        if (Number.isFinite(la) && Number.isFinite(ln)) {
+          return { lat: la, lng: ln };
+        }
+      }
+      return w;
+    });
   }
 
   /**
