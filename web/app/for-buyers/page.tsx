@@ -256,7 +256,7 @@ export default function ForBuyersPage() {
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle className="h-4 w-4 text-[#2D5A27] flex-shrink-0 mt-0.5" />
-              <span>We work with fixed pricing structures and clear payment flows (escrow, splits) so everyone knows where they stand.</span>
+              <span>We work with clear pricing and settlement: escrow until release conditions are met, then payout to partners under agreed terms.</span>
             </li>
           </ul>
         </section>
@@ -269,7 +269,7 @@ export default function ForBuyersPage() {
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { icon: Lock, title: 'Payments', desc: 'Structured payment flow: buyer payment goes to platform escrow; funds are split to farmer, driver, and platform according to agreed terms. No hidden fees.' },
+              { icon: Lock, title: 'Payments', desc: 'Structured flow: the buyer’s payment is held in escrow through Bio Vera until delivery is confirmed, then goes to grower and logistics partners under contract. We operate as the brand and supply side—no hidden fees; terms are agreed, not a generic “platform” cut.' },
               { icon: FileCheck, title: 'Contracts & compliance', desc: 'Orders and pre-orders are documented. We enforce quality and packaging standards and verify compliance before release.' },
               { icon: Shield, title: 'Quality control', desc: 'Field and quality checks, barcode and GPS validation, and approved inputs only. Unauthorized or non-compliant batches are blocked.' },
               { icon: QrCode, title: 'Traceability', desc: 'Every batch has a unique ID and digital passport. You can verify origin, harvest date, and journey at any time.' },
@@ -467,7 +467,7 @@ export default function ForBuyersPage() {
                   />
                 </Link>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Vertically integrated agrotech platform for Bio-Ready certification
+                  A vertically integrated agricultural network for Bio-Ready certification
                   and EU market compliance.
                 </p>
               </div>

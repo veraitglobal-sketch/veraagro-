@@ -159,7 +159,7 @@ function LoginForm() {
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
-                Vertically integrated agrotech platform for Bio-Ready certification 
+                A vertically integrated agricultural network for Bio-Ready certification 
                 and EU market compliance.
               </p>
             </div>

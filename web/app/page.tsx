@@ -217,8 +217,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">Our Vision</h2>
             <p className="text-base text-gray-600 max-w-2xl mx-auto font-light">
-              Transforming agriculture through technology, ensuring transparency, 
-              security, and market access for producers everywhere.
+              We build a trusted path from field to buyer: clear rules, honest records, and fair access to market for growers who meet our standards.
             </p>
           </div>
 
@@ -261,7 +260,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">Core Features</h2>
             <p className="text-base text-gray-600 font-light">
-              Technology that changes how we produce and distribute food
+              How the network runs day to day—production, logistics, delivery, and settlement connected in one operating model.
             </p>
           </div>
 
@@ -279,7 +278,7 @@ export default function Home() {
               },
               {
                 title: 'Escrow Payment',
-                description: 'Secure payment locked in escrow. Automatic split: 70% farmer, 20% driver, 10% platform.',
+                description: 'Buyer funds stay in escrow until delivery is confirmed, then are released to grower and logistics partners under agreed terms. Bio Vera runs the chain as brand and supply operator—strong, fair commercial terms, not a public percentage sheet.',
                 icon: Wallet,
               },
               {
@@ -493,9 +492,9 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-6">Ready to Transform Agriculture?</h2>
+            <h2 className="text-3xl font-light text-gray-900 mb-6">Partner with the network</h2>
             <p className="text-lg text-gray-600 mb-8">
-              Join the revolution in agrotech. Simple, secure, transparent.
+              Work with growers, logistics partners, and buyers under one set of standards—clear handovers, traceable batches, and predictable commercial terms.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

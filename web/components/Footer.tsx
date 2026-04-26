@@ -21,7 +21,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
-              Vertically integrated agrotech platform for Bio-Ready certification
+              A vertically integrated agricultural network for Bio-Ready certification
               and EU market compliance.
             </p>
             <div className="flex flex-wrap items-center gap-2">
