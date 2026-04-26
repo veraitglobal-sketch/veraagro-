@@ -271,6 +271,13 @@ export const parcelsAPI = {
     const response = await api.put(`/parcels/${parcelId}/approve`);
     return response.data;
   },
+  /** Retail / store: PNG QR (data URL) for this parcel — links to /plot/{publicCode} */
+  getPlotQr: async (parcelId: string) => {
+    const response = await api.get<{ publicCode: string; publicUrl: string; qrCodeDataUrl: string }>(
+      `/parcels/${parcelId}/qr`,
+    );
+    return response.data;
+  },
 };
 
 // Harvest plans (harvest_announcements — grower notifies admin)

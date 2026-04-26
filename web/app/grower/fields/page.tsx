@@ -5,7 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
-import { MapPin, Plus, Clock, CheckCircle, Loader2 } from 'lucide-react';
+import { MapPin, Plus, Clock, CheckCircle, Loader2, QrCode } from 'lucide-react';
 import Link from 'next/link';
 
 const DEFAULT_POLYGON = [
@@ -21,6 +21,8 @@ interface Parcel {
   status: string;
   approvedAt: string | null;
   estateId: string;
+  /** Set when admin approves — used in /plot/{code} for retail */
+  publicCode?: string | null;
 }
 
 interface Estate {
@@ -41,6 +43,14 @@ export default function GrowerFieldsPage() {
   const [batchError, setBatchError] = useState<string | null>(null);
   const [newEstateName, setNewEstateName] = useState('');
   const [addingEstate, setAddingEstate] = useState(false);
+  const [plotQr, setPlotQr] = useState<{
+    parcelId: string;
+    publicCode: string;
+    publicUrl: string;
+    qrCodeDataUrl: string;
+  } | null>(null);
+  const [plotQrLoading, setPlotQrLoading] = useState(false);
+  const [plotQrErr, setPlotQrErr] = useState<string | null>(null);
 
   useEffect(() => {
     loadEstates();
@@ -104,6 +114,20 @@ export default function GrowerFieldsPage() {
     setBatchError(null);
   };
 
+  const openStoreQr = async (parcelId: string) => {
+    setPlotQrErr(null);
+    setPlotQrLoading(true);
+    try {
+      const data = await parcelsAPI.getPlotQr(parcelId);
+      setPlotQr({ parcelId, ...data });
+      await loadEstates();
+    } catch (err: any) {
+      setPlotQrErr(err?.response?.data?.message || err?.message || 'Could not create plot QR');
+    } finally {
+      setPlotQrLoading(false);
+    }
+  };
+
   const handleCreateBatch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formBatchParcel) return;
@@ -133,7 +157,9 @@ export default function GrowerFieldsPage() {
         <div className="p-6 bg-gray-50 min-h-screen">
           <div className="mb-6">
             <h1 className="text-3xl font-light text-gray-900">My fields &amp; parcels</h1>
-            <p className="text-sm text-gray-600 mt-1">Add parcels here. Admin must approve before batches and field work.</p>
+            <p className="text-sm text-gray-600 mt-1 max-w-2xl">
+              Add parcels here; admin must approve. Each approved block gets a <strong>store QR</strong> (sadnja / field story) and you create a <strong>batch</strong> for packed boxes (passport QR per lot on the label).
+            </p>
           </div>
 
           {error && (
@@ -202,12 +228,32 @@ export default function GrowerFieldsPage() {
                           <span className="font-medium text-gray-900">{parcel.cropType || 'Parcel'}</span>
                           <span className="ml-2 text-xs text-gray-500">({parcel.id.slice(0, 8)}…)</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
                           {parcel.approvedAt ? (
                             <>
                               <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
                                 <CheckCircle className="w-3 h-3" /> Approved
                               </span>
+                              {parcel.publicCode && (
+                                <Link
+                                  href={`/plot/${encodeURIComponent(parcel.publicCode)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs font-medium text-gray-600 hover:text-[#2D5A27] underline"
+                                >
+                                  Public plot page
+                                </Link>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => void openStoreQr(parcel.id)}
+                                disabled={plotQrLoading}
+                                className="inline-flex items-center gap-1 text-sm font-medium text-gray-800 hover:text-[#2D5A27] disabled:opacity-50"
+                                title="QR for shops — links to this block (sadnja) and field history"
+                              >
+                                {plotQrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+                                Store QR
+                              </button>
                               <button
                                 type="button"
                                 onClick={() => handleFormBatch(estate.id, parcel.id, estate.name, parcel.cropType || undefined)}
@@ -251,6 +297,56 @@ export default function GrowerFieldsPage() {
           )}
 
           {/* Modal / panel: Form batch (only when parcel is approved) */}
+          {plotQrErr && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{plotQrErr}</div>
+          )}
+
+          {plotQr && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+              onClick={() => setPlotQr(null)}
+            >
+              <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">Store / retail plot QR</h3>
+                <p className="text-xs text-gray-500 mb-3">
+                  Shoppers see this block, treatments, and links to each product lot. Put on a stand; boxes still use the batch passport QR.
+                </p>
+                <div className="flex justify-center p-2 bg-gray-50 rounded-lg mb-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={plotQr.qrCodeDataUrl} alt="Plot QR" className="w-48 h-48" />
+                </div>
+                <p className="text-xs font-mono text-center text-gray-600 break-all mb-2">{plotQr.publicCode}</p>
+                <a
+                  href={plotQr.publicUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-[#2D5A27] font-medium block text-center mb-4 underline"
+                >
+                  Open public page
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = plotQr.qrCodeDataUrl;
+                    a.download = `bio-vera-plot-${plotQr.publicCode}.png`;
+                    a.click();
+                  }}
+                  className="w-full py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium hover:bg-[#23471f]"
+                >
+                  Download PNG
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlotQr(null)}
+                  className="w-full mt-2 py-2 text-gray-600 text-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+
           {formBatchParcel && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setFormBatchParcel(null)}>
               <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
