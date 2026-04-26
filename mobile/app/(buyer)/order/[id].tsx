@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Linking,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
@@ -11,6 +18,44 @@ import {
   isTimelineStepCurrent,
   tBuyerOrderStatus,
 } from '../../../lib/buyer-order-status';
+import { getExpoPublicPaymentConfig, hasExpoPaymentConfig } from '../../../lib/biovera-payment-public';
+
+function PaymentDetailsTextBlock() {
+  const c = getExpoPublicPaymentConfig();
+  return (
+    <View>
+      {c.beneficiary ? (
+        <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+          <Text style={{ color: theme.colors.text.secondary }}>Beneficiary: </Text>
+          {c.beneficiary}
+        </Text>
+      ) : null}
+      {c.bankName ? (
+        <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+          <Text style={{ color: theme.colors.text.secondary }}>Bank: </Text>
+          {c.bankName}
+        </Text>
+      ) : null}
+      {c.iban ? (
+        <Text selectable style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+          <Text style={{ color: theme.colors.text.secondary }}>IBAN: </Text>
+          {c.iban}
+        </Text>
+      ) : null}
+      {c.swift ? (
+        <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 4 }}>
+          <Text style={{ color: theme.colors.text.secondary }}>SWIFT: </Text>
+          {c.swift}
+        </Text>
+      ) : null}
+      {c.extraLines.map((line) => (
+        <Text key={line} style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: 2 }}>
+          {line}
+        </Text>
+      ))}
+    </View>
+  );
+}
 
 /**
  * Order Tracking Screen
@@ -205,6 +250,65 @@ export default function OrderTrackingScreen() {
               </Text>
             </View>
           </View>
+
+          {/* Bank transfer: after Vera approved (APPROVED) */}
+          {order.status === 'APPROVED' && (
+            <View
+              style={{
+                marginBottom: theme.spacing.xl,
+                padding: theme.spacing.lg,
+                backgroundColor: `${theme.colors.primary}0F`,
+                borderRadius: theme.borderRadius.md,
+                borderWidth: 0.5,
+                borderColor: `${theme.colors.primary}35`,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '500',
+                  color: theme.colors.text.primary,
+                  marginBottom: theme.spacing.sm,
+                }}
+              >
+                {t('buyer.orders.paymentTitle', 'Pay by bank transfer')}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '300',
+                  color: theme.colors.text.secondary,
+                  marginBottom: theme.spacing.md,
+                }}
+              >
+                {t('buyer.orders.paymentRefHint', 'Use the order number as the payment reference.')}
+              </Text>
+              <View style={{ marginBottom: theme.spacing.sm }}>
+                <Text style={{ fontSize: 11, color: theme.colors.text.secondary, fontWeight: '300' }}>
+                  {t('buyer.orders.reference', 'Reference')}
+                </Text>
+                <Text
+                  selectable
+                  style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.primary }}
+                >
+                  {order.orderNumber}
+                </Text>
+              </View>
+              {hasExpoPaymentConfig() ? (
+                <PaymentDetailsTextBlock />
+              ) : (
+                <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>
+                  {t('buyer.orders.paymentNotConfigured', 'For IBAN and bank details, check your email or contact')}{' '}
+                  <Text
+                    onPress={() => Linking.openURL('mailto:info@biovera.app')}
+                    style={{ textDecorationLine: 'underline', color: theme.colors.primary }}
+                  >
+                    info@biovera.app
+                  </Text>
+                </Text>
+              )}
+            </View>
+          )}
 
           {/* Timeline */}
           <View style={{

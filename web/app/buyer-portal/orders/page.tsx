@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { PaymentInstructionsPanel } from '@/components/PaymentInstructionsPanel';
 
 export default function OrdersPage() {
   const buyerPortalNavItems = getBuyerPortalNavItems();
@@ -374,10 +375,20 @@ export default function OrdersPage() {
                         {getBuyerOrderStatusLabel(selectedOrder.status)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 font-light mb-6">
+                    <p
+                      className={`text-sm text-gray-600 font-light ${
+                        selectedOrder.status === 'APPROVED' ? 'mb-3' : 'mb-6'
+                      }`}
+                    >
                       {getBuyerOrderStatusDescription(selectedOrder.status)}
                     </p>
-                    <h3 className="text-sm font-light text-gray-500 mb-4">Progress</h3>
+                    {selectedOrder.status === 'APPROVED' && (
+                      <PaymentInstructionsPanel
+                        orderNumber={selectedOrder.orderNumber}
+                        totalAmount={Number(selectedOrder.totalAmount)}
+                      />
+                    )}
+                    <h3 className="text-sm font-light text-gray-500 mb-4 mt-2">Progress</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>

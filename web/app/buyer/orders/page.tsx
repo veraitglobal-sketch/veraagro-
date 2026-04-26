@@ -99,6 +99,19 @@ export default function OrdersPage() {
                   <span className="font-semibold">Total:</span>
                   <span className="font-bold text-[#2D5A27]">{order.totalAmount || 0} RSD</span>
                 </div>
+                {order.status === 'APPROVED' && (
+                  <div className="mt-4 p-3 rounded-lg bg-sky-50 border border-sky-100 text-sm text-sky-900">
+                    <strong className="font-semibold">Payment:</strong> use order reference{' '}
+                    <code className="bg-white/80 px-1 rounded text-xs">{order.orderNumber}</code> on your bank
+                    transfer. Full IBAN details are in the{' '}
+                    <a href="/buyer-portal/orders" className="text-[#2D5A27] underline font-medium">
+                      buyer portal
+                    </a>
+                    {process.env.NEXT_PUBLIC_BIOVERA_BANK_IBAN
+                      ? ' or see details configured for this site.'
+                      : ' (or contact us for account details).'}
+                  </div>
+                )}
               </div>
             ))}
           </div>

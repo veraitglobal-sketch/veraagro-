@@ -10,7 +10,8 @@ const BUYER: Record<string, { label: string; description: string }> = {
   },
   APPROVED: {
     label: 'Accepted',
-    description: 'Your order is accepted. You can complete payment; any details can be agreed next.',
+    description:
+      'BioVera has accepted your order. Use the bank transfer instructions below, then we will mark payment when it arrives (or use in-app pay when available).',
   },
   PAID: {
     label: 'Paid',
