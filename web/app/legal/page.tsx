@@ -38,7 +38,7 @@ export default function LegalPage() {
             <div>
               <h2 className="text-2xl font-light text-gray-900 mb-4">Legal Documents</h2>
               <p className="text-gray-600 mb-6 font-light">
-                Access our legal documents and policies to understand your rights and obligations when using Bio Vera platform.
+                Access our legal documents and policies to understand your rights and obligations when using Bio Vera services.
               </p>
               
               <div className="grid md:grid-cols-2 gap-6">
@@ -48,7 +48,7 @@ export default function LegalPage() {
                 >
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Terms of Service</h3>
                   <p className="text-sm text-gray-600 font-light">
-                    Read our terms and conditions for using the Bio Vera platform and services.
+                    Read our terms and conditions for using Bio Vera and related services.
                   </p>
                 </Link>
                 
@@ -68,7 +68,7 @@ export default function LegalPage() {
                 >
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Cookie Policy</h3>
                   <p className="text-sm text-gray-600 font-light">
-                    Understand how we use cookies and similar technologies on our platform.
+                    Understand how we use cookies and similar technologies on our websites and apps.
                   </p>
                 </Link>
               </div>

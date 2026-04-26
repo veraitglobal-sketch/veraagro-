@@ -246,7 +246,7 @@ export default function PassportView({ data }: { data: PassportData }) {
           <ul className="space-y-2.5 text-sm text-gray-700 font-light">
             <li className="flex items-start gap-2.5">
               <Leaf className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-              <span>Inputs and treatments are recorded per batch in the Vera platform.</span>
+              <span>Inputs and treatments are recorded per batch in the Bio Vera system.</span>
             </li>
             <li className="flex items-start gap-2.5">
               <Droplets className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />

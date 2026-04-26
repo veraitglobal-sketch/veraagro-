@@ -165,7 +165,7 @@ export default function ForBuyersPage() {
             {[
               { step: 1, title: 'Register or log in', body: 'Create a buyer account or sign in. Your dashboard gives you access to the full product catalog and ordering tools.' },
               { step: 2, title: 'Browse and order', body: 'In the dashboard you can browse by category (fruits, vegetables, cereals, other), see origin, harvest info, and pricing. Place direct orders or use Pre-order 2026 for seasonal planning.' },
-              { step: 3, title: 'Confirm and pay', body: 'Orders are confirmed through the platform. Payment and delivery terms are clear; we work with secure, traceable flows from farm to you.' },
+              { step: 3, title: 'Confirm and pay', body: 'Orders are confirmed in Bio Vera. Payment and delivery terms are clear; we work with secure, traceable flows from farm to you.' },
               { step: 4, title: 'Delivery and traceability', body: 'Track your batch via the digital passport. You see where it was harvested, when (harvest period), and how it was handled until delivery.' },
             ].map(({ step, title, body }) => (
               <div key={step} className="flex gap-4">

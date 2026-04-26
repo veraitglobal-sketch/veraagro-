@@ -16,7 +16,7 @@ const faqs: FAQItem[] = [
   {
     category: 'general',
     question: 'What is Bio Vera?',
-    answer: 'Bio Vera is a vertically integrated agrotech platform that connects agricultural producers worldwide directly with markets. We provide complete traceability, quality assurance, and automated compliance management from seed to shelf—around the world.',
+    answer: 'Bio Vera is a vertically integrated agricultural network: we connect producers with markets under one operating model—traceability, quality assurance, and compliance from field to buyer, worldwide.',
   },
   {
     category: 'general',
@@ -26,7 +26,7 @@ const faqs: FAQItem[] = [
   {
     category: 'general',
     question: 'What certifications does Bio Vera support?',
-    answer: 'We facilitate GlobalG.A.P. IFA v6 group certification and ensure all products meet international and EU market standards. Our platform automates certification management and compliance tracking globally.',
+    answer: 'We facilitate GlobalG.A.P. IFA v6 group certification and ensure all products meet international and EU market standards. Our systems support certification management and compliance tracking globally.',
   },
   {
     category: 'growers',
@@ -46,7 +46,7 @@ const faqs: FAQItem[] = [
   {
     category: 'buyers',
     question: 'How do I place an order?',
-    answer: 'Create a buyer account, browse available products, and place orders through our platform. You can track your orders in real-time and receive digital certificates for each delivery.',
+    answer: 'Create a buyer account, browse available products, and place orders through Bio Vera. You can track your orders in real time and receive digital certificates for each delivery.',
   },
   {
     category: 'buyers',

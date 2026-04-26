@@ -445,7 +445,7 @@ export default function GrowersPage() {
               },
               {
                 title: 'Payment Process Guide',
-                description: 'Understanding escrow payments, release schedules, and payment splits.',
+                description: 'How escrow, release after delivery, and partner payouts work under your agreements with Bio Vera.',
                 type: 'PDF',
                 size: '1.5 MB',
                 downloadKey: 'Payment Process Guide',

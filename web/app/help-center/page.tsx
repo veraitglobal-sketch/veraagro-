@@ -42,7 +42,7 @@ const content = {
         },
         { 
           title: 'How to Place Orders', 
-          content: 'Step-by-step guide on browsing products, placing orders, tracking deliveries, and managing your account on the Bio Vera platform.',
+          content: 'Step-by-step guide on browsing products, placing orders, tracking deliveries, and managing your account in Bio Vera.',
         },
       ],
       growers: [
@@ -58,7 +58,7 @@ const content = {
         { title: 'Digital Seals', content: 'How to use and verify digital seals for cargo security.' },
       ],
       general: [
-        { title: 'Getting Started', content: 'Welcome to Bio Vera! Learn the basics of the platform.' },
+        { title: 'Getting Started', content: 'Welcome to Bio Vera! Learn the basics of the network and how to get around the app and buyer tools.' },
         { title: 'Account Setup', content: 'How to create and manage your Bio Vera account.' },
         { title: 'Mobile App Guide', content: 'Download and use the Bio Vera mobile application.' },
         { title: 'Contact Support', content: 'Get in touch with our support team for assistance.' },

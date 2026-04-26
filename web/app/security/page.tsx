@@ -72,7 +72,7 @@ export default function SecurityPage() {
                 {
                   icon: Server,
                   title: 'Secure Infrastructure',
-                  description: 'Our platform is hosted on secure, compliant cloud infrastructure with regular security updates, intrusion detection systems, and automated backups.',
+                  description: 'Bio Vera services are hosted on secure, compliant cloud infrastructure with regular security updates, intrusion detection systems, and automated backups.',
                 },
                 {
                   icon: Eye,
@@ -144,7 +144,7 @@ export default function SecurityPage() {
                   <div>
                     <h3 className="text-base font-medium text-gray-900 mb-1">EU Market Standards</h3>
                     <p className="text-sm text-gray-600 font-light leading-relaxed">
-                      All products on our platform meet EU certification standards. We facilitate GlobalG.A.P. 
+                      All products distributed through the Bio Vera network meet EU certification standards. We facilitate GlobalG.A.P. 
                       IFA v6 group certification and ensure complete compliance with food safety regulations.
                     </p>
                   </div>

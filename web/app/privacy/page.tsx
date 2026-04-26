@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               <h2 className="text-2xl font-light text-gray-900 mb-4">1. Introduction and Data Controller</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 Bio Vera ("we", "our", "us", or "Company") is committed to protecting your privacy and personal data. This Privacy Policy 
-                explains in detail how we collect, use, process, disclose, and safeguard your information when you use our platform, mobile 
+                explains in detail how we collect, use, process, disclose, and safeguard your information when you use our websites, mobile 
                 applications, and related services (collectively, the "Service").
               </p>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">2.2. Information Collected Automatically</h3>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
-                <li><strong>Usage Data:</strong> How you interact with our platform, pages visited, features used, time spent, click patterns, 
+                <li><strong>Usage Data:</strong> How you interact with Bio Vera, pages visited, features used, time spent, click patterns, 
                 and navigation paths</li>
                 <li><strong>Device Information:</strong> Device type, operating system, browser type, device identifiers, mobile network 
                 information, and device settings</li>
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
                 <li>Develop new features, products, and services</li>
                 <li>Conduct research and analytics to understand user behavior</li>
                 <li>Detect, prevent, and address technical issues, security threats, and fraudulent activity</li>
-                <li>Ensure platform security, integrity, and availability</li>
+                <li>Ensure security, integrity, and availability of our services</li>
               </ul>
               <p className="text-gray-600 font-light leading-relaxed mt-4"><strong>Legal Basis:</strong> Legitimate interest</p>
 

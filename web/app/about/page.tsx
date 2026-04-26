@@ -63,8 +63,8 @@ export default function AboutPage() {
                 <div>
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Mission</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    Bio Vera is on a mission to revolutionize the agricultural supply chain by connecting 
-                    producers worldwide directly with markets, ensuring complete transparency, quality assurance, 
+                    Bio Vera works to strengthen agricultural supply chains by connecting 
+                    producers worldwide directly with markets, ensuring clear standards, quality assurance, 
                     and fair compensation at every step.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
@@ -90,7 +90,7 @@ export default function AboutPage() {
                 <div>
                   <h2 className="text-2xl font-light text-gray-900 mb-4">Our Vision</h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    To become the leading vertically integrated agrotech platform worldwide, setting new 
+                    To become a leading vertically integrated agricultural network, setting new 
                     standards for traceability, quality assurance, and sustainable agriculture.
                   </p>
                   <p className="text-gray-600 font-light leading-relaxed">
@@ -209,8 +209,8 @@ export default function AboutPage() {
           >
             <h2 className="text-2xl font-light text-gray-900 mb-4">Join Us on This Journey</h2>
             <p className="text-gray-600 font-light leading-relaxed mb-6">
-              Whether you're a grower, supplier, logistics partner, or buyer, Bio Vera offers a platform 
-              designed for your success.
+              Whether you are a grower, supplier, logistics partner, or buyer, Bio Vera offers a place in one 
+              agricultural network—with clear processes from field to settlement.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

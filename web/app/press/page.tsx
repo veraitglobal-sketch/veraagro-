@@ -17,8 +17,8 @@ const pressReleases: PressRelease[] = [
   {
     id: '1',
     date: 'January 15, 2026',
-    title: 'Bio Vera Launches Vertically Integrated Agrotech Platform',
-    summary: 'Bio Vera announces the launch of its comprehensive platform connecting agricultural producers worldwide with markets, featuring complete traceability and automated compliance.',
+    title: 'Bio Vera Launches Vertically Integrated Agricultural Network',
+    summary: 'Bio Vera announces the launch of its agricultural network connecting producers worldwide with markets, with full traceability and compliance built into the operating model.',
     link: '#',
   },
   {
@@ -52,7 +52,7 @@ const assets = [
     items: [
       { name: 'Product Photography', description: 'High-quality product images', format: 'ZIP' },
       { name: 'Team Photos', description: 'Official team photographs', format: 'ZIP' },
-      { name: 'Platform Screenshots', description: 'Platform interface screenshots', format: 'ZIP' },
+      { name: 'App & portal screenshots', description: 'Bio Vera app and web portal screenshots', format: 'ZIP' },
     ],
   },
   {
@@ -200,9 +200,9 @@ export default function PressPage() {
                 <div className="border-l-2 border-[#2D5A27] pl-6">
                   <h3 className="text-base font-medium text-gray-900 mb-2">About Bio Vera</h3>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    Bio Vera is a vertically integrated agrotech platform that connects agricultural producers 
-                    worldwide directly with markets. We provide complete traceability, quality assurance, and 
-                    automated compliance management from seed to shelf. Founded in 2026, Bio Vera is headquartered 
+                    Bio Vera is a vertically integrated agricultural network that connects producers 
+                    with markets under clear standards. We provide traceability, quality assurance, and 
+                    compliance as part of the same operating model, from field to buyer. Founded in 2026, Bio Vera is headquartered 
                     in Hamburg, Germany, and serves producers and buyers around the world.
                   </p>
                 </div>

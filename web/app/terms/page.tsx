@@ -39,7 +39,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-light text-gray-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
-                By accessing, browsing, or using the Bio Vera platform (the "Service"), including any subdomains, mobile applications, 
+                By accessing, browsing, or using Bio Vera (the "Service"), including any subdomains, mobile applications, 
                 APIs, or related services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service 
                 (the "Terms") and all applicable laws and regulations. If you do not agree with any of these Terms, you are prohibited from 
                 using or accessing the Service.
@@ -66,7 +66,7 @@ export default function TermsPage() {
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
                 <li>Modifying, copying, reproducing, or creating derivative works of the Service, its content, or any portion thereof</li>
                 <li>Using the Service or its content for any commercial purpose without our explicit written permission</li>
-                <li>Attempting to reverse engineer, decompile, disassemble, or otherwise derive the source code of any software contained on the platform</li>
+                <li>Attempting to reverse engineer, decompile, disassemble, or otherwise derive the source code of any software contained in the Service</li>
                 <li>Removing, altering, or obscuring any copyright, trademark, patent, or other proprietary notices from the Service</li>
                 <li>Using automated systems, bots, scrapers, or crawlers to access, monitor, or copy any content from the Service</li>
                 <li>Interfering with or disrupting the Service, servers, or networks connected to the Service</li>
@@ -106,7 +106,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-light text-gray-900 mb-4">4. Platform Services and Description</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
-                Bio Vera operates a vertically integrated agrotech platform that connects growers, suppliers, logistics partners, and buyers 
+                Bio Vera operates a vertically integrated agricultural network that connects growers, suppliers, logistics partners, and buyers 
                 worldwide. Our services include, but are not limited to:
               </p>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
@@ -114,7 +114,7 @@ export default function TermsPage() {
                 <li><strong>Traceability Systems:</strong> Complete product journey tracking from field to shelf with immutable digital proof</li>
                 <li><strong>Quality Assurance:</strong> Multi-level quality control systems including Protocol 360 compliance verification</li>
                 <li><strong>Logistics Coordination:</strong> Transportation management, route optimization, and delivery tracking</li>
-                <li><strong>Payment Processing:</strong> Escrow services, automated payment splits, and financial transaction management</li>
+                <li><strong>Payment Processing:</strong> Escrow services, settlement to partners under agreed terms, and financial transaction management</li>
                 <li><strong>Certification Management:</strong> GlobalG.A.P. IFA v6 group certification facilitation and compliance tracking</li>
                 <li><strong>Mobile Applications:</strong> Field management, logistics tracking, and buyer portal applications</li>
                 <li><strong>Data Analytics:</strong> Supply chain insights, market intelligence, and performance metrics</li>

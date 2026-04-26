@@ -1,6 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ComplianceService } from '../compliance/compliance.service';
+import { GeometryUtil, type Point } from '../common/utils/geometry.util';
 import * as crypto from 'crypto';
 
 /**
@@ -18,6 +19,48 @@ export class SyncService {
     private prisma: PrismaService,
     private complianceService: ComplianceService,
   ) {}
+
+  /** Normalize estate `polygonCoordinates` JSON to { lat, lng }[] for point-in-polygon. */
+  private polygonJsonToPoints(coords: unknown): Point[] {
+    if (!coords || !Array.isArray(coords) || coords.length === 0) return [];
+    return (coords as unknown[]).map((p: unknown) => {
+      const o = p as Record<string, unknown>;
+      if (typeof o?.lat === 'number' && typeof o?.lng === 'number') {
+        return { lat: o.lat, lng: o.lng };
+      }
+      const arr = p as number[];
+      if (Array.isArray(arr) && arr.length >= 2) {
+        return { lat: arr[1], lng: arr[0] };
+      }
+      return null;
+    }).filter((x): x is Point => x !== null && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+  }
+
+  /**
+   * Whether device GPS lies inside the estate boundary (if polygon has ≥3 points).
+   */
+  private async isLocationWithinEstate(
+    estateId: string,
+    location: { lat: number; lng: number },
+  ): Promise<boolean> {
+    const estate = await this.prisma.estates.findUnique({
+      where: { id: estateId },
+      select: { polygonCoordinates: true },
+    });
+    if (!estate?.polygonCoordinates) return true;
+    const raw = estate.polygonCoordinates as unknown;
+    if (raw && typeof raw === 'object' && !Array.isArray(raw) && 'lat' in (raw as object) && 'lng' in (raw as object)) {
+      const c = raw as { lat: number; lng: number };
+      const d = GeometryUtil.calculateDistance(
+        { lat: location.lat, lng: location.lng },
+        { lat: c.lat, lng: c.lng },
+      );
+      return d <= 100;
+    }
+    const pts = this.polygonJsonToPoints(raw);
+    if (pts.length < 3) return true;
+    return GeometryUtil.isPointInPolygon({ lat: location.lat, lng: location.lng }, pts);
+  }
 
   /**
    * Sync multiple field entries from offline storage
@@ -72,6 +115,16 @@ export class SyncService {
       // Process entries in batch
       for (const entry of batch) {
         try {
+        let isWithinFarmFlag = true;
+        if (entry.data.location?.lat != null && entry.data.location?.lng != null) {
+          try {
+            isWithinFarmFlag = await this.isLocationWithinEstate(entry.farmId, entry.data.location);
+          } catch (e) {
+            this.logger.warn(`GPS boundary check failed for estate ${entry.farmId}: ${e}`);
+            isWithinFarmFlag = false;
+          }
+        }
+
         // Step 1: Validate timestamp (check if entry is late)
         const entryDate = new Date(entry.createdAt);
         const now = new Date();
@@ -98,7 +151,7 @@ export class SyncService {
                 blockedReason: `Late entry: ${hoursDiff.toFixed(2)} hours old (threshold: ${this.LATE_ENTRY_THRESHOLD_HOURS}h)`,
                 gpsLatitude: entry.data.location?.lat || 0,
                 gpsLongitude: entry.data.location?.lng || 0,
-                isWithinFarm: true, // Assume valid, will be verified
+                isWithinFarm: isWithinFarmFlag,
                 photos: [],
                 deviceFingerprint: entry.deviceFingerprint || entry.deviceId || 'unknown',
                 deviceId: entry.deviceId || entry.deviceFingerprint || 'unknown', // CRITICAL: Track device ID
@@ -143,13 +196,7 @@ export class SyncService {
           }
         }
 
-        // Step 3: Validate GPS coordinates (if provided)
-        if (entry.data.location) {
-          // TODO: Implement GPS validation against farm boundaries
-          // For now, assume valid if coordinates are provided
-        }
-
-        // Step 4: Create compliance log entry
+        // Step 3–4: Create compliance log (GPS vs estate boundary already computed above)
         try {
           await this.prisma.compliance_logs.create({
             data: {
@@ -159,11 +206,12 @@ export class SyncService {
               entryType: entry.type,
               scannedBarcode: entry.fertilizerBarcode || entry.seedSerialNumber || entry.packagingBarcode || 'N/A',
               barcodeType: entry.fertilizerBarcode ? 'FERTILIZER' : entry.seedSerialNumber ? 'SEED' : 'PACKAGING',
-              isCompliant: true,
-              complianceStatus: 'APPROVED',
+              isCompliant: isWithinFarmFlag,
+              complianceStatus: isWithinFarmFlag ? 'APPROVED' : 'REVIEW',
               gpsLatitude: entry.data.location?.lat || 0,
               gpsLongitude: entry.data.location?.lng || 0,
-              isWithinFarm: true, // Will be validated
+              isWithinFarm: isWithinFarmFlag,
+              blockedReason: isWithinFarmFlag ? null : 'GPS outside registered farm boundary',
               photos: [],
               deviceFingerprint: entry.deviceFingerprint || entry.deviceId || 'unknown',
               deviceId: entry.deviceId || entry.deviceFingerprint || 'unknown', // CRITICAL: Track device ID

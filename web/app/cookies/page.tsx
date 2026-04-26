@@ -60,13 +60,13 @@ export default function CookiesPage() {
             <section>
               <h2 className="text-2xl font-light text-gray-900 mb-4">2. How We Use Cookies</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
-                Bio Vera uses cookies to enhance your experience on our platform. We use cookies for the following purposes:
+                Bio Vera uses cookies to enhance your experience on our websites and apps. We use cookies for the following purposes:
               </p>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
-                <li><strong>Essential Cookies:</strong> Required for the platform to function properly (authentication, security)</li>
-                <li><strong>Performance Cookies:</strong> Help us understand how visitors interact with our platform</li>
+                <li><strong>Essential Cookies:</strong> Required for our services to function properly (authentication, security)</li>
+                <li><strong>Performance Cookies:</strong> Help us understand how visitors use Bio Vera</li>
                 <li><strong>Functionality Cookies:</strong> Remember your preferences and settings</li>
-                <li><strong>Analytics Cookies:</strong> Collect information about how you use our platform to improve it</li>
+                <li><strong>Analytics Cookies:</strong> Collect information about how you use our sites to improve them</li>
               </ul>
             </section>
 
@@ -77,7 +77,7 @@ export default function CookiesPage() {
                 <div>
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Essential Cookies (Strictly Necessary)</h3>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    These cookies are absolutely necessary for the platform to function and cannot be switched off. They are usually set 
+                    These cookies are absolutely necessary for the services to function and cannot be switched off. They are usually set 
                     in response to actions made by you, such as setting privacy preferences, logging in, or filling in forms. These cookies 
                     include:
                   </p>
@@ -96,9 +96,9 @@ export default function CookiesPage() {
                 <div>
                   <h3 className="text-xl font-medium text-gray-900 mb-2">Analytics and Performance Cookies</h3>
                   <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    These cookies help us understand how visitors interact with our platform by collecting and reporting information 
+                    These cookies help us understand how visitors use our sites by collecting and reporting information 
                     anonymously. They allow us to count visits, identify traffic sources, and understand which pages are most popular. 
-                    This information helps us improve the user experience and platform performance. These cookies include:
+                    This information helps us improve the user experience and service performance. These cookies include:
                   </p>
                   <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
                     <li><strong>Usage Analytics:</strong> Track page views, user flows, and feature usage</li>
@@ -195,7 +195,7 @@ export default function CookiesPage() {
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">4.3. Analytics Services</h3>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
-                We may use analytics services to understand how users interact with our platform. These services use cookies to collect 
+                We may use analytics services to understand how users use Bio Vera. These services use cookies to collect 
                 information about your use of the Service. The information generated is typically transmitted to and stored by the analytics 
                 service provider.
               </p>
@@ -216,7 +216,7 @@ export default function CookiesPage() {
               <h2 className="text-2xl font-light text-gray-900 mb-4">5. Managing and Controlling Cookies</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 You have several options for managing and controlling cookies. Please keep in mind that removing or blocking certain cookies 
-                may impact your user experience, and some features of our platform may no longer function properly:
+                may impact your user experience, and some features of our services may no longer function properly:
               </p>
               
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">5.1. Browser Settings</h3>
@@ -241,7 +241,7 @@ export default function CookiesPage() {
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">5.2. Platform Cookie Preferences</h3>
               <p className="text-gray-600 font-light leading-relaxed">
-                You can manage your cookie preferences through your account settings on the Bio Vera platform. This allows you to opt-in 
+                You can manage your cookie preferences through your account settings in Bio Vera. This allows you to opt-in 
                 or opt-out of non-essential cookies while maintaining essential functionality.
               </p>
 
@@ -263,7 +263,7 @@ export default function CookiesPage() {
 
               <p className="text-gray-600 font-light leading-relaxed mt-4">
                 <strong>Important:</strong> If you choose to block essential cookies, you may not be able to access certain features 
-                of the Service, including login functionality, transaction processing, and core platform features.
+                of the Service, including login functionality, transaction processing, and core product features.
               </p>
             </section>
 

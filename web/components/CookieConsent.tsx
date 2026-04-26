@@ -118,7 +118,7 @@ export default function CookieConsent() {
                     </h3>
                   </div>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    We use <strong>essential</strong> cookies so the platform works (login, security, your consent choice). 
+                    We use <strong>essential</strong> cookies so our sites and apps work (login, security, your consent choice). 
                     Optional cookies help us improve the site (analytics), remember your preferences (functionality), and, if you allow, support marketing. 
                     You can accept all, reject non-essential, or choose by category. Full list of cookies, purposes, and retention is in our{' '}
                     <Link href="/cookies" className="text-[#2D5A27] hover:underline font-medium">
@@ -172,7 +172,7 @@ export default function CookieConsent() {
                       <div>
                         <h4 className="text-sm font-medium text-gray-900">Essential Cookies</h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Required for the platform to function
+                          Required for the services to function
                         </p>
                       </div>
                       <div className="flex items-center gap-2 text-green-600">
@@ -181,7 +181,7 @@ export default function CookieConsent() {
                       </div>
                     </div>
                     <p className="text-xs text-gray-600 font-light mb-2">
-                      Necessary for the platform to work. They cannot be disabled.
+                      Necessary for the site to work. They cannot be disabled.
                     </p>
                     <details className="text-xs text-gray-500 font-light">
                       <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
@@ -199,7 +199,7 @@ export default function CookieConsent() {
                       <div>
                         <h4 className="text-sm font-medium text-gray-900">Analytics Cookies</h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Help us understand how you use our platform
+                          Help us understand how you use Bio Vera
                         </p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -213,7 +213,7 @@ export default function CookieConsent() {
                       </label>
                     </div>
                     <p className="text-xs text-gray-600 font-light mb-2">
-                      Help us understand how the platform is used so we can improve it.
+                      Help us understand how our services are used so we can improve them.
                     </p>
                     <details className="text-xs text-gray-500 font-light">
                       <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>

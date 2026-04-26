@@ -399,7 +399,7 @@ export default function LogisticsPartnerPage() {
               },
               {
                 title: 'Payment Process Guide',
-                description: 'Understanding automated payments, delivery confirmations, and payment schedules.',
+                description: 'Automated payments after delivery confirmation, timing, and settlement to transport partners under agreed terms.',
                 type: 'PDF',
                 size: '1.5 MB',
                 downloadKey: 'Payment Process Guide',
