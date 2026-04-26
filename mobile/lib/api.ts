@@ -376,6 +376,10 @@ export const b2bSuppliersAPI = {
     const response = await api.get('/b2b-suppliers/my/profile');
     return response.data;
   },
+  patchMyStore: async (data: Record<string, unknown>) => {
+    const response = await api.patch('/b2b-suppliers/my/profile', data);
+    return response.data;
+  },
   getIncomingOrders: async () => {
     const response = await api.get('/b2b-suppliers/orders/incoming');
     return response.data || [];

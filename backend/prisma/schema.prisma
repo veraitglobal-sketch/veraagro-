@@ -1136,6 +1136,11 @@ model material_supplier_profiles {
   userId           String    @unique
   businessName     String
   description      String?
+  /// Public website (https)
+  website          String?   @db.Text
+  /// Street line; combined with houseNumber for display + geocoding
+  street           String?
+  houseNumber      String?
   /// Street + number (e.g. "Bulevar kralja Aleksandra 15")
   address          String
   postalCode       String?

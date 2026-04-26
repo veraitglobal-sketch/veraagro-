@@ -1,9 +1,10 @@
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { useState, useEffect } from 'react';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
 import { retailLocationsAPI, b2bSuppliersAPI, RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
-import { ShoppingBag, Sprout } from 'lucide-react-native';
+import { ShoppingBag, Sprout, Info } from 'lucide-react-native';
 
 interface SuppliersMapProps {
   onMarkerPress?: (location: RetailLocation) => void;
@@ -15,6 +16,7 @@ interface SuppliersMapProps {
  * Works with Expo Go - no native build required
  */
 export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
+  const { t } = useTranslation();
   const [locations, setLocations] = useState<RetailLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [region, setRegion] = useState({
@@ -85,6 +87,17 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
 
   return (
     <View style={styles.container}>
+      {locations.length === 0 && (
+        <View
+          style={styles.hintBox}
+        >
+          <Info size={18} color={theme.colors.text.secondary} style={{ marginRight: 8 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.hintTitle}>{t('map.emptyTitle')}</Text>
+            <Text style={styles.hintBody}>{t('map.emptyBody')}</Text>
+          </View>
+        </View>
+      )}
       <MapView
         style={styles.map}
         initialRegion={region}
@@ -135,6 +148,30 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: theme.borderRadius.lg,
     overflow: 'hidden',
+  },
+  hintBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    marginHorizontal: theme.spacing.md,
+    marginTop: theme.spacing.sm,
+    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.35)',
+  },
+  hintTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+  },
+  hintBody: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '300',
+    lineHeight: 17,
+    color: theme.colors.text.secondary,
   },
   map: {
     flex: 1,

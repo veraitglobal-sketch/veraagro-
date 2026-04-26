@@ -466,6 +466,26 @@ export const b2bSupplierPortalAPI = {
     const response = await api.get('/b2b-suppliers/my/profile');
     return response.data as Record<string, unknown> | null;
   },
+  /** Update store + contact: name, site, address, email, phone, person name. Address/coords change can clear map until re-verified. */
+  patchMyStore: async (data: {
+    businessName?: string;
+    description?: string;
+    website?: string;
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+    country?: string;
+    latitude?: number;
+    longitude?: number;
+    email?: string;
+    phone?: string;
+    firstName?: string;
+    lastName?: string;
+  }) => {
+    const response = await api.patch('/b2b-suppliers/my/profile', data);
+    return response.data as Record<string, unknown>;
+  },
   getIncomingOrders: async () => {
     const response = await api.get('/b2b-suppliers/orders/incoming');
     return (response.data || []) as Array<{

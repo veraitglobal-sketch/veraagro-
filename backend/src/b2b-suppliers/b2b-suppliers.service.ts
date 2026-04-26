@@ -13,6 +13,7 @@ import {
   AdminCreateSupplierStoreDto,
   CreateB2bSupplierProfileDto,
   CreateCatalogItemDto,
+  UpdateB2bSupplierStoreDto,
   UpdateCatalogItemDto,
 } from './dto/b2b-suppliers.dto';
 import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geocoding';
@@ -20,6 +21,10 @@ import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geoco
 @Injectable()
 export class B2bSuppliersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private normLocationPart(s: string | null | undefined) {
+    return (s ?? '').trim().toLowerCase();
+  }
 
   /** Ručne koordinate ili geokodiranje ulice + poštanski broj + grad + država */
   private async resolveMapLocation(
@@ -102,6 +107,7 @@ export class B2bSuppliersService {
       id: p.userId,
       businessName: p.businessName,
       description: p.description,
+      website: p.website,
       address: p.address,
       postalCode: p.postalCode,
       city: p.city,
@@ -199,6 +205,9 @@ export class B2bSuppliersService {
           userId: user.id,
           businessName: dto.businessName.trim(),
           description: dto.description?.trim() || null,
+          website: dto.website?.trim() || null,
+          street: dto.street.trim(),
+          houseNumber: dto.houseNumber?.trim() || null,
           address: addressLine1,
           postalCode: dto.postalCode.trim(),
           city: dto.city.trim(),
@@ -238,6 +247,9 @@ export class B2bSuppliersService {
         userId,
         businessName: dto.businessName,
         description: dto.description,
+        website: dto.website?.trim() || null,
+        street: dto.street.trim(),
+        houseNumber: dto.houseNumber?.trim() || null,
         address: addressLine1,
         postalCode: dto.postalCode.trim(),
         city: dto.city,
@@ -248,6 +260,9 @@ export class B2bSuppliersService {
       update: {
         businessName: dto.businessName,
         description: dto.description,
+        website: dto.website?.trim() || null,
+        street: dto.street.trim(),
+        houseNumber: dto.houseNumber?.trim() || null,
         address: addressLine1,
         postalCode: dto.postalCode.trim(),
         city: dto.city,
@@ -258,8 +273,188 @@ export class B2bSuppliersService {
     });
   }
 
+  /**
+   * Logged-in supplier: public store + own contact. Changing address or coordinates clears map
+   * approval until Bio Vera verifies again.
+   */
+  async updateMyStoreSettings(userId: string, dto: UpdateB2bSupplierStoreDto) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: userId } })).roles,
+    );
+    const prof = await this.prisma.material_supplier_profiles.findUnique({ where: { userId } });
+    if (!prof) {
+      throw new BadRequestException('No store profile found.');
+    }
+    const user = await this.prisma.users.findUniqueOrThrow({ where: { id: userId } });
+
+    if (dto.email !== undefined) {
+      const emailNorm = dto.email.trim().toLowerCase();
+      if (!emailNorm) {
+        throw new BadRequestException('Email cannot be empty');
+      }
+      if (emailNorm !== (user.email || '').toLowerCase()) {
+        const taken = await this.prisma.users.findFirst({
+          where: { email: emailNorm, NOT: { id: userId } },
+        });
+        if (taken) {
+          throw new ConflictException('This email is already in use');
+        }
+      }
+    }
+
+    const userData: {
+      email?: string;
+      phone?: string | null;
+      firstName?: string;
+      lastName?: string;
+      updatedAt: Date;
+    } = { updatedAt: new Date() };
+    if (dto.email !== undefined) {
+      userData.email = dto.email.trim().toLowerCase();
+    }
+    if (dto.phone !== undefined) {
+      userData.phone = dto.phone.trim() || null;
+    }
+    if (dto.firstName !== undefined) {
+      userData.firstName = dto.firstName.trim();
+    }
+    if (dto.lastName !== undefined) {
+      userData.lastName = dto.lastName.trim();
+    }
+    if (Object.keys(userData).length > 1) {
+      await this.prisma.users.update({ where: { id: userId }, data: userData });
+    }
+
+    const addressFieldsInRequest =
+      dto.street !== undefined ||
+      dto.houseNumber !== undefined ||
+      dto.postalCode !== undefined ||
+      dto.city !== undefined ||
+      dto.country !== undefined;
+    const coordsTouched = dto.latitude != null && dto.longitude != null;
+    const anyAddressUpdateIntent = addressFieldsInRequest || coordsTouched;
+
+    const hasProfileField =
+      dto.businessName !== undefined ||
+      dto.description !== undefined ||
+      dto.website !== undefined ||
+      anyAddressUpdateIntent;
+
+    if (!hasProfileField) {
+      return this.getMyProfile(userId);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profileData: Record<string, any> = { updatedAt: new Date() };
+
+    if (dto.businessName !== undefined) {
+      profileData.businessName = dto.businessName.trim();
+    }
+    if (dto.description !== undefined) {
+      profileData.description = dto.description?.trim() || null;
+    }
+    if (dto.website !== undefined) {
+      const w = dto.website.trim();
+      if (!w) {
+        profileData.website = null;
+      } else {
+        let u = w;
+        if (!/^https?:\/\//i.test(u)) {
+          u = `https://${u}`;
+        }
+        try {
+          // eslint-disable-next-line no-new
+          new URL(u);
+        } catch {
+          throw new BadRequestException('Invalid website URL');
+        }
+        profileData.website = u;
+      }
+    }
+
+    if (anyAddressUpdateIntent) {
+      const streetM = (dto.street !== undefined ? dto.street : prof.street || prof.address).trim();
+      if (!streetM) {
+        throw new BadRequestException('Street is required');
+      }
+      const houseM =
+        dto.houseNumber !== undefined
+          ? dto.houseNumber?.trim() || null
+          : prof.houseNumber;
+      const postalM = (dto.postalCode !== undefined ? dto.postalCode : prof.postalCode)?.trim() || '';
+      if (!postalM) {
+        throw new BadRequestException('Postal code is required');
+      }
+      const cityM = (dto.city !== undefined ? dto.city : prof.city).trim();
+      if (!cityM) {
+        throw new BadRequestException('City is required');
+      }
+      const countryM = (dto.country !== undefined ? dto.country : prof.country).trim();
+      if (!countryM) {
+        throw new BadRequestException('Country is required');
+      }
+
+      const keyBefore = [
+        this.normLocationPart(prof.street || prof.address),
+        this.normLocationPart(prof.houseNumber),
+        this.normLocationPart(prof.postalCode),
+        this.normLocationPart(prof.city),
+        this.normLocationPart(prof.country),
+      ].join('|');
+      const keyAfter = [
+        this.normLocationPart(streetM),
+        this.normLocationPart(houseM),
+        this.normLocationPart(postalM),
+        this.normLocationPart(cityM),
+        this.normLocationPart(countryM),
+      ].join('|');
+      const addressTextChanged = keyBefore !== keyAfter;
+
+      if (addressTextChanged || coordsTouched) {
+        const { lat, lng } = await this.resolveMapLocation(
+          { street: streetM, houseNumber: houseM || undefined, postalCode: postalM, city: cityM, country: countryM },
+          coordsTouched ? { latitude: dto.latitude, longitude: dto.longitude } : undefined,
+        );
+
+        profileData.street = streetM;
+        profileData.houseNumber = houseM;
+        profileData.address = buildStreetAddressLine(streetM, houseM || undefined);
+        profileData.postalCode = postalM;
+        profileData.city = cityM;
+        profileData.country = countryM;
+        profileData.location = { lat, lng };
+        profileData.mapApproved = false;
+        profileData.approvedAt = null;
+        profileData.approvedByUserId = null;
+      }
+    }
+
+    const profileKeys = Object.keys(profileData).filter((k) => k !== 'updatedAt');
+    if (profileKeys.length > 0) {
+      await this.prisma.material_supplier_profiles.update({ where: { userId }, data: profileData });
+    }
+    return this.getMyProfile(userId);
+  }
+
   async getMyProfile(userId: string) {
-    return this.prisma.material_supplier_profiles.findUnique({ where: { userId } });
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: userId } })).roles,
+    );
+    const p = await this.prisma.material_supplier_profiles.findUnique({ where: { userId } });
+    if (!p) {
+      return null;
+    }
+    const u = await this.prisma.users.findUnique({
+      where: { id: userId },
+      select: { email: true, phone: true, firstName: true, lastName: true },
+    });
+    return {
+      ...p,
+      email: u?.email,
+      phone: u?.phone,
+      firstName: u?.firstName,
+      lastName: u?.lastName,
+    };
   }
 
   async approveMap(adminUserId: string, supplierUserId: string) {

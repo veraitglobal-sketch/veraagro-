@@ -10,6 +10,7 @@ const nav = [
   { href: '/supplier/catalog', label: 'Catalog' },
   { href: '/supplier/orders', label: 'Orders' },
   { href: '/supplier/messages', label: 'Messages' },
+  { href: '/supplier/settings', label: 'Settings' },
 ] as const;
 
 export default function SupplierHeader() {

@@ -26,6 +26,7 @@ import {
   PostMessageDto,
   UpdateOrderStatusDto,
   CreateCatalogItemDto,
+  UpdateB2bSupplierStoreDto,
   UpdateCatalogItemDto,
 } from './dto/b2b-suppliers.dto';
 
@@ -55,6 +56,13 @@ export class B2bSuppliersController {
   @Roles('MATERIAL_SUPPLIER')
   upsertMyProfile(@GetUser() u: { id: string }, @Body() dto: CreateB2bSupplierProfileDto) {
     return this.svc.upsertMyProfile(u.id, dto);
+  }
+
+  @Patch('my/profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  patchMyStore(@GetUser() u: { id: string }, @Body() dto: UpdateB2bSupplierStoreDto) {
+    return this.svc.updateMyStoreSettings(u.id, dto);
   }
 
   @Get('my/catalog')

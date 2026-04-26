@@ -613,7 +613,9 @@
   },
   "map": {
     "title": "Where to Buy",
-    "subtitle": "Retail pickup points (green) and approved material suppliers — seeds, inputs (orange)"
+    "subtitle": "Retail pickup points (green) and approved material suppliers — seeds, inputs (orange)",
+    "emptyTitle": "No markers yet",
+    "emptyBody": "Partner stores (orange) only show after the location is approved for the public map. Retail pins (green) come from hub records. If you recently changed the store address, approval may need to be done again. Ask a Bio Vera admin to approve the store on the map, or check the API connection if you expected data."
   },
   "register": {
     "title": "Register",

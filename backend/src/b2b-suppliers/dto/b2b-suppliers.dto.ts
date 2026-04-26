@@ -86,6 +86,10 @@ export class AdminCreateSupplierStoreDto {
   @IsBoolean()
   @IsOptional()
   isVeraPartner?: boolean;
+
+  @IsString()
+  @IsOptional()
+  website?: string;
 }
 
 export class CreateB2bSupplierProfileDto {
@@ -95,6 +99,11 @@ export class CreateB2bSupplierProfileDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  /** Public store website (https), optional */
+  @IsString()
+  @IsOptional()
+  website?: string;
 
   @IsString()
   street: string;
@@ -119,6 +128,72 @@ export class CreateB2bSupplierProfileDto {
   @IsNumber()
   @IsOptional()
   longitude?: number;
+}
+
+/** Partial update: store + contact; any change to address triggers map re-approval. */
+export class UpdateB2bSupplierStoreDto {
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  businessName?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  website?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  street?: string;
+
+  @IsString()
+  @IsOptional()
+  houseNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  postalCode?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  city?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  country?: string;
+
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(1)
+  lastName?: string;
 }
 
 export class CreateThreadDto {

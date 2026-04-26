@@ -162,7 +162,11 @@ export default function SupplierStorefrontSection({
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-400 font-light max-w-md mx-auto">
-          To change store name, address, or map status, contact Bio Vera support.
+          Update store name, website, contact, and address in{' '}
+          <Link href="/supplier/settings" className="text-[#2D5A27] hover:underline">
+            Settings
+          </Link>
+          . If your map pin or address changes, Bio Vera re-verifies the listing.
         </p>
       </div>
     </div>
