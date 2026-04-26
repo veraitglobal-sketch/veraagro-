@@ -1,9 +1,17 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, UserRole } from '@prisma/client';
 
 @Injectable()
 export class BuyersService {
+  private readonly logger = new Logger(BuyersService.name);
+
   constructor(private prisma: PrismaService) {}
 
   /**
@@ -444,10 +452,34 @@ export class BuyersService {
    * Buyer portal + admin: one JSON document per buyer user
    */
   async getCompanyProfile(buyerId: string) {
-    const user = await this.prisma.users.findUnique({
-      where: { id: buyerId },
-      select: { id: true, roles: true, buyerCompanyProfile: true },
-    });
+    let user: {
+      id: string;
+      roles: UserRole[];
+      buyerCompanyProfile: Prisma.JsonValue | null;
+    } | null;
+    try {
+      user = await this.prisma.users.findUnique({
+        where: { id: buyerId },
+        select: { id: true, roles: true, buyerCompanyProfile: true },
+      });
+    } catch (e) {
+      // e.g. DB not migrated — column `buyerCompanyProfile` missing
+      this.logger.warn(
+        `getCompanyProfile: full select failed, retrying without JSON column: ${e}`,
+      );
+      const basic = await this.prisma.users.findUnique({
+        where: { id: buyerId },
+        select: { id: true, roles: true },
+      });
+      if (!basic) {
+        throw new NotFoundException('User not found');
+      }
+      if (!basic.roles.includes(UserRole.BUYER)) {
+        throw new ForbiddenException('Not a buyer account');
+      }
+      return this.emptyCompanyProfile();
+    }
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -469,13 +501,20 @@ export class BuyersService {
       throw new ForbiddenException('Not a buyer account');
     }
     const normalized = this.normalizeCompanyProfile(body);
-    await this.prisma.users.update({
-      where: { id: buyerId },
-      data: {
-        buyerCompanyProfile: normalized as Prisma.InputJsonValue,
-        updatedAt: new Date(),
-      },
-    });
+    try {
+      await this.prisma.users.update({
+        where: { id: buyerId },
+        data: {
+          buyerCompanyProfile: normalized as Prisma.InputJsonValue,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (e) {
+      this.logger.error(`updateCompanyProfile failed: ${e}`);
+      throw new BadRequestException(
+        'Could not save company profile. The database may need the latest migration (buyer company profile). Run: npx prisma migrate deploy',
+      );
+    }
     return normalized;
   }
 }

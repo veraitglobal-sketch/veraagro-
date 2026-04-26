@@ -102,8 +102,14 @@ export default function BuyerProfilePage() {
         setCompanyData(data.company);
         setDeliveryLocations((data.deliveryLocations || []) as DeliveryLocation[]);
         setAuthorizedPersonnel((data.authorizedPersonnel || []) as AuthorizedPerson[]);
-      } catch {
-        if (!cancelled) setLoadError('Could not load company profile. Please try again.');
+      } catch (e: any) {
+        if (!cancelled) {
+          const m = e.response?.data?.message;
+          const msg = Array.isArray(m) ? m.join(' ') : m;
+          setLoadError(
+            msg || 'Could not load company profile. Please try again.',
+          );
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
