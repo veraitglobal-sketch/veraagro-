@@ -59,7 +59,10 @@ export default function SupplierMessagesPage() {
   };
 
   return (
-    <AuthGuard requiredRoles={['MATERIAL_SUPPLIER']} redirectTo="/login">
+    <AuthGuard
+      requiredRoles={['MATERIAL_SUPPLIER']}
+      redirectTo="/login?returnTo=%2Fsupplier%2Fmessages"
+    >
       <h1 className="text-xl font-light text-gray-900 mb-4">Messages</h1>
       {loading && <p className="text-sm text-gray-500">Loading…</p>}
       {err && <p className="text-sm text-red-600 mb-3">{err}</p>}
