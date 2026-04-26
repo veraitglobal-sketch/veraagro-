@@ -8,6 +8,7 @@ import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
 import Link from 'next/link';
 import { Info, List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
+import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 
 type MapItem = {
   id: string;
@@ -232,12 +233,14 @@ export default function GrowerWhereToBuyPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
-      <SidebarLayout title="Where to buy" navItems={growerNavItems}>
-        <div className="max-w-4xl">
-          <p className="text-sm text-gray-600 font-light mb-4">
+      <SidebarLayout title="Suppliers & orders" navItems={growerNavItems}>
+        <div className="w-full max-w-7xl mx-auto space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 space-y-4 min-w-0">
+          <p className="text-sm text-gray-600 font-light">
             Choose a <strong>country</strong> and, if you want, a <strong>city</strong> (larger places where we have
-            listings). Use <strong>Nearest to me</strong> to sort by distance using your current location. Retail pickup
-            points and partner input stores (same as before — green vs orange in the list) come from the public directory.
+            listings). Use <strong>Nearest to me</strong> to sort by distance. Retail pickup points and partner stores
+            (green vs orange) come from the public directory.
           </p>
 
           {!loading && productionCountry && (
@@ -446,6 +449,10 @@ export default function GrowerWhereToBuyPage() {
               </p>
             </>
           )}
+            </div>
+
+            <PartnerB2BPanel />
+          </div>
         </div>
       </SidebarLayout>
     </AuthGuard>

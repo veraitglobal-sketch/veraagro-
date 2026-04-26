@@ -161,9 +161,9 @@ export default function FarmerProfilePage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Profile" navItems={growerNavItems}>
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">My Farmer Profile</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-6">My farmer profile</h1>
 
           {/* Photo Upload Section */}
           <div className="mb-8">
@@ -277,8 +277,34 @@ export default function FarmerProfilePage() {
             </p>
           </div>
 
-          {/* Your QR Code – prominent, print-ready, with copy link and download */}
-          <div className="mb-10 overflow-hidden rounded-2xl border border-[#2D5A27]/20 bg-gradient-to-b from-[#2D5A27]/5 to-white">
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+                saving
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-[#2D5A27] text-white hover:bg-[#23471f]'
+              }`}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save changes
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+          {/* Your QR Code – right column on large screens */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <div className="overflow-hidden rounded-2xl border border-[#2D5A27]/20 bg-gradient-to-b from-[#2D5A27]/5 to-white m-3 sm:m-4">
             <div className="bg-[#2D5A27] px-6 py-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/15">
@@ -388,32 +414,7 @@ export default function FarmerProfilePage() {
               )}
             </div>
           </div>
-
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
-                saving
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-green-600 text-white hover:bg-green-700'
-              }`}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  Save Changes
-                </>
-              )}
-            </button>
           </div>
-        </div>
         </div>
       </SidebarLayout>
     </AuthGuard>

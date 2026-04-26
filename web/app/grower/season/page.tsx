@@ -48,64 +48,66 @@ export default function GrowerFieldSeasonPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="Steps" navItems={growerNavItems}>
-        <div className="p-6 max-w-lg mx-auto">
-          <h1 className="text-xl font-medium text-gray-900 mb-1">Three steps</h1>
-          <p className="text-sm text-gray-500 mb-6">Parcels → approval → work &amp; harvest.</p>
+        <div className="w-full max-w-6xl mx-auto space-y-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
+            <h1 className="text-lg font-semibold text-gray-900 mb-1">Three steps</h1>
+            <p className="text-sm text-gray-500 mb-6">Parcels → approval → work &amp; harvest</p>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
-          )}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+            )}
 
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-7 h-7 animate-spin text-[#2D5A27]" />
-            </div>
-          ) : (
-            <ol className="space-y-5 text-sm text-gray-800">
-              <li>
-                <span className="font-medium text-gray-900">1. Add parcels</span>
-                <p className="text-gray-600 mt-0.5 mb-2">In My fields.</p>
-                <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-                  Open My fields →
-                </Link>
-              </li>
-              <li>
-                <span className="font-medium text-gray-900">2. Admin approval</span>
-                <p className="text-gray-600 mt-0.5">
-                  {hasApprovedParcel
-                    ? 'You are approved — continue below.'
-                    : hasParcel
-                      ? `${pendingCount} waiting for approval.`
-                      : 'Add a parcel first (step 1).'}
-                </p>
-              </li>
-              <li>
-                <span className="font-medium text-gray-900">3. Then</span>
-                {hasApprovedParcel ? (
-                  <ul className="mt-2 space-y-2">
-                    <li>
-                      <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
-                        Materials
-                      </Link>
-                    </li>
-                    <li className="text-gray-600">Field diary &amp; seed — in the mobile app</li>
-                    <li>
-                      <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-                        Report harvest (batch) — My fields
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/grower/batches" className="text-gray-700 hover:underline">
-                        My batches
-                      </Link>
-                    </li>
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 mt-0.5">After step 2.</p>
-                )}
-              </li>
-            </ol>
-          )}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-7 h-7 animate-spin text-[#2D5A27]" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800">
+                  <span className="font-semibold text-gray-900">1. Add parcels</span>
+                  <p className="text-gray-600 mt-1 mb-2">Name fields and add crop blocks in My fields.</p>
+                  <Link href="/grower/fields" className="text-[#2D5A27] font-medium text-sm hover:underline">
+                    Open My fields →
+                  </Link>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800">
+                  <span className="font-semibold text-gray-900">2. Admin approval</span>
+                  <p className="text-gray-600 mt-1">
+                    {hasApprovedParcel
+                      ? 'You are approved — continue to the right.'
+                      : hasParcel
+                        ? `${pendingCount} waiting for approval.`
+                        : 'Add a parcel first (step 1).'}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4 text-sm text-gray-800 md:col-span-1">
+                  <span className="font-semibold text-gray-900">3. Then</span>
+                  {hasApprovedParcel ? (
+                    <ul className="mt-2 space-y-2 list-none">
+                      <li>
+                        <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
+                          Materials
+                        </Link>
+                      </li>
+                      <li className="text-gray-600">Field diary &amp; seed — mobile app</li>
+                      <li>
+                        <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
+                          Report harvest (batch)
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/grower/batches" className="text-gray-700 hover:underline">
+                          My batches
+                        </Link>
+                      </li>
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500 mt-1">Unlocked after step 2.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </SidebarLayout>
     </AuthGuard>

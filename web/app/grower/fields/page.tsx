@@ -130,7 +130,7 @@ export default function GrowerFieldsPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Fields" navItems={growerNavItems}>
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto">
           <h1 className="text-2xl font-light text-gray-900 mb-1">My fields & parcels</h1>
           <p className="text-sm text-gray-600 mb-6">Add parcels here. Admin must approve before batches and field work.</p>
 
