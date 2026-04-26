@@ -35,7 +35,7 @@ export default function AdminSupplierStoresPage() {
     overrideLat: '',
     overrideLng: '',
     autoGeneratePassword: true,
-    mapApproved: false,
+    mapApproved: true,
     isVeraPartner: true,
   });
 
@@ -297,7 +297,7 @@ export default function AdminSupplierStoresPage() {
                 checked={form.mapApproved}
                 onChange={(e) => set('mapApproved', e.target.checked)}
               />
-              Approve for map now (visible to growers on the supplier map)
+              Approve for map now (visible to growers) — on by default; turn off if the address is not ready
             </label>
             <label className="inline-flex items-center gap-2 text-sm text-gray-700">
               <input

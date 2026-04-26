@@ -16,9 +16,12 @@ export default function AdminSupplierGrowersPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [openSupplierId, setOpenSupplierId] = useState<string | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [approveError, setApproveError] = useState<string | null>(null);
 
   const load = async () => {
     setError(null);
+    setApproveError(null);
     setLoading(true);
     try {
       setData(await b2bSuppliersAdminAPI.getNetworkOverview());
@@ -112,6 +115,39 @@ export default function AdminSupplierGrowersPage() {
                         </button>
                         {isOpen && (
                           <div className="border-t border-gray-100">
+                            <div className="px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-gray-50/80 border-b border-gray-100">
+                              {!s.mapApproved ? (
+                                <>
+                                  <p className="text-xs text-amber-900 max-w-prose">
+                                    Not on the grower map: pins only show after you approve the store location.
+                                  </p>
+                                  <button
+                                    type="button"
+                                    disabled={approvingId === s.userId}
+                                    onClick={async () => {
+                                      setApprovingId(s.userId);
+                                      setApproveError(null);
+                                      try {
+                                        await b2bSuppliersAdminAPI.approveSupplierMap(s.userId);
+                                        await load();
+                                      } catch (e) {
+                                        setApproveError(e instanceof Error ? e.message : 'Approval failed');
+                                      } finally {
+                                        setApprovingId(null);
+                                      }
+                                    }}
+                                    className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-md bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
+                                  >
+                                    {approvingId === s.userId ? 'Saving…' : 'Approve for public map'}
+                                  </button>
+                                </>
+                              ) : (
+                                <p className="text-xs text-green-800">Shown on the grower &quot;Where to buy&quot; map.</p>
+                              )}
+                            </div>
+                            {approveError && (
+                              <p className="px-4 py-1 text-xs text-red-600 bg-red-50">{approveError}</p>
+                            )}
                             <div className="px-4 py-3 bg-gray-50/50">
                               {s.linkedFarmers.length === 0 ? (
                                 <p className="text-sm text-gray-500">No linked growers yet (no threads or orders).</p>

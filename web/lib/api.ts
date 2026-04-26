@@ -630,6 +630,13 @@ export const b2bSuppliersAdminAPI = {
     };
   },
   /** Snabdevači + povezani proizvođači (niti, porudžbine) */
+  /** Set supplier visible on the public grower map (after address is correct). */
+  approveSupplierMap: async (supplierUserId: string) => {
+    const response = await api.post(
+      `/b2b-suppliers/admin/approve/${encodeURIComponent(supplierUserId)}`,
+    );
+    return response.data;
+  },
   getNetworkOverview: async () => {
     const response = await api.get('/b2b-suppliers/admin/network-overview');
     return response.data as {
