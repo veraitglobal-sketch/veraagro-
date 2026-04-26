@@ -52,11 +52,10 @@ export default function Home() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
               Vertically Integrated
               <br />
-              <span className="font-normal">Agrotech Platform</span>
+              <span className="font-normal">Agricultural Network</span>
           </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-              From seed to market—anywhere in the world. Immutable digital proof. Bio-Ready certification 
-              with complete traceability and automated compliance. Open to producers worldwide.
+              From field to buyer in one system: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -133,57 +132,6 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* How it works — step-by-step */}
-      <section id="how-it-works" className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white scroll-mt-24">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">How Bio Vera works</h2>
-            <p className="text-base text-gray-600 font-light max-w-2xl mx-auto">
-              A single operating model from enrollment to payment—not a bag of disconnected tools.
-            </p>
-          </div>
-          <ol className="space-y-8">
-            {[
-              {
-                n: 1,
-                t: 'Growers join and produce to our standards',
-                d: 'Farms apply, adopt the protocol, and grow under Bio Vera rules—so quality and traceability are built in from the field.',
-              },
-              {
-                n: 2,
-                t: 'We guarantee offtake for the enrolled crop',
-                d: 'You are not left negotiating with ad-hoc buyers at harvest. Contracted offtake and clear terms reduce exposure to spot-market chaos.',
-              },
-              {
-                n: 3,
-                t: 'We organize packaging, logistics, and distribution',
-                d: 'Cold chain, handovers, and routes are run as part of the network. Transport uses official PDF waybills and controlled access at each step.',
-              },
-              {
-                n: 4,
-                t: 'Invoices, traceability, and payment line up',
-                d: 'Invoices are generated in line with deliveries; the digital record follows the product from field through delivery, supporting settlement and audit.',
-              },
-              {
-                n: 5,
-                t: 'Farmers grow; we operate the chain',
-                d: 'Your focus stays on production. We coordinate the commercial, logistical, and financial process end to end.',
-              },
-            ].map((step) => (
-              <li key={step.n} className="flex gap-4 sm:gap-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-sm font-medium">
-                  {step.n}
-                </div>
-                <div>
-                  <h3 className="text-lg font-light text-gray-900 mb-1">{step.t}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed font-light">{step.d}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 

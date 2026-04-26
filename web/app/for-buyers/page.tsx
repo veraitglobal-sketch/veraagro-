@@ -91,8 +91,8 @@ export default function ForBuyersPage() {
             For Buyers
           </h1>
           <p className="text-lg text-gray-600 mb-6 max-w-2xl leading-relaxed">
-            Source fresh, traceable fruit and vegetables from Bio Vera certified producers.
-            Full product catalog and ordering are available in your dashboard after you register and we have your details.
+            Source fresh produce from the Bio Vera network: certified origin and a traceable batch history, not just a listing.
+            The full catalog and ordering are in your dashboard after you register.
           </p>
 
           {/* We are not a simple shop */}

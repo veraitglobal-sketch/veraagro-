@@ -49,7 +49,6 @@ export default function Footer() {
               <li><Link href="/about" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">About</Link></li>
               <li><Link href="/careers" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Careers</Link></li>
               <li><Link href="/press" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
-              <li><Link href="/#how-it-works" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">How it works</Link></li>
               <li><Link href="/#vision" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Vision</Link></li>
               <li><Link href="/#roadmap" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               <li><Link href="/contact" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Contact</Link></li>

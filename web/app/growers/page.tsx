@@ -151,8 +151,8 @@ export default function GrowersPage() {
             For Growers
             </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-              Join the most advanced In-Time logistics network. Secure your placement and eliminate 
-              market volatility by following the Bio Vera Protocol. Open to producers worldwide.
+              Join a grower network with agreed offtake and organized logistics—grow to the Bio Vera Protocol and we align pickup, 
+              documents, and payment. Open to producers worldwide.
             </p>
           <button
             onClick={async () => {
