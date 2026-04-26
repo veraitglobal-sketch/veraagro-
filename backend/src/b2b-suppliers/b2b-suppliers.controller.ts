@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { B2bSuppliersService } from './b2b-suppliers.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -11,6 +11,8 @@ import {
   CreateThreadDto,
   PostMessageDto,
   UpdateOrderStatusDto,
+  CreateCatalogItemDto,
+  UpdateCatalogItemDto,
 } from './dto/b2b-suppliers.dto';
 
 @Controller('b2b-suppliers')
@@ -41,6 +43,38 @@ export class B2bSuppliersController {
     return this.svc.upsertMyProfile(u.id, dto);
   }
 
+  @Get('my/catalog')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  listMyCatalog(@GetUser() u: { id: string }) {
+    return this.svc.listMyCatalog(u.id);
+  }
+
+  @Post('my/catalog')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  createCatalogItem(@GetUser() u: { id: string }, @Body() dto: CreateCatalogItemDto) {
+    return this.svc.createCatalogItem(u.id, dto);
+  }
+
+  @Patch('my/catalog/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  updateCatalogItem(
+    @GetUser() u: { id: string },
+    @Param('id') id: string,
+    @Body() dto: UpdateCatalogItemDto,
+  ) {
+    return this.svc.updateCatalogItem(u.id, id, dto);
+  }
+
+  @Delete('my/catalog/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  deleteCatalogItem(@GetUser() u: { id: string }, @Param('id') id: string) {
+    return this.svc.deleteCatalogItem(u.id, id);
+  }
+
   @Post('admin/create-store')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')
@@ -56,6 +90,13 @@ export class B2bSuppliersController {
     @Param('supplierUserId') supplierUserId: string,
   ) {
     return this.svc.approveMap(u.id, supplierUserId);
+  }
+
+  @Get('admin/network-overview')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminNetworkOverview() {
+    return this.svc.adminGetNetworkOverview();
   }
 
   @Post('threads')

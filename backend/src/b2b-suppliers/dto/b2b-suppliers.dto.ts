@@ -1,4 +1,15 @@
-import { IsString, IsNumber, IsOptional, IsArray, ValidateNested, IsIn, IsEmail, IsBoolean, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+  IsIn,
+  IsEmail,
+  IsBoolean,
+  MinLength,
+  IsInt,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 /**
@@ -159,4 +170,56 @@ export class UpdateOrderStatusDto {
   @IsString()
   @IsOptional()
   noteFromSupplier?: string;
+}
+
+export class CreateCatalogItemDto {
+  @IsString()
+  @MinLength(1)
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  unit?: string;
+
+  @IsNumber()
+  @IsOptional()
+  listPrice?: number;
+
+  @IsString()
+  @IsOptional()
+  sku?: string;
+}
+
+export class UpdateCatalogItemDto {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  unit?: string;
+
+  @IsNumber()
+  @IsOptional()
+  listPrice?: number;
+
+  @IsString()
+  @IsOptional()
+  sku?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  sortOrder?: number;
 }

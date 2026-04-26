@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth';
 
 const nav = [
   { href: '/supplier/dashboard', label: 'Home' },
+  { href: '/supplier/catalog', label: 'Catalog' },
   { href: '/supplier/orders', label: 'Orders' },
   { href: '/supplier/messages', label: 'Messages' },
 ] as const;
@@ -18,7 +19,7 @@ export default function SupplierHeader() {
 
   return (
     <header className="border-b border-gray-200 bg-white sticky top-0 z-20">
-      <div className="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+      <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           <Link href="/supplier/dashboard" className="flex items-center">
             <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto" />

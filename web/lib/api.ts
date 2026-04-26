@@ -497,6 +497,50 @@ export const b2bSupplierPortalAPI = {
     const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
     return response.data;
   },
+  getMyCatalog: async () => {
+    const response = await api.get('/b2b-suppliers/my/catalog');
+    return response.data as Array<{
+      id: string;
+      name: string;
+      description: string | null;
+      unit: string;
+      listPrice: number | null;
+      sku: string | null;
+      isActive: boolean;
+      sortOrder: number;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+  },
+  createCatalogItem: async (data: {
+    name: string;
+    description?: string;
+    unit?: string;
+    listPrice?: number;
+    sku?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/my/catalog', data);
+    return response.data;
+  },
+  updateCatalogItem: async (
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      unit?: string;
+      listPrice?: number | null;
+      sku?: string;
+      isActive?: boolean;
+      sortOrder?: number;
+    },
+  ) => {
+    const response = await api.patch(`/b2b-suppliers/my/catalog/${encodeURIComponent(id)}`, data);
+    return response.data;
+  },
+  deleteCatalogItem: async (id: string) => {
+    const response = await api.delete(`/b2b-suppliers/my/catalog/${encodeURIComponent(id)}`);
+    return response.data;
+  },
 };
 
 export const b2bSuppliersAdminAPI = {
@@ -528,6 +572,48 @@ export const b2bSuppliersAdminAPI = {
       profile: Record<string, unknown>;
       password?: string;
       passwordGenerated: boolean;
+    };
+  },
+  /** Snabdevači + povezani proizvođači (niti, porudžbine) */
+  getNetworkOverview: async () => {
+    const response = await api.get('/b2b-suppliers/admin/network-overview');
+    return response.data as {
+      suppliers: Array<{
+        userId: string;
+        businessName: string;
+        address: string;
+        city: string;
+        country: string;
+        mapApproved: boolean;
+        user: {
+          id: string;
+          partnerCode: string;
+          firstName: string;
+          lastName: string;
+          status: string;
+          email?: string | null;
+          phone?: string | null;
+        };
+        stats: { threadCount: number; orderCount: number; linkedFarmerCount: number };
+        linkedFarmers: Array<{
+          id: string;
+          firstName: string;
+          lastName: string;
+          partnerCode: string;
+          status: string;
+          hasMessageThread: boolean;
+          hasOrder: boolean;
+        }>;
+      }>;
+      recentOrders: Array<{
+        id: string;
+        status: string;
+        createdAt: string;
+        items: unknown;
+        noteFromFarmer?: string | null;
+        farmer: { id: string; firstName: string; lastName: string; partnerCode: string };
+        supplier: { id: string; partnerCode: string; businessName: string | null; city: string | null };
+      }>;
     };
   },
 };

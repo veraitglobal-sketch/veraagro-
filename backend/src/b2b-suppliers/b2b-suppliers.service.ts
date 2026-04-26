@@ -9,7 +9,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, UserStatus, SupplierDirectOrderStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { AdminCreateSupplierStoreDto, CreateB2bSupplierProfileDto } from './dto/b2b-suppliers.dto';
+import {
+  AdminCreateSupplierStoreDto,
+  CreateB2bSupplierProfileDto,
+  CreateCatalogItemDto,
+  UpdateCatalogItemDto,
+} from './dto/b2b-suppliers.dto';
 import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geocoding';
 
 @Injectable()
@@ -80,7 +85,11 @@ export class B2bSuppliersService {
       include: { user: { select: { id: true, firstName: true, lastName: true, partnerCode: true, email: true, phone: true, status: true, roles: true } } },
     });
     if (!p || !p.mapApproved) throw new NotFoundException('Supplier not found');
-    const loc = p.location as { lat?: number; lng?: number };
+    const catalog = await this.prisma.supplier_catalog_items.findMany({
+      where: { supplierUserId: userId, isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+      select: { id: true, name: true, description: true, unit: true, listPrice: true, sku: true },
+    });
     return {
       id: p.userId,
       businessName: p.businessName,
@@ -93,6 +102,7 @@ export class B2bSuppliersService {
       partnerCode: p.user?.partnerCode,
       contactEmail: p.user?.email,
       contactPhone: p.user?.phone,
+      catalog,
     };
   }
 
@@ -408,5 +418,222 @@ export class B2bSuppliersService {
       where: { id: orderId },
       data: { status, noteFromSupplier, updatedAt: new Date() },
     });
+  }
+
+  async listMyCatalog(supplierUserId: string) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    return this.prisma.supplier_catalog_items.findMany({
+      where: { supplierUserId },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+    });
+  }
+
+  async createCatalogItem(supplierUserId: string, dto: CreateCatalogItemDto) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const count = await this.prisma.supplier_catalog_items.count({ where: { supplierUserId } });
+    return this.prisma.supplier_catalog_items.create({
+      data: {
+        id: crypto.randomUUID(),
+        supplierUserId,
+        name: dto.name.trim(),
+        description: dto.description?.trim() || null,
+        unit: (dto.unit || 'unit').trim() || 'unit',
+        listPrice:
+          dto.listPrice != null && !Number.isNaN(Number(dto.listPrice)) ? Number(dto.listPrice) : null,
+        sku: dto.sku?.trim() || null,
+        sortOrder: count,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  async updateCatalogItem(supplierUserId: string, id: string, dto: UpdateCatalogItemDto) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const row = await this.prisma.supplier_catalog_items.findFirst({ where: { id, supplierUserId } });
+    if (!row) throw new NotFoundException('Catalog item not found');
+    const data: Record<string, unknown> = { updatedAt: new Date() };
+    if (dto.name !== undefined) data.name = dto.name.trim();
+    if (dto.description !== undefined) data.description = dto.description?.trim() || null;
+    if (dto.unit !== undefined) data.unit = dto.unit.trim() || 'unit';
+    if (dto.listPrice !== undefined) {
+      data.listPrice =
+        dto.listPrice != null && !Number.isNaN(Number(dto.listPrice)) ? Number(dto.listPrice) : null;
+    }
+    if (dto.sku !== undefined) data.sku = dto.sku?.trim() || null;
+    if (dto.isActive !== undefined) data.isActive = dto.isActive;
+    if (dto.sortOrder !== undefined) data.sortOrder = dto.sortOrder;
+    return this.prisma.supplier_catalog_items.update({ where: { id }, data: data as any });
+  }
+
+  async deleteCatalogItem(supplierUserId: string, id: string) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const row = await this.prisma.supplier_catalog_items.findFirst({ where: { id, supplierUserId } });
+    if (!row) throw new NotFoundException('Catalog item not found');
+    await this.prisma.supplier_catalog_items.delete({ where: { id } });
+    return { ok: true };
+  }
+
+  /**
+   * Admin: snabdevači ↔ proizvođači (niti, porudžbine) na jednom mestu
+   */
+  async adminGetNetworkOverview() {
+    const [
+      profiles,
+      threadCountRows,
+      orderCountRows,
+      allThreads,
+      orderFarmerLinks,
+      recentOrders,
+    ] = await Promise.all([
+      this.prisma.material_supplier_profiles.findMany({
+        include: {
+          user: {
+            select: {
+              id: true,
+              partnerCode: true,
+              firstName: true,
+              lastName: true,
+              status: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
+        orderBy: { businessName: 'asc' },
+      }),
+      this.prisma.supplier_threads.groupBy({
+        by: ['supplierUserId'],
+        _count: { _all: true },
+      }),
+      this.prisma.supplier_direct_orders.groupBy({
+        by: ['supplierUserId'],
+        _count: { _all: true },
+      }),
+      this.prisma.supplier_threads.findMany({
+        include: {
+          farmer: { select: { id: true, firstName: true, lastName: true, partnerCode: true } },
+        },
+      }),
+      this.prisma.supplier_direct_orders.findMany({
+        select: { supplierUserId: true, farmerId: true },
+      }),
+      this.prisma.supplier_direct_orders.findMany({
+        take: 50,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          farmer: { select: { id: true, firstName: true, lastName: true, partnerCode: true } },
+          supplier: {
+            select: {
+              id: true,
+              partnerCode: true,
+              firstName: true,
+              lastName: true,
+              material_supplier_profile: {
+                select: { businessName: true, city: true, country: true },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    const threadCountBy = new Map(threadCountRows.map((r) => [r.supplierUserId, r._count._all]));
+    const orderCountBy = new Map(orderCountRows.map((r) => [r.supplierUserId, r._count._all]));
+
+    const supplierToFarmerIds = new Map<string, Set<string>>();
+    const hasThread = new Map<string, Set<string>>();
+    for (const t of allThreads) {
+      if (!supplierToFarmerIds.has(t.supplierUserId)) {
+        supplierToFarmerIds.set(t.supplierUserId, new Set());
+        hasThread.set(t.supplierUserId, new Set());
+      }
+      supplierToFarmerIds.get(t.supplierUserId)!.add(t.farmerId);
+      hasThread.get(t.supplierUserId)!.add(t.farmerId);
+    }
+    const hasOrder = new Map<string, Set<string>>();
+    for (const o of orderFarmerLinks) {
+      if (!supplierToFarmerIds.has(o.supplierUserId)) {
+        supplierToFarmerIds.set(o.supplierUserId, new Set());
+      }
+      supplierToFarmerIds.get(o.supplierUserId)!.add(o.farmerId);
+      if (!hasOrder.has(o.supplierUserId)) hasOrder.set(o.supplierUserId, new Set());
+      hasOrder.get(o.supplierUserId)!.add(o.farmerId);
+    }
+
+    const allFarmerIds = [...new Set([...supplierToFarmerIds.values()].flatMap((s) => [...s]))];
+    const farmerRows =
+      allFarmerIds.length === 0
+        ? []
+        : await this.prisma.users.findMany({
+            where: { id: { in: allFarmerIds } },
+            select: { id: true, firstName: true, lastName: true, partnerCode: true, status: true },
+          });
+    const farmerById = new Map(farmerRows.map((f) => [f.id, f]));
+
+    const suppliers = profiles.map((p) => {
+      const sid = p.userId;
+      const fids = supplierToFarmerIds.get(sid) ?? new Set();
+      const threadSet = hasThread.get(sid) ?? new Set();
+      const orderSet = hasOrder.get(sid) ?? new Set();
+      const linkedFarmers = [...fids]
+        .map((fid) => {
+          const u = farmerById.get(fid);
+          if (!u) return null;
+          return {
+            id: u.id,
+            firstName: u.firstName,
+            lastName: u.lastName,
+            partnerCode: u.partnerCode,
+            status: u.status,
+            hasMessageThread: threadSet.has(fid),
+            hasOrder: orderSet.has(fid),
+          };
+        })
+        .filter((x): x is NonNullable<typeof x> => x != null)
+        .sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
+
+      return {
+        userId: sid,
+        businessName: p.businessName,
+        address: p.address,
+        city: p.city,
+        country: p.country,
+        mapApproved: p.mapApproved,
+        user: p.user,
+        stats: {
+          threadCount: threadCountBy.get(sid) ?? 0,
+          orderCount: orderCountBy.get(sid) ?? 0,
+          /** Jedinstveni proizvođači povezani (poruke i/ili porudžbina) */
+          linkedFarmerCount: fids.size,
+        },
+        linkedFarmers,
+      };
+    });
+
+    return {
+      suppliers,
+      recentOrders: recentOrders.map((o) => ({
+        id: o.id,
+        status: o.status,
+        createdAt: o.createdAt,
+        items: o.items,
+        noteFromFarmer: o.noteFromFarmer,
+        farmer: o.farmer,
+        supplier: {
+          id: o.supplier.id,
+          partnerCode: o.supplier.partnerCode,
+          businessName: o.supplier.material_supplier_profile?.businessName ?? null,
+          city: o.supplier.material_supplier_profile?.city ?? null,
+        },
+      })),
+    };
   }
 }

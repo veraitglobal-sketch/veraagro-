@@ -22,6 +22,7 @@ const labels = {
   dashboard: 'Dashboard',
   users: 'Users',
   supplierStores: 'Supplier stores (map)',
+  supplierFarmers: 'Suppliers & growers (B2B)',
   partnerApplications: 'Partner applications',
   products: 'Products',
   orders: 'Orders',
@@ -95,6 +96,11 @@ export function getAdminNavItems() {
       href: '/admin/supplier-stores', 
       label: labels.supplierStores, 
       icon: <Store className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/supplier-growers', 
+      label: labels.supplierFarmers, 
+      icon: <MessageCircle className="w-5 h-5" /> 
     },
     { 
       href: '/admin/products', 

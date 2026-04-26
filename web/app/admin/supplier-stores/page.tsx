@@ -104,7 +104,11 @@ export default function AdminSupplierStoresPage() {
             <Link href="/admin/users" className="text-[#2D5A27] underline">
               Users
             </Link>{' '}
-            for generic accounts.
+            for generic accounts.{' '}
+            <Link href="/admin/supplier-growers" className="text-[#2D5A27] font-medium underline">
+              Suppliers &amp; growers (B2B) overview
+            </Link>
+            .
           </p>
 
           {message && (

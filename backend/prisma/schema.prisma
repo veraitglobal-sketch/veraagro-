@@ -1072,6 +1072,7 @@ model users {
   supplier_thread_messages                    supplier_thread_messages[] @relation("SupplierMessageSender")
   supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
   supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
+  supplier_catalog_items                      supplier_catalog_items[]   @relation("SupplierCatalogItems")
   /// When a partner / distributor application is converted to a store user
   partner_application_links                 partner_applications[]     @relation("PartnerApplicationLinkedUser")
   /// Admin-assigned commercial agent (growers, logistics partners, material suppliers)
@@ -1151,6 +1152,25 @@ model material_supplier_profiles {
 
   @@index([mapApproved, country])
   @@index([city])
+}
+
+/// Partner store sell list (seeds, inputs, packaging) — created by the supplier; reference for grower direct orders
+model supplier_catalog_items {
+  id             String   @id @default(uuid())
+  supplierUserId String
+  name           String
+  description    String?  @db.Text
+  unit           String   @default("unit")
+  listPrice      Float?
+  sku            String?
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  supplier       users    @relation("SupplierCatalogItems", fields: [supplierUserId], references: [id], onDelete: Cascade)
+
+  @@index([supplierUserId, isActive])
+  @@index([supplierUserId, sortOrder])
 }
 
 model supplier_threads {

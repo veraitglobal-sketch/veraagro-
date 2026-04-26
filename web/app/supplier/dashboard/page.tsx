@@ -10,6 +10,7 @@ import SupplierStorefrontSection from '../SupplierStorefrontSection';
 export default function SupplierDashboardPage() {
   const [ordersCount, setOrdersCount] = useState<number | null>(null);
   const [threadsCount, setThreadsCount] = useState<number | null>(null);
+  const [catalogCount, setCatalogCount] = useState<number | null>(null);
   const [profile, setProfile] = useState<Record<string, unknown> | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
@@ -39,7 +40,7 @@ export default function SupplierDashboardPage() {
     })();
   }, []);
 
-  const name = (profile?.businessName as string) || 'Vaša radnja';
+  const name = (profile?.businessName as string) || 'Your store';
   const city = typeof profile?.city === 'string' ? profile.city : undefined;
   const country = typeof profile?.country === 'string' ? profile.country : undefined;
   const mapApproved = typeof profile?.mapApproved === 'boolean' ? profile.mapApproved : undefined;
@@ -60,11 +61,8 @@ export default function SupplierDashboardPage() {
         mapApproved={mapApproved}
         ordersCount={ordersCount}
         threadsCount={threadsCount}
+        catalogCount={catalogCount}
       />
-
-      <p className="text-center text-xs text-gray-500 mt-2 max-w-md mx-auto">
-        Za promenu adrese, naziva radnje ili pitanja, kontaktirajte Bio Vera podršku.
-      </p>
     </AuthGuard>
   );
 }
