@@ -1,8 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { useRouter } from 'expo-router';
-import { ArrowLeft, Save } from 'lucide-react-native';
+import { Save } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useQualityEntryData } from './useQualityEntryData';
 import { BatchSelector } from './BatchSelector';
 import { QualityForm } from './QualityForm';
@@ -12,48 +13,26 @@ import { QualityForm } from './QualityForm';
  * Uses useQualityEntryData once and passes data to BatchSelector and QualityForm.
  */
 export function QualityEntryScreen() {
-  const router = useRouter();
   const data = useQualityEntryData();
+  const p = useBioVeraScreenPadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      {/* Header */}
-      <View
-        className="px-4 pt-12 pb-4 border-b-[0.5px] flex-row items-center"
-        style={{
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ marginRight: theme.spacing.md }}
-        >
-          <ArrowLeft size={24} color={colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text
-          className="text-lg flex-1"
-          style={{
-            color: colors.text.primary,
-            fontWeight: '300',
-            letterSpacing: 0.5,
-          }}
-        >
-          Unos Kvaliteta
-        </Text>
-        {data.qualityEntry && (
-          <TouchableOpacity
-            onPress={data.handleSave}
-            disabled={data.saving}
-          >
-            {data.saving ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <Save size={24} color={colors.primary} strokeWidth={1.5} />
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
+      <BioVeraSubpageHeader
+        title="Unos Kvaliteta"
+        left="back"
+        right={
+          data.qualityEntry ? (
+            <TouchableOpacity onPress={data.handleSave} disabled={data.saving} hitSlop={8}>
+              {data.saving ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <Save size={24} color={colors.primary} strokeWidth={1.5} />
+              )}
+            </TouchableOpacity>
+          ) : null
+        }
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -65,7 +44,14 @@ export function QualityEntryScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+          }}
+        >
           <BatchSelector
             batches={data.batches}
             selectedBatchId={data.selectedBatchId}

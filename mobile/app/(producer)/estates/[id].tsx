@@ -2,10 +2,12 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Calendar, Package, Edit, Trash2 } from 'lucide-react-native';
+import { MapPin, Calendar, Package, Edit, Trash2 } from 'lucide-react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../lib/api';
 
 /**
@@ -15,6 +17,7 @@ import { estatesAPI, Estate } from '../../../lib/api';
 export default function EstateDetailsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [estate, setEstate] = useState<Estate | null>(null);
   const [loading, setLoading] = useState(true);
@@ -93,37 +96,18 @@ export default function EstateDetailsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      {/* Header */}
-      <View 
-        className="px-4 pt-12 pb-4 border-b-[0.5px] flex-row items-center"
-        style={{ 
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ marginRight: theme.spacing.md }}
-        >
-          <ArrowLeft size={24} color={colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text 
-          className="text-lg flex-1"
-          style={{ 
-            color: colors.text.primary,
-            fontWeight: '300',
-            letterSpacing: 0.5,
-          }}
-        >
-          {estate.name}
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.push(`/(producer)/estates/${id}/edit`)}
-          style={{ marginRight: theme.spacing.sm }}
-        >
-          <Edit size={20} color={colors.text.secondary} strokeWidth={1.5} />
-        </TouchableOpacity>
-      </View>
+      <BioVeraSubpageHeader
+        title={estate.name}
+        left="back"
+        right={
+          <TouchableOpacity
+            onPress={() => router.push(`/(producer)/estates/${id}/edit`)}
+            hitSlop={8}
+          >
+            <Edit size={20} color={colors.text.secondary} strokeWidth={1.5} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -135,7 +119,14 @@ export default function EstateDetailsScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {/* Status */}
           <View style={{
             backgroundColor: colors.background,

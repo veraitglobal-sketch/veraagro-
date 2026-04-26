@@ -2,8 +2,17 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
-import { b2bSupplierPortalAPI } from '@/lib/api';
-import { Store, User, MapPin } from 'lucide-react';
+import { b2bSupplierPortalAPI, usersAPI } from '@/lib/api';
+import { KeyRound, MapPin, Store, User } from 'lucide-react';
+
+function getApiErrorMessage(e: unknown): string {
+  const r = e as { response?: { data?: { message?: unknown } } };
+  const m = r?.response?.data?.message;
+  if (Array.isArray(m)) return m.join(' ');
+  if (typeof m === 'string') return m;
+  if (e instanceof Error) return e.message;
+  return 'Request failed';
+}
 
 export default function SupplierSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -11,6 +20,12 @@ export default function SupplierSettingsPage() {
   const [err, setErr] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [mapApproved, setMapApproved] = useState(true);
+  const [pwdCurrent, setPwdCurrent] = useState('');
+  const [pwdNew, setPwdNew] = useState('');
+  const [pwdNew2, setPwdNew2] = useState('');
+  const [pwdSaving, setPwdSaving] = useState(false);
+  const [pwdErr, setPwdErr] = useState<string | null>(null);
+  const [pwdOk, setPwdOk] = useState<string | null>(null);
   const [form, setForm] = useState({
     businessName: '',
     description: '',
@@ -118,6 +133,32 @@ export default function SupplierSettingsPage() {
     }
   };
 
+  const onPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdErr(null);
+    setPwdOk(null);
+    if (pwdNew.length < 8) {
+      setPwdErr('New password must be at least 8 characters.');
+      return;
+    }
+    if (pwdNew !== pwdNew2) {
+      setPwdErr('New password and confirmation do not match.');
+      return;
+    }
+    setPwdSaving(true);
+    try {
+      await usersAPI.changeMyPassword({ currentPassword: pwdCurrent, newPassword: pwdNew });
+      setPwdOk('Password updated. Use your new password the next time you sign in on web or in the app.');
+      setPwdCurrent('');
+      setPwdNew('');
+      setPwdNew2('');
+    } catch (err) {
+      setPwdErr(getApiErrorMessage(err));
+    } finally {
+      setPwdSaving(false);
+    }
+  };
+
   return (
     <AuthGuard
       requiredRoles={['MATERIAL_SUPPLIER']}
@@ -140,6 +181,14 @@ export default function SupplierSettingsPage() {
               If you changed the login email, use the new address the next time you sign in.
             </span>
           </div>
+        )}
+        {pwdOk && (
+          <div className="mb-4 rounded-md border border-green-200 bg-green-50/80 px-3 py-2 text-sm text-green-900">
+            {pwdOk}
+          </div>
+        )}
+        {pwdErr && (
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{pwdErr}</div>
         )}
 
         {!mapApproved && !loading && (
@@ -329,6 +378,64 @@ export default function SupplierSettingsPage() {
                 className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-light rounded-md hover:bg-[#23471f] disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Save changes'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {!loading && (
+          <form
+            onSubmit={(ev) => void onPasswordSubmit(ev)}
+            className="mt-6 rounded-lg border border-gray-200 bg-white p-4 sm:p-5 shadow-sm"
+          >
+            <h2 className="text-sm font-medium text-gray-800 mb-1 flex items-center gap-2">
+              <KeyRound className="h-4 w-4 text-[#2D5A27]" />
+              Login password
+            </h2>
+            <p className="text-xs text-gray-500 font-light mb-4">
+              If the team gave you a one-time password, set your own here (min. 8 characters). You will keep the same
+              email and partner code.
+            </p>
+            <div className="grid sm:grid-cols-1 gap-3 max-w-md">
+              <label className="block text-xs text-gray-600">
+                Current password
+                <input
+                  type="password"
+                  autoComplete="current-password"
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={pwdCurrent}
+                  onChange={(e) => setPwdCurrent(e.target.value)}
+                />
+              </label>
+              <label className="block text-xs text-gray-600">
+                New password
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={pwdNew}
+                  onChange={(e) => setPwdNew(e.target.value)}
+                  minLength={8}
+                />
+              </label>
+              <label className="block text-xs text-gray-600">
+                Confirm new password
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={pwdNew2}
+                  onChange={(e) => setPwdNew2(e.target.value)}
+                />
+              </label>
+            </div>
+            <div className="mt-4">
+              <button
+                type="submit"
+                disabled={pwdSaving}
+                className="px-4 py-2 border border-[#2D5A27] text-[#2D5A27] text-sm font-light rounded-md hover:bg-[#2D5A27]/5 disabled:opacity-50"
+              >
+                {pwdSaving ? 'Updating…' : 'Update password'}
               </button>
             </div>
           </form>

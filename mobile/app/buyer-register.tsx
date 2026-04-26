@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { theme } from '../lib/theme';
+import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import api from '../lib/api';
 
 /**
@@ -13,6 +14,7 @@ import api from '../lib/api';
  */
 export default function BuyerRegisterScreen() {
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [loading, setLoading] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
   
@@ -140,9 +142,10 @@ export default function BuyerRegisterScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.1)',
@@ -165,7 +168,15 @@ export default function BuyerRegisterScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: theme.spacing.lg }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingTop: theme.spacing.lg,
+          paddingLeft: p.screenPaddingLeft,
+          paddingRight: p.screenPaddingRight,
+          paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+        }}
+      >
         {/* Info */}
         <View style={{
           backgroundColor: theme.colors.surface,

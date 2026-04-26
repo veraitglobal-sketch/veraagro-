@@ -2,11 +2,13 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityInd
 import { useTranslation } from 'react-i18next';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, MapPin } from 'lucide-react-native';
+import { Save, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import MapView, { Polygon, Marker } from 'react-native-maps';
 import { colors } from '../../../../lib/colors';
 import { theme } from '../../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../../lib/screen-insets';
+import { BioVeraSubpageHeader } from '../../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../../lib/api';
 
 /**
@@ -16,6 +18,7 @@ import { estatesAPI, Estate } from '../../../../lib/api';
 export default function EditEstateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [estate, setEstate] = useState<Estate | null>(null);
   const [name, setName] = useState('');
@@ -110,44 +113,29 @@ export default function EditEstateScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      {/* Header */}
-      <View 
-        className="px-4 pt-12 pb-4 border-b-[0.5px] flex-row items-center"
-        style={{ 
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ marginRight: theme.spacing.md }}
-        >
-          <ArrowLeft size={24} color={colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text 
-          className="text-lg flex-1"
-          style={{ 
-            color: colors.text.primary,
-            fontWeight: '300',
-            letterSpacing: 0.5,
-          }}
-        >
-          Izmeni Njivu
-        </Text>
-        <TouchableOpacity
-          onPress={handleSave}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color={colors.primary} />
-          ) : (
-            <Save size={24} color={colors.primary} strokeWidth={1.5} />
-          )}
-        </TouchableOpacity>
-      </View>
+      <BioVeraSubpageHeader
+        title="Izmeni Njivu"
+        left="back"
+        right={
+          <TouchableOpacity onPress={handleSave} disabled={loading} hitSlop={8}>
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <Save size={24} color={colors.primary} strokeWidth={1.5} />
+            )}
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {/* Name Input */}
           <View style={{ marginBottom: theme.spacing.md }}>
             <Text style={{

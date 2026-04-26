@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMissionDto, AcceptMissionDto } from './dto/mission.dto';
 import { FreshnessService } from '../freshness/freshness.service';
@@ -19,18 +26,22 @@ export class MissionsService {
     private notificationsGateway: NotificationsGateway,
   ) {}
 
+  /** DB uses FARMER (default) and/or GROWER; both may create transport missions. */
+  private isGrowerAccount(roles: string[]): boolean {
+    return roles.some((r) => r === 'GROWER' || r === 'FARMER');
+  }
+
   /**
    * Create mission when Grower clicks "Ready for Pickup"
    * Automatically finds nearest Logistics Partner
    */
   async createMission(growerId: string, dto: CreateMissionDto) {
-    // Verify grower exists and has GROWER role
     const grower = await this.prisma.users.findUnique({
       where: { id: growerId },
     });
 
-    if (!grower || !grower.roles.includes('GROWER')) {
-      throw new BadRequestException('Only growers can create missions');
+    if (!grower || !this.isGrowerAccount(grower.roles as string[])) {
+      throw new BadRequestException('Only growers (farmers) can create transport missions');
     }
 
     // Get batch if provided
@@ -50,7 +61,15 @@ export class MissionsService {
       try {
         await this.materialControlService.validateBatchForShipment(dto.batchId, growerId);
       } catch (error: any) {
-        throw new BadRequestException(error.message || 'Batch validation failed. Cannot create shipment.');
+        if (error instanceof ForbiddenException || error instanceof NotFoundException) {
+          throw error;
+        }
+        if (error instanceof BadRequestException) {
+          throw error;
+        }
+        throw new BadRequestException(
+          error?.message || 'Batch validation failed. Cannot create shipment.',
+        );
       }
 
       // Deduct materials from balance

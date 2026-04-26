@@ -116,22 +116,20 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
                 latitude: location.latitude,
                 longitude: location.longitude,
               }}
+              tracksViewChanges={false}
               onPress={() => onMarkerPress?.(location)}
             >
               <View style={styles.markerContainer}>
                 <View
                   style={[
-                    styles.marker,
-                    isSupplier && {
-                      borderColor: '#C2410C',
-                      backgroundColor: '#FFF7ED',
-                    },
+                    styles.markerRing,
+                    isSupplier ? styles.markerRingSupplier : styles.markerRingRetail,
                   ]}
                 >
                   {isSupplier ? (
-                    <Sprout size={22} color="#C2410C" strokeWidth={1.5} />
+                    <Sprout size={20} color="#B45309" strokeWidth={2} />
                   ) : (
-                    <ShoppingBag size={22} color={theme.colors.primary} strokeWidth={1.5} />
+                    <ShoppingBag size={20} color={theme.colors.primary} strokeWidth={2} />
                   )}
                 </View>
               </View>
@@ -180,24 +178,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  marker: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: theme.colors.background,
+  /** Classic Bio Vera look: white disc + crisp brand border (retail = green, supplier = amber) */
+  markerRing: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2.5,
-    borderColor: theme.colors.primary,
-    ...theme.shadows.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.14,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  markerPulse: {
-    position: 'absolute',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: `${theme.colors.primary}20`,
-    borderWidth: 1,
-    borderColor: `${theme.colors.primary}30`,
+  markerRingRetail: {
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+  },
+  markerRingSupplier: {
+    borderWidth: 2,
+    borderColor: '#EA580C',
+    backgroundColor: '#FFFFFF',
   },
 });

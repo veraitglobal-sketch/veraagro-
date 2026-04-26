@@ -1,6 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, UserRole, UserStatus } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import * as QRCode from 'qrcode';
 
@@ -361,6 +367,30 @@ export class UsersService {
         commercial_agent_profile: true,
       },
     });
+  }
+
+  /** Logged-in user changes password (any role with JWT). */
+  async changeOwnPassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+      select: { id: true, passwordHash: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const matches = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!matches) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+    if (currentPassword === newPassword) {
+      throw new BadRequestException('New password must be different from the current one');
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.prisma.users.update({
+      where: { id: userId },
+      data: { passwordHash, updatedAt: new Date() },
+    });
+    return { ok: true };
   }
 
   async delete(id: string) {

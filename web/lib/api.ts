@@ -340,6 +340,10 @@ export const usersAPI = {
     const response = await api.get('/users/me');
     return response.data;
   },
+  changeMyPassword: async (data: { currentPassword: string; newPassword: string }) => {
+    const response = await api.patch('/users/me/password', data);
+    return response.data as { ok: boolean };
+  },
   getAll: async (filters?: { role?: string; status?: string; search?: string }) => {
     const response = await api.get('/users/admin/all', { params: filters });
     return response.data;

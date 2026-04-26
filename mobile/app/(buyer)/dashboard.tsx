@@ -5,6 +5,7 @@ import { QrCode, Package, X, Truck } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { inventoryAPI, Product, batchesAPI, BatchAvailability } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import ProductPassport from '../../components/ProductPassport';
@@ -37,6 +38,7 @@ interface FieldStory {
  */
 export default function BuyerDashboard() {
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [products, setProducts] = useState<EnhancedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -207,9 +209,10 @@ export default function BuyerDashboard() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.08)',
@@ -233,7 +236,7 @@ export default function BuyerDashboard() {
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: theme.spacing.md, gap: theme.spacing.md }}
+          contentContainerStyle={{ paddingLeft: p.screenPaddingLeft, paddingRight: p.screenPaddingRight, gap: theme.spacing.md }}
         >
           {fieldStories.map((story) => (
             <TouchableOpacity
@@ -272,7 +275,8 @@ export default function BuyerDashboard() {
       {/* Horizontal Filters */}
       <View style={{
         flexDirection: 'row',
-        paddingHorizontal: theme.spacing.md,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingVertical: theme.spacing.sm,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.05)',
@@ -323,7 +327,9 @@ export default function BuyerDashboard() {
           numColumns={2}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ 
-            padding: theme.spacing.md,
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
             paddingBottom: 120, // Space for QR button and order pulse
           }}
           columnWrapperStyle={{ gap: theme.spacing.md }}
@@ -437,8 +443,9 @@ export default function BuyerDashboard() {
             >
               {/* Top Bar */}
               <View style={{
-                paddingTop: 60,
-                paddingHorizontal: theme.spacing.lg,
+                paddingTop: p.headerTop,
+                paddingLeft: p.screenPaddingLeft,
+                paddingRight: p.screenPaddingRight,
                 paddingBottom: theme.spacing.md,
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 flexDirection: 'row',

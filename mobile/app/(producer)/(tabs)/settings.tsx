@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Bell, Moon, Globe, Shield, Info } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SETTINGS_KEYS = {
@@ -21,6 +22,7 @@ const SETTINGS_KEYS = {
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
   const [gpsAlways, setGpsAlways] = useState(false);
@@ -71,9 +73,10 @@ export default function SettingsScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.1)',
@@ -97,7 +100,14 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ padding: theme.spacing.lg }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.lg,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {/* Notifications */}
           <View style={{
             backgroundColor: theme.colors.surface,

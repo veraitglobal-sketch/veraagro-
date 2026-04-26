@@ -1,7 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Package, Calendar, Euro } from 'lucide-react-native';
+import { Package, Calendar, Euro } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useOrdersListData } from './useOrdersListData';
 import type { OrderFilterStatus } from './useOrdersListData';
 
@@ -21,34 +23,22 @@ const FILTER_OPTIONS: { id: OrderFilterStatus; label: string }[] = [
 export function OrdersListScreen() {
   const router = useRouter();
   const data = useOrdersListData();
+  const p = useBioVeraScreenPadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={{
-        paddingTop: 60,
-        paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
-        backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={{ marginRight: theme.spacing.md }}>
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: '300', color: theme.colors.text.primary, letterSpacing: 0.5, flex: 1 }}>
-          Orders
-        </Text>
-      </View>
+      <BioVeraSubpageHeader title="Orders" left="back" />
 
-      <View style={{
-        paddingHorizontal: theme.spacing.lg,
+      <View
+        style={{
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingVertical: theme.spacing.sm,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-      }}>
+      }}
+      >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
             {FILTER_OPTIONS.map((f) => (
@@ -88,7 +78,14 @@ export function OrdersListScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {data.loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{ color: theme.colors.text.secondary, fontSize: 11, fontWeight: '300', letterSpacing: 0.3 }}>

@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, Circle } from 'lucide-react-native';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import {
   getOrderTimelineSteps,
   isTimelineStepCompleted,
@@ -63,6 +64,7 @@ function PaymentDetailsTextBlock() {
  */
 export default function OrderTrackingScreen() {
   const { t } = useTranslation();
+  const p = useBioVeraScreenPadding();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
@@ -142,9 +144,10 @@ export default function OrderTrackingScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.1)',
@@ -198,7 +201,14 @@ export default function OrderTrackingScreen() {
       </View>
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ padding: theme.spacing.lg }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.lg,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {/* Order Info */}
           <View style={{
             marginBottom: theme.spacing.xl,

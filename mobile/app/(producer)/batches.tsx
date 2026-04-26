@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Package, QrCode, Calendar } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
 
 /**
@@ -11,6 +12,7 @@ import { batchesAPI } from '../../lib/api';
  * Matches buyer dashboard styling
  */
 export default function BatchesScreen() {
+  const p = useBioVeraScreenPadding();
   const router = useRouter();
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,9 +70,10 @@ export default function BatchesScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.08)',
@@ -97,7 +100,8 @@ export default function BatchesScreen() {
 
       {/* Filters */}
       <View style={{
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingVertical: theme.spacing.sm,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
@@ -150,7 +154,14 @@ export default function BatchesScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{

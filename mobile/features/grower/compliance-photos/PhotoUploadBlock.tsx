@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Camera } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
+import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 
 export interface PhotoUploadBlockProps {
   onUpload: () => void;
@@ -20,41 +21,34 @@ export function PhotoUploadBlock({
   title = 'Compliance Fotografije',
 }: PhotoUploadBlockProps) {
   return (
-    <View
-      className="px-4 pt-12 pb-4 border-b-[0.5px] flex-row items-center justify-between"
-      style={{
-        backgroundColor: colors.background,
-        borderBottomColor: colors.border,
-      }}
-    >
-      <Text
-        className="text-lg flex-1"
-        style={{
-          color: colors.text.primary,
-          fontWeight: '300',
-          letterSpacing: 0.5,
-        }}
-      >
-        {title}
-      </Text>
-      <TouchableOpacity
-        onPress={onUpload}
-        disabled={uploading || !hasEstates}
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          backgroundColor: colors.primary,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {uploading ? (
-          <ActivityIndicator size="small" color={colors.background} />
-        ) : (
-          <Camera size={20} color={colors.background} strokeWidth={1.5} />
-        )}
-      </TouchableOpacity>
-    </View>
+    <BioVeraSubpageHeader
+      left="none"
+      title={title}
+      right={
+        <TouchableOpacity
+          onPress={onUpload}
+          disabled={uploading || !hasEstates}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            backgroundColor: colors.primary,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: colors.primary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          {uploading ? (
+            <ActivityIndicator size="small" color={colors.background} />
+          ) : (
+            <Camera size={20} color={colors.background} strokeWidth={1.5} />
+          )}
+        </TouchableOpacity>
+      }
+    />
   );
 }

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useWalletData } from './useWalletData';
 import { WalletBalanceCard } from './WalletBalanceCard';
 import { TransactionItem } from './TransactionItem';
@@ -20,6 +21,7 @@ import { TransactionItem } from './TransactionItem';
 export default function WalletScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const { wallet, transactions, loading } = useWalletData();
 
   if (loading) {
@@ -41,9 +43,10 @@ export default function WalletScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View
         style={{
-          paddingTop: 60,
+          paddingTop: p.headerTop,
           paddingBottom: theme.spacing.md,
-          paddingHorizontal: theme.spacing.lg,
+          paddingLeft: p.screenPaddingLeft,
+          paddingRight: p.screenPaddingRight,
           backgroundColor: theme.colors.background,
           borderBottomWidth: 0.5,
           borderBottomColor: 'rgba(0, 0, 0, 0.08)',
@@ -75,7 +78,14 @@ export default function WalletScreen() {
       </View>
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ padding: theme.spacing.lg }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.lg,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           <WalletBalanceCard
             availableBalance={wallet?.availableBalance ?? 0}
             pendingBalance={wallet?.pendingBalance ?? 0}

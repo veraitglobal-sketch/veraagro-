@@ -22,7 +22,7 @@ export class MissionsController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles('GROWER')
+  @Roles('GROWER', 'FARMER')
   async createMission(@Request() req, @Body() dto: CreateMissionDto) {
     return this.missionsService.createMission(req.user.id, dto);
   }

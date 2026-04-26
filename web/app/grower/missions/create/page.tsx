@@ -154,7 +154,9 @@ export default function CreateMissionPage() {
       }, 2000);
     } catch (error: any) {
       console.error('Error creating mission:', error);
-      alert(error.response?.data?.message || 'Failed to create mission');
+      const raw = error?.response?.data?.message;
+      const msg = Array.isArray(raw) ? raw.join(' ') : raw;
+      alert(msg || 'Failed to create mission');
     } finally {
       setSubmitting(false);
     }

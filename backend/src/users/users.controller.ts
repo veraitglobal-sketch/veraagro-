@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -7,6 +19,7 @@ import { Prisma, UserRole, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
+import { ChangeOwnPasswordDto } from './dto/change-own-password.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -19,6 +32,11 @@ export class UsersController {
   @Get('me')
   async getProfile(@Request() req: any) {
     return this.usersService.findById(req.user.id);
+  }
+
+  @Patch('me/password')
+  async changeMyPassword(@Request() req: any, @Body() dto: ChangeOwnPasswordDto) {
+    return this.usersService.changeOwnPassword(req.user.id, dto.currentPassword, dto.newPassword);
   }
 
   // Admin endpoints

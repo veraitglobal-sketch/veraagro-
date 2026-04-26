@@ -8,6 +8,15 @@ import { getAdminNavItems } from '@/lib/admin-nav';
 import { Store } from 'lucide-react';
 import Link from 'next/link';
 
+function getApiErrorMessage(e: unknown): string {
+  const r = e as { response?: { data?: { message?: unknown } } };
+  const m = r?.response?.data?.message;
+  if (Array.isArray(m)) return m.join(' ');
+  if (typeof m === 'string') return m;
+  if (e instanceof Error) return e.message;
+  return 'Request failed. Please try again.';
+}
+
 /**
  * Onboard a partner agri store (Material supplier) with login + map profile in one step.
  * No public registration; partners are created by admin only.
@@ -16,6 +25,7 @@ export default function AdminSupplierStoresPage() {
   const adminNavItems = getAdminNavItems();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [lastPassword, setLastPassword] = useState<string | null>(null);
 
   const [form, setForm] = useState({
@@ -45,6 +55,7 @@ export default function AdminSupplierStoresPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
+    setSubmitError(null);
     setLastPassword(null);
     setSaving(true);
     const latO = form.overrideLat.trim() ? parseFloat(form.overrideLat) : NaN;
@@ -83,8 +94,7 @@ export default function AdminSupplierStoresPage() {
       );
       if (res.password) setLastPassword(res.password);
     } catch (err: unknown) {
-      const m = err instanceof Error ? err.message : 'Failed to create store';
-      setMessage(m);
+      setSubmitError(getApiErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -110,6 +120,27 @@ export default function AdminSupplierStoresPage() {
             </Link>
             .
           </p>
+
+          {submitError && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+              <p className="font-medium">Could not create store</p>
+              <p className="mt-1 font-light">{submitError}</p>
+              {submitError.toLowerCase().includes('already in use') && (
+                <p className="mt-2 text-xs text-red-800/90 font-light">
+                  HTTP 409 = conflict. This email or partner code is already in the system — you can’t create a second
+                  account with the same value. Open{' '}
+                  <Link href="/admin/users" className="underline font-medium">
+                    Users
+                  </Link>{' '}
+                  to find the existing account, or use{' '}
+                  <Link href="/admin/supplier-growers" className="underline font-medium">
+                    Suppliers &amp; growers
+                  </Link>{' '}
+                  and tap <strong>Approve for public map</strong> if the store exists but the pin is missing.
+                </p>
+              )}
+            </div>
+          )}
 
           {message && (
             <div

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image as ImageIcon } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { GrowthLog } from '../../../lib/api';
 import { GrowthLogCard } from './GrowthLogCard';
 
@@ -20,6 +21,7 @@ export function GrowthJournalList({
   onRefresh,
 }: GrowthJournalListProps) {
   const { t } = useTranslation();
+  const p = useBioVeraScreenPadding();
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -31,7 +33,14 @@ export function GrowthJournalList({
         />
       }
     >
-      <View style={{ padding: theme.spacing.md }}>
+      <View
+        style={{
+          paddingTop: theme.spacing.md,
+          paddingLeft: p.screenPaddingLeft,
+          paddingRight: p.screenPaddingRight,
+          paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+        }}
+      >
         {loading ? (
           <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
             <Text style={{ color: colors.text.secondary, fontSize: 13 }}>

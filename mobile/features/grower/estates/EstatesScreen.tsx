@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useEstatesData } from './useEstatesData';
 import { EstateList } from './EstateList';
 import type { Estate } from '../../../lib/api';
@@ -14,14 +15,16 @@ import type { Estate } from '../../../lib/api';
 export function EstatesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const data = useEstatesData();
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.08)',
@@ -64,7 +67,14 @@ export function EstatesScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           <EstateList
             estates={data.estates}
             loading={data.loading}

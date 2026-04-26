@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../contexts/AuthContext';
 import { CartProvider } from '../hooks/useCart';
 import '../i18n/config';
@@ -23,6 +24,7 @@ const stackHeaderTitleStyle = {
 
 export default function RootLayout() {
   return (
+    <SafeAreaProvider>
     <AuthProvider>
     <CartProvider>
       <Stack
@@ -70,5 +72,6 @@ export default function RootLayout() {
       </Stack>
     </CartProvider>
     </AuthProvider>
+    </SafeAreaProvider>
   );
 }

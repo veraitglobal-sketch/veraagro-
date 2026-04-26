@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useCart } from '../../hooks/useCart';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { ordersAPI } from '../../lib/api';
 import { ArrowLeft } from 'lucide-react-native';
 
@@ -14,6 +15,7 @@ import { ArrowLeft } from 'lucide-react-native';
 export default function CheckoutScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const { items, getTotalPrice, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   
@@ -90,9 +92,10 @@ export default function CheckoutScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.1)',
@@ -116,7 +119,14 @@ export default function CheckoutScreen() {
       </View>
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ padding: theme.spacing.lg }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.lg,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           {/* Delivery Address Section */}
           <Text style={{
             fontSize: 11,

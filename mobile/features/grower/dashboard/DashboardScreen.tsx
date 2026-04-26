@@ -1,20 +1,20 @@
 import React from 'react';
-import { View, ScrollView, RefreshControl } from 'react-native';
+import { View, ScrollView, RefreshControl, TouchableOpacity, Text } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
-import TrustScoreWidget from '../../../components/TrustScoreWidget';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useDashboardData } from './useDashboardData';
 import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
-import QuickActionsSection from './QuickActionsSection';
-import LiveInformationSection from './LiveInformationSection';
-import FinancialSummarySection from './FinancialSummarySection';
-import RecentActivitySection from './RecentActivitySection';
+import FarmerHomeSection from './FarmerHomeSection';
 
 export default function DashboardScreen() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const data = useDashboardData(user);
 
   const farmName = data.estates[0]?.name || 'My Farm';
@@ -22,23 +22,39 @@ export default function DashboardScreen() {
   const estateCount = data.estates.length;
   const ps = data.parcelSteps;
 
-  const handlers = {
+  const farmerHandlers = {
+    onParcels: () => router.push('/(producer)/estates'),
+    onPlantingSteps: () => router.push('/(producer)/field-season'),
+    onFieldDiary: () => router.push('/(producer)/(tabs)/field-log'),
+    onAllowedMaterials: () => router.push('/(producer)/materials'),
+    onBanned: () => router.push('/(producer)/(tabs)/banned-substances'),
+    onCertificates: () => router.push('/(producer)/(tabs)/certifications'),
     onMyProducts: () => router.push('/(producer)/(tabs)/products'),
-    onCostCalculator: () => router.push('/(producer)/(tabs)/cost-calculator'),
-    onCertifications: () => router.push('/(producer)/(tabs)/certifications'),
-    onBannedSubstances: () => router.push('/(producer)/(tabs)/banned-substances'),
-    onScanInput: () => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } }),
-    onNewEntry: () => router.push('/(producer)/(tabs)/field-log'),
-    onReportHarvest: () => router.push('/(producer)/(tabs)/harvest'),
-    onVeraInsights: () => router.push('/(producer)/vera-insights'),
-    onViewMissions: () => router.push('/(producer)/missions'),
-    onViewBatches: () => router.push('/(producer)/batches'),
-    onViewNotifications: () => router.push('/(producer)/notifications'),
-    onViewWallet: () => router.push('/(producer)/(tabs)/wallet'),
-    onEstates: () => router.push('/(producer)/estates'),
-    onFieldSeason: () => router.push('/(producer)/field-season'),
-    onSuppliersMap: () => router.push('/map'),
+    onScan: () => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } }),
+    onHarvest: () => router.push('/(producer)/(tabs)/harvest'),
+    onCompliancePhotos: () => router.push('/(producer)/compliance-photos'),
+    onQuality: () => router.push('/(producer)/quality-entry'),
   };
+
+  const hasAlerts =
+    data.unreadCount > 0 || data.activeMissions.length > 0 || data.activeBatches.length > 0;
+
+  const alertLine =
+    hasAlerts
+      ? [
+          data.unreadCount > 0
+            ? t('producer.dashboard.farmer.alertMsg', { count: data.unreadCount })
+            : null,
+          data.activeMissions.length > 0
+            ? t('producer.dashboard.farmer.alertMissions', { count: data.activeMissions.length })
+            : null,
+          data.activeBatches.length > 0
+            ? t('producer.dashboard.farmer.alertBatches', { count: data.activeBatches.length })
+            : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      : '';
 
   return (
     <ScrollView
@@ -57,7 +73,14 @@ export default function DashboardScreen() {
         partnerCode={user?.partnerCode}
         connected={data.connected}
       />
-      <View style={{ padding: theme.spacing.md }}>
+      <View
+        style={{
+          paddingTop: theme.spacing.md,
+          paddingLeft: p.screenPaddingLeft,
+          paddingRight: p.screenPaddingRight,
+          paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+        }}
+      >
         <NextStepCard
           ready={ps.loaded}
           estateCount={estateCount}
@@ -68,34 +91,42 @@ export default function DashboardScreen() {
           offlinePending={data.offlinePending}
           onAddField={() => router.push('/(producer)/estates/new')}
           onAddParcel={() => router.push('/(producer)/estates')}
-          onMissions={handlers.onViewMissions}
-          onSteps={handlers.onFieldSeason}
-          onFieldLog={handlers.onNewEntry}
+          onMissions={() => router.push('/(producer)/missions')}
+          onSteps={() => router.push('/(producer)/field-season')}
+          onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
         />
-        <View
-          style={{
-            backgroundColor: theme.colors.surfaceElevated,
-            borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.lg,
-            marginBottom: theme.spacing.md,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            alignItems: 'center',
-          }}
-        >
-          <TrustScoreWidget score={data.trustScore} size={100} />
-        </View>
-        <QuickActionsSection handlers={handlers} />
-        <LiveInformationSection
-          activeMissionsCount={data.activeMissions.length}
-          activeBatchesCount={data.activeBatches.length}
-          unreadCount={data.unreadCount}
-          onMissions={handlers.onViewMissions}
-          onBatches={handlers.onViewBatches}
-          onNotifications={handlers.onViewNotifications}
-        />
-        <FinancialSummarySection financialData={data.financialData} onViewWallet={handlers.onViewWallet} />
-        <RecentActivitySection entries={data.recentEntries} />
+        {hasAlerts ? (
+          <TouchableOpacity
+            onPress={() => {
+              if (data.unreadCount > 0) router.push('/(producer)/notifications');
+              else if (data.activeMissions.length > 0) router.push('/(producer)/missions');
+              else router.push('/(producer)/batches');
+            }}
+            activeOpacity={0.75}
+            style={{
+              backgroundColor: theme.colors.primaryLight,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.md,
+              marginBottom: theme.spacing.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, marginBottom: 4 }}>
+              {t('producer.dashboard.farmer.alertsTitle')}
+            </Text>
+            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, lineHeight: 18 }}>
+              {alertLine}
+            </Text>
+            <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 6, fontWeight: '500' }}>
+              {t('producer.dashboard.farmer.alertsOpen')}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        <FarmerHomeSection handlers={farmerHandlers} />
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, lineHeight: 18, marginTop: theme.spacing.sm }}>
+          {t('producer.dashboard.farmer.profileMore')}
+        </Text>
       </View>
     </ScrollView>
   );

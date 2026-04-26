@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { Estate, Parcel } from '../../../lib/api';
 
 interface GrowthJournalFiltersProps {
@@ -22,12 +23,14 @@ export function GrowthJournalFilters({
   onParcelChange,
 }: GrowthJournalFiltersProps) {
   const { t } = useTranslation();
+  const p = useBioVeraScreenPadding();
   if (estates.length === 0) return null;
 
   return (
     <View
       style={{
-        paddingHorizontal: theme.spacing.md,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingVertical: theme.spacing.sm,
         borderBottomWidth: 0.5,
         borderBottomColor: colors.border,

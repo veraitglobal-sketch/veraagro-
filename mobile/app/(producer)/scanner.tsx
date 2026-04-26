@@ -6,6 +6,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScanLine, X, Check } from 'lucide-react-native';
 import { colors } from '../../lib/colors';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { materialValidator } from '../../lib/integrity-guard';
 
 /**
@@ -15,6 +16,7 @@ import { materialValidator } from '../../lib/integrity-guard';
  */
 export default function ScannerScreen() {
   const { t } = useTranslation();
+  const p = useBioVeraScreenPadding();
   const router = useRouter();
   const params = useLocalSearchParams<{ returnTo?: string }>();
   const isForProducts = params.returnTo === 'products' || params.returnTo === 'seed-registration';
@@ -126,7 +128,16 @@ export default function ScannerScreen() {
       />
       <View style={[StyleSheet.absoluteFill, styles.overlay]} pointerEvents="box-none">
         {/* Top bar */}
-        <View style={styles.topBar}>
+        <View
+          style={[
+            styles.topBar,
+            {
+              paddingTop: p.headerTop,
+              paddingLeft: p.screenPaddingLeft,
+              paddingRight: p.screenPaddingRight,
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.closeButton}
@@ -219,8 +230,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
-    paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },

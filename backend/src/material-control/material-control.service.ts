@@ -234,7 +234,9 @@ export class MaterialControlService {
     }
 
     if (batch.estates.ownerId !== userId) {
-      throw new ForbiddenException('You can only validate your own batches');
+      throw new ForbiddenException(
+        'This batch is not on your account. It must belong to your farm (estate owner).',
+      );
     }
 
     const standard = await this.getBioVeraStandard();

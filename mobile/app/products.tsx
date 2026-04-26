@@ -16,6 +16,7 @@ import {
 } from 'lucide-react-native';
 import { inventoryAPI, Product } from '../lib/api';
 import { theme } from '../lib/theme';
+import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import ProductCard from '../components/ProductCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -29,6 +30,7 @@ type CategoryFilter = 'fruits' | 'vegetables' | 'grains' | 'all';
 export default function ProductsPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const params = useLocalSearchParams<{ category?: string }>();
   
   const [products, setProducts] = useState<Product[]>([]);
@@ -147,9 +149,10 @@ export default function ProductsPage() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
       <View style={{
-        paddingTop: 60,
+        paddingTop: p.headerTop,
         paddingBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.lg,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.1)',
@@ -175,7 +178,8 @@ export default function ProductsPage() {
       {/* Category Filters */}
       <View style={{
         flexDirection: 'row',
-        paddingHorizontal: theme.spacing.md,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingVertical: theme.spacing.sm,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.05)',
@@ -254,7 +258,14 @@ export default function ProductsPage() {
             />
           }
         >
-          <View style={{ padding: theme.spacing.md }}>
+          <View
+            style={{
+              paddingTop: theme.spacing.md,
+              paddingLeft: p.screenPaddingLeft,
+              paddingRight: p.screenPaddingRight,
+              paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+            }}
+          >
             {/* Available Products Section */}
             {filteredProducts.length > 0 && (
               <>

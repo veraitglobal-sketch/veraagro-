@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useCompliancePhotosData } from './useCompliancePhotosData';
 import { PhotoUploadBlock } from './PhotoUploadBlock';
 import { CompliancePhotosList } from './CompliancePhotosList';
@@ -13,6 +14,7 @@ import { CompliancePhotosList } from './CompliancePhotosList';
 export function CompliancePhotosScreen() {
   const { t } = useTranslation();
   const data = useCompliancePhotosData();
+  const p = useBioVeraScreenPadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
@@ -24,10 +26,12 @@ export function CompliancePhotosScreen() {
 
       {data.estates.length > 0 && (
         <View
-          className="px-4 py-3 border-b-[0.5px]"
+          className="py-3 border-b-[0.5px]"
           style={{
             backgroundColor: colors.background,
             borderBottomColor: colors.border,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
           }}
         >
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -90,7 +94,14 @@ export function CompliancePhotosScreen() {
           />
         }
       >
-        <View style={{ padding: theme.spacing.md }}>
+        <View
+          style={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          }}
+        >
           <CompliancePhotosList
             filteredPhotos={data.filteredPhotos}
             loading={data.loading}

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Plus, Minus, ShoppingCart } from 'lucide-react-native';
 import { inventoryAPI, Product } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { useCart } from '../../hooks/useCart';
 
 /**
@@ -16,6 +17,7 @@ export default function ProductDetailScreen() {
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const router = useRouter();
   const { addToCart } = useCart();
+  const p = useBioVeraScreenPadding();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -89,8 +91,9 @@ export default function ProductDetailScreen() {
         left: 0,
         right: 0,
         zIndex: 10,
-        paddingTop: 60,
-        paddingHorizontal: theme.spacing.lg,
+        paddingTop: p.headerTop,
+        paddingLeft: p.screenPaddingLeft,
+        paddingRight: p.screenPaddingRight,
         paddingBottom: theme.spacing.md,
         backgroundColor: 'transparent',
       }}>
