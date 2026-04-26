@@ -20,6 +20,12 @@ export class AdminController {
     return this.adminService.getRecentActivities(limit ? parseInt(limit) : 10);
   }
 
+  /** Hub + batch “supply” vs. quantity locked in not-yet-finished sales orders. */
+  @Get('operations/supply-snapshot')
+  getSupplySnapshot() {
+    return this.adminService.getSupplyOperationsSnapshot();
+  }
+
   /**
    * Single grower (farmer) dossier. Optional `?include=` comma list (e.g. `counts,trust,kyc,estates`) returns only those
    * sections; omit for full payload. Aliases: `kyc` → kycDocuments, `compliance` → complianceLogs.

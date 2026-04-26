@@ -669,11 +669,13 @@ export class MissionsService {
         users_missions_logisticsPartnerIdTousers: true,
         vehicles: true,
         batches: true,
+        harvest_announcement: true,
       };
       const logisticsInclude = {
         users_missions_growerIdTousers: true,
         vehicles: true,
         batches: true,
+        harvest_announcement: true,
       };
       const logisticsPoolWhere: Prisma.missionsWhereInput = {
         OR: [

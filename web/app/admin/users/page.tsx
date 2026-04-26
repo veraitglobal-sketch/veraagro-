@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { usersAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound, Copy } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
 interface User {
@@ -823,7 +823,26 @@ export default function UsersManagementPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
               >
-                <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+                <h2 className="text-xl font-semibold mb-2">Edit User</h2>
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">User ID</p>
+                      <p className="text-xs font-mono text-gray-800 break-all mt-1" title={editingUser.id}>
+                        {editingUser.id}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void navigator.clipboard.writeText(editingUser.id)}
+                      className="shrink-0 p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100 text-gray-600"
+                      title="Copy user ID"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Use this UUID in API filters, database joins, or support tickets.</p>
+                </div>
                 <form onSubmit={handleUpdate} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>

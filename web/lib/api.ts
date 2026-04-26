@@ -195,6 +195,26 @@ export const missionsAPI = {
   },
 };
 
+export const logisticsVehiclesAPI = {
+  list: async () => {
+    const response = await api.get('/logistics-partner/vehicles');
+    return response.data;
+  },
+  create: async (body: {
+    licensePlate: string;
+    type: string;
+    make?: string;
+    model?: string;
+    hasFrigo?: boolean;
+    tempRangeMin?: number;
+    tempRangeMax?: number;
+    currentLocation?: { lat: number; lng: number };
+  }) => {
+    const response = await api.post('/logistics-partner/vehicles', body);
+    return response.data;
+  },
+};
+
 // Deliveries API
 export const deliveriesAPI = {
   getBuyerDeliveries: async (status?: string) => {
@@ -343,6 +363,10 @@ export const adminAPI = {
   },
   getRecentActivities: async (limit?: number) => {
     const response = await api.get('/admin/recent-activities', { params: { limit } });
+    return response.data;
+  },
+  getSupplySnapshot: async () => {
+    const response = await api.get('/admin/operations/supply-snapshot');
     return response.data;
   },
 };
