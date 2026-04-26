@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { GrowerPortalService } from './grower-portal.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -12,7 +21,7 @@ import {
 
 @Controller('grower-portal')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('GROWER')
+@Roles('GROWER', 'FARMER')
 export class GrowerPortalController {
   constructor(private readonly growerPortalService: GrowerPortalService) {}
 
@@ -44,10 +53,14 @@ export class GrowerPortalController {
 
   @Get('mission-tracker')
   async getMissionTracker(
-    @GetUser() user: any,
+    @GetUser() user: { id?: string } | undefined,
     @Query('batchId') batchId?: string,
   ) {
-    return this.growerPortalService.getMissionTracker(user.id, batchId);
+    const id = user?.id;
+    if (!id) {
+      throw new UnauthorizedException();
+    }
+    return this.growerPortalService.getMissionTracker(id, batchId);
   }
 
   @Get('journey-map/:missionId')

@@ -5,6 +5,7 @@ export type NextStepKind =
   | 'add_field'
   | 'add_parcel'
   | 'missions'
+  | 'request_transport'
   | 'pending_approval'
   | 'offline_sync'
   | 'log_work'
@@ -23,6 +24,8 @@ export function computeNextStep(p: {
   approved: number;
   activeMissions: number;
   offlinePending: number;
+  /** Batches in PACKED or QUALITY_VERIFIED — ready to book pickup when prerequisites are met */
+  batchesReadyForTransport: number;
 }): NextStep | null {
   if (p.estateCount === 0) {
     return { kind: 'add_field' };
@@ -32,6 +35,9 @@ export function computeNextStep(p: {
   }
   if (p.activeMissions > 0) {
     return { kind: 'missions' };
+  }
+  if (p.batchesReadyForTransport > 0) {
+    return { kind: 'request_transport' };
   }
   if (p.pendingApproval > 0) {
     return { kind: 'pending_approval', pendingCount: p.pendingApproval };

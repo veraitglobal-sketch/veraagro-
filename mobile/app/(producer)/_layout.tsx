@@ -28,6 +28,7 @@ export default function ProducerLayout() {
         <Stack.Screen name="batches" />
         <Stack.Screen name="batch/[id]" />
         <Stack.Screen name="missions" />
+        <Stack.Screen name="missions-create" options={{ title: 'Request transport' }} />
         <Stack.Screen name="mission/[id]" />
         <Stack.Screen name="orders" />
         <Stack.Screen name="orders/[id]" />

@@ -162,6 +162,24 @@ export default function MissionsScreen() {
             paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
           }}
         >
+          <TouchableOpacity
+            onPress={() => router.push('/(producer)/missions-create')}
+            activeOpacity={0.8}
+            style={{
+              marginBottom: theme.spacing.md,
+              paddingVertical: theme.spacing.md,
+              paddingHorizontal: theme.spacing.md,
+              borderRadius: theme.borderRadius.md,
+              backgroundColor: theme.colors.primary,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}
+          >
+            <Truck size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>Request transport</Text>
+          </TouchableOpacity>
           {loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{

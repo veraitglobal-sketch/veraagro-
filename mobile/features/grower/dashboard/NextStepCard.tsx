@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Sprout, ChevronRight, Package } from 'lucide-react-native';
+import { Sprout, ChevronRight, Package, Truck } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { computeNextStep, type NextStep } from './computeNextStep';
 
@@ -12,10 +12,12 @@ export interface NextStepCardProps {
   approved: number;
   activeMissions: number;
   offlinePending: number;
+  batchesReadyForTransport: number;
   ready: boolean;
   onAddField: () => void;
   onAddParcel: () => void;
   onMissions: () => void;
+  onRequestTransport: () => void;
   onSteps: () => void;
   onFieldLog: () => void;
 }
@@ -46,6 +48,13 @@ function labelAndCta(
         body: t('producer.dashboard.nextStep.missionsBody'),
         cta: t('producer.dashboard.nextStep.missionsCta'),
         onPress: props.onMissions,
+      };
+    case 'request_transport':
+      return {
+        title: t('producer.dashboard.nextStep.requestTransportTitle'),
+        body: t('producer.dashboard.nextStep.requestTransportBody'),
+        cta: t('producer.dashboard.nextStep.requestTransportCta'),
+        onPress: props.onRequestTransport,
       };
     case 'pending_approval':
       return {
@@ -92,6 +101,7 @@ export default function NextStepCard(props: NextStepCardProps) {
     approved: props.approved,
     activeMissions: props.activeMissions,
     offlinePending: props.offlinePending,
+    batchesReadyForTransport: props.batchesReadyForTransport,
   });
   if (!step) {
     return null;
@@ -124,6 +134,8 @@ export default function NextStepCard(props: NextStepCardProps) {
         >
           {step.kind === 'log_work' || step.kind === 'offline_sync' ? (
             <Package size={20} color={theme.colors.primary} strokeWidth={1.5} />
+          ) : step.kind === 'request_transport' || step.kind === 'missions' ? (
+            <Truck size={20} color={theme.colors.primary} strokeWidth={1.5} />
           ) : (
             <Sprout size={20} color={theme.colors.primary} strokeWidth={1.5} />
           )}

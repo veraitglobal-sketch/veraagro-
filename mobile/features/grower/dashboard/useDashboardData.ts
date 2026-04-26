@@ -42,6 +42,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     approved: number;
   }>({ loaded: false, total: 0, pending: 0, approved: 0 });
   const [offlinePending, setOfflinePending] = useState(0);
+  const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
   const appStateRef = useRef(AppState.currentState);
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSyncTriggerRef = useRef(0);
@@ -138,12 +139,17 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const loadBatches = useCallback(async () => {
     try {
       const batches = await batchesAPI.getAll();
-      const active = (Array.isArray(batches) ? batches : [])
+      const arr = Array.isArray(batches) ? batches : [];
+      setBatchesReadyForTransport(
+        arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
+      );
+      const active = arr
         .filter((b: any) => b?.status === 'PACKED' || b?.status === 'IN_HUB' || b?.status === 'IN_TRANSIT')
         .slice(0, 5);
       setActiveBatches(active);
     } catch {
       setActiveBatches([]);
+      setBatchesReadyForTransport(0);
     }
   }, []);
 
@@ -264,5 +270,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     onRefresh,
     loadData,
     loadLiveData,
+    batchesReadyForTransport,
   };
 }

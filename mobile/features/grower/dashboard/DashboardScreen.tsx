@@ -90,9 +90,11 @@ export default function DashboardScreen() {
           approved={ps.approved}
           activeMissions={data.activeMissions.length}
           offlinePending={data.offlinePending}
+          batchesReadyForTransport={data.batchesReadyForTransport}
           onAddField={() => router.push('/(producer)/estates/new')}
           onAddParcel={() => router.push('/(producer)/estates')}
           onMissions={() => router.push('/(producer)/missions')}
+          onRequestTransport={() => router.push('/(producer)/missions-create')}
           onSteps={() => router.push('/(producer)/(tabs)/steps')}
           onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
         />

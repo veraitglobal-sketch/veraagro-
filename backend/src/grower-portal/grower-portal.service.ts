@@ -18,16 +18,53 @@ export class GrowerPortalService {
   ) {}
 
   /**
+   * Web Mission Tracker and mobile pass either internal batch PK or public batch number (BATCH-…).
+   * Missions are keyed by batches.id only — resolve to avoid empty lists / DB errors.
+   */
+  private async resolveBatchIdForGrower(
+    ref: string,
+    growerId: string,
+  ): Promise<string | null> {
+    const r = ref?.trim();
+    if (!r) {
+      return null;
+    }
+    try {
+      const owned = { estates: { ownerId: growerId } } as const;
+      const byId = await this.prisma.batches.findFirst({
+        where: { id: r, ...owned },
+        select: { id: true },
+      });
+      if (byId) {
+        return byId.id;
+      }
+      const byCode = await this.prisma.batches.findFirst({
+        where: { batchId: r, ...owned },
+        select: { id: true },
+      });
+      return byCode?.id ?? null;
+    } catch (e) {
+      this.logger.warn(`resolveBatchIdForGrower failed for ref=${r}: ${(e as Error).message}`);
+      return null;
+    }
+  }
+
+  /**
    * Get grower's mission tracker data
    */
   async getMissionTracker(growerId: string, batchId?: string) {
-    if (!growerId) {
+    if (!growerId?.trim()) {
       throw new BadRequestException('Invalid session');
     }
+    const gid = growerId.trim();
 
-    const where: Prisma.missionsWhereInput = { growerId };
-    if (batchId) {
-      where.batchId = batchId;
+    const where: Prisma.missionsWhereInput = { growerId: gid };
+    if (batchId?.trim()) {
+      const internalId = await this.resolveBatchIdForGrower(batchId, gid);
+      if (!internalId) {
+        return [];
+      }
+      where.batchId = internalId;
     }
 
     // Relations needed by buildMilestones; cap nested rows. If Prisma errors on a legacy row (bad FK,
@@ -58,50 +95,58 @@ export class GrowerPortalService {
 
     let missions: Awaited<ReturnType<typeof this.prisma.missions.findMany>>;
     try {
-      missions = await this.prisma.missions.findMany({
-        where,
-        include: fullInclude,
-        orderBy: { createdAt: 'desc' },
+      try {
+        missions = await this.prisma.missions.findMany({
+          where,
+          include: fullInclude,
+          orderBy: { createdAt: 'desc' },
+        });
+      } catch (err) {
+        this.logger.warn(
+          `getMissionTracker full include failed, retrying minimal: ${(err as Error).message}`,
+        );
+        missions = await this.prisma.missions.findMany({
+          where,
+          include: {
+            batches: {
+              select: {
+                batchId: true,
+                productName: true,
+                quantity: true,
+                unit: true,
+              },
+            },
+            users_missions_logisticsPartnerIdTousers: {
+              select: {
+                firstName: true,
+                lastName: true,
+                phone: true,
+              },
+            },
+            vehicles: { select: { vehicleNumber: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+      }
+
+      return missions.map((mission) => {
+        try {
+          return this.buildMissionTrackerData(mission);
+        } catch (err) {
+          this.logger.error(
+            `buildMissionTrackerData failed for mission ${(mission as { id: string }).id}: ${(err as Error).message}`,
+            (err as Error).stack,
+          );
+          return this.buildMissionTrackerDataFallback(mission);
+        }
       });
     } catch (err) {
-      this.logger.warn(
-        `getMissionTracker full include failed, retrying minimal: ${(err as Error).message}`,
+      this.logger.error(
+        `getMissionTracker failed for grower ${growerId}: ${(err as Error).message}`,
+        (err as Error).stack,
       );
-      missions = await this.prisma.missions.findMany({
-        where,
-        include: {
-          batches: {
-            select: {
-              batchId: true,
-              productName: true,
-              quantity: true,
-              unit: true,
-            },
-          },
-          users_missions_logisticsPartnerIdTousers: {
-            select: {
-              firstName: true,
-              lastName: true,
-              phone: true,
-            },
-          },
-          vehicles: { select: { vehicleNumber: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-      });
+      return [];
     }
-
-    return missions.map((mission) => {
-      try {
-        return this.buildMissionTrackerData(mission);
-      } catch (err) {
-        this.logger.error(
-          `buildMissionTrackerData failed for mission ${(mission as { id: string }).id}: ${(err as Error).message}`,
-          (err as Error).stack,
-        );
-        return this.buildMissionTrackerDataFallback(mission);
-      }
-    });
   }
 
   /**
@@ -137,9 +182,13 @@ export class GrowerPortalService {
    * Get consumer feedback for a batch
    */
   async getConsumerFeedback(batchId: string, growerId: string) {
+    const internalId = await this.resolveBatchIdForGrower(batchId, growerId);
+    if (!internalId) {
+      throw new NotFoundException(`Batch not found for your account`);
+    }
     // Verify batch belongs to grower
     const batch = await this.prisma.batches.findUnique({
-      where: { id: batchId },
+      where: { id: internalId },
       include: {
         estates: true,
         order_items: {
@@ -205,7 +254,7 @@ export class GrowerPortalService {
       ratings,
       hasExcellenceCertificate,
       certificate: hasExcellenceCertificate
-        ? await this.generateExcellenceCertificate(batchId, batch.batchId, batch.estates.name)
+        ? await this.generateExcellenceCertificate(internalId, batch.batchId, batch.estates.name)
         : null,
     };
   }
@@ -265,8 +314,12 @@ export class GrowerPortalService {
    * Get financial status for a batch
    */
   async getFinancialStatus(batchId: string, growerId: string) {
+    const internalId = await this.resolveBatchIdForGrower(batchId, growerId);
+    if (!internalId) {
+      throw new NotFoundException(`Batch not found for your account`);
+    }
     const batch = await this.prisma.batches.findUnique({
-      where: { id: batchId },
+      where: { id: internalId },
       include: {
         estates: true,
         order_items: {

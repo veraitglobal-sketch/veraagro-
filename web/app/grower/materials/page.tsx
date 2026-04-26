@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
@@ -55,6 +55,7 @@ export default function GrowerMaterialsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
   const [serialsError, setSerialsError] = useState<string | null>(null);
+  const [labelRollFilter, setLabelRollFilter] = useState('');
 
   const loadLabelRolls = async () => {
     try {
@@ -76,6 +77,23 @@ export default function GrowerMaterialsPage() {
       setLabelRolls([]);
     }
   };
+
+  const labelRollStats = useMemo(() => {
+    let sold = 0;
+    let used = 0;
+    for (const r of labelRolls) {
+      const s = (r.status || '').toUpperCase();
+      if (s === 'USED') used += 1;
+      else if (s === 'SOLD') sold += 1;
+    }
+    return { total: labelRolls.length, sold, used, other: labelRolls.length - sold - used };
+  }, [labelRolls]);
+
+  const filteredLabelRolls = useMemo(() => {
+    const q = labelRollFilter.trim().toLowerCase();
+    if (!q) return labelRolls;
+    return labelRolls.filter((r) => r.serialNumber.toLowerCase().includes(q));
+  }, [labelRolls, labelRollFilter]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -311,20 +329,68 @@ export default function GrowerMaterialsPage() {
               No label rolls in your account yet — purchase at least one in the form below, then the IDs appear here.
             </p>
           ) : (
-            <ul className="divide-y divide-gray-100 border border-gray-100 rounded-md">
-              {labelRolls.map((r) => (
-                <li
-                  key={r.serialNumber}
-                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm"
-                >
-                  <code className="font-mono text-xs sm:text-sm text-gray-900 break-all">{r.serialNumber}</code>
-                  <span className="text-xs text-gray-500 shrink-0">
-                    {r.status}
-                    {r.soldAt ? ` · ${new Date(r.soldAt).toLocaleString()}` : ''}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium text-gray-900">{labelRollStats.total}</span> serial
+                {labelRollStats.total === 1 ? '' : 's'} on file
+                {labelRollStats.total > 0 ? (
+                  <>
+                    {' '}
+                    — <span className="text-green-800">{labelRollStats.sold} available (SOLD)</span>
+                    {labelRollStats.used > 0 ? (
+                      <>
+                        , <span className="text-gray-600">{labelRollStats.used} used in compliance (USED)</span>
+                      </>
+                    ) : null}
+                    {labelRollStats.other > 0 ? <>, {labelRollStats.other} other</> : null}
+                  </>
+                ) : null}
+                .
+              </p>
+              {labelRollStats.total > 0 && (
+                <div>
+                  <label htmlFor="label-roll-search" className="sr-only">
+                    Find a serial
+                  </label>
+                  <input
+                    id="label-roll-search"
+                    type="search"
+                    value={labelRollFilter}
+                    onChange={(e) => setLabelRollFilter(e.target.value)}
+                    placeholder="Type to find a serial…"
+                    className="w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                  />
+                  {labelRollFilter.trim() && (
+                    <p className="mt-1.5 text-xs text-gray-500">
+                      {filteredLabelRolls.length} match{filteredLabelRolls.length === 1 ? '' : 'es'}
+                    </p>
+                  )}
+                </div>
+              )}
+              <div
+                className="max-h-72 sm:max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-gray-50/50 scroll-pt-1"
+                role="region"
+                aria-label="Label roll serial list"
+              >
+                <ul className="divide-y divide-gray-100">
+                  {filteredLabelRolls.map((r) => (
+                    <li
+                      key={r.serialNumber}
+                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 sm:py-2.5 text-sm"
+                    >
+                      <code className="font-mono text-xs sm:text-sm text-gray-900 break-all">{r.serialNumber}</code>
+                      <span className="text-xs text-gray-500 shrink-0">
+                        {r.status}
+                        {r.soldAt ? ` · ${new Date(r.soldAt).toLocaleString()}` : ''}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {filteredLabelRolls.length === 0 && labelRollFilter.trim() && (
+                  <p className="p-3 text-sm text-gray-500">No serials match that text.</p>
+                )}
+              </div>
+            </div>
           )}
         </div>
 

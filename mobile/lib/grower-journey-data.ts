@@ -82,7 +82,10 @@ export const GROWER_JOURNEY_STEPS: GrowerJourneyStep[] = [
     paragraphs: [
       'When the batch is ready, request transport with address and location.',
     ],
-    links: [{ label: 'Missions & transport', path: '/(producer)/missions' }],
+    links: [
+      { label: 'Request transport', path: '/(producer)/missions-create' },
+      { label: 'Missions (tracker)', path: '/(producer)/missions' },
+    ],
   },
   {
     title: 'Mission tracker',
