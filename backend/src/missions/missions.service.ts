@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  ServiceUnavailableException,
   Inject,
   forwardRef,
   Logger,
@@ -170,7 +171,18 @@ export class MissionsService {
             'Invalid link to batch, vehicle, or user. Check your selection and retry.',
           );
         }
-        // Any other Prisma client error: avoid generic 500 body — show code for support
+        /** DB behind API deploy — missing table/column vs schema (e.g. `missions.harvestAnnouncementId`) */
+        if (e.code === 'P2021' || e.code === 'P2022') {
+          this.logger.error(
+            `DB schema out of date (${e.code}): ${e.message} meta=${JSON.stringify(e.meta)}`,
+          );
+          throw new ServiceUnavailableException(
+            'The server database is not up to date with the app (missing table or column). ' +
+              'An administrator must run Prisma migrations on the API, e.g. in the `backend` folder: `npx prisma migrate deploy` with production DATABASE_URL. ' +
+              `Prisma ${e.code}.`,
+          );
+        }
+        // Any other Prisma client error: show code for support
         throw new BadRequestException(
           `Could not save the transport request (database ${e.code}). Try again, or contact support and mention this code.`,
         );
