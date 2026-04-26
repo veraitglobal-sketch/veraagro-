@@ -1072,8 +1072,36 @@ model users {
   supplier_thread_messages                    supplier_thread_messages[] @relation("SupplierMessageSender")
   supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
   supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
+  /// When a partner / distributor application is converted to a store user
+  partner_application_links                 partner_applications[]     @relation("PartnerApplicationLinkedUser")
 
   @@index([partnerCode])
+}
+
+/// Distributor & supplier-partner interest from website (/suppliers) — internal pipeline; admin creates store account when ready.
+model partner_applications {
+  id              String                   @id @default(uuid())
+  referenceCode   String                   @unique
+  companyName     String
+  pib             String?
+  contactPerson   String
+  email           String
+  phone           String?
+  website         String?
+  productType     String?
+  certifications  Json?
+  description     String?                  @db.Text
+  status          PartnerApplicationStatus @default(SUBMITTED)
+  internalNotes   String?                  @db.Text
+  meetingAt       DateTime?
+  linkedUserId    String?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  linkedUser      users?                   @relation("PartnerApplicationLinkedUser", fields: [linkedUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([referenceCode])
 }
 
 /// Snabdevač inputa (semena, đubriva, ambalaža) – lokacija na mapi nakon admin odobravanja
@@ -1082,7 +1110,9 @@ model material_supplier_profiles {
   userId           String    @unique
   businessName     String
   description      String?
+  /// Street + number (e.g. "Bulevar kralja Aleksandra 15")
   address          String
+  postalCode       String?
   city             String
   country          String
   /// { "lat": number, "lng": number }
@@ -1528,6 +1558,19 @@ enum SeedStatus {
 enum SeedType {
   SEED
   FERTILIZER
+}
+
+/// Website partner pipeline: supplier / distributor applications before admin onboarding
+enum PartnerApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  CONTACTED
+  MEETING_SCHEDULED
+  NEGOTIATION
+  APPROVED
+  REJECTED
+  /// MATERIAL_SUPPLIER (store) user created; link in linkedUserId
+  ONBOARDED
 }
 
 enum UserRole {

@@ -27,11 +27,13 @@ export default function AdminSupplierStoresPage() {
     password: '',
     businessName: '',
     description: '',
-    address: '',
+    street: '',
+    houseNumber: '',
+    postalCode: '',
     city: '',
     country: '',
-    latitude: '',
-    longitude: '',
+    overrideLat: '',
+    overrideLng: '',
     autoGeneratePassword: true,
     mapApproved: false,
     isVeraPartner: true,
@@ -45,12 +47,15 @@ export default function AdminSupplierStoresPage() {
     setMessage(null);
     setLastPassword(null);
     setSaving(true);
-    const lat = parseFloat(form.latitude);
-    const lng = parseFloat(form.longitude);
-    if (Number.isNaN(lat) || Number.isNaN(lng)) {
-      setMessage('Latitude and longitude must be valid numbers (e.g. 44.7866, 20.4489).');
-      setSaving(false);
-      return;
+    const latO = form.overrideLat.trim() ? parseFloat(form.overrideLat) : NaN;
+    const lngO = form.overrideLng.trim() ? parseFloat(form.overrideLng) : NaN;
+    const useOverride = !Number.isNaN(latO) && !Number.isNaN(lngO);
+    if (form.overrideLat.trim() || form.overrideLng.trim()) {
+      if (!useOverride) {
+        setMessage('If you set coordinates, both latitude and longitude must be valid numbers, or leave both empty for automatic lookup from the address.');
+        setSaving(false);
+        return;
+      }
     }
     try {
       const res = await b2bSuppliersAdminAPI.createStore({
@@ -61,11 +66,12 @@ export default function AdminSupplierStoresPage() {
         lastName: form.lastName.trim(),
         businessName: form.businessName.trim(),
         description: form.description.trim() || undefined,
-        address: form.address.trim(),
+        street: form.street.trim(),
+        houseNumber: form.houseNumber.trim() || undefined,
+        postalCode: form.postalCode.trim(),
         city: form.city.trim(),
         country: form.country.trim(),
-        latitude: lat,
-        longitude: lng,
+        ...(useOverride ? { latitude: latO, longitude: lngO } : {}),
         mapApproved: form.mapApproved,
         isVeraPartner: form.isVeraPartner,
         autoGeneratePassword: form.autoGeneratePassword,
@@ -188,7 +194,10 @@ export default function AdminSupplierStoresPage() {
               )}
             </div>
 
-            <h2 className="text-sm font-medium text-gray-800 pt-2">Store & map</h2>
+            <h2 className="text-sm font-medium text-gray-800 pt-2">Store & address (map uses automatic coordinates)</h2>
+            <p className="text-xs text-gray-500">
+              Enter street, number, postal code, city, and country. The server locates the pin on the map — you do not need latitude/longitude.
+            </p>
             <label className="block text-xs text-gray-600">
               Business / store name *
               <input
@@ -207,18 +216,40 @@ export default function AdminSupplierStoresPage() {
                 onChange={(e) => set('description', e.target.value)}
               />
             </label>
-            <label className="block text-xs text-gray-600">
-              Address *
-              <input
-                required
-                className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
-                value={form.address}
-                onChange={(e) => set('address', e.target.value)}
-              />
-            </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label className="block text-xs text-gray-600">
-                City *
+                Street (ulica) *
+                <input
+                  required
+                  className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
+                  placeholder="e.g. Kralja Petra"
+                  value={form.street}
+                  onChange={(e) => set('street', e.target.value)}
+                />
+              </label>
+              <label className="block text-xs text-gray-600">
+                No. (broj)
+                <input
+                  className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
+                  placeholder="e.g. 12"
+                  value={form.houseNumber}
+                  onChange={(e) => set('houseNumber', e.target.value)}
+                />
+              </label>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className="block text-xs text-gray-600">
+                Postal / ZIP (poštanski broj) *
+                <input
+                  required
+                  className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
+                  placeholder="e.g. 11000"
+                  value={form.postalCode}
+                  onChange={(e) => set('postalCode', e.target.value)}
+                />
+              </label>
+              <label className="block text-xs text-gray-600">
+                City (grad) *
                 <input
                   required
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
@@ -226,35 +257,33 @@ export default function AdminSupplierStoresPage() {
                   onChange={(e) => set('city', e.target.value)}
                 />
               </label>
-              <label className="block text-xs text-gray-600">
-                Country *
-                <input
-                  required
-                  className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
-                  value={form.country}
-                  onChange={(e) => set('country', e.target.value)}
-                />
-              </label>
             </div>
+            <label className="block text-xs text-gray-600">
+              Country (država) *
+              <input
+                required
+                className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
+                placeholder="e.g. Serbia"
+                value={form.country}
+                onChange={(e) => set('country', e.target.value)}
+              />
+            </label>
+            <p className="text-xs text-gray-500">Advanced — only if geocoding fails or you need exact map pin</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label className="block text-xs text-gray-600">
-                Latitude *
+                Latitude (optional override)
                 <input
-                  required
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
-                  placeholder="e.g. 44.815"
-                  value={form.latitude}
-                  onChange={(e) => set('latitude', e.target.value)}
+                  value={form.overrideLat}
+                  onChange={(e) => set('overrideLat', e.target.value)}
                 />
               </label>
               <label className="block text-xs text-gray-600">
-                Longitude *
+                Longitude (optional override)
                 <input
-                  required
                   className="mt-1 w-full border border-gray-200 rounded px-3 py-2 text-sm"
-                  placeholder="e.g. 20.461"
-                  value={form.longitude}
-                  onChange={(e) => set('longitude', e.target.value)}
+                  value={form.overrideLng}
+                  onChange={(e) => set('overrideLng', e.target.value)}
                 />
               </label>
             </div>

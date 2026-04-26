@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   CalendarRange,
   Store,
+  Inbox,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import type { SidebarNavGroup } from '@/components/SidebarLayout';
@@ -21,6 +22,7 @@ const labels = {
   dashboard: 'Dashboard',
   users: 'Users',
   supplierStores: 'Supplier stores (map)',
+  partnerApplications: 'Partner applications',
   products: 'Products',
   orders: 'Orders',
   missions: 'Missions',
@@ -83,6 +85,11 @@ export function getAdminNavItems() {
       href: '/admin/users', 
       label: labels.users, 
       icon: <Users className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/partner-applications', 
+      label: labels.partnerApplications, 
+      icon: <Inbox className="w-5 h-5" /> 
     },
     { 
       href: '/admin/supplier-stores', 

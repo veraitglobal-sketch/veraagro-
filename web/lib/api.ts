@@ -385,6 +385,63 @@ export const usersAPI = {
 };
 
 /** B2B partner stores (e.g. agri pharmacies) — admin creates login + map profile, no self-registration. */
+/** Public: distributor / partner store interest from /suppliers (no auth) */
+export const partnerApplicationsAPI = {
+  create: async (data: {
+    companyName: string;
+    pib?: string;
+    contactPerson: string;
+    email: string;
+    phone?: string;
+    website?: string;
+    productType?: string;
+    certifications?: string[];
+    description?: string;
+  }) => {
+    const response = await api.post('/partner-applications', data);
+    return response.data as { id: string; referenceCode: string; message: string };
+  },
+  getStatus: async (referenceCode: string) => {
+    try {
+      const response = await api.get(`/partner-applications/public/status/${encodeURIComponent(referenceCode)}`);
+      return response.data as {
+        referenceCode: string;
+        status: string;
+        companyName: string;
+        updatedAt: string;
+      };
+    } catch (e: unknown) {
+      const ax = e as { response?: { data?: { message?: unknown } } };
+      const m = ax?.response?.data?.message;
+      const msg = Array.isArray(m) ? m[0] : m;
+      throw new Error(typeof msg === 'string' ? msg : 'No application with this reference code');
+    }
+  },
+};
+
+export const partnerApplicationsAdminAPI = {
+  list: async (params?: { status?: string; search?: string }) => {
+    const response = await api.get('/partner-applications/admin', { params });
+    return response.data as Record<string, unknown>[];
+  },
+  getOne: async (id: string) => {
+    const response = await api.get(`/partner-applications/admin/${id}`);
+    return response.data;
+  },
+  update: async (
+    id: string,
+    data: {
+      status?: string;
+      internalNotes?: string;
+      meetingAt?: string | null;
+      linkedUserId?: string | null;
+    },
+  ) => {
+    const response = await api.patch(`/partner-applications/admin/${id}`, data);
+    return response.data;
+  },
+};
+
 export const b2bSuppliersAdminAPI = {
   createStore: async (data: {
     partnerCode?: string;
@@ -396,11 +453,15 @@ export const b2bSuppliersAdminAPI = {
     autoGeneratePassword?: boolean;
     businessName: string;
     description?: string;
-    address: string;
+    /** Street / road name */
+    street: string;
+    houseNumber?: string;
+    postalCode: string;
     city: string;
     country: string;
-    latitude: number;
-    longitude: number;
+    /** Only if you must override automatic geocoding */
+    latitude?: number;
+    longitude?: number;
     mapApproved?: boolean;
     isVeraPartner?: boolean;
   }) => {
@@ -1214,7 +1275,7 @@ export const farmerProfileAPI = {
 const CONTACT_API_BASE = 'https://api.biovera.app';
 
 /** Get Formspree endpoint from env */
-function getFormspreeEndpoint(): string {
+export function getFormspreeEndpoint(): string {
   return typeof process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT === 'string'
     ? process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT.trim()
     : '';

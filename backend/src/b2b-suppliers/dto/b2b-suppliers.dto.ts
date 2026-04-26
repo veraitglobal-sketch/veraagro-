@@ -39,8 +39,17 @@ export class AdminCreateSupplierStoreDto {
   @IsOptional()
   description?: string;
 
+  /** Ulica (bez broja) */
   @IsString()
-  address: string;
+  street: string;
+
+  /** Broj (opciono ako je sve u ulici) */
+  @IsString()
+  @IsOptional()
+  houseNumber?: string;
+
+  @IsString()
+  postalCode: string;
 
   @IsString()
   city: string;
@@ -48,11 +57,14 @@ export class AdminCreateSupplierStoreDto {
   @IsString()
   country: string;
 
+  /** Ako nisu poslati, server računa iz adrese (Nominatim) */
   @IsNumber()
-  latitude: number;
+  @IsOptional()
+  latitude?: number;
 
   @IsNumber()
-  longitude: number;
+  @IsOptional()
+  longitude?: number;
 
   /** If true, store appears on public map immediately (same as separate approve) */
   @IsBoolean()
@@ -74,7 +86,14 @@ export class CreateB2bSupplierProfileDto {
   description?: string;
 
   @IsString()
-  address: string;
+  street: string;
+
+  @IsString()
+  @IsOptional()
+  houseNumber?: string;
+
+  @IsString()
+  postalCode: string;
 
   @IsString()
   city: string;
@@ -83,10 +102,12 @@ export class CreateB2bSupplierProfileDto {
   country: string;
 
   @IsNumber()
-  latitude: number;
+  @IsOptional()
+  latitude?: number;
 
   @IsNumber()
-  longitude: number;
+  @IsOptional()
+  longitude?: number;
 }
 
 export class CreateThreadDto {

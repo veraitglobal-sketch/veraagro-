@@ -33,6 +33,7 @@ async function main() {
       businessName: 'Vera Test Seeds Point',
       mapApproved: true,
       approvedAt: new Date(),
+      postalCode: '20457',
     },
     create: {
       id: crypto.randomUUID(),
@@ -40,6 +41,7 @@ async function main() {
       businessName: 'Vera Test Seeds Point',
       description: 'Demo supplier on the grower map (seeds, inputs).',
       address: 'Hafenstraße 1',
+      postalCode: '20457',
       city: 'Hamburg',
       country: 'Germany',
       location: { lat: 53.55, lng: 9.99 } as any,

@@ -10,10 +10,39 @@ import { UserRole, UserStatus, SupplierDirectOrderStatus } from '@prisma/client'
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { AdminCreateSupplierStoreDto, CreateB2bSupplierProfileDto } from './dto/b2b-suppliers.dto';
+import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geocoding';
 
 @Injectable()
 export class B2bSuppliersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /** Ručne koordinate ili geokodiranje ulice + poštanski broj + grad + država */
+  private async resolveMapLocation(
+    input: { street: string; houseNumber?: string; postalCode: string; city: string; country: string },
+    override?: { latitude?: number; longitude?: number },
+  ): Promise<{ lat: number; lng: number }> {
+    if (
+      override?.latitude != null &&
+      override?.longitude != null &&
+      !Number.isNaN(Number(override.latitude)) &&
+      !Number.isNaN(Number(override.longitude))
+    ) {
+      return { lat: Number(override.latitude), lng: Number(override.longitude) };
+    }
+    const addressLine1 = buildStreetAddressLine(input.street, input.houseNumber);
+    const g = await geocodeAddressNominatim({
+      addressLine1,
+      postalCode: input.postalCode,
+      city: input.city,
+      country: input.country,
+    });
+    if (!g) {
+      throw new BadRequestException(
+        'Could not find coordinates for this address. Check street, postal code, city, country — or set latitude and longitude manually.',
+      );
+    }
+    return g;
+  }
 
   /** Javna mapa: snabdevači sa odobrenom lokacijom i validnim koordinatama */
   async getPublicMapPins() {
@@ -57,6 +86,7 @@ export class B2bSuppliersService {
       businessName: p.businessName,
       description: p.description,
       address: p.address,
+      postalCode: p.postalCode,
       city: p.city,
       country: p.country,
       location: p.location,
@@ -116,6 +146,18 @@ export class B2bSuppliersService {
     const mapApproved = dto.mapApproved === true;
     const now = new Date();
 
+    const addressLine1 = buildStreetAddressLine(dto.street, dto.houseNumber);
+    const { lat, lng } = await this.resolveMapLocation(
+      {
+        street: dto.street,
+        houseNumber: dto.houseNumber,
+        postalCode: dto.postalCode,
+        city: dto.city,
+        country: dto.country,
+      },
+      { latitude: dto.latitude, longitude: dto.longitude },
+    );
+
     const { user, profile } = await this.prisma.$transaction(async (tx) => {
       const user = await tx.users.create({
         data: {
@@ -139,10 +181,11 @@ export class B2bSuppliersService {
           userId: user.id,
           businessName: dto.businessName.trim(),
           description: dto.description?.trim() || null,
-          address: dto.address.trim(),
+          address: addressLine1,
+          postalCode: dto.postalCode.trim(),
           city: dto.city.trim(),
           country: dto.country.trim(),
-          location: { lat: dto.latitude, lng: dto.longitude } as any,
+          location: { lat, lng } as any,
           mapApproved,
           approvedAt: mapApproved ? now : null,
           approvedByUserId: mapApproved ? adminUserId : null,
@@ -165,6 +208,11 @@ export class B2bSuppliersService {
 
   async upsertMyProfile(userId: string, dto: CreateB2bSupplierProfileDto) {
     this.assertSupplier((await this.prisma.users.findUniqueOrThrow({ where: { id: userId } })).roles);
+    const addressLine1 = buildStreetAddressLine(dto.street, dto.houseNumber);
+    const { lat, lng } = await this.resolveMapLocation(
+      { street: dto.street, houseNumber: dto.houseNumber, postalCode: dto.postalCode, city: dto.city, country: dto.country },
+      { latitude: dto.latitude, longitude: dto.longitude },
+    );
     return this.prisma.material_supplier_profiles.upsert({
       where: { userId },
       create: {
@@ -172,19 +220,21 @@ export class B2bSuppliersService {
         userId,
         businessName: dto.businessName,
         description: dto.description,
-        address: dto.address,
+        address: addressLine1,
+        postalCode: dto.postalCode.trim(),
         city: dto.city,
         country: dto.country,
-        location: { lat: dto.latitude, lng: dto.longitude } as any,
+        location: { lat, lng } as any,
         updatedAt: new Date(),
       },
       update: {
         businessName: dto.businessName,
         description: dto.description,
-        address: dto.address,
+        address: addressLine1,
+        postalCode: dto.postalCode.trim(),
         city: dto.city,
         country: dto.country,
-        location: { lat: dto.latitude, lng: dto.longitude } as any,
+        location: { lat, lng } as any,
         updatedAt: new Date(),
       },
     });

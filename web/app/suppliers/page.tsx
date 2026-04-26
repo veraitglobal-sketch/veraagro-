@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, Download } from 'lucide-react';
-import { suppliersAPI, submitApplicationForm } from '@/lib/api';
+import { suppliersAPI, partnerApplicationsAPI, submitApplicationForm, getFormspreeEndpoint } from '@/lib/api';
 
 export default function SuppliersPage() {
   const [formData, setFormData] = useState({
@@ -19,6 +19,7 @@ export default function SuppliersPage() {
     description: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [referenceCode, setReferenceCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -41,7 +42,7 @@ export default function SuppliersPage() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await submitApplicationForm('Supplier', {
+      const res = await partnerApplicationsAPI.create({
         companyName: formData.companyName,
         pib: formData.pib,
         contactPerson: formData.contactPerson,
@@ -52,7 +53,27 @@ export default function SuppliersPage() {
         website: formData.website,
         description: formData.description,
       });
+      setReferenceCode(res.referenceCode);
       setSubmitted(true);
+      if (getFormspreeEndpoint()) {
+        try {
+          await submitApplicationForm('Supplier', {
+            companyName: formData.companyName,
+            pib: formData.pib,
+            contactPerson: formData.contactPerson,
+            email: formData.email,
+            phone: formData.phone,
+            productType: formData.productType,
+            certifications: formData.certifications,
+            website: formData.website,
+            description: formData.description,
+            referenceCode: res.referenceCode,
+            note: 'Also stored in Bio Vera system — use this ref in admin Partner applications.',
+          });
+        } catch {
+          // Email copy optional; application is already in database
+        }
+      }
       setFormData({
         companyName: '',
         pib: '',
@@ -64,7 +85,6 @@ export default function SuppliersPage() {
         website: '',
         description: '',
       });
-      setTimeout(() => setSubmitted(false), 5000);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Failed to submit. Please try again or contact info@biovera.app');
     } finally {
@@ -530,22 +550,51 @@ export default function SuppliersPage() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">Supplier Application</h2>
-            <p className="text-base text-gray-600 font-light">
-              Apply to become a Bio Vera supplier
+            <p className="text-base text-gray-600 font-light max-w-xl mx-auto">
+              Apply online (no self-service store login). You receive a <strong>reference code</strong> to track
+              your application. Our team will contact you to schedule a meeting; when you are approved we create
+              your partner store account.
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              <Link href="/suppliers/status" className="text-[#2D5A27] underline">
+                Check status with your reference
+              </Link>
             </p>
           </div>
 
           {submitted ? (
-            <div className="bg-[#2D5A27]/10/50 border border-[#2D5A27]/20/50 p-8 text-center">
+            <div className="bg-[#2D5A27]/5 border border-[#2D5A27]/20 p-8 text-center">
               <div className="w-16 h-16 bg-[#2D5A27] rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Application Submitted!</h3>
-              <p className="text-gray-600 font-light">
-                Thank you for your interest. We'll review your application and contact you within 3-5 business days.
+              <h3 className="text-xl font-medium text-gray-900 mb-2">Application received</h3>
+              {referenceCode && (
+                <p className="text-gray-800 font-mono text-lg mb-2">
+                  Your reference: <span className="font-semibold">{referenceCode}</span>
+                </p>
+              )}
+              <p className="text-gray-600 font-light mb-4">
+                We will contact you to schedule a conversation. Save your reference number — you can use it to check your application status anytime.
               </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                {referenceCode && (
+                  <Link
+                    href={`/suppliers/status?ref=${encodeURIComponent(referenceCode)}`}
+                    className="inline-flex items-center justify-center px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f]"
+                  >
+                    Check application status
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => { setSubmitted(false); setReferenceCode(null); }}
+                  className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Submit another
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-8">
