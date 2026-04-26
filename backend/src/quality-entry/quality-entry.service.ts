@@ -109,9 +109,12 @@ export class QualityEntryService {
 
       await this.prisma.audit_trails.create({
         data: {
+          id: crypto.randomUUID(),
           eventType: 'QUALITY_ENTRY',
           entityType: 'Batch',
           entityId: dto.batchId,
+          batchId: dto.batchId,
+          performedByUserId: userId,
           newValue: {
             qualityEntryId: qualityEntry.id,
             preCoolingStartTime: dto.preCoolingStartTime,
@@ -161,9 +164,12 @@ export class QualityEntryService {
 
     await this.prisma.audit_trails.create({
       data: {
+        id: crypto.randomUUID(),
         eventType: 'QUALITY_ENTRY',
         entityType: 'Batch',
         entityId: dto.batchId,
+        batchId: dto.batchId,
+        performedByUserId: userId,
         newValue: {
           qualityEntryId: qualityEntry.id,
           qualityScore: score,
@@ -279,9 +285,12 @@ export class QualityEntryService {
     // Create audit trail
     await this.prisma.audit_trails.create({
       data: {
+        id: crypto.randomUUID(),
         eventType: 'LOGISTICS_HANDOVER',
         entityType: 'Mission',
         entityId: dto.missionId,
+        batchId: mission.batchId,
+        performedByUserId: userId,
         newValue: {
           handoverId: handover.id,
           insideTruckTemperature: dto.insideTruckTemperature,
