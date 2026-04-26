@@ -506,6 +506,7 @@ export const b2bSupplierPortalAPI = {
       unit: string;
       listPrice: number | null;
       sku: string | null;
+      imageUrl: string | null;
       isActive: boolean;
       sortOrder: number;
       createdAt: string;
@@ -539,6 +540,40 @@ export const b2bSupplierPortalAPI = {
   },
   deleteCatalogItem: async (id: string) => {
     const response = await api.delete(`/b2b-suppliers/my/catalog/${encodeURIComponent(id)}`);
+    return response.data;
+  },
+  /** JPEG / PNG / WebP, max 3MB (server may resize). */
+  uploadCatalogItemImage: async (itemId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await api.post(
+      `/b2b-suppliers/my/catalog/${encodeURIComponent(itemId)}/image`,
+      formData,
+      {
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+        transformRequest: [
+          (data, headers) => {
+            if (data instanceof FormData) {
+              const h = headers as { delete?: (k: string) => void; [key: string]: unknown };
+              if (typeof h.delete === 'function') {
+                h.delete('Content-Type');
+              } else {
+                delete h['Content-Type'];
+                delete h['content-type'];
+              }
+            }
+            return data;
+          },
+        ],
+      },
+    );
+    return response.data as Record<string, unknown>;
+  },
+  deleteCatalogItemImage: async (itemId: string) => {
+    const response = await api.delete(
+      `/b2b-suppliers/my/catalog/${encodeURIComponent(itemId)}/image`,
+    );
     return response.data;
   },
 };

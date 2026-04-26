@@ -1163,6 +1163,8 @@ model supplier_catalog_items {
   unit           String   @default("unit")
   listPrice      Float?
   sku            String?
+  /// https URL (Vercel Blob) or data URL for product photo (seeds, packaging)
+  imageUrl       String?  @db.Text
   isActive       Boolean  @default(true)
   sortOrder      Int      @default(0)
   createdAt      DateTime @default(now())

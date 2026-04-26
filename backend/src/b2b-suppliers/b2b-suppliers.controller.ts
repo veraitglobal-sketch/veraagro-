@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageUploadInterceptor } from '../field-entries/image-upload.interceptor';
 import { B2bSuppliersService } from './b2b-suppliers.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -73,6 +87,28 @@ export class B2bSuppliersController {
   @Roles('MATERIAL_SUPPLIER')
   deleteCatalogItem(@GetUser() u: { id: string }, @Param('id') id: string) {
     return this.svc.deleteCatalogItem(u.id, id);
+  }
+
+  @Post('my/catalog/:id/image')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  @UseInterceptors(FileInterceptor('image'), ImageUploadInterceptor)
+  uploadCatalogItemImage(
+    @GetUser() u: { id: string },
+    @Param('id') id: string,
+    @UploadedFile() file: { buffer: Buffer; mimetype: string; size: number },
+  ) {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
+    return this.svc.uploadCatalogItemImage(u.id, id, file);
+  }
+
+  @Delete('my/catalog/:id/image')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  deleteCatalogItemImage(@GetUser() u: { id: string }, @Param('id') id: string) {
+    return this.svc.deleteCatalogItemImage(u.id, id);
   }
 
   @Post('admin/create-store')

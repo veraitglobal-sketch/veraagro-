@@ -88,7 +88,15 @@ export class B2bSuppliersService {
     const catalog = await this.prisma.supplier_catalog_items.findMany({
       where: { supplierUserId: userId, isActive: true },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-      select: { id: true, name: true, description: true, unit: true, listPrice: true, sku: true },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        unit: true,
+        listPrice: true,
+        sku: true,
+        imageUrl: true,
+      },
     });
     return {
       id: p.userId,
@@ -479,6 +487,74 @@ export class B2bSuppliersService {
     if (!row) throw new NotFoundException('Catalog item not found');
     await this.prisma.supplier_catalog_items.delete({ where: { id } });
     return { ok: true };
+  }
+
+  /**
+   * Product photo: Vercel Blob when BLOB_READ_WRITE_TOKEN is set, else data URL in DB.
+   */
+  async uploadCatalogItemImage(
+    supplierUserId: string,
+    itemId: string,
+    file: { buffer: Buffer; mimetype: string; size: number },
+  ) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    if (!file?.buffer?.length) {
+      throw new BadRequestException('No image file');
+    }
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.mimetype)) {
+      throw new BadRequestException('Invalid file type. Only JPEG, PNG, and WebP are allowed.');
+    }
+    const max = 3 * 1024 * 1024;
+    if (file.size > max) {
+      throw new BadRequestException('File size exceeds 3MB');
+    }
+    const item = await this.prisma.supplier_catalog_items.findFirst({
+      where: { id: itemId, supplierUserId },
+    });
+    if (!item) {
+      throw new NotFoundException('Catalog item not found');
+    }
+    const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
+    if (token) {
+      const { put } = await import('@vercel/blob');
+      const ext =
+        file.mimetype === 'image/png' ? 'png' : file.mimetype === 'image/webp' ? 'webp' : 'jpg';
+      const key = `supplier-catalog/${supplierUserId}/${itemId}-${Date.now()}.${ext}`;
+      const out = await put(key, file.buffer, { access: 'public', token });
+      return this.prisma.supplier_catalog_items.update({
+        where: { id: itemId },
+        data: { imageUrl: out.url, updatedAt: new Date() },
+      });
+    }
+    const dataUrl = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+    if (dataUrl.length > 2_500_000) {
+      throw new BadRequestException(
+        'Image is too large for inline storage. Set BLOB_READ_WRITE_TOKEN or use a smaller image.',
+      );
+    }
+    return this.prisma.supplier_catalog_items.update({
+      where: { id: itemId },
+      data: { imageUrl: dataUrl, updatedAt: new Date() },
+    });
+  }
+
+  async deleteCatalogItemImage(supplierUserId: string, itemId: string) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const item = await this.prisma.supplier_catalog_items.findFirst({
+      where: { id: itemId, supplierUserId },
+    });
+    if (!item) {
+      throw new NotFoundException('Catalog item not found');
+    }
+    return this.prisma.supplier_catalog_items.update({
+      where: { id: itemId },
+      data: { imageUrl: null, updatedAt: new Date() },
+    });
   }
 
   /**

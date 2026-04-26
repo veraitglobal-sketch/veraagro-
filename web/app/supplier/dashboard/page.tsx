@@ -11,6 +11,9 @@ export default function SupplierDashboardPage() {
   const [ordersCount, setOrdersCount] = useState<number | null>(null);
   const [threadsCount, setThreadsCount] = useState<number | null>(null);
   const [catalogCount, setCatalogCount] = useState<number | null>(null);
+  const [catalogWindowItems, setCatalogWindowItems] = useState<
+    Array<{ id: string; name: string; imageUrl: string | null }>
+  >([]);
   const [profile, setProfile] = useState<Record<string, unknown> | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
@@ -18,15 +21,35 @@ export default function SupplierDashboardPage() {
   useEffect(() => {
     (async () => {
       try {
-        const [orders, threads, prof, me] = await Promise.all([
+        const [orders, threads, prof, me, cat] = await Promise.all([
           b2bSupplierPortalAPI.getIncomingOrders().catch(() => []),
           b2bSupplierPortalAPI.getMyThreads().catch(() => []),
           b2bSupplierPortalAPI.getMyProfile().catch(() => null),
           usersAPI.getMe().catch(() => null),
+          b2bSupplierPortalAPI.getMyCatalog().catch(() => []),
         ]);
         setOrdersCount(Array.isArray(orders) ? orders.length : 0);
         setThreadsCount(Array.isArray(threads) ? threads.length : 0);
         setProfile(prof);
+        if (Array.isArray(cat)) {
+          setCatalogCount(cat.length);
+          const active = cat.filter((row: { isActive?: boolean }) => row.isActive !== false);
+          const withPhotosFirst = [...active].sort((a, b) => {
+            const ai = a.imageUrl ? 1 : 0;
+            const bi = b.imageUrl ? 1 : 0;
+            return bi - ai;
+          });
+          setCatalogWindowItems(
+            withPhotosFirst.slice(0, 3).map((row: { id: string; name: string; imageUrl?: string | null }) => ({
+              id: row.id,
+              name: row.name,
+              imageUrl: row.imageUrl ?? null,
+            })),
+          );
+        } else {
+          setCatalogCount(0);
+          setCatalogWindowItems([]);
+        }
         if (me && typeof me === 'object' && 'assignedCommercialAgent' in me) {
           setAssignedAgent(
             (me as { assignedCommercialAgent?: CommercialAgentPublic | null }).assignedCommercialAgent ?? null,
@@ -62,6 +85,7 @@ export default function SupplierDashboardPage() {
         ordersCount={ordersCount}
         threadsCount={threadsCount}
         catalogCount={catalogCount}
+        catalogWindowItems={catalogWindowItems}
       />
     </AuthGuard>
   );

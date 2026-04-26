@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { ImageUp, Plus, Pencil, Trash2, X } from 'lucide-react';
 
 type Item = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyCatalog>>[number];
 
@@ -13,6 +13,8 @@ export default function SupplierCatalogPage() {
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -37,9 +39,28 @@ export default function SupplierCatalogPage() {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreview((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return null;
+      });
+      return;
+    }
+    const url = URL.createObjectURL(imageFile);
+    setImagePreview((prev) => {
+      if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+      return url;
+    });
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [imageFile]);
+
   const resetForm = () => {
     setForm({ name: '', description: '', unit: 'bag', listPrice: '', sku: '' });
     setEditingId(null);
+    setImageFile(null);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -63,13 +84,16 @@ export default function SupplierCatalogPage() {
           sku: form.sku.trim() || undefined,
         });
       } else {
-        await b2bSupplierPortalAPI.createCatalogItem({
+        const created = (await b2bSupplierPortalAPI.createCatalogItem({
           name: form.name.trim(),
           description: form.description.trim() || undefined,
           unit: form.unit.trim() || 'unit',
           listPrice: listPrice,
           sku: form.sku.trim() || undefined,
-        });
+        })) as { id: string };
+        if (imageFile) {
+          await b2bSupplierPortalAPI.uploadCatalogItemImage(created.id, imageFile);
+        }
       }
       resetForm();
       await load();
@@ -82,6 +106,7 @@ export default function SupplierCatalogPage() {
 
   const startEdit = (it: Item) => {
     setEditingId(it.id);
+    setImageFile(null);
     setForm({
       name: it.name,
       description: it.description || '',
@@ -89,6 +114,43 @@ export default function SupplierCatalogPage() {
       listPrice: it.listPrice != null ? String(it.listPrice) : '',
       sku: it.sku || '',
     });
+  };
+
+  const onImageSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    e.target.value = '';
+    if (!f) return;
+    if (editingId) {
+      setSaving(true);
+      setErr(null);
+      try {
+        await b2bSupplierPortalAPI.uploadCatalogItemImage(editingId, f);
+        await load();
+      } catch (err) {
+        setErr(err instanceof Error ? err.message : 'Image upload failed');
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      setImageFile(f);
+    }
+  };
+
+  const clearCatalogImage = async () => {
+    if (editingId) {
+      setSaving(true);
+      setErr(null);
+      try {
+        await b2bSupplierPortalAPI.deleteCatalogItemImage(editingId);
+        await load();
+      } catch (err) {
+        setErr(err instanceof Error ? err.message : 'Remove failed');
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      setImageFile(null);
+    }
   };
 
   const remove = async (id: string) => {
@@ -176,6 +238,58 @@ export default function SupplierCatalogPage() {
                 placeholder="optional"
               />
             </label>
+            <div className="sm:col-span-2 rounded-md border border-dashed border-gray-200 bg-gray-50/80 p-3">
+              <p className="text-xs font-medium text-gray-700">Product photo</p>
+              <p className="text-xs text-gray-500 font-light mt-0.5">
+                Optional — e.g. seed bags or inputs. JPEG, PNG, or WebP. Shown on your public store and dashboard
+                window.
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
+                  {editingId ? (
+                    items.find((x) => x.id === editingId)?.imageUrl ? (
+                      <img
+                        src={items.find((x) => x.id === editingId)!.imageUrl!}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs text-gray-400 font-light p-1 text-center">
+                        No photo
+                      </div>
+                    )
+                  ) : imagePreview ? (
+                    <img src={imagePreview} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-gray-400 font-light p-1 text-center">
+                      No photo
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2 min-w-0">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[#2D5A27]/30 bg-white px-3 py-2 text-sm text-[#2D5A27] hover:bg-[#2D5A27]/5">
+                    <ImageUp className="h-4 w-4 shrink-0" />
+                    {editingId ? 'Change image' : 'Choose image'}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="sr-only"
+                      onChange={onImageSelected}
+                    />
+                  </label>
+                  {((editingId && items.find((x) => x.id === editingId)?.imageUrl) || (!editingId && imageFile)) && (
+                    <button
+                      type="button"
+                      onClick={() => void clearCatalogImage()}
+                      className="inline-flex items-center gap-1 self-start text-xs text-red-600 hover:underline"
+                    >
+                      <X className="h-3 w-3" />
+                      Remove image
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
@@ -207,7 +321,17 @@ export default function SupplierCatalogPage() {
                 key={it.id}
                 className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm"
               >
-                <div>
+                <div className="flex gap-3 min-w-0">
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-md border border-gray-100 bg-gray-50">
+                    {it.imageUrl ? (
+                      <img src={it.imageUrl} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[#2D5A27]/15">
+                        <ImageUp className="h-5 w-5" strokeWidth={1.25} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
                   <p className="font-medium text-gray-900">{it.name}</p>
                   {it.description && <p className="text-xs text-gray-500 font-light mt-0.5">{it.description}</p>}
                   <p className="text-xs text-gray-500 mt-1">
@@ -216,6 +340,7 @@ export default function SupplierCatalogPage() {
                     {it.sku && ` · SKU ${it.sku}`}
                     {!it.isActive && ' · (inactive)'}
                   </p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <button

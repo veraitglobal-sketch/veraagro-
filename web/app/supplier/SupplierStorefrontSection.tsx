@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { MessageCircle, Package, MapPin, Sparkles, ShoppingBag, ArrowUpRight } from 'lucide-react';
 
+type CatalogWindowItem = { id: string; name: string; imageUrl: string | null };
+
 type Props = {
   storeName: string;
   city?: string;
@@ -11,6 +13,8 @@ type Props = {
   ordersCount: number | null;
   threadsCount: number | null;
   catalogCount: number | null;
+  /** Up to three active products for a small “shop window” row (thumbnails or placeholders). */
+  catalogWindowItems?: CatalogWindowItem[];
 };
 
 /**
@@ -25,8 +29,10 @@ export default function SupplierStorefrontSection({
   ordersCount,
   threadsCount,
   catalogCount,
+  catalogWindowItems = [],
 }: Props) {
   const location = [city, country].filter(Boolean).join(', ');
+  const windowSlots: (CatalogWindowItem | undefined)[] = [0, 1, 2].map((i) => catalogWindowItems[i]);
 
   const cards = [
     {
@@ -54,6 +60,18 @@ export default function SupplierStorefrontSection({
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+      {/* Light storefront cue: striped awning + sill — Bio Vera green, no stock photos */}
+      <div className="relative" aria-hidden>
+        <div
+          className="h-7 w-full"
+          style={{
+            background:
+              'repeating-linear-gradient(110deg, #2D5A27 0px, #2D5A27 16px, #3a6540 16px, #3a6540 32px)',
+          }}
+        />
+        <div className="h-1.5 w-full bg-gradient-to-b from-[#1e3d1a] to-[#152a14] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" />
+      </div>
+
       <div className="border-b border-gray-100 bg-gradient-to-b from-[#2D5A27]/5 to-white px-5 py-6 sm:px-8 sm:py-8">
         <p className="text-xs font-medium uppercase tracking-wider text-[#2D5A27]">Partner store</p>
         <h1 className="mt-1 text-2xl sm:text-3xl font-light text-gray-900 tracking-tight">{storeName}</h1>
@@ -67,6 +85,34 @@ export default function SupplierStorefrontSection({
           Direct grower orders and message threads in one place. Build your in-app catalog so growers see what
           you stock; orders still use free-text lines — the catalog is your reference list.
         </p>
+
+        <div className="mt-5">
+          <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Shop window</p>
+          <div className="mt-2 flex flex-wrap items-end gap-2">
+            {windowSlots.map((it, idx) => (
+              <div
+                key={it?.id ?? `placeholder-${idx}`}
+                className="relative h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem] overflow-hidden rounded-md border-2 border-[#2D5A27]/20 bg-gradient-to-b from-white to-[#f7f4ef] shadow-[inset_0_0_0_1px_rgba(45,90,39,0.08)]"
+                title={it?.name || 'Add products with photos in Catalog'}
+              >
+                {it?.imageUrl ? (
+                  <img
+                    src={it.imageUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[#2D5A27]/20">
+                    <ShoppingBag className="h-7 w-7" strokeWidth={1.25} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs text-gray-400 font-light">
+            Upload product photos in Catalog — they appear here and on your public profile.
+          </p>
+        </div>
 
         {mapApproved !== undefined && (
           <div
