@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, standardEngineAPI } from '@/lib/api';
@@ -22,6 +23,16 @@ import {
 } from 'lucide-react';
 
 const navItems = growerNavItems;
+
+function formatCurrentLocation(loc: unknown): string {
+  if (loc == null) return '—';
+  if (typeof loc === 'string') return loc;
+  if (typeof loc === 'object' && loc !== null && 'hubName' in loc) {
+    const o = loc as { hubName?: string; city?: string };
+    return [o.hubName, o.city].filter(Boolean).join(', ') || '—';
+  }
+  return '—';
+}
 
 interface Batch {
   id: string;
@@ -67,6 +78,7 @@ export default function GrowerBatchesPage() {
   const [loadingApproval, setLoadingApproval] = useState<any>(null);
   const [checkingApproval, setCheckingApproval] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [showTraceabilityJson, setShowTraceabilityJson] = useState(false);
 
   useEffect(() => {
     loadBatches();
@@ -494,17 +506,132 @@ export default function GrowerBatchesPage() {
                         </div>
                       </div>
 
-                      {/* Traceability Info */}
+                      {/* Traceability — human-readable; raw JSON available for support */}
                       {batchDetails && (
                         <div className="border-t border-gray-200 pt-6">
-                          <h3 className="text-lg font-medium text-gray-900 mb-4">
-                            Traceability Information
+                          <h3 className="text-lg font-medium text-gray-900 mb-1">
+                            Traceability
                           </h3>
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <pre className="text-sm text-gray-700 whitespace-pre-wrap">
-                              {JSON.stringify(batchDetails, null, 2)}
-                            </pre>
-                          </div>
+                          <p className="text-sm text-gray-500 font-light mb-4">
+                            Origin, people, and location. <strong>Transported by</strong> is set when a driver is
+                            assigned to this batch in the system; it can stay empty until then even if you requested a
+                            mission.
+                          </p>
+                          {batchDetails.traceability ? (
+                            <div className="space-y-4 text-sm">
+                              {batchDetails.traceability.origin?.estate && (
+                                <div className="rounded-lg border border-gray-100 bg-gray-50/80 p-4">
+                                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2">
+                                    Origin
+                                  </p>
+                                  <p className="text-gray-900">
+                                    Estate: {batchDetails.traceability.origin.estate.name}
+                                    {batchDetails.traceability.origin.estate.owner?.name && (
+                                      <span className="text-gray-600">
+                                        {' '}
+                                        · Owner: {batchDetails.traceability.origin.estate.owner.name}
+                                      </span>
+                                    )}
+                                  </p>
+                                  {batchDetails.traceability.origin.parcel && (
+                                    <p className="text-gray-600 mt-1">
+                                      Parcel: {batchDetails.traceability.origin.parcel.cropType || '—'}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="rounded-lg border border-gray-100 p-4">
+                                  <p className="text-xs font-medium text-gray-500 mb-1">Harvested by</p>
+                                  <p className="text-gray-900">
+                                    {batchDetails.traceability.harvestedBy?.name || '—'}
+                                  </p>
+                                </div>
+                                <div className="rounded-lg border border-gray-100 p-4">
+                                  <p className="text-xs font-medium text-gray-500 mb-1">Transported by (batch record)</p>
+                                  <p className="text-gray-900">
+                                    {batchDetails.traceability.transportedBy?.name || (
+                                      <span className="text-amber-800">Not assigned yet</span>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="rounded-lg border border-gray-100 p-4">
+                                <p className="text-xs font-medium text-gray-500 mb-1">Current location</p>
+                                <p className="text-gray-900">
+                                  {formatCurrentLocation(batchDetails.traceability.currentLocation)}
+                                </p>
+                              </div>
+                              {Array.isArray(batchDetails.traceability.locationHistory) &&
+                                batchDetails.traceability.locationHistory.length > 0 && (
+                                  <div>
+                                    <p className="text-xs font-medium text-gray-500 mb-2">Location history</p>
+                                    <ul className="space-y-2">
+                                      {batchDetails.traceability.locationHistory.map(
+                                        (entry: Record<string, unknown>, idx: number) => (
+                                          <li
+                                            key={idx}
+                                            className="rounded border border-gray-100 bg-white px-3 py-2 text-gray-700"
+                                          >
+                                            {String(entry.status ?? '—')}
+                                            {entry.driverId != null && ` · driver set`}
+                                            {entry.hubId != null && ` · hub`}
+                                          </li>
+                                        ),
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                              {Array.isArray(batchDetails.traceability.orders) &&
+                                batchDetails.traceability.orders.length > 0 && (
+                                  <div>
+                                    <p className="text-xs font-medium text-gray-500 mb-2">Linked orders</p>
+                                    <ul className="list-disc pl-5 text-gray-700">
+                                      {batchDetails.traceability.orders.map(
+                                        (o: { orderNumber?: string; orderId?: string }) => (
+                                          <li key={o.orderId || o.orderNumber}>
+                                            {o.orderNumber || o.orderId}
+                                          </li>
+                                        ),
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                              {['PACKED', 'QUALITY_VERIFIED'].includes(
+                                (selectedBatch.status || '').toUpperCase(),
+                              ) && (
+                                <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                  <p className="text-sm text-gray-800">
+                                    Need pickup? Create a <strong>transport mission</strong> for this batch.
+                                  </p>
+                                  <Link
+                                    href="/grower/missions/create"
+                                    className="inline-flex items-center justify-center rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] shrink-0"
+                                  >
+                                    Request transport
+                                  </Link>
+                                </div>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => setShowTraceabilityJson((v) => !v)}
+                                className="text-xs text-gray-500 hover:text-gray-800 underline"
+                              >
+                                {showTraceabilityJson ? 'Hide' : 'Show'} raw JSON (support / debugging)
+                              </button>
+                              {showTraceabilityJson && (
+                                <pre className="text-xs text-gray-600 whitespace-pre-wrap bg-gray-100 rounded-lg p-3 overflow-x-auto">
+                                  {JSON.stringify(batchDetails, null, 2)}
+                                </pre>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="bg-gray-50 rounded-lg p-4">
+                              <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+                                {JSON.stringify(batchDetails, null, 2)}
+                              </pre>
+                            </div>
+                          )}
                         </div>
                       )}
 

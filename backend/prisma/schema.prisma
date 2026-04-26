@@ -1073,6 +1073,10 @@ model users {
   supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
   supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
   supplier_catalog_items                      supplier_catalog_items[]   @relation("SupplierCatalogItems")
+  /// B2B: physical unit barcodes registered by this supplier (stock / sale traceability)
+  supplier_material_barcodes_registered       supplier_material_barcodes[] @relation("SupplierMaterialBarcodes")
+  /// Barcodes of material sold to this grower (when supplier marks sale)
+  supplier_barcodes_sold_to_me                 supplier_material_barcodes[] @relation("SupplierBarcodeSoldToFarmer")
   /// When a partner / distributor application is converted to a store user
   partner_application_links                 partner_applications[]     @relation("PartnerApplicationLinkedUser")
   /// Admin-assigned commercial agent (growers, logistics partners, material suppliers)
@@ -1175,6 +1179,7 @@ model supplier_catalog_items {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   supplier       users    @relation("SupplierCatalogItems", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  material_barcodes supplier_material_barcodes[]
 
   @@index([supplierUserId, isActive])
   @@index([supplierUserId, sortOrder])
@@ -1225,9 +1230,35 @@ model supplier_direct_orders {
   thread             supplier_threads? @relation(fields: [threadId], references: [id], onDelete: SetNull)
   farmer             users     @relation("SupplierOrderFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
   supplier           users     @relation("SupplierOrderSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  material_barcodes  supplier_material_barcodes[]
 
   @@index([farmerId, createdAt])
   @@index([supplierUserId, status])
+}
+
+/// Physical unit instance: supplier registers barcode on goods-in; marks SOLD when selling to a grower (optional link to order).
+model supplier_material_barcodes {
+  id                 String                        @id @default(uuid())
+  supplierUserId     String
+  catalogItemId      String?
+  /// Raw scanned value (EAN-13, Code128, etc.) — unique system-wide for this unit line
+  barcode            String                        @unique
+  status             SupplierMaterialBarcodeStatus @default(IN_STOCK)
+  lotNumber          String?
+  note               String?                       @db.Text
+  receivedAt         DateTime                      @default(now())
+  soldAt             DateTime?
+  soldToFarmerId     String?
+  directOrderId      String?
+  createdAt          DateTime                      @default(now())
+  updatedAt          DateTime                      @updatedAt
+  supplier           users                         @relation("SupplierMaterialBarcodes", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  catalogItem        supplier_catalog_items?       @relation(fields: [catalogItemId], references: [id], onDelete: SetNull)
+  soldToFarmer       users?                        @relation("SupplierBarcodeSoldToFarmer", fields: [soldToFarmerId], references: [id], onDelete: SetNull)
+  directOrder        supplier_direct_orders?       @relation(fields: [directOrderId], references: [id], onDelete: SetNull)
+
+  @@index([supplierUserId, status])
+  @@index([supplierUserId, createdAt])
 }
 
 model email_verification_tokens {
@@ -1647,6 +1678,15 @@ enum SupplierDirectOrderStatus {
   REJECTED
   FULFILLED
   CANCELLED
+}
+
+enum SupplierMaterialBarcodeStatus {
+  /// Registered on goods-in, not yet marked sold to a grower
+  IN_STOCK
+  /// Supplier linked this unit to a sale (optional grower + order)
+  SOLD
+  /// Damaged / returned / data error — do not accept in the field
+  VOID
 }
 
 enum UserStatus {

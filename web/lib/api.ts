@@ -473,6 +473,50 @@ export const partnerApplicationsAdminAPI = {
   },
 };
 
+/** Logged-in grower: B2B partner store (catalog + direct order) — same routes as mobile */
+export const growerSupplierB2bAPI = {
+  getPublicStore: async (supplierUserId: string) => {
+    const response = await api.get(
+      `/b2b-suppliers/public/${encodeURIComponent(supplierUserId)}`,
+    );
+    return response.data as {
+      id: string;
+      businessName: string;
+      description: string | null;
+      website: string | null;
+      address: string;
+      postalCode: string | null;
+      city: string;
+      country: string;
+      partnerCode: string | null;
+      contactEmail: string | null;
+      contactPhone: string | null;
+      catalog: Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        unit: string;
+        listPrice: number | null;
+        sku: string | null;
+        imageUrl: string | null;
+      }>;
+    };
+  },
+  getOrCreateThread: async (supplierUserId: string) => {
+    const response = await api.post('/b2b-suppliers/threads', { supplierUserId });
+    return response.data as { id: string; farmerId: string; supplierUserId: string; lastMessageAt: string };
+  },
+  createDirectOrder: async (payload: {
+    supplierUserId: string;
+    items: { label: string; quantity: number; unit?: string }[];
+    note?: string;
+    threadId?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/orders', payload);
+    return response.data;
+  },
+};
+
 /** Logged-in material supplier: orders + threads + own profile (web + mobile) */
 export const b2bSupplierPortalAPI = {
   getMyProfile: async () => {
@@ -607,6 +651,43 @@ export const b2bSupplierPortalAPI = {
     const response = await api.delete(
       `/b2b-suppliers/my/catalog/${encodeURIComponent(itemId)}/image`,
     );
+    return response.data;
+  },
+  /** Register a physical barcode when goods arrive (unique in the whole system). */
+  getMyMaterialBarcodes: async (params?: { status?: string }) => {
+    const response = await api.get('/b2b-suppliers/my/material-barcodes', { params });
+    return response.data as Array<{
+      id: string;
+      barcode: string;
+      status: string;
+      lotNumber: string | null;
+      note: string | null;
+      receivedAt: string;
+      soldAt: string | null;
+      catalogItem: { id: string; name: string; unit: string; sku: string | null } | null;
+      soldToFarmer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        partnerCode: string;
+      } | null;
+      directOrder: { id: string; status: string; createdAt: string } | null;
+    }>;
+  },
+  registerMaterialBarcode: async (data: {
+    barcode: string;
+    catalogItemId?: string;
+    lotNumber?: string;
+    note?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/my/material-barcodes', data);
+    return response.data;
+  },
+  updateMaterialBarcode: async (
+    id: string,
+    data: { status: 'SOLD' | 'VOID'; soldToFarmerId?: string; directOrderId?: string },
+  ) => {
+    const response = await api.patch(`/b2b-suppliers/my/material-barcodes/${encodeURIComponent(id)}`, data);
     return response.data;
   },
 };

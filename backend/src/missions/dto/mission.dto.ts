@@ -1,9 +1,24 @@
-import { IsString, IsObject, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsObject,
+  IsOptional,
+  ValidateNested,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
+/** Pickup point — must declare validators or ValidationPipe (forbidNonWhitelisted) rejects lat/lng/address */
 class LocationDto {
+  @Type(() => Number)
+  @IsNumber()
   lat: number;
+
+  @Type(() => Number)
+  @IsNumber()
   lng: number;
+
+  @IsString()
+  @IsOptional()
   address?: string;
 }
 

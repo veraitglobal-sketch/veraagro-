@@ -6,15 +6,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, UserStatus, SupplierDirectOrderStatus } from '@prisma/client';
+import {
+  UserRole,
+  UserStatus,
+  SupplierDirectOrderStatus,
+  SupplierMaterialBarcodeStatus,
+} from '@prisma/client';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import {
   AdminCreateSupplierStoreDto,
   CreateB2bSupplierProfileDto,
   CreateCatalogItemDto,
+  RegisterSupplierMaterialBarcodeDto,
   UpdateB2bSupplierStoreDto,
   UpdateCatalogItemDto,
+  UpdateSupplierMaterialBarcodeDto,
 } from './dto/b2b-suppliers.dto';
 import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geocoding';
 
@@ -906,5 +913,180 @@ export class B2bSuppliersService {
         },
       })),
     };
+  }
+
+  private normMaterialBarcode(s: string) {
+    return s.trim().replace(/\s+/g, '');
+  }
+
+  /**
+   * Public: resolve a physical unit (registered by a supplier) — used by grower app / scanner fallback.
+   */
+  async publicLookupMaterialBarcode(code: string | undefined) {
+    const bar = code ? this.normMaterialBarcode(code) : '';
+    if (bar.length < 3) {
+      return { registered: false as const, message: 'Code too short' };
+    }
+    const row = await this.prisma.supplier_material_barcodes.findUnique({
+      where: { barcode: bar },
+      include: {
+        catalogItem: { select: { name: true, unit: true } },
+        supplier: {
+          select: {
+            partnerCode: true,
+            material_supplier_profile: { select: { businessName: true } },
+          },
+        },
+      },
+    });
+    if (!row) {
+      return { registered: false as const };
+    }
+    return {
+      registered: true as const,
+      status: row.status,
+      businessName: row.supplier?.material_supplier_profile?.businessName ?? null,
+      partnerCode: row.supplier?.partnerCode ?? null,
+      productName: row.catalogItem?.name ?? null,
+      unit: row.catalogItem?.unit ?? null,
+      lotNumber: row.lotNumber,
+    };
+  }
+
+  async listMyMaterialBarcodes(supplierUserId: string, status?: string) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const where: {
+      supplierUserId: string;
+      status?: SupplierMaterialBarcodeStatus;
+    } = { supplierUserId };
+    if (status && ['IN_STOCK', 'SOLD', 'VOID'].includes(status)) {
+      where.status = status as SupplierMaterialBarcodeStatus;
+    }
+    return this.prisma.supplier_material_barcodes.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        catalogItem: { select: { id: true, name: true, unit: true, sku: true } },
+        soldToFarmer: { select: { id: true, firstName: true, lastName: true, partnerCode: true } },
+        directOrder: { select: { id: true, status: true, createdAt: true } },
+      },
+    });
+  }
+
+  async registerMaterialBarcode(supplierUserId: string, dto: RegisterSupplierMaterialBarcodeDto) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const bar = this.normMaterialBarcode(dto.barcode);
+    if (bar.length < 3) {
+      throw new BadRequestException('Barcode is too short');
+    }
+    const existing = await this.prisma.supplier_material_barcodes.findUnique({ where: { barcode: bar } });
+    if (existing) {
+      if (existing.supplierUserId === supplierUserId) {
+        throw new ConflictException('This barcode is already registered for your store');
+      }
+      throw new ConflictException('This barcode is already registered in the system');
+    }
+    if (dto.catalogItemId) {
+      const item = await this.prisma.supplier_catalog_items.findFirst({
+        where: { id: dto.catalogItemId, supplierUserId },
+      });
+      if (!item) {
+        throw new BadRequestException('Catalog item not found');
+      }
+    }
+    return this.prisma.supplier_material_barcodes.create({
+      data: {
+        id: crypto.randomUUID(),
+        supplierUserId,
+        catalogItemId: dto.catalogItemId || null,
+        barcode: bar,
+        lotNumber: dto.lotNumber?.trim() || null,
+        note: dto.note?.trim() || null,
+        status: 'IN_STOCK',
+        updatedAt: new Date(),
+      },
+      include: {
+        catalogItem: { select: { id: true, name: true, unit: true } },
+      },
+    });
+  }
+
+  async updateMaterialBarcode(
+    supplierUserId: string,
+    id: string,
+    dto: UpdateSupplierMaterialBarcodeDto,
+  ) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const row = await this.prisma.supplier_material_barcodes.findFirst({
+      where: { id, supplierUserId },
+    });
+    if (!row) {
+      throw new NotFoundException('Barcode record not found');
+    }
+    if (dto.status === 'VOID') {
+      return this.prisma.supplier_material_barcodes.update({
+        where: { id },
+        data: { status: 'VOID', updatedAt: new Date() },
+        include: {
+          catalogItem: { select: { name: true } },
+          soldToFarmer: { select: { partnerCode: true, firstName: true, lastName: true } },
+        },
+      });
+    }
+    if (dto.status === 'SOLD') {
+      if (row.status !== 'IN_STOCK') {
+        throw new BadRequestException('Only items in stock can be marked SOLD');
+      }
+      let soldToFarmerId: string | null = dto.soldToFarmerId?.trim() || null;
+      let orderId: string | null = null;
+      if (dto.directOrderId) {
+        const o = await this.prisma.supplier_direct_orders.findFirst({
+          where: { id: dto.directOrderId, supplierUserId },
+        });
+        if (!o) {
+          throw new BadRequestException('Direct order not found for this store');
+        }
+        orderId = o.id;
+        if (soldToFarmerId && soldToFarmerId !== o.farmerId) {
+          throw new BadRequestException('Selected farmer does not match this order');
+        }
+        if (!soldToFarmerId) {
+          soldToFarmerId = o.farmerId;
+        }
+      }
+      if (soldToFarmerId) {
+        const farmer = await this.prisma.users.findFirst({
+          where: { id: soldToFarmerId, status: UserStatus.ACTIVE },
+          select: { id: true, roles: true },
+        });
+        if (!farmer) {
+          throw new BadRequestException('Farmer not found or inactive');
+        }
+        if (!['FARMER', 'GROWER', 'PARTNER'].some((r) => (farmer.roles as string[]).includes(r))) {
+          throw new BadRequestException('The selected user is not a grower account');
+        }
+      }
+      return this.prisma.supplier_material_barcodes.update({
+        where: { id },
+        data: {
+          status: 'SOLD',
+          soldAt: new Date(),
+          soldToFarmerId,
+          directOrderId: orderId,
+          updatedAt: new Date(),
+        },
+        include: {
+          catalogItem: { select: { name: true, unit: true } },
+          soldToFarmer: { select: { firstName: true, lastName: true, partnerCode: true } },
+        },
+      });
+    }
+    throw new BadRequestException('Invalid status');
   }
 }

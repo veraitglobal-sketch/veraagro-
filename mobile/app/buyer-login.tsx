@@ -260,9 +260,9 @@ export default function BuyerLoginScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Back */}
+      {/* Opening login via replace() (e.g. after logout) leaves no history — do not use back() */}
       <TouchableOpacity
-        onPress={() => router.back()}
+        onPress={() => router.replace('/')}
         style={{ marginTop: theme.spacing.md, alignItems: 'center' }}
       >
         <Text style={{

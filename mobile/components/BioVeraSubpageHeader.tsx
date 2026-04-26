@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import type { ReactNode } from 'react';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
@@ -25,7 +25,6 @@ export function BioVeraSubpageHeader({
   right,
   style,
 }: BioVeraSubpageHeaderProps) {
-  const router = useRouter();
   const p = useBioVeraScreenPadding();
 
   return (
@@ -47,7 +46,16 @@ export function BioVeraSubpageHeader({
     >
       {left === 'back' ? (
         <TouchableOpacity
-          onPress={onBack ?? (() => router.back())}
+          onPress={
+            onBack ??
+            (() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                router.replace('/');
+              }
+            })
+          }
           hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
           style={{ marginRight: theme.spacing.md }}
         >

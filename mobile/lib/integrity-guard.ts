@@ -76,16 +76,41 @@ export async function materialValidator(
     }
   }
 
-  // For fertilizers/pesticides, check whitelist
+  // For fertilizers/pesticides, check local whitelist first
   const whitelist = await offlineStorage.getWhitelist();
-  const isValid = whitelist.includes(trimmedBarcode);
-
-  if (!isValid) {
-    return { 
-      valid: false, 
-      message: 'Materijal nije na whitelist-i. Kontaktirajte administratora.' 
-    };
+  if (whitelist.includes(trimmedBarcode)) {
+    return { valid: true };
   }
 
-  return { valid: true };
+  // Then check supplier-registered material units (goods-in) on the server
+  try {
+    const { API_URL } = await import('./api-url');
+    const res = await fetch(
+      `${API_URL}/b2b-suppliers/public/material-barcodes/lookup?code=${encodeURIComponent(trimmedBarcode)}`,
+      { method: 'GET' },
+    );
+    if (res.ok) {
+      const data = (await res.json()) as {
+        registered?: boolean;
+        status?: string;
+        businessName?: string | null;
+        productName?: string | null;
+        message?: string;
+      };
+      if (data.registered) {
+        if (data.status === 'VOID') {
+          return { valid: false, message: 'Ovaj je barkod poništen u sistemu. Kontaktirajte dobavljača.' };
+        }
+        const label = [data.businessName, data.productName].filter(Boolean).join(' · ') || 'Registrovan kod snabdevača';
+        return { valid: true, message: `${label} (${data.status})` };
+      }
+    }
+  } catch {
+    // offline / server down — fall through
+  }
+
+  return {
+    valid: false,
+    message: 'Materijal nije na whitelist-i i nije registrovani kod snabdevača. Kontaktirajte administratora ili apoteku.',
+  };
 }

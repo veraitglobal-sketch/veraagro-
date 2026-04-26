@@ -178,9 +178,9 @@ export default function PartnerLoginScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Back to Marketplace */}
+      {/* After replace() from logout there is no stack to pop — use replace, not back() */}
       <TouchableOpacity
-        onPress={() => router.back()}
+        onPress={() => router.replace('/')}
         style={{ alignItems: 'center' }}
       >
         <Text style={{

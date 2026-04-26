@@ -3,12 +3,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
-import { ImageUp, Plus, Pencil, Trash2, X } from 'lucide-react';
+import { ImageUp, Plus, Pencil, Trash2, X, Barcode, Package } from 'lucide-react';
 
 type Item = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyCatalog>>[number];
+type BarcodeRow = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyMaterialBarcodes>>[number];
 
 export default function SupplierCatalogPage() {
   const [items, setItems] = useState<Item[]>([]);
+  const [barcodes, setBarcodes] = useState<BarcodeRow[]>([]);
+  const [barSaving, setBarSaving] = useState(false);
+  const [barForm, setBarForm] = useState({ barcode: '', catalogItemId: '', lotNumber: '', note: '' });
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -27,7 +31,12 @@ export default function SupplierCatalogPage() {
     setErr(null);
     setLoading(true);
     try {
-      setItems(await b2bSupplierPortalAPI.getMyCatalog());
+      const [c, b] = await Promise.all([
+        b2bSupplierPortalAPI.getMyCatalog(),
+        b2bSupplierPortalAPI.getMyMaterialBarcodes().catch(() => [] as BarcodeRow[]),
+      ]);
+      setItems(c);
+      setBarcodes(Array.isArray(b) ? b : []);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Failed to load catalog');
     } finally {
@@ -165,6 +174,64 @@ export default function SupplierCatalogPage() {
     }
   };
 
+  const onRegisterBarcode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!barForm.barcode.trim()) return;
+    setBarSaving(true);
+    setErr(null);
+    try {
+      await b2bSupplierPortalAPI.registerMaterialBarcode({
+        barcode: barForm.barcode.trim(),
+        catalogItemId: barForm.catalogItemId || undefined,
+        lotNumber: barForm.lotNumber.trim() || undefined,
+        note: barForm.note.trim() || undefined,
+      });
+      setBarForm({ barcode: '', catalogItemId: '', lotNumber: '', note: '' });
+      await load();
+    } catch (e) {
+      setErr(
+        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          (e instanceof Error ? e.message : 'Failed to register barcode'),
+      );
+    } finally {
+      setBarSaving(false);
+    }
+  };
+
+  const markBarcodeSold = async (id: string) => {
+    if (!confirm('Mark this unit as SOLD? Growers can still verify the barcode in the system.')) return;
+    setBarSaving(true);
+    setErr(null);
+    try {
+      await b2bSupplierPortalAPI.updateMaterialBarcode(id, { status: 'SOLD' });
+      await load();
+    } catch (e) {
+      setErr(
+        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          (e instanceof Error ? e.message : 'Update failed'),
+      );
+    } finally {
+      setBarSaving(false);
+    }
+  };
+
+  const voidBarcode = async (id: string) => {
+    if (!confirm('Void this barcode? It will no longer be accepted in field apps.')) return;
+    setBarSaving(true);
+    setErr(null);
+    try {
+      await b2bSupplierPortalAPI.updateMaterialBarcode(id, { status: 'VOID' });
+      await load();
+    } catch (e) {
+      setErr(
+        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          (e instanceof Error ? e.message : 'Update failed'),
+      );
+    } finally {
+      setBarSaving(false);
+    }
+  };
+
   return (
     <AuthGuard
       requiredRoles={['MATERIAL_SUPPLIER']}
@@ -176,6 +243,115 @@ export default function SupplierCatalogPage() {
           Reference products and prices for growers (shown on your public store profile). Grower orders can still
           use free text — this list helps everyone align on names and units.
         </p>
+
+        <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 sm:p-5 mb-8">
+          <h2 className="text-sm font-medium text-gray-900 mb-1 flex items-center gap-2">
+            <Barcode className="h-4 w-4 text-[#2D5A27]" />
+            Physical unit barcodes
+          </h2>
+          <p className="text-xs text-gray-600 font-light mb-4">
+            When you <strong>receive</strong> stock, register each scannable code (EAN, Code 128, etc.) — it becomes
+            unique in Bio Vera. When you <strong>sell</strong>, mark the row as SOLD (optional: link a grower or order
+            later from the API). Grower scanners can then resolve your codes even if the product is not on the global
+            whitelist.
+          </p>
+          <form onSubmit={onRegisterBarcode} className="space-y-3 mb-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <label className="block sm:col-span-2 text-xs text-gray-600">
+                Barcode (from label) *
+                <input
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+                  value={barForm.barcode}
+                  onChange={(e) => setBarForm((f) => ({ ...f, barcode: e.target.value }))}
+                  placeholder="Scan or type — must be unique"
+                  required
+                />
+              </label>
+              <label className="block text-xs text-gray-600 sm:col-span-2">
+                <span className="inline-flex items-center gap-1">
+                  <Package className="h-3 w-3" /> Link to catalog line (optional)
+                </span>
+                <select
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={barForm.catalogItemId}
+                  onChange={(e) => setBarForm((f) => ({ ...f, catalogItemId: e.target.value }))}
+                >
+                  <option value="">— Not linked —</option>
+                  {items.map((it) => (
+                    <option key={it.id} value={it.id}>
+                      {it.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-xs text-gray-600">
+                Lot / batch
+                <input
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={barForm.lotNumber}
+                  onChange={(e) => setBarForm((f) => ({ ...f, lotNumber: e.target.value }))}
+                />
+              </label>
+              <label className="block text-xs text-gray-600 sm:col-span-2">
+                Note (e.g. supplier invoice ref.)
+                <input
+                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  value={barForm.note}
+                  onChange={(e) => setBarForm((f) => ({ ...f, note: e.target.value }))}
+                />
+              </label>
+            </div>
+            <button
+              type="submit"
+              disabled={barSaving}
+              className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-light rounded-md hover:bg-[#23471f] disabled:opacity-50"
+            >
+              {barSaving ? 'Saving…' : 'Register received unit'}
+            </button>
+          </form>
+          {barcodes.length > 0 && (
+            <div className="border-t border-[#2D5A27]/20 pt-3">
+              <p className="text-xs font-medium text-gray-700 mb-2">Recent units</p>
+              <ul className="space-y-2 max-h-60 overflow-y-auto text-xs">
+                {barcodes.map((b) => (
+                  <li
+                    key={b.id}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded border border-white/50 bg-white/60 px-3 py-2"
+                  >
+                    <div>
+                      <span className="font-mono text-gray-900">{b.barcode}</span>
+                      <span className="ml-2 text-gray-500">
+                        {b.status}
+                        {b.catalogItem && ` · ${b.catalogItem.name}`}
+                        {b.lotNumber && ` · lot ${b.lotNumber}`}
+                      </span>
+                    </div>
+                    {b.status === 'IN_STOCK' && (
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => void markBarcodeSold(b.id)}
+                          disabled={barSaving}
+                          className="px-2 py-1 rounded bg-white border border-gray-200 text-gray-800 hover:bg-gray-50"
+                        >
+                          Mark sold
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void voidBarcode(b.id)}
+                          disabled={barSaving}
+                          className="px-2 py-1 rounded text-red-700 hover:bg-red-50"
+                        >
+                          Void
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
 
         {err && (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>

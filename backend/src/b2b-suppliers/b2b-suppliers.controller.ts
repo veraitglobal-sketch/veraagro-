@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,8 +27,10 @@ import {
   PostMessageDto,
   UpdateOrderStatusDto,
   CreateCatalogItemDto,
+  RegisterSupplierMaterialBarcodeDto,
   UpdateB2bSupplierStoreDto,
   UpdateCatalogItemDto,
+  UpdateSupplierMaterialBarcodeDto,
 } from './dto/b2b-suppliers.dto';
 
 @Controller('b2b-suppliers')
@@ -37,6 +40,12 @@ export class B2bSuppliersController {
   @Get('public/map')
   getPublicMap() {
     return this.svc.getPublicMapPins();
+  }
+
+  /** No auth — grower app / field scanner: verify supplier-registered material unit */
+  @Get('public/material-barcodes/lookup')
+  publicMaterialBarcode(@Query('code') code: string) {
+    return this.svc.publicLookupMaterialBarcode(code);
   }
 
   @Get('public/:userId')
@@ -63,6 +72,37 @@ export class B2bSuppliersController {
   @Roles('MATERIAL_SUPPLIER')
   patchMyStore(@GetUser() u: { id: string }, @Body() dto: UpdateB2bSupplierStoreDto) {
     return this.svc.updateMyStoreSettings(u.id, dto);
+  }
+
+  @Get('my/material-barcodes')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  listMyMaterialBarcodes(
+    @GetUser() u: { id: string },
+    @Query('status') status?: string,
+  ) {
+    return this.svc.listMyMaterialBarcodes(u.id, status);
+  }
+
+  @Post('my/material-barcodes')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  registerMaterialBarcode(
+    @GetUser() u: { id: string },
+    @Body() dto: RegisterSupplierMaterialBarcodeDto,
+  ) {
+    return this.svc.registerMaterialBarcode(u.id, dto);
+  }
+
+  @Patch('my/material-barcodes/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  updateMaterialBarcode(
+    @GetUser() u: { id: string },
+    @Param('id') id: string,
+    @Body() dto: UpdateSupplierMaterialBarcodeDto,
+  ) {
+    return this.svc.updateMaterialBarcode(u.id, id, dto);
   }
 
   @Get('my/catalog')

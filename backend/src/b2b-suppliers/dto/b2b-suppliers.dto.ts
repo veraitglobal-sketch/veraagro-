@@ -298,3 +298,38 @@ export class UpdateCatalogItemDto {
   @IsOptional()
   sortOrder?: number;
 }
+
+const SUPPLIER_BARCODE_STATUSES = ['SOLD', 'VOID'] as const;
+
+export class RegisterSupplierMaterialBarcodeDto {
+  @IsString()
+  @MinLength(3)
+  barcode: string;
+
+  @IsString()
+  @IsOptional()
+  catalogItemId?: string;
+
+  @IsString()
+  @IsOptional()
+  lotNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  note?: string;
+}
+
+export class UpdateSupplierMaterialBarcodeDto {
+  @IsIn(SUPPLIER_BARCODE_STATUSES)
+  status: (typeof SUPPLIER_BARCODE_STATUSES)[number];
+
+  /** Grower account when the sale is attributed to a known farmer (optional for over-the-counter) */
+  @IsString()
+  @IsOptional()
+  soldToFarmerId?: string;
+
+  /** Optional link to a direct order (must be same supplier + same farmer as soldToFarmerId) */
+  @IsString()
+  @IsOptional()
+  directOrderId?: string;
+}

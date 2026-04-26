@@ -94,7 +94,7 @@ export default function LoginScreen() {
         <TouchableOpacity onPress={() => router.push('/buyer-register')} activeOpacity={0.7}>
           <Text style={styles.link}>{t('login.registerBuyer')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => router.replace('/')} activeOpacity={0.7}>
           <Text style={styles.link}>{t('login.backToMarketplace')}</Text>
         </TouchableOpacity>
       </View>

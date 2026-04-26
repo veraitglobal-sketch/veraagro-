@@ -6,7 +6,8 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { growerNavItems } from '@/lib/grower-nav';
 import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
-import { Info, List, MapPinned, Navigation, Store, Globe } from 'lucide-react';
+import Link from 'next/link';
+import { Info, List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
 
 type MapItem = {
   id: string;
@@ -18,6 +19,8 @@ type MapItem = {
   longitude: number;
   kind: 'retail' | 'supplier';
   description?: string;
+  /** B2B partner user id — link to /grower/where-to-buy/store/[id] */
+  supplierUserId?: string;
 };
 
 function countriesLikelyMatch(profileCountry: string, itemCountry: string | undefined) {
@@ -142,6 +145,7 @@ export default function GrowerWhereToBuyPage() {
         .filter((x) => x.latitude && x.longitude && x.latitude !== 0 && x.longitude !== 0)
         .map((x) => ({
           id: `supplier-${x.id}`,
+          supplierUserId: x.id,
           name: x.name,
           city: x.city,
           country: x.country,
@@ -370,7 +374,8 @@ export default function GrowerWhereToBuyPage() {
                   Locations
                 </h2>
                 <p className="text-xs text-gray-500 font-light mb-3">
-                  Names and full addresses (no map). Filter by country and city, or by distance with “Nearest to me”.
+                  Names and full addresses. <strong>Partner stores</strong> open a product list where you can enter
+                  quantities and send a direct order to that supplier.
                 </p>
                 <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
                   {sortedForList.map((loc) => {
@@ -382,11 +387,11 @@ export default function GrowerWhereToBuyPage() {
                     return (
                       <li
                         key={loc.id}
-                        className={`px-4 py-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4 ${
+                        className={`px-4 py-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${
                           inRegion && !nearMe ? 'bg-[#2D5A27]/5' : ''
                         }`}
                       >
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
                             {loc.name}
                             {inRegion && !nearMe && (
@@ -408,15 +413,26 @@ export default function GrowerWhereToBuyPage() {
                             <p className="text-xs text-gray-500 font-light mt-1 line-clamp-2">{loc.description}</p>
                           )}
                         </div>
-                        <span
-                          className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-md w-fit ${
-                            loc.kind === 'supplier'
-                              ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
-                              : 'bg-green-50 text-green-900 border border-green-200/80'
-                          }`}
-                        >
-                          {loc.kind === 'supplier' ? 'Partner store' : 'Retail / pickup'}
-                        </span>
+                        <div className="shrink-0 flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+                          <span
+                            className={`text-xs font-medium px-2 py-0.5 rounded-md w-fit ${
+                              loc.kind === 'supplier'
+                                ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
+                                : 'bg-green-50 text-green-900 border border-green-200/80'
+                            }`}
+                          >
+                            {loc.kind === 'supplier' ? 'Partner store' : 'Retail / pickup'}
+                          </span>
+                          {loc.kind === 'supplier' && loc.supplierUserId && (
+                            <Link
+                              href={`/grower/where-to-buy/store/${encodeURIComponent(loc.supplierUserId)}`}
+                              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#2D5A27] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#23471f] w-full sm:w-auto"
+                            >
+                              <ShoppingBag className="h-3.5 w-3.5" />
+                              Catalog &amp; order
+                            </Link>
+                          )}
+                        </div>
                       </li>
                     );
                   })}
