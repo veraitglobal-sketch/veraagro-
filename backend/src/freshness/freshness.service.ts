@@ -19,6 +19,13 @@ export class FreshnessService {
    * Create freshness tracker for a batch
    */
   async createFreshnessTracker(batchId: string, cropType: string) {
+    const existing = await this.prisma.freshness_trackers.findUnique({
+      where: { batchId },
+    });
+    if (existing) {
+      return existing;
+    }
+
     const batch = await this.prisma.batches.findUnique({
       where: { id: batchId },
     });
@@ -30,7 +37,8 @@ export class FreshnessService {
     const cropTypeUpper = cropType.toUpperCase();
     const shelfLifeHours = SHELF_LIFE_HOURS[cropTypeUpper] || 48; // Default 48 hours
 
-    const expiresAt = new Date(batch.harvestDate);
+    const harvest = batch.harvestDate ? new Date(batch.harvestDate) : new Date();
+    const expiresAt = new Date(harvest);
     expiresAt.setHours(expiresAt.getHours() + shelfLifeHours);
 
     return this.prisma.freshness_trackers.create({
@@ -38,7 +46,7 @@ export class FreshnessService {
         id: crypto.randomUUID(),
         batchId,
         cropType: cropTypeUpper,
-        timestampHarvested: batch.harvestDate,
+        timestampHarvested: harvest,
         shelfLifeHours,
         remainingShelfLifeHours: shelfLifeHours,
         expiresAt,

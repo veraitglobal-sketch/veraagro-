@@ -263,13 +263,12 @@ export class MaterialControlService {
     const required = standard.requiredPhotoTypes || ['PUNNETS', 'LABELING', 'PALLETIZATION'];
     const uploadedTypes = [...new Set(batch.compliance_photos.map((p) => p.photoType))];
     const missing = required.filter((t) => !uploadedTypes.includes(t));
-    const labelRow = await this.prisma.material_inventory.findFirst({
-      where: {
-        usedInBatchId: batchInternalId,
-        material_types: { type: 'LABEL' },
-      },
-      select: { serialNumber: true, status: true, usedAt: true },
+    // Resolve label roll: prefer explicit LABEL type; any inventory tied to this lot may be a label in edge cases
+    const usedForLot = await this.prisma.material_inventory.findMany({
+      where: { usedInBatchId: batchInternalId },
+      include: { material_types: { select: { type: true } } },
     });
+    const labelRow = usedForLot.find((r) => r.material_types?.type === 'LABEL') ?? null;
 
     const complete = missing.length === 0 && labelRow != null;
 
@@ -279,8 +278,8 @@ export class MaterialControlService {
       requiredPhotoTypes: required,
       uploadedPhotoTypes: uploadedTypes,
       missingPhotoTypes: missing,
-      stickerRollId: labelRow?.serialNumber ?? null,
-      stickerStatus: labelRow?.status ?? null,
+      stickerRollId: labelRow?.serialNumber != null ? labelRow.serialNumber : null,
+      stickerStatus: labelRow != null ? labelRow.status : null,
       lastComplianceAt: batch.compliance_photos[0]
         ? batch.compliance_photos[0].uploadedAt.toISOString()
         : null,
@@ -347,9 +346,16 @@ export class MaterialControlService {
   }
 
   /**
-   * Check if batch can be shipped (material validation)
+   * Check if batch can be shipped. For *transport request* (booking a truck), we only require compliance —
+   * not virtual crate stock on file (growers may pack before balance sync). Crate checks stay for stricter flows.
    */
-  async validateBatchForShipment(batchId: string, userId: string) {
+  async validateBatchForShipment(
+    batchId: string,
+    userId: string,
+    options?: { requireCrateBalance?: boolean },
+  ) {
+    const requireCrateBalance = options?.requireCrateBalance !== false;
+
     const batch = await this.prisma.batches.findUnique({
       where: { id: batchId },
       include: {
@@ -373,15 +379,15 @@ export class MaterialControlService {
 
     const errors: string[] = [];
 
-    // Check crate balance
-    const requiredCrates = Math.ceil(batch.quantity / 10); // Assuming 10kg per crate
-    if (balance.crateBalance < requiredCrates) {
-      errors.push(
-        `Non-standard packaging detected. You need ${requiredCrates} Bio Vera crates but only have ${balance.crateBalance}. Order official materials.`
-      );
+    if (requireCrateBalance) {
+      const requiredCrates = Math.ceil(batch.quantity / 10);
+      if (balance.crateBalance < requiredCrates) {
+        errors.push(
+          `Non-standard packaging detected. You need ${requiredCrates} Bio Vera crates but only have ${balance.crateBalance}. Order official materials.`
+        );
+      }
     }
 
-    // Check compliance photos
     if (standard.requiresCompliancePhotos) {
       const requiredTypes = standard.requiredPhotoTypes || ['PUNNETS', 'LABELING', 'PALLETIZATION'];
       const uploadedTypes = batch.compliance_photos.map((p) => p.photoType);

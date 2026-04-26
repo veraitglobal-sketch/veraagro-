@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuditTrailDto } from './dto/audit-trail.dto';
 
@@ -12,6 +13,7 @@ export class AuditTrailService {
   async createAuditTrail(dto: CreateAuditTrailDto) {
     return this.prisma.audit_trails.create({
       data: {
+        id: crypto.randomUUID(),
         eventType: dto.eventType as any,
         entityType: dto.entityType,
         entityId: dto.entityId,

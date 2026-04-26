@@ -101,19 +101,18 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
           My orders &amp; messages
         </h2>
         <p className="text-sm text-gray-600 font-light">
-          Direct material orders and conversations with partners. Find new suppliers in the list on the left.
+          Direct material orders and threads. New partners: use the list on the left.
         </p>
-        <p className="text-xs text-gray-500 font-light mt-2 leading-relaxed">
-          <strong>Status</strong> is updated by the supplier. Use <strong>Received at farm</strong> when the shipment
-          arrives. For the full end-to-end path (B2B → balances → barcodes → harvest → transport), see the{' '}
+        <p className="text-xs text-gray-500 font-light mt-2">
+          The supplier updates status. Tap <strong>Received at farm</strong> when the shipment arrives. Full path:{' '}
           <a href="#supply-flow" className="text-[#2D5A27] underline">
-            step-by-step block
-          </a>{' '}
-          at the top of this page, and{' '}
+            steps
+          </a>
+          ,{' '}
           <Link href="/grower/materials" className="text-[#2D5A27] underline">
             Materials
-          </Link>{' '}
-          for the in-app catalog and serials.
+          </Link>
+          .
         </p>
       </div>
 

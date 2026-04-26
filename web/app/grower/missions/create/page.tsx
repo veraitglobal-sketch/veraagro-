@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { missionsAPI, batchesAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
+import { WEB_API_BASE } from '@/lib/api-base';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -44,6 +45,12 @@ export default function CreateMissionPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   /** API message when mission is blocked (materials + compliance) */
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [complianceForBatch, setComplianceForBatch] = useState<{
+    complete: boolean;
+    missingPhotoTypes: string[];
+    stickerRollId: string | null;
+  } | null>(null);
+  const [complianceLoading, setComplianceLoading] = useState(false);
 
   useEffect(() => {
     loadBatches();
@@ -57,6 +64,41 @@ export default function CreateMissionPage() {
       return { ...prev, batchId: '' };
     });
   }, [batches]);
+
+  useEffect(() => {
+    if (!formData.batchId) {
+      setComplianceForBatch(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setComplianceLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(
+          `${WEB_API_BASE}/material-control/compliance-status/${formData.batchId}`,
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        );
+        if (!res.ok) {
+          if (!cancelled) setComplianceForBatch(null);
+          return;
+        }
+        const data = (await res.json()) as {
+          complete: boolean;
+          missingPhotoTypes: string[];
+          stickerRollId: string | null;
+        };
+        if (!cancelled) setComplianceForBatch(data);
+      } catch {
+        if (!cancelled) setComplianceForBatch(null);
+      } finally {
+        if (!cancelled) setComplianceLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [formData.batchId]);
 
   const loadBatches = async () => {
     try {
@@ -202,9 +244,17 @@ export default function CreateMissionPage() {
       }, 2000);
     } catch (error: any) {
       console.error('Error creating mission:', error);
+      const status = error?.response?.status;
       const raw = error?.response?.data?.message;
       const msg = Array.isArray(raw) ? raw.join(' ') : raw;
-      setSubmitError((msg as string) || 'Failed to create mission');
+      if (status === 500 || status >= 500) {
+        setSubmitError(
+          (msg as string) ||
+            'Server error while creating the request. This is often a temporary issue — try again in a moment. If it keeps happening, use Contact.'
+        );
+      } else {
+        setSubmitError((msg as string) || 'Failed to create mission');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -247,32 +297,24 @@ export default function CreateMissionPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Transport Mission</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Request a truck</h2>
           <p className="text-sm text-gray-600 mb-4">
-            Request transport for your packed batch. The system will automatically find the nearest available logistics
-            partner.
+            Three fields: <strong>batch</strong>, <strong>pickup on the map</strong>, <strong>address</strong>. Then send
+            the request. If a frigo vehicle is free nearby, a partner is assigned; otherwise the mission stays pending.
           </p>
           <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-800">
-            <p className="font-medium text-[#23471f] mb-1">Before this request is accepted, Bio Vera checks:</p>
-            <ul className="list-disc pl-5 space-y-1.5 text-gray-700">
-              <li>
-                <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
-                  Compliance photos
-                </Link>{' '}
-                — for <strong>this batch</strong>, all three: PUNNETS, LABELING, PALLETIZATION.
-              </li>
-              <li>
-                <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
-                  Materials
-                </Link>{' '}
-                — enough Bio Vera crate balance (about one crate per 10 kg of product). The catalog here updates your
-                balances; if you source stock from a local distributor, also use{' '}
-                <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
-                  Suppliers &amp; orders
-                </Link>{' '}
-                to coordinate with them.
-              </li>
-            </ul>
+            <p className="font-medium text-[#23471f] mb-1">What must already be done</p>
+            <p className="text-gray-700">
+              <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
+                Compliance
+              </Link>{' '}
+              for <strong>this</strong> lot: three photos + one label roll, saved in the app. The status line under the
+              batch should turn green before you expect transport to work. Crates and stock: order via{' '}
+              <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
+                Materials
+              </Link>
+              — not checked at send time.
+            </p>
           </div>
 
           {submitError && (
@@ -282,25 +324,29 @@ export default function CreateMissionPage() {
             >
               <p className="font-medium">Could not create transport</p>
               <p className="mt-1 whitespace-pre-wrap">{submitError}</p>
-              <p className="mt-3 text-xs text-red-800/90">
-                Add photos:{' '}
-                <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
-                  Compliance photos
-                </Link>
-                . Order crates / stock:{' '}
-                <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline">
-                  Materials
-                </Link>
-                . Message your material partner:{' '}
-                <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline">
-                  Suppliers &amp; orders
-                </Link>
-                . Still stuck:{' '}
-                <Link href="/contact" className="font-semibold text-[#2D5A27] underline">
-                  Contact
-                </Link>
-                .
-              </p>
+              {/compliance|photo|packaging|crate|materials|Non-standard|Missing balance|label roll/i.test(
+                submitError
+              ) && (
+                <p className="mt-3 text-xs text-red-800/90">
+                  Add photos:{' '}
+                  <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
+                    Compliance photos
+                  </Link>
+                  . Order crates / stock:{' '}
+                  <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline">
+                    Materials
+                  </Link>
+                  . Message your material partner:{' '}
+                  <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline">
+                    Suppliers &amp; orders
+                  </Link>
+                  . Still stuck:{' '}
+                  <Link href="/contact" className="font-semibold text-[#2D5A27] underline">
+                    Contact
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
           )}
 
@@ -331,6 +377,48 @@ export default function CreateMissionPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   You need to have batches with status "PACKED" or "QUALITY_VERIFIED" to request transport.
                 </p>
+              )}
+              {formData.batchId && (
+                <div className="mt-3 rounded-lg border px-3 py-2 text-sm">
+                  {complianceLoading ? (
+                    <p className="text-gray-600">Checking compliance for this lot…</p>
+                  ) : complianceForBatch?.complete ? (
+                    <p className="text-emerald-800 flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
+                      <span>
+                        Compliance photos and label roll are on file for this lot
+                        {complianceForBatch.stickerRollId ? (
+                          <>
+                            {' '}
+                            (roll <span className="font-mono">{complianceForBatch.stickerRollId}</span>)
+                          </>
+                        ) : null}
+                        . Transport can still fail if crate balance is too low — see Materials.
+                      </span>
+                    </p>
+                  ) : complianceForBatch ? (
+                    <div className="text-amber-900">
+                      <p className="font-medium">Compliance not complete for this lot</p>
+                      {complianceForBatch.missingPhotoTypes?.length > 0 && (
+                        <p className="mt-1">
+                          Missing photo types: <strong>{complianceForBatch.missingPhotoTypes.join(', ')}</strong>
+                        </p>
+                      )}
+                      {!complianceForBatch.stickerRollId &&
+                        complianceForBatch.missingPhotoTypes?.length === 0 && (
+                          <p className="mt-1">Label roll is not linked to this lot in the system yet.</p>
+                        )}
+                      <p className="mt-2">
+                        <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
+                          Open Compliance photos
+                        </Link>{' '}
+                        and submit all three photos plus the sticker roll ID, then return here.
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">Could not load compliance status. You can still try to submit.</p>
+                  )}
+                </div>
               )}
             </div>
 

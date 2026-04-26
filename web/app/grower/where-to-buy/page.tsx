@@ -241,36 +241,38 @@ export default function GrowerWhereToBuyPage() {
             <p className="text-sm text-gray-600 mt-1">Directory, material orders, and partner messages in one place.</p>
           </div>
 
-          <GrowerSupplyFlowCard context="suppliers" />
+          <GrowerSupplyFlowCard context="suppliers" variant="collapsible" />
 
-          <section className="rounded-lg border border-gray-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              Choose a <strong>country</strong> and optionally a <strong>city</strong>. Use{' '}
-              <strong>Nearest to me</strong> to sort by distance. Retail pickup points and partner stores come from the
-              public directory.
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between gap-2 text-sm text-gray-600">
+            <p>
+              Filter the list by place, or open{' '}
+              <a href="#my-orders" className="text-[#2D5A27] font-medium underline">
+                My orders &amp; messages
+              </a>{' '}
+              for B2B status and threads.
             </p>
             {!loading && productionCountry && (
-              <p className="text-xs text-gray-500">
-                Your profile production country:{' '}
-                <span className="font-medium text-gray-700">{productionCountry}</span>
+              <p className="text-xs text-gray-500 sm:text-right">
+                Profile: <span className="font-medium text-gray-700">{productionCountry}</span>
                 {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
-                  <span> — matching areas are listed first when not using &quot;nearest&quot;.</span>
+                  <span> — similar regions first (unless Nearest to me).</span>
                 ) : (
-                  <span> — no directory entries for this country yet; they can appear after admin approval.</span>
+                  <span> — no rows for that country yet (after approval they show here).</span>
                 )}
               </p>
             )}
-            <div className="rounded-lg border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
-              <p className="font-medium flex items-center gap-2">
-                <Info className="h-4 w-4 shrink-0" />
-                Partner store visibility
-              </p>
-              <p className="mt-1.5 text-amber-900/90 leading-relaxed">
-                A material supplier is listed <strong>only</strong> after the address is approved for the public
-                directory. Retail rows come from hub records.
-              </p>
-            </div>
-          </section>
+          </div>
+
+          <details className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 shadow-sm list-none">
+            <summary className="cursor-pointer font-medium text-gray-800 list-none flex items-center gap-2 py-1 [&::-webkit-details-marker]:hidden">
+              <Info className="h-4 w-4 shrink-0 text-amber-700" />
+              When a partner or retail row appears in the directory
+            </summary>
+            <p className="pl-6 pb-1 text-xs text-gray-600 leading-relaxed">
+              Partner stores need an address <strong>approved</strong> for the public list. Retail pickup points come
+              from hub records.
+            </p>
+          </details>
 
           {err && (
             <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
@@ -386,8 +388,7 @@ export default function GrowerWhereToBuyPage() {
                   Locations
                 </h3>
                 <p className="text-xs text-gray-500 font-light mb-3">
-                  Names and full addresses. <strong>Partner stores</strong> open a product list where you can enter
-                  quantities and send a direct order to that supplier.
+                  <strong>Partner store</strong> = catalog and direct order; retail = hub pickup.
                 </p>
                 <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
                   {sortedForList.map((loc) => {

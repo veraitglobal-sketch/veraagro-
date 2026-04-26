@@ -60,9 +60,12 @@ export class MissionsService {
         throw new NotFoundException(`Batch with ID ${dto.batchId} not found`);
       }
 
-      // Validate materials before allowing shipment
+      // Compliance + ownership only (do not block on virtual crate stock — that was stopping valid requests).
+      // Material deduction can be tied to pickup/handover later; see deductMaterialsOnShipment for admin/logistics flows.
       try {
-        await this.materialControlService.validateBatchForShipment(dto.batchId, growerId);
+        await this.materialControlService.validateBatchForShipment(dto.batchId, growerId, {
+          requireCrateBalance: false,
+        });
       } catch (error: any) {
         if (error instanceof ForbiddenException || error instanceof NotFoundException) {
           throw error;
@@ -74,9 +77,6 @@ export class MissionsService {
           error?.message || 'Batch validation failed. Cannot create shipment.',
         );
       }
-
-      // Deduct materials from balance
-      await this.materialControlService.deductMaterialsOnShipment(dto.batchId, growerId);
     }
 
     // Find nearest available logistics partner with frigo vehicle
@@ -86,11 +86,12 @@ export class MissionsService {
     );
 
     // Calculate optimal route (using simple distance calculation for now)
-    // In production, use Google Maps API or similar
-    const optimalRoute = await this.calculateOptimalRoute(
+    const routeCalc = await this.calculateOptimalRoute(
       dto.pickupLocation,
-      logisticsPartner?.currentLocation || null,
+      logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
     );
+    // Prisma Json must not embed non-JSON-native values; Date breaks some runtimes.
+    const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
 
     // Generate mission number
     const missionNumber = await this.generateMissionNumber();
@@ -106,8 +107,8 @@ export class MissionsService {
         pickupAddress: dto.pickupAddress,
         logisticsPartnerId: logisticsPartner?.id,
         vehicleId: logisticsPartner?.vehicleId,
-        optimalRoute,
-        estimatedPickupTime: optimalRoute?.estimatedArrival,
+        optimalRoute: optimalRoute as any,
+        estimatedPickupTime: routeCalc.estimatedArrival,
         status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
         assignedAt: logisticsPartner ? new Date() : null,
         updatedAt: new Date(),
@@ -120,20 +121,31 @@ export class MissionsService {
       },
     });
 
-    // If batch exists, create freshness tracker
+    // If batch exists, create freshness tracker (idempotent; duplicate batchId must not break mission)
     if (batch) {
-      await this.freshnessService.createFreshnessTracker(batch.id, batch.productName);
+      try {
+        await this.freshnessService.createFreshnessTracker(batch.id, batch.productName);
+      } catch (e) {
+        this.logger.warn(
+          `Freshness tracker skipped for batch ${batch.id}: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
     }
 
-    // Create audit trail
-    await this.auditTrailService.createAuditTrail({
-      eventType: 'STATUS_CHANGE',
-      entityType: 'Mission',
-      entityId: mission.id,
-      performedByUserId: growerId,
-      newValue: { status: mission.status, missionNumber: mission.missionNumber },
-      location: dto.pickupLocation,
-    });
+    try {
+      await this.auditTrailService.createAuditTrail({
+        eventType: 'STATUS_CHANGE',
+        entityType: 'Mission',
+        entityId: mission.id,
+        performedByUserId: growerId,
+        newValue: { status: mission.status, missionNumber: mission.missionNumber },
+        location: dto.pickupLocation,
+      });
+    } catch (e) {
+      this.logger.warn(
+        `Audit trail failed for mission ${mission.id}: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
 
     // Real-time notification to grower
     try {
@@ -185,20 +197,17 @@ export class MissionsService {
 
     for (const partner of partners) {
       const vehicle = partner.vehicles?.[0];
-      if (vehicle?.currentLocation) {
-        const distance = this.calculateDistance(
-          pickupLat,
-          pickupLng,
-          vehicle.currentLocation['lat'],
-          vehicle.currentLocation['lng'],
-        );
-
+      const loc = vehicle?.currentLocation;
+      const latLng = MissionsService.parseJsonLatLng(loc);
+      if (latLng) {
+        const distance = this.calculateDistance(pickupLat, pickupLng, latLng.lat, latLng.lng);
+        if (!Number.isFinite(distance) || distance < 0) continue;
         if (distance < minDistance) {
           minDistance = distance;
           nearestPartner = {
             id: partner.id,
             vehicleId: vehicle.id,
-            currentLocation: vehicle.currentLocation,
+            currentLocation: loc,
           };
         }
       }
@@ -226,6 +235,41 @@ export class MissionsService {
 
   private toRad(degrees: number): number {
     return degrees * (Math.PI / 180);
+  }
+
+  /** Tolerate Json stored as {lat,lng}, {latitude,longitude}, or a JSON string. */
+  private static parseJsonLatLng(
+    loc: unknown,
+  ): { lat: number; lng: number } | null {
+    if (loc == null) return null;
+    let o: Record<string, unknown> | null = null;
+    if (typeof loc === 'string') {
+      try {
+        o = JSON.parse(loc) as Record<string, unknown>;
+      } catch {
+        return null;
+      }
+    } else if (typeof loc === 'object') {
+      o = loc as Record<string, unknown>;
+    }
+    if (!o) return null;
+    const lat = Number((o as { lat?: unknown; latitude?: unknown }).lat ?? o.latitude);
+    const lng = Number((o as { lng?: unknown; longitude?: unknown }).lng ?? o.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return { lat, lng };
+  }
+
+  /** Prisma Json columns must be JSON-serializable; Date in nested objects can break drivers. */
+  private static routeToJsonValue(route: {
+    distance: string | null;
+    duration: string | null;
+    waypoints: unknown[];
+    estimatedArrival: Date | null;
+  }): { distance: string | null; duration: string | null; waypoints: unknown[]; estimatedArrival: string | null } {
+    return {
+      ...route,
+      estimatedArrival: route.estimatedArrival ? route.estimatedArrival.toISOString() : null,
+    };
   }
 
   /**
@@ -350,13 +394,16 @@ export class MissionsService {
     }
 
     const logisticsPartner = await this.findNearestLogisticsPartner(pickup.lat, pickup.lng);
-    const partnerLoc = logisticsPartner?.currentLocation as { lat: number; lng: number } | null;
-    const optimalRoute = await this.calculateOptimalRoute(pickup, partnerLoc);
+    const partnerLoc = logisticsPartner
+      ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation)
+      : null;
+    const routeCalc = await this.calculateOptimalRoute(pickup, partnerLoc);
+    const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
     const missionNumber = await this.generateMissionNumber();
     const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
     const pickupAddress = `${estate.name} — ${ann.cropType}${qty != null ? ` (~${Number(qty).toFixed(0)} kg)` : ''} · plan berbe`;
     const plannedTime = ann.plannedLoadingStart ?? ann.estimatedDate;
-    const estimatedPickupTime = plannedTime ?? optimalRoute?.estimatedArrival ?? new Date();
+    const estimatedPickupTime = plannedTime ?? routeCalc.estimatedArrival ?? new Date();
 
     const mission = await this.prisma.missions.create({
       data: {
