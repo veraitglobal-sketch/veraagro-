@@ -10,6 +10,8 @@ export type FieldActivityType = 'Planting' | 'Fertilizing' | 'Spraying' | 'Harve
 
 export interface PendingFieldEntry {
   id: string;
+  /** Set when saving so sync targets the same estate (avoids 403 if API returns estates in a different order). */
+  estateId?: string;
   activityType: FieldActivityType;
   materialID?: string;
   photoUri: string;

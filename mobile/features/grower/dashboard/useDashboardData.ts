@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   estatesAPI,
@@ -41,6 +42,32 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     approved: number;
   }>({ loaded: false, total: 0, pending: 0, approved: 0 });
   const [offlinePending, setOfflinePending] = useState(0);
+  const appStateRef = useRef(AppState.currentState);
+  const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSyncTriggerRef = useRef(0);
+
+  const scheduleOfflineSync = useCallback(() => {
+    if (syncDebounceRef.current) clearTimeout(syncDebounceRef.current);
+    syncDebounceRef.current = setTimeout(async () => {
+      syncDebounceRef.current = null;
+      const now = Date.now();
+      if (now - lastSyncTriggerRef.current < 1500) return;
+      lastSyncTriggerRef.current = now;
+      try {
+        await syncService.startAutoSync();
+        const st = await syncService.getSyncStatus();
+        setOfflinePending(st.pendingCount || 0);
+      } catch {
+        // still try to show queue size
+        try {
+          const st = await syncService.getSyncStatus();
+          setOfflinePending(st.pendingCount || 0);
+        } catch {
+          // ignore
+        }
+      }
+    }, 500);
+  }, []);
 
   const loadEstates = useCallback(async () => {
     try {
@@ -181,6 +208,23 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     return () => clearInterval(interval);
   }, [user, connected, loadData, loadLiveData]);
 
+  // After transport reconnects (Socket.io), run the same auto-sync as settings allow
+  useEffect(() => {
+    if (!connected) return;
+    scheduleOfflineSync();
+  }, [connected, scheduleOfflineSync]);
+
+  // When user brings the app to foreground, retry sending the offline queue
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (appStateRef.current?.match(/inactive|background/) && next === 'active') {
+        scheduleOfflineSync();
+      }
+      appStateRef.current = next;
+    });
+    return () => sub.remove();
+  }, [scheduleOfflineSync]);
+
   useEffect(() => {
     if (socketNotifications.length > 0) {
       setNotifications((prev) => {
@@ -197,7 +241,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all([loadData(), syncService.syncAll()]);
+      await syncService.syncAll();
+      await loadData();
     } finally {
       setRefreshing(false);
     }

@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMissionDto, AcceptMissionDto } from './dto/mission.dto';
@@ -16,6 +17,8 @@ import { NotificationsGateway } from '../notifications/notifications.gateway';
 
 @Injectable()
 export class MissionsService {
+  private readonly logger = new Logger(MissionsService.name);
+
   constructor(
     private prisma: PrismaService,
     private freshnessService: FreshnessService,
@@ -181,7 +184,7 @@ export class MissionsService {
     let minDistance = Infinity;
 
     for (const partner of partners) {
-      const vehicle = (partner as any).logisticsVehicles?.[0];
+      const vehicle = partner.vehicles?.[0];
       if (vehicle?.currentLocation) {
         const distance = this.calculateDistance(
           pickupLat,
@@ -274,6 +277,134 @@ export class MissionsService {
       },
     });
     return `MISSION-${year}-${String(count + 1).padStart(4, '0')}`;
+  }
+
+  /** Geometric center of estate boundary for pickup when no batch GPS yet. */
+  private static centroidFromEstatePolygon(polygonCoordinates: unknown): { lat: number; lng: number } | null {
+    if (polygonCoordinates == null) return null;
+    const points: { lat: number; lng: number }[] = [];
+    if (Array.isArray(polygonCoordinates)) {
+      for (const p of polygonCoordinates) {
+        if (p && typeof p === 'object' && 'lat' in p && 'lng' in p) {
+          const lat = (p as { lat: number }).lat;
+          const lng = (p as { lng: number }).lng;
+          if (typeof lat === 'number' && typeof lng === 'number') {
+            points.push({ lat, lng });
+          }
+        } else if (Array.isArray(p) && p.length >= 2) {
+          points.push({ lng: Number(p[0]), lat: Number(p[1]) });
+        }
+      }
+    } else if (typeof polygonCoordinates === 'object' && polygonCoordinates !== null) {
+      const o = polygonCoordinates as { coordinates?: number[][][] };
+      const ring = o.coordinates?.[0];
+      if (Array.isArray(ring)) {
+        for (const pt of ring) {
+          if (Array.isArray(pt) && pt.length >= 2) {
+            points.push({ lng: pt[0], lat: pt[1] });
+          }
+        }
+      }
+    }
+    if (points.length === 0) return null;
+    const lat = points.reduce((s, p) => s + p.lat, 0) / points.length;
+    const lng = points.reduce((s, p) => s + p.lng, 0) / points.length;
+    return { lat, lng };
+  }
+
+  /**
+   * Creates a transport mission (visible to logistics) when a grower files a HARVEST plan
+   * (očekivana berba / prozor utovara). No batch is required; batch links later at packing.
+   */
+  async createMissionFromHarvestAnnouncement(announcementId: string, growerId: string) {
+    const ann = await this.prisma.harvest_announcements.findFirst({
+      where: { id: announcementId, userId: growerId, announcementType: 'HARVEST' },
+      include: { parcel: { include: { estates: true } } },
+    });
+    if (!ann) {
+      return null;
+    }
+
+    const existing = await this.prisma.missions.findFirst({
+      where: { harvestAnnouncementId: announcementId },
+    });
+    if (existing) {
+      return existing;
+    }
+
+    const estate = ann.parcel?.estates;
+    if (!estate) {
+      this.logger.warn(`Harvest mission skipped: no estate on parcel for announcement ${announcementId}`);
+      return null;
+    }
+
+    const pickup = MissionsService.centroidFromEstatePolygon(estate.polygonCoordinates);
+    if (!pickup) {
+      this.logger.warn(`Harvest mission skipped: estate ${estate.id} has no drawable boundary`);
+      return null;
+    }
+
+    const grower = await this.prisma.users.findUnique({ where: { id: growerId } });
+    if (!grower || !this.isGrowerAccount(grower.roles as string[])) {
+      return null;
+    }
+
+    const logisticsPartner = await this.findNearestLogisticsPartner(pickup.lat, pickup.lng);
+    const partnerLoc = logisticsPartner?.currentLocation as { lat: number; lng: number } | null;
+    const optimalRoute = await this.calculateOptimalRoute(pickup, partnerLoc);
+    const missionNumber = await this.generateMissionNumber();
+    const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
+    const pickupAddress = `${estate.name} — ${ann.cropType}${qty != null ? ` (~${Number(qty).toFixed(0)} kg)` : ''} · plan berbe`;
+    const plannedTime = ann.plannedLoadingStart ?? ann.estimatedDate;
+    const estimatedPickupTime = plannedTime ?? optimalRoute?.estimatedArrival ?? new Date();
+
+    const mission = await this.prisma.missions.create({
+      data: {
+        id: crypto.randomUUID(),
+        missionNumber,
+        growerId,
+        batchId: null,
+        harvestAnnouncementId: ann.id,
+        pickupLocation: pickup as any,
+        pickupAddress,
+        logisticsPartnerId: logisticsPartner?.id ?? null,
+        vehicleId: logisticsPartner?.vehicleId ?? null,
+        optimalRoute: optimalRoute as any,
+        estimatedPickupTime,
+        status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
+        assignedAt: logisticsPartner ? new Date() : null,
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+        harvest_announcement: true,
+      },
+    });
+
+    await this.auditTrailService.createAuditTrail({
+      eventType: 'STATUS_CHANGE',
+      entityType: 'Mission',
+      entityId: mission.id,
+      performedByUserId: growerId,
+      newValue: {
+        status: mission.status,
+        missionNumber: mission.missionNumber,
+        fromHarvestPlan: true,
+        harvestAnnouncementId: ann.id,
+      },
+      location: pickup,
+    });
+
+    try {
+      await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
+    } catch (error) {
+      this.logger.warn(`notifyMissionUpdate failed: ${(error as Error).message}`);
+    }
+
+    return mission;
   }
 
   /**

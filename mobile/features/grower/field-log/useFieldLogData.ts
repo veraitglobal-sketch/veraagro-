@@ -166,6 +166,7 @@ export function useFieldLogData() {
       setLoading(true);
       await offlineStorage.savePendingEntry({
         activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
+        estateId: currentEstate?.id,
         materialID: materialID || undefined,
         photoUri: photoUri!,
         location: location!,
@@ -182,7 +183,7 @@ export function useFieldLogData() {
     } finally {
       setLoading(false);
     }
-  }, [activityType, materialID, photoUri, location]);
+  }, [activityType, materialID, photoUri, location, currentEstate?.id]);
 
   const handleSubmit = useCallback(async () => {
     if (!activityType) {

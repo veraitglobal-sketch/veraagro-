@@ -1,7 +1,8 @@
-import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TreatmentLogsService } from '../treatment-logs/treatment-logs.service';
+import { MissionsService } from '../missions/missions.service';
 import * as crypto from 'crypto';
 
 export interface CreateHarvestAnnouncementDto {
@@ -38,10 +39,13 @@ export interface AdminUpdateHarvestAnnouncementDto {
 
 @Injectable()
 export class HarvestAnnouncementsService {
+  private readonly logger = new Logger(HarvestAnnouncementsService.name);
+
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
     private treatmentLogsService: TreatmentLogsService,
+    private missionsService: MissionsService,
   ) {}
 
   /**
@@ -119,7 +123,34 @@ export class HarvestAnnouncementsService {
       console.error('Error notifying admins:', err);
     });
 
-    return announcement;
+    // 5. HARVEST plan → open a logistics mission (tura) so partners see pickup in missions list
+    if (dto.announcementType === 'HARVEST') {
+      try {
+        await this.missionsService.createMissionFromHarvestAnnouncement(announcement.id, userId);
+      } catch (err) {
+        this.logger.error(
+          `Could not create logistics mission for harvest announcement ${announcement.id}`,
+          err instanceof Error ? err.stack : err,
+        );
+      }
+    }
+
+    return this.prisma.harvest_announcements.findUnique({
+      where: { id: announcement.id },
+      include: {
+        parcel: {
+          include: {
+            estates: {
+              include: {
+                users: true,
+              },
+            },
+          },
+        },
+        user: true,
+        mission: true,
+      },
+    });
   }
 
   /**

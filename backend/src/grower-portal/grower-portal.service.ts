@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { QrService } from '../qr/qr.service';
+import {
+  IngestMobileCertificatePhotoDto,
+  IngestMobileCostDto,
+  IngestMobileProductDto,
+} from './dto/mobile-ingest.dto';
 
 @Injectable()
 export class GrowerPortalService {
@@ -477,6 +482,39 @@ export class GrowerPortalService {
       { id: 'cert_2', title: 'Production certificate', description: 'Proof of production method' },
       { id: 'cert_3', title: 'GlobalG.A.P. (if applicable)', description: 'Optional' },
     ];
+  }
+
+  /**
+   * Idempotent inbox for mobile offline sync (product / cost / cert metadata).
+   * Same clientReference re-sent returns 200 with duplicate: true (mobile can drop local copy).
+   */
+  async ingestMobileProduct(userId: string, dto: IngestMobileProductDto) {
+    return this.upsertMobileIngest(userId, 'PRODUCT', dto.clientReference, { ...dto } as object);
+  }
+
+  async ingestMobileCost(userId: string, dto: IngestMobileCostDto) {
+    return this.upsertMobileIngest(userId, 'COST', dto.clientReference, { ...dto } as object);
+  }
+
+  async ingestMobileCertificatePhoto(userId: string, dto: IngestMobileCertificatePhotoDto) {
+    return this.upsertMobileIngest(userId, 'CERT_PHOTO', dto.clientReference, { ...dto } as object);
+  }
+
+  private async upsertMobileIngest(
+    userId: string,
+    kind: 'PRODUCT' | 'COST' | 'CERT_PHOTO',
+    clientReference: string,
+    payload: object,
+  ) {
+    const where = { userId_kind_clientReference: { userId, kind, clientReference } };
+    const existing = await this.prisma.grower_mobile_ingest.findUnique({ where });
+    if (existing) {
+      return { id: existing.id, duplicate: true, kind };
+    }
+    const created = await this.prisma.grower_mobile_ingest.create({
+      data: { userId, kind, clientReference, payload },
+    });
+    return { id: created.id, duplicate: false, kind };
   }
 
   /**

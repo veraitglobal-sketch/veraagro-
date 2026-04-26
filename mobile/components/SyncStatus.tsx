@@ -29,6 +29,7 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
         const autoSyncEnabled = await AsyncStorage.getItem('settings_auto_sync');
         if (autoSyncEnabled !== 'false') {
           await syncService.syncAll();
+          await loadSyncStatus();
         }
       } catch (error) {
         // Ignore

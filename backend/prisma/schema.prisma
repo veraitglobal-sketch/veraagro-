@@ -599,6 +599,8 @@ model missions {
   missionNumber                            String               @unique
   growerId                                 String
   batchId                                  String?
+  /// Set when this transport run was opened from a grower harvest plan (berba / isporuka)
+  harvestAnnouncementId                    String?              @unique
   pickupLocation                           Json
   pickupAddress                            String
   logisticsPartnerId                       String?
@@ -616,16 +618,18 @@ model missions {
   border_wait_times                        border_wait_times[]
   location_logs                            location_logs[]
   logistics_handovers                      logistics_handovers?
-  batches                                  batches?             @relation(fields: [batchId], references: [id])
-  users_missions_growerIdTousers           users                @relation("missions_growerIdTousers", fields: [growerId], references: [id])
-  users_missions_logisticsPartnerIdTousers users?               @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
-  vehicles                                 vehicles?            @relation(fields: [vehicleId], references: [id])
+  batches                                  batches?                @relation(fields: [batchId], references: [id])
+  harvest_announcement                     harvest_announcements?  @relation(fields: [harvestAnnouncementId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  users_missions_growerIdTousers           users                 @relation("missions_growerIdTousers", fields: [growerId], references: [id])
+  users_missions_logisticsPartnerIdTousers users?                @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
+  vehicles                                 vehicles?             @relation(fields: [vehicleId], references: [id])
   temperature_logs                         temperature_logs[]
 
   @@index([growerId])
   @@index([logisticsPartnerId])
   @@index([missionNumber])
   @@index([status])
+  @@index([harvestAnnouncementId])
 }
 
 model notification_templates {
@@ -773,6 +777,7 @@ model harvest_announcements {
   updatedAt          DateTime
   parcel             parcels   @relation(fields: [parcelId], references: [id])
   user               users     @relation(fields: [userId], references: [id])
+  mission            missions?
 
   @@index([parcelId])
   @@index([userId])
@@ -1073,6 +1078,8 @@ model users {
   supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
   supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
   supplier_catalog_items                      supplier_catalog_items[]   @relation("SupplierCatalogItems")
+  /// Mobile offline sync: product/cost/certificate drafts ingested from the app
+  grower_mobile_ingest                        grower_mobile_ingest[]
   /// B2B: physical unit barcodes registered by this supplier (stock / sale traceability)
   supplier_material_barcodes_registered       supplier_material_barcodes[] @relation("SupplierMaterialBarcodes")
   /// Barcodes of material sold to this grower (when supplier marks sale)
@@ -1737,4 +1744,21 @@ model ai_conversations {
   @@index([contactRequested])
   @@index([createdAt])
   @@map("ai_conversations")
+}
+
+/// Inbox for grower app offline queue: product entries, cost lines, certificate metadata (image URI may be device-local only until upload flow exists)
+model grower_mobile_ingest {
+  id              String   @id @default(uuid())
+  userId          String
+  /// PRODUCT | COST | CERT_PHOTO
+  kind            String
+  /// Stable id from the device (e.g. pending_* id) for idempotent sync
+  clientReference String
+  payload         Json
+  createdAt       DateTime @default(now())
+  users           users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kind, clientReference])
+  @@index([userId])
+  @@index([createdAt])
 }

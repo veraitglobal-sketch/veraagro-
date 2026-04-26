@@ -17,6 +17,17 @@ const syncApi = axios.create({
 
 const SYNC_STATUS_KEY = 'sync_status';
 
+/** NestJS / axios: surface `message` so 403 shows real reason (GPS, whitelist, parcel approval). */
+function getApiErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === 'object' && 'response' in error) {
+    const data = (error as { response?: { data?: { message?: string | string[] } } }).response?.data;
+    if (typeof data?.message === 'string') return data.message;
+    if (Array.isArray(data?.message)) return data.message.join('; ');
+  }
+  if (error instanceof Error) return error.message;
+  return fallback;
+}
+
 export interface SyncStatus {
   lastSyncTime: string | null;
   pendingCount: number;
@@ -104,20 +115,21 @@ export const syncService = {
           'Žetva': 'BERBA',
         };
 
-        // Get user's first estate (in production, should be selected by user)
+        // Prefer estate recorded at save time so GPS matches the right polygon (not always estates[0]).
         const { estatesAPI } = await import('./api');
         const estates = await estatesAPI.getAll();
-        const estateId = estates[0]?.id;
+        const list = Array.isArray(estates) ? estates : [];
+        const preferred =
+          entry.estateId && list.find((e: { id: string }) => e.id === entry.estateId);
+        const estateId = preferred?.id ?? list[0]?.id;
 
         if (!estateId) {
           throw new Error('No estate found. Please create an estate first.');
         }
 
-        // Prepare entry data for backend
-        const entryData = {
+        const entryData: Record<string, unknown> = {
           type: activityTypeMap[entry.activityType] || 'PRSKANJE',
           farmId: estateId,
-          fertilizerBarcode: entry.materialID,
           data: {
             date: entry.timestamp,
             location: entry.location,
@@ -125,6 +137,10 @@ export const syncService = {
           },
           createdAt: entry.timestamp,
         };
+        const mat = entry.materialID?.trim();
+        if (mat) {
+          entryData.fertilizerBarcode = mat;
+        }
 
         // Get auth token
         const token = await AsyncStorage.getItem('auth_token');
@@ -139,13 +155,12 @@ export const syncService = {
         // Mark as synced
         await offlineStorage.removeEntry(entry.id);
         success++;
-      } catch (error: any) {
-        console.error(`Error syncing entry ${entry.id}:`, error);
-        
-        // Mark as error
+      } catch (error: unknown) {
+        const msg = getApiErrorMessage(error, 'Sync failed');
+        console.error(`Error syncing entry ${entry.id}:`, msg);
         entry.status = 'error';
-        entry.error = error.message || 'Sync failed';
-        await this.updateEntryStatus(entry.id, 'error', error.message);
+        entry.error = msg;
+        await this.updateEntryStatus(entry.id, 'error', msg);
         failed++;
       }
     }
@@ -197,6 +212,7 @@ export const syncService = {
         await syncApi.post(
           '/grower-portal/products',
           {
+            clientReference: product.id,
             source: product.source,
             qrCode: product.qrCode,
             name: product.name,
@@ -241,6 +257,7 @@ export const syncService = {
         await syncApi.post(
           '/grower-portal/costs',
           {
+            clientReference: cost.id,
             type: cost.type,
             productId: cost.productId,
             label: cost.label,
@@ -283,6 +300,7 @@ export const syncService = {
         await syncApi.post(
           '/grower-portal/certificate-photos',
           {
+            clientReference: photo.id,
             certificateId: photo.certificateId,
             certificateTitle: photo.certificateTitle,
             photoUri: photo.photoUri,
