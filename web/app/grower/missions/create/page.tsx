@@ -297,25 +297,19 @@ export default function CreateMissionPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Request a truck</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Three fields: <strong>batch</strong>, <strong>pickup on the map</strong>, <strong>address</strong>. Then send
-            the request. If a frigo vehicle is free nearby, a partner is assigned; otherwise the mission stays pending.
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Request transport</h2>
+          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+            Pick a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and a full{' '}
+            <strong>address</strong>. A nearby cold truck may auto-assign the run; otherwise it stays queued. Have{' '}
+            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
+              compliance
+            </Link>{' '}
+            done for this lot (see the line under the batch). Order stock on{' '}
+            <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
+              Materials
+            </Link>{' '}
+            if you still need crates or labels.
           </p>
-          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-800">
-            <p className="font-medium text-[#23471f] mb-1">What must already be done</p>
-            <p className="text-gray-700">
-              <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
-                Compliance
-              </Link>{' '}
-              for <strong>this</strong> lot: three photos + one label roll, saved in the app. The status line under the
-              batch should turn green before you expect transport to work. Crates and stock: order via{' '}
-              <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
-                Materials
-              </Link>
-              — not checked at send time.
-            </p>
-          </div>
 
           {submitError && (
             <div
@@ -386,14 +380,14 @@ export default function CreateMissionPage() {
                     <p className="text-emerald-800 flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
                       <span>
-                        Compliance photos and label roll are on file for this lot
+                        Compliance and label roll are on file for this lot
                         {complianceForBatch.stickerRollId ? (
                           <>
                             {' '}
-                            (roll <span className="font-mono">{complianceForBatch.stickerRollId}</span>)
+                            (<span className="font-mono">{complianceForBatch.stickerRollId}</span>)
                           </>
                         ) : null}
-                        . Transport can still fail if crate balance is too low — see Materials.
+                        .
                       </span>
                     </p>
                   ) : complianceForBatch ? (
@@ -451,10 +445,7 @@ export default function CreateMissionPage() {
                   {locationHint}
                 </p>
               )}
-              <p className="text-xs text-gray-500 mb-2">
-                If GPS is slow, enter latitude and longitude and the address yourself — the form does not require
-                using the button.
-              </p>
+              <p className="text-xs text-gray-500 mb-2">Or type lat/lng and address manually—no need to use GPS.</p>
 
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>

@@ -731,6 +731,8 @@ model parcels {
   expectedHarvestDate   DateTime?
   approvedAt            DateTime?
   approvedByUserId      String?
+  /// Public store-facing ID (BIO-PLOT-…); URL /plot/{publicCode} — QR for this parcel / sadnja
+  publicCode            String?                 @unique
   createdAt             DateTime                @default(now())
   updatedAt             DateTime
   batches               batches[]

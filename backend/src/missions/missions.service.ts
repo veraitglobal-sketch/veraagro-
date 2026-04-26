@@ -108,7 +108,7 @@ export class MissionsService {
         logisticsPartnerId: logisticsPartner?.id,
         vehicleId: logisticsPartner?.vehicleId,
         optimalRoute: optimalRoute as any,
-        estimatedPickupTime: routeCalc.estimatedArrival,
+        estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
         status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
         assignedAt: logisticsPartner ? new Date() : null,
         updatedAt: new Date(),
@@ -259,6 +259,12 @@ export class MissionsService {
     return { lat, lng };
   }
 
+  /** Prisma DateTime: reject Invalid Date (Prisma/JSON drivers choke on it). */
+  private static toSafeDateTime(d: Date | null | undefined): Date | null {
+    if (!(d instanceof Date) || !Number.isFinite(d.getTime())) return null;
+    return d;
+  }
+
   /** Prisma Json columns must be JSON-serializable; Date in nested objects can break drivers. */
   private static routeToJsonValue(route: {
     distance: string | null;
@@ -266,9 +272,11 @@ export class MissionsService {
     waypoints: unknown[];
     estimatedArrival: Date | null;
   }): { distance: string | null; duration: string | null; waypoints: unknown[]; estimatedArrival: string | null } {
+    // Invalid Date is still truthy — never call toISOString() without a finite time check (was causing RangeError → 500).
+    const ar = MissionsService.toSafeDateTime(route.estimatedArrival);
     return {
       ...route,
-      estimatedArrival: route.estimatedArrival ? route.estimatedArrival.toISOString() : null,
+      estimatedArrival: ar ? ar.toISOString() : null,
     };
   }
 
@@ -288,6 +296,20 @@ export class MissionsService {
       };
     }
 
+    if (
+      !Number.isFinite(pickupLocation.lat) ||
+      !Number.isFinite(pickupLocation.lng) ||
+      !Number.isFinite(vehicleLocation.lat) ||
+      !Number.isFinite(vehicleLocation.lng)
+    ) {
+      return {
+        distance: null,
+        duration: null,
+        waypoints: [pickupLocation],
+        estimatedArrival: null,
+      };
+    }
+
     // Simple calculation (in production, use Google Maps Directions API)
     const distance = this.calculateDistance(
       vehicleLocation.lat,
@@ -295,10 +317,19 @@ export class MissionsService {
       pickupLocation.lat,
       pickupLocation.lng,
     );
+    if (!Number.isFinite(distance) || distance < 0) {
+      return {
+        distance: null,
+        duration: null,
+        waypoints: [vehicleLocation, pickupLocation],
+        estimatedArrival: null,
+      };
+    }
 
     // Estimate duration (assuming average speed of 60 km/h)
     const durationMinutes = (distance / 60) * 60;
-    const estimatedArrival = new Date(Date.now() + durationMinutes * 60 * 1000);
+    const estimatedArrivalRaw = new Date(Date.now() + durationMinutes * 60 * 1000);
+    const estimatedArrival = MissionsService.toSafeDateTime(estimatedArrivalRaw);
 
     return {
       distance: `${distance.toFixed(2)} km`,
@@ -309,7 +340,7 @@ export class MissionsService {
   }
 
   /**
-   * Generate unique mission number
+   * Generate unique mission number (count + random suffix so concurrent creates rarely collide on @unique).
    */
   private async generateMissionNumber(): Promise<string> {
     const year = new Date().getFullYear();
@@ -320,7 +351,9 @@ export class MissionsService {
         },
       },
     });
-    return `MISSION-${year}-${String(count + 1).padStart(4, '0')}`;
+    const seq = String(count + 1).padStart(4, '0');
+    const salt = crypto.randomBytes(2).toString('hex').toUpperCase();
+    return `MISSION-${year}-${seq}-${salt}`;
   }
 
   /** Geometric center of estate boundary for pickup when no batch GPS yet. */
@@ -403,7 +436,10 @@ export class MissionsService {
     const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
     const pickupAddress = `${estate.name} — ${ann.cropType}${qty != null ? ` (~${Number(qty).toFixed(0)} kg)` : ''} · plan berbe`;
     const plannedTime = ann.plannedLoadingStart ?? ann.estimatedDate;
-    const estimatedPickupTime = plannedTime ?? routeCalc.estimatedArrival ?? new Date();
+    const estimatedPickupTime =
+      MissionsService.toSafeDateTime(plannedTime) ??
+      MissionsService.toSafeDateTime(routeCalc.estimatedArrival) ??
+      new Date();
 
     const mission = await this.prisma.missions.create({
       data: {

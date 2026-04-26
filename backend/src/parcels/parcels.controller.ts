@@ -8,6 +8,14 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class ParcelsController {
   constructor(private parcelsService: ParcelsService) {}
 
+  /**
+   * Public: consumer / retail — plot passport (sadnja, tretmani, serije) — no auth.
+   */
+  @Get('public/plot/:code')
+  async getPublicPlot(@Param('code') code: string) {
+    return this.parcelsService.getPublicPlotData(code);
+  }
+
   @Post('estate/:estateId')
   @UseGuards(JwtAuthGuard)
   async create(
@@ -22,6 +30,16 @@ export class ParcelsController {
   @UseGuards(JwtAuthGuard)
   async findAllByEstate(@Param('estateId') estateId: string, @Request() req: any) {
     return this.parcelsService.findAllByEstate(estateId, req.user.id);
+  }
+
+  /** Grower: PNG QR (data URL) for printing — one per parcel; links to /plot/{publicCode} */
+  @Get(':id/qr')
+  @UseGuards(JwtAuthGuard)
+  async getPlotQr(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.parcelsService.getPlotQrDataUrlForOwner(id, req.user.id);
   }
 
   /** Admin: list parcels pending approval */

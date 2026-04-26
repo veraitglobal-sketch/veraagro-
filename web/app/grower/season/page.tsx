@@ -55,9 +55,7 @@ export default function GrowerFieldSeasonPage() {
               <div className="lg:col-span-8">
                 <h1 className="text-3xl font-light tracking-tight text-gray-900">Steps</h1>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  Full path from first setup to the end of a harvest. The sidebar is ordered the same:{' '}
-                  <strong>Dashboard</strong> → <strong>Steps</strong> → <strong>My fields</strong> … through{' '}
-                  <strong>Mission tracker</strong> → <strong>Profile</strong>.
+                  From first setup to transport — same order as the sidebar. Use the chips under the cards to jump.
                 </p>
               </div>
               <div className="lg:col-span-4 flex flex-wrap items-center gap-2 text-xs text-gray-500 lg:justify-end">
@@ -65,8 +63,6 @@ export default function GrowerFieldSeasonPage() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A27]" />
                   12 steps
                 </span>
-                <span className="hidden sm:inline">·</span>
-                <span>Jump with the row of chips below the intro cards.</span>
               </div>
             </div>
 

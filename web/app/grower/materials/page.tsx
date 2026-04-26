@@ -241,30 +241,29 @@ export default function GrowerMaterialsPage() {
 
         <GrowerSupplyFlowCard context="materials" />
 
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-800 shadow-sm">
-          <p className="font-medium text-gray-900 mb-2">Quick refs</p>
-          <ul className="list-disc space-y-1.5 pl-5 text-gray-700">
-            <li>
-              <a href="#supply-flow" className="text-[#2D5A27] font-medium underline">Full supply &amp; transport path</a>{' '}
-              (partners, B2B, serials, harvest, transport).
-            </li>
-            <li>
-              After purchase, your <strong>label roll IDs</strong> are listed in{' '}
-              <a href="#label-roll-ids" className="text-[#2D5A27] font-medium underline">the block below on this page</a>{' '}
-              and on <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">Compliance photos</Link>.
-            </li>
-            <li>
-              B2B with partners:{' '}
-              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">Suppliers &amp; orders</Link>{' '}
-              (directory, orders, <strong>Received at farm</strong>).
-            </li>
-            <li>
-              Problems with this page:{' '}
-              <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">message your partner</Link>{' '}
-              or <Link href="/contact" className="text-[#2D5A27] font-medium underline">Contact</Link>.
-            </li>
-          </ul>
-        </div>
+        <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
+          <span className="text-gray-500">Shortcuts</span>
+          <span className="text-gray-300 hidden sm:inline">·</span>
+          <a href="#supply-flow" className="text-[#2D5A27] font-medium underline">
+            Supply path
+          </a>
+          <span className="text-gray-300">·</span>
+          <a href="#label-roll-ids" className="text-[#2D5A27] font-medium underline">
+            Your label rolls
+          </a>
+          <span className="text-gray-300">·</span>
+          <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
+            Suppliers
+          </Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
+            Compliance
+          </Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/contact" className="text-[#2D5A27] font-medium underline">
+            Help
+          </Link>
+        </p>
 
         {balance &&
           balance.crateBalance === 0 &&

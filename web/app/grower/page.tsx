@@ -120,7 +120,7 @@ export default function GrowerDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-light text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-600 font-light mt-1">Overview of your farms and operations</p>
+              <p className="text-sm text-gray-600 font-light mt-1">Parcels, estates, and transport at a glance</p>
             </div>
             <button
               onClick={loadData}
