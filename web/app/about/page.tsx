@@ -117,7 +117,7 @@ export default function AboutPage() {
                   {
                     icon: Shield,
                     title: 'Transparency',
-                    description: 'Complete visibility into every step of the supply chain, from seed to shelf. No hidden processes, no obscured origins.',
+                    description: 'Complete visibility into every step of the supply chain, from field to shelf. No hidden processes, no obscured origins.',
                   },
                   {
                     icon: Award,

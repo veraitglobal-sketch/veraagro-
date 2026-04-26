@@ -128,7 +128,11 @@ export class DigitalPassportsService {
       include: {
         estates: {
           include: {
-            users: true,
+            users: {
+              include: {
+                trust_scores: true,
+              },
+            },
             parcels: true,
           },
         },
@@ -215,6 +219,10 @@ export class DigitalPassportsService {
     // Get parcel coordinates for map
     const parcelCoordinates = batch.parcels?.polygonCoordinates || batch.estates.polygonCoordinates;
 
+    const growerScore = batch.estates.users.trust_scores?.currentScore;
+    const trustScore =
+      growerScore != null && !Number.isNaN(growerScore) ? Math.round(growerScore) : 50;
+
     return {
       batch: {
         batchId: batch.batchId,
@@ -236,7 +244,7 @@ export class DigitalPassportsService {
           : null,
         farmer: {
           name: `${batch.estates.users.firstName} ${batch.estates.users.lastName}`,
-          trustScore: 85, // TODO: Get from TrustScore model
+          trustScore,
         },
       },
       timeline,
@@ -249,7 +257,7 @@ export class DigitalPassportsService {
           : null,
         polygon: parcelCoordinates,
       },
-      trustScore: 85, // TODO: Get from TrustScore model
+      trustScore,
     };
   }
 }

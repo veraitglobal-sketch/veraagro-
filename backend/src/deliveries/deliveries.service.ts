@@ -322,6 +322,14 @@ export class DeliveriesService {
     return this.prisma.deliveries.findMany({
       where,
       include: {
+        waybills: {
+          select: {
+            id: true,
+            waybillNumber: true,
+            pdfUrl: true,
+            generatedAt: true,
+          },
+        },
         orders: {
           include: {
             estates: {

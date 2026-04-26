@@ -333,7 +333,7 @@ export default function PassportView({ data }: { data: PassportData }) {
           >
             biovera.app
           </Link>
-          <p className="text-xs text-gray-400 font-light mt-2">From seed to market — with full traceability.</p>
+          <p className="text-xs text-gray-400 font-light mt-2">From field to buyer — with full traceability.</p>
         </footer>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
-import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw } from 'lucide-react';
+import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function DeliveriesPage() {
@@ -108,6 +108,21 @@ export default function DeliveriesPage() {
     }
   };
 
+  const handleDownloadWaybill = async (waybillId: string, waybillNumber: string) => {
+    try {
+      const blob = await deliveriesAPI.downloadWaybillPdf(waybillId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `waybill-${waybillNumber || waybillId}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to download waybill';
+      alert(msg);
+    }
+  };
+
   return (
     <AuthGuard requiredRoles={['BUYER']}>
       <SidebarLayout title="My Deliveries" navItems={buyerPortalNavItems}>
@@ -198,11 +213,23 @@ export default function DeliveriesPage() {
                         Supplier: {delivery.orders?.estates?.name || 'N/A'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className={`px-3 py-1 text-xs font-light border flex items-center gap-1 ${getStatusColor(delivery.status)}`}>
                         {getStatusIcon(delivery.status)}
                         {getStatusLabel(delivery.status)}
                       </span>
+                      {delivery.waybills?.id && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleDownloadWaybill(delivery.waybills.id, delivery.waybills.waybillNumber)
+                          }
+                          className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
+                        >
+                          <FileDown className="w-4 h-4" strokeWidth={1} />
+                          Waybill PDF
+                        </button>
+                      )}
                       <button
                         onClick={() => setSelectedDelivery(delivery)}
                         className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
@@ -313,6 +340,21 @@ export default function DeliveriesPage() {
                       <p className="text-sm text-gray-600 font-light">
                         Order: {selectedDelivery.orders?.orderNumber || 'N/A'}
                       </p>
+                      {selectedDelivery.waybills?.id && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleDownloadWaybill(
+                              selectedDelivery.waybills.id,
+                              selectedDelivery.waybills.waybillNumber,
+                            )
+                          }
+                          className="mt-3 inline-flex items-center gap-1 px-3 py-1.5 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors"
+                        >
+                          <FileDown className="w-4 h-4" strokeWidth={1} />
+                          Download waybill PDF
+                        </button>
+                      )}
                     </div>
                     <button
                       onClick={() => setSelectedDelivery(null)}

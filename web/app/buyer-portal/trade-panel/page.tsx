@@ -606,7 +606,7 @@ export default function TradePanelPage() {
               <div>
                 <h1 className="text-2xl font-light text-gray-900">Vera Trade</h1>
                 <p className="text-sm text-gray-600 mt-2 font-light">
-                  Real-time market intelligence & trading platform
+                  Real-time market intelligence & trading desk
                 </p>
               </div>
               <button

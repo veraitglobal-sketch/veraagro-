@@ -39,7 +39,7 @@ const labels = {
   goEstates: 'Estates & setup',
   goHarvestPlans: 'Harvest plans',
   goHaccp: 'HACCP / field',
-  goBatchesPlatform: 'Batches (platform)',
+  goBatchesPlatform: 'Batches (online)',
 } as const;
 
 // Dashboard icon component

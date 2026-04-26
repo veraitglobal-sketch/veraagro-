@@ -184,6 +184,13 @@ export const deliveriesAPI = {
     const response = await api.post(`/deliveries/confirm/${qrCode}`);
     return response.data;
   },
+  /** Download waybill PDF (auth required; buyer, driver, grower, admin). */
+  downloadWaybillPdf: async (waybillId: string) => {
+    const response = await api.get(`/waybills/document/${waybillId}/pdf`, {
+      responseType: 'blob',
+    });
+    return response.data as Blob;
+  },
 };
 
 // Estates API

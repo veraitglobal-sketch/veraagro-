@@ -225,7 +225,7 @@ export default function Home() {
             {[
               {
                 title: 'Transparency',
-                description: 'Complete visibility of the entire process from seed to customer. Every step is documented and immutable.',
+                description: 'Complete visibility of the entire process from field to customer. Every step is documented and immutable.',
                 icon: Eye,
               },
               {
@@ -273,7 +273,7 @@ export default function Home() {
               },
               {
                 title: 'Batch Tracking',
-                description: 'Every crate tracked with Batch_ID. One-click traceability from seed to customer.',
+                description: 'Every crate tracked with Batch_ID. One-click traceability from field to customer.',
                 icon: PackageSearch,
               },
               {
@@ -376,9 +376,9 @@ export default function Home() {
             {[
               {
                 phase: 'Q1 2026',
-                title: 'Platform Launch',
+                title: 'Network go-live',
                 status: 'completed',
-                items: ['Backend API', 'Mobile App', 'Web Platform', 'Core Features'],
+                items: ['Backend API', 'Mobile App', 'Web app', 'Core features'],
               },
               {
                 phase: 'Q2 2026',

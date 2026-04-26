@@ -424,6 +424,80 @@ Bio Vera Team
   }
 
   /**
+   * Send generated invoice PDF to the buyer (Resend with attachment or SMTP).
+   */
+  async sendInvoicePdf(data: {
+    to: string;
+    firstName: string;
+    lastName: string;
+    invoiceNumber: string;
+    orderNumber: string;
+    pdfBuffer: Buffer;
+  }): Promise<boolean> {
+    if (!this.resend && !this.transporter) {
+      this.logger.warn('Email not configured, skipping invoice email');
+      return false;
+    }
+    const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
+    const name = `${data.firstName} ${data.lastName}`.trim() || 'Customer';
+    const subj = `Invoice ${data.invoiceNumber} — order ${data.orderNumber}`;
+    const filename = `invoice-${data.invoiceNumber.replace(/[^a-zA-Z0-9._-]+/g, '_')}.pdf`;
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8" /></head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+        <p>Dear <strong>${name}</strong>,</p>
+        <p>Please find your Bio Vera invoice <strong>${data.invoiceNumber}</strong> for order <strong>${data.orderNumber}</strong> attached.</p>
+        <p>Thank you for your business.</p>
+        <p style="color:#666;font-size:12px;">Bio Vera — transparency from field to shelf</p>
+      </body>
+      </html>
+    `;
+    const text = `Dear ${name},\n\nPlease find your invoice ${data.invoiceNumber} (order ${data.orderNumber}) attached.\n\n— Bio Vera`;
+    const att = { filename, content: data.pdfBuffer };
+    try {
+      if (this.resend) {
+        const { error } = await this.resend.emails.send({
+          from: `"Bio Vera" <${fromAddr}>`,
+          to: data.to,
+          subject: subj,
+          html,
+          text,
+          attachments: [
+            {
+              filename: att.filename,
+              content: data.pdfBuffer,
+            },
+          ],
+        });
+        if (error) {
+          this.logger.error(`Resend invoice error: ${JSON.stringify(error)}`);
+          return false;
+        }
+        this.logger.log(`Invoice email sent to ${data.to} (${data.invoiceNumber})`);
+        return true;
+      }
+      if (this.transporter) {
+        await this.transporter.sendMail({
+          from: `"Bio Vera" <${fromAddr}>`,
+          to: data.to,
+          subject: subj,
+          html,
+          text,
+          attachments: [att],
+        });
+        this.logger.log(`Invoice email sent via SMTP to ${data.to} (${data.invoiceNumber})`);
+        return true;
+      }
+    } catch (e: any) {
+      this.logger.error(`Failed to send invoice email: ${e?.message || e}`);
+      return false;
+    }
+    return false;
+  }
+
+  /**
    * Test email configuration
    */
   async testConnection(): Promise<boolean> {

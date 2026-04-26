@@ -526,34 +526,60 @@ export class BatchesService {
     }
     const at = dto.completedAt ? new Date(dto.completedAt) : new Date();
 
-    let photos: {
-      storage: 'local_disk';
-      dir: string;
-      crate: { fileName: string; sha256: string; bytes: number };
-      quality: { fileName: string; sha256: string; bytes: number };
-    } | undefined;
+    let photos:
+      | {
+          storage: 'local_disk';
+          dir: string;
+          crate: { fileName: string; sha256: string; bytes: number };
+          quality: { fileName: string; sha256: string; bytes: number };
+        }
+      | {
+          storage: 'vercel_blob';
+          crate: { url: string; sha256: string; bytes: number };
+          quality: { url: string; sha256: string; bytes: number };
+        }
+      | undefined;
 
     if (c && q) {
       const bufC = this.decodePackingPhotoBase64(c);
       const bufQ = this.decodePackingPhotoBase64(q);
-      const relDir = path.join('packing-flow', batch.id);
-      const absDir = path.join(process.cwd(), 'uploads', relDir);
-      fs.mkdirSync(absDir, { recursive: true });
       const ts = Date.now();
       const extC = BatchesService.guessImageExt(bufC);
       const extQ = BatchesService.guessImageExt(bufQ);
-      const fC = `crate-${ts}.${extC}`;
-      const fQ = `quality-${ts}.${extQ}`;
-      fs.writeFileSync(path.join(absDir, fC), bufC);
-      fs.writeFileSync(path.join(absDir, fQ), bufQ);
-      const hashC = createHash('sha256').update(bufC).digest('hex');
-      const hashQ = createHash('sha256').update(bufQ).digest('hex');
-      photos = {
-        storage: 'local_disk',
-        dir: relDir.replace(/\\/g, '/'),
-        crate: { fileName: fC, sha256: hashC, bytes: bufC.length },
-        quality: { fileName: fQ, sha256: hashQ, bytes: bufQ.length },
-      };
+      const blobToken = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
+
+      if (blobToken) {
+        const { put } = await import('@vercel/blob');
+        const keyBase = `packing-flow/${batch.id}/${ts}`;
+        const putOpts = { access: 'public' as const, token: blobToken };
+        const [outC, outQ] = await Promise.all([
+          put(`${keyBase}-crate.${extC}`, bufC, putOpts),
+          put(`${keyBase}-quality.${extQ}`, bufQ, putOpts),
+        ]);
+        const hashC = createHash('sha256').update(bufC).digest('hex');
+        const hashQ = createHash('sha256').update(bufQ).digest('hex');
+        photos = {
+          storage: 'vercel_blob' as const,
+          crate: { url: outC.url, sha256: hashC, bytes: bufC.length },
+          quality: { url: outQ.url, sha256: hashQ, bytes: bufQ.length },
+        };
+      } else {
+        const relDir = path.join('packing-flow', batch.id);
+        const absDir = path.join(process.cwd(), 'uploads', relDir);
+        fs.mkdirSync(absDir, { recursive: true });
+        const fC = `crate-${ts}.${extC}`;
+        const fQ = `quality-${ts}.${extQ}`;
+        fs.writeFileSync(path.join(absDir, fC), bufC);
+        fs.writeFileSync(path.join(absDir, fQ), bufQ);
+        const hashC = createHash('sha256').update(bufC).digest('hex');
+        const hashQ = createHash('sha256').update(bufQ).digest('hex');
+        photos = {
+          storage: 'local_disk' as const,
+          dir: relDir.replace(/\\/g, '/'),
+          crate: { fileName: fC, sha256: hashC, bytes: bufC.length },
+          quality: { fileName: fQ, sha256: hashQ, bytes: bufQ.length },
+        };
+      }
     }
 
     await this.prisma.audit_trails.create({
@@ -579,9 +605,13 @@ export class BatchesService {
   }
 
   /**
-   * Serve a packing-flow photo (crate | quality) from the latest audit with stored files.
+   * Serve a packing-flow photo (crate | quality) from the latest audit with stored files or blob URL.
    */
-  async getPackingFlowPhotoFile(userId: string, batchRef: string, kind: 'crate' | 'quality') {
+  async getPackingFlowPhotoFile(
+    userId: string,
+    batchRef: string,
+    kind: 'crate' | 'quality',
+  ): Promise<{ filePath: string; fileName: string } | { redirectUrl: string; fileName: string }> {
     const batch = await this.prisma.batches.findFirst({
       where: {
         OR: [{ id: batchRef }, { batchId: batchRef }],
@@ -609,6 +639,15 @@ export class BatchesService {
     }
     const nv = trail.newValue as Record<string, unknown>;
     const p = nv.photos as Record<string, unknown>;
+    if (p.storage === 'vercel_blob') {
+      const sub = p[kind] as { url?: string } | undefined;
+      if (!sub?.url) {
+        throw new NotFoundException('Photo not found');
+      }
+      const u = new URL(sub.url);
+      const seg = u.pathname.split('/').filter(Boolean).pop() || 'photo';
+      return { redirectUrl: sub.url, fileName: seg };
+    }
     const dir = p.dir as string;
     const sub = p[kind] as { fileName?: string } | undefined;
     if (!dir || !sub?.fileName) {

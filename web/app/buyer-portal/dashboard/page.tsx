@@ -157,7 +157,7 @@ export default function BuyerDashboardPage() {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-gray-500 font-light">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-4 h-4 text-[#2D5A27]/70" strokeWidth={1.5} />
-                Secure B2B platform
+                Secure B2B buyer access
               </span>
               <span>·</span>
               <span>Certified supply chain</span>
@@ -288,7 +288,7 @@ export default function BuyerDashboardPage() {
               <div className="border-b border-[#2D5A27]/20/50 pb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Platform Status</p>
+                    <p className="text-xs font-light text-gray-500 uppercase tracking-wide mb-1">Service status</p>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-[#2D5A27]/100 rounded-full"></div>
                       <p className="text-sm font-light text-gray-900">All Systems Operational</p>

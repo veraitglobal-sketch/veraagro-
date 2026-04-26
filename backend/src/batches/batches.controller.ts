@@ -7,9 +7,11 @@ import {
   Param,
   Post,
   Request,
+  Res,
   UseGuards,
   StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import * as fs from 'fs';
 import { BatchesService } from './batches.service';
 import { PackingFlowBodyDto } from './dto/packing-flow.dto';
@@ -64,20 +66,21 @@ export class BatchesController {
     @Param('batchId') batchId: string,
     @Param('kind') kind: string,
     @Request() req: any,
+    @Res({ passthrough: true }) res: Response,
   ) {
     if (kind !== 'crate' && kind !== 'quality') {
       throw new BadRequestException('kind must be crate or quality');
     }
-    const { filePath, fileName } = await this.batchesService.getPackingFlowPhotoFile(
-      req.user.id,
-      batchId,
-      kind,
-    );
-    const buffer = fs.readFileSync(filePath);
-    const mime = fileName.toLowerCase().endsWith('png') ? 'image/png' : 'image/jpeg';
+    const out = await this.batchesService.getPackingFlowPhotoFile(req.user.id, batchId, kind);
+    if ('redirectUrl' in out) {
+      res.redirect(302, out.redirectUrl);
+      return;
+    }
+    const buffer = fs.readFileSync(out.filePath);
+    const mime = out.fileName.toLowerCase().endsWith('png') ? 'image/png' : 'image/jpeg';
     return new StreamableFile(buffer, {
       type: mime,
-      disposition: `inline; filename="${fileName}"`,
+      disposition: `inline; filename="${out.fileName}"`,
     });
   }
 

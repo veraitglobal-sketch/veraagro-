@@ -269,7 +269,7 @@ export default function ForBuyersPage() {
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { icon: Lock, title: 'Payments', desc: 'Structured flow: the buyer’s payment is held in escrow through Bio Vera until delivery is confirmed, then goes to grower and logistics partners under contract. We operate as the brand and supply side—no hidden fees; terms are agreed, not a generic “platform” cut.' },
+              { icon: Lock, title: 'Payments', desc: 'Structured flow: the buyer’s payment is held in escrow through Bio Vera until delivery is confirmed, then goes to grower and logistics partners under contract. We operate as the brand and supply side—no hidden fees; terms are agreed directly with Bio Vera, not an abstract marketplace layer.' },
               { icon: FileCheck, title: 'Contracts & compliance', desc: 'Orders and pre-orders are documented. We enforce quality and packaging standards and verify compliance before release.' },
               { icon: Shield, title: 'Quality control', desc: 'Field and quality checks, barcode and GPS validation, and approved inputs only. Unauthorized or non-compliant batches are blocked.' },
               { icon: QrCode, title: 'Traceability', desc: 'Every batch has a unique ID and digital passport. You can verify origin, harvest date, and journey at any time.' },

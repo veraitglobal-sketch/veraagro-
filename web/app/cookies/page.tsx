@@ -239,7 +239,7 @@ export default function CookiesPage() {
                 <li><strong>Edge:</strong> Settings → Privacy, search, and services → Cookies and site permissions</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">5.2. Platform Cookie Preferences</h3>
+              <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">5.2. Cookie Preferences</h3>
               <p className="text-gray-600 font-light leading-relaxed">
                 You can manage your cookie preferences through your account settings in Bio Vera. This allows you to opt-in 
                 or opt-out of non-essential cookies while maintaining essential functionality.

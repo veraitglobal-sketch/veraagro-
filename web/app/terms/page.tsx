@@ -104,13 +104,13 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-light text-gray-900 mb-4">4. Platform Services and Description</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">4. Services and Description</h2>
               <p className="text-gray-600 font-light leading-relaxed mb-4">
                 Bio Vera operates a vertically integrated agricultural network that connects growers, suppliers, logistics partners, and buyers 
                 worldwide. Our services include, but are not limited to:
               </p>
               <ul className="list-disc list-inside text-gray-600 font-light space-y-2 ml-4">
-                <li><strong>Digital Marketplace:</strong> Platform for buying and selling agricultural products with transparent pricing and quality standards</li>
+                <li><strong>Digital Marketplace:</strong> Channel for buying and selling agricultural products with transparent pricing and quality standards</li>
                 <li><strong>Traceability Systems:</strong> Complete product journey tracking from field to shelf with immutable digital proof</li>
                 <li><strong>Quality Assurance:</strong> Multi-level quality control systems including Protocol 360 compliance verification</li>
                 <li><strong>Logistics Coordination:</strong> Transportation management, route optimization, and delivery tracking</li>

@@ -23,7 +23,7 @@ const jobOpenings: JobOpening[] = [
     department: 'Engineering',
     location: 'Remote / Hamburg, Germany',
     type: 'Full-time',
-    description: 'We are looking for an experienced full-stack developer to join our engineering team. You will work on building and maintaining our platform, mobile applications, and APIs.',
+    description: 'We are looking for an experienced full-stack developer to join our engineering team. You will work on building and maintaining Bio Vera web and mobile applications, backend services, and APIs.',
     requirements: [
       '5+ years of experience in full-stack development',
       'Proficiency in TypeScript, Node.js, React, and Next.js',
@@ -47,7 +47,7 @@ const jobOpenings: JobOpening[] = [
     type: 'Full-time',
     description: 'Join our product team to help shape the future of agricultural technology. You will work closely with farmers, understand their needs, and translate them into product features.',
     requirements: [
-      'Background in agriculture, agrotech, or related field',
+      'Background in agriculture, agri-food technology, or related field',
       'Understanding of EU agricultural regulations and certifications',
       'Experience with farm management systems',
       'Strong analytical and communication skills',
