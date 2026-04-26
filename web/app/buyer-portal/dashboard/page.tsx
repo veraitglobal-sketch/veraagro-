@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
+import { getBuyerInvoiceDisplayStatus } from '@/lib/invoice-payment-status';
 import {
   ShoppingCart,
   TrendingUp,
@@ -83,7 +84,7 @@ export default function BuyerDashboardPage() {
         orderNumber: inv.orders?.orderNumber || inv.invoiceData?.orderNumber || 'N/A',
         date: new Date(inv.generatedAt || inv.createdAt),
         amount: inv.orders?.totalAmount ?? inv.invoiceData?.total ?? 0,
-        status: inv.orders?.payments?.[0]?.status ?? 'PENDING',
+        status: getBuyerInvoiceDisplayStatus(inv.orders),
       }));
       setLatestInvoices(transformed.sort((a: any, b: any) => b.date.getTime() - a.date.getTime()).slice(0, 5));
     } catch (err: any) {
@@ -588,9 +589,15 @@ export default function BuyerDashboardPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-light text-gray-900">€{Number(inv.amount).toFixed(2)}</span>
-                    <span className={`text-xs px-2 py-1 border font-light ${
-                      inv.status === 'PAID' ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80' : 'border-amber-200/50 text-amber-600/80'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-1 border font-light ${
+                        inv.status === 'PAID'
+                          ? 'border-[#2D5A27]/20/50 text-[#2D5A27]/80'
+                          : inv.status === 'REFUNDED'
+                            ? 'border-gray-200/50 text-gray-600/80'
+                            : 'border-amber-200/50 text-amber-600/80'
+                      }`}
+                    >
                       {inv.status}
                     </span>
                     <button

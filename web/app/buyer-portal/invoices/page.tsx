@@ -22,6 +22,10 @@ import {
 import { useRouter } from 'next/navigation';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { invoicesAPI } from '@/lib/api';
+import {
+  getBuyerInvoiceDisplayStatus,
+  getOrderPayment,
+} from '@/lib/invoice-payment-status';
 
 export default function InvoicesPage() {
   const buyerPortalNavItems = getBuyerPortalNavItems();
@@ -58,7 +62,7 @@ export default function InvoicesPage() {
         orderNumber: invoice.orders?.orderNumber || invoice.invoiceData?.orderNumber || 'N/A',
         date: new Date(invoice.generatedAt),
         amount: invoice.orders?.totalAmount || invoice.invoiceData?.total || 0,
-        status: invoice.orders?.payments?.[0]?.status || 'PENDING',
+        status: getBuyerInvoiceDisplayStatus(invoice.orders),
         pdfUrl: invoice.pdfUrl,
         invoiceData: invoice.invoiceData,
         order: invoice.orders,
@@ -130,8 +134,15 @@ export default function InvoicesPage() {
 
   const handleViewDetails = async (invoice: any) => {
     try {
-      const details = await invoicesAPI.getOne(invoice.id);
-      setSelectedInvoice(details);
+      const details: any = await invoicesAPI.getOne(invoice.id);
+      const order = details.orders || details.order;
+      setSelectedInvoice({
+        ...details,
+        order,
+        date: details.generatedAt,
+        amount: order?.totalAmount,
+        status: getBuyerInvoiceDisplayStatus(order),
+      });
     } catch (err: any) {
       console.error('Error loading invoice details:', err);
       alert('Failed to load invoice details');
@@ -144,8 +155,8 @@ export default function InvoicesPage() {
         return <CheckCircle className="w-4 h-4 text-green-600/60" strokeWidth={1} />;
       case 'PENDING':
         return <Clock className="w-4 h-4 text-yellow-600/60" strokeWidth={1} />;
-      case 'OVERDUE':
-        return <XCircle className="w-4 h-4 text-red-600/60" strokeWidth={1} />;
+      case 'REFUNDED':
+        return <XCircle className="w-4 h-4 text-gray-600/60" strokeWidth={1} />;
       default:
         return null;
     }
@@ -157,8 +168,8 @@ export default function InvoicesPage() {
         return 'border-green-200/50 text-green-600/80';
       case 'PENDING':
         return 'border-yellow-200/50 text-yellow-600/80';
-      case 'OVERDUE':
-        return 'border-red-200/50 text-red-600/80';
+      case 'REFUNDED':
+        return 'border-gray-200/50 text-gray-600/80';
       default:
         return 'border-gray-200/50 text-gray-600/80';
     }
@@ -252,10 +263,10 @@ export default function InvoicesPage() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
                 >
-                  <option value="all">All Status</option>
-                  <option value="PAID">Paid</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="OVERDUE">Overdue</option>
+                  <option value="all">All status</option>
+                  <option value="PAID">Paid (in escrow or released)</option>
+                  <option value="PENDING">Pending payment</option>
+                  <option value="REFUNDED">Refunded</option>
                 </select>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
@@ -466,7 +477,9 @@ export default function InvoicesPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Status:</span>
-                          <span className={`font-light ${getStatusColor(selectedInvoice.status).split(' ')[1]}`}>
+                          <span
+                            className={`text-xs font-light inline-flex border px-2 py-0.5 rounded ${getStatusColor(selectedInvoice.status)}`}
+                          >
                             {selectedInvoice.status}
                           </span>
                         </div>
@@ -476,25 +489,27 @@ export default function InvoicesPage() {
                     <div>
                       <h3 className="text-sm font-light text-gray-500 mb-2">Payment Information</h3>
                       <div className="space-y-2 text-sm">
-                        {selectedInvoice.order?.payments?.[0] ? (
+                        {getOrderPayment(selectedInvoice.order) ? (
                           <>
                             <div className="flex justify-between">
-                              <span className="text-gray-600 font-light">Payment Method:</span>
+                              <span className="text-gray-600 font-light">Payment method:</span>
                               <span className="font-light text-gray-900">
-                                {selectedInvoice.order.payments[0].paymentMethod || 'N/A'}
+                                {getOrderPayment(selectedInvoice.order)?.paymentMethod || 'N/A'}
                               </span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600 font-light">Payment Status:</span>
-                              <span className={`font-light ${getStatusColor(selectedInvoice.order.payments[0].status).split(' ')[1]}`}>
-                                {selectedInvoice.order.payments[0].status}
+                              <span className="text-gray-600 font-light">Payment status (system):</span>
+                              <span className="font-light text-gray-800">
+                                {getOrderPayment(selectedInvoice.order)?.status || '—'}
                               </span>
                             </div>
-                            {selectedInvoice.order.payments[0].releasedAt && (
+                            {getOrderPayment(selectedInvoice.order)?.releasedAt && (
                               <div className="flex justify-between">
-                                <span className="text-gray-600 font-light">Released At:</span>
+                                <span className="text-gray-600 font-light">Released at:</span>
                                 <span className="font-light text-gray-900">
-                                  {new Date(selectedInvoice.order.payments[0].releasedAt).toLocaleDateString()}
+                                  {new Date(
+                                    String(getOrderPayment(selectedInvoice.order)?.releasedAt),
+                                  ).toLocaleDateString()}
                                 </span>
                               </div>
                             )}

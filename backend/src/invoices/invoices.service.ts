@@ -223,13 +223,28 @@ export class InvoicesService {
     }
 
     if (filters?.status) {
-      // Status is based on payment status
-      where.orders = {
-        ...where.orders,
-        payments: {
-          status: filters.status,
-        },
-      };
+      // UI uses "PAID" / "PENDING"; Prisma has IN_ESCROW, RELEASED, PENDING, REFUNDED
+      if (filters.status === 'PAID') {
+        where.orders = {
+          ...where.orders,
+          payments: { status: { in: ['IN_ESCROW', 'RELEASED'] } },
+        };
+      } else if (filters.status === 'PENDING') {
+        where.orders = {
+          ...where.orders,
+          payments: { status: 'PENDING' },
+        };
+      } else if (filters.status === 'REFUNDED') {
+        where.orders = {
+          ...where.orders,
+          payments: { status: 'REFUNDED' },
+        };
+      } else {
+        where.orders = {
+          ...where.orders,
+          payments: { status: filters.status },
+        };
+      }
     }
 
     if (filters?.startDate || filters?.endDate) {
