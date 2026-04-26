@@ -106,6 +106,8 @@ export default function AdminDashboard() {
     );
   }
 
+  const pendingParcelApprovalCount = statistics?.parcels?.pendingApproval ?? 0;
+
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
       <SidebarLayout title="Admin Dashboard" navItems={adminNavItems}>
@@ -270,9 +272,9 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-[#2D5A27]" />
                   <span className="text-sm font-medium text-gray-900">Odobri parcele</span>
-                  {(statistics?.parcels?.pendingApproval ?? 0) > 0 && (
+                  {pendingParcelApprovalCount > 0 && (
                     <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-                      {statistics.parcels.pendingApproval}
+                      {pendingParcelApprovalCount}
                     </span>
                   )}
                 </div>
