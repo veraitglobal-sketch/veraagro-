@@ -143,6 +143,13 @@ export class UsersController {
     };
   }
 
+  @Post('admin/:id/reset-password')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async adminResetPassword(@Request() req: any, @Param('id') id: string) {
+    return this.usersService.adminResetPasswordForUser(req.user.id, id);
+  }
+
   @Put('admin/:id')
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')

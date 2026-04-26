@@ -376,6 +376,15 @@ export const usersAPI = {
     const response = await api.post('/users/admin', userData);
     return response.data;
   },
+  /** New random 12-char password; show once to user (e.g. supplier lost temp password). */
+  adminResetPassword: async (id: string) => {
+    const response = await api.post(`/users/admin/${id}/reset-password`);
+    return response.data as {
+      partnerCode: string;
+      email: string | null;
+      temporaryPassword: string;
+    };
+  },
   update: async (id: string, userData: {
     email?: string;
     phone?: string;

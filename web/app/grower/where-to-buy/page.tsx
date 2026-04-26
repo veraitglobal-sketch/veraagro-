@@ -1,19 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import 'leaflet/dist/leaflet.css';
-import dynamic from 'next/dynamic';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { growerNavItems } from '@/lib/grower-nav';
 import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
-import { Info, List, MapPinned, Store } from 'lucide-react';
-
-const MapContainer = dynamic(() => import('react-leaflet').then((m) => m.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then((m) => m.TileLayer), { ssr: false });
-const CircleMarker = dynamic(() => import('react-leaflet').then((m) => m.CircleMarker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then((m) => m.Popup), { ssr: false });
+import { Info, List, MapPinned, Navigation, Store, Globe } from 'lucide-react';
 
 type MapItem = {
   id: string;
@@ -27,9 +20,6 @@ type MapItem = {
   description?: string;
 };
 
-const HAMBURG: [number, number] = [53.5511, 9.9937];
-
-/** Loose match for Serbia / Germany / etc. (profile text vs API country) */
 function countriesLikelyMatch(profileCountry: string, itemCountry: string | undefined) {
   if (!itemCountry?.trim()) return false;
   const p = profileCountry.trim().toLowerCase();
@@ -46,7 +36,9 @@ function countriesLikelyMatch(profileCountry: string, itemCountry: string | unde
 
 function sortItemsByProfileCountry(items: MapItem[], productionCountry: string | null) {
   if (!productionCountry?.trim()) {
-    return [...items].sort((a, b) => (a.country || '').localeCompare(b.country || '') || a.name.localeCompare(b.name));
+    return [...items].sort(
+      (a, b) => (a.country || '').localeCompare(b.country || '') || a.name.localeCompare(b.name),
+    );
   }
   const pc = productionCountry.trim();
   return [...items].sort((a, b) => {
@@ -62,22 +54,36 @@ function formatAddressLine(loc: MapItem) {
   return parts.join(' · ');
 }
 
+function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
+  const R = 6371;
+  const dLat = ((bLat - aLat) * Math.PI) / 180;
+  const dLng = ((bLng - aLng) * Math.PI) / 180;
+  const x =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((aLat * Math.PI) / 180) *
+      Math.cos((bLat * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+function normalizeCountry(c: string | undefined) {
+  return (c || '').trim() || '—';
+}
+
 /**
- * Public pickup + partner supplier pins — same data as the mobile “Where to Buy” map.
- * Retail = green, material suppliers = orange (only if approved for the public map).
+ * No map: country tabs, optional city, “nearest to me” from coordinates on file + browser location.
  */
 export default function GrowerWhereToBuyPage() {
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-  const [center, setCenter] = useState<[number, number]>(HAMBURG);
-  const [zoom, setZoom] = useState(10);
   const [productionCountry, setProductionCountry] = useState<string | null>(null);
-
-  const sortedItems = useMemo(
-    () => sortItemsByProfileCountry(items, productionCountry),
-    [items, productionCountry],
-  );
+  const [selectedCountry, setSelectedCountry] = useState<string>('ALL');
+  const [selectedCity, setSelectedCity] = useState<string>('ALL');
+  const [nearMe, setNearMe] = useState(false);
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -96,7 +102,7 @@ export default function GrowerWhereToBuyPage() {
         setProductionCountry(null);
       }
       if (!rRetail.ok || !rSup.ok) {
-        setErr('Could not load map data. Check that the API is running and NEXT_PUBLIC_API_URL is set on the site.');
+        setErr('Could not load directory. Check that the API is running and NEXT_PUBLIC_API_URL is set on the site.');
         setItems([]);
         return;
       }
@@ -121,10 +127,7 @@ export default function GrowerWhereToBuyPage() {
       }>;
 
       const retailM: MapItem[] = (retail || [])
-        .filter(
-          (x) =>
-            x.latitude && x.longitude && x.latitude !== 0 && x.longitude !== 0,
-        )
+        .filter((x) => x.latitude && x.longitude && x.latitude !== 0 && x.longitude !== 0)
         .map((x) => ({
           id: `retail-${x.id}`,
           name: x.name,
@@ -136,10 +139,7 @@ export default function GrowerWhereToBuyPage() {
           kind: 'retail' as const,
         }));
       const supM: MapItem[] = (suppliers || [])
-        .filter(
-          (x) =>
-            x.latitude && x.longitude && x.latitude !== 0 && x.longitude !== 0,
-        )
+        .filter((x) => x.latitude && x.longitude && x.latitude !== 0 && x.longitude !== 0)
         .map((x) => ({
           id: `supplier-${x.id}`,
           name: x.name,
@@ -151,14 +151,7 @@ export default function GrowerWhereToBuyPage() {
           kind: 'supplier' as const,
           description: x.description,
         }));
-      const merged = [...retailM, ...supM];
-      setItems(merged);
-      if (merged.length > 0) {
-        const al = merged.reduce((s, i) => s + i.latitude, 0) / merged.length;
-        const aLng = merged.reduce((s, i) => s + i.longitude, 0) / merged.length;
-        setCenter([al, aLng]);
-        setZoom(merged.length === 1 ? 12 : 9);
-      }
+      setItems([...retailM, ...supM]);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Failed to load');
       setItems([]);
@@ -171,181 +164,272 @@ export default function GrowerWhereToBuyPage() {
     void load();
   }, [load]);
 
+  const countryOptions = useMemo(() => {
+    const set = new Set<string>();
+    items.forEach((i) => set.add(normalizeCountry(i.country)));
+    return ['ALL', ...Array.from(set).filter((c) => c !== '—').sort((a, b) => a.localeCompare(b))];
+  }, [items]);
+
+  const filteredByCountry = useMemo(() => {
+    if (selectedCountry === 'ALL') return items;
+    return items.filter((i) => normalizeCountry(i.country) === selectedCountry);
+  }, [items, selectedCountry]);
+
+  const cityOptions = useMemo(() => {
+    const set = new Set<string>();
+    filteredByCountry.forEach((i) => {
+      const c = (i.city || '').trim();
+      if (c) set.add(c);
+    });
+    return ['ALL', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+  }, [filteredByCountry]);
+
+  const filtered = useMemo(() => {
+    if (selectedCity === 'ALL') return filteredByCountry;
+    return filteredByCountry.filter((i) => (i.city || '').trim() === selectedCity);
+  }, [filteredByCountry, selectedCity]);
+
+  const sortedForList = useMemo(() => {
+    const base = sortItemsByProfileCountry(filtered, productionCountry);
+    if (nearMe && userPos) {
+      return [...base].sort(
+        (a, b) =>
+          haversineKm(userPos.lat, userPos.lng, a.latitude, a.longitude) -
+          haversineKm(userPos.lat, userPos.lng, b.latitude, b.longitude),
+      );
+    }
+    return base;
+  }, [filtered, productionCountry, nearMe, userPos]);
+
+  const requestNearMe = () => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert('Location is not available in this browser.');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setNearMe(true);
+        setLocating(false);
+      },
+      () => {
+        setLocating(false);
+        alert('Could not get your position. Check browser permissions and try again.');
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
+    );
+  };
+
+  const clearNearMe = () => {
+    setNearMe(false);
+    setUserPos(null);
+  };
+
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
       <SidebarLayout title="Where to buy" navItems={growerNavItems}>
         <div className="max-w-4xl">
-        <p className="text-sm text-gray-600 font-light mb-4">
-          When locations exist, you get a map plus an address list below. The list is ordered with your profile
-          production country first (from your account), then other countries. Retail pickup points (green on the map)
-          and partner input stores (orange) both come from the public directory.
-        </p>
-
-        {!loading && productionCountry && (
-          <p className="text-xs text-gray-500 font-light mb-3">
-            Your profile production country:{' '}
-            <span className="font-medium text-gray-700">{productionCountry}</span>
-            {sortedItems.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
-              <span> — showing matching locations first in the list.</span>
-            ) : (
-              <span> — no directory entries match this country yet; they may appear after admin approval.</span>
-            )}
+          <p className="text-sm text-gray-600 font-light mb-4">
+            Choose a <strong>country</strong> and, if you want, a <strong>city</strong> (larger places where we have
+            listings). Use <strong>Nearest to me</strong> to sort by distance using your current location. Retail pickup
+            points and partner input stores (same as before — green vs orange in the list) come from the public directory.
           </p>
-        )}
 
-        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-          <p className="font-medium flex items-center gap-2">
-            <Info className="h-4 w-4 shrink-0" />
-            Why you might see no orange pin for a new store
-          </p>
-          <p className="mt-1.5 text-amber-900/90 font-light leading-relaxed">
-            A material supplier (partner store) is shown <strong>only</strong> after the location is <strong>approved
-            for the public map</strong> (<code className="text-xs bg-amber-100/80 px-1">mapApproved</code>). If the
-            address was changed in Settings, approval is cleared until an admin re-verifies. Green pins are separate:
-            they come from <strong>retail hub</strong> records, not from typing an address in the supplier form alone.
-          </p>
-        </div>
+          {!loading && productionCountry && (
+            <p className="text-xs text-gray-500 font-light mb-3">
+              Your profile production country:{' '}
+              <span className="font-medium text-gray-700">{productionCountry}</span>
+              {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
+                <span> — matching areas are highlighted in the list first when not using “nearest”.</span>
+              ) : (
+                <span> — no directory entries for this country yet; they can appear after admin approval.</span>
+              )}
+            </p>
+          )}
 
-        {err && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
-        )}
-
-        {loading ? (
-          <p className="text-sm text-gray-500">Loading directory…</p>
-        ) : items.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-gray-200 bg-white p-8 text-sm text-gray-600">
-            <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-            <p className="font-medium text-gray-800 text-center">No locations in the public directory yet</p>
-            {productionCountry ? (
-              <p className="mt-3 text-center font-light max-w-lg mx-auto leading-relaxed">
-                Your account is registered for production in <strong className="text-gray-800">{productionCountry}</strong>.
-                There are still no approved retail hubs or partner stores in the shared list for this region. A map will
-                appear here automatically once Bio Vera adds or approves entries.
-              </p>
-            ) : (
-              <p className="mt-3 text-center font-light max-w-md mx-auto">
-                Ask a Bio Vera admin to approve partner stores for the map or add retail hub data. If the mobile app map
-                is also empty, check that the app points to the production API.
-              </p>
-            )}
-            <div className="mt-6 rounded-md bg-gray-50 border border-gray-100 px-4 py-3 text-left text-xs text-gray-600 font-light">
-              <p className="font-medium text-gray-700 mb-1 flex items-center gap-1.5">
-                <List className="h-3.5 w-3.5" />
-                Without pins, you still have the address list (empty): it uses the same data as the map. As soon as
-                entries exist, both the map and the list will show them, with your country prioritized in the list.
-              </p>
-            </div>
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => void load()}
-                className="mt-4 text-sm text-[#2D5A27] hover:underline"
-              >
-                Retry
-              </button>
-            </div>
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
+            <p className="font-medium flex items-center gap-2">
+              <Info className="h-4 w-4 shrink-0" />
+              Partner store visibility
+            </p>
+            <p className="mt-1.5 text-amber-900/90 font-light leading-relaxed">
+              A material supplier is listed <strong>only</strong> after the address is <strong>approved for the public
+              directory</strong> (<code className="text-xs bg-amber-100/80 px-1">mapApproved</code>). Retail rows come
+              from hub records.
+            </p>
           </div>
-        ) : (
-          <>
-            <div className="h-[min(420px,50vh)] w-full overflow-hidden rounded-xl border border-gray-200 shadow-sm">
-              <MapContainer
-                center={center}
-                zoom={zoom}
-                className="h-full w-full z-0 min-h-[280px]"
-                scrollWheelZoom
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {items.map((loc) => (
-                  <CircleMarker
-                    key={loc.id}
-                    center={[loc.latitude, loc.longitude]}
-                    radius={9}
-                    pathOptions={{
-                      color: loc.kind === 'supplier' ? '#C2410C' : '#2D5A27',
-                      fillColor: loc.kind === 'supplier' ? '#FDBA74' : '#86efac',
-                      fillOpacity: 0.9,
-                      weight: 2,
-                    }}
-                  >
-                    <Popup>
-                      <p className="font-medium text-sm">{loc.name}</p>
-                      {loc.address && <p className="text-xs text-gray-600 mt-0.5">{loc.address}</p>}
-                      <p className="text-xs text-gray-500">
-                        {loc.kind === 'supplier' ? 'Material supplier' : 'Retail / pickup'}
-                        {loc.city && ` · ${loc.city}`}
-                      </p>
-                      {loc.description && (
-                        <p className="text-xs text-gray-600 mt-1">{loc.description}</p>
-                      )}
-                    </Popup>
-                  </CircleMarker>
-                ))}
-              </MapContainer>
-            </div>
 
-            <div className="mt-6">
-              <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-2">
-                <List className="h-4 w-4 text-[#2D5A27]" />
-                Address list
-                {productionCountry && (
-                  <span className="font-light text-gray-500 normal-case">({productionCountry} first)</span>
-                )}
-              </h2>
-              <p className="text-xs text-gray-500 font-light mb-3">
-                Same locations as on the map — useful if the map does not load in your browser; you can copy names and
-                addresses from here.
+          {err && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
+          )}
+
+          {loading ? (
+            <p className="text-sm text-gray-500">Loading directory…</p>
+          ) : items.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-200 bg-white p-8 text-sm text-gray-600">
+              <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+              <p className="font-medium text-gray-800 text-center">No locations in the public directory yet</p>
+              <p className="mt-3 text-center font-light max-w-md mx-auto">
+                Ask a Bio Vera admin to approve partner entries or add retail hub data. When entries exist, use the
+                country and city filters here.
               </p>
-              <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
-                {sortedItems.map((loc) => {
-                  const inRegion = productionCountry && countriesLikelyMatch(productionCountry, loc.country);
-                  return (
-                    <li
-                      key={loc.id}
-                      className={`px-4 py-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4 ${
-                        inRegion ? 'bg-[#2D5A27]/5' : ''
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => void load()}
+                  className="mt-4 text-sm text-[#2D5A27] hover:underline"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4 space-y-3">
+                <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5" />
+                  Country
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {countryOptions.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCountry(c);
+                        setSelectedCity('ALL');
+                      }}
+                      className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                        selectedCountry === c
+                          ? 'bg-[#2D5A27] text-white'
+                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                       }`}
                     >
-                      <div className="min-w-0">
-                        <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
-                          {loc.name}
-                          {inRegion && (
-                            <span className="text-[10px] font-medium uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-1.5 py-0.5 rounded">
-                              Your region
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-sm text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
-                          <MapPinned className="h-3.5 w-3.5 text-gray-400 shrink-0 mt-0.5" />
-                          <span>{formatAddressLine(loc)}</span>
-                        </p>
-                        {loc.description && loc.kind === 'supplier' && (
-                          <p className="text-xs text-gray-500 font-light mt-1 line-clamp-2">{loc.description}</p>
-                        )}
-                      </div>
-                      <span
-                        className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-md w-fit ${
-                          loc.kind === 'supplier'
-                            ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
-                            : 'bg-green-50 text-green-900 border border-green-200/80'
+                      {c === 'ALL' ? 'All countries' : c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {selectedCountry !== 'ALL' && cityOptions.length > 1 && (
+                <div className="mb-4 space-y-2">
+                  <p className="text-xs font-medium text-gray-700">City (optional)</p>
+                  <div className="flex flex-wrap gap-2">
+                    {cityOptions.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setSelectedCity(c)}
+                        className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                          selectedCity === c
+                            ? 'bg-[#2D5A27]/15 text-[#23471f] ring-1 ring-[#2D5A27]/40'
+                            : 'bg-white border border-gray-200 text-gray-800 hover:border-gray-300'
                         }`}
                       >
-                        {loc.kind === 'supplier' ? 'Partner store' : 'Retail / pickup'}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                        {c === 'ALL' ? 'All cities' : c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            <p className="mt-3 text-xs text-gray-400 font-light">
-              {items.filter((i) => i.kind === 'retail').length} retail ·{' '}
-              {items.filter((i) => i.kind === 'supplier').length} supplier
-            </p>
-          </>
-        )}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {!nearMe ? (
+                  <button
+                    type="button"
+                    onClick={() => void requestNearMe()}
+                    disabled={locating}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                  >
+                    <Navigation className="h-4 w-4" />
+                    {locating ? 'Getting location…' : 'Nearest to me'}
+                  </button>
+                ) : (
+                  <>
+                    <span className="text-sm text-gray-600">
+                      Sorted by distance
+                      {userPos
+                        ? ` — ${sortedForList.length} result(s)`
+                        : ''}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={clearNearMe}
+                      className="text-sm text-[#2D5A27] underline"
+                    >
+                      Clear
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div>
+                <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-2">
+                  <List className="h-4 w-4 text-[#2D5A27]" />
+                  Locations
+                </h2>
+                <p className="text-xs text-gray-500 font-light mb-3">
+                  Names and full addresses (no map). Filter by country and city, or by distance with “Nearest to me”.
+                </p>
+                <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
+                  {sortedForList.map((loc) => {
+                    const inRegion = productionCountry && countriesLikelyMatch(productionCountry, loc.country);
+                    const distKm =
+                      nearMe && userPos
+                        ? haversineKm(userPos.lat, userPos.lng, loc.latitude, loc.longitude)
+                        : null;
+                    return (
+                      <li
+                        key={loc.id}
+                        className={`px-4 py-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4 ${
+                          inRegion && !nearMe ? 'bg-[#2D5A27]/5' : ''
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
+                            {loc.name}
+                            {inRegion && !nearMe && (
+                              <span className="text-[10px] font-medium uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-1.5 py-0.5 rounded">
+                                Your region
+                              </span>
+                            )}
+                            {distKm != null && (
+                              <span className="text-[10px] font-medium text-gray-500">
+                                {distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(1)} km`}
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-sm text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
+                            <MapPinned className="h-3.5 w-3.5 text-gray-400 shrink-0 mt-0.5" />
+                            <span>{formatAddressLine(loc)}</span>
+                          </p>
+                          {loc.description && loc.kind === 'supplier' && (
+                            <p className="text-xs text-gray-500 font-light mt-1 line-clamp-2">{loc.description}</p>
+                          )}
+                        </div>
+                        <span
+                          className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-md w-fit ${
+                            loc.kind === 'supplier'
+                              ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
+                              : 'bg-green-50 text-green-900 border border-green-200/80'
+                          }`}
+                        >
+                          {loc.kind === 'supplier' ? 'Partner store' : 'Retail / pickup'}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              <p className="mt-3 text-xs text-gray-400 font-light">
+                {items.filter((i) => i.kind === 'retail').length} retail ·{' '}
+                {items.filter((i) => i.kind === 'supplier').length} partner
+                {selectedCountry !== 'ALL' && ` · filtered: ${sortedForList.length} shown`}
+              </p>
+            </>
+          )}
         </div>
       </SidebarLayout>
     </AuthGuard>

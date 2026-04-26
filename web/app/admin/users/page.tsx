@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { usersAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
 interface User {
@@ -53,6 +53,7 @@ export default function UsersManagementPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [createdFarmer, setCreatedFarmer] = useState<{ qrCode: string; profileUrl: string; name: string } | null>(null);
+  const [resettingPassword, setResettingPassword] = useState(false);
   const [commercialAgents, setCommercialAgents] = useState<
     {
       id: string;
@@ -267,6 +268,35 @@ export default function UsersManagementPage() {
       caCountry: '',
       caPostalCode: '',
     });
+  };
+
+  const handleAdminResetPassword = async () => {
+    if (!editingUser) return;
+    if (
+      !confirm(
+        `Generate a new temporary password for ${editingUser.partnerCode}? The old password will stop working immediately.`,
+      )
+    ) {
+      return;
+    }
+    setResettingPassword(true);
+    try {
+      const r = await usersAPI.adminResetPassword(editingUser.id);
+      const lines = [
+        `Partner code: ${r.partnerCode}`,
+        r.email ? `Email: ${r.email}` : '',
+        ``,
+        `New temporary password (copy and send securely; shown once):`,
+        r.temporaryPassword,
+      ]
+        .filter(Boolean)
+        .join('\n');
+      alert(lines);
+    } catch (err: any) {
+      alert(err?.response?.data?.message || err?.message || 'Failed to reset password');
+    } finally {
+      setResettingPassword(false);
+    }
   };
 
   const openEditModal = async (user: User) => {
@@ -983,6 +1013,22 @@ export default function UsersManagementPage() {
                         />
                       </div>
                     )}
+                  </div>
+                  <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-sm text-amber-950">
+                    <p className="font-medium mb-1">Lost password / new temporary login</p>
+                    <p className="text-xs text-amber-900/80 mb-2">
+                      Creates a new 12-character password. After they log in, they can set their own in Supplier settings
+                      (web) or profile.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => void handleAdminResetPassword()}
+                      disabled={resettingPassword}
+                      className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-950 hover:bg-amber-100 disabled:opacity-50"
+                    >
+                      <KeyRound className="h-4 w-4" />
+                      {resettingPassword ? 'Generating…' : 'Generate new temporary password'}
+                    </button>
                   </div>
                   <div className="flex gap-3 justify-end pt-4 border-t">
                     <button

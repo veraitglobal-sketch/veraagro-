@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -391,6 +392,47 @@ export class UsersService {
       data: { passwordHash, updatedAt: new Date() },
     });
     return { ok: true };
+  }
+
+  /**
+   * Admin generates a new random password for a user (e.g. supplier lost temp password).
+   * Returns the plain password once; old password is invalidated.
+   */
+  async adminResetPasswordForUser(actingAdminId: string, targetUserId: string) {
+    if (actingAdminId === targetUserId) {
+      throw new BadRequestException('Use “Change password” in your account settings, or ask another admin.');
+    }
+    const target = await this.prisma.users.findUnique({
+      where: { id: targetUserId },
+      select: { id: true, partnerCode: true, email: true, roles: true },
+    });
+    if (!target) {
+      throw new NotFoundException('User not found');
+    }
+    if (target.roles.includes(UserRole.SUPER_ADMIN)) {
+      const actor = await this.prisma.users.findUnique({
+        where: { id: actingAdminId },
+        select: { roles: true },
+      });
+      if (!actor?.roles.includes(UserRole.SUPER_ADMIN)) {
+        throw new ForbiddenException('Only a super admin can reset another super admin password');
+      }
+    }
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let temporaryPassword = '';
+    for (let i = 0; i < 12; i++) {
+      temporaryPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const passwordHash = await bcrypt.hash(temporaryPassword, 10);
+    await this.prisma.users.update({
+      where: { id: targetUserId },
+      data: { passwordHash, updatedAt: new Date() },
+    });
+    return {
+      partnerCode: target.partnerCode,
+      email: target.email,
+      temporaryPassword,
+    };
   }
 
   async delete(id: string) {
