@@ -1074,8 +1074,33 @@ model users {
   supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
   /// When a partner / distributor application is converted to a store user
   partner_application_links                 partner_applications[]     @relation("PartnerApplicationLinkedUser")
+  /// Admin-assigned commercial agent (growers, logistics partners, material suppliers)
+  assignedAgentUserId                       String?
+  assignedCommercialAgent                  users?                     @relation("CommercialAgentAssignment", fields: [assignedAgentUserId], references: [id], onDelete: SetNull)
+  accountsWhereIAmCommercialAgent          users[]                    @relation("CommercialAgentAssignment")
+  /// Office address for proximity (only for COMMERCIAL_AGENT users)
+  commercial_agent_profile                 commercial_agent_profiles?
 
   @@index([partnerCode])
+  @@index([assignedAgentUserId])
+}
+
+/// Bio Vera field / commercial office — used to match growers & partners to nearby agents (admin assigns manually)
+model commercial_agent_profiles {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  officeName  String?
+  address     String
+  postalCode  String?
+  city        String
+  country     String
+  /// { "lat": number, "lng": number } — optional; can be geocoded from address later
+  location    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([city, country])
 }
 
 /// Distributor & supplier-partner interest from website (/suppliers) — internal pipeline; admin creates store account when ready.
@@ -1585,6 +1610,8 @@ enum UserRole {
   LOGISTICS_PARTNER
   /// B2B: seeds, fertilizer, packaging – appears on grower map when profile mapApproved
   MATERIAL_SUPPLIER
+  /// Commercial / field agent — supports growers, logistics, supplier stores (admin assigns accounts)
+  COMMERCIAL_AGENT
 }
 
 enum SupplierDirectOrderStatus {

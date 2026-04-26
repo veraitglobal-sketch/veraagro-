@@ -61,6 +61,8 @@ export class AuthService {
         roles: user.roles || [user.role], // Return array of roles
         firstName: user.firstName,
         lastName: user.lastName,
+        /** Admin-assigned commercial agent (growers, logistics, B2B suppliers) */
+        assignedCommercialAgent: user.assignedCommercialAgent ?? null,
       },
     };
   }

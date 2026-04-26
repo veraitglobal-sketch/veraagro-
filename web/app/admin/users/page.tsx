@@ -25,6 +25,21 @@ interface User {
   _count?: {
     estates: number;
   };
+  assignedAgentUserId?: string | null;
+  assignedCommercialAgent?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    partnerCode: string;
+    email?: string | null;
+  } | null;
+  commercial_agent_profile?: {
+    officeName?: string | null;
+    address: string;
+    city: string;
+    country: string;
+    postalCode?: string | null;
+  } | null;
 }
 
 export default function UsersManagementPage() {
@@ -38,6 +53,30 @@ export default function UsersManagementPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [createdFarmer, setCreatedFarmer] = useState<{ qrCode: string; profileUrl: string; name: string } | null>(null);
+  const [commercialAgents, setCommercialAgents] = useState<
+    {
+      id: string;
+      firstName: string;
+      lastName: string;
+      partnerCode: string;
+      email?: string | null;
+      phone?: string | null;
+      commercial_agent_profile?: { city?: string; country?: string } | null;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    let c = true;
+    usersAPI
+      .getCommercialAgents()
+      .then((a) => {
+        if (c && Array.isArray(a)) setCommercialAgents(a);
+      })
+      .catch(() => undefined);
+    return () => {
+      c = false;
+    };
+  }, []);
 
   useEffect(() => {
     loadUsers();
@@ -86,6 +125,12 @@ export default function UsersManagementPage() {
     autoGeneratePassword: false,
     sendEmail: true,
     buyerCompanyProfileJson: '' as string,
+    assignedAgentUserId: '' as string,
+    caOfficeName: '',
+    caAddress: '',
+    caCity: '',
+    caCountry: '',
+    caPostalCode: '',
   });
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -162,6 +207,13 @@ export default function UsersManagementPage() {
         }
       }
 
+      const canHaveAssignedAgent = formData.roles.some((r) =>
+        ['FARMER', 'GROWER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER'].includes(r),
+      );
+      const isCommercialAgent = formData.roles.includes('COMMERCIAL_AGENT');
+      const officeComplete =
+        formData.caAddress.trim() && formData.caCity.trim() && formData.caCountry.trim();
+
       await usersAPI.update(editingUser.id, {
         email: formData.email || undefined,
         phone: formData.phone || undefined,
@@ -172,6 +224,18 @@ export default function UsersManagementPage() {
         status: formData.status || undefined,
         ...(formData.roles.includes('BUYER') && formData.buyerCompanyProfileJson.trim()
           ? { buyerCompanyProfile }
+          : {}),
+        ...(canHaveAssignedAgent ? { assignedAgentUserId: formData.assignedAgentUserId || null } : {}),
+        ...(isCommercialAgent && officeComplete
+          ? {
+              commercialAgentProfile: {
+                officeName: formData.caOfficeName.trim() || null,
+                address: formData.caAddress.trim(),
+                city: formData.caCity.trim(),
+                country: formData.caCountry.trim(),
+                postalCode: formData.caPostalCode.trim() || null,
+              },
+            }
           : {}),
       });
       setEditingUser(null);
@@ -196,15 +260,26 @@ export default function UsersManagementPage() {
       autoGeneratePassword: false,
       sendEmail: true,
       buyerCompanyProfileJson: '',
+      assignedAgentUserId: '',
+      caOfficeName: '',
+      caAddress: '',
+      caCity: '',
+      caCountry: '',
+      caPostalCode: '',
     });
   };
 
   const openEditModal = async (user: User) => {
     setEditingUser(user);
+    let full: User = user;
+    try {
+      full = await usersAPI.getOne(user.id);
+    } catch {
+      // keep list row
+    }
     let profileJson = '';
-    if (user.roles.includes('BUYER')) {
+    if (full.roles.includes('BUYER')) {
       try {
-        const full = await usersAPI.getOne(user.id);
         profileJson = full?.buyerCompanyProfile
           ? JSON.stringify(full.buyerCompanyProfile, null, 2)
           : JSON.stringify(
@@ -226,19 +301,26 @@ export default function UsersManagementPage() {
         profileJson = '';
       }
     }
+    const cap = full.commercial_agent_profile;
     setFormData({
-      partnerCode: user.partnerCode,
-      email: user.email || '',
-      phone: user.phone || '',
-      firstName: user.firstName,
-      lastName: user.lastName,
-      productionCountry: user.productionCountry || '',
+      partnerCode: full.partnerCode,
+      email: full.email || '',
+      phone: full.phone || '',
+      firstName: full.firstName,
+      lastName: full.lastName,
+      productionCountry: full.productionCountry || '',
       password: '',
-      roles: user.roles || [],
-      status: user.status,
+      roles: full.roles || [],
+      status: full.status,
       autoGeneratePassword: false,
       sendEmail: false,
       buyerCompanyProfileJson: profileJson,
+      assignedAgentUserId: full.assignedAgentUserId || '',
+      caOfficeName: cap?.officeName || '',
+      caAddress: cap?.address || '',
+      caCity: cap?.city || '',
+      caCountry: cap?.country || '',
+      caPostalCode: cap?.postalCode || '',
     });
   };
 
@@ -285,6 +367,7 @@ export default function UsersManagementPage() {
                 <option value="BUYER">Buyer</option>
                 <option value="LOGISTICS_PARTNER">Logistics Partner</option>
                 <option value="MATERIAL_SUPPLIER">Material supplier (B2B map)</option>
+                <option value="COMMERCIAL_AGENT">Commercial agent (field)</option>
                 <option value="ADMIN">Admin</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
               </select>
@@ -328,6 +411,9 @@ export default function UsersManagementPage() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Agent
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Estates
@@ -378,6 +464,18 @@ export default function UsersManagementPage() {
                         >
                           {user.status.replace(/_/g, ' ')}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 max-w-[10rem]">
+                        {user.assignedCommercialAgent ? (
+                          <span>
+                            {user.assignedCommercialAgent.firstName} {user.assignedCommercialAgent.lastName}
+                            <span className="block text-xs text-gray-400 truncate">
+                              {user.assignedCommercialAgent.partnerCode}
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {user._count?.estates || 0}
@@ -549,7 +647,7 @@ export default function UsersManagementPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
                       <div className="space-y-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'COMMERCIAL_AGENT', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"
@@ -772,7 +870,7 @@ export default function UsersManagementPage() {
                     <div className="col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
                       <div className="grid grid-cols-3 gap-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'COMMERCIAL_AGENT', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"
@@ -791,6 +889,84 @@ export default function UsersManagementPage() {
                         ))}
                       </div>
                     </div>
+                    {formData.roles.some((r) =>
+                      ['FARMER', 'GROWER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER'].includes(r),
+                    ) && (
+                      <div className="col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Assigned commercial agent
+                        </label>
+                        <p className="text-xs text-gray-500 mb-2">
+                          Who supports this account in the field. You assign manually; agent office (below) can help
+                          match by region.
+                        </p>
+                        <select
+                          value={formData.assignedAgentUserId}
+                          onChange={(e) => setFormData({ ...formData, assignedAgentUserId: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="">— None —</option>
+                          {commercialAgents.map((a) => (
+                            <option key={a.id} value={a.id}>
+                              {a.firstName} {a.lastName} ({a.partnerCode})
+                              {a.commercial_agent_profile?.city
+                                ? ` — ${a.commercial_agent_profile.city}, ${a.commercial_agent_profile.country || ''}`
+                                : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    {formData.roles.includes('COMMERCIAL_AGENT') && (
+                      <div className="col-span-2 space-y-3 rounded-lg border border-dashed border-gray-200 p-3 bg-gray-50/50">
+                        <p className="text-sm font-medium text-gray-800">Field / office (for matching growers &amp; partners)</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-0.5">Office name (optional)</label>
+                            <input
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              value={formData.caOfficeName}
+                              onChange={(e) => setFormData({ ...formData, caOfficeName: e.target.value })}
+                              placeholder="e.g. South Serbia"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-0.5">Street &amp; number *</label>
+                            <input
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              value={formData.caAddress}
+                              onChange={(e) => setFormData({ ...formData, caAddress: e.target.value })}
+                              placeholder="Bulevar 1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-0.5">Postal code</label>
+                            <input
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              value={formData.caPostalCode}
+                              onChange={(e) => setFormData({ ...formData, caPostalCode: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-0.5">City *</label>
+                            <input
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              value={formData.caCity}
+                              onChange={(e) => setFormData({ ...formData, caCity: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-0.5">Country *</label>
+                            <input
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              value={formData.caCountry}
+                              onChange={(e) => setFormData({ ...formData, caCountry: e.target.value })}
+                              placeholder="Serbia"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     {formData.roles.includes('BUYER') && (
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">

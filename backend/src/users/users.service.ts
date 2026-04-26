@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, UserRole, UserStatus } from '@prisma/client';
 import * as crypto from 'crypto';
@@ -15,6 +15,25 @@ const AUTH_LOGIN_SELECT: Prisma.usersSelect = {
   passwordHash: true,
   status: true,
   roles: true,
+  assignedCommercialAgent: {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      partnerCode: true,
+      email: true,
+      phone: true,
+      commercial_agent_profile: {
+        select: {
+          officeName: true,
+          address: true,
+          city: true,
+          country: true,
+          postalCode: true,
+        },
+      },
+    },
+  },
 };
 
 @Injectable()
@@ -53,6 +72,10 @@ export class UsersService {
     const user = await this.prisma.users.findUnique({
       where: { id },
       include: {
+        assignedCommercialAgent: {
+          include: { commercial_agent_profile: true },
+        },
+        commercial_agent_profile: true,
         estates: {
           include: {
             parcels: true,
@@ -138,6 +161,25 @@ export class UsersService {
     return this.prisma.users.findMany({
       where,
       include: {
+        assignedCommercialAgent: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            partnerCode: true,
+            email: true,
+            phone: true,
+            commercial_agent_profile: {
+              select: {
+                officeName: true,
+                address: true,
+                city: true,
+                country: true,
+                postalCode: true,
+              },
+            },
+          },
+        },
         estates: {
           select: {
             id: true,
@@ -154,19 +196,79 @@ export class UsersService {
     });
   }
 
-  async update(id: string, data: {
-    email?: string;
-    phone?: string;
-    firstName?: string;
-    lastName?: string;
-    productionCountry?: string;
-    roles?: UserRole[];
-    status?: UserStatus;
-    /** Buyer company profile JSON (admin + synced with buyer portal) */
-    buyerCompanyProfile?: Prisma.InputJsonValue | null;
-  }) {
+  /** Active commercial agents (admin dropdown + proximity notes) */
+  async findCommercialAgents() {
+    return this.prisma.users.findMany({
+      where: {
+        status: UserStatus.ACTIVE,
+        roles: { has: UserRole.COMMERCIAL_AGENT },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        partnerCode: true,
+        email: true,
+        phone: true,
+        commercial_agent_profile: {
+          select: {
+            officeName: true,
+            address: true,
+            city: true,
+            country: true,
+            postalCode: true,
+          },
+        },
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  }
+
+  private static readonly ROLES_WITH_ASSIGNED_AGENT: UserRole[] = [
+    UserRole.GROWER,
+    UserRole.FARMER,
+    UserRole.LOGISTICS_PARTNER,
+    UserRole.MATERIAL_SUPPLIER,
+  ];
+
+  private static canHaveAssignedAgent(roles: UserRole[]): boolean {
+    return roles.some((r) => UsersService.ROLES_WITH_ASSIGNED_AGENT.includes(r));
+  }
+
+  async update(
+    id: string,
+    data: {
+      email?: string;
+      phone?: string;
+      firstName?: string;
+      lastName?: string;
+      productionCountry?: string;
+      roles?: UserRole[];
+      status?: UserStatus;
+      /** Buyer company profile JSON (admin + synced with buyer portal) */
+      buyerCompanyProfile?: Prisma.InputJsonValue | null;
+      /** Admin: link a COMMERCIAL_AGENT to this grower / logistics / material supplier */
+      assignedAgentUserId?: string | null;
+      /** Admin: field office for COMMERCIAL_AGENT users */
+      commercialAgentProfile?: {
+        officeName?: string | null;
+        address: string;
+        city: string;
+        country: string;
+        postalCode?: string | null;
+      } | null;
+    },
+  ) {
+    const existing = await this.prisma.users.findUnique({
+      where: { id },
+      select: { roles: true },
+    });
+    if (!existing) {
+      throw new NotFoundException('User not found');
+    }
+
     const updateData: Prisma.usersUpdateInput = { updatedAt: new Date() };
-    
+
     if (data.email !== undefined) updateData.email = data.email;
     if (data.phone !== undefined) updateData.phone = data.phone;
     if (data.firstName !== undefined) updateData.firstName = data.firstName;
@@ -178,9 +280,86 @@ export class UsersService {
       updateData.buyerCompanyProfile = data.buyerCompanyProfile;
     }
 
+    const effectiveRoles = data.roles !== undefined ? data.roles : existing.roles;
+    if (data.roles !== undefined && !UsersService.canHaveAssignedAgent(data.roles)) {
+      updateData.assignedCommercialAgent = { disconnect: true };
+    }
+    if (
+      data.roles !== undefined &&
+      !data.roles.includes(UserRole.COMMERCIAL_AGENT) &&
+      existing.roles.includes(UserRole.COMMERCIAL_AGENT)
+    ) {
+      updateData.commercial_agent_profile = { delete: true };
+    }
+
+    if (data.assignedAgentUserId !== undefined) {
+      if (!UsersService.canHaveAssignedAgent(effectiveRoles)) {
+        if (data.assignedAgentUserId !== null) {
+          throw new BadRequestException(
+            'Only growers, farmers, logistics partners, and B2B suppliers can have an assigned commercial agent',
+          );
+        }
+      } else if (data.assignedAgentUserId === null) {
+        updateData.assignedCommercialAgent = { disconnect: true };
+      } else {
+        if (data.assignedAgentUserId === id) {
+          throw new BadRequestException('A user cannot be assigned as their own commercial agent');
+        }
+        const agent = await this.prisma.users.findUnique({
+          where: { id: data.assignedAgentUserId },
+          select: { roles: true, status: true },
+        });
+        if (!agent || agent.status !== UserStatus.ACTIVE) {
+          throw new BadRequestException('Invalid commercial agent');
+        }
+        if (!agent.roles.includes(UserRole.COMMERCIAL_AGENT)) {
+          throw new BadRequestException('Assigned user must have the commercial agent role');
+        }
+        updateData.assignedCommercialAgent = { connect: { id: data.assignedAgentUserId } };
+      }
+    }
+
+    if (data.commercialAgentProfile !== undefined) {
+      if (!effectiveRoles.includes(UserRole.COMMERCIAL_AGENT)) {
+        if (data.commercialAgentProfile != null) {
+          throw new BadRequestException('Field office is only for users with the commercial agent role');
+        }
+        // If role was removed, office delete is already set above; null body is a no-op here.
+      } else if (data.commercialAgentProfile === null) {
+        updateData.commercial_agent_profile = { delete: true };
+      } else {
+        const p = data.commercialAgentProfile;
+        updateData.commercial_agent_profile = {
+          upsert: {
+            create: {
+              id: crypto.randomUUID(),
+              address: p.address.trim(),
+              city: p.city.trim(),
+              country: p.country.trim(),
+              postalCode: p.postalCode?.trim() || null,
+              officeName: p.officeName?.trim() || null,
+            },
+            update: {
+              address: p.address.trim(),
+              city: p.city.trim(),
+              country: p.country.trim(),
+              postalCode: p.postalCode?.trim() || null,
+              officeName: p.officeName?.trim() || null,
+            },
+          },
+        };
+      }
+    }
+
     return this.prisma.users.update({
       where: { id },
       data: updateData,
+      include: {
+        assignedCommercialAgent: {
+          include: { commercial_agent_profile: true },
+        },
+        commercial_agent_profile: true,
+      },
     });
   }
 

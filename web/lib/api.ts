@@ -336,8 +336,16 @@ export const adminAPI = {
 
 // Users API (Admin)
 export const usersAPI = {
+  getMe: async () => {
+    const response = await api.get('/users/me');
+    return response.data;
+  },
   getAll: async (filters?: { role?: string; status?: string; search?: string }) => {
     const response = await api.get('/users/admin/all', { params: filters });
+    return response.data;
+  },
+  getCommercialAgents: async () => {
+    const response = await api.get('/users/admin/commercial-agents');
     return response.data;
   },
   getStatistics: async () => {
@@ -374,6 +382,16 @@ export const usersAPI = {
     status?: string;
     /** Same shape as /buyers/company-profile — for BUYER users */
     buyerCompanyProfile?: Record<string, unknown> | null;
+    /** Growers, farmers, logistics, B2B suppliers — must reference an active COMMERCIAL_AGENT */
+    assignedAgentUserId?: string | null;
+    /** COMMERCIAL_AGENT user — field office (admin) */
+    commercialAgentProfile?: {
+      officeName?: string | null;
+      address: string;
+      city: string;
+      country: string;
+      postalCode?: string | null;
+    } | null;
   }) => {
     const response = await api.put(`/users/admin/${id}`, userData);
     return response.data;

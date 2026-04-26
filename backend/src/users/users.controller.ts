@@ -45,6 +45,13 @@ export class UsersController {
     return this.usersService.getStatistics();
   }
 
+  @Get('admin/commercial-agents')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async getCommercialAgents() {
+    return this.usersService.findCommercialAgents();
+  }
+
   @Get('admin/:id')
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')
@@ -132,6 +139,14 @@ export class UsersController {
       roles?: UserRole[];
       status?: UserStatus;
       buyerCompanyProfile?: Prisma.InputJsonValue | null;
+      assignedAgentUserId?: string | null;
+      commercialAgentProfile?: {
+        officeName?: string | null;
+        address: string;
+        city: string;
+        country: string;
+        postalCode?: string | null;
+      } | null;
     },
   ) {
     return this.usersService.update(id, body);

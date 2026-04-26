@@ -7,7 +7,10 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { usersAPI } from '@/lib/api';
+import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { Truck } from 'lucide-react';
+import type { CommercialAgentPublic } from '@/lib/auth';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -101,6 +104,7 @@ interface FinancialStatus {
 }
 
 export default function GrowerPortalPage() {
+  const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [missions, setMissions] = useState<MissionTracker[]>([]);
   const [journeyMap, setJourneyMap] = useState<JourneyMap | null>(null);
@@ -108,6 +112,20 @@ export default function GrowerPortalPage() {
   const [financialStatus, setFinancialStatus] = useState<FinancialStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setAssignedAgent(null);
+      return;
+    }
+    usersAPI
+      .getMe()
+      .then((me: { assignedCommercialAgent?: CommercialAgentPublic | null }) => {
+        setAssignedAgent(me?.assignedCommercialAgent ?? null);
+      })
+      .catch(() => setAssignedAgent(null));
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -216,6 +234,8 @@ export default function GrowerPortalPage() {
   return (
     <SidebarLayout title="Mission Tracker" navItems={navItems}>
       <div className="space-y-6">
+        {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} className="mb-0" />}
+
         <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-700">
           <p className="font-medium text-gray-900">What is this?</p>
           <p className="mt-1 text-gray-600">

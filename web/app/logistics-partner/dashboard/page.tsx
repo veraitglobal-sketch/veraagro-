@@ -6,7 +6,9 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { missionsAPI } from '@/lib/api';
+import type { CommercialAgentPublic } from '@/lib/auth';
+import { missionsAPI, usersAPI } from '@/lib/api';
+import AssignedAgentCard from '@/components/AssignedAgentCard';
 
 const navItems = [
   { href: '/logistics-partner/dashboard', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
@@ -61,6 +63,22 @@ export default function LogisticsDashboardPage() {
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setAssignedAgent(null);
+      return;
+    }
+    usersAPI
+      .getMe()
+      .then((me: { assignedCommercialAgent?: CommercialAgentPublic | null }) => {
+        setAssignedAgent(me?.assignedCommercialAgent ?? null);
+      })
+      .catch(() => setAssignedAgent(null));
+  }, [isAuthenticated]);
 
   // Auth guard
   useEffect(() => {
@@ -141,6 +159,8 @@ export default function LogisticsDashboardPage() {
   return (
     <SidebarLayout title="Logistics Dashboard" navItems={navItems}>
       <div className="space-y-6">
+        {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} />}
+
         {/* Partner Profile Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

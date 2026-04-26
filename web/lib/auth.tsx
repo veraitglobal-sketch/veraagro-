@@ -3,12 +3,30 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPI } from './api';
 
+export interface CommercialAgentPublic {
+  id: string;
+  firstName: string;
+  lastName: string;
+  partnerCode: string;
+  email?: string | null;
+  phone?: string | null;
+  commercial_agent_profile?: {
+    officeName?: string | null;
+    address: string;
+    city: string;
+    country: string;
+    postalCode?: string | null;
+  } | null;
+}
+
 interface User {
   id: string;
   partnerCode: string;
   roles: string[]; // Array of roles
   firstName?: string;
   lastName?: string;
+  /** Set by the team in admin — your Bio Vera field contact */
+  assignedCommercialAgent?: CommercialAgentPublic | null;
 }
 
 interface AuthContextType {
