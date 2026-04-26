@@ -29,13 +29,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
       if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        const returnTo = path + (window.location.search || '');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Only redirect if not already on login page
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = '/login/producer';
+        if (!path.includes('/login')) {
+          if (path.startsWith('/buyer-portal')) {
+            const q = returnTo && returnTo !== '/login/buyer' ? `?returnTo=${encodeURIComponent(returnTo)}` : '';
+            window.location.href = `/login/buyer${q}`;
+          } else {
+            window.location.href = '/login/producer';
+          }
         }
       }
     }
@@ -144,6 +149,18 @@ export const ordersAPI = {
     const response = await api.post(`/orders/${id}/pay`, { paymentMethod, transactionId });
     return response.data;
   },
+  updateStatusAdmin: async (id: string, status: string) => {
+    const response = await api.patch(`/orders/admin/${id}/status`, { status });
+    return response.data;
+  },
+  updateFulfillmentAdmin: async (id: string, fulfillingEstateId: string | null) => {
+    const response = await api.patch(`/orders/admin/${id}/fulfillment`, { fulfillingEstateId });
+    return response.data;
+  },
+  approveOrderAdmin: async (id: string) => {
+    const response = await api.post(`/orders/admin/${id}/approve`);
+    return response.data;
+  },
 };
 
 // Missions API
@@ -196,6 +213,10 @@ export const deliveriesAPI = {
 // Estates API
 export const estatesAPI = {
   // Admin endpoints
+  getFulfillmentEstates: async () => {
+    const response = await api.get('/estates/admin/fulfillment-estates');
+    return response.data;
+  },
   getPendingEstates: async () => {
     const response = await api.get('/estates/admin/pending');
     return response.data;

@@ -28,6 +28,13 @@ export class EstatesController {
   /**
    * Admin: Get all pending estates (must be before :id)
    */
+  @Get('admin/fulfillment-estates')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  async getFulfillmentEstates() {
+    return this.estatesService.findAllForFulfillmentAssignment();
+  }
+
   @Get('admin/pending')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')

@@ -7,6 +7,13 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, UserRole } from '@prisma/client';
+import { isSystemEstateId } from '../orders/order-fulfillment.util';
+
+function supplierEstateKey(order: { estateId: string; fulfillingEstateId: string | null }) {
+  if (order.fulfillingEstateId) return order.fulfillingEstateId;
+  if (order.estateId && !isSystemEstateId(order.estateId)) return order.estateId;
+  return 'PENDING_FULFILLMENT';
+}
 
 @Injectable()
 export class BuyersService {
@@ -34,7 +41,7 @@ export class BuyersService {
       activeOrders,
       completedOrders,
       topProducts,
-      topSuppliers,
+      ordersForSupplierStats,
     ] = await Promise.all([
       this.prisma.orders.count({
         where: { buyerId },
@@ -100,20 +107,42 @@ export class BuyersService {
         orderBy: { _sum: { quantity: 'desc' } },
         take: 5,
       }),
-      this.prisma.orders.groupBy({
-        by: ['estateId'],
+      this.prisma.orders.findMany({
         where: { buyerId },
-        _sum: { totalAmount: true },
-        _count: true,
-        orderBy: { _sum: { totalAmount: 'desc' } },
-        take: 5,
+        select: { estateId: true, fulfillingEstateId: true, totalAmount: true },
       }),
     ]);
+
+    const supplierAgg = new Map<string, { sum: number; count: number }>();
+    for (const o of ordersForSupplierStats) {
+      const k = supplierEstateKey(o);
+      const e = supplierAgg.get(k) || { sum: 0, count: 0 };
+      e.sum += o.totalAmount || 0;
+      e.count += 1;
+      supplierAgg.set(k, e);
+    }
+    const topSuppliers = Array.from(supplierAgg.entries())
+      .map(([estateId, v]) => ({
+        estateId,
+        _sum: { totalAmount: v.sum },
+        _count: v.count,
+      }))
+      .sort((a, b) => (b._sum.totalAmount || 0) - (a._sum.totalAmount || 0))
+      .slice(0, 5);
 
     // Get estate names for top suppliers
     const topSuppliersWithNames = await Promise.all(
       topSuppliers.map(async (supplier) => {
         if (!supplier.estateId) return null;
+        if (supplier.estateId === 'PENDING_FULFILLMENT') {
+          return {
+            estateId: supplier.estateId,
+            estateName: 'Čeka dodelu gazdinstva',
+            farmerName: '—',
+            totalSpent: supplier._sum.totalAmount || 0,
+            orderCount: supplier._count,
+          };
+        }
         const estate = await this.prisma.estates.findUnique({
           where: { id: supplier.estateId },
           select: { name: true, users: { select: { firstName: true, lastName: true } } },
@@ -272,6 +301,7 @@ export class BuyersService {
         totalAmount: true,
         productName: true,
         estateId: true,
+        fulfillingEstateId: true,
         quantity: true,
       },
     });
@@ -309,10 +339,10 @@ export class BuyersService {
       }))
       .sort((a, b) => b._sum.totalAmount - a._sum.totalAmount);
 
-    // Group by supplier
+    // Group by supplier (real farm: fulfilling, else legacy line estate, else pending)
     const spendingBySupplierMap = new Map<string, { amount: number; count: number }>();
     ordersForAnalytics.forEach((order) => {
-      const estateId = order.estateId || 'Unknown';
+      const estateId = supplierEstateKey(order);
       const existing = spendingBySupplierMap.get(estateId) || { amount: 0, count: 0 };
       spendingBySupplierMap.set(estateId, {
         amount: existing.amount + (order.totalAmount || 0),
@@ -365,15 +395,17 @@ export class BuyersService {
       where: { buyerId },
     });
 
-    // Group orders by estateId for performance metrics
+    // Group by fulfilling farm, else legacy line estate (skip only if neither is a real farm)
     const ordersByEstate = new Map<string, typeof buyerOrders>();
     buyerOrders.forEach((order) => {
-      if (order.estateId) {
-        if (!ordersByEstate.has(order.estateId)) {
-          ordersByEstate.set(order.estateId, []);
-        }
-        ordersByEstate.get(order.estateId)!.push(order);
+      const k =
+        order.fulfillingEstateId ||
+        (order.estateId && !isSystemEstateId(order.estateId) ? order.estateId : null);
+      if (!k) return;
+      if (!ordersByEstate.has(k)) {
+        ordersByEstate.set(k, []);
       }
+      ordersByEstate.get(k)!.push(order);
     });
 
     // Calculate performance metrics for each supplier

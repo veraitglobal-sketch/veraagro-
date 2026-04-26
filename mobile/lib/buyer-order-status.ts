@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 
 const STATUS_KEYS: Record<string, string> = {
   PENDING: 'buyer.orders.statuses.PENDING',
+  APPROVED: 'buyer.orders.statuses.APPROVED',
   PAID: 'buyer.orders.statuses.PAID',
   CONFIRMED: 'buyer.orders.statuses.CONFIRMED',
   PICKED_UP: 'buyer.orders.statuses.PICKED_UP',
@@ -29,7 +30,7 @@ export function getOrderTimelineIndex(
 ): number {
   if (!status) return 0;
   if (status === 'CANCELLED' || status === 'REFUNDED') return -1;
-  if (status === 'PENDING') return 0;
+  if (status === 'PENDING' || status === 'APPROVED') return 0;
   if (status === 'PAID' || status === 'CONFIRMED') return 1;
   if (status === 'PICKED_UP' || status === 'IN_TRANSIT') return 2;
   if (status === 'DELIVERED' || status === 'COMPLETED') return 3;

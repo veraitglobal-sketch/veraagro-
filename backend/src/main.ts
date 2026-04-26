@@ -3,158 +3,33 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { execSync } from 'child_process';
-import { PrismaClient } from '@prisma/client';
 
 async function bootstrap() {
-  // Run Prisma migrations before starting the app
+  // Run Prisma migrations before starting the app; see backend/MIGRATIONS.md (squashed baseline, Railway).
   try {
     console.log('Running Prisma migrations...');
-    
-    // First, try to resolve any failed migrations
-    // List of known failed migrations to resolve
-    const failedMigrations = [
-      '20250101000000_add_harvest_announcements',
-      '20250201140000_add_vera_insights',
-      '20250201150000_add_farmer_profile_fields'
-    ];
-    
-    // Apply farmer profile fields migration directly via SQL if needed
-    // This must happen BEFORE Prisma Client is used in scripts
     try {
-      console.log('Applying farmer profile fields migration...');
-      const prisma = new PrismaClient();
-      
-      // Execute each ALTER TABLE command separately (PostgreSQL doesn't allow multiple commands in one statement)
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;`);
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;`);
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;`);
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;`);
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;`);
-      await prisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;`);
-      
-      // Create index if it doesn't exist
-      await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");`);
-
-      // vera_insights - table may be missing if migration was resolved without running
-      try {
-        await prisma.$executeRawUnsafe(`
-          DO $$ BEGIN
-            CREATE TYPE "RiskLevel" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
-          EXCEPTION WHEN duplicate_object THEN NULL;
-          END $$;
-        `);
-        await prisma.$executeRawUnsafe(`
-          DO $$ BEGIN
-            CREATE TYPE "PriceTrend" AS ENUM ('UP', 'DOWN', 'STABLE');
-          EXCEPTION WHEN duplicate_object THEN NULL;
-          END $$;
-        `);
-        await prisma.$executeRawUnsafe(`
-          CREATE TABLE IF NOT EXISTS "vera_insights" (
-            "id" TEXT NOT NULL,
-            "cropName" TEXT NOT NULL,
-            "veraScore" INTEGER NOT NULL,
-            "historicalDeficit" DOUBLE PRECISION,
-            "whyText" TEXT NOT NULL,
-            "riskLevel" "RiskLevel" NOT NULL DEFAULT 'MEDIUM',
-            "priceTrend" "PriceTrend" NOT NULL DEFAULT 'STABLE',
-            "seedId" TEXT,
-            "isActive" BOOLEAN NOT NULL DEFAULT true,
-            "createdBy" TEXT NOT NULL,
-            "updatedBy" TEXT,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "updatedAt" TIMESTAMP(3) NOT NULL,
-            CONSTRAINT "vera_insights_pkey" PRIMARY KEY ("id")
-          );
-        `);
-        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_cropName_idx" ON "vera_insights"("cropName");`);
-        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_isActive_idx" ON "vera_insights"("isActive");`);
-        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "vera_insights_veraScore_idx" ON "vera_insights"("veraScore");`);
-        try {
-          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_seedId_fkey" FOREIGN KEY ("seedId") REFERENCES "seeds"("id") ON DELETE SET NULL ON UPDATE CASCADE`);
-        } catch (_) {}
-        try {
-          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE`);
-        } catch (_) {}
-        try {
-          await prisma.$executeRawUnsafe(`ALTER TABLE "vera_insights" ADD CONSTRAINT "vera_insights_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE`);
-        } catch (_) {}
-        console.log('✅ vera_insights table ensured');
-      } catch (viErr: any) {
-        console.warn('vera_insights setup:', viErr?.message || 'skipped');
-      }
-      
-      await prisma.$disconnect();
-      console.log('✅ Farmer profile fields migration applied successfully');
-    } catch (sqlError: any) {
-      console.error('❌ Error applying farmer profile fields migration:', sqlError?.message || 'Unknown error');
-      // Don't exit - continue with migrations
-    }
-    
-    console.log('Checking for failed migrations...');
-    for (const migration of failedMigrations) {
-      try {
-        execSync(`npx prisma migrate resolve --applied ${migration}`, { 
-          stdio: 'pipe',
-          env: process.env 
-        });
-        console.log(`Resolved failed migration: ${migration}`);
-      } catch (resolveError) {
-        // If migration doesn't exist or is already resolved, that's okay
-        console.log(`Migration ${migration} not found or already resolved`);
-      }
-    }
-    
-    // Now run migrations
-    try {
-      execSync('npx prisma migrate deploy', { 
+      execSync('npx prisma migrate deploy', {
         stdio: 'inherit',
-        env: process.env 
+        env: process.env,
       });
       console.log('Migrations completed successfully');
     } catch (migrateError: any) {
-      // If migration fails, log but don't crash - might be shadow database issue
-      console.warn('Migration deploy failed, but continuing:', migrateError.message);
-      // Try to resolve any failed migrations
-      try {
-        execSync('npx prisma migrate resolve --applied 20250209000000_add_ai_conversations', {
-          stdio: 'inherit',
-          env: process.env
-        });
-      } catch (resolveError) {
-        console.warn('Could not resolve migration, continuing anyway');
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Migration deploy failed in production:', migrateError?.message);
+        process.exit(1);
       }
+      console.warn('Migration deploy failed, but continuing in dev:', migrateError?.message);
     }
-    
+
     // Create test users if database is empty (only in production for initial setup)
     if (process.env.NODE_ENV === 'production' && process.env.CREATE_TEST_USERS !== 'false') {
       try {
-        // Verify that farmerQrCode column exists before running script
-        console.log('Verifying farmerQrCode column exists...');
-        const verifyPrisma = new PrismaClient();
-        try {
-          // Try to query the column to verify it exists
-          await verifyPrisma.$queryRawUnsafe(`SELECT "farmerQrCode" FROM "users" LIMIT 1`);
-          console.log('✅ farmerQrCode column verified');
-        } catch (verifyError: any) {
-          console.error('❌ farmerQrCode column does not exist. Re-applying migration...');
-          // Re-apply migration - execute each command separately
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerQrCode" TEXT;`);
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerProfileUrl" TEXT;`);
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerPhoto" TEXT;`);
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "farmerBio" TEXT;`);
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "yearsOfExperience" INTEGER;`);
-          await verifyPrisma.$executeRawUnsafe(`ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "generation" TEXT;`);
-          await verifyPrisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "users_farmerQrCode_key" ON "users"("farmerQrCode");`);
-          console.log('✅ Migration re-applied successfully');
-        }
-        await verifyPrisma.$disconnect();
-        
         console.log('Checking if test users need to be created...');
-        execSync('npm run create:users', { 
+        execSync('npm run create:users', {
           stdio: 'inherit',
           env: process.env,
-          cwd: process.cwd()
+          cwd: process.cwd(),
         });
         console.log('Test users check completed');
       } catch (error) {
@@ -164,7 +39,6 @@ async function bootstrap() {
     }
   } catch (error) {
     console.error('Migration failed:', error);
-    // Don't exit in development, but exit in production
     if (process.env.NODE_ENV === 'production') {
       process.exit(1);
     }

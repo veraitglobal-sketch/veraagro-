@@ -1,0 +1,3 @@
+# Copy ONE line into backend/.env (replace YOUR_RAILWAY_PASSWORD with Railway → Postgres → Variables)
+
+DATABASE_URL="postgresql://postgres:YOUR_RAILWAY_PASSWORD@postgres-production-60fd.up.railway.app:5432/railway?sslmode=require"

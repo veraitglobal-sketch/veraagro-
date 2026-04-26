@@ -123,7 +123,7 @@ export class BuyerTradePanelService {
     const orders = await this.prisma.orders.findMany({
       where: {
         status: {
-          in: ['PENDING', 'CONFIRMED', 'PAID'],
+          in: ['PENDING', 'APPROVED', 'CONFIRMED', 'PAID'],
         },
       },
       select: {
@@ -192,7 +192,7 @@ export class BuyerTradePanelService {
           gte: oneHourAgo,
         },
         status: {
-          in: ['PENDING', 'CONFIRMED'],
+          in: ['PENDING', 'APPROVED', 'CONFIRMED'],
         },
         ...(productName ? { productName } : {}),
         // Large order = quantity > 100kg or totalAmount > 500€

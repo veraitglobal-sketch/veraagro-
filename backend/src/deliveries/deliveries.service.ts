@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { getPickupEstate, getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
 import { PaymentsService } from '../payments/payments.service';
 import { WaybillsService } from '../waybills/waybills.service';
 import { InvoicesService } from '../invoices/invoices.service';
@@ -28,6 +29,7 @@ export class DeliveriesService {
       where: { id: orderId },
       include: {
         estates: true,
+        fulfilling_estate: true,
         payments: true,
       },
     });
@@ -40,6 +42,13 @@ export class DeliveriesService {
       throw new BadRequestException('Order must be paid before assigning delivery');
     }
 
+    const pickup = getPickupEstate(order);
+    if (!pickup) {
+      throw new BadRequestException(
+        'Dodela prevoza: u adminu dodeli gazdinstvo koje ispunjava porudžbinu, ili naručilac nije povezan sa realnim gazdinstvom (stari zapis).',
+      );
+    }
+
     // Generate unique QR code for delivery confirmation
     const deliveryQRCode = this.generateDeliveryQRCode(orderId);
 
@@ -50,8 +59,8 @@ export class DeliveriesService {
         deliveryNumber: `DEL-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         orderId,
         driverId,
-        pickupLocation: order.estates.polygonCoordinates,
-        pickupAddress: `Estate: ${order.estates.name}`,
+        pickupLocation: pickup.polygonCoordinates,
+        pickupAddress: `Estate: ${pickup.name}`,
         deliveryLocation: order.deliveryAddress,
         deliveryAddress: JSON.stringify(order.deliveryAddress),
         status: 'ASSIGNED',
@@ -78,7 +87,7 @@ export class DeliveriesService {
 
     // Notify farmer
     await this.notificationsService.create({
-      userId: order.estates.ownerId,
+      userId: pickup.ownerId,
       type: 'REMINDER',
       title: 'Kombi stiže',
       message: `Vozač ${driverId} stiže za 20 minuta da pokupi robu.`,
@@ -172,7 +181,12 @@ export class DeliveriesService {
     const delivery = await this.prisma.deliveries.findUnique({
       where: { deliveryQRCode },
       include: {
-        orders: true,
+        orders: {
+          include: {
+            estates: true,
+            fulfilling_estate: true,
+          },
+        },
         users: true,
       },
     });
@@ -211,13 +225,15 @@ export class DeliveriesService {
     // Release escrow payment automatically
     await this.paymentsService.releaseEscrowPayment(delivery.orderId);
 
-    // Notify farmer and driver
-    await this.notificationsService.create({
-      userId: delivery.orders.estateId, // Farmer
-      type: 'SYSTEM',
-      title: 'Dostava potvrđena',
-      message: `Plaćanje je oslobođeno za porudžbinu ${delivery.orders.orderNumber}`,
-    });
+    const farmerUid = getFarmerOwnerUserId(delivery.orders);
+    if (farmerUid) {
+      await this.notificationsService.create({
+        userId: farmerUid,
+        type: 'SYSTEM',
+        title: 'Dostava potvrđena',
+        message: `Plaćanje je oslobođeno za porudžbinu ${delivery.orders.orderNumber}`,
+      });
+    }
 
     await this.notificationsService.create({
       userId: delivery.driverId,

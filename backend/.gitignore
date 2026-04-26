@@ -1,12 +1,7 @@
-node_modules
-dist
 .env
 .env.local
-.git
-.gitignore
-*.md
+.env.*.local
+
+node_modules/
+dist/
 .DS_Store
-coverage
-uploads
-.vscode
-.idea

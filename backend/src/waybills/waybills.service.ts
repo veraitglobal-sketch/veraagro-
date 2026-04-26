@@ -26,6 +26,11 @@ export class WaybillsService {
                 users: true,
               },
             },
+            fulfilling_estate: {
+              include: {
+                users: true,
+              },
+            },
             users: true,
           },
         },
@@ -41,6 +46,8 @@ export class WaybillsService {
     const waybillNumber = `WB-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
 
     // Prepare waybill data
+    const farm = delivery.orders.fulfilling_estate ?? delivery.orders.estates;
+
     const waybillData = {
       waybillNumber,
       deliveryNumber: delivery.deliveryNumber,
@@ -65,9 +72,9 @@ export class WaybillsService {
         unit: delivery.orders?.unit,
       },
       estate: {
-        name: delivery.orders?.estates?.name,
-        owner: delivery.orders?.estates?.users
-          ? `${delivery.orders.estates.users.firstName} ${delivery.orders.estates.users.lastName}`
+        name: farm?.name,
+        owner: farm?.users
+          ? `${farm.users.firstName} ${farm.users.lastName}`
           : 'N/A',
       },
       buyer: {
@@ -122,7 +129,7 @@ export class WaybillsService {
         deliveries: {
           include: {
             orders: {
-              include: { estates: true },
+              include: { estates: true, fulfilling_estate: true },
             },
           },
         },
@@ -140,6 +147,7 @@ export class WaybillsService {
       throw new ForbiddenException('Access denied');
     }
     if (order.buyerId === user.id) return;
+    if (order.fulfilling_estate?.ownerId === user.id) return;
     if (order.estates?.ownerId === user.id) return;
     if (waybill.deliveries.driverId === user.id) return;
     throw new ForbiddenException('Access denied');

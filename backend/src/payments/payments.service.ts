@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { ConfigService } from '@nestjs/config';
+import { getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
 
 /**
  * Payments Service
@@ -48,12 +49,15 @@ export class PaymentsService {
       include: { 
         users: true,
         estates: true,
+        fulfilling_estate: true,
       },
     });
 
     if (!order) {
       throw new NotFoundException('Order not found');
     }
+
+    const farmerUserId = getFarmerOwnerUserId(order);
 
     // Calculate split amounts
     const farmerAmount = (totalAmount * this.farmerPercentage) / 100;
@@ -62,7 +66,7 @@ export class PaymentsService {
 
     const splitDetails = {
       farmer: {
-        userId: order.estates.ownerId,
+        userId: farmerUserId,
         amount: farmerAmount,
         percentage: this.farmerPercentage,
         releasedAt: null,
@@ -126,11 +130,12 @@ export class PaymentsService {
             users: true,
           },
         },
+        fulfilling_estate: true,
       },
     });
 
-    const payment = (order as any).payment;
-    const delivery = (order as any).delivery;
+    const payment = order?.payments ?? null;
+    const delivery = order?.deliveries ?? null;
     
     if (!order || !payment) {
       throw new NotFoundException('Order or payment not found');
@@ -144,8 +149,10 @@ export class PaymentsService {
       throw new BadRequestException('Delivery must be confirmed before releasing payment');
     }
 
+    const deliveryRel = delivery as any;
+
     // Financial Escrow Control: Check Store Manager signature
-    const storeManagerSignature = delivery?.mission?.digitalSignatures?.find(
+    const storeManagerSignature = deliveryRel?.mission?.digitalSignatures?.find(
       (s: any) => s.signatureType === 'STORE_MANAGER',
     );
     if (!storeManagerSignature) {
@@ -153,13 +160,13 @@ export class PaymentsService {
     }
 
     // Financial Escrow Control: Check temperature log verification
-    const temperatureLogs = delivery?.mission?.temperature_logs || [];
+    const temperatureLogs = deliveryRel?.mission?.temperature_logs || [];
     if (temperatureLogs.length === 0) {
       throw new BadRequestException('Temperature log must be uploaded and verified before payment release');
     }
 
     // Verify temperature log is complete (covers entire trip)
-    const mission = delivery?.mission;
+    const mission = deliveryRel?.mission;
     if (mission && mission.pickedUpAt && (mission as any).deliveredAt) {
       const tripDuration = (mission as any).deliveredAt.getTime() - mission.pickedUpAt.getTime();
       const logDuration = temperatureLogs.length > 0
@@ -193,10 +200,9 @@ export class PaymentsService {
     });
 
     // Credit wallets
-    // Farmer wallet
-    const estate = (order as any).estate;
+    const farmerOwnerId = getFarmerOwnerUserId(order);
     await this.walletsService.creditWallet(
-      estate?.ownerId,
+      farmerOwnerId,
       payment.farmerAmount,
       'EARNED',
       orderId,

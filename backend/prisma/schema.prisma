@@ -358,7 +358,8 @@ model estates {
   users                  users               @relation(fields: [ownerId], references: [id])
   growth_logs            growth_logs[]
   inventory              inventory[]
-  orders                 orders[]
+  line_orders            orders[]            @relation("OrderSellerEstate")
+  fulfilling_orders    orders[]            @relation("OrderFulfillingEstate")
   parcels                parcels[]
   security_alerts        security_alerts[]
 
@@ -677,6 +678,8 @@ model orders {
   orderNumber          String                 @unique
   buyerId              String
   estateId             String
+  /// Physical farm that will supply the order; set by operativa. `estateId` is the line seller (Vera platform estate).
+  fulfillingEstateId   String?
   parcelId             String?
   productName          String
   quantity             Float
@@ -694,13 +697,15 @@ model orders {
   invoices             invoices?
   order_items          order_items[]
   users                users                  @relation(fields: [buyerId], references: [id])
-  estates              estates                @relation(fields: [estateId], references: [id])
+  estates              estates                @relation("OrderSellerEstate", fields: [estateId], references: [id])
+  fulfilling_estate    estates?               @relation("OrderFulfillingEstate", fields: [fulfillingEstateId], references: [id])
   parcels              parcels?               @relation(fields: [parcelId], references: [id])
   payments             payments?
   ratings              ratings[]
 
   @@index([buyerId])
   @@index([estateId])
+  @@index([fulfillingEstateId])
   @@index([orderNumber])
   @@index([status])
 }
@@ -1373,6 +1378,8 @@ enum NotificationType {
 
 enum OrderStatus {
   PENDING
+  /// Platform (operativa) accepted the order; buyer may pay; further commercial terms can follow in parallel
+  APPROVED
   PAID
   CONFIRMED
   PICKED_UP

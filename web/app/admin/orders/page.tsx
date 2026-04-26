@@ -3,16 +3,34 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { ordersAPI } from '@/lib/api';
+import { ordersAPI, estatesAPI } from '@/lib/api';
 import { ShoppingCart, Search } from 'lucide-react';
 
 import { getAdminNavItems } from '@/lib/admin-nav';
 
+/** Prisma OrderStatus — must match backend */
+const ORDER_STATUSES = [
+  'PENDING',
+  'APPROVED',
+  'PAID',
+  'CONFIRMED',
+  'PICKED_UP',
+  'IN_TRANSIT',
+  'DELIVERED',
+  'COMPLETED',
+  'CANCELLED',
+  'REFUNDED',
+] as const;
+
 export default function OrdersManagementPage() {
   const adminNavItems = getAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
+  const [fulfillmentEstates, setFulfillmentEstates] = useState<
+    { id: string; name: string; ownerId: string }[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -22,13 +40,67 @@ export default function OrdersManagementPage() {
     try {
       setLoading(true);
       setError(null);
-      const data = await ordersAPI.getAllAdmin();
+      const [data, est] = await Promise.all([
+        ordersAPI.getAllAdmin(),
+        estatesAPI.getFulfillmentEstates().catch(() => []),
+      ]);
       setOrders(data);
+      setFulfillmentEstates(Array.isArray(est) ? est : []);
     } catch (err: any) {
       console.error('Error loading orders:', err);
       setError(err.message || 'Failed to load orders');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateStatus = async (orderId: string, status: string) => {
+    try {
+      setSavingId(orderId);
+      setError(null);
+      await ordersAPI.updateStatusAdmin(orderId, status);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
+      );
+    } catch (err: any) {
+      console.error('updateStatus', err);
+      setError(err.response?.data?.message || err.message || 'Failed to update status');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const approveOrder = async (orderId: string) => {
+    try {
+      setSavingId(orderId);
+      setError(null);
+      const updated = await ordersAPI.approveOrderAdmin(orderId);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o)),
+      );
+    } catch (err: any) {
+      console.error('approveOrder', err);
+      setError(err.response?.data?.message || err.message || 'Failed to accept order');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const updateFulfillment = async (orderId: string, fulfillingEstateId: string | null) => {
+    try {
+      setSavingId(orderId);
+      setError(null);
+      const updated = await ordersAPI.updateFulfillmentAdmin(orderId, fulfillingEstateId);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o)),
+      );
+    } catch (err: any) {
+      console.error('updateFulfillment', err);
+      setError(
+        err.response?.data?.message || err.message || 'Failed to update fulfilling farm',
+      );
+    } finally {
+      setSavingId(null);
     }
   };
 
@@ -66,7 +138,9 @@ export default function OrdersManagementPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fulfilling farm</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Change status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
                   </tr>
                 </thead>
@@ -88,14 +162,63 @@ export default function OrdersManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         €{order.totalAmount?.toFixed(2) || '0.00'}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap max-w-[14rem]">
+                        <select
+                          value={order.fulfillingEstateId || ''}
+                          disabled={savingId === order.id}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            void updateFulfillment(order.id, v === '' ? null : v);
+                          }}
+                          className="text-sm border border-gray-300 rounded-md px-2 py-1.5 bg-white w-full max-w-full focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-600 disabled:opacity-50"
+                          aria-label={`Fulfilling farm for ${order.orderNumber}`}
+                        >
+                          <option value="">(not set)</option>
+                          {fulfillmentEstates.map((e) => (
+                            <option key={e.id} value={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {order.status === 'PENDING' ? (
+                          <button
+                            type="button"
+                            disabled={savingId === order.id}
+                            onClick={() => void approveOrder(order.id)}
+                            className="text-xs font-medium rounded-md px-3 py-1.5 bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
+                          >
+                            Accept order
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-400">—</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-medium rounded ${
                           order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
                           order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                          order.status === 'APPROVED' ? 'bg-sky-100 text-sky-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
                           {order.status}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <select
+                          value={order.status}
+                          disabled={savingId === order.id}
+                          onChange={(e) => updateStatus(order.id, e.target.value)}
+                          className="text-sm border border-gray-300 rounded-md px-2 py-1.5 bg-white max-w-[11rem] focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-600 disabled:opacity-50"
+                          aria-label={`Update status for ${order.orderNumber}`}
+                        >
+                          {ORDER_STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(order.createdAt).toLocaleDateString()}

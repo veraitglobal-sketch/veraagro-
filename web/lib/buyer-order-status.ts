@@ -6,7 +6,11 @@
 const BUYER: Record<string, { label: string; description: string }> = {
   PENDING: {
     label: 'Placed',
-    description: 'We have received your order. Payment or supplier confirmation is next.',
+    description: 'We have received your order. Vera will confirm before payment.',
+  },
+  APPROVED: {
+    label: 'Accepted',
+    description: 'Your order is accepted. You can complete payment; any details can be agreed next.',
   },
   PAID: {
     label: 'Paid',
@@ -68,6 +72,7 @@ export function getBuyerStatusBadgeClass(status: string | undefined | null): str
       return 'border-amber-200/80 text-amber-800 bg-amber-50/80';
     case 'PAID':
     case 'CONFIRMED':
+    case 'APPROVED':
       return 'border-sky-200/80 text-sky-800 bg-sky-50/80';
     case 'PENDING':
       return 'border-gray-200/50 text-gray-600/80 bg-gray-50/80';
@@ -81,6 +86,7 @@ export function getBuyerStatusBadgeClass(status: string | undefined | null): str
 
 export const ALL_ORDER_STATUS_FILTERS = [
   { value: 'PENDING', label: 'Placed' },
+  { value: 'APPROVED', label: 'Accepted' },
   { value: 'PAID', label: 'Paid' },
   { value: 'CONFIRMED', label: 'Preparing' },
   { value: 'PICKED_UP', label: 'Picked up' },

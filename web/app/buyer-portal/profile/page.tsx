@@ -40,6 +40,17 @@ interface AuthorizedPerson {
 
 type TabType = 'general' | 'locations' | 'staff';
 
+function getApiErrorMessage(e: any): string {
+  const m = e?.response?.data?.message;
+  if (Array.isArray(m)) return m.join(' ');
+  if (typeof m === 'string') return m;
+  return e?.message || 'Request failed. Please try again.';
+}
+
+function showField(v: string) {
+  return v?.trim() ? v : '—';
+}
+
 export default function BuyerProfilePage() {
   const buyerPortalNavItems = getBuyerPortalNavItems();
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -49,6 +60,7 @@ export default function BuyerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Company Core Data (persisted: same document admin sees on /users)
   const [companyData, setCompanyData] = useState({
@@ -69,6 +81,7 @@ export default function BuyerProfilePage() {
       authorizedPersonnel?: AuthorizedPerson[];
     }) => {
       setSaving(true);
+      setSaveError(null);
       try {
         await buyersAPI.updateCompanyProfile({
           company: override?.company ?? companyData,
@@ -83,11 +96,14 @@ export default function BuyerProfilePage() {
   );
 
   const handleSaveGeneral = async () => {
+    setSaveError(null);
     try {
       await persist();
       setIsEditing(false);
-    } catch {
-      alert('Failed to save profile');
+    } catch (e) {
+      const msg = getApiErrorMessage(e);
+      setSaveError(msg);
+      alert(msg);
     }
   };
 
@@ -202,8 +218,10 @@ export default function BuyerProfilePage() {
           deliveryLocations: next,
           authorizedPersonnel,
         });
-      } catch {
-        alert('Could not save location to server. Please try again.');
+      } catch (e) {
+        const msg = getApiErrorMessage(e);
+        setSaveError(msg);
+        alert(msg);
       }
     }
   };
@@ -234,8 +252,10 @@ export default function BuyerProfilePage() {
           deliveryLocations,
           authorizedPersonnel: next,
         });
-      } catch {
-        alert('Could not save contact to server. Please try again.');
+      } catch (e) {
+        const msg = getApiErrorMessage(e);
+        setSaveError(msg);
+        alert(msg);
       }
     }
   };
@@ -249,8 +269,10 @@ export default function BuyerProfilePage() {
         deliveryLocations: next,
         authorizedPersonnel,
       });
-    } catch {
-      alert('Could not update server. Reverting is not automatic — please refresh.');
+    } catch (e) {
+      const msg = getApiErrorMessage(e);
+      setSaveError(msg);
+      alert(msg);
     }
   };
 
@@ -263,8 +285,10 @@ export default function BuyerProfilePage() {
         deliveryLocations,
         authorizedPersonnel: next,
       });
-    } catch {
-      alert('Could not update server. Please try again.');
+    } catch (e) {
+      const msg = getApiErrorMessage(e);
+      setSaveError(msg);
+      alert(msg);
     }
   };
 
@@ -275,6 +299,19 @@ export default function BuyerProfilePage() {
         {loadError && (
           <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-lg text-sm">
             {loadError}
+          </div>
+        )}
+        {saveError && (
+          <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg text-sm">
+            <p className="font-medium">Could not save</p>
+            <p className="mt-1 font-light">{saveError}</p>
+            <p className="mt-2 text-xs font-light text-red-800/90">
+              If the message mentions a migration, run the SQL in Railway (Postgres → Query) for column
+              <code className="mx-1 bg-red-100 px-1 rounded">buyerCompanyProfile</code>
+              (see <code className="mx-1 bg-red-100 px-1 rounded">backend/MIGRATIONS.md</code> and column{' '}
+              <code className="mx-1 bg-red-100 px-1 rounded">users.buyerCompanyProfile</code>) or{' '}
+              <code className="mx-1 bg-red-100 px-1 rounded">npx prisma migrate deploy</code> for a fresh install.
+            </p>
           </div>
         )}
         {loading ? (
@@ -349,7 +386,7 @@ export default function BuyerProfilePage() {
                           className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                         />
                       ) : (
-                        <p className="text-sm font-light text-gray-900">{companyData.legalEntity}</p>
+                        <p className="text-sm font-light text-gray-900">{showField(companyData.legalEntity)}</p>
                       )}
                     </div>
                     <div>
@@ -362,7 +399,7 @@ export default function BuyerProfilePage() {
                           className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                         />
                       ) : (
-                        <p className="text-sm font-light text-gray-900">{companyData.taxId}</p>
+                        <p className="text-sm font-light text-gray-900">{showField(companyData.taxId)}</p>
                       )}
                     </div>
                     <div className="md:col-span-2">
@@ -375,7 +412,7 @@ export default function BuyerProfilePage() {
                           className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                         />
                       ) : (
-                        <p className="text-sm font-light text-gray-900">{companyData.headquarters}</p>
+                        <p className="text-sm font-light text-gray-900">{showField(companyData.headquarters)}</p>
                       )}
                     </div>
                   </div>
@@ -395,7 +432,7 @@ export default function BuyerProfilePage() {
                           className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                         />
                       ) : (
-                        <p className="text-sm font-light text-gray-900">{companyData.generalDirector}</p>
+                        <p className="text-sm font-light text-gray-900">{showField(companyData.generalDirector)}</p>
                       )}
                     </div>
                     <div>
@@ -408,7 +445,7 @@ export default function BuyerProfilePage() {
                           className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                         />
                       ) : (
-                        <p className="text-sm font-light text-gray-900">{companyData.financeManager}</p>
+                        <p className="text-sm font-light text-gray-900">{showField(companyData.financeManager)}</p>
                       )}
                     </div>
                   </div>

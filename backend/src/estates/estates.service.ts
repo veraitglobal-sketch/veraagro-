@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { PrismaService } from '../prisma/prisma.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
 import * as crypto from 'crypto';
+import { isSystemEstateId, VERA_PLATFORM_ESTATE_ID, PRE_ORDER_ESTATE_ID } from '../orders/order-fulfillment.util';
 
 @Injectable()
 export class EstatesService {
@@ -64,6 +65,23 @@ export class EstatesService {
       console.error('Error in findAllByUser:', error);
       throw error;
     }
+  }
+
+  /**
+   * Admin: real farms suitable for order fulfillment (excludes system / platform rows).
+   */
+  async findAllForFulfillmentAssignment() {
+    const rows = await this.prisma.estates.findMany({
+      where: {
+        status: 'ACTIVE',
+        NOT: {
+          id: { in: [VERA_PLATFORM_ESTATE_ID, PRE_ORDER_ESTATE_ID, 'PRE-ORDER'] },
+        },
+      },
+      select: { id: true, name: true, ownerId: true },
+      orderBy: { name: 'asc' },
+    });
+    return rows.filter((e) => !isSystemEstateId(e.id));
   }
 
   async findAllPublic() {
