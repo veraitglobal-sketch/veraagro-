@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
 const siteName = 'Bio Vera';
-const siteDescription = 'Vertically Integrated Agrotech Platform. From seed to EU market. Immutable digital proof. Bio-Ready certification with complete traceability and automated compliance.';
+const siteDescription =
+  'Organized agricultural network with guaranteed offtake, integrated packaging and logistics, official transport documents, automated invoicing, and full traceability from field to payment.';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://biovera.app';
 const siteImage = `${siteUrl}/logo1.png`;
 
@@ -14,8 +15,8 @@ export const defaultMetadata: Metadata = {
   description: siteDescription,
   keywords: [
     'Bio Vera',
-    'Agrotech',
-    'Agricultural Technology',
+    'Agricultural supply chain',
+    'Offtake',
     'Traceability',
     'Bio Certification',
     'EU Market',

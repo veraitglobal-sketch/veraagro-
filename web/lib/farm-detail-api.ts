@@ -1,7 +1,7 @@
 /**
  * Farm Detail API – aggregate farmer data for admin view
  * Single farmer overview: field photos, lab results, Sedex status
- * Prefers GET /admin/farm/:farmerId (server aggregate); falls back if needed
+ * Prefers GET /admin/farmers/:farmerId (or /admin/farm/:farmerId — same payload); falls back if needed
  */
 
 const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
@@ -84,7 +84,10 @@ export async function getFarmDetail(farmerId: string): Promise<FarmDetailData> {
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
   try {
-    const res = await fetch(`${base}/admin/farm/${farmerId}`, { headers });
+    let res = await fetch(`${base}/admin/farmers/${farmerId}`, { headers });
+    if (!res.ok) {
+      res = await fetch(`${base}/admin/farm/${farmerId}`, { headers });
+    }
     if (res.ok) {
       return res.json();
     }

@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { createHash } from 'crypto';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { CryptoUtil } from '../common/utils/crypto.util';
+import { buildInvoicePdf } from '../common/pdf/simple-documents-pdf';
 
 /**
  * Invoices Service
@@ -75,14 +76,15 @@ export class InvoicesService {
         : null,
     };
 
-    // Generate PDF (mock - in production, use PDF library)
-    const pdfUrl = `/invoices/${invoiceNumber}.pdf`; // TODO: Generate actual PDF
-    const pdfHash = CryptoUtil.hashPassport(invoiceData);
+    const id = crypto.randomUUID();
+    const pdfBuffer = await buildInvoicePdf(invoiceData);
+    const pdfHash = createHash('sha256').update(pdfBuffer).digest('hex');
+    const pdfUrl = `/invoices/${id}/download`;
 
     // Create invoice record
     const invoice = await this.prisma.invoices.create({
       data: {
-        id: crypto.randomUUID(),
+        id,
         invoiceNumber,
         orderId,
         deliveryId: deliveryId || null,
@@ -259,16 +261,15 @@ export class InvoicesService {
     return invoice;
   }
 
-  async downloadInvoice(invoiceId: string, buyerId?: string) {
+  /**
+   * Regenerate PDF from stored `invoiceData` (same logical document as at creation).
+   */
+  async getInvoicePdfDownload(invoiceId: string, buyerId?: string) {
     const invoice = await this.findOne(invoiceId, buyerId);
-
-    // In production, generate PDF on the fly or return existing PDF
-    // For now, return invoice data that can be used to generate PDF on frontend
-    return {
-      invoice,
-      pdfUrl: invoice.pdfUrl,
-      invoiceData: invoice.invoiceData,
-    };
+    const data = (invoice.invoiceData || {}) as Record<string, unknown>;
+    const buffer = await buildInvoicePdf(data);
+    const safeName = `invoice-${String(data.invoiceNumber ?? invoiceId).replace(/[^a-zA-Z0-9._-]+/g, '_')}.pdf`;
+    return { buffer, filename: safeName };
   }
 
   async sendInvoiceEmail(invoiceId: string, buyerId?: string, email?: string) {

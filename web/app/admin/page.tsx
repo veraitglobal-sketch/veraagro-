@@ -114,18 +114,18 @@ export default function AdminDashboard() {
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
       <SidebarLayout title="Admin Dashboard" navItems={adminNavItems}>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-5">
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.users.total || 0}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -140,12 +140,12 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Orders Today</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Orders Today</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.orders.today || 0}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -160,12 +160,12 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Missions</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Active Missions</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.missions.active || 0}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -180,12 +180,12 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Alerts</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Pending Alerts</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.security.pending || 0}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -200,12 +200,12 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Estates</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Estates</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.estates?.total ?? 0}
                   </p>
                   <p className="text-xs text-amber-600 mt-1">
@@ -220,12 +220,12 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Parcels</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Parcels</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
                     {statistics?.parcels?.total ?? 0}
                   </p>
                   <p className="text-xs text-amber-600 mt-1">
@@ -238,9 +238,9 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg shadow border border-gray-200 p-4 sm:p-5">
+            <h2 className="text-base font-semibold text-gray-900 mb-3">Quick actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <Link
                 href="/admin/users"
                 className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -314,80 +314,74 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Pending parcels + Recent Batches */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pending parcels */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Parcels pending approval</h2>
-                <Link href="/admin/parcels-pending" className="text-sm text-green-600 hover:text-green-700">
-                  Approve all
-                </Link>
-              </div>
-              <div className="space-y-3">
-                {recentActivities?.pendingParcels?.length > 0 ? (
-                  recentActivities.pendingParcels.map((parcel: any) => (
-                    <div key={parcel.id} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {parcel.estates?.name || 'Estate'} — {parcel.cropType || 'Parcel'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {parcel.estates?.users
-                            ? `${parcel.estates.users.firstName} ${parcel.estates.users.lastName} (${parcel.estates.users.partnerCode})`
-                            : 'Farmer'}
-                        </p>
-                      </div>
-                      <Link
-                        href="/admin/parcels-pending"
-                        className="text-xs font-medium text-[#2D5A27] hover:underline"
-                      >
-                        Approve
-                      </Link>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">No parcels waiting for approval</p>
-                )}
-              </div>
+          {/* Live: pending parcels + recent batches (compact) */}
+          <div className="bg-white rounded-lg shadow border border-gray-200 p-4 sm:p-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+              <h2 className="text-base font-semibold text-gray-900">Live</h2>
+              <p className="text-xs text-gray-500">Pending parcels and latest batches</p>
             </div>
-
-            {/* Recent Batches */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Batches</h2>
-                <Link href="/admin/test-batch" className="text-sm text-green-600 hover:text-green-700">
-                  Test batch
-                </Link>
-              </div>
-              <div className="space-y-3">
-                {recentActivities?.recentBatches?.length > 0 ? (
-                  recentActivities.recentBatches.map((batch: any) => (
-                    <div key={batch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{batch.batchId}</p>
-                        <p className="text-xs text-gray-500">
-                          {batch.estates?.name || '—'} · {batch.productName} · {batch.quantity} {batch.unit}
-                        </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium uppercase tracking-wide text-amber-800">Parcels</span>
+                  <Link href="/admin/parcels-pending" className="text-xs text-[#2D5A27] font-medium hover:underline">
+                    Open queue
+                  </Link>
+                </div>
+                <div className="max-h-40 overflow-y-auto space-y-1.5 border border-amber-100/80 rounded-md bg-amber-50/50">
+                  {recentActivities?.pendingParcels?.length > 0 ? (
+                    recentActivities.pendingParcels.slice(0, 5).map((parcel: any) => (
+                      <div
+                        key={parcel.id}
+                        className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs border-b border-amber-100/60 last:border-0"
+                      >
+                        <span className="text-gray-900 truncate" title={`${parcel.estates?.name} — ${parcel.cropType}`}>
+                          {parcel.estates?.name || 'Estate'} · {parcel.cropType || 'Parcel'}
+                        </span>
+                        <Link href="/admin/parcels-pending" className="shrink-0 text-[#2D5A27] font-medium hover:underline">
+                          →
+                        </Link>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {batch.harvestDate ? new Date(batch.harvestDate).toLocaleDateString() : '—'}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">No recent batches</p>
-                )}
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-500 px-2 py-2">None pending</p>
+                  )}
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-600">Batches</span>
+                  <Link href="/admin/test-batch" className="text-xs text-[#2D5A27] font-medium hover:underline">
+                    Test
+                  </Link>
+                </div>
+                <div className="max-h-40 overflow-y-auto space-y-1.5 border border-gray-100 rounded-md bg-gray-50/80">
+                  {recentActivities?.recentBatches?.length > 0 ? (
+                    recentActivities.recentBatches.slice(0, 5).map((batch: any) => (
+                      <div
+                        key={batch.id}
+                        className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs border-b border-gray-100 last:border-0"
+                      >
+                        <span className="text-gray-900 font-medium tabular-nums truncate">{batch.batchId}</span>
+                        <span className="shrink-0 text-gray-500">
+                          {batch.harvestDate ? new Date(batch.harvestDate).toLocaleDateString() : '—'}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-500 px-2 py-2">No recent batches</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Recent Activities */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Recent Orders */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+            <div className="bg-white rounded-lg shadow border border-gray-200 p-4 sm:p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-gray-900">Recent orders</h2>
                 <Link href="/admin/orders" className="text-sm text-green-600 hover:text-green-700">
                   View all
                 </Link>
@@ -418,9 +412,9 @@ export default function AdminDashboard() {
             </div>
 
             {/* Recent Security Alerts */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Security Alerts</h2>
+            <div className="bg-white rounded-lg shadow border border-gray-200 p-4 sm:p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-gray-900">Recent security alerts</h2>
                 <Link href="/admin/security" className="text-sm text-green-600 hover:text-green-700">
                   View all
                 </Link>

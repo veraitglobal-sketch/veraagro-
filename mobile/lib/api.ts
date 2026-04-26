@@ -204,6 +204,16 @@ export const estatesAPI = {
     const response = await api.get(`/estates/${id}`);
     return response.data;
   },
+  /** Estate GPS boundary (polygon + version) for offline / map cache sync */
+  getBoundary: async (id: string): Promise<{
+    id: string;
+    name: string;
+    updatedAt: string;
+    polygonCoordinates: unknown;
+  }> => {
+    const response = await api.get(`/estates/${id}/boundary`);
+    return response.data;
+  },
   create: async (data: { name: string; polygonCoordinates: any }): Promise<Estate> => {
     const response = await api.post('/estates', data);
     return response.data;
@@ -598,8 +608,15 @@ export const batchesAPI = {
   /** Log packing wizard completion (GPS) — batchRef is internal id or public batchId */
   recordPackingFlow: async (
     batchRef: string,
-    body: { latitude: number; longitude: number; completedAt?: string },
-  ): Promise<{ success: boolean; batchId: string; id: string }> => {
+    body: {
+      latitude: number;
+      longitude: number;
+      completedAt?: string;
+      /** Raw base64 or data-URL; both crate + quality should be sent together */
+      cratePhotoBase64?: string;
+      qualityPhotoBase64?: string;
+    },
+  ): Promise<{ success: boolean; batchId: string; id: string; photosSaved?: boolean }> => {
     const response = await api.post(`/batches/${encodeURIComponent(batchRef)}/packing-flow`, body);
     return response.data;
   },

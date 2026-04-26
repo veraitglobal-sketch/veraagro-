@@ -9,17 +9,28 @@ import dynamic from 'next/dynamic';
 
 const NotificationCenter = dynamic(() => import('@/components/NotificationCenter'), { ssr: false });
 
+export type SidebarNavItem = {
+  href: string;
+  label: string;
+  icon?: ReactNode;
+  /** Shown on the right (e.g. pending counts) */
+  badge?: string | number;
+};
+
+export type SidebarNavGroup = {
+  title: string;
+  items: SidebarNavItem[];
+};
+
 interface SidebarLayoutProps {
   children: ReactNode;
   title: string;
-  navItems: Array<{
-    href: string;
-    label: string;
-    icon?: ReactNode;
-  }>;
+  navItems: SidebarNavItem[];
+  /** Extra sections below main nav (e.g. admin “Grower ops”) */
+  navGroups?: SidebarNavGroup[];
 }
 
-export default function SidebarLayout({ children, title, navItems }: SidebarLayoutProps) {
+export default function SidebarLayout({ children, title, navItems, navGroups }: SidebarLayoutProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,16 +59,59 @@ export default function SidebarLayout({ children, title, navItems }: SidebarLayo
             key={item.href}
             href={item.href}
             onClick={() => setMobileMenuOpen(false)}
-            className={`flex items-center gap-3 px-3 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center justify-between gap-2 px-3 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
               isActive(item.href)
                 ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
                 : 'text-gray-700 hover:bg-gray-50'
             }`}
           >
-            {item.icon}
-            <span>{item.label}</span>
+            <span className="flex items-center gap-3 min-w-0">
+              {item.icon}
+              <span className="truncate">{item.label}</span>
+            </span>
+            {item.badge != null && item.badge !== '' && (
+              <span className="shrink-0 text-xs font-semibold tabular-nums px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">
+                {item.badge}
+              </span>
+            )}
           </Link>
         ))}
+
+        {navGroups && navGroups.length > 0 && (
+          <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
+            {navGroups.map((group) => (
+              <div key={group.title}>
+                <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  {group.title}
+                </p>
+                <div className="space-y-1">
+                  {group.items.map((item) => (
+                    <Link
+                      key={item.href + item.label}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between gap-2 px-3 min-h-[40px] rounded-lg text-sm font-medium transition-colors ${
+                        isActive(item.href)
+                          ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="flex items-center gap-3 min-w-0">
+                        {item.icon}
+                        <span className="truncate">{item.label}</span>
+                      </span>
+                      {item.badge != null && item.badge !== '' && (
+                        <span className="shrink-0 text-xs font-semibold tabular-nums px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* User Info & Logout */}

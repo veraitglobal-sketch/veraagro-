@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface VehicleData {
   vehicle: {
@@ -94,7 +95,7 @@ export default function AeoDashboardPage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/aeo/vehicle/${vehicleId}`,
+        `${WEB_API_BASE}/aeo/vehicle/${vehicleId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

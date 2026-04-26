@@ -132,7 +132,7 @@ export function createBackendService(config: BackendServiceConfig) {
         treatmentLogs: unknown[];
         harvestAnnouncements: unknown[];
         batches: unknown[];
-      }>(baseURL, `/admin/farm/${farmerId}`, { getToken, timeout });
+      }>(baseURL, `/admin/farmers/${farmerId}`, { getToken, timeout });
     },
 
     // Packing flow – submit packing record

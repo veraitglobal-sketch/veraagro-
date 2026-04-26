@@ -21,8 +21,8 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
-              Vertically integrated agrotech platform for Bio-Ready certification
-              and EU market compliance.
+              An organized producer network with guaranteed offtake, integrated logistics
+              and finance, and full traceability from field to payment.
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600">
@@ -49,6 +49,7 @@ export default function Footer() {
               <li><Link href="/about" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">About</Link></li>
               <li><Link href="/careers" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Careers</Link></li>
               <li><Link href="/press" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+              <li><Link href="/#how-it-works" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">How it works</Link></li>
               <li><Link href="/#vision" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Vision</Link></li>
               <li><Link href="/#roadmap" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
               <li><Link href="/contact" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Contact</Link></li>

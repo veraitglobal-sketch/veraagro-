@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface BioVeraStandard {
   id: string;
@@ -46,7 +47,7 @@ export default function AdminStandardsPage() {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/standard`,
+          `${WEB_API_BASE}/material-control/standard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -83,7 +84,7 @@ export default function AdminStandardsPage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/material-control/standard`,
+        `${WEB_API_BASE}/material-control/standard`,
         {
           method: 'PUT',
           headers: {

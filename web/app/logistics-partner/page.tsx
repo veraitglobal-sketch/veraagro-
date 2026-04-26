@@ -136,9 +136,10 @@ export default function LogisticsPartnerPage() {
               For Logistics
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-              Join Bio Vera's trusted network of transport partners. Open to independent drivers, 
-              small vans, medium trucks, and large transport companies. Deliver organic products 
-              with complete traceability and earn stable, long-term contracts.
+              Haul for a single operating system: planned handovers, cold-chain rules, and{' '}
+              <strong className="font-medium text-gray-800">official PDF waybills</strong> with controlled access—so every load matches 
+              what the farm packed and what the buyer receives. Open to independent drivers through large fleets; 
+              stable lanes and clear documentation instead of informal spot jobs.
             </p>
             <button
               onClick={async () => {

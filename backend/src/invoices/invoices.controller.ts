@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards, Request, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Request, Post, Body, StreamableFile, Header } from '@nestjs/common';
 import { InvoicesService } from './invoices.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -27,20 +27,22 @@ export class InvoicesController {
     return this.invoicesService.getInvoice(orderId);
   }
 
+  @Get(':id/download')
+  @UseGuards(RolesGuard)
+  @Roles('BUYER', 'ADMIN', 'SUPER_ADMIN')
+  @Header('Content-Type', 'application/pdf')
+  async downloadInvoice(@Param('id') id: string, @Request() req: any) {
+    const buyerId = req.user.roles?.includes('BUYER') ? req.user.id : undefined;
+    const { buffer, filename } = await this.invoicesService.getInvoicePdfDownload(id, buyerId);
+    return new StreamableFile(buffer, { type: 'application/pdf', disposition: `attachment; filename="${filename}"` });
+  }
+
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles('BUYER', 'ADMIN', 'SUPER_ADMIN')
   async getInvoiceById(@Param('id') id: string, @Request() req: any) {
     const buyerId = req.user.roles?.includes('BUYER') ? req.user.id : undefined;
     return this.invoicesService.findOne(id, buyerId);
-  }
-
-  @Get(':id/download')
-  @UseGuards(RolesGuard)
-  @Roles('BUYER', 'ADMIN', 'SUPER_ADMIN')
-  async downloadInvoice(@Param('id') id: string, @Request() req: any) {
-    const buyerId = req.user.roles?.includes('BUYER') ? req.user.id : undefined;
-    return this.invoicesService.downloadInvoice(id, buyerId);
   }
 
   @Post(':id/send-email')

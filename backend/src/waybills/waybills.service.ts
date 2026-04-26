@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { createHash } from 'crypto';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { CryptoUtil } from '../common/utils/crypto.util';
+import { buildWaybillPdf } from '../common/pdf/simple-documents-pdf';
 
 /**
  * Waybills Service
@@ -11,7 +13,7 @@ export class WaybillsService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Generate waybill PDF automatically when delivery is assigned
+   * Generate waybill PDF when delivery is assigned (real PDF via pdfkit, hash = SHA-256 of bytes).
    */
   async generateWaybill(deliveryId: string) {
     const delivery = await this.prisma.deliveries.findUnique({
@@ -64,7 +66,9 @@ export class WaybillsService {
       },
       estate: {
         name: delivery.orders?.estates?.name,
-        owner: delivery.orders?.estates?.users ? `${delivery.orders.estates.users.firstName} ${delivery.orders.estates.users.lastName}` : 'N/A',
+        owner: delivery.orders?.estates?.users
+          ? `${delivery.orders.estates.users.firstName} ${delivery.orders.estates.users.lastName}`
+          : 'N/A',
       },
       buyer: {
         name: delivery.orders?.users ? `${delivery.orders.users.firstName} ${delivery.orders.users.lastName}` : 'N/A',
@@ -72,14 +76,15 @@ export class WaybillsService {
       },
     };
 
-    // Generate PDF (mock - in production, use PDF library like pdfkit)
-    const pdfUrl = `/waybills/${waybillNumber}.pdf`; // TODO: Generate actual PDF
-    const pdfHash = CryptoUtil.hashPassport(waybillData);
+    const id = crypto.randomUUID();
+    const pdfBuffer = await buildWaybillPdf(waybillData);
+    const pdfHash = createHash('sha256').update(pdfBuffer).digest('hex');
+    const pdfUrl = `/waybills/document/${id}/pdf`;
 
     // Create waybill record
     const waybill = await this.prisma.waybills.create({
       data: {
-        id: crypto.randomUUID(),
+        id,
         waybillNumber,
         deliveryId,
         pdfUrl,
@@ -95,5 +100,48 @@ export class WaybillsService {
     return this.prisma.waybills.findUnique({
       where: { deliveryId },
     });
+  }
+
+  /**
+   * PDF bytes for a waybill. Caller must have checked access.
+   */
+  async getWaybillPdfBuffer(waybillId: string) {
+    const waybill = await this.prisma.waybills.findUnique({
+      where: { id: waybillId },
+    });
+    if (!waybill || !waybill.generatedData) {
+      throw new NotFoundException('Waybill not found');
+    }
+    return buildWaybillPdf(waybill.generatedData as Record<string, unknown>);
+  }
+
+  async assertUserCanReadWaybill(waybillId: string, user: { id: string; roles?: string[] }) {
+    const waybill = await this.prisma.waybills.findUnique({
+      where: { id: waybillId },
+      include: {
+        deliveries: {
+          include: {
+            orders: {
+              include: { estates: true },
+            },
+          },
+        },
+      },
+    });
+    if (!waybill) {
+      throw new NotFoundException('Waybill not found');
+    }
+    const roles = user.roles || [];
+    if (roles.includes('ADMIN') || roles.includes('SUPER_ADMIN')) {
+      return;
+    }
+    const order = waybill.deliveries?.orders;
+    if (!order) {
+      throw new ForbiddenException('Access denied');
+    }
+    if (order.buyerId === user.id) return;
+    if (order.estates?.ownerId === user.id) return;
+    if (waybill.deliveries.driverId === user.id) return;
+    throw new ForbiddenException('Access denied');
   }
 }

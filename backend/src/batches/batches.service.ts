@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef, Logger } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Inject, forwardRef, Logger } from '@nestjs/common';
+import { createHash, randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
@@ -14,6 +16,7 @@ import { BatchStatus } from '@prisma/client';
 @Injectable()
 export class BatchesService {
   private readonly logger = new Logger(BatchesService.name);
+  private static readonly MAX_PACKING_PHOTO_BYTES = Math.floor(2.5 * 1024 * 1024);
 
   constructor(
     private prisma: PrismaService,
@@ -493,13 +496,19 @@ export class BatchesService {
   }
 
   /**
-   * Record mobile packing-flow completion (GPS + time in audit trail).
+   * Record mobile packing-flow completion: GPS + optional crate/quality photos on disk (audit JSON references files).
    * batchRef is internal batch UUID or public batchId (e.g. BATCH-2026-0001).
    */
   async recordPackingFlowCheck(
     userId: string,
     batchRef: string,
-    dto: { latitude: number; longitude: number; completedAt?: string },
+    dto: {
+      latitude: number;
+      longitude: number;
+      completedAt?: string;
+      cratePhotoBase64?: string;
+      qualityPhotoBase64?: string;
+    },
   ) {
     const batch = await this.prisma.batches.findFirst({
       where: {
@@ -510,7 +519,43 @@ export class BatchesService {
     if (!batch) {
       throw new NotFoundException('Batch not found or you do not have access');
     }
+    const c = dto.cratePhotoBase64?.trim() ?? '';
+    const q = dto.qualityPhotoBase64?.trim() ?? '';
+    if ((c && !q) || (!c && q)) {
+      throw new BadRequestException('When uploading images, both crate and quality photos are required.');
+    }
     const at = dto.completedAt ? new Date(dto.completedAt) : new Date();
+
+    let photos: {
+      storage: 'local_disk';
+      dir: string;
+      crate: { fileName: string; sha256: string; bytes: number };
+      quality: { fileName: string; sha256: string; bytes: number };
+    } | undefined;
+
+    if (c && q) {
+      const bufC = this.decodePackingPhotoBase64(c);
+      const bufQ = this.decodePackingPhotoBase64(q);
+      const relDir = path.join('packing-flow', batch.id);
+      const absDir = path.join(process.cwd(), 'uploads', relDir);
+      fs.mkdirSync(absDir, { recursive: true });
+      const ts = Date.now();
+      const extC = BatchesService.guessImageExt(bufC);
+      const extQ = BatchesService.guessImageExt(bufQ);
+      const fC = `crate-${ts}.${extC}`;
+      const fQ = `quality-${ts}.${extQ}`;
+      fs.writeFileSync(path.join(absDir, fC), bufC);
+      fs.writeFileSync(path.join(absDir, fQ), bufQ);
+      const hashC = createHash('sha256').update(bufC).digest('hex');
+      const hashQ = createHash('sha256').update(bufQ).digest('hex');
+      photos = {
+        storage: 'local_disk',
+        dir: relDir.replace(/\\/g, '/'),
+        crate: { fileName: fC, sha256: hashC, bytes: bufC.length },
+        quality: { fileName: fQ, sha256: hashQ, bytes: bufQ.length },
+      };
+    }
+
     await this.prisma.audit_trails.create({
       data: {
         id: randomUUID(),
@@ -523,12 +568,87 @@ export class BatchesService {
           source: 'mobile_packing_flow',
           gps: { lat: dto.latitude, lng: dto.longitude },
           completedAt: at.toISOString(),
+          ...(photos && { photos }),
         },
         isCompliant: true,
         location: { lat: dto.latitude, lng: dto.longitude },
         timestamp: at,
       } as any,
     });
-    return { success: true, batchId: batch.batchId, id: batch.id };
+    return { success: true, batchId: batch.batchId, id: batch.id, photosSaved: Boolean(photos) };
+  }
+
+  /**
+   * Serve a packing-flow photo (crate | quality) from the latest audit with stored files.
+   */
+  async getPackingFlowPhotoFile(userId: string, batchRef: string, kind: 'crate' | 'quality') {
+    const batch = await this.prisma.batches.findFirst({
+      where: {
+        OR: [{ id: batchRef }, { batchId: batchRef }],
+        harvestedByUserId: userId,
+      },
+    });
+    if (!batch) {
+      throw new NotFoundException('Batch not found or you do not have access');
+    }
+    const expectedDir = `packing-flow/${batch.id}`.replace(/\\/g, '/');
+    const trails = await this.prisma.audit_trails.findMany({
+      where: {
+        batchId: batch.id,
+        eventType: 'QUALITY_CHECK',
+      },
+      orderBy: { timestamp: 'desc' },
+      take: 30,
+    });
+    const trail = trails.find((t) => {
+      const nv = t.newValue as Record<string, unknown> | null;
+      return nv?.source === 'mobile_packing_flow' && nv?.photos;
+    });
+    if (!trail) {
+      throw new NotFoundException('No packing flow record with photos found');
+    }
+    const nv = trail.newValue as Record<string, unknown>;
+    const p = nv.photos as Record<string, unknown>;
+    const dir = p.dir as string;
+    const sub = p[kind] as { fileName?: string } | undefined;
+    if (!dir || !sub?.fileName) {
+      throw new NotFoundException('Photo not found');
+    }
+    if (dir !== expectedDir) {
+      throw new BadRequestException('Invalid path');
+    }
+    if (!/^[a-zA-Z0-9._-]+\.(jpg|jpeg|png)$/i.test(sub.fileName)) {
+      throw new BadRequestException('Invalid file name');
+    }
+    const full = path.join(process.cwd(), 'uploads', dir, sub.fileName);
+    const resolved = path.resolve(full);
+    const base = path.resolve(path.join(process.cwd(), 'uploads', dir));
+    if (!resolved.startsWith(base) || !fs.existsSync(resolved)) {
+      throw new NotFoundException('Photo file missing');
+    }
+    return { filePath: resolved, fileName: sub.fileName };
+  }
+
+  private stripDataUrlBase64(input: string): string {
+    const m = input.trim().match(/^data:image\/\w+;base64,(.+)$/is);
+    return m ? m[1] : input.replace(/\s/g, '');
+  }
+
+  private decodePackingPhotoBase64(base64: string): Buffer {
+    const raw = this.stripDataUrlBase64(base64);
+    const buf = Buffer.from(raw, 'base64');
+    if (buf.length === 0) {
+      throw new BadRequestException('Invalid image data');
+    }
+    if (buf.length > BatchesService.MAX_PACKING_PHOTO_BYTES) {
+      throw new BadRequestException(`Each photo must be at most ${BatchesService.MAX_PACKING_PHOTO_BYTES} bytes`);
+    }
+    return buf;
+  }
+
+  private static guessImageExt(buf: Buffer): 'jpg' | 'png' {
+    if (buf[0] === 0xff && buf[1] === 0xd8) return 'jpg';
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'png';
+    return 'jpg';
   }
 }

@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { formatFarmerIdentity, getFirstName, extractRegion } from '@/lib/farmer-utils';
 import { BlockchainVerification } from '@/components/BlockchainVerification';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface VerificationData {
   batch: {
@@ -82,7 +83,7 @@ export default function VerifyPage() {
   const fetchVerificationData = async () => {
     try {
       // Use the verify endpoint which supports both batchId and QR ID format
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/qr/verify/${batchId}`);
+      const response = await fetch(`${WEB_API_BASE}/qr/verify/${batchId}`);
       
       if (!response.ok) {
         throw new Error('Product verification not found');

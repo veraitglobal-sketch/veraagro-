@@ -30,6 +30,7 @@ import { theme } from '../../../lib/theme';
 import StepInstructions from './StepInstructions';
 import StepCamera from './StepCamera';
 import StepGps, { type GpsCapturePayload } from './StepGps';
+import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import { batchesAPI } from '../../../lib/api';
 
 const STEPS = [
@@ -90,15 +91,27 @@ export default function PackingFlowScreen() {
       return;
     }
     try {
-      await batchesAPI.recordPackingFlow(batchRef, {
+      let cratePhotoBase64: string | undefined;
+      let qualityPhotoBase64: string | undefined;
+      if (photoUri && qualityPhotoUri) {
+        const c = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
+        const q = await readAsStringAsync(qualityPhotoUri, { encoding: EncodingType.Base64 });
+        cratePhotoBase64 = `data:image/jpeg;base64,${c}`;
+        qualityPhotoBase64 = `data:image/jpeg;base64,${q}`;
+      }
+      const res = await batchesAPI.recordPackingFlow(batchRef, {
         latitude: gpsPayload.lat,
         longitude: gpsPayload.lng,
         completedAt: gpsPayload.timestamp,
+        cratePhotoBase64,
+        qualityPhotoBase64,
       });
       Alert.alert(
         t('packingFlow.submittedTitle', { defaultValue: 'Packing check complete' }),
         t('packingFlow.submittedServer', {
-          defaultValue: 'Location logged on the server for this batch.',
+          defaultValue: res.photosSaved
+            ? 'Location and photos are stored on the server for this batch.'
+            : 'Location logged on the server for this batch.',
         }),
         [{ text: t('common.ok', { defaultValue: 'OK' }), onPress: () => router.back() }],
       );

@@ -1,25 +1,25 @@
 'use client';
 
-import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { 
-  QrCode, 
   PackageSearch,
   Wallet, 
   Handshake, 
-  Shield, 
   FileCheck,
   Eye,
   Lock,
-  Globe,
   Apple,
   Carrot,
   Wheat,
   HelpCircle,
   ShoppingBag,
+  Truck,
+  Receipt,
+  BadgeCheck,
+  Network,
 } from 'lucide-react';
 import { partners } from '@/lib/partners';
 import dynamic from 'next/dynamic';
@@ -28,7 +28,6 @@ const VeraAIChatbotInline = dynamic(() => import('@/components/VeraAIChatbotInli
 import Footer from '@/components/Footer';
 
 export default function Home() {
-  const { isAuthenticated, user } = useAuth();
   const [showPreOrderInfo, setShowPreOrderInfo] = useState(false);
   const preOrderRef = useRef<HTMLDivElement>(null);
 
@@ -51,14 +50,19 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
+            <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.2em] text-[#2D5A27] mb-4">
+              Organized agricultural network
+            </p>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
-              Vertically Integrated
+              Production, offtake, logistics, and payment
               <br />
-              <span className="font-normal">Agrotech Platform</span>
+              <span className="font-normal">in one operating system</span>
           </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-              From seed to market—anywhere in the world. Immutable digital proof. Bio-Ready certification 
-              with complete traceability and automated compliance. Open to producers worldwide.
+              Bio Vera is not a generic software product. We run a certified grower network with agreed standards, 
+              <strong className="font-medium text-gray-800"> guaranteed offtake</strong> for enrolled farmers, and 
+              coordinated packaging and transport. Producers focus on growing; we organize the path to market, 
+              documentation, invoicing, and settlement—from harvest to payment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -75,7 +79,7 @@ export default function Home() {
                 Become a Producer
               </Link>
             </div>
-            {/* Pre-order 2026 — klik vodi na login, posle login direktno na pre-order */}
+            {/* Pre-order 2026 — link goes to login; after login user can open pre-order */}
             <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
               <Link
                 href="/login?returnTo=/pre-order-2026"
@@ -110,16 +114,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats - Minimal */}
+      {/* What makes this different from a “platform” — business outcomes */}
       <section className="pt-16 pb-12 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <p className="text-center text-sm text-gray-500 mb-10 max-w-2xl mx-auto">
+            Unlike a simple listing or marketplace, Bio Vera contracts quality, coordinates operations, and stands behind the chain.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
             {[
-              { number: '100%', label: 'Traceability' },
-              { number: 'EU', label: 'Certified' },
-              { number: '24/7', label: 'Monitoring' },
-              { number: '0', label: 'Fraud Cases' },
-              { number: 'Polygon', label: 'Blockchain Complete' },
+              { title: 'Guaranteed offtake', line: 'Agreed standards and a clear path to sell the crop' },
+              { title: 'We run logistics', line: 'Packing, cold chain, and routing as part of the network' },
+              { title: 'Official documents', line: 'PDF waybills with controlled access for each handover' },
+              { title: 'Invoicing & payment', line: 'Automated invoices tied to delivery and release rules' },
+              { title: 'Field to settlement', line: 'Traceability from production through delivery to payment' },
             ].map((stat, index) => (
               <motion.div
                 key={index}
@@ -127,14 +134,65 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center"
+                className="text-center lg:text-left"
               >
-                <div className="text-3xl font-light text-gray-900 mb-2">{stat.number}</div>
-                <div className="h-0.5 w-8 mx-auto mb-2 rounded-full bg-[#2D5A27]/40" aria-hidden />
-                <div className="text-sm text-gray-500 uppercase tracking-wide">{stat.label}</div>
+                <div className="text-sm font-medium text-gray-900 mb-2 leading-snug">{stat.title}</div>
+                <div className="h-0.5 w-8 mx-auto lg:mx-0 mb-2 rounded-full bg-[#2D5A27]/40" aria-hidden />
+                <div className="text-xs text-gray-600 leading-relaxed font-light">{stat.line}</div>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* How it works — step-by-step business flow */}
+      <section id="how-it-works" className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white scroll-mt-24">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-light text-gray-900 mb-3">How Bio Vera works</h2>
+            <p className="text-base text-gray-600 font-light max-w-2xl mx-auto">
+              A single operating model from enrollment to payment—not a bag of disconnected tools.
+            </p>
+          </div>
+          <ol className="space-y-8">
+            {[
+              {
+                n: 1,
+                t: 'Growers join and produce to our standards',
+                d: 'Farms apply, adopt the protocol, and grow under Bio Vera rules—so quality and traceability are built in from the field.',
+              },
+              {
+                n: 2,
+                t: 'We guarantee offtake for the enrolled crop',
+                d: 'You are not left negotiating with ad-hoc buyers at harvest. Contracted offtake and clear terms reduce exposure to spot-market chaos.',
+              },
+              {
+                n: 3,
+                t: 'We organize packaging, logistics, and distribution',
+                d: 'Cold chain, handovers, and routes are run as part of the network. Transport uses official PDF waybills and controlled access at each step.',
+              },
+              {
+                n: 4,
+                t: 'Invoices, traceability, and payment line up',
+                d: 'Invoices are generated in line with deliveries; the digital record follows the product from field through delivery, supporting settlement and audit.',
+              },
+              {
+                n: 5,
+                t: 'Farmers grow; we operate the chain',
+                d: 'Your focus stays on production. We coordinate the commercial, logistical, and financial process end to end.',
+              },
+            ].map((step) => (
+              <li key={step.n} className="flex gap-4 sm:gap-6">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-sm font-medium">
+                  {step.n}
+                </div>
+                <div>
+                  <h3 className="text-lg font-light text-gray-900 mb-1">{step.t}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed font-light">{step.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -214,33 +272,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Vision Section */}
-      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
+      {/* Vision — network + operations, not “just an app” */}
+      <section id="vision" className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5 scroll-mt-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">Our Vision</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">Why the model exists</h2>
             <p className="text-base text-gray-600 max-w-2xl mx-auto font-light">
-              Transforming agriculture through technology, ensuring transparency, 
-              security, and market access for producers everywhere.
+              Bio Vera is built as a <strong className="font-medium text-gray-800">managed supply chain</strong>: standards, logistics, 
+              documentation, and settlement working together—so growers and buyers are not stitching together brokers, trucks, and spreadsheets.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: 'Transparency',
-                description: 'Complete visibility of the entire process from seed to customer. Every step is documented and immutable.',
-                icon: Eye,
+                title: 'One operating system',
+                description: 'Production rules, transport, handover documents, invoices, and traceability are designed as one flow—not separate products bolted together.',
+                icon: Network,
               },
               {
-                title: 'Security',
-                description: 'Cryptographically protected data, anti-fraud protection, and immutable digital evidence.',
-                icon: Lock,
+                title: 'No random middlemen',
+                description: 'Pricing and offtake are aligned with the network. The goal is stability and clarity for farmers, not opaque spot trading.',
+                icon: Handshake,
               },
               {
-                title: 'EU Access',
-                description: 'Automated generation of EU certificates and digital passports for direct market access.',
-                icon: Globe,
+                title: 'Proof for buyers and auditors',
+                description: 'From waybills to digital passports, documentation exists to support real delivery, compliance, and settlement—not slide decks.',
+                icon: FileCheck,
               },
             ].map((item, index) => {
               const IconComponent = item.icon;
@@ -258,52 +316,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Operations & assurance — value-led, not a feature laundry list */}
       <section className="py-20 bg-white px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">Core Features</h2>
-            <p className="text-base text-gray-600 font-light">
-              Technology that changes how we produce and distribute food
+            <h2 className="text-2xl font-light text-gray-900 mb-3">Operations &amp; assurance</h2>
+            <p className="text-base text-gray-600 font-light max-w-2xl mx-auto">
+              What the network runs day to day: clear roles, documents, and money flow—supported by digital tools where they add real control.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: 'Smart-Lock System',
-                description: 'QR code scanning is the primary key. Immutable proof of production with GPS validation.',
-                icon: QrCode,
+                title: 'Guaranteed offtake & standards',
+                description: 'Farmers produce under agreed rules; Bio Vera aligns purchase and handling with those rules—reducing last-minute price pressure and uncertainty.',
+                icon: BadgeCheck,
               },
               {
-                title: 'Batch Tracking',
-                description: 'Every crate tracked with Batch_ID. One-click traceability from seed to customer.',
+                title: 'Quality & batch control (Protocol 360)',
+                description: 'Field-to-pack checks and batch identity so every handover matches what was grown—supporting both food safety and buyer confidence.',
                 icon: PackageSearch,
               },
               {
-                title: 'Escrow Payment',
-                description: 'Secure payment locked in escrow. Automatic split: 70% farmer, 20% driver, 10% platform.',
+                title: 'Logistics & PDF waybills',
+                description: 'Transport is part of the same system: official PDF waybills, controlled access, and a clear chain of custody from farm to buyer.',
+                icon: Truck,
+              },
+              {
+                title: 'Invoicing built into delivery',
+                description: 'Invoices are generated to match what actually moved—fewer disputes, faster reconciliation, less manual paperwork between teams.',
+                icon: Receipt,
+              },
+              {
+                title: 'Escrow & settlement',
+                description: 'Payments can be held in escrow and released against verified delivery—protecting buyers and paying farmers on clear triggers.',
                 icon: Wallet,
               },
               {
-                title: 'Digital Handshake',
-                description: 'Customer scans QR code to confirm delivery. Automatic payment release.',
-                icon: Handshake,
-              },
-              {
-                title: 'Anti-Fraud Protection',
-                description: 'GPS timestamp, device ID tracking, camera-only capture. Impossible to falsify.',
-                icon: Shield,
-              },
-              {
-                title: 'EU Digital Passport',
-                description: 'Automated generation of EU certificates. Direct market access without intermediaries.',
-                icon: FileCheck,
-              },
-              {
-                title: 'Blockchain verification (Polygon)',
-                description: 'Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete.',
-                icon: Lock,
+                title: 'Traceability to payment',
+                description: 'The same record that supports cold chain and documents also supports audit and settlement—not a separate “traceability project.”',
+                icon: Eye,
               },
             ].map((feature, index) => {
               const IconComponent = feature.icon;
@@ -321,7 +374,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blockchain Trust – why we use chain, customer assurance, tamper resistance */}
+      {/* Strong record-keeping — blockchain as assurance, not the headline product */}
       <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -333,11 +386,10 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#2D5A27]/10 mb-6">
               <Lock className="w-6 h-6 text-[#2D5A27]" strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-light text-gray-900 mb-4">Why We Use Blockchain</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">Tamper-resistant records for buyers and auditors</h2>
             <p className="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
-              We use a blockchain system so our products stay <strong className="font-normal text-gray-800">faithful to you</strong>—the customer. 
-              Every step of the journey, from harvest to delivery, is recorded in a way that <strong className="font-normal text-gray-800">cannot be changed</strong>. 
-              Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.
+              For key product history, Bio Vera uses blockchain-backed storage so the trail stays <strong className="font-normal text-gray-800">consistent for you and for us</strong>—not quietly editable after the fact. 
+              From harvest through delivery, what you see when you verify a batch is the same evidence our operations rely on: clear, checkable, and aligned with physical handovers and documents.
             </p>
           </motion.div>
           <motion.div
@@ -348,9 +400,9 @@ export default function Home() {
             className="flex flex-wrap justify-center gap-6 text-sm"
           >
             {[
-              'Immutable record',
-              'No one can edit the trail',
-              'You verify the same data we do',
+              'Aligned with real handovers',
+              'Same data for customer and operations',
+              'Built for audit, not for slides',
             ].map((line, i) => (
               <span key={i} className="flex items-center gap-2 text-gray-600 font-light">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27]/60" />
@@ -361,8 +413,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Roadmap Section */}
-      <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-white">
+      {/* Roadmap — business milestones, not a product backlog */}
+      <section id="roadmap" className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -372,7 +424,7 @@ export default function Home() {
           >
             <h2 className="text-3xl font-light text-gray-900 mb-4">Roadmap</h2>
             <p className="text-lg text-gray-600">
-              Where we are now and where we're heading
+              How we are growing the network and hardening operations—not a list of buzzwords
             </p>
           </motion.div>
 
@@ -380,27 +432,27 @@ export default function Home() {
             {[
               {
                 phase: 'Q1 2026',
-                title: 'Platform Launch',
+                title: 'Live grower & buyer operations',
                 status: 'completed',
-                items: ['Backend API', 'Mobile App', 'Web Platform', 'Core Features']
+                items: ['Onboarding and core supply flows', 'Mobile and web for the field and office', 'Initial logistics and payment rules live'],
               },
               {
                 phase: 'Q2 2026',
-                title: 'Feature Expansion',
+                title: 'Assurance at scale',
                 status: 'completed',
-                items: ['AI Analytics — Complete', 'Blockchain verification (Polygon) — Complete', 'Advanced Dashboard', 'Integrations', 'EU Certificates']
+                items: ['Deeper analytics for operations', 'On-chain verification for product passports', 'Richer dashboards for growers, buyers, and partners', 'EU-aligned certification paths'],
               },
               {
-                phase: 'Q3-Q4 2026',
-                title: 'Scaling',
+                phase: 'Q3–Q4 2026',
+                title: 'Regional depth',
                 status: 'planned',
-                items: ['Multi-region Support', 'API Marketplace', 'Partner Integrations', 'Enterprise Features']
+                items: ['More routes and partner capacity', 'Closer partner integrations where it cuts manual work', 'Enterprise-style programs for large buyers'],
               },
               {
                 phase: '2027',
-                title: 'Global Expansion',
+                title: 'Broader geography & IoT where it pays off',
                 status: 'planned',
-                items: ['Global Markets', 'IoT Sensors', 'AI Predictions']
+                items: ['Select new markets with the same operating model', 'Sensors and forecasting only where they improve decisions'],
               },
             ].map((plan, index) => (
               <motion.div
@@ -457,9 +509,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-4">Browse Products</h2>
+            <h2 className="text-3xl font-light text-gray-900 mb-4">Browse products</h2>
             <p className="text-lg text-gray-600">
-              Organic products with complete traceability
+              See what the network offers—origins, harvest windows, and terms through the buyer flow
             </p>
           </motion.div>
 
@@ -518,7 +570,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Help / Chat — linija kod chata u posebnoj sekciji */}
+      {/* Help + chat CTA row */}
       <section className="border-t border-gray-200 bg-gray-50/50 py-6 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm font-light text-gray-600">Questions? We’re here to help.</p>

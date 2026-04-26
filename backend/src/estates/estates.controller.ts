@@ -25,6 +25,25 @@ export class EstatesController {
     return this.estatesService.findAllPublic();
   }
 
+  /**
+   * Admin: Get all pending estates (must be before :id)
+   */
+  @Get('admin/pending')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  async getPendingEstates() {
+    return this.estatesService.getPendingEstates();
+  }
+
+  /**
+   * Lightweight GPS boundary for mobile cache / sync (owner only)
+   */
+  @Get(':id/boundary')
+  @UseGuards(JwtAuthGuard)
+  async getBoundary(@Param('id') id: string, @Request() req: any) {
+    return this.estatesService.getBoundaryForSync(id, req.user.id);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string, @Request() req: any) {
@@ -48,16 +67,6 @@ export class EstatesController {
   @UseGuards(JwtAuthGuard)
   async startCertification(@Param('id') id: string, @Request() req: any) {
     return this.estatesService.startCertification(id, req.user.id);
-  }
-
-  /**
-   * Admin: Get all pending estates
-   */
-  @Get('admin/pending')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'SUPER_ADMIN')
-  async getPendingEstates() {
-    return this.estatesService.getPendingEstates();
   }
 
   /**

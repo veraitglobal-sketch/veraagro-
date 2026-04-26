@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface CertificateData {
   qrId: string;
@@ -63,7 +64,7 @@ export default function CertificatePage() {
 
   const fetchCertificateData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/qr/certificate/${qrId}`);
+      const response = await fetch(`${WEB_API_BASE}/qr/certificate/${qrId}`);
       if (!response.ok) {
         throw new Error('Certificate not found');
       }

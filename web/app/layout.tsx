@@ -45,7 +45,7 @@ export default function RootLayout({
               "name": "Bio Vera",
               "url": process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app",
               "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app"}/logo1.png`,
-              "description": "Vertically Integrated Agrotech Platform. From seed to market—worldwide. Immutable digital proof. Bio-Ready certification with complete traceability and automated compliance.",
+              "description": "Organized grower network with guaranteed offtake, integrated logistics, invoicing, and full traceability from field to payment.",
               "sameAs": [],
               "contactPoint": {
                 "@type": "ContactPoint",

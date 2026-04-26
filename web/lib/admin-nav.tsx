@@ -7,62 +7,40 @@ import {
   AlertTriangle,
   TrendingUp,
   Activity,
-  DollarSign,
-  Shield,
-  BarChart3,
   MapPin,
   MessageCircle,
   ClipboardCheck,
   CalendarRange,
 } from 'lucide-react';
 import { ReactNode } from 'react';
+import type { SidebarNavGroup } from '@/components/SidebarLayout';
 
-// Localization for admin navigation items
-const navLabels = {
-  en: {
-    dashboard: 'Dashboard',
-    users: 'Users',
-    products: 'Products',
-    orders: 'Orders',
-    missions: 'Missions',
-    security: 'Security Alerts',
-    marketPrices: 'Market Prices',
-    standards: 'Bio Vera Standards',
-    haccp: 'HACCP Monitoring',
-    veraInsights: 'Vera Insights',
-    commandControl: 'Command & Control',
-    estates: 'Estate Approval',
-    aiConversations: 'AI Conversations',
-    testBatch: 'Test batch',
-    njivaBlockchain: 'Field → Blockchain',
-    parcelsPending: 'Parcels pending',
-    harvestPlans: 'Harvest plans',
-  },
-  de: {
-    dashboard: 'Dashboard',
-    users: 'Benutzer',
-    products: 'Produkte',
-    orders: 'Bestellungen',
-    missions: 'Missionen',
-    security: 'Sicherheitswarnungen',
-    marketPrices: 'Marktpreise',
-    standards: 'Bio Vera Standards',
-    haccp: 'HACCP-Überwachung',
-    veraInsights: 'Vera Einblicke',
-    commandControl: 'Befehls- und Kontrollzentrale',
-    estates: 'Grundstücksgenehmigung',
-    aiConversations: 'KI-Konversationen',
-    testBatch: 'Test-Batch',
-    njivaBlockchain: 'Feld → Blockchain',
-    parcelsPending: 'Parzellen (Freigabe)',
-    harvestPlans: 'Erntepläne',
-  },
-};
-
-// English localization only
-function getCurrentLanguage(): 'en' {
-  return 'en';
-}
+/** Admin navigation labels (English only) */
+const labels = {
+  dashboard: 'Dashboard',
+  users: 'Users',
+  products: 'Products',
+  orders: 'Orders',
+  missions: 'Missions',
+  security: 'Security Alerts',
+  marketPrices: 'Market Prices',
+  standards: 'Bio Vera Standards',
+  haccp: 'HACCP Monitoring',
+  veraInsights: 'Vera Insights',
+  commandControl: 'Command & Control',
+  estates: 'Estate Approval',
+  aiConversations: 'AI Conversations',
+  testBatch: 'Test batch',
+  njivaBlockchain: 'Field → Blockchain',
+  parcelsPending: 'Parcels pending',
+  harvestPlans: 'Harvest plans',
+  growerOps: 'Grower ops',
+  goParcelsPending: 'Parcels pending',
+  goEstates: 'Estates & setup',
+  goHarvestPlans: 'Harvest plans',
+  goHaccp: 'HACCP / field',
+  goBatchesPlatform: 'Batches (platform)',
+} as const;
 
 // Dashboard icon component
 const DashboardIcon = () => (
@@ -92,10 +70,7 @@ const CommandControlIcon = () => (
   </svg>
 );
 
-// Function to get navigation items with localization
-export function getAdminNavItems(_language?: 'en') {
-  const labels = navLabels.en;
-
+export function getAdminNavItems() {
   return [
     { 
       href: '/admin', 
@@ -183,4 +158,54 @@ export function getAdminNavItems(_language?: 'en') {
       icon: <CalendarRange className="w-5 h-5" /> 
     },
   ];
+}
+
+/** Dashboard `/admin/statistics` shape (subset) for Grower ops badges */
+export type AdminDashStats = {
+  parcels?: { total?: number; pendingApproval?: number };
+  estates?: { total?: number; pendingSetup?: number };
+  batches?: { total?: number };
+};
+
+/**
+ * Shortcuts + counts for grower-related admin work (shown below main admin nav).
+ */
+export function getAdminGrowerOpsGroup(stats: AdminDashStats | null): SidebarNavGroup {
+  const t = labels;
+  const pa = stats?.parcels?.pendingApproval;
+  const es = stats?.estates?.pendingSetup;
+  const batchTotal = stats?.batches?.total;
+  return {
+    title: t.growerOps,
+    items: [
+      {
+        href: '/admin/parcels-pending',
+        label: t.goParcelsPending,
+        icon: <MapPin className="w-5 h-5 flex-shrink-0" />,
+        badge: pa != null && pa > 0 ? pa : undefined,
+      },
+      {
+        href: '/admin/estates',
+        label: t.goEstates,
+        icon: <MapPin className="w-5 h-5 flex-shrink-0 opacity-80" />,
+        badge: es != null && es > 0 ? es : undefined,
+      },
+      {
+        href: '/admin/harvest-plans',
+        label: t.goHarvestPlans,
+        icon: <CalendarRange className="w-5 h-5 flex-shrink-0" />,
+      },
+      {
+        href: '/admin/haccp',
+        label: t.goHaccp,
+        icon: <ClipboardCheck className="w-5 h-5 flex-shrink-0" />,
+      },
+      {
+        href: '/admin',
+        label: t.goBatchesPlatform,
+        icon: <Package className="w-5 h-5 flex-shrink-0" />,
+        badge: batchTotal != null && batchTotal > 0 ? batchTotal : undefined,
+      },
+    ],
+  };
 }

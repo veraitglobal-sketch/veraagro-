@@ -6,6 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -113,14 +114,14 @@ export default function GrowerPortalPage() {
         const token = localStorage.getItem('token');
         const [missionsRes, feedbackRes, financialRes] = await Promise.all([
           fetch(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/grower-portal/mission-tracker${selectedBatch ? `?batchId=${selectedBatch}` : ''}`,
+            `${WEB_API_BASE}/grower-portal/mission-tracker${selectedBatch ? `?batchId=${selectedBatch}` : ''}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           selectedBatch
             ? fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/grower-portal/consumer-feedback/${selectedBatch}`,
+                `${WEB_API_BASE}/grower-portal/consumer-feedback/${selectedBatch}`,
                 {
                   headers: { Authorization: `Bearer ${token}` },
                 }
@@ -128,7 +129,7 @@ export default function GrowerPortalPage() {
             : Promise.resolve(null),
           selectedBatch
             ? fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/grower-portal/financial-status/${selectedBatch}`,
+                `${WEB_API_BASE}/grower-portal/financial-status/${selectedBatch}`,
                 {
                   headers: { Authorization: `Bearer ${token}` },
                 }
@@ -162,7 +163,7 @@ export default function GrowerPortalPage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/grower-portal/journey-map/${missionId}`,
+        `${WEB_API_BASE}/grower-portal/journey-map/${missionId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

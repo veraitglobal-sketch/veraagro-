@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import Link from 'next/link';
 import { commandControlAPI } from '@/lib/api';
 
 type LiveMission = {
@@ -124,13 +125,13 @@ export default function CommandControlPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`rounded-lg shadow-sm border p-6 ${
+          className={`rounded-lg shadow-sm border p-4 sm:p-5 ${
             systemStatus.paused ? 'bg-red-50 border-red-200' : 'bg-[#2D5A27]/10 border-[#2D5A27]/30'
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-1">System Status</h2>
+              <h2 className="text-base font-semibold text-gray-900 mb-0.5">System status</h2>
               <p
                 className={`text-sm font-medium ${
                   systemStatus.paused ? 'text-red-700' : 'text-[#2D5A27]'
@@ -139,20 +140,22 @@ export default function CommandControlPage() {
                 {systemStatus.paused ? '⛔ PAUSED' : '✓ OPERATIONAL'}
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 shrink-0">
               {systemStatus.paused ? (
                 <button
+                  type="button"
                   onClick={handleResumeSystem}
-                  className="px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] transition-colors"
+                  className="px-4 py-2 text-sm bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                 >
-                  Resume System
+                  Resume
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={handlePauseSystem}
-                  className="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-4 py-2 text-sm bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
                 >
-                  ⛔ Pause System
+                  Pause
                 </button>
               )}
             </div>
@@ -163,32 +166,48 @@ export default function CommandControlPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Live Missions</h2>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2 className="text-base font-semibold text-gray-900">Live missions</h2>
+            <div className="flex items-center gap-2 shrink-0">
+              {activeMissions.length > 0 && (
+                <span className="text-xs tabular-nums text-gray-500">{activeMissions.length} open</span>
+              )}
+              <Link
+                href="/admin/missions"
+                className="text-xs font-medium text-[#2D5A27] hover:underline"
+              >
+                All missions
+              </Link>
+            </div>
+          </div>
           {activeMissions.length === 0 ? (
             <p className="text-sm text-gray-500">No open missions (pending through in-transit).</p>
           ) : (
-            <div className="space-y-3">
-              {activeMissions.map((mission) => (
+            <div className="max-h-64 overflow-y-auto border border-gray-100 rounded-md divide-y divide-gray-100">
+              {activeMissions.slice(0, 12).map((mission) => (
                 <div
                   key={mission.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                  className="flex items-start sm:items-center justify-between gap-2 px-2 py-2 sm:py-1.5 hover:bg-gray-50/80"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                      <p className="font-medium text-gray-900">Mission {mission.missionNumber}</p>
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span className="text-sm font-medium text-gray-900 tabular-nums">
+                        {mission.missionNumber}
+                      </span>
+                      <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-medium rounded bg-blue-100 text-blue-800">
                         {mission.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 break-words">
-                      Driver: {mission.driverName} · {mission.pickupAddress}
+                    <p className="text-xs text-gray-600 truncate" title={`${mission.driverName} · ${mission.pickupAddress}`}>
+                      {mission.driverName} · {mission.pickupAddress}
                     </p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleReassignMission(mission.id)}
-                    className="shrink-0 ml-2 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                    className="shrink-0 px-2.5 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200"
                   >
                     Reassign
                   </button>
@@ -202,9 +221,9 @@ export default function CommandControlPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Non-compliant audit flags</h2>
+          <h2 className="text-base font-semibold text-gray-900 mb-3">Non-compliant audit</h2>
           {violations.length === 0 ? (
             <p className="text-sm text-gray-500">No recent non-compliant rows in the audit log.</p>
           ) : (
@@ -212,10 +231,10 @@ export default function CommandControlPage() {
               {violations.map((violation) => (
                 <div
                   key={violation.id}
-                  className="p-4 border-l-4 border-red-500 bg-red-50 rounded-lg"
+                  className="p-3 border-l-4 border-red-500 bg-red-50 rounded-md"
                 >
-                  <div className="flex items-center justify-between mb-2 gap-2">
-                    <p className="font-medium text-gray-900">
+                  <div className="flex items-center justify-between mb-1 gap-2">
+                    <p className="text-sm font-medium text-gray-900">
                       {String(violation.type).replace(/_/g, ' ')}
                     </p>
                     <span className="text-xs text-gray-500 shrink-0">
@@ -236,24 +255,21 @@ export default function CommandControlPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="bg-white rounded-lg shadow-sm border border-gray-200 px-3 py-3 sm:px-4 sm:py-3"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Trust score overview</h2>
-          <p className="text-xs text-gray-500 mb-4">
-            Counts of logistics partners and growers with a trust record (buckets by current score).
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Score under 70</p>
-              <p className="text-2xl font-bold text-red-600">{trustSummary.blocked}</p>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Trust score (accounts with a record)</h2>
+          <div className="flex flex-wrap items-stretch divide-x divide-gray-200 rounded-md bg-gray-50 border border-gray-100">
+            <div className="flex-1 min-w-[4.5rem] px-2 py-2 text-center">
+              <p className="text-lg sm:text-xl font-bold tabular-nums text-red-600 leading-none">{trustSummary.blocked}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">&lt;70</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">70 – 79</p>
-              <p className="text-2xl font-bold text-yellow-600">{trustSummary.atRisk}</p>
+            <div className="flex-1 min-w-[4.5rem] px-2 py-2 text-center">
+              <p className="text-lg sm:text-xl font-bold tabular-nums text-yellow-600 leading-none">{trustSummary.atRisk}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">70–79</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">80 and above</p>
-              <p className="text-2xl font-bold text-[#2D5A27]">{trustSummary.healthy}</p>
+            <div className="flex-1 min-w-[4.5rem] px-2 py-2 text-center">
+              <p className="text-lg sm:text-xl font-bold tabular-nums text-[#2D5A27] leading-none">{trustSummary.healthy}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">≥80</p>
             </div>
           </div>
         </motion.div>

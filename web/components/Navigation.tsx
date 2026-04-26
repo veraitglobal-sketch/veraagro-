@@ -18,6 +18,7 @@ export default function Navigation() {
     if (!isAuthenticated || !user) {
       return [
         { href: '/', label: 'Home' },
+        { href: '/#how-it-works', label: 'How it works' },
         { href: '/for-buyers', label: 'For Buyers' },
         { href: '/growers', label: 'For Growers' },
         { href: '/suppliers', label: 'For Suppliers' },

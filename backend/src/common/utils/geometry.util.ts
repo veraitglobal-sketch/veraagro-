@@ -53,6 +53,9 @@ export class GeometryUtil {
    * Check if a point is inside a polygon
    */
   static isPointInPolygon(point: Point, polygon: Point[]): boolean {
+    if (!polygon || polygon.length < 3) {
+      return false;
+    }
     let inside = false;
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       const xi = polygon[i].lng;

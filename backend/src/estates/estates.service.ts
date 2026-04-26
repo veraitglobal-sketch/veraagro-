@@ -125,6 +125,34 @@ export class EstatesService {
     return estate;
   }
 
+  /**
+   * Lightweight boundary payload for mobile map / offline cache sync (owner only).
+   */
+  async getBoundaryForSync(id: string, userId: string) {
+    const estate = await this.prisma.estates.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        updatedAt: true,
+        polygonCoordinates: true,
+        ownerId: true,
+      },
+    });
+    if (!estate) {
+      throw new NotFoundException('Estate not found');
+    }
+    if (estate.ownerId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+    return {
+      id: estate.id,
+      name: estate.name,
+      updatedAt: estate.updatedAt.toISOString(),
+      polygonCoordinates: estate.polygonCoordinates,
+    };
+  }
+
   async update(id: string, userId: string, data: { name?: string; polygonCoordinates?: any }) {
     // Verify ownership first
     const estate = await this.findOne(id, userId);

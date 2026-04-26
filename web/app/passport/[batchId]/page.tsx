@@ -7,6 +7,7 @@ import { Shield, Download, MapPin, Package, Camera, Truck, CheckCircle, AlertTri
 import Image from 'next/image';
 import { getFirstName } from '@/lib/farmer-utils';
 import { BlockchainVerification } from '@/components/BlockchainVerification';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface Treatment {
   appliedAt: string;
@@ -163,7 +164,7 @@ export default function ProductPassportPage() {
 
   const fetchPassportData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/qr/verify/${batchId}`);
+      const response = await fetch(`${WEB_API_BASE}/qr/verify/${batchId}`);
       
       if (!response.ok) {
         throw new Error('Passport data not found');

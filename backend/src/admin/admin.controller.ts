@@ -20,8 +20,15 @@ export class AdminController {
     return this.adminService.getRecentActivities(limit ? parseInt(limit) : 10);
   }
 
+  /** Single grower (farmer) dossier: estates, parcels, batches, compliance, treatments, field evidence, KYC, trust, material balance, missions. */
+  @Get('farmers/:id')
+  async getFarmerById(@Param('id') id: string) {
+    return this.adminService.getFarmerAdminDetail(id);
+  }
+
+  /** @deprecated Use GET /admin/farmers/:id — same payload */
   @Get('farm/:id')
   async getFarmDetail(@Param('id') id: string) {
-    return this.adminService.getFarmDetailByFarmerId(id);
+    return this.adminService.getFarmerAdminDetail(id);
   }
 }

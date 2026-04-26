@@ -7,5 +7,6 @@ dist
 *.md
 .DS_Store
 coverage
+uploads
 .vscode
 .idea
