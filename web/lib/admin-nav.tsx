@@ -13,6 +13,7 @@ import {
   CalendarRange,
   Store,
   Inbox,
+  Layers,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import type { SidebarNavGroup } from '@/components/SidebarLayout';
@@ -26,6 +27,7 @@ const labels = {
   partnerApplications: 'Partner applications',
   products: 'Products',
   orders: 'Orders',
+  supplySnapshot: 'Stock vs open orders',
   missions: 'Missions',
   security: 'Security Alerts',
   marketPrices: 'Market Prices',
@@ -111,6 +113,11 @@ export function getAdminNavItems() {
       href: '/admin/orders', 
       label: labels.orders, 
       icon: <ShoppingCart className="w-5 h-5" /> 
+    },
+    { 
+      href: '/admin/operations', 
+      label: labels.supplySnapshot, 
+      icon: <Layers className="w-5 h-5" /> 
     },
     { 
       href: '/admin/missions', 

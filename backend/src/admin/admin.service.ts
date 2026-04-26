@@ -691,4 +691,128 @@ export class AdminService {
       recentBatches,
     };
   }
+
+  /**
+   * Single admin view: hub inventory + batch stock vs. quantity still committed in open sales orders
+   * (same idea as your “sort apples and see how many kg are available / already sold in orders”).
+   */
+  async getSupplyOperationsSnapshot() {
+    const OPEN_ORDER_STATUSES = ['PENDING', 'APPROVED', 'PAID', 'CONFIRMED'] as const;
+    const BATCH_STOCK_STATUSES = ['PACKED', 'IN_HUB', 'IN_TRANSIT', 'QUALITY_VERIFIED'] as const;
+
+    const [invRows, batchRows, orderLines] = await Promise.all([
+      this.prisma.inventory.findMany({
+        where: { status: 'AVAILABLE' },
+        select: {
+          productName: true,
+          quantity: true,
+          unit: true,
+          hubs: { select: { name: true, city: true } },
+        },
+      }),
+      this.prisma.batches.findMany({
+        where: { status: { in: [...BATCH_STOCK_STATUSES] } },
+        select: { productName: true, quantity: true, unit: true, status: true, batchId: true },
+      }),
+      this.prisma.order_items.findMany({
+        where: { orders: { status: { in: [...OPEN_ORDER_STATUSES] } } },
+        select: {
+          productName: true,
+          quantity: true,
+          batchId: true,
+          batches: { select: { unit: true, productName: true } },
+          orders: { select: { orderNumber: true, status: true } },
+        },
+      }),
+    ]);
+
+    const keyOf = (productName: string, unit: string) => {
+      const p = (productName || '—').trim();
+      const u = (unit || 'kg').trim().toLowerCase() || 'kg';
+      return { key: `${p.toLowerCase()}::${u}`, displayProduct: p, displayUnit: u };
+    };
+
+    const map = new Map<
+      string,
+      {
+        displayProduct: string;
+        displayUnit: string;
+        inventoryKgOrUnits: number;
+        batchKgOrUnits: number;
+        openOrdersQty: number;
+        hubNames: string[];
+        batchCount: number;
+        openOrderLineCount: number;
+      }
+    >();
+
+    const ensure = (productName: string, unit: string) => {
+      const { key, displayProduct, displayUnit } = keyOf(productName, unit);
+      let row = map.get(key);
+      if (!row) {
+        row = {
+          displayProduct,
+          displayUnit,
+          inventoryKgOrUnits: 0,
+          batchKgOrUnits: 0,
+          openOrdersQty: 0,
+          hubNames: [],
+          batchCount: 0,
+          openOrderLineCount: 0,
+        };
+        map.set(key, row);
+      }
+      return row;
+    };
+
+    for (const r of invRows) {
+      const row = ensure(r.productName, r.unit);
+      row.inventoryKgOrUnits += Number(r.quantity) || 0;
+      const hn = r.hubs?.name ? `${r.hubs.name}${r.hubs.city ? ` (${r.hubs.city})` : ''}` : null;
+      if (hn && !row.hubNames.includes(hn)) row.hubNames.push(hn);
+    }
+    for (const r of batchRows) {
+      const row = ensure(r.productName, r.unit);
+      row.batchKgOrUnits += Number(r.quantity) || 0;
+      row.batchCount += 1;
+    }
+    for (const o of orderLines) {
+      const unit = o.batches?.unit || 'kg';
+      const name = o.productName || o.batches?.productName || '—';
+      const row = ensure(name, unit);
+      row.openOrdersQty += Number(o.quantity) || 0;
+      row.openOrderLineCount += 1;
+    }
+
+    const rows = [...map.values()]
+      .map((r) => ({
+        productName: r.displayProduct,
+        unit: r.displayUnit,
+        availableInHubs: Math.round((r.inventoryKgOrUnits + Number.EPSILON) * 1000) / 1000,
+        inBatchesPipeline: Math.round((r.batchKgOrUnits + Number.EPSILON) * 1000) / 1000,
+        inOpenOrders: Math.round((r.openOrdersQty + Number.EPSILON) * 1000) / 1000,
+        netEstimate:
+          Math.round(
+            (r.inventoryKgOrUnits + r.batchKgOrUnits - r.openOrdersQty + Number.EPSILON) * 1000,
+          ) / 1000,
+        hubLabel: r.hubNames.length ? r.hubNames.join(', ') : '—',
+        batchLineCount: r.batchCount,
+        openOrderLineCount: r.openOrderLineCount,
+      }))
+      .sort((a, b) => a.productName.localeCompare(b.productName) || a.unit.localeCompare(b.unit));
+
+    return {
+      asOf: new Date().toISOString(),
+      description:
+        'Available = hub stock (listings) + on-farm/transport batches. Open orders = lines on orders that are ' +
+        'not yet complete/cancelled. Use “Product name” consistently (e.g. “Apple Golden”) so the same product rolls up; ' +
+        'typos and variants may appear as extra rows.',
+      filters: {
+        inventoryStatus: 'AVAILABLE' as const,
+        batchStatus: [...BATCH_STOCK_STATUSES],
+        openOrderStatus: [...OPEN_ORDER_STATUSES],
+      },
+      rows,
+    };
+  }
 }

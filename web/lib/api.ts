@@ -195,10 +195,28 @@ export const missionsAPI = {
   },
 };
 
+/** Same-origin BFF: avoids POST hitting the Next app host by mistake; proxies to Nest (see /api/logistics/vehicles). */
 export const logisticsVehiclesAPI = {
   list: async () => {
-    const response = await api.get('/logistics-partner/vehicles');
-    return response.data;
+    if (typeof window === 'undefined') {
+      const response = await api.get('/logistics-partner/vehicles');
+      return response.data;
+    }
+    const token = localStorage.getItem('token');
+    const res = await fetch('/api/logistics/vehicles', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err: { response?: { data: unknown; status: number } } = {
+        response: { data, status: res.status },
+      };
+      throw err;
+    }
+    return data;
   },
   create: async (body: {
     licensePlate: string;
@@ -210,8 +228,27 @@ export const logisticsVehiclesAPI = {
     tempRangeMax?: number;
     currentLocation?: { lat: number; lng: number };
   }) => {
-    const response = await api.post('/logistics-partner/vehicles', body);
-    return response.data;
+    if (typeof window === 'undefined') {
+      const response = await api.post('/logistics-partner/vehicles', body);
+      return response.data;
+    }
+    const token = localStorage.getItem('token');
+    const res = await fetch('/api/logistics/vehicles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err: { response?: { data: unknown; status: number } } = {
+        response: { data, status: res.status },
+      };
+      throw err;
+    }
+    return data;
   },
 };
 

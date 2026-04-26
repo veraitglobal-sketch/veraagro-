@@ -17,6 +17,7 @@ import {
   MapPin,
   CheckCircle,
   Calendar,
+  Layers,
 } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
 
@@ -258,6 +259,16 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-3">
                   <Package className="w-5 h-5 text-green-600" />
                   <span className="text-sm font-medium text-gray-900">Product Catalog</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Link>
+              <Link
+                href="/admin/operations"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Layers className="w-5 h-5 text-[#2D5A27]" />
+                  <span className="text-sm font-medium text-gray-900">Stock vs open orders</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </Link>
