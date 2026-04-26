@@ -6,6 +6,20 @@ import { b2bSupplierPortalAPI } from '@/lib/api';
 
 const STATUS_OPTIONS = ['PENDING', 'CONFIRMED', 'REJECTED', 'FULFILLED', 'CANCELLED'] as const;
 
+/** B2B lines may use `label` (from catalog) or `name` (older/alternate) */
+function orderLinesFromItems(items: unknown): string[] {
+  if (!Array.isArray(items)) return [];
+  return items.map((row) => {
+    if (row && typeof row === 'object') {
+      const o = row as { label?: string; name?: string; quantity?: number; unit?: string };
+      const title = (o.label || o.name || 'Item').trim() || 'Item';
+      const u = o.unit && o.unit !== 'order' && o.unit !== 'inquiry' ? ` ${o.unit}` : '';
+      return `${title} — ${o.quantity ?? 1}${u}`.trim();
+    }
+    return String(row);
+  });
+}
+
 export default function SupplierOrdersPage() {
   const [list, setList] = useState<
     Awaited<ReturnType<typeof b2bSupplierPortalAPI.getIncomingOrders>>
@@ -52,19 +66,33 @@ export default function SupplierOrdersPage() {
       <p className="text-sm text-gray-500 font-light mb-4 max-w-2xl">
         You set the workflow status. When the grower physically receives the goods, they can press{' '}
         <strong>Received at farm</strong> on their side — you will see that timestamp below. That is separate from
-        FULFILLED (e.g. you may set FULFILLED when you dispatch; they confirm when it arrives).
+        FULFILLED (e.g. you may set FULFILLED when you dispatch; they confirm when it arrives). B2B lines below are
+        the request; <strong>barcodes / in-app material balances</strong> are on the grower&apos;s Materials / compliance
+        side, not on this page.
       </p>
       {loading && <p className="text-sm text-gray-500">Loading…</p>}
       {err && <p className="text-sm text-red-600 mb-3">{err}</p>}
       <div className="space-y-3">
-        {list.map((o) => (
+        {list.map((o) => {
+          const lines = orderLinesFromItems(o.items);
+          return (
           <div
             key={o.id}
             className="bg-white border border-gray-200 rounded-lg p-4 text-sm"
           >
-            <div className="flex flex-wrap justify-between gap-2 mb-2">
-              <span className="text-gray-500 font-mono text-xs">{o.id.slice(0, 8)}…</span>
-              <span className="text-xs text-gray-500">{new Date(o.createdAt).toLocaleString()}</span>
+            <div className="flex flex-wrap justify-between gap-2 mb-1">
+              <div>
+                <p className="text-xs text-gray-500">
+                  Order ref{' '}
+                  <span className="font-mono text-gray-800" title={o.id}>
+                    {o.id.slice(0, 8).toUpperCase()}…
+                  </span>
+                </p>
+                <p className="text-[10px] text-gray-400 mt-0.5 max-w-md">
+                  First 8 characters of the system order id — not a product barcode.
+                </p>
+              </div>
+              <span className="text-xs text-gray-500 shrink-0">{new Date(o.createdAt).toLocaleString()}</span>
             </div>
             <p className="text-gray-800 mb-1">
               {o.farmer
@@ -72,9 +100,18 @@ export default function SupplierOrdersPage() {
                 : 'Grower'}
             </p>
             {o.noteFromFarmer && <p className="text-gray-600 text-xs mb-2">Note: {o.noteFromFarmer}</p>}
-            <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto mb-3 text-gray-700">
-              {JSON.stringify(o.items, null, 2)}
-            </pre>
+            <div className="mb-3">
+              <p className="text-xs font-medium text-gray-500 mb-1.5">Order lines</p>
+              {lines.length === 0 ? (
+                <p className="text-xs text-gray-500">No line items in this order.</p>
+              ) : (
+                <ul className="list-disc pl-4 space-y-0.5 text-gray-800 text-sm">
+                  {lines.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
             {o.farmerReceivedAt && (
               <p className="text-xs text-emerald-800 font-medium mb-2">
                 Grower received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
@@ -101,7 +138,8 @@ export default function SupplierOrdersPage() {
               </select>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
       {!loading && list.length === 0 && <p className="text-sm text-gray-500">No orders yet.</p>}
     </AuthGuard>

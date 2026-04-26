@@ -5,6 +5,19 @@ import { theme } from '../../lib/theme';
 
 const STATUSES = ['PENDING', 'CONFIRMED', 'REJECTED', 'FULFILLED', 'CANCELLED'] as const;
 
+function orderLinesFromItems(items: unknown): string[] {
+  if (!Array.isArray(items)) return [];
+  return items.map((row) => {
+    if (row && typeof row === 'object') {
+      const o = row as { label?: string; name?: string; quantity?: number; unit?: string };
+      const title = (o.label || o.name || 'Item').trim() || 'Item';
+      const u = o.unit && o.unit !== 'order' && o.unit !== 'inquiry' ? ` ${o.unit}` : '';
+      return `${title} — ${o.quantity ?? 1}${u}`.trim();
+    }
+    return String(row);
+  });
+}
+
 export default function SupplierOrdersScreen() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +62,9 @@ export default function SupplierOrdersScreen() {
       {list.length === 0 ? (
         <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 24 }}>No orders yet</Text>
       ) : (
-        list.map((o) => (
+        list.map((o) => {
+          const lines = orderLinesFromItems(o.items);
+          return (
           <View
             key={o.id}
             style={{
@@ -61,12 +76,32 @@ export default function SupplierOrdersScreen() {
               borderColor: theme.colors.border,
             }}
           >
+            <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 2 }}>
+              Order ref {o.id ? `${String(o.id).slice(0, 8).toUpperCase()}…` : '—'}
+            </Text>
             <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 4 }}>
               {o.farmer ? `${o.farmer.firstName || ''} ${o.farmer.lastName || ''} · ${o.farmer.partnerCode || ''}` : 'Grower'}
             </Text>
-            <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 8 }}>
+            <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 6 }}>
               {o.createdAt ? new Date(o.createdAt).toLocaleString() : ''} · {o.status}
             </Text>
+            {lines.length > 0 && (
+              <View style={{ marginBottom: 8 }}>
+                {lines.map((line, i) => (
+                  <Text
+                    key={i}
+                    style={{ fontSize: 12, color: theme.colors.text.primary, marginBottom: 2 }}
+                  >
+                    • {line}
+                  </Text>
+                ))}
+              </View>
+            )}
+            {o.farmerReceivedAt && (
+              <Text style={{ fontSize: 11, color: '#166534', marginBottom: 6 }}>
+                Grower received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+              </Text>
+            )}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
               {STATUSES.map((s) => (
                 <TouchableOpacity
@@ -91,7 +126,8 @@ export default function SupplierOrdersScreen() {
               ))}
             </View>
           </View>
-        ))
+          );
+        })
       )}
     </ScrollView>
   );
