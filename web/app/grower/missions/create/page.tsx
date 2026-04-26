@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
-import { useAuth } from '@/lib/auth';
 import { missionsAPI, batchesAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const navItems = growerNavItems;
 
@@ -20,9 +20,18 @@ interface Batch {
   status: string;
 }
 
+const GEO_OPTIONS: PositionOptions = {
+  enableHighAccuracy: false,
+  maximumAge: 5 * 60_000,
+  timeout: 18_000,
+};
+
 export default function CreateMissionPage() {
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  /** Initial batch list only (do not conflate with GPS) */
+  const [batchesLoading, setBatchesLoading] = useState(true);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [addressLookupLoading, setAddressLookupLoading] = useState(false);
+  const [locationHint, setLocationHint] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [batches, setBatches] = useState<Batch[]>([]);
@@ -33,6 +42,8 @@ export default function CreateMissionPage() {
     pickupLng: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  /** API message when mission is blocked (materials + compliance) */
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     loadBatches();
@@ -40,7 +51,7 @@ export default function CreateMissionPage() {
 
   const loadBatches = async () => {
     try {
-      setLoading(true);
+      setBatchesLoading(true);
       // Get batches that are ready for transport (PACKED status)
       const allBatches = await batchesAPI.getMyBatches();
       const readyBatches = allBatches.filter((b: any) => 
@@ -51,58 +62,85 @@ export default function CreateMissionPage() {
       console.error('Error loading batches:', error);
       alert('Failed to load batches');
     } finally {
-      setLoading(false);
+      setBatchesLoading(false);
     }
   };
 
   const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
       alert('Geolocation is not supported by your browser');
       return;
     }
 
-    setLoading(true);
+    setLocationHint(null);
+    setLocationLoading(true);
+    setAddressLookupLoading(false);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setFormData({
-          ...formData,
-          pickupLat: position.coords.latitude.toString(),
-          pickupLng: position.coords.longitude.toString(),
-        });
-        setLoading(false);
-        // Try to reverse geocode to get address
-        reverseGeocode(position.coords.latitude, position.coords.longitude);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setFormData((prev) => ({
+          ...prev,
+          pickupLat: lat.toString(),
+          pickupLng: lng.toString(),
+        }));
+        setLocationLoading(false);
+        void reverseGeocode(lat, lng);
       },
       (error) => {
         console.error('Error getting location:', error);
-        alert('Failed to get your location. Please enter it manually.');
-        setLoading(false);
-      }
+        const code = error && typeof error === 'object' && 'code' in error ? (error as GeolocationPositionError).code : 0;
+        const msg =
+          code === 1
+            ? 'Location permission was denied. Allow location for this site or enter coordinates and address below.'
+            : 'Could not get GPS before timeout. Enter latitude, longitude, and address manually.';
+        setLocationHint(msg);
+        setLocationLoading(false);
+      },
+      GEO_OPTIONS
     );
   };
 
   const reverseGeocode = async (lat: number, lng: number) => {
+    setAddressLookupLoading(true);
+    setLocationHint(null);
     try {
-      // Using OpenStreetMap Nominatim API (free, no key required)
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
-        {
-          headers: {
-            'User-Agent': 'BioVera App',
-          },
-        }
+        `/api/reverse-geocode?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lng))}`
       );
-      const data = await response.json();
-      if (data.display_name) {
-        setFormData({
-          ...formData,
-          pickupAddress: data.display_name,
-          pickupLat: lat.toString(),
-          pickupLng: lng.toString(),
-        });
+      const data = (await response.json()) as { displayName?: string | null; error?: string };
+      if (data.displayName) {
+        setFormData((prev) => ({
+          ...prev,
+          pickupAddress: data.displayName as string,
+          pickupLat: prev.pickupLat || String(lat),
+          pickupLng: prev.pickupLng || String(lng),
+        }));
+        return;
       }
+      setFormData((prev) => ({
+        ...prev,
+        pickupAddress:
+          prev.pickupAddress.trim() ||
+          `Near ${lat.toFixed(5)}, ${lng.toFixed(5)} — add farm name, street, and city`,
+        pickupLat: prev.pickupLat || String(lat),
+        pickupLng: prev.pickupLng || String(lng),
+      }));
+      setLocationHint('Address lookup did not return a name. We filled a placeholder — please edit the address.');
     } catch (error) {
       console.error('Error reverse geocoding:', error);
+      setFormData((prev) => ({
+        ...prev,
+        pickupAddress:
+          prev.pickupAddress.trim() ||
+          `Near ${lat.toFixed(5)}, ${lng.toFixed(5)} — add farm name, street, and city`,
+        pickupLat: prev.pickupLat || String(lat),
+        pickupLng: prev.pickupLng || String(lng),
+      }));
+      setLocationHint('Address lookup failed. You can still submit — please type the full pickup address.');
+    } finally {
+      setAddressLookupLoading(false);
     }
   };
 
@@ -135,6 +173,7 @@ export default function CreateMissionPage() {
     try {
       setSubmitting(true);
       setErrors({});
+      setSubmitError(null);
 
       const missionData = {
         batchId: formData.batchId || undefined,
@@ -156,13 +195,13 @@ export default function CreateMissionPage() {
       console.error('Error creating mission:', error);
       const raw = error?.response?.data?.message;
       const msg = Array.isArray(raw) ? raw.join(' ') : raw;
-      alert(msg || 'Failed to create mission');
+      setSubmitError((msg as string) || 'Failed to create mission');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading && batches.length === 0) {
+  if (batchesLoading) {
     return (
       <SidebarLayout title="Request Transport" navItems={navItems}>
         <div className="flex items-center justify-center h-64">
@@ -200,9 +239,48 @@ export default function CreateMissionPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Transport Mission</h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Request transport for your packed batch. The system will automatically find the nearest available logistics partner.
+          <p className="text-sm text-gray-600 mb-4">
+            Request transport for your packed batch. The system will automatically find the nearest available logistics
+            partner.
           </p>
+          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-800">
+            <p className="font-medium text-[#23471f] mb-1">Before this request is accepted, Bio Vera checks:</p>
+            <ul className="list-disc pl-5 space-y-1.5 text-gray-700">
+              <li>
+                <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
+                  Compliance photos
+                </Link>{' '}
+                — for <strong>this batch</strong>, all three: PUNNETS, LABELING, PALLETIZATION.
+              </li>
+              <li>
+                <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline-offset-2 hover:underline">
+                  Materials
+                </Link>{' '}
+                — enough Bio Vera crate balance (about one crate per 10 kg of product).
+              </li>
+            </ul>
+          </div>
+
+          {submitError && (
+            <div
+              className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"
+              role="alert"
+            >
+              <p className="font-medium">Could not create transport</p>
+              <p className="mt-1 whitespace-pre-wrap">{submitError}</p>
+              <p className="mt-3 text-xs text-red-800/90">
+                Add photos:{' '}
+                <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
+                  Compliance photos
+                </Link>
+                . Order crates:{' '}
+                <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline">
+                  Materials
+                </Link>
+                .
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
@@ -239,15 +317,34 @@ export default function CreateMissionPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Pickup Location *
               </label>
-              <button
-                type="button"
-                onClick={getCurrentLocation}
-                disabled={loading}
-                className="mb-3 inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400"
-              >
-                <MapPin className="w-4 h-4" />
-                {loading ? 'Getting Location...' : 'Use My Current Location'}
-              </button>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  disabled={locationLoading || addressLookupLoading}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400"
+                >
+                  {locationLoading || addressLookupLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
+                  {locationLoading
+                    ? 'Getting GPS...'
+                    : addressLookupLoading
+                      ? 'Looking up address...'
+                      : 'Use my current location'}
+                </button>
+              </div>
+              {locationHint && (
+                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-3">
+                  {locationHint}
+                </p>
+              )}
+              <p className="text-xs text-gray-500 mb-2">
+                If GPS is slow, enter latitude and longitude and the address yourself — the form does not require
+                using the button.
+              </p>
 
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>

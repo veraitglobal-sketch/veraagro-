@@ -130,9 +130,11 @@ export default function GrowerFieldsPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Fields" navItems={growerNavItems}>
-        <div className="w-full max-w-6xl mx-auto">
-          <h1 className="text-2xl font-light text-gray-900 mb-1">My fields & parcels</h1>
-          <p className="text-sm text-gray-600 mb-6">Add parcels here. Admin must approve before batches and field work.</p>
+        <div className="p-6 bg-gray-50 min-h-screen">
+          <div className="mb-6">
+            <h1 className="text-3xl font-light text-gray-900">My fields &amp; parcels</h1>
+            <p className="text-sm text-gray-600 mt-1">Add parcels here. Admin must approve before batches and field work.</p>
+          </div>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
@@ -143,7 +145,7 @@ export default function GrowerFieldsPage() {
               <Loader2 className="w-8 h-8 animate-spin text-[#2D5A27]" />
             </div>
           ) : estates.length === 0 ? (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
               <p className="text-gray-600 mb-4">You have no fields yet. Add your first one.</p>
               <form onSubmit={handleAddEstate} className="flex flex-wrap items-center gap-2">
                 <input
@@ -165,7 +167,7 @@ export default function GrowerFieldsPage() {
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap items-center gap-2">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   value={newEstateName}
@@ -184,7 +186,7 @@ export default function GrowerFieldsPage() {
                 </button>
               </div>
               {estates.map((estate) => (
-                <div key={estate.id} className="bg-white border border-gray-200 rounded-xl p-6">
+                <div key={estate.id} className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
                   <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                     <MapPin className="w-5 h-5" />
                     <h2 className="text-lg font-medium">{estate.name}</h2>

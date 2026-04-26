@@ -222,7 +222,7 @@ export default function GrowerWhereToBuyPage() {
         setLocating(false);
         alert('Could not get your position. Check browser permissions and try again.');
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
+      { enableHighAccuracy: false, timeout: 18_000, maximumAge: 5 * 60_000 },
     );
   };
 
@@ -234,65 +234,70 @@ export default function GrowerWhereToBuyPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
       <SidebarLayout title="Suppliers & orders" navItems={growerNavItems}>
-        <div className="w-full max-w-7xl mx-auto space-y-6">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 space-y-4 min-w-0">
-          <p className="text-sm text-gray-600 font-light">
-            Choose a <strong>country</strong> and, if you want, a <strong>city</strong> (larger places where we have
-            listings). Use <strong>Nearest to me</strong> to sort by distance. Retail pickup points and partner stores
-            (green vs orange) come from the public directory.
-          </p>
-
-          {!loading && productionCountry && (
-            <p className="text-xs text-gray-500 font-light mb-3">
-              Your profile production country:{' '}
-              <span className="font-medium text-gray-700">{productionCountry}</span>
-              {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
-                <span> — matching areas are highlighted in the list first when not using “nearest”.</span>
-              ) : (
-                <span> — no directory entries for this country yet; they can appear after admin approval.</span>
-              )}
-            </p>
-          )}
-
-          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-            <p className="font-medium flex items-center gap-2">
-              <Info className="h-4 w-4 shrink-0" />
-              Partner store visibility
-            </p>
-            <p className="mt-1.5 text-amber-900/90 font-light leading-relaxed">
-              A material supplier is listed <strong>only</strong> after the address is <strong>approved for the public
-              directory</strong> (<code className="text-xs bg-amber-100/80 px-1">mapApproved</code>). Retail rows come
-              from hub records.
-            </p>
+        <div className="p-6 bg-gray-50 min-h-screen space-y-6">
+          <div className="mb-2">
+            <h1 className="text-3xl font-light text-gray-900">Suppliers &amp; orders</h1>
+            <p className="text-sm text-gray-600 mt-1">Directory, material orders, and partner messages in one place.</p>
           </div>
+          <section className="rounded-lg border border-gray-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              Choose a <strong>country</strong> and optionally a <strong>city</strong>. Use{' '}
+              <strong>Nearest to me</strong> to sort by distance. Retail pickup points and partner stores come from the
+              public directory.
+            </p>
+            {!loading && productionCountry && (
+              <p className="text-xs text-gray-500">
+                Your profile production country:{' '}
+                <span className="font-medium text-gray-700">{productionCountry}</span>
+                {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
+                  <span> — matching areas are listed first when not using &quot;nearest&quot;.</span>
+                ) : (
+                  <span> — no directory entries for this country yet; they can appear after admin approval.</span>
+                )}
+              </p>
+            )}
+            <div className="rounded-lg border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+              <p className="font-medium flex items-center gap-2">
+                <Info className="h-4 w-4 shrink-0" />
+                Partner store visibility
+              </p>
+              <p className="mt-1.5 text-amber-900/90 leading-relaxed">
+                A material supplier is listed <strong>only</strong> after the address is approved for the public
+                directory. Retail rows come from hub records.
+              </p>
+            </div>
+          </section>
 
           {err && (
-            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
+            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
           )}
 
-          {loading ? (
-            <p className="text-sm text-gray-500">Loading directory…</p>
-          ) : items.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-gray-200 bg-white p-8 text-sm text-gray-600">
-              <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-              <p className="font-medium text-gray-800 text-center">No locations in the public directory yet</p>
-              <p className="mt-3 text-center font-light max-w-md mx-auto">
-                Ask a Bio Vera admin to approve partner entries or add retail hub data. When entries exist, use the
-                country and city filters here.
-              </p>
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => void load()}
-                  className="mt-4 text-sm text-[#2D5A27] hover:underline"
-                >
-                  Retry
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 min-w-0 flex flex-col min-h-0">
+              {loading ? (
+                <p className="text-sm text-gray-500">Loading directory…</p>
+              ) : items.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-sm text-gray-600 text-center">
+                  <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                  <p className="font-medium text-gray-800">No locations in the public directory yet</p>
+                  <p className="mt-3 font-light max-w-md mx-auto">
+                    Ask a Bio Vera admin to approve partner entries or add retail hub data. When entries exist, use the
+                    country and city filters here.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void load()}
+                    className="mt-4 text-sm text-[#2D5A27] font-medium hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-base font-semibold text-gray-900">Supplier directory</h2>
+                  <p className="text-xs text-gray-500 mt-1 mb-4">
+                    Filter by place, then open a partner to order materials or start a message thread.
+                  </p>
               <div className="mb-4 space-y-3">
                 <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" />
@@ -372,10 +377,10 @@ export default function GrowerWhereToBuyPage() {
               </div>
 
               <div>
-                <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-2">
                   <List className="h-4 w-4 text-[#2D5A27]" />
                   Locations
-                </h2>
+                </h3>
                 <p className="text-xs text-gray-500 font-light mb-3">
                   Names and full addresses. <strong>Partner stores</strong> open a product list where you can enter
                   quantities and send a direct order to that supplier.
@@ -442,13 +447,13 @@ export default function GrowerWhereToBuyPage() {
                 </ul>
               </div>
 
-              <p className="mt-3 text-xs text-gray-400 font-light">
+              <p className="mt-3 text-xs text-gray-400">
                 {items.filter((i) => i.kind === 'retail').length} retail ·{' '}
                 {items.filter((i) => i.kind === 'supplier').length} partner
-                {selectedCountry !== 'ALL' && ` · filtered: ${sortedForList.length} shown`}
+                {selectedCountry !== 'ALL' && ` · ${sortedForList.length} shown`}
               </p>
             </>
-          )}
+              )}
             </div>
 
             <PartnerB2BPanel />

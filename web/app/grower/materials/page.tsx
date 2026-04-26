@@ -34,11 +34,13 @@ export default function GrowerMaterialsPage() {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [typesError, setTypesError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setError(null);
+      setTypesError(null);
       try {
         const token = localStorage.getItem('token');
         const auth = { Authorization: `Bearer ${token}` };
@@ -50,6 +52,8 @@ export default function GrowerMaterialsPage() {
         if (balanceRes.ok) {
           const balanceData = await balanceRes.json();
           setBalance(balanceData);
+        } else {
+          setError('Could not load your material balance. Check that you are logged in.');
         }
 
         if (typesRes.ok) {
@@ -65,11 +69,19 @@ export default function GrowerMaterialsPage() {
                 description: t.description ?? null,
               })),
             );
+            if (types.length === 0) {
+              setTypesError(
+                'No products in the catalog. Refresh the page; if the list stays empty, ask a Bio Vera admin to enable material types.',
+              );
+            } else {
+              setTypesError(null);
+            }
           } else {
             setMaterialTypes([]);
+            setTypesError('Invalid response from the server for material types.');
           }
         } else {
-          setError('Could not load material types');
+          setTypesError('Could not load the list of materials (network or API).');
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -125,17 +137,23 @@ export default function GrowerMaterialsPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title="Material Management" navItems={navItems}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading...</div>
+      <SidebarLayout title="Materials" navItems={navItems}>
+        <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
+          <div className="text-gray-500 text-sm">Loading materials…</div>
         </div>
       </SidebarLayout>
     );
   }
 
   return (
-    <SidebarLayout title="Material Management" navItems={navItems}>
-      <div className="space-y-6">
+    <SidebarLayout title="Materials" navItems={navItems}>
+      <div className="p-6 bg-gray-50 min-h-screen space-y-6">
+        <div className="mb-2">
+          <h1 className="text-3xl font-light text-gray-900">Materials</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Order official Bio Vera packaging here (crates, label rolls, film). Purchases add to the balances above the form.
+          </p>
+        </div>
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -143,6 +161,15 @@ export default function GrowerMaterialsPage() {
             className="p-4 bg-red-50 border border-red-200 rounded-lg"
           >
             <p className="text-sm text-red-800">{error}</p>
+          </motion.div>
+        )}
+        {typesError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          >
+            <p className="text-sm text-amber-950">{typesError}</p>
           </motion.div>
         )}
 
@@ -186,11 +213,15 @@ export default function GrowerMaterialsPage() {
           transition={{ delay: 0.1 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Purchase Official Materials</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">Purchase official materials</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Open the list and pick <strong>crate</strong> (increments &quot;Crates&quot;), <strong>label roll</strong>, or{' '}
+            <strong>film</strong> (meters) — matching the three balance cards.
+          </p>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Material
+                Product to order
               </label>
               <select
                 value={selectedMaterial}

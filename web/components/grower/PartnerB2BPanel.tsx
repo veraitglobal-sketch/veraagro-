@@ -36,10 +36,14 @@ function threadTitle(t: ThreadRow) {
   return n || t.supplier?.partnerCode || 'Partner';
 }
 
+type PartnerB2BPanelProps = {
+  className?: string;
+};
+
 /**
  * Right column on "Suppliers & orders": direct B2B orders + message threads (same card style as Request Transport).
  */
-export default function PartnerB2BPanel() {
+export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps) {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +76,7 @@ export default function PartnerB2BPanel() {
   return (
     <div
       id="my-orders"
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 space-y-8 xl:sticky xl:top-6"
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6 min-h-0 flex flex-col lg:sticky lg:top-20 lg:max-h-[min(calc(100vh-5rem),56rem)] lg:overflow-y-auto [scrollbar-gutter:stable] ${className}`.trim()}
     >
       <div>
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1">

@@ -23,14 +23,13 @@ export class GrowerPortalService {
       where.batchId = batchId;
     }
 
+    // Only include relations used by `buildMissionTrackerData` / `buildMilestones`. Omit large or
+    // optional nested rows (e.g. quality_entries) that can make Prisma fail on legacy DB data.
     const missions = await this.prisma.missions.findMany({
       where,
       include: {
         batches: {
           include: {
-            estates: true,
-            quality_entries: true,
-            freshness_trackers: true,
             distributor_arrivals: {
               orderBy: { arrivalTime: 'desc' },
               take: 1,
@@ -46,17 +45,8 @@ export class GrowerPortalService {
           },
         },
         vehicles: true,
-        logistics_handovers: true,
-        location_logs: {
-          orderBy: { timestamp: 'desc' },
-          take: 50, // Last 50 location updates
-        },
         border_wait_times: {
           orderBy: { borderArrivalTime: 'desc' },
-        },
-        temperature_logs: {
-          orderBy: { timestamp: 'desc' },
-          take: 100, // Last 100 temperature readings
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -282,10 +272,10 @@ export class GrowerPortalService {
       status: mission.status,
       currentMilestone: currentMilestone?.name,
       milestones,
-      driver: mission.logisticsPartner
+      driver: mission.users_missions_logisticsPartnerIdTousers
         ? `${mission.users_missions_logisticsPartnerIdTousers.firstName} ${mission.users_missions_logisticsPartnerIdTousers.lastName}`
         : 'Not assigned',
-      vehicle: mission.vehicle?.vehicleNumber || 'Not assigned',
+      vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
       requestedAt: mission.requestedAt,
       pickedUpAt: mission.pickedUpAt,
       completedAt: mission.completedAt,
@@ -383,7 +373,7 @@ export class GrowerPortalService {
     }
 
     // Arrived at Distributor
-    if (mission.batch?.distributor_arrivals && mission.batches.distributor_arrivals.length > 0) {
+    if ((mission.batches?.distributor_arrivals?.length ?? 0) > 0) {
       const arrival = mission.batches.distributor_arrivals[0];
       milestones.push({
         name: 'Arrived at Distributor',

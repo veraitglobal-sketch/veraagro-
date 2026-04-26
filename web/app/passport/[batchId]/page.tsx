@@ -164,13 +164,31 @@ export default function ProductPassportPage() {
 
   const fetchPassportData = async () => {
     try {
-      const response = await fetch(`${WEB_API_BASE}/qr/verify/${batchId}`);
-      
+      setError(null);
+      const id =
+        typeof batchId === 'string' && batchId.length > 0
+          ? decodeURIComponent(batchId)
+          : String(batchId ?? '');
+      const response = await fetch(`${WEB_API_BASE}/qr/verify/${encodeURIComponent(id)}`);
+      const raw: unknown = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        throw new Error('Passport data not found');
+        const r = raw as { message?: string | string[] };
+        const fromApi =
+          typeof r?.message === 'string'
+            ? r.message
+            : Array.isArray(r?.message)
+              ? r.message.join(' ')
+              : null;
+        throw new Error(
+          fromApi ||
+            (response.status === 404
+              ? 'No batch matches this code. Check the BATCH-… number (e.g. year 2026 vs 2326), or open "Open passport" from your producer profile so the link matches production data.'
+              : 'Could not load passport. The service may be temporarily unavailable.'),
+        );
       }
-      
-      const apiData = await response.json();
+
+      const apiData = raw as any;
       
       const harvestDate = apiData.batch?.harvestDate || apiData.timeline?.harvested || new Date().toISOString();
       const harvestWhen = new Date(harvestDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });

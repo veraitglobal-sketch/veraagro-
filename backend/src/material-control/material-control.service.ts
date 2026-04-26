@@ -8,13 +8,63 @@ export class MaterialControlService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Get available material types
+   * Get available material types. If the catalog is empty (fresh DB / no seed), create the default
+   * Bio Vera CRATE, LABEL, FILM products so the grower "Materials" page always has a dropdown.
    */
   async getMaterialTypeEnums() {
+    const anyRow = await this.prisma.material_types.count();
+    if (anyRow === 0) {
+      await this.seedDefaultMaterialTypes();
+    }
     return this.prisma.material_types.findMany({
       where: { isActive: true },
       orderBy: { name: 'asc' },
     });
+  }
+
+  private async seedDefaultMaterialTypes() {
+    const now = new Date();
+    const rows = [
+      {
+        name: 'Bio Vera Crate (standard)',
+        type: 'CRATE' as const,
+        unit: 'crate',
+        unitPrice: 0.5,
+        description: 'Official reusable crate for transport compliance',
+      },
+      {
+        name: 'Bio Vera Label roll',
+        type: 'LABEL' as const,
+        unit: 'roll',
+        unitPrice: 0.1,
+        description: 'Official sticker / QR label roll',
+      },
+      {
+        name: 'Bio Vera Protective film',
+        type: 'FILM' as const,
+        unit: 'meter',
+        unitPrice: 0.05,
+        description: 'Official protective film (per meter)',
+      },
+    ];
+    for (const r of rows) {
+      try {
+        await this.prisma.material_types.create({
+          data: {
+            id: crypto.randomUUID(),
+            name: r.name,
+            type: r.type,
+            unit: r.unit,
+            unitPrice: r.unitPrice,
+            description: r.description,
+            isActive: true,
+            updatedAt: now,
+          },
+        });
+      } catch (e) {
+        // e.g. unique name race — ignore
+      }
+    }
   }
 
   /**

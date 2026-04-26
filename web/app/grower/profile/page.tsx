@@ -150,7 +150,7 @@ export default function FarmerProfilePage() {
     return (
       <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
         <SidebarLayout title="My Profile" navItems={growerNavItems}>
-          <div className="flex items-center justify-center min-h-[40vh]">
+          <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
             <Loader2 className="w-8 h-8 animate-spin text-[#2D5A27]" />
           </div>
         </SidebarLayout>
@@ -161,9 +161,15 @@ export default function FarmerProfilePage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Profile" navItems={growerNavItems}>
-        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-          <h1 className="text-xl font-semibold text-gray-900 mb-6">My farmer profile</h1>
+        <div className="p-6 bg-gray-50 min-h-screen">
+          <div className="mb-6">
+            <h1 className="text-3xl font-light text-gray-900">My Profile</h1>
+            <p className="text-sm text-gray-600 mt-1">Public page, your story, and Bio Vera QR for markets and packaging.</p>
+          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sm:p-7 flex flex-col h-full min-h-0">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">My farmer profile</h2>
+          <p className="text-sm text-gray-500 mb-6">Details shown on your public page when people scan your QR code.</p>
 
           {/* Photo Upload Section */}
           <div className="mb-8">
@@ -260,7 +266,7 @@ export default function FarmerProfilePage() {
           </div>
 
           {/* Generation */}
-          <div className="mb-6">
+          <div>
             <label htmlFor="generation" className="block text-sm font-medium text-gray-700 mb-2">
               Generation
             </label>
@@ -277,11 +283,11 @@ export default function FarmerProfilePage() {
             </p>
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="mt-auto flex justify-end pt-6 border-t border-gray-100">
             <button
               onClick={handleSave}
               disabled={saving}
-              className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-colors ${
                 saving
                   ? 'bg-gray-400 text-white cursor-not-allowed'
                   : 'bg-[#2D5A27] text-white hover:bg-[#23471f]'
@@ -303,7 +309,7 @@ export default function FarmerProfilePage() {
         </div>
 
           {/* Your QR Code – right column on large screens */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden h-full min-h-0 flex flex-col">
           <div className="overflow-hidden rounded-2xl border border-[#2D5A27]/20 bg-gradient-to-b from-[#2D5A27]/5 to-white m-3 sm:m-4">
             <div className="bg-[#2D5A27] px-6 py-4">
               <div className="flex items-center gap-3">
@@ -415,6 +421,7 @@ export default function FarmerProfilePage() {
             </div>
           </div>
           </div>
+        </div>
         </div>
       </SidebarLayout>
     </AuthGuard>

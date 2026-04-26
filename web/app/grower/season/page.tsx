@@ -48,10 +48,14 @@ export default function GrowerFieldSeasonPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="Steps" navItems={growerNavItems}>
-        <div className="w-full max-w-6xl mx-auto space-y-4">
+        <div className="p-6 bg-gray-50 min-h-screen">
+          <div className="mb-6">
+            <h1 className="text-3xl font-light text-gray-900">Steps</h1>
+            <p className="text-sm text-gray-600 mt-1">Parcels → approval → work &amp; harvest</p>
+          </div>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
-            <h1 className="text-lg font-semibold text-gray-900 mb-1">Three steps</h1>
-            <p className="text-sm text-gray-500 mb-6">Parcels → approval → work &amp; harvest</p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Three steps</h2>
+            <p className="text-sm text-gray-500 mb-6">Follow the order below to get from map to harvest.</p>
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>

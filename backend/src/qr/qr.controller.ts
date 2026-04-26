@@ -22,7 +22,14 @@ export class QrController {
   }
 
   @Get('verify/:batchId')
-  async getVerification(@Param('batchId') batchId: string) {
+  async getVerification(@Param('batchId') raw: string) {
+    const batchId = (() => {
+      try {
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
+      }
+    })();
     // Support both batchId and QR ID format
     const qrId = batchId.startsWith('BIO-VERA-') ? batchId : `BIO-VERA-${batchId}`;
     return this.qrService.getCertificateData(qrId);

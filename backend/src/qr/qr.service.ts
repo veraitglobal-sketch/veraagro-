@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as QRCode from 'qrcode';
 import * as PDFDocument from 'pdfkit';
@@ -68,17 +68,15 @@ export class QrService {
    * Get certificate data by QR ID
    */
   async getCertificateData(qrId: string) {
-    // QR ID format: BIO-VERA-BATCH-2026-001
-    // Extract batch number from QR ID
-    const batchIdMatch = qrId.replace('BIO-VERA-', '');
-    if (!batchIdMatch) {
-      throw new Error('Invalid QR ID format');
+    // QR ID format: BIO-VERA-BATCH-2026-001 (public batch code) or BIO-VERA-<cuid> (internal id)
+    const key = String(qrId).replace(/^BIO-VERA-/, '').trim();
+    if (!key) {
+      throw new NotFoundException('Invalid QR or batch id');
     }
 
-    const batchNumber = batchIdMatch;
-
-    const batch = await this.prisma.batches.findUnique({
-      where: { batchId: batchNumber },
+    // Human-readable batchId (BATCH-…) or Prisma cuid
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ batchId: key }, { id: key }] },
       include: {
         estates: {
           include: {
@@ -130,7 +128,9 @@ export class QrService {
     });
 
     if (!batch) {
-      throw new Error(`Batch not found for QR ID: ${qrId}`);
+      throw new NotFoundException(
+        `No batch found for "${key}". Check the code on the label (e.g. BATCH-2026-…); links must match production data.`,
+      );
     }
 
     // Calculate timeline
