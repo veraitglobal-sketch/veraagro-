@@ -215,24 +215,40 @@ export class BatchesService {
    */
   async assignToOrder(batchId: string, orderItemId: string) {
     // Note: Batch can have multiple orderItems, so we link via OrderItem instead
-    return this.prisma.batches.update({
+    const updated = await this.prisma.batches.update({
       where: { batchId },
       data: {
         status: 'IN_TRANSIT',
       },
     });
+    if (updated.harvestedByUserId) {
+      this.notificationsGateway.emitBatchUpdatedToGrower(updated.harvestedByUserId, {
+        id: updated.id,
+        batchId: updated.batchId,
+        status: updated.status,
+      });
+    }
+    return updated;
   }
 
   /**
    * Mark batch as delivered
    */
   async markDelivered(batchId: string) {
-    return this.prisma.batches.update({
+    const updated = await this.prisma.batches.update({
       where: { batchId },
       data: {
         status: 'DELIVERED',
       },
     });
+    if (updated.harvestedByUserId) {
+      this.notificationsGateway.emitBatchUpdatedToGrower(updated.harvestedByUserId, {
+        id: updated.id,
+        batchId: updated.batchId,
+        status: updated.status,
+      });
+    }
+    return updated;
   }
 
   /**

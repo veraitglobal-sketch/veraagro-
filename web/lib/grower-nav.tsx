@@ -2,6 +2,7 @@
 
 import {
   Home,
+  Inbox,
   MapPin,
   MapPinned,
   Package,
@@ -31,6 +32,7 @@ export const growerNavItems: GrowerNavItem[] = [
   { href: '/grower/fields', label: 'My Fields', icon: <MapPinned className="w-5 h-5" /> },
   { href: '/grower/season', label: 'Steps', icon: <Sprout className="w-5 h-5" /> },
   { href: '/grower/where-to-buy', label: 'Where to buy', icon: <ShoppingBag className="w-5 h-5" /> },
+  { href: '/grower/partner-orders', label: 'Partner orders', icon: <Inbox className="w-5 h-5" /> },
   { href: '/grower/materials', label: 'Materials', icon: <Package className="w-5 h-5" /> },
   { href: '/grower/quality-entry', label: 'Quality Entry', icon: <CheckCircle className="w-5 h-5" /> },
   { href: '/grower/compliance-photos', label: 'Compliance Photos', icon: <Camera className="w-5 h-5" /> },

@@ -41,7 +41,7 @@ export default function GrowerPartnerStorePage() {
       setData(null);
       setLoadErr(
         (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Store not found or not approved for the directory.',
+          'Store not found, or partner is inactive.',
       );
     } finally {
       setLoading(false);
@@ -125,6 +125,11 @@ export default function GrowerPartnerStorePage() {
 
           {data && !successId && (
             <>
+              {data.mapOnPublicDirectory === false && (
+                <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2.5 text-sm text-sky-950 mb-4">
+                  This partner is not on the public “Where to buy” map yet. You can still order using this link.
+                </div>
+              )}
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm mb-6">
                 <div className="flex items-start gap-3">
                   <div className="rounded-lg bg-[#2D5A27]/10 p-2.5 text-[#2D5A27]">

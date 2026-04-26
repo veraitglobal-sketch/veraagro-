@@ -6,10 +6,11 @@ import { b2bSupplierPortalAPI, usersAPI } from '@/lib/api';
 import { KeyRound, MapPin, Store, User } from 'lucide-react';
 
 function getApiErrorMessage(e: unknown): string {
-  const r = e as { response?: { data?: { message?: unknown } } };
+  const r = e as { response?: { data?: { message?: unknown; error?: string } } };
   const m = r?.response?.data?.message;
-  if (Array.isArray(m)) return m.join(' ');
+  if (Array.isArray(m)) return m.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join(' ');
   if (typeof m === 'string') return m;
+  if (typeof r?.response?.data?.error === 'string') return r.response.data.error;
   if (e instanceof Error) return e.message;
   return 'Request failed';
 }
@@ -127,7 +128,7 @@ export default function SupplierSettingsPage() {
       setOk('Saved. If you changed address or the map pin, the listing will show as pending until Bio Vera verifies it.');
       await load();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Save failed');
+      setErr(getApiErrorMessage(e));
     } finally {
       setSaving(false);
     }

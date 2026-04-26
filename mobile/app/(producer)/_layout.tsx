@@ -37,6 +37,14 @@ export default function ProducerLayout() {
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />
         <Stack.Screen name="dashboard" />
+        <Stack.Screen
+          name="partner-orders"
+          options={{
+            headerShown: true,
+            title: 'Partner orders',
+            headerBackTitle: 'Back',
+          }}
+        />
         <Stack.Screen name="vera-bag" />
         <Stack.Screen name="vera-insights" />
         <Stack.Screen name="plot-mapper" />

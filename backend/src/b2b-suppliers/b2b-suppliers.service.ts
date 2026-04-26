@@ -96,7 +96,9 @@ export class B2bSuppliersService {
       where: { userId },
       include: { user: { select: { id: true, firstName: true, lastName: true, partnerCode: true, email: true, phone: true, status: true, roles: true } } },
     });
-    if (!p || !p.mapApproved) throw new NotFoundException('Supplier not found');
+    if (!p?.user) throw new NotFoundException('Supplier not found');
+    if (p.user.status !== 'ACTIVE') throw new NotFoundException('Supplier not found');
+    if (!p.user.roles?.includes('MATERIAL_SUPPLIER' as any)) throw new NotFoundException('Supplier not found');
     const catalog = await this.prisma.supplier_catalog_items.findMany({
       where: { supplierUserId: userId, isActive: true },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
@@ -120,6 +122,8 @@ export class B2bSuppliersService {
       city: p.city,
       country: p.country,
       location: p.location,
+      /** Javna mapa “Where to buy” prikazuje samo true; order i direktan link rade i dok čeka odobrenje mape. */
+      mapOnPublicDirectory: p.mapApproved,
       partnerCode: p.user?.partnerCode,
       contactEmail: p.user?.email,
       contactPhone: p.user?.phone,
@@ -487,7 +491,8 @@ export class B2bSuppliersService {
       throw new BadRequestException('Not a material supplier');
     }
     const prof = await this.prisma.material_supplier_profiles.findUnique({ where: { userId: supplierUserId } });
-    if (!prof || !prof.mapApproved) throw new BadRequestException('Supplier is not visible on the map');
+    if (!prof) throw new BadRequestException('Supplier has no store profile');
+    if (supplier.status !== 'ACTIVE') throw new BadRequestException('Supplier account is not active');
     return this.prisma.supplier_threads.upsert({
       where: { farmerId_supplierUserId: { farmerId, supplierUserId } },
       create: {
@@ -567,7 +572,8 @@ export class B2bSuppliersService {
     const supplier = await this.prisma.users.findUnique({ where: { id: data.supplierUserId } });
     if (!supplier?.roles.includes('MATERIAL_SUPPLIER' as any)) throw new BadRequestException('Invalid supplier');
     const prof = await this.prisma.material_supplier_profiles.findUnique({ where: { userId: data.supplierUserId } });
-    if (!prof?.mapApproved) throw new BadRequestException('Supplier not on map');
+    if (!prof) throw new BadRequestException('Invalid supplier');
+    if (supplier.status !== 'ACTIVE') throw new BadRequestException('Supplier account is not active');
     let threadId = data.threadId ?? null;
     if (threadId) {
       const th = await this.prisma.supplier_threads.findFirst({

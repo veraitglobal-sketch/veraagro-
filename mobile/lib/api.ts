@@ -372,6 +372,16 @@ export const b2bSuppliersAPI = {
     const response = await api.post('/b2b-suppliers/orders', payload);
     return response.data;
   },
+  /** Logged-in grower: B2B orders to material suppliers. */
+  getMyDirectOrders: async () => {
+    const response = await api.get('/b2b-suppliers/orders/mine');
+    return response.data || [];
+  },
+  /** Logged-in grower: message threads with material suppliers. */
+  getMyThreadsAsFarmer: async () => {
+    const response = await api.get('/b2b-suppliers/threads/mine');
+    return response.data || [];
+  },
   getMyProfile: async () => {
     const response = await api.get('/b2b-suppliers/my/profile');
     return response.data;
@@ -391,10 +401,6 @@ export const b2bSuppliersAPI = {
   getThreadMessages: async (threadId: string) => {
     const response = await api.get(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`);
     return response.data || [];
-  },
-  postMessage: async (threadId: string, body: string) => {
-    const response = await api.post(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`, { body });
-    return response.data;
   },
   patchOrderStatus: async (orderId: string, data: { status: string; noteFromSupplier?: string }) => {
     const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);

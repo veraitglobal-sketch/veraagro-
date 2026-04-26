@@ -13,6 +13,7 @@ import {
   FilePlus,
   Image as ImageIcon,
   ClipboardCheck,
+  ShoppingBag,
 } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
@@ -28,6 +29,7 @@ export type FarmerHomeHandlers = {
   onHarvest: () => void;
   onCompliancePhotos: () => void;
   onQuality: () => void;
+  onPartnerOrders: () => void;
 };
 
 const row = {
@@ -122,6 +124,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
   ];
 
   const also: { key: string; onPress: () => void; icon: React.ReactNode; titleKey: string }[] = [
+    { key: 'b2b', onPress: handlers.onPartnerOrders, icon: <ShoppingBag size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoPartnerOrders' },
     { key: 'prod', onPress: handlers.onMyProducts, icon: <Package size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoProducts' },
     { key: 'scan', onPress: handlers.onScan, icon: <Camera size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoScan' },
     { key: 'harvest', onPress: handlers.onHarvest, icon: <FilePlus size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoHarvest' },

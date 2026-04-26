@@ -161,6 +161,22 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
       message: notification.message,
       actionUrl: notification.actionUrl,
     });
+
+    this.emitBatchUpdatedToGrower(userId, {
+      id: batch.id,
+      batchId: batch.batchId,
+      status: batch.status,
+    });
+  }
+
+  /**
+   * Push to grower app so Batches list / filters refresh without manual pull (IN_HUB, IN_TRANSIT, …).
+   */
+  emitBatchUpdatedToGrower(
+    userId: string,
+    payload: { id: string; batchId: string; status: string },
+  ) {
+    this.server.to(`user:${userId}`).emit('batch:updated', payload);
   }
 
   /**

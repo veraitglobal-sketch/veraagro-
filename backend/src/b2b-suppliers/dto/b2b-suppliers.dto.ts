@@ -10,7 +10,13 @@ import {
   MinLength,
   IsInt,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
+
+/** PATCH bodies often send "" or null; treat as absent so @IsOptional + @MinLength work. */
+function emptyToUndefined({ value }: { value: unknown }) {
+  if (value === '' || value === null) return undefined;
+  return value;
+}
 
 /**
  * Admin-only: one step — user account (MATERIAL_SUPPLIER) + store profile.
@@ -132,64 +138,82 @@ export class CreateB2bSupplierProfileDto {
 
 /** Partial update: store + contact; any change to address triggers map re-approval. */
 export class UpdateB2bSupplierStoreDto {
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   businessName?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   description?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   website?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   street?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   houseNumber?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   postalCode?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   city?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   country?: string;
 
+  @Transform(({ value }) =>
+    value === '' || value === null || value === undefined ? undefined : Number(value),
+  )
   @IsNumber()
   @IsOptional()
   latitude?: number;
 
+  @Transform(({ value }) =>
+    value === '' || value === null || value === undefined ? undefined : Number(value),
+  )
   @IsNumber()
   @IsOptional()
   longitude?: number;
 
+  @Transform(emptyToUndefined)
   @IsEmail()
   @IsOptional()
   email?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   phone?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)
   firstName?: string;
 
+  @Transform(emptyToUndefined)
   @IsString()
   @IsOptional()
   @MinLength(1)

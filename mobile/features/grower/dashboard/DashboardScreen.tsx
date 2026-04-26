@@ -34,6 +34,7 @@ export default function DashboardScreen() {
     onHarvest: () => router.push('/(producer)/(tabs)/harvest'),
     onCompliancePhotos: () => router.push('/(producer)/compliance-photos'),
     onQuality: () => router.push('/(producer)/quality-entry'),
+    onPartnerOrders: () => router.push('/(producer)/partner-orders'),
   };
 
   const hasAlerts =

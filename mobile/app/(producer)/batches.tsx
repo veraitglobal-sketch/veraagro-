@@ -1,6 +1,8 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
 import { ArrowLeft, Package, QrCode, Calendar } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
@@ -19,11 +21,7 @@ export default function BatchesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<'all' | 'PACKED' | 'IN_HUB' | 'IN_TRANSIT' | 'DELIVERED'>('all');
 
-  useEffect(() => {
-    loadBatches();
-  }, []);
-
-  const loadBatches = async () => {
+  const loadBatches = useCallback(async () => {
     try {
       setLoading(true);
       const data = await batchesAPI.getAll();
@@ -34,7 +32,21 @@ export default function BatchesScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  /** Load on focus and when coming back to this screen (e.g. after logistics updated status). */
+  useFocusEffect(
+    useCallback(() => {
+      void loadBatches();
+    }, [loadBatches]),
+  );
+
+  /** Real-time: home tab keeps one socket; when batch status changes (hub, transit, delivered), reload. */
+  useEffect(() => {
+    return onBatchListRefreshRequest(() => {
+      void loadBatches();
+    });
+  }, [loadBatches]);
 
   const onRefresh = async () => {
     setRefreshing(true);

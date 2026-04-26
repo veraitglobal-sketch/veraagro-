@@ -3,6 +3,7 @@ import { AppState, AppStateStatus } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../lib/api-url';
+import { requestBatchListRefresh } from '../lib/batch-refresh';
 
 interface Notification {
   id: string;
@@ -96,10 +97,19 @@ export function useSocket() {
           }
         });
 
+        newSocket.on('batch:updated', () => {
+          if (mounted) {
+            requestBatchListRefresh();
+          }
+        });
+
         newSocket.on('notification', (notification: Notification) => {
           console.log('Received notification:', notification);
           if (mounted) {
             setNotifications((prev) => [notification, ...prev]);
+            if (notification.batchId || notification.title?.toLowerCase().includes('batch')) {
+              requestBatchListRefresh();
+            }
           }
         });
 

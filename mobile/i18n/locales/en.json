@@ -168,7 +168,16 @@
         "alertMissions": "{{count}} transport tasks",
         "alertBatches": "{{count}} batches",
         "alertsOpen": "Open — messages, tasks, batches",
-        "profileMore": "Wallet, suppliers map, costs, tips, settings — in Profile (bottom right)."
+        "profileMore": "Wallet, suppliers map, costs, tips, settings — in Profile (bottom right).",
+        "alsoPartnerOrders": "Partner orders (inputs)"
+      },
+      "partnerOrders": {
+        "title": "Partner orders",
+        "directOrders": "My direct orders",
+        "emptyOrders": "No orders yet. Open the suppliers map, pick a partner, and place an order from their store.",
+        "openPartner": "Messages & store",
+        "threads": "Conversations",
+        "emptyThreads": "No conversations yet. Start from a partner on the map."
       },
       "quickActions": "Quick actions",
       "more": "More",
@@ -619,6 +628,7 @@
   },
   "common": {
     "currency": "EUR",
+    "back": "Back",
     "close": "Close",
     "retry": "Try again",
     "next": "Next",

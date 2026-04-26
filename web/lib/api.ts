@@ -491,6 +491,7 @@ export const growerSupplierB2bAPI = {
       partnerCode: string | null;
       contactEmail: string | null;
       contactPhone: string | null;
+      mapOnPublicDirectory?: boolean;
       catalog: Array<{
         id: string;
         name: string;
@@ -505,6 +506,52 @@ export const growerSupplierB2bAPI = {
   getOrCreateThread: async (supplierUserId: string) => {
     const response = await api.post('/b2b-suppliers/threads', { supplierUserId });
     return response.data as { id: string; farmerId: string; supplierUserId: string; lastMessageAt: string };
+  },
+  /** Logged-in grower: B2B direct orders placed with material suppliers (newest first). */
+  getMyDirectOrders: async () => {
+    const response = await api.get('/b2b-suppliers/orders/mine');
+    return response.data as Array<{
+      id: string;
+      supplierUserId: string;
+      threadId: string | null;
+      status: string;
+      items: unknown;
+      noteFromFarmer: string | null;
+      noteFromSupplier: string | null;
+      createdAt: string;
+      updatedAt: string;
+      supplier: { firstName: string | null; lastName: string | null; partnerCode: string | null } | null;
+    }>;
+  },
+  /** Logged-in grower: message threads with material suppliers. */
+  getMyThreads: async () => {
+    const response = await api.get('/b2b-suppliers/threads/mine');
+    return response.data as Array<{
+      id: string;
+      farmerId: string;
+      supplierUserId: string;
+      lastMessageAt: string;
+      supplier: {
+        id: string;
+        firstName: string | null;
+        lastName: string | null;
+        partnerCode: string | null;
+        material_supplier_profile: { businessName: string; city: string | null; country: string | null } | null;
+      };
+    }>;
+  },
+  getThreadMessages: async (threadId: string) => {
+    const response = await api.get(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`);
+    return response.data as Array<{
+      id: string;
+      body: string;
+      createdAt: string;
+      sender: { id: string; firstName: string | null; lastName: string | null; partnerCode: string | null };
+    }>;
+  },
+  postThreadMessage: async (threadId: string, body: string) => {
+    const response = await api.post(`/b2b-suppliers/threads/${encodeURIComponent(threadId)}/messages`, { body });
+    return response.data;
   },
   createDirectOrder: async (payload: {
     supplierUserId: string;
