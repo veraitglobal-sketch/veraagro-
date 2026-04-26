@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateQualityEntryDto, LogisticsHandoverDto } from './dto/quality-entry.dto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class QualityEntryService {
@@ -29,6 +30,8 @@ export class QualityEntryService {
 
   /**
    * Create quality entry for a batch (Farmer's responsibility)
+   * — Full: pre-cool, weather, 3 photos, standard confirmation.
+   * — Simple (grower app): `qualityScore` and/or `notes` only; optional photos/weather can be added later in web.
    */
   async createQualityEntry(userId: string, dto: CreateQualityEntryDto) {
     // Verify batch exists and belongs to user
@@ -47,22 +50,10 @@ export class QualityEntryService {
       throw new BadRequestException(`Batch ${dto.batchId} not found`);
     }
 
-    // Verify user is the owner
     if (batch.estates.users.id !== userId) {
       throw new ForbiddenException('You can only create quality entries for your own batches');
     }
 
-    // Verify standard confirmation is checked
-    if (!dto.standardConfirmation) {
-      throw new BadRequestException('Standard confirmation is required. You must confirm that Bio Vera packaging, film, and labels are applied according to the protocol.');
-    }
-
-    // Verify visual grade photos (must be 3)
-    if (!dto.visualGradePhotos || dto.visualGradePhotos.length !== 3) {
-      throw new BadRequestException('Exactly 3 visual grade photos are required (top, middle, bottom crates)');
-    }
-
-    // Check if quality entry already exists
     const existing = await this.prisma.quality_entries.findUnique({
       where: { batchId: dto.batchId },
     });
@@ -71,31 +62,103 @@ export class QualityEntryService {
       throw new BadRequestException('Quality entry already exists for this batch');
     }
 
-    // Create quality entry
+    const isFull =
+      Boolean(dto.preCoolingStartTime) &&
+      dto.weatherAtHarvest != null &&
+      typeof dto.weatherAtHarvest === 'object' &&
+      Array.isArray(dto.visualGradePhotos) &&
+      dto.visualGradePhotos.length === 3;
+
+    if (isFull) {
+      if (!dto.standardConfirmation) {
+        throw new BadRequestException(
+          'Standard confirmation is required. You must confirm that Bio Vera packaging, film, and labels are applied according to the protocol.',
+        );
+      }
+    } else {
+      const hasScore = dto.qualityScore != null && !Number.isNaN(Number(dto.qualityScore));
+      const hasNotes = Boolean(dto.notes?.trim());
+      if (!hasScore && !hasNotes) {
+        throw new BadRequestException(
+          'Add a quality score (0–100) and/or notes, or send the full checklist (pre-cool time, weather, 3 photos, confirmation).',
+        );
+      }
+    }
+
+    if (isFull) {
+      const qualityEntry = await this.prisma.quality_entries.create({
+        data: {
+          id: crypto.randomUUID(),
+          batchId: dto.batchId,
+          preCoolingStartTime: new Date(dto.preCoolingStartTime!),
+          weatherAtHarvest: dto.weatherAtHarvest as any,
+          visualGradePhotos: dto.visualGradePhotos!,
+          qualityScore: dto.qualityScore != null ? Number(dto.qualityScore) : null,
+          standardConfirmation: true,
+          confirmedBy: userId,
+          notes: dto.notes,
+          status: 'COMPLETED',
+          updatedAt: new Date(),
+        },
+      });
+
+      await this.prisma.batches.update({
+        where: { id: dto.batchId },
+        data: { status: 'QUALITY_VERIFIED' },
+      });
+
+      await this.prisma.audit_trails.create({
+        data: {
+          eventType: 'QUALITY_ENTRY',
+          entityType: 'Batch',
+          entityId: dto.batchId,
+          newValue: {
+            qualityEntryId: qualityEntry.id,
+            preCoolingStartTime: dto.preCoolingStartTime,
+            weatherAtHarvest: dto.weatherAtHarvest,
+            fullProtocol: true,
+          } as any,
+          changeReason: 'Farmer quality entry completed (full protocol)',
+          isCompliant: true,
+          timestamp: new Date(),
+        } as any,
+      });
+
+      return qualityEntry;
+    }
+
+    const score =
+      dto.qualityScore != null && !Number.isNaN(Number(dto.qualityScore))
+        ? Math.min(100, Math.max(0, Number(dto.qualityScore)))
+        : null;
+    const weatherPlaceholder = {
+      _entryMode: 'mobile_simple' as const,
+      temperature: 0,
+      humidity: 0,
+      cloudCover: 'clear' as const,
+    };
+
     const qualityEntry = await this.prisma.quality_entries.create({
       data: {
         id: crypto.randomUUID(),
         batchId: dto.batchId,
-        preCoolingStartTime: new Date(dto.preCoolingStartTime),
-        weatherAtHarvest: dto.weatherAtHarvest as any,
-        visualGradePhotos: dto.visualGradePhotos,
-        standardConfirmation: dto.standardConfirmation,
+        preCoolingStartTime: new Date(),
+        weatherAtHarvest: weatherPlaceholder as any,
+        visualGradePhotos: [],
+        qualityScore: score,
+        standardConfirmation: true,
         confirmedBy: userId,
-        notes: dto.notes,
+        notes: dto.notes?.trim() || null,
         status: 'COMPLETED',
         updatedAt: new Date(),
       },
     });
 
-    // Update batch status to allow shipment creation
     await this.prisma.batches.update({
       where: { id: dto.batchId },
-      data: {
-        status: 'QUALITY_VERIFIED',
-      },
+      data: { status: 'QUALITY_VERIFIED' },
     });
 
-    // Create audit trail
     await this.prisma.audit_trails.create({
       data: {
         eventType: 'QUALITY_ENTRY',
@@ -103,10 +166,10 @@ export class QualityEntryService {
         entityId: dto.batchId,
         newValue: {
           qualityEntryId: qualityEntry.id,
-          preCoolingStartTime: dto.preCoolingStartTime,
-          weatherAtHarvest: dto.weatherAtHarvest,
+          qualityScore: score,
+          fullProtocol: false,
         } as any,
-        changeReason: 'Farmer quality entry completed',
+        changeReason: 'Farmer quality entry (score/notes; full photo protocol optional for later)',
         isCompliant: true,
         timestamp: new Date(),
       } as any,

@@ -570,6 +570,25 @@ export const b2bSupplierPortalAPI = {
     const response = await api.get('/b2b-suppliers/my/profile');
     return response.data as Record<string, unknown> | null;
   },
+  /**
+   * First-time: creates `material_supplier_profiles` when the user has MATERIAL_SUPPLIER
+   * but no store row (e.g. role added manually). Use PATCH for updates once the profile exists.
+   */
+  createMyStoreProfile: async (data: {
+    businessName: string;
+    description?: string;
+    website?: string;
+    street: string;
+    houseNumber?: string;
+    postalCode: string;
+    city: string;
+    country: string;
+    latitude?: number;
+    longitude?: number;
+  }) => {
+    const response = await api.post('/b2b-suppliers/my/profile', data);
+    return response.data as Record<string, unknown>;
+  },
   /** Update store + contact: name, site, address, email, phone, person name. Address/coords change can clear map until re-verified. */
   patchMyStore: async (data: {
     businessName?: string;

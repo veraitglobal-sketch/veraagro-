@@ -12,7 +12,7 @@ export class QualityEntryController {
   constructor(private readonly qualityEntryService: QualityEntryService) {}
 
   @Post()
-  @Roles('GROWER')
+  @Roles('GROWER', 'FARMER', 'PARTNER')
   async createQualityEntry(
     @Body() dto: CreateQualityEntryDto,
     @GetUser() user: any,

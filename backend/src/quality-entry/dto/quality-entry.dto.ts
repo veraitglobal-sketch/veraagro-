@@ -1,4 +1,16 @@
-import { IsString, IsNumber, IsDateString, IsBoolean, IsArray, IsOptional, Min, Max, ArrayMinSize, ArrayMaxSize } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsDateString,
+  IsBoolean,
+  IsArray,
+  IsOptional,
+  Min,
+  Max,
+  ArrayMinSize,
+  ArrayMaxSize,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class WeatherAtHarvestDto {
   @IsNumber()
@@ -15,25 +27,41 @@ export class WeatherAtHarvestDto {
   cloudCover: 'clear' | 'partly_cloudy' | 'cloudy' | 'overcast';
 }
 
+/**
+ * Full protocol: pre-cool time, weather, 3 photos, standard confirmation.
+ * Simple (mobile) path: `batchId` + `qualityScore` and/or `notes` only.
+ */
 export class CreateQualityEntryDto {
   @IsString()
   batchId: string;
 
+  @IsOptional()
   @IsDateString()
-  preCoolingStartTime: string; // ISO date string
+  preCoolingStartTime?: string;
 
-  weatherAtHarvest: WeatherAtHarvestDto;
+  @IsOptional()
+  weatherAtHarvest?: WeatherAtHarvestDto;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  visualGradePhotos: string[]; // Array of photo URLs or base64
+  visualGradePhotos?: string[];
 
+  @IsOptional()
   @IsBoolean()
-  standardConfirmation: boolean; // Must be true
+  @Type(() => Boolean)
+  standardConfirmation?: boolean;
 
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  qualityScore?: number;
 }
 
 export class LogisticsHandoverDto {

@@ -132,7 +132,9 @@ export default function AdminSupplierStoresPage() {
                   <Link href="/admin/users" className="underline font-medium">
                     Users
                   </Link>{' '}
-                  to find the existing account, or use{' '}
+                  to find the existing account. If that user is already a material supplier, they should log in to{' '}
+                  <strong>Partner store → Settings</strong> and complete the form once (first save creates the store
+                  profile). Or use{' '}
                   <Link href="/admin/supplier-growers" className="underline font-medium">
                     Suppliers &amp; growers
                   </Link>{' '}

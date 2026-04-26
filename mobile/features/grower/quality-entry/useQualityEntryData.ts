@@ -92,7 +92,11 @@ export function useQualityEntryData() {
       await loadQualityEntry();
       Alert.alert(t('alerts.success'), t('producer.qualityEntry.saved'));
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : t('producer.qualityEntry.saveFailed');
+      const ax = error as { response?: { data?: { message?: string | string[] } } };
+      const fromApi = ax?.response?.data?.message;
+      const apiText = Array.isArray(fromApi) ? fromApi.join(' ') : typeof fromApi === 'string' ? fromApi : null;
+      const message =
+        apiText || (error instanceof Error ? error.message : t('producer.qualityEntry.saveFailed'));
       Alert.alert(t('error'), message);
       console.error('Error saving quality entry:', error);
     } finally {

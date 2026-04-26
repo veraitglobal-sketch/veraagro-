@@ -814,6 +814,8 @@ model quality_entries {
   preCoolingStartTime  DateTime
   visualGradePhotos    String[]
   standardConfirmation Boolean            @default(false)
+  /// Mobile quick entry (0–100); full protocol can omit this
+  qualityScore         Float?
   confirmedBy          String
   status               QualityEntryStatus @default(DRAFT)
   notes                String?

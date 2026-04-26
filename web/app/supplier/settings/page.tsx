@@ -21,6 +21,8 @@ export default function SupplierSettingsPage() {
   const [err, setErr] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [mapApproved, setMapApproved] = useState(true);
+  /** True when user has MATERIAL_SUPPLIER but no `material_supplier_profiles` row yet. */
+  const [noStoreProfile, setNoStoreProfile] = useState(false);
   const [pwdCurrent, setPwdCurrent] = useState('');
   const [pwdNew, setPwdNew] = useState('');
   const [pwdNew2, setPwdNew2] = useState('');
@@ -46,11 +48,40 @@ export default function SupplierSettingsPage() {
 
   const load = useCallback(async () => {
     setErr(null);
+    setNoStoreProfile(false);
     setLoading(true);
     try {
       const p = await b2bSupplierPortalAPI.getMyProfile();
       if (!p) {
-        setErr('No store profile. Contact Bio Vera to finish onboarding.');
+        setNoStoreProfile(true);
+        setMapApproved(false);
+        let me: {
+          firstName?: string;
+          lastName?: string;
+          email?: string;
+          phone?: string | null;
+        } | null = null;
+        try {
+          me = await usersAPI.getMe();
+        } catch {
+          me = null;
+        }
+        setForm({
+          businessName: '',
+          description: '',
+          website: '',
+          street: '',
+          houseNumber: '',
+          postalCode: '',
+          city: '',
+          country: '',
+          overrideLat: '',
+          overrideLng: '',
+          firstName: me?.firstName != null ? String(me.firstName) : '',
+          lastName: me?.lastName != null ? String(me.lastName) : '',
+          email: me?.email != null ? String(me.email) : '',
+          phone: me?.phone != null ? String(me.phone) : '',
+        });
         return;
       }
       setMapApproved(Boolean(p.mapApproved));
@@ -106,7 +137,7 @@ export default function SupplierSettingsPage() {
         setSaving(false);
         return;
       }
-      const payload: Parameters<typeof b2bSupplierPortalAPI.patchMyStore>[0] = {
+      const basePayload: Parameters<typeof b2bSupplierPortalAPI.patchMyStore>[0] = {
         businessName: form.businessName.trim(),
         description: form.description.trim(),
         website: form.website.trim(),
@@ -121,11 +152,40 @@ export default function SupplierSettingsPage() {
         phone: form.phone.trim(),
       };
       if (haveBoth) {
-        payload.latitude = latN;
-        payload.longitude = lngN;
+        basePayload.latitude = latN;
+        basePayload.longitude = lngN;
       }
-      await b2bSupplierPortalAPI.patchMyStore(payload);
-      setOk('Saved. If you changed address or the map pin, the listing will show as pending until Bio Vera verifies it.');
+
+      if (noStoreProfile) {
+        if (
+          !basePayload.businessName ||
+          !basePayload.street ||
+          !basePayload.postalCode ||
+          !basePayload.city ||
+          !basePayload.country
+        ) {
+          setErr('Fill in store name, street, postal code, city, and country to create your store profile.');
+          setSaving(false);
+          return;
+        }
+        await b2bSupplierPortalAPI.createMyStoreProfile({
+          businessName: basePayload.businessName,
+          description: basePayload.description,
+          website: basePayload.website,
+          street: basePayload.street,
+          houseNumber: basePayload.houseNumber,
+          postalCode: basePayload.postalCode,
+          city: basePayload.city,
+          country: basePayload.country,
+          ...(haveBoth ? { latitude: latN, longitude: lngN } : {}),
+        });
+        await b2bSupplierPortalAPI.patchMyStore(basePayload);
+        setNoStoreProfile(false);
+        setOk('Your store profile is created. You can update details any time. Map listing may need Bio Vera approval.');
+      } else {
+        await b2bSupplierPortalAPI.patchMyStore(basePayload);
+        setOk('Saved. If you changed address or the map pin, the listing will show as pending until Bio Vera verifies it.');
+      }
       await load();
     } catch (e) {
       setErr(getApiErrorMessage(e));
@@ -172,6 +232,17 @@ export default function SupplierSettingsPage() {
           only re-checks the map when your location changes.
         </p>
 
+        {noStoreProfile && !loading && (
+          <div className="mb-4 rounded-md border border-sky-200 bg-sky-50/90 px-3 py-2 text-sm text-sky-950">
+            <p className="font-medium">First-time store setup</p>
+            <p className="mt-1 font-light">
+              Your login has the supplier role, but the store record was not created yet. Fill in the fields below
+              (required: business name, address, contact) and press <strong>Save</strong> — this creates your store in
+              Bio Vera. You do not need a second admin account if your email is already registered.
+            </p>
+          </div>
+        )}
+
         {err && (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
         )}
@@ -192,7 +263,7 @@ export default function SupplierSettingsPage() {
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{pwdErr}</div>
         )}
 
-        {!mapApproved && !loading && (
+        {!mapApproved && !loading && !noStoreProfile && (
           <div className="mb-4 rounded-md border border-amber-200 bg-amber-50/90 px-3 py-2 text-sm text-amber-950">
             Your store is not currently approved for the public map — often because the address or pin was recently
             updated. Bio Vera will re-verify the location.
