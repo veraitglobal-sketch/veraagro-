@@ -175,8 +175,14 @@ export const missionsAPI = {
     const response = await api.get('/missions/admin/all', { params: filters });
     return response.data;
   },
-  getMyMissions: async () => {
-    const response = await api.get('/missions/my-missions');
+  getMyMissions: async (scope?: 'grower' | 'logistics') => {
+    const response = await api.get('/missions/my-missions', {
+      params: scope ? { scope } : {},
+    });
+    return response.data;
+  },
+  claimMission: async (missionId: string, body?: { vehicleId?: string }) => {
+    const response = await api.post(`/missions/${encodeURIComponent(missionId)}/claim`, body || {});
     return response.data;
   },
   create: async (data: {

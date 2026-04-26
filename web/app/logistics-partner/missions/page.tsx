@@ -33,6 +33,7 @@ export default function LogisticsMissionsPage() {
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [claiming, setClaiming] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -51,7 +52,7 @@ export default function LogisticsMissionsPage() {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     let cancelled = false;
     missionsAPI
-      .getMyMissions()
+      .getMyMissions('logistics')
       .then((data: Mission[]) => {
         if (!cancelled) setMissions(Array.isArray(data) ? data : []);
       })
@@ -66,6 +67,28 @@ export default function LogisticsMissionsPage() {
       });
     return () => { cancelled = true; };
   }, [isAuthenticated, user?.roles]);
+
+  const reloadMissions = () => {
+    missionsAPI
+      .getMyMissions('logistics')
+      .then((data: Mission[]) => setMissions(Array.isArray(data) ? data : []))
+      .catch(() => setMissions([]));
+  };
+
+  const claimMission = async (missionId: string) => {
+    setClaiming(missionId);
+    setError(null);
+    try {
+      await missionsAPI.claimMission(missionId);
+      await reloadMissions();
+    } catch (e: unknown) {
+      const msg =
+        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
+      setError(typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : 'Could not claim mission');
+    } finally {
+      setClaiming(null);
+    }
+  };
 
   const acceptedMissions = missions.filter((m) => ACTIVE_STATUSES.includes(m.status));
   const availableMissions = missions.filter((m) => m.status === 'PENDING');
@@ -168,12 +191,14 @@ export default function LogisticsMissionsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Link
-                        href="/logistics-partner/missions"
-                        className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f]"
+                      <button
+                        type="button"
+                        disabled={claiming === mission.id}
+                        onClick={() => void claimMission(mission.id)}
+                        className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-60"
                       >
-                        Prihvati (Accept via app)
-                      </Link>
+                        {claiming === mission.id ? 'Claiming…' : 'Claim mission'}
+                      </button>
                     </div>
                   </div>
                 </div>

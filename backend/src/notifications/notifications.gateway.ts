@@ -124,7 +124,7 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
       type: 'ALERT',
       title: 'Mission Update',
       message: `Mission #${mission.id} status: ${mission.status}`,
-      actionUrl: `/missions/${mission.id}`,
+      actionUrl: `/grower/portal?missionId=${encodeURIComponent(mission.id)}`,
       missionId: mission.id,
     };
 

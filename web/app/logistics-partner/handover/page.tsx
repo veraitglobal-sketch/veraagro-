@@ -69,7 +69,7 @@ export default function LogisticsHandoverPage() {
   const refreshMissions = () => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     missionsAPI
-      .getMyMissions()
+      .getMyMissions('logistics')
       .then((data: Mission[]) => {
         const needHandover = (Array.isArray(data) ? data : []).filter((m) =>
           PENDING_HANDOVER_STATUSES.includes(m.status)
@@ -84,7 +84,7 @@ export default function LogisticsHandoverPage() {
     let cancelled = false;
     setMissionsLoading(true);
     missionsAPI
-      .getMyMissions()
+      .getMyMissions('logistics')
       .then((data: Mission[]) => {
         if (!cancelled) {
           const needHandover = (Array.isArray(data) ? data : []).filter((m) =>

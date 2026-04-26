@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -104,6 +104,7 @@ interface FinancialStatus {
 }
 
 export default function GrowerPortalPage() {
+  const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [missions, setMissions] = useState<MissionTracker[]>([]);
@@ -189,7 +190,7 @@ export default function GrowerPortalPage() {
     fetchData();
   }, [selectedBatch]);
 
-  const handleMissionSelect = async (missionId: string) => {
+  const handleMissionSelect = useCallback(async (missionId: string) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
@@ -206,7 +207,18 @@ export default function GrowerPortalPage() {
     } catch (err) {
       console.error('Error fetching journey map:', err);
     }
-  };
+  }, []);
+
+  /** Open the mission from notification: /missions/:id or /grower/portal?missionId= */
+  useEffect(() => {
+    if (deepLinkApplied.current || typeof window === 'undefined' || missions.length === 0) return;
+    const mid = new URLSearchParams(window.location.search).get('missionId');
+    if (!mid) return;
+    if (!missions.some((m) => m.missionId === mid)) return;
+    deepLinkApplied.current = true;
+    void handleMissionSelect(mid);
+    window.history.replaceState(null, '', '/grower/portal');
+  }, [missions, handleMissionSelect]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (

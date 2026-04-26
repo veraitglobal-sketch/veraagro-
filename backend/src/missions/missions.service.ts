@@ -646,11 +646,12 @@ export class MissionsService {
   }
 
   /**
-   * Get missions for a user
+   * Logistics: missions assigned to this partner, plus unclaimed pool (PENDING, no partner yet).
+   * Grower: their missions only. Uses `role` from controller so FARMER/GROWER + LOGISTICS dual accounts
+   * can use ?scope= to pick which list (see missions.controller).
    */
   async getMissionsForUser(userId: string, role: string) {
     try {
-      // Get user to check roles
       const user = await this.prisma.users.findUnique({
         where: { id: userId },
         select: { roles: true },
@@ -660,40 +661,115 @@ export class MissionsService {
         throw new NotFoundException('User not found');
       }
 
-      // Check if user has GROWER role
-      const isGrower = user.roles.includes('GROWER');
-      // Check if user has LOGISTICS_PARTNER role
-      const isLogisticsPartner = user.roles.includes('LOGISTICS_PARTNER');
+      const r = (user.roles as string[]) || [];
+      const isGrower = r.includes('GROWER') || r.includes('FARMER');
+      const isLogisticsPartner = r.includes('LOGISTICS_PARTNER');
 
-      if (isGrower) {
+      const growerInclude = {
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+      };
+      const logisticsInclude = {
+        users_missions_growerIdTousers: true,
+        vehicles: true,
+        batches: true,
+      };
+      const logisticsPoolWhere: Prisma.missionsWhereInput = {
+        OR: [
+          { logisticsPartnerId: userId },
+          { status: 'PENDING', logisticsPartnerId: null },
+        ],
+      };
+
+      // Trust `role` from controller (JWT + ?scope=); do not require DB `users.roles` to match —
+      // stale role arrays caused empty lists for logistics/grower dashboards.
+      if (role === 'LOGISTICS_PARTNER') {
         return this.prisma.missions.findMany({
-          where: { growerId: userId },
-          include: {
-            users_missions_logisticsPartnerIdTousers: true,
-            vehicles: true,
-            batches: true,
-          },
-          orderBy: { createdAt: 'desc' },
-        });
-      } else if (isLogisticsPartner) {
-        return this.prisma.missions.findMany({
-          where: { logisticsPartnerId: userId },
-          include: {
-            users_missions_growerIdTousers: true,
-            vehicles: true,
-            batches: true,
-          },
+          where: logisticsPoolWhere,
+          include: logisticsInclude,
           orderBy: { createdAt: 'desc' },
         });
       }
-
-      // If user has neither role, return empty array instead of throwing error
+      if (role === 'GROWER') {
+        return this.prisma.missions.findMany({
+          where: { growerId: userId },
+          include: growerInclude,
+          orderBy: { createdAt: 'desc' },
+        });
+      }
+      if (isGrower) {
+        return this.prisma.missions.findMany({
+          where: { growerId: userId },
+          include: growerInclude,
+          orderBy: { createdAt: 'desc' },
+        });
+      }
+      if (isLogisticsPartner) {
+        return this.prisma.missions.findMany({
+          where: logisticsPoolWhere,
+          include: logisticsInclude,
+          orderBy: { createdAt: 'desc' },
+        });
+      }
       return [];
     } catch (error) {
       console.error('Error in getMissionsForUser:', error);
-      // Return empty array on error instead of throwing
       return [];
     }
+  }
+
+  /**
+   * Partner takes a still-unclaimed transport job (PENDING, no logistics partner). Then use acceptMission.
+   */
+  async claimUnassignedMission(logisticsPartnerId: string, missionId: string, dto: AcceptMissionDto) {
+    const mission = await this.prisma.missions.findUnique({ where: { id: missionId } });
+    if (!mission) {
+      throw new NotFoundException('Mission not found');
+    }
+    if (mission.status !== 'PENDING' || mission.logisticsPartnerId != null) {
+      throw new BadRequestException(
+        'This mission is already assigned or is not available to claim. Refresh the list.',
+      );
+    }
+    let vehicle = null as { id: string } | null;
+    if (dto.vehicleId) {
+      vehicle = await this.prisma.vehicles.findFirst({
+        where: {
+          id: dto.vehicleId,
+          logisticsPartnerId,
+          status: 'AVAILABLE',
+          hasFrigo: true,
+        },
+        select: { id: true },
+      });
+    }
+    if (!vehicle) {
+      vehicle = await this.prisma.vehicles.findFirst({
+        where: { logisticsPartnerId, status: 'AVAILABLE', hasFrigo: true },
+        orderBy: { updatedAt: 'desc' },
+        select: { id: true },
+      });
+    }
+    if (!vehicle) {
+      throw new BadRequestException('No available refrigerated vehicle. Add or free a vehicle first.');
+    }
+    return this.prisma.missions.update({
+      where: { id: missionId },
+      data: {
+        logisticsPartnerId,
+        vehicleId: vehicle.id,
+        status: 'ASSIGNED',
+        assignedAt: new Date(),
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+      },
+    });
   }
 
   /**

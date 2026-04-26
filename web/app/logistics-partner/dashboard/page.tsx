@@ -99,7 +99,7 @@ export default function LogisticsDashboardPage() {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     let cancelled = false;
     missionsAPI
-      .getMyMissions()
+      .getMyMissions('logistics')
       .then((data: Mission[]) => {
         if (!cancelled) {
           setMissions(Array.isArray(data) ? data : []);

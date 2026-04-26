@@ -39,14 +39,38 @@ export class MissionsController {
   }
 
   @Get('my-missions')
-  async getMyMissions(@Request() req) {
-    // Get roles from user object (could be array or single role)
-    const roles = req.user.roles || (req.user.role ? [req.user.role] : []);
-    // Determine primary role for filtering - default to GROWER if no role matches
-    const primaryRole = roles.includes('GROWER') ? 'GROWER' : 
-                       roles.includes('LOGISTICS_PARTNER') ? 'LOGISTICS_PARTNER' : 
-                       'GROWER'; // Default to GROWER instead of throwing error
+  async getMyMissions(
+    @Request() req,
+    @Query('scope') scope?: 'grower' | 'logistics',
+  ) {
+    const roles: string[] = req.user.roles || (req.user.role ? [req.user.role] : []);
+    let primaryRole: string;
+    if (scope === 'logistics' && roles.includes('LOGISTICS_PARTNER')) {
+      primaryRole = 'LOGISTICS_PARTNER';
+    } else if (scope === 'grower' && (roles.includes('GROWER') || roles.includes('FARMER'))) {
+      primaryRole = 'GROWER';
+    } else {
+      primaryRole = roles.includes('GROWER')
+        ? 'GROWER'
+        : roles.includes('FARMER')
+          ? 'GROWER'
+          : roles.includes('LOGISTICS_PARTNER')
+            ? 'LOGISTICS_PARTNER'
+            : 'GROWER';
+    }
     return this.missionsService.getMissionsForUser(req.user.id, primaryRole);
+  }
+
+  /** Take an unclaimed PENDING mission (no partner yet), then use PUT :id/accept. */
+  @Post(':id/claim')
+  @UseGuards(RolesGuard)
+  @Roles('LOGISTICS_PARTNER')
+  claimMission(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: AcceptMissionDto,
+  ) {
+    return this.missionsService.claimUnassignedMission(req.user.id, id, dto);
   }
 
   // Admin endpoints
