@@ -432,9 +432,10 @@ export default function TradePanelPage() {
   // Handle order from Price Matrix Table
   const handleMatrixOrder = async (productId: string, quantity: number, lockPrice: boolean) => {
     try {
-      const product = inventoryProducts.find((p: any) => (p.id || p.batchId) === productId);
+      const matrix = formatProductsForMatrix();
+      const product = matrix.find((p: any) => p.id === productId);
       if (!product) {
-        alert('Product not found');
+        alert('Product not found. Refresh the page and try again.');
         return;
       }
 
@@ -449,7 +450,9 @@ export default function TradePanelPage() {
       alert(result.message || 'Order created successfully!');
       loadData(); // Refresh data
     } catch (err: any) {
-      alert(err.message || 'Failed to create order');
+      const body = err.response?.data?.message;
+      const msg = Array.isArray(body) ? body.join(' ') : body || err.message || 'Failed to create order';
+      alert(msg);
     }
   };
 

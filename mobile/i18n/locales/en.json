@@ -521,7 +521,25 @@
       "paymentStatus": "Payment status",
       "tracking": "Order tracking",
       "currentStep": "Current",
-      "deliveryAddressHeading": "Delivery address"
+      "deliveryAddressHeading": "Delivery address",
+      "statusBadge": "Status",
+      "cancelledOrder": "This order was cancelled or refunded.",
+      "statuses": {
+        "UNKNOWN": "Update pending",
+        "PENDING": "Placed",
+        "PAID": "Paid",
+        "CONFIRMED": "Preparing",
+        "PICKED_UP": "Picked up",
+        "IN_TRANSIT": "In transit",
+        "DELIVERED": "Delivered",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled",
+        "REFUNDED": "Refunded"
+      },
+      "timelinePlaced": "Order placed",
+      "timelineConfirmed": "Confirmed & preparing",
+      "timelineShipped": "On the way",
+      "timelineDone": "Delivered"
     },
     "veraStandard": {
       "title": "Bio Vera Standard",

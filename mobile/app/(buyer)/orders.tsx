@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ordersAPI, Order } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { tBuyerOrderStatus } from '../../lib/buyer-order-status';
 import { ArrowRight, Package } from 'lucide-react-native';
 
 /**
@@ -116,14 +117,25 @@ export default function OrdersScreen() {
                   }}>
                     {order.orderNumber}
                   </Text>
-                  <Text style={{
-                    fontSize: 13,
-                    fontWeight: '300',
-                    color: theme.colors.text.primary,
-                    marginTop: theme.spacing.xs,
-                  }}>
-                    {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: theme.spacing.xs }}>
+                    <View style={{
+                      paddingHorizontal: theme.spacing.sm,
+                      paddingVertical: 3,
+                      borderRadius: theme.borderRadius.sm,
+                      backgroundColor: `${theme.colors.primary}10`,
+                    }}>
+                      <Text style={{ fontSize: 11, fontWeight: '500', color: theme.colors.text.primary }}>
+                        {tBuyerOrderStatus(t, order.status)}
+                      </Text>
+                    </View>
+                    <Text style={{
+                      fontSize: 13,
+                      fontWeight: '300',
+                      color: theme.colors.text.primary,
+                    }}>
+                      {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                    </Text>
+                  </View>
                 </View>
                 <ArrowRight size={18} color={theme.colors.text.secondary} strokeWidth={1} />
               </TouchableOpacity>

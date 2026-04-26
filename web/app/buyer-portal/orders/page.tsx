@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI } from '@/lib/api';
+import {
+  getBuyerOrderStatusLabel,
+  getBuyerOrderStatusDescription,
+  getBuyerStatusBadgeClass,
+  ALL_ORDER_STATUS_FILTERS,
+} from '@/lib/buyer-order-status';
 import Link from 'next/link';
 import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
@@ -39,33 +45,21 @@ export default function OrdersPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'border-[#2D5A27]/30 text-[#2D5A27]/80';
-      case 'DELIVERED':
-        return 'border-[#2D5A27]/30 text-[#2D5A27]/80';
-      case 'IN_TRANSIT':
-        return 'border-yellow-200/50 text-yellow-600/80';
-      case 'PENDING':
-        return 'border-gray-200/50 text-gray-600/80';
-      case 'CANCELLED':
-        return 'border-red-200/50 text-red-600/80';
-      default:
-        return 'border-gray-200/50 text-gray-600/80';
-    }
-  };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'COMPLETED':
       case 'DELIVERED':
         return <CheckCircle className="w-4 h-4 text-[#2D5A27]/60" strokeWidth={1} />;
       case 'IN_TRANSIT':
-        return <Truck className="w-4 h-4 text-yellow-600/60" strokeWidth={1} />;
+      case 'PICKED_UP':
+        return <Truck className="w-4 h-4 text-amber-600/70" strokeWidth={1} />;
+      case 'PAID':
+      case 'CONFIRMED':
+        return <Package className="w-4 h-4 text-sky-600/60" strokeWidth={1} />;
       case 'PENDING':
         return <Clock className="w-4 h-4 text-gray-600/60" strokeWidth={1} />;
       case 'CANCELLED':
+      case 'REFUNDED':
         return <X className="w-4 h-4 text-red-600/60" strokeWidth={1} />;
       default:
         return <AlertCircle className="w-4 h-4 text-gray-600/60" strokeWidth={1} />;
@@ -171,12 +165,12 @@ export default function OrdersPage() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                 >
-                  <option value="all">All Status</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="IN_TRANSIT">In Transit</option>
-                  <option value="DELIVERED">Delivered</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="CANCELLED">Cancelled</option>
+                  <option value="all">All status</option>
+                  {ALL_ORDER_STATUS_FILTERS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
                 </select>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
@@ -271,9 +265,12 @@ export default function OrdersPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-3 py-1 text-xs font-light border flex items-center gap-1 ${getStatusColor(order.status)}`}>
+                      <span
+                        className={`px-3 py-1 text-xs font-light border flex items-center gap-1 rounded ${getBuyerStatusBadgeClass(order.status)}`}
+                        title={getBuyerOrderStatusDescription(order.status)}
+                      >
                         {getStatusIcon(order.status)}
-                        {order.status?.replace(/_/g, ' ') || 'PENDING'}
+                        {getBuyerOrderStatusLabel(order.status)}
                       </span>
                       <button
                         onClick={() => loadOrderDetails(order.id)}
@@ -366,14 +363,26 @@ export default function OrdersPage() {
                     </button>
                   </div>
 
-                  {/* Order Status Timeline */}
+                  {/* Order Status */}
                   <div className="mb-6 border-b border-gray-200/50 pb-6">
-                    <h3 className="text-sm font-light text-gray-500 mb-4">Order Status</h3>
+                    <h3 className="text-sm font-light text-gray-500 mb-2">Status</h3>
+                    <div
+                      className={`inline-flex items-center gap-2 px-3 py-2 rounded border text-sm font-light mb-4 ${getBuyerStatusBadgeClass(selectedOrder.status)}`}
+                    >
+                      {getStatusIcon(selectedOrder.status)}
+                      <span className="font-medium">
+                        {getBuyerOrderStatusLabel(selectedOrder.status)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 font-light mb-6">
+                      {getBuyerOrderStatusDescription(selectedOrder.status)}
+                    </p>
+                    <h3 className="text-sm font-light text-gray-500 mb-4">Progress</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>
                         <div className="flex-1">
-                          <p className="font-light text-gray-900">Order Created</p>
+                          <p className="font-light text-gray-900">Order created</p>
                           <p className="text-xs text-gray-500 font-light">
                             {new Date(selectedOrder.createdAt).toLocaleString()}
                           </p>
@@ -512,9 +521,12 @@ export default function OrdersPage() {
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-light">Payment Status:</span>
-                          <span className={`font-light ${getStatusColor(selectedOrder.payments[0].status).split(' ')[1]}`}>
-                            {selectedOrder.payments[0].status}
+                          <span className="text-gray-600 font-light">Payment status:</span>
+                          <span className="font-light text-gray-900">
+                            {String(selectedOrder.payments[0].status).replace(
+                              /_/g,
+                              ' ',
+                            )}
                           </span>
                         </div>
                         {selectedOrder.payments[0].releasedAt && (

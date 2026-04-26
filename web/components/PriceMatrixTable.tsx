@@ -321,15 +321,21 @@ export default function PriceMatrixTable({ products, onOrder, onPriceChange, onP
                       </label>
                       <input
                         type="number"
-                        min="1"
-                        max={product.availableQuantity}
+                        min="0.1"
+                        max={
+                          product.availableQuantity > 0
+                            ? product.availableQuantity
+                            : undefined
+                        }
                         step="0.1"
                         value={orderQuantity}
                         onChange={(e) => setOrderQuantity(parseFloat(e.target.value) || 1)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27]"
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        Available: {product.availableQuantity.toFixed(0)} {product.unit || 'kg'}
+                        {product.availableQuantity > 0
+                          ? `Available: ${product.availableQuantity.toFixed(0)} ${product.unit || 'kg'} (you can still pre-order if demand exceeds stock)`
+                          : `No physical stock in hub yet — pre-order and lock the listed price; fulfillment is planned`}
                       </p>
                     </div>
 

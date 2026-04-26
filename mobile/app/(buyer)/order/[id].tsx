@@ -5,6 +5,12 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, Circle } from 'lucide-react-native';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
+import {
+  getOrderTimelineSteps,
+  isTimelineStepCompleted,
+  isTimelineStepCurrent,
+  tBuyerOrderStatus,
+} from '../../../lib/buyer-order-status';
 
 /**
  * Order Tracking Screen
@@ -38,20 +44,6 @@ export default function OrderTrackingScreen() {
     }
   };
 
-  const getStatusSteps = () => {
-    return [
-      { key: 'PENDING', label: t('buyer.orders.statusPending'), completed: true },
-      { key: 'CONFIRMED', label: t('buyer.orders.statusConfirmed'), completed: order?.status !== 'PENDING' },
-      { key: 'PREPARING', label: t('buyer.orders.statusPreparing'), completed: ['PREPARING', 'IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
-      { key: 'IN_TRANSIT', label: t('buyer.orders.statusInTransit'), completed: ['IN_TRANSIT', 'DELIVERED'].includes(order?.status || '') },
-      { key: 'DELIVERED', label: t('buyer.orders.statusDelivered'), completed: order?.status === 'DELIVERED' },
-    ];
-  };
-
-  const getCurrentStepIndex = () => {
-    const steps = getStatusSteps();
-    return steps.findIndex(step => step.key === order?.status);
-  };
 
   if (loading) {
     return (
@@ -97,8 +89,9 @@ export default function OrderTrackingScreen() {
     );
   }
 
-  const steps = getStatusSteps();
-  const currentStepIndex = getCurrentStepIndex();
+  const timelineInvalid =
+    order.status === 'CANCELLED' || order.status === 'REFUNDED';
+  const steps = getOrderTimelineSteps(t);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -136,6 +129,25 @@ export default function OrderTrackingScreen() {
             }}>
               {order.orderNumber}
             </Text>
+            <View style={{ marginTop: theme.spacing.sm, alignSelf: 'flex-start' }}>
+              <View style={{
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: 4,
+                borderRadius: theme.borderRadius.sm,
+                backgroundColor: `${theme.colors.primary}12`,
+                borderWidth: 0.5,
+                borderColor: `${theme.colors.primary}40`,
+              }}>
+                <Text style={{
+                  fontSize: 11,
+                  fontWeight: '500',
+                  color: theme.colors.text.primary,
+                  letterSpacing: 0.3,
+                }}>
+                  {tBuyerOrderStatus(t, order.status)}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -164,7 +176,10 @@ export default function OrderTrackingScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              {order.quantity} {order.unit} × {order.unitPrice.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+              {order.quantity} {order.unit}
+              {order.unitPrice != null
+                ? ` × ${Number(order.unitPrice).toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}`
+                : ''}
             </Text>
             <View style={{
               flexDirection: 'row',
@@ -203,14 +218,22 @@ export default function OrderTrackingScreen() {
               marginBottom: theme.spacing.lg,
               textTransform: 'uppercase',
             }}>
-              Status
+              {t('buyer.orders.statusBadge', 'Status')}
             </Text>
+
+            {timelineInvalid && (
+              <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.md, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: theme.borderRadius.md }}>
+                <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
+                  {t('buyer.orders.cancelledOrder', 'This order was cancelled or refunded.')}
+                </Text>
+              </View>
+            )}
 
             {/* Vertical Timeline */}
             <View style={{ paddingLeft: theme.spacing.md }}>
-              {steps.map((step, index) => {
-                const isCompleted = step.completed;
-                const isCurrent = index === currentStepIndex;
+              {!timelineInvalid && steps.map((step, index) => {
+                const isCompleted = isTimelineStepCompleted(order.status, index);
+                const isCurrent = isTimelineStepCurrent(order.status, index);
                 const isLast = index === steps.length - 1;
 
                 return (
@@ -257,7 +280,7 @@ export default function OrderTrackingScreen() {
                       }}>
                         {step.label}
                       </Text>
-                      {isCurrent && (
+                        {isCurrent && !isCompleted && (
                         <Text style={{
                           fontSize: 11,
                           fontWeight: '300',

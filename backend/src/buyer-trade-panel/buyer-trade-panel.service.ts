@@ -1,8 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 import { EmailService } from '../email/email.service';
 import { NotificationsService } from '../notifications/notifications.service';
+
+/** Stable FK target for pre-orders (not a real farm). Created on first pre-order. */
+const PRE_ORDER_ESTATE_ID =
+  process.env.PRE_ORDER_ESTATE_ID || 'biov-preorder-system';
 
 @Injectable()
 export class BuyerTradePanelService {
@@ -13,6 +18,64 @@ export class BuyerTradePanelService {
     private emailService: EmailService,
     private notificationsService: NotificationsService,
   ) {}
+
+  /**
+   * `orders.estateId` must reference a real `estates` row. Pre-orders are not tied
+   * to a farm, so we use a single system estate (upserted on first pre-order).
+   */
+  private async ensurePreOrderEstateId(): Promise<string> {
+    const existing = await this.prisma.estates.findFirst({
+      where: {
+        OR: [{ id: PRE_ORDER_ESTATE_ID }, { id: 'PRE-ORDER' }],
+      },
+    });
+    if (existing) {
+      return existing.id;
+    }
+
+    const owner =
+      (await this.prisma.users.findFirst({
+        where: { roles: { has: 'SUPER_ADMIN' } },
+      })) || (await this.prisma.users.findFirst({ orderBy: { createdAt: 'asc' } }));
+
+    if (!owner) {
+      throw new BadRequestException(
+        'Pre-orders are not available: no system user. Contact support.',
+      );
+    }
+
+    const polygon: Prisma.InputJsonValue = {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [0, 0],
+          [0, 0.00001],
+          [0.00001, 0.00001],
+          [0, 0],
+        ],
+      ],
+    };
+
+    await this.prisma.estates.upsert({
+      where: { id: PRE_ORDER_ESTATE_ID },
+      create: {
+        id: PRE_ORDER_ESTATE_ID,
+        name: 'Pre-order (system — not a physical farm)',
+        ownerId: owner.id,
+        estateQrCode: null,
+        polygonCoordinates: polygon,
+        calculatedArea: 0,
+        status: 'ACTIVE',
+        updatedAt: new Date(),
+      },
+      update: { updatedAt: new Date() },
+    });
+
+    this.logger.log(
+      `System pre-order estate ready (${PRE_ORDER_ESTATE_ID}, owner ${owner.id})`,
+    );
+    return PRE_ORDER_ESTATE_ID;
+  }
 
   /**
    * Live Supply & Demand Graph
@@ -379,11 +442,18 @@ export class BuyerTradePanelService {
     requestedDeliveryDate: Date,
     lockPrice: boolean,
   ) {
-    // Get current price
+    const name = (productName || '').trim();
+    if (!name) {
+      throw new BadRequestException('Product name is required');
+    }
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      throw new BadRequestException('Quantity must be a positive number');
+    }
+
     const currentPrice = await this.prisma.market_prices.findFirst({
       where: {
-        cropType: productName,
         isActive: true,
+        cropType: { equals: name, mode: 'insensitive' },
       },
       orderBy: {
         createdAt: 'desc',
@@ -391,11 +461,15 @@ export class BuyerTradePanelService {
     });
 
     if (!currentPrice) {
-      throw new Error(`No active price found for ${productName}`);
+      throw new BadRequestException(
+        `No active market price for "${name}". Add it in Admin → Market prices, or check spelling (must match the crop).`,
+      );
     }
 
-    const unitPrice = currentPrice.sellPrice;
+    const marketSell = currentPrice.sellPrice;
+    const unitPrice = marketSell;
     const totalAmount = quantity * unitPrice;
+    const estateId = await this.ensurePreOrderEstateId();
 
     // Create pre-order
     const preOrder = await this.prisma.orders.create({
@@ -403,11 +477,12 @@ export class BuyerTradePanelService {
         id: crypto.randomUUID(),
         orderNumber: `PRE-${Date.now()}`,
         buyerId,
-        estateId: 'PRE-ORDER', // Special estate ID for pre-orders
-        productName,
+        estateId,
+        productName: name,
         quantity,
         unit,
-        unitPrice: lockPrice ? unitPrice : null, // Lock price if requested
+        // Schema requires a float; "unlocked" price intent is in deliveryNotes.
+        unitPrice,
         totalAmount,
         deliveryAddress: {}, // Will be filled later
         status: 'PENDING',
@@ -434,10 +509,10 @@ export class BuyerTradePanelService {
     void this.emailService
       .sendNewOrderAdminNotification({
         orderNumber: preOrder.orderNumber,
-        productName,
+        productName: name,
         quantity,
         unit,
-        unitPrice: lockPrice ? unitPrice : null,
+        unitPrice,
         totalAmount,
         buyerName: buyerLabel,
         buyerEmail: buyer?.email,
@@ -452,7 +527,7 @@ export class BuyerTradePanelService {
     void this.notificationsService
       .notifyAdminsForNewOrder({
         orderNumber: preOrder.orderNumber,
-        productName,
+        productName: name,
         totalAmount,
         buyerLabel,
         estateLabel: 'Pre-order',

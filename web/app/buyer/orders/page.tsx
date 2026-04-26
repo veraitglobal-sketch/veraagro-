@@ -3,6 +3,7 @@
 import { useAuth } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { ordersAPI } from '@/lib/api';
+import { getBuyerOrderStatusLabel, getBuyerStatusBadgeClass } from '@/lib/buyer-order-status';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -82,12 +83,8 @@ export default function OrdersPage() {
                       {new Date(order.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    order.status === 'COMPLETED' ? 'bg-[#2D5A27]/15 text-[#23471f]' :
-                    order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {order.status}
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getBuyerStatusBadgeClass(order.status)}`}>
+                    {getBuyerOrderStatusLabel(order.status)}
                   </span>
                 </div>
                 <div className="space-y-2">

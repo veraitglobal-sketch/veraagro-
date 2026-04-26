@@ -419,7 +419,7 @@ export interface Order {
   unit: string;
   unitPrice: number;
   totalAmount: number;
-  status: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+  status: string;
   deliveryAddress: any;
   deliveryNotes?: string;
   createdAt: string;
