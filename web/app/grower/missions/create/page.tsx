@@ -9,6 +9,57 @@ import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
+/** Shown when POST /missions fails so we see status, message, and non-JSON bodies (e.g. 502 HTML). */
+function formatMissionCreateError(error: unknown): string {
+  const e = error as {
+    code?: string;
+    message?: string;
+    response?: { status?: number; data?: unknown };
+  };
+  if (!e?.response) {
+    const code = e?.code;
+    const msg = e?.message || 'Request failed';
+    if (code === 'ERR_NETWORK' || msg === 'Network Error') {
+      return [
+        'The browser could not reach the API (network / CORS / wrong URL).',
+        `Tried base URL from config (see also Network tab for the real URL): ${WEB_API_BASE}`,
+        `Error: ${msg}`,
+      ].join('\n\n');
+    }
+    return `No response from server${code ? ` (${code})` : ''}. ${msg}`;
+  }
+  const status = e.response.status;
+  const data = e.response.data as Record<string, unknown> | string | undefined;
+  const prefix = `HTTP ${status}`;
+
+  let body = '';
+  if (typeof data === 'string' && data.trim().length) {
+    body = data.length > 500 ? `${data.slice(0, 500)}…` : data;
+  } else if (data && typeof data === 'object') {
+    const raw = data.message;
+    const base = Array.isArray(raw) ? raw.join(' ') : (raw as string | undefined);
+    const dbg =
+      data.debug && typeof data.debug === 'object' && data.debug !== null && 'message' in data.debug
+        ? String((data.debug as { message?: string }).message)
+        : '';
+    const joined = [base, dbg].filter((s) => s && String(s).trim().length).join('\n\n');
+    if (joined) {
+      body = joined;
+    } else {
+      try {
+        body = JSON.stringify(data, null, 2);
+      } catch {
+        body = 'Could not read error body';
+      }
+    }
+  }
+  if (!body) {
+    body =
+      'Empty or unreadable error body — open DevTools → Network, click the /missions request, and read the Response; the real reason is also in API server logs.';
+  }
+  return `${prefix}\n\n${body}`;
+}
+
 const navItems = growerNavItems;
 
 interface Batch {
@@ -278,19 +329,9 @@ export default function CreateMissionPage() {
       setTimeout(() => {
         window.location.href = '/grower/portal';
       }, 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating mission:', error);
-      const status = error?.response?.status;
-      const raw = error?.response?.data?.message;
-      const msg = Array.isArray(raw) ? raw.join(' ') : raw;
-      if (status === 500 || status >= 500) {
-        setSubmitError(
-          (msg as string) ||
-            'Server error while creating the request. This is often a temporary issue — try again in a moment. If it keeps happening, use Contact.'
-        );
-      } else {
-        setSubmitError((msg as string) || 'Failed to create mission');
-      }
+      setSubmitError(formatMissionCreateError(error));
     } finally {
       setSubmitting(false);
     }
@@ -319,7 +360,13 @@ export default function CreateMissionPage() {
           <p className="text-gray-600 mb-4">
             Your transport request has been submitted. A logistics partner will be assigned automatically.
           </p>
-          <p className="text-sm text-gray-500">Redirecting to Mission Tracker...</p>
+          <p className="text-sm text-gray-500">
+            Redirecting to{' '}
+            <Link href="/grower/portal" className="text-[#2D5A27] font-semibold underline">
+              Mission tracker
+            </Link>{' '}
+            (same as sidebar: /grower/portal)…
+          </p>
         </motion.div>
       </SidebarLayout>
     );
@@ -345,6 +392,13 @@ export default function CreateMissionPage() {
               Materials
             </Link>{' '}
             if you still need crates or labels.
+          </p>
+          <p className="text-sm text-gray-500 mb-6 border-l-2 border-gray-200 pl-3">
+            <strong>After transport:</strong> when the request is created successfully, the app takes you to{' '}
+            <Link href="/grower/portal" className="text-[#2D5A27] font-medium underline">
+              Mission tracker
+            </Link>{' '}
+            to follow the run (map, status, logistics).
           </p>
 
           {submitError && (

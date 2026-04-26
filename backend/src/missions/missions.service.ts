@@ -153,18 +153,27 @@ export class MissionsService {
         },
       });
     } catch (e: unknown) {
-      const pe = e as Prisma.PrismaClientKnownRequestError;
       this.logger.error(
-        `missions.create failed: ${pe?.code} ${(e as Error)?.message}`,
-        (e as Error)?.stack,
+        `missions.create failed: ${
+          e instanceof Prisma.PrismaClientKnownRequestError ? e.code : 'non-prisma'
+        } ${e instanceof Error ? e.message : String(e)}`,
+        e instanceof Error ? e.stack : undefined,
       );
-      if (pe?.code === 'P2002') {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new BadRequestException(
+            'Could not assign a unique mission number. Please try again in a few seconds.',
+          );
+        }
+        if (e.code === 'P2003') {
+          throw new BadRequestException(
+            'Invalid link to batch, vehicle, or user. Check your selection and retry.',
+          );
+        }
+        // Any other Prisma client error: avoid generic 500 body — show code for support
         throw new BadRequestException(
-          'Could not assign a unique mission number. Please try again in a few seconds.',
+          `Could not save the transport request (database ${e.code}). Try again, or contact support and mention this code.`,
         );
-      }
-      if (pe?.code === 'P2003') {
-        throw new BadRequestException('Invalid link to batch, vehicle, or user. Check your selection and retry.');
       }
       throw e;
     }
