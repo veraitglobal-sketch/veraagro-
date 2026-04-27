@@ -1,0 +1,43 @@
+{
+  "shop": {
+    "navOrders": "Moje porudžbine",
+    "cartLabel": "Korpa ({{count}})",
+    "welcome": "Dobrodošli, {{name}}!",
+    "guestName": "Kupac",
+    "categories": {
+      "fruits": "Voće",
+      "vegetables": "Povrće",
+      "grains": "Žitarice"
+    },
+    "producerBadge": "VERA PROIZVOĐAČ",
+    "unknownRegion": "Nepoznata regija",
+    "productFallback": "Bio Vera proizvod",
+    "organicFallback": "Organski proizvod",
+    "priceNa": "n/d",
+    "unitKg": "kg",
+    "addToCart": "U korpu",
+    "cartTitle": "Korpa ({{count}})",
+    "orderCta": "Poruči ({{total}} EUR)",
+    "orderCreated": "Porudžbina je kreirana!",
+    "orderFailed": "Greška pri kreiranju porudžbine"
+  },
+  "orders": {
+    "navShop": "Prodavnica",
+    "title": "Moje porudžbine",
+    "orderPrefix": "Porudžbina #",
+    "productFallback": "Proizvod",
+    "total": "Ukupno:",
+    "paymentLabel": "Plaćanje:",
+    "paymentRefLead": "koristite referencu porudžbine",
+    "paymentRefTrail": "pri bankovnom transferu. Kompletan IBAN je u",
+    "buyerPortalLink": "kupčkom portalu",
+    "paymentTailConfigured": " ili pogledajte detalje podešene za ovaj sajt.",
+    "paymentTailContact": " (ili nas kontaktirajte za podatke računa).",
+    "invoicePrefix": "Faktura {{number}}",
+    "downloadPdf": "Preuzmi PDF",
+    "invoiceHistory": "Istorija faktura",
+    "invoiceDownloadFail": "Preuzimanje fakture nije uspelo. Otvorite kupčki portal → Fakture.",
+    "empty": "Još uvek nemate porudžbine.",
+    "startShopping": "Krenite u kupovinu →"
+  }
+}

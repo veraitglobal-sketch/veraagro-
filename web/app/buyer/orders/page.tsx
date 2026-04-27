@@ -6,8 +6,10 @@ import { ordersAPI, invoicesAPI } from '@/lib/api';
 import { getBuyerOrderStatusLabel, getBuyerStatusBadgeClass } from '@/lib/buyer-order-status';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 export default function OrdersPage() {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
@@ -24,7 +26,7 @@ export default function OrdersPage() {
       window.URL.revokeObjectURL(url);
     } catch (e) {
       console.error(e);
-      alert('Could not download invoice. Open the buyer portal → Invoices.');
+      alert(t('buyerRetail.orders.invoiceDownloadFail'));
     }
   };
 
@@ -73,7 +75,7 @@ export default function OrdersPage() {
             </Link>
             <nav className="flex gap-4">
               <Link href="/buyer/shop" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
-                Shop
+                {t('buyerRetail.orders.navShop')}
               </Link>
             </nav>
           </div>
@@ -81,7 +83,7 @@ export default function OrdersPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('buyerRetail.orders.title')}</h1>
 
         {loading ? (
           <div className="text-center py-12">
@@ -93,7 +95,10 @@ export default function OrdersPage() {
               <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="font-semibold text-lg">Order #{order.id.slice(0, 8)}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {t('buyerRetail.orders.orderPrefix')}
+                      {order.id.slice(0, 8)}
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {new Date(order.createdAt).toLocaleDateString('en-GB')}
                     </p>
@@ -105,44 +110,43 @@ export default function OrdersPage() {
                 <div className="space-y-2">
                   {order.items?.map((item: any, index: number) => (
                     <div key={index} className="flex justify-between text-sm">
-                      <span>{item.product?.name || 'Product'}</span>
-                      <span>{item.quantity} x {item.price} RSD</span>
+                      <span>{item.product?.name || t('buyerRetail.orders.productFallback')}</span>
+                      <span>
+                        {item.quantity} x {item.price} RSD
+                      </span>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between">
-                  <span className="font-semibold">Total:</span>
+                  <span className="font-semibold">{t('buyerRetail.orders.total')}</span>
                   <span className="font-bold text-[#2D5A27]">{order.totalAmount || 0} RSD</span>
                 </div>
                 {order.status === 'APPROVED' && (
                   <div className="mt-4 p-3 rounded-lg bg-sky-50 border border-sky-100 text-sm text-sky-900">
-                    <strong className="font-semibold">Payment:</strong> use order reference{' '}
-                    <code className="bg-white/80 px-1 rounded text-xs">{order.orderNumber}</code> on your bank
-                    transfer. Full IBAN details are in the{' '}
+                    <strong className="font-semibold">{t('buyerRetail.orders.paymentLabel')}</strong>{' '}
+                    {t('buyerRetail.orders.paymentRefLead')}{' '}
+                    <code className="bg-white/80 px-1 rounded text-xs">{order.orderNumber}</code>{' '}
+                    {t('buyerRetail.orders.paymentRefTrail')}{' '}
                     <a href="/buyer-portal/orders" className="text-[#2D5A27] underline font-medium">
-                      buyer portal
+                      {t('buyerRetail.orders.buyerPortalLink')}
                     </a>
-                    {process.env.NEXT_PUBLIC_BIOVERA_BANK_IBAN
-                      ? ' or see details configured for this site.'
-                      : ' (or contact us for account details).'}
+                    {process.env.NEXT_PUBLIC_BIOVERA_BANK_IBAN ? t('buyerRetail.orders.paymentTailConfigured') : t('buyerRetail.orders.paymentTailContact')}
                   </div>
                 )}
                 {order.invoices && (
                   <div className="mt-4 p-3 rounded-lg bg-white border border-gray-200 text-sm text-gray-800">
-                    <span className="font-semibold">Invoice {order.invoices.invoiceNumber}</span>
+                    <span className="font-semibold">{t('buyerRetail.orders.invoicePrefix', { number: order.invoices.invoiceNumber })}</span>
                     <span className="mx-2">·</span>
                     <button
                       type="button"
-                      onClick={() =>
-                        void downloadInvoicePdf(order.invoices.id, order.invoices.invoiceNumber)
-                      }
+                      onClick={() => void downloadInvoicePdf(order.invoices.id, order.invoices.invoiceNumber)}
                       className="text-[#2D5A27] font-medium underline"
                     >
-                      Download PDF
+                      {t('buyerRetail.orders.downloadPdf')}
                     </button>
                     <span className="mx-2">·</span>
                     <Link href="/buyer-portal/invoices" className="text-gray-600 hover:text-gray-900">
-                      Invoice history
+                      {t('buyerRetail.orders.invoiceHistory')}
                     </Link>
                   </div>
                 )}
@@ -151,12 +155,9 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="text-center py-12 bg-white rounded-lg shadow-md">
-            <p className="text-gray-600 mb-4">You have no orders yet.</p>
-            <Link
-              href="/buyer/shop"
-              className="text-[#2D5A27] hover:text-[#23471f] font-semibold"
-            >
-              Start shopping →
+            <p className="text-gray-600 mb-4">{t('buyerRetail.orders.empty')}</p>
+            <Link href="/buyer/shop" className="text-[#2D5A27] hover:text-[#23471f] font-semibold">
+              {t('buyerRetail.orders.startShopping')}
             </Link>
           </div>
         )}

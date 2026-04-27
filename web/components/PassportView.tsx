@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export interface PassportData {
@@ -70,10 +71,28 @@ const vera = {
 };
 
 export default function PassportView({ data }: { data: PassportData }) {
+  const { t } = useTranslation();
   const loc = useLocalizedHref();
-  const displayName = [data.farmer.firstName, data.farmer.lastName].filter(Boolean).join(' ').trim() || 'Vera partner';
+  const displayName =
+    [data.farmer.firstName, data.farmer.lastName].filter(Boolean).join(' ').trim() ||
+    t('passportPublic.producerProfile.veraPartnerFallback');
   const photo = data.farmer.photo || data.photos.profile;
   const allGallery = [...data.photos.field, ...data.photos.growth].filter(Boolean);
+
+  const producedLine =
+    data.producedInLabel ||
+    (data.location.region
+      ? t('passportPublic.producerProfile.producedIn', { region: data.location.region })
+      : t('passportPublic.producerProfile.grownStandards'));
+
+  const statsRows = [
+    { label: t('passportPublic.producerProfile.stats.estates'), value: data.stats.totalEstates },
+    { label: t('passportPublic.producerProfile.stats.listedHarvests'), value: data.stats.totalBatches },
+    { label: t('passportPublic.producerProfile.stats.latestYear'), value: data.stats.latestHarvestYear },
+    { label: t('passportPublic.producerProfile.stats.crops'), value: data.stats.crops, small: true },
+  ] as const;
+
+  const traceBullets = t('passportPublic.producerProfile.traceBullets', { returnObjects: true }) as string[];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f4f7f4] via-white to-gray-50/40">
@@ -83,7 +102,7 @@ export default function PassportView({ data }: { data: PassportData }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center text-xs font-medium tracking-[0.2em] uppercase text-gray-500 mb-6"
         >
-          Bio Vera · digital producer profile
+          {t('passportPublic.producerProfile.eyebrow')}
         </motion.p>
 
         <motion.div
@@ -123,7 +142,7 @@ export default function PassportView({ data }: { data: PassportData }) {
 
               <div className="flex-1 text-center md:text-left min-w-0">
                 <p className="text-[10px] sm:text-xs font-medium tracking-[0.22em] uppercase text-[#2D5A27] mb-2">
-                  Vera partner
+                  {t('passportPublic.producerProfile.veraPartnerBadge')}
                 </p>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 tracking-tight leading-tight mb-2">
                   {displayName}
@@ -131,12 +150,7 @@ export default function PassportView({ data }: { data: PassportData }) {
                 {data.farmer.partnerCode && (
                   <p className="text-sm font-mono text-gray-500 mb-3">{data.farmer.partnerCode}</p>
                 )}
-                <p className="text-base sm:text-lg text-gray-600 font-light leading-relaxed mb-4">
-                  {data.producedInLabel ||
-                    (data.location.region
-                      ? `Produced in ${data.location.region}. Grown to Vera standards.`
-                      : 'Grown to Vera standards.')}
-                </p>
+                <p className="text-base sm:text-lg text-gray-600 font-light leading-relaxed mb-4">{producedLine}</p>
                 {data.location.region && (
                   <div className="inline-flex items-center gap-1.5 text-sm text-gray-600 font-light mb-4">
                     <MapPin className="w-4 h-4 text-[#2D5A27] flex-shrink-0" strokeWidth={1.5} aria-hidden />
@@ -144,11 +158,15 @@ export default function PassportView({ data }: { data: PassportData }) {
                   </div>
                 )}
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1 text-xs text-gray-500 font-light mb-4">
-                  {data.farmer.generation && <span>{data.farmer.generation} generation grower</span>}
+                  {data.farmer.generation && (
+                    <span>{t('passportPublic.producerProfile.generationGrower', { gen: data.farmer.generation })}</span>
+                  )}
                   {data.farmer.yearsOfExperience != null && (
                     <span>
                       {data.farmer.generation ? '· ' : null}
-                      {data.farmer.yearsOfExperience} years of experience
+                      {t('passportPublic.producerProfile.yearsExperience', {
+                        count: data.farmer.yearsOfExperience,
+                      })}
                     </span>
                   )}
                 </div>
@@ -164,7 +182,7 @@ export default function PassportView({ data }: { data: PassportData }) {
                       style={{ borderColor: vera.border, backgroundColor: vera.soft, color: vera.text }}
                     >
                       <Award className="w-4 h-4 text-[#2D5A27] flex-shrink-0" strokeWidth={1.5} />
-                      <span>Verified Vera Partner</span>
+                      <span>{t('passportPublic.producerProfile.verifiedPartner')}</span>
                     </div>
                   </div>
                 )}
@@ -179,19 +197,12 @@ export default function PassportView({ data }: { data: PassportData }) {
           transition={{ delay: 0.08 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-6"
         >
-          {[
-            { label: 'Estates', value: data.stats.totalEstates },
-            { label: 'Listed harvests', value: data.stats.totalBatches },
-            { label: 'Latest year', value: data.stats.latestHarvestYear },
-            { label: 'Crops', value: data.stats.crops, small: true },
-          ].map((item) => (
+          {statsRows.map((item) => (
             <div
               key={item.label}
               className="rounded-2xl border border-gray-200 bg-white/90 px-4 py-5 text-center shadow-sm"
             >
-              <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                {item.label}
-              </p>
+              <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{item.label}</p>
               <p
                 className={
                   'small' in item && item.small
@@ -213,7 +224,7 @@ export default function PassportView({ data }: { data: PassportData }) {
             className="mt-10"
           >
             <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
-              From the field
+              {t('passportPublic.producerProfile.fromField')}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
               {allGallery.slice(0, 8).map((photoUrl, index) => (
@@ -244,25 +255,22 @@ export default function PassportView({ data }: { data: PassportData }) {
         >
           <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-800 uppercase mb-3 flex items-center gap-2">
             <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} aria-hidden />
-            Product traceability
+            {t('passportPublic.producerProfile.traceTitle')}
           </h2>
-          <p className="text-sm text-gray-700 font-light leading-relaxed mb-5">
-            Fresh, traceable produce. Pesticide and spray records, and full batch details, are available on each
-            product&apos;s digital passport when you scan the batch QR.
-          </p>
+          <p className="text-sm text-gray-700 font-light leading-relaxed mb-5">{t('passportPublic.producerProfile.traceIntro')}</p>
           <ul className="space-y-2.5 text-sm text-gray-700 font-light">
-            <li className="flex items-start gap-2.5">
-              <Leaf className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-              <span>Inputs and treatments are recorded per batch in the Bio Vera system.</span>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <Droplets className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-              <span>Field applications are logged with the batch passport when you open it from the product.</span>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <ImageIcon className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-              <span>Photos above show the farm and growth stages leading to harvest.</span>
-            </li>
+            {traceBullets.map((line, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                {idx === 0 ? (
+                  <Leaf className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                ) : idx === 1 ? (
+                  <Droplets className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                ) : (
+                  <ImageIcon className="w-4 h-4 text-[#2D5A27] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                )}
+                <span>{line}</span>
+              </li>
+            ))}
           </ul>
         </motion.div>
 
@@ -274,7 +282,7 @@ export default function PassportView({ data }: { data: PassportData }) {
             className="mt-10"
           >
             <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
-              Batch passports
+              {t('passportPublic.producerProfile.batchPassports')}
             </h2>
             <div className="space-y-2">
               {data.recentHarvests.map((harvest, index) => (
@@ -296,12 +304,14 @@ export default function PassportView({ data }: { data: PassportData }) {
                         <Calendar className="w-3.5 h-3.5 flex-shrink-0" strokeWidth={1.5} />
                         <span>{new Date(harvest.harvestDate).toLocaleDateString('en-GB')}</span>
                         <span>·</span>
-                        <span>{harvest.quantity} kg</span>
+                        <span>
+                          {harvest.quantity} {t('passportPublic.producerProfile.unitKg')}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <span className="text-xs font-medium text-[#2D5A27] flex-shrink-0 group-hover:underline">
-                    Open passport
+                    {t('passportPublic.producerProfile.openPassport')}
                   </span>
                 </Link>
               ))}
@@ -317,14 +327,11 @@ export default function PassportView({ data }: { data: PassportData }) {
             className="mt-10 pt-10 border-t border-gray-200"
           >
             <h2 className="text-xs sm:text-sm font-medium tracking-[0.15em] text-gray-500 uppercase mb-4">
-              Estates
+              {t('passportPublic.producerProfile.estatesTitle')}
             </h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {data.location.estates.map((estate, index) => (
-                <div
-                  key={index}
-                  className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm"
-                >
+                <div key={index} className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
                   <p className="text-sm font-medium text-gray-900 mb-0.5">{estate.name}</p>
                   {estate.location && <p className="text-xs text-gray-500 font-light">{estate.location}</p>}
                 </div>
@@ -338,9 +345,9 @@ export default function PassportView({ data }: { data: PassportData }) {
             href={loc('/')}
             className="inline-flex text-sm font-medium text-[#2D5A27] hover:text-[#23471f] transition-colors"
           >
-            biovera.app
+            {t('passportPublic.producerProfile.footerDomain')}
           </Link>
-          <p className="text-xs text-gray-400 font-light mt-2">From field to buyer — with full traceability.</p>
+          <p className="text-xs text-gray-400 font-light mt-2">{t('passportPublic.producerProfile.footerTagline')}</p>
         </footer>
       </div>
     </div>

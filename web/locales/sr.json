@@ -82,7 +82,40 @@
   },
   "chat": {
     "needHelp": "Treba pomoć?",
-    "getInTouch": "Javite se"
+    "getInTouch": "Javite se",
+    "openAssistant": "Otvori Vera AI asistenta",
+    "ariaClose": "Zatvori",
+    "ariaWhatsapp": "WhatsApp",
+    "terminal": {
+      "title": "TERMINAL INTELIGENCIJE",
+      "subtitle": "Logistička analitika v2.1",
+      "tickerNew": "Novih",
+      "tickerTransit": "U tranzitu",
+      "tickerHub": "→HB",
+      "tickerDone": "Gotovo",
+      "tickerFlash": "Novo: {{qty}} gajbi → {{city}}",
+      "hintEmpty": "Izaberite kategoriju iznad za brze opcije, ili postavite pitanje ovde.",
+      "placeholder": "Postavite dodatno pitanje…",
+      "thinking": "Razmišljam…",
+      "back": "Nazad",
+      "panelTitleLogistics": "Logistička analitika",
+      "ctaBrowseProducts": "Pregledaj proizvode",
+      "actionLoadOptimization": "Optimizacija utovara",
+      "actionRouteEfficiency": "Efikasnost ruta",
+      "actionPackagingIntegrity": "Integritet pakovanja",
+      "actionCostAnalysis": "Analiza troškova",
+      "actionBrowseProducts": "Pregledaj proizvode",
+      "actionPreorder": "Predporudžbina",
+      "actionTraceability": "Tragabilnost",
+      "actionContactSales": "Kontakt prodaje",
+      "actionApplyProducer": "Prijava kao proizvođač",
+      "actionCertification": "Sertifikacija",
+      "actionResources": "Resursi",
+      "actionContact": "Kontakt",
+      "actionJoinNetwork": "Pridruži se mreži",
+      "actionProducts": "Proizvodi",
+      "actionRegions": "Regioni"
+    }
   },
   "shell": {
     "loggedInAs": "Prijavljeni kao",
@@ -1932,5 +1965,13 @@
       "wheat": "Pšenica",
       "barley": "Jčam"
     }
+  },
+  "legalDocsMeta": {
+    "privacyTitle": "Politika privatnosti",
+    "privacyUpdated": "Poslednje ažuriranje: januar 2026.",
+    "termsTitle": "Uslovi korišćenja",
+    "termsUpdated": "Poslednje ažuriranje: januar 2026.",
+    "cookiesTitle": "Politika kolačića",
+    "cookiesUpdated": "Poslednje ažuriranje: januar 2026."
   }
 }

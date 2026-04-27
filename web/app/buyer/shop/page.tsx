@@ -1,19 +1,34 @@
 'use client';
 
 import { useAuth } from '@/lib/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { inventoryAPI, ordersAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Apple, Carrot, Wheat, ChevronRight } from 'lucide-react';
 import { formatFarmerIdentity, getFirstName } from '@/lib/farmer-utils';
+import { useTranslation } from 'react-i18next';
+
+const CATEGORY_IDS = ['fruits', 'vegetables', 'grains'] as const;
 
 export default function ShopPage() {
+  const { t } = useTranslation();
   const { isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<any[]>([]);
+
+  const categories = useMemo(
+    () =>
+      CATEGORY_IDS.map((id) => ({
+        id,
+        name: t(`buyerRetail.shop.categories.${id}`),
+        icon: id === 'fruits' ? Apple : id === 'vegetables' ? Carrot : Wheat,
+        color: 'text-[#2D5A27]',
+      })),
+    [t],
+  );
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -47,7 +62,7 @@ export default function ShopPage() {
 
     try {
       const orderData = {
-        items: cart.map(item => ({
+        items: cart.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
           price: item.price,
@@ -55,10 +70,10 @@ export default function ShopPage() {
       };
       await ordersAPI.create(orderData);
       setCart([]);
-      alert('Order created!');
+      alert(t('buyerRetail.shop.orderCreated'));
     } catch (error) {
       console.error('Error creating order:', error);
-      alert('Error creating order');
+      alert(t('buyerRetail.shop.orderFailed'));
     }
   };
 
@@ -74,9 +89,10 @@ export default function ShopPage() {
     return null;
   }
 
+  const displayName = user?.firstName || t('buyerRetail.shop.guestName');
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -85,9 +101,9 @@ export default function ShopPage() {
             </Link>
             <nav className="flex gap-4 items-center">
               <Link href="/buyer/orders" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
-                My Orders
+                {t('buyerRetail.shop.navOrders')}
               </Link>
-              <span className="text-gray-700">Korpa ({cart.length})</span>
+              <span className="text-gray-700">{t('buyerRetail.shop.cartLabel', { count: cart.length })}</span>
             </nav>
           </div>
         </div>
@@ -95,17 +111,12 @@ export default function ShopPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Welcome, {user?.firstName || 'Customer'}! 🛒
+          {t('buyerRetail.shop.welcome', { name: displayName })}
         </h1>
 
-        {/* Category Filters */}
         <div className="mb-8 border-t border-b border-gray-200 py-4">
           <div className="flex gap-4 overflow-x-auto">
-            {[
-              { id: 'fruits', name: 'Fruits', icon: Apple, color: 'text-[#2D5A27]' },
-              { id: 'vegetables', name: 'Vegetables', icon: Carrot, color: 'text-[#2D5A27]' },
-              { id: 'grains', name: 'Grains', icon: Wheat, color: 'text-[#2D5A27]' },
-            ].map((category) => {
+            {categories.map((category) => {
               const Icon = category.icon;
               return (
                 <Link
@@ -114,9 +125,7 @@ export default function ShopPage() {
                   className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:border-[#2D5A27] transition-all group"
                 >
                   <Icon className={`w-5 h-5 ${category.color} group-hover:scale-110 transition-transform`} strokeWidth={1.5} />
-                  <span className={`text-sm font-light ${category.color} group-hover:text-[#2D5A27] transition-colors`}>
-                    {category.name}
-                  </span>
+                  <span className={`text-sm font-light ${category.color} group-hover:text-[#2D5A27] transition-colors`}>{category.name}</span>
                   <ChevronRight className={`w-4 h-4 ${category.color} opacity-0 group-hover:opacity-100 transition-opacity`} strokeWidth={1.5} />
                 </Link>
               );
@@ -137,14 +146,11 @@ export default function ShopPage() {
                     <span className="text-6xl">🌾</span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{product.productName || product.name || 'Bio Vera product'}</h3>
-                    
-                    {/* VERA PRODUCER Brand & Farmer Identity */}
+                    <h3 className="font-semibold text-lg mb-2">{product.productName || product.name || t('buyerRetail.shop.productFallback')}</h3>
+
                     {product.estate?.owner && (
                       <div className="mb-3 pb-3 border-b border-gray-100">
-                        <p className="text-[10px] font-light tracking-[0.15em] text-gray-400 uppercase mb-1.5">
-                          VERA PRODUCER
-                        </p>
+                        <p className="text-[10px] font-light tracking-[0.15em] text-gray-400 uppercase mb-1.5">{t('buyerRetail.shop.producerBadge')}</p>
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-3 h-3 text-gray-400" strokeWidth={1} />
                           <span className="text-xs font-light text-gray-700">
@@ -152,26 +158,29 @@ export default function ShopPage() {
                               product.estate.owner.firstName,
                               undefined,
                               product.estate.location,
-                              product.estate.location
+                              product.estate.location,
                             )}
                           </span>
                         </div>
                         <p className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase mt-1">
-                          {product.estate.location || 'Unknown Region'}
+                          {product.estate.location || t('buyerRetail.shop.unknownRegion')}
                         </p>
                       </div>
                     )}
-                    
-                    <p className="text-gray-600 text-sm mb-2">{product.description || 'Organic product'}</p>
+
+                    <p className="text-gray-600 text-sm mb-2">{product.description || t('buyerRetail.shop.organicFallback')}</p>
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-[#2D5A27] font-bold">{product.price || 'N/A'} RSD</span>
-                      <span className="text-sm text-gray-500">{product.quantity || 0} kg</span>
+                      <span className="text-[#2D5A27] font-bold">{product.price || t('buyerRetail.shop.priceNa')} RSD</span>
+                      <span className="text-sm text-gray-500">
+                        {product.quantity || 0} {t('buyerRetail.shop.unitKg')}
+                      </span>
                     </div>
                     <button
+                      type="button"
                       onClick={() => addToCart(product)}
                       className="w-full bg-[#2D5A27] text-white py-2 rounded-lg hover:bg-[#23471f] transition-colors"
                     >
-                      Add to cart
+                      {t('buyerRetail.shop.addToCart')}
                     </button>
                   </div>
                 </div>
@@ -180,7 +189,7 @@ export default function ShopPage() {
 
             {cart.length > 0 && (
               <div className="fixed bottom-0 right-0 m-4 bg-white rounded-lg shadow-xl p-6 max-w-sm">
-                <h3 className="font-semibold text-lg mb-4">Korpa ({cart.length})</h3>
+                <h3 className="font-semibold text-lg mb-4">{t('buyerRetail.shop.cartTitle', { count: cart.length })}</h3>
                 <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
                   {cart.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
@@ -190,10 +199,13 @@ export default function ShopPage() {
                   ))}
                 </div>
                 <button
-                  onClick={createOrder}
+                  type="button"
+                  onClick={() => void createOrder()}
                   className="w-full bg-[#2D5A27] text-white py-3 rounded-lg hover:bg-[#23471f] font-semibold"
                 >
-                  Order ({cart.reduce((sum, item) => sum + (item.price || 0), 0)} EUR)
+                  {t('buyerRetail.shop.orderCta', {
+                    total: cart.reduce((sum, item) => sum + (item.price || 0), 0),
+                  })}
                 </button>
               </div>
             )}

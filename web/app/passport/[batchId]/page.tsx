@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Shield, Download, MapPin, Package, Camera, Truck, CheckCircle, AlertTriangle, Thermometer, Clock } from 'lucide-react';
@@ -152,6 +153,7 @@ interface PassportData {
 }
 
 export default function ProductPassportPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const batchId = params.batchId as string;
   const [data, setData] = useState<PassportData | null>(null);
@@ -183,8 +185,8 @@ export default function ProductPassportPage() {
         throw new Error(
           fromApi ||
             (response.status === 404
-              ? 'No batch matches this code. Check the BATCH-… number (e.g. year 2026 vs 2326), or open "Open passport" from your producer profile so the link matches production data.'
-              : 'Could not load passport. The service may be temporarily unavailable.'),
+              ? t('passportPublic.batchPage.errorNoBatch')
+              : t('passportPublic.batchPage.errorGeneric')),
         );
       }
 
@@ -373,7 +375,7 @@ export default function ProductPassportPage() {
       
       setData(passportData);
     } catch (err: any) {
-      setError(err.message || 'Failed to load passport data');
+      setError(err.message || t('passportPublic.batchPage.errorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -404,7 +406,7 @@ export default function ProductPassportPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-6 h-6 border-[1.5px] border-[#2D5A27] border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600 text-sm font-light">Loading…</p>
+          <p className="mt-4 text-gray-600 text-sm font-light">{t('passportPublic.batchPage.loading')}</p>
         </div>
       </div>
     );
@@ -414,8 +416,8 @@ export default function ProductPassportPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-xl font-light text-gray-900 mb-2">Data not found</h1>
-          <p className="text-sm text-gray-600 font-light">{error || 'Passport data is not available.'}</p>
+          <h1 className="text-xl font-light text-gray-900 mb-2">{t('passportPublic.batchPage.notFoundTitle')}</h1>
+          <p className="text-sm text-gray-600 font-light">{error || t('passportPublic.batchPage.passportUnavailable')}</p>
         </div>
       </div>
     );
@@ -432,19 +434,23 @@ export default function ProductPassportPage() {
         >
           <div className="flex items-center gap-2 mb-3">
             <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Product</span>
+            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">{t('passportPublic.batchPage.productEyebrow')}</span>
           </div>
           <h1 className="text-2xl font-light text-gray-900 mb-2">{data.batch.productName}</h1>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-700">
-            <span><strong className="font-medium text-gray-900">Batch ID:</strong> {data.batch.batchId}</span>
-            <span><strong className="font-medium text-gray-900">Quantity:</strong> {data.batch.quantity} {data.batch.unit}</span>
-            {data.batch.status && <span><strong className="font-medium text-gray-900">Status:</strong> {data.batch.status}</span>}
+            <span><strong className="font-medium text-gray-900">{t('passportPublic.batchPage.batchId')}</strong> {data.batch.batchId}</span>
+            <span><strong className="font-medium text-gray-900">{t('passportPublic.batchPage.quantity')}</strong> {data.batch.quantity} {data.batch.unit}</span>
+            {data.batch.status && (
+              <span>
+                <strong className="font-medium text-gray-900">{t('passportPublic.batchPage.status')}</strong> {data.batch.status}
+              </span>
+            )}
             {data.qrId && <span className="text-gray-500 font-mono text-xs">{data.qrId}</span>}
           </div>
           {data.batch.isCompromised && (
             <div className="mt-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-              <span>Temperature deviation recorded. Check cold chain log.</span>
+              <span>{t('passportPublic.batchPage.compromisedHint')}</span>
             </div>
           )}
           {data.batch.estateId && (
@@ -468,25 +474,27 @@ export default function ProductPassportPage() {
         >
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Region &amp; place of origin</span>
+            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">{t('passportPublic.batchPage.regionEyebrow')}</span>
           </div>
           <div className="rounded-xl border border-[#2D5A27]/20 bg-white p-4 space-y-3 text-sm">
             <div>
-              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-0.5">Region (where it is grown)</p>
+              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-0.5">{t('passportPublic.batchPage.regionHint')}</p>
               <p className="text-lg font-light text-gray-900">{data.origin.regionLabel || data.origin.location || data.harvest.where}</p>
               {data.origin.productionCountry && (
-                <p className="text-[12px] text-gray-600 mt-1">Country: {data.origin.productionCountry}</p>
+                <p className="text-[12px] text-gray-600 mt-1">
+                  {t('passportPublic.batchPage.countryValue', { name: data.origin.productionCountry })}
+                </p>
               )}
             </div>
             <div className="grid sm:grid-cols-2 gap-3 text-[12px] text-gray-700 border-t border-gray-100 pt-3">
               <p>
-                <span className="text-gray-500">Estate / farm name</span>
+                <span className="text-gray-500">{t('passportPublic.batchPage.estateFarm')}</span>
                 <br />
                 <span className="font-medium text-gray-900">{data.origin.farmName}</span>
               </p>
               {(data.origin.estateCalculatedAreaHa != null || data.origin.parcelCalculatedAreaHa != null) && (
                 <p>
-                  <span className="text-gray-500">Surface</span>
+                  <span className="text-gray-500">{t('passportPublic.batchPage.surface')}</span>
                   <br />
                   {data.origin.estateCalculatedAreaHa != null && (
                     <span className="font-mono text-gray-900">Field: {Number(data.origin.estateCalculatedAreaHa).toFixed(2)} ha</span>
@@ -499,7 +507,7 @@ export default function ProductPassportPage() {
             </div>
             {(data.origin.parcelMapCenter || data.origin.estateMapCenter) && (
               <div className="text-[11px] font-mono text-gray-600 border-t border-gray-100 pt-3">
-                <span className="text-gray-500 font-sans block mb-1">Approx. map center (verified polygon)</span>
+                <span className="text-gray-500 font-sans block mb-1">{t('passportPublic.batchPage.mapCenterHint')}</span>
                 {data.origin.parcelMapCenter && (
                   <span className="block">
                     Plot: {data.origin.parcelMapCenter.lat.toFixed(5)}, {data.origin.parcelMapCenter.lng.toFixed(5)}
@@ -524,21 +532,31 @@ export default function ProductPassportPage() {
         >
           <div className="flex items-center gap-2 mb-4">
             <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-            <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Harvest (this batch)</span>
+                <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">{t('passportPublic.batchPage.harvestEyebrow')}</span>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">Where harvested (full line)</p>
+              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">{t('passportPublic.batchPage.harvestWhereFull')}</p>
               <p className="text-[15px] font-light text-gray-900">{data.harvest.where}</p>
               {data.origin.farmName && data.origin.farmName !== data.harvest.where && (
-                <p className="text-[11px] font-light text-gray-600 mt-1">Estate: {data.origin.farmName}</p>
+                <p className="text-[11px] font-light text-gray-600 mt-1">
+                  {t('passportPublic.batchPage.estateLabel')} {data.origin.farmName}
+                </p>
               )}
-              {data.origin.location && <p className="text-[11px] font-light text-gray-600">Region label: {data.origin.location}</p>}
+              {data.origin.location && (
+                <p className="text-[11px] font-light text-gray-600">
+                  {t('passportPublic.batchPage.regionLabel')} {data.origin.location}
+                </p>
+              )}
             </div>
             <div>
               <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">When harvested</p>
               <p className="text-[15px] font-light text-gray-900">{data.harvest.when}</p>
-              {data.harvest.period && <p className="text-[11px] font-light text-gray-600 mt-0.5">Period: {data.harvest.period}</p>}
+              {data.harvest.period && (
+                <p className="text-[11px] font-light text-gray-600 mt-0.5">
+                  {t('passportPublic.batchPage.period')} {data.harvest.period}
+                </p>
+              )}
             </div>
           </div>
         </motion.div>
@@ -647,17 +665,17 @@ export default function ProductPassportPage() {
             >
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-                <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Activities in chronological order</span>
+                <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">{t('passportPublic.batchPage.timelineEyebrow')}</span>
               </div>
-              <p className="text-xs font-light text-gray-600 mb-4">Chronological list of all recorded activities for this batch (date and time, activity, detail).</p>
+              <p className="text-xs font-light text-gray-600 mb-4">{t('passportPublic.batchPage.timelineIntro')}</p>
               <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
                 <div className="max-h-[400px] overflow-y-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                       <tr>
-                        <th className="py-3 px-4 font-medium text-gray-700">Date & time</th>
-                        <th className="py-3 px-4 font-medium text-gray-700">Activity</th>
-                        <th className="py-3 px-4 font-medium text-gray-700">Detail</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">{t('passportPublic.batchPage.tableDateTime')}</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">{t('passportPublic.batchPage.tableActivity')}</th>
+                        <th className="py-3 px-4 font-medium text-gray-700">{t('passportPublic.batchPage.tableDetail')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -686,17 +704,17 @@ export default function ProductPassportPage() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">Applied inputs (treatments)</span>
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">{t('passportPublic.batchPage.treatmentsEyebrow')}</span>
             </div>
-            <p className="text-xs font-light text-gray-600 mb-4">Product, rate, water, reason, server time and device time, GPS point where spraying was recorded.</p>
+            <p className="text-xs font-light text-gray-600 mb-4">{t('passportPublic.batchPage.treatmentsIntro')}</p>
             <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
               <div className="max-h-[480px] overflow-x-auto overflow-y-auto">
                 <table className="w-full text-left text-sm min-w-[900px]">
                   <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                     <tr>
-                      <th className="py-3 px-2 font-medium text-gray-700">Applied (server)</th>
-                      <th className="py-3 px-2 font-medium text-gray-700">Device (time)</th>
-                      <th className="py-3 px-2 font-medium text-gray-700">Product</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colAppliedServer')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colDeviceTime')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colProduct')}</th>
                       <th className="py-3 px-2 font-medium text-gray-700">Rate</th>
                       <th className="py-3 px-2 font-medium text-gray-700">Water (L)</th>
                       <th className="py-3 px-2 font-medium text-gray-700">Reason</th>

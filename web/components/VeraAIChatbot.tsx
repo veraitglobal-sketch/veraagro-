@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+import i18n from '@/i18n/config';
 import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -10,58 +12,70 @@ const VERA_GREEN = '#2D5A27';
 
 type CategoryKey = 'buyers' | 'growers' | 'logistics' | 'suppliers';
 
-// When a category is selected, a panel shows the title, a 2×2 action grid, and a main CTA.
-const categoryPanels: Record<CategoryKey, {
-  title: string;
-  ctaLabel: string;
-  href: string;
-  actions: { label: string; icon: React.ComponentType<{ className?: string }> }[];
-}> = {
+type PanelActionDef = { actionKey: string; icon: React.ComponentType<{ className?: string }> };
+
+/** Actions shown per category; labels via `t(actionKey)`. AI query uses English from same keys (`lng: 'en'`). */
+const CATEGORY_PANEL_DEFS: Record<CategoryKey, { href: string; actions: PanelActionDef[] }> = {
   logistics: {
-    title: 'Logistics analytics',
-    ctaLabel: 'For Logistics',
     href: '/logistics-partner',
     actions: [
-      { label: 'Load Optimization', icon: Package },
-      { label: 'Route Efficiency', icon: Route },
-      { label: 'Packaging Integrity', icon: Package },
-      { label: 'Cost Analysis', icon: Calculator },
+      { actionKey: 'chat.terminal.actionLoadOptimization', icon: Package },
+      { actionKey: 'chat.terminal.actionRouteEfficiency', icon: Route },
+      { actionKey: 'chat.terminal.actionPackagingIntegrity', icon: Package },
+      { actionKey: 'chat.terminal.actionCostAnalysis', icon: Calculator },
     ],
   },
   buyers: {
-    title: 'For Buyers',
-    ctaLabel: 'Browse Products',
     href: '/for-buyers',
     actions: [
-      { label: 'Browse Products', icon: ShoppingBag },
-      { label: 'Pre-order', icon: Calendar },
-      { label: 'Traceability', icon: QrCode },
-      { label: 'Contact Sales', icon: Mail },
+      { actionKey: 'chat.terminal.actionBrowseProducts', icon: ShoppingBag },
+      { actionKey: 'chat.terminal.actionPreorder', icon: Calendar },
+      { actionKey: 'chat.terminal.actionTraceability', icon: QrCode },
+      { actionKey: 'chat.terminal.actionContactSales', icon: Mail },
     ],
   },
   growers: {
-    title: 'For Growers',
-    ctaLabel: 'For Growers',
     href: '/growers',
     actions: [
-      { label: 'Apply as Producer', icon: FileCheck },
-      { label: 'Certification', icon: Award },
-      { label: 'Resources', icon: BookOpen },
-      { label: 'Contact', icon: Mail },
+      { actionKey: 'chat.terminal.actionApplyProducer', icon: FileCheck },
+      { actionKey: 'chat.terminal.actionCertification', icon: Award },
+      { actionKey: 'chat.terminal.actionResources', icon: BookOpen },
+      { actionKey: 'chat.terminal.actionContact', icon: Mail },
     ],
   },
   suppliers: {
-    title: 'For Suppliers',
-    ctaLabel: 'For Suppliers',
     href: '/suppliers',
     actions: [
-      { label: 'Join Network', icon: UserPlus },
-      { label: 'Products', icon: Package },
-      { label: 'Regions', icon: MapPin },
-      { label: 'Contact', icon: Mail },
+      { actionKey: 'chat.terminal.actionJoinNetwork', icon: UserPlus },
+      { actionKey: 'chat.terminal.actionProducts', icon: Package },
+      { actionKey: 'chat.terminal.actionRegions', icon: MapPin },
+      { actionKey: 'chat.terminal.actionContact', icon: Mail },
     ],
   },
 };
+
+const AUDIENCE_NAV_KEYS: {
+  key: CategoryKey;
+  labelKey: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { key: 'buyers', labelKey: 'nav.forBuyers', icon: ShoppingBag },
+  { key: 'growers', labelKey: 'nav.forGrowers', icon: Leaf },
+  { key: 'logistics', labelKey: 'nav.forLogistics', icon: Truck },
+  { key: 'suppliers', labelKey: 'nav.forSuppliers', icon: Building2 },
+];
+
+function getPanelTitle(cat: CategoryKey, t: TFunction): string {
+  if (cat === 'logistics') return t('chat.terminal.panelTitleLogistics');
+  const row = AUDIENCE_NAV_KEYS.find((a) => a.key === cat);
+  return row ? t(row.labelKey) : '';
+}
+
+function getPanelCta(cat: CategoryKey, t: TFunction): string {
+  if (cat === 'buyers') return t('chat.terminal.ctaBrowseProducts');
+  const row = AUDIENCE_NAV_KEYS.find((a) => a.key === cat);
+  return row ? t(row.labelKey) : '';
+}
 
 const CITIES = ['Hamburg', 'Vienna', 'Munich', 'Berlin', 'Zagreb', 'Ljubljana'];
 
@@ -115,13 +129,6 @@ function useTicker() {
 
   return { ...ticker, newOrder };
 }
-
-const audienceButtons: { key: CategoryKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'buyers', label: 'For Buyers', icon: ShoppingBag },
-  { key: 'growers', label: 'For Growers', icon: Leaf },
-  { key: 'logistics', label: 'For Logistics', icon: Truck },
-  { key: 'suppliers', label: 'For Suppliers', icon: Building2 },
-];
 
 type VeraAIChatbotProps = { inline?: boolean; inlineVariant?: 'default' | 'minimal' };
 
@@ -236,16 +243,18 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
     setView(key);
   };
 
-  const handlePanelAction = async (label: string) => {
-    setMessages((prev) => [...prev, { role: 'user', content: label }]);
+  const handlePanelAction = async (actionKey: string) => {
+    const displayLabel = t(actionKey);
+    const queryEn = String(i18n.t(actionKey, { lng: 'en' }));
+    setMessages((prev) => [...prev, { role: 'user', content: displayLabel }]);
     setLoading(true);
     try {
-      const { answer, sessionId } = await sendChatQuery(label, sessionIdRef.current);
+      const { answer, sessionId } = await sendChatQuery(queryEn, sessionIdRef.current);
       if (sessionId) sessionIdRef.current = sessionId;
       addAssistantReply(answer);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Something went wrong.';
-      addAssistantReply(`"${label}" — ${msg} Try again or ask your own question below.`);
+      addAssistantReply(`"${displayLabel}" — ${msg} Try again or ask your own question below.`);
     }
   };
 
@@ -262,7 +271,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
             : `flex items-center gap-2 rounded-lg border border-[#2D5A27]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#2D5A27] shadow-sm transition hover:bg-[#2D5A27]/5 hover:border-[#2D5A27]/50 ${inline ? '' : 'fixed bottom-5 right-5 z-[60]'}`
         }
         style={isMinimalInline ? undefined : { boxShadow: `0 2px 12px rgba(45, 90, 39, 0.12)` }}
-        aria-label={isMinimalInline ? 'Get in touch' : 'Open Vera AI Assistant'}
+        aria-label={isMinimalInline ? t('chat.getInTouch') : t('chat.openAssistant')}
         animate={{ opacity: 1 }}
       >
         {isMinimalInline ? (
@@ -304,16 +313,16 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}
             >
               <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-                <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} New</span>
-                <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} Transit</span>
-                <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} →HH</span>
-                <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% Done</span>
+                <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} {t('chat.terminal.tickerNew')}</span>
+                <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} {t('chat.terminal.tickerTransit')}</span>
+                <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} {t('chat.terminal.tickerHub')}</span>
+                <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% {t('chat.terminal.tickerDone')}</span>
               </div>
               <div className="min-h-[1.25rem] flex items-center overflow-hidden">
                 {ticker.newOrder ? (
-                  <span className="text-[#2D5A27] font-medium truncate block w-full">New: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
+                  <span className="text-[#2D5A27] font-medium truncate block w-full">{t('chat.terminal.tickerFlash', { qty: ticker.newOrder.qty, city: ticker.newOrder.city })}</span>
                 ) : (
-                  <span className="text-transparent select-none block w-full" aria-hidden>New: …</span>
+                  <span className="text-transparent select-none block w-full" aria-hidden>...</span>
                 )}
               </div>
             </div>
@@ -325,9 +334,9 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
             >
               <div className="min-w-0">
                 <div className="text-xs md:text-sm font-semibold tracking-wide truncate" style={{ color: VERA_GREEN }}>
-                  INTELLIGENCE TERMINAL
+                  {t('chat.terminal.title')}
                 </div>
-                <div className="text-[10px] md:text-xs text-gray-500">Logistics Analytics v2.1</div>
+                <div className="text-[10px] md:text-xs text-gray-500">{t('chat.terminal.subtitle')}</div>
               </div>
               <div className="flex items-center gap-1">
                 <Link
@@ -335,7 +344,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded p-1.5 text-gray-600 hover:bg-white/60 hover:text-[#2D5A27] transition"
-                  aria-label="WhatsApp"
+                  aria-label={t('chat.ariaWhatsapp')}
                 >
                   <Zap className="h-5 w-5" />
                 </Link>
@@ -343,7 +352,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   type="button"
                   onClick={() => setOpen(false)}
                   className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition"
-                  aria-label="Close"
+                  aria-label={t('chat.ariaClose')}
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -362,7 +371,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                     transition={{ duration: 0.15 }}
                     className="grid grid-cols-2 gap-1.5 md:gap-2"
                   >
-                    {audienceButtons.map(({ key, label, icon: Icon }) => (
+                    {AUDIENCE_NAV_KEYS.map(({ key, labelKey, icon: Icon }) => (
                       <button
                         key={key}
                         type="button"
@@ -370,7 +379,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                         className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
                       >
                         <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" />
-                        <span className="truncate">{label}</span>
+                        <span className="truncate">{t(labelKey)}</span>
                       </button>
                     ))}
                   </motion.div>
@@ -389,30 +398,30 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                       className="flex items-center gap-1 text-[11px] md:text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"
                     >
                       <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                      Back
+                      {t('chat.terminal.back')}
                     </button>
                     <p className="text-[11px] md:text-xs font-medium text-gray-500">
-                      {categoryPanels[view].title}
+                      {getPanelTitle(view, t)}
                     </p>
                     <div className="grid grid-cols-2 gap-1.5 md:gap-2">
-                      {categoryPanels[view].actions.map(({ label, icon: Icon }) => (
+                      {CATEGORY_PANEL_DEFS[view].actions.map(({ actionKey, icon: Icon }) => (
                         <button
-                          key={label}
+                          key={actionKey}
                           type="button"
-                          onClick={() => handlePanelAction(label)}
+                          onClick={() => handlePanelAction(actionKey)}
                           className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2.5 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50"
                         >
                           <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" />
-                          <span className="leading-tight line-clamp-2">{label}</span>
+                          <span className="leading-tight line-clamp-2">{t(actionKey)}</span>
                         </button>
                       ))}
                     </div>
                     <Link
-                      href={categoryPanels[view].href}
+                      href={CATEGORY_PANEL_DEFS[view].href}
                       className="flex items-center justify-center gap-2 w-full rounded-lg py-2.5 md:py-3 text-xs md:text-sm font-semibold text-white transition hover:opacity-90"
                       style={{ backgroundColor: VERA_GREEN }}
                     >
-                      {categoryPanels[view].ctaLabel}
+                      {getPanelCta(view, t)}
                     </Link>
                   </motion.div>
                 )}
@@ -423,7 +432,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
             <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-2 md:p-3 space-y-2 md:space-y-3">
               {messages.length === 0 && (
                 <p className="text-center text-xs md:text-sm text-gray-500 py-3 md:py-4 font-light px-2">
-                  Click a category above to see options, or ask any question here.
+                  {t('chat.terminal.hintEmpty')}
                 </p>
               )}
               {messages.map((m, i) => (
@@ -449,7 +458,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
               ))}
               {loading && (
                 <div className="mr-6 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 font-mono">
-                  Thinking…
+                  {t('chat.terminal.thinking')}
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -467,7 +476,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
-                  placeholder="Ask anything else..."
+                  placeholder={t('chat.terminal.placeholder')}
                   disabled={loading}
                   className="w-full rounded-lg border border-gray-200 py-2 pl-8 md:pl-9 pr-2 md:pr-3 text-base outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60 min-w-0"
                   style={{ fontSize: '16px' }}
@@ -507,70 +516,70 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                     style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.04))' }}
                   >
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-                      <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} New</span>
-                      <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} Transit</span>
-                      <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} →HH</span>
-                      <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% Done</span>
+                      <span className="flex items-center gap-1 text-gray-600"><Package className="h-3 w-3 text-[#2D5A27]" />{ticker.newOrders} {t('chat.terminal.tickerNew')}</span>
+                      <span className="flex items-center gap-1 text-gray-600"><Truck className="h-3 w-3 text-[#2D5A27]" />{ticker.inTransit} {t('chat.terminal.tickerTransit')}</span>
+                      <span className="flex items-center gap-1 text-gray-600"><MapPin className="h-3 w-3 text-[#2D5A27]" />{ticker.toHamburg} {t('chat.terminal.tickerHub')}</span>
+                      <span className="flex items-center gap-1 font-medium text-[#2D5A27]"><CheckCircle className="h-3 w-3" />{ticker.delivered}% {t('chat.terminal.tickerDone')}</span>
                     </div>
                     <div className="min-h-[1.25rem] flex items-center overflow-hidden">
                       {ticker.newOrder ? (
-                        <span className="text-[#2D5A27] font-medium truncate block w-full">New: {ticker.newOrder.qty} boxes → {ticker.newOrder.city}</span>
+                        <span className="text-[#2D5A27] font-medium truncate block w-full">{t('chat.terminal.tickerFlash', { qty: ticker.newOrder.qty, city: ticker.newOrder.city })}</span>
                       ) : (
-                        <span className="text-transparent select-none block w-full" aria-hidden>New: …</span>
+                        <span className="text-transparent select-none block w-full" aria-hidden>...</span>
                       )}
                     </div>
                   </div>
                   <div className="flex-shrink-0 flex items-center justify-between px-3 py-2 md:px-4 md:py-2.5 border-b border-gray-100" style={{ background: 'linear-gradient(to bottom, rgba(45,90,39,0.08), rgba(45,90,39,0.03))' }}>
                     <div className="min-w-0">
-                      <div className="text-xs md:text-sm font-semibold tracking-wide truncate" style={{ color: VERA_GREEN }}>INTELLIGENCE TERMINAL</div>
-                      <div className="text-[10px] md:text-xs text-gray-500">Logistics Analytics v2.1</div>
+                      <div className="text-xs md:text-sm font-semibold tracking-wide truncate" style={{ color: VERA_GREEN }}>{t('chat.terminal.title')}</div>
+                      <div className="text-[10px] md:text-xs text-gray-500">{t('chat.terminal.subtitle')}</div>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Link href="https://wa.me/381601234567" target="_blank" rel="noopener noreferrer" className="rounded p-1.5 text-gray-600 hover:bg-white/60 hover:text-[#2D5A27] transition" aria-label="WhatsApp"><Zap className="h-5 w-5" /></Link>
-                      <button type="button" onClick={() => setOpen(false)} className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition" aria-label="Close"><X className="h-5 w-5" /></button>
+                      <Link href="https://wa.me/381601234567" target="_blank" rel="noopener noreferrer" className="rounded p-1.5 text-gray-600 hover:bg-white/60 hover:text-[#2D5A27] transition" aria-label={t('chat.ariaWhatsapp')}><Zap className="h-5 w-5" /></Link>
+                      <button type="button" onClick={() => setOpen(false)} className="rounded p-1.5 text-gray-500 hover:bg-white/60 hover:text-gray-800 transition" aria-label={t('chat.ariaClose')}><X className="h-5 w-5" /></button>
                     </div>
                   </div>
                   <div className="flex-shrink-0 border-b border-gray-100 p-2 md:p-3 min-h-[80px] md:min-h-[110px]">
                     <AnimatePresence mode="wait">
                       {view === 'main' ? (
                         <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="grid grid-cols-2 gap-1.5 md:gap-2">
-                          {audienceButtons.map(({ key, label, icon: Icon }) => (
+                          {AUDIENCE_NAV_KEYS.map(({ key, labelKey, icon: Icon }) => (
                             <button key={key} type="button" onClick={() => handleCategorySelect(key)} className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50">
-                              <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" /><span className="truncate">{label}</span>
+                              <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" /><span className="truncate">{t(labelKey)}</span>
                             </button>
                           ))}
                         </motion.div>
                       ) : (
                         <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="space-y-2 md:space-y-3">
-                          <button type="button" onClick={() => setView('main')} className="flex items-center gap-1 text-[11px] md:text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"><ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />Back</button>
-                          <p className="text-[11px] md:text-xs font-medium text-gray-500">{categoryPanels[view].title}</p>
+                          <button type="button" onClick={() => setView('main')} className="flex items-center gap-1 text-[11px] md:text-xs font-medium text-gray-600 hover:text-[#2D5A27] transition"><ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />{t('chat.terminal.back')}</button>
+                          <p className="text-[11px] md:text-xs font-medium text-gray-500">{getPanelTitle(view, t)}</p>
                           <div className="grid grid-cols-2 gap-1.5 md:gap-2">
-                            {categoryPanels[view].actions.map(({ label, icon: Icon }) => (
-                              <button key={label} type="button" onClick={() => handlePanelAction(label)} className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2.5 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50">
-                                <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" /><span className="leading-tight line-clamp-2">{label}</span>
+                            {CATEGORY_PANEL_DEFS[view].actions.map(({ actionKey, icon: Icon }) => (
+                              <button key={actionKey} type="button" onClick={() => handlePanelAction(actionKey)} className="flex items-center gap-1.5 md:gap-2 rounded-md md:rounded-lg border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-2.5 text-left text-[11px] md:text-xs font-medium text-gray-700 transition hover:border-[#2D5A27]/40 hover:bg-gray-50">
+                                <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" /><span className="leading-tight line-clamp-2">{t(actionKey)}</span>
                               </button>
                             ))}
                           </div>
-                          <Link href={categoryPanels[view].href} className="flex items-center justify-center gap-2 w-full rounded-lg py-2.5 md:py-3 text-xs md:text-sm font-semibold text-white transition hover:opacity-90" style={{ backgroundColor: VERA_GREEN }}>{categoryPanels[view].ctaLabel}</Link>
+                          <Link href={CATEGORY_PANEL_DEFS[view].href} className="flex items-center justify-center gap-2 w-full rounded-lg py-2.5 md:py-3 text-xs md:text-sm font-semibold text-white transition hover:opacity-90" style={{ backgroundColor: VERA_GREEN }}>{getPanelCta(view, t)}</Link>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
                   <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-2 md:p-3 space-y-2 md:space-y-3">
-                    {messages.length === 0 && <p className="text-center text-xs md:text-sm text-gray-500 py-3 md:py-4 font-light px-2">Click a category above to see options, or ask any question here.</p>}
+                    {messages.length === 0 && <p className="text-center text-xs md:text-sm text-gray-500 py-3 md:py-4 font-light px-2">{t('chat.terminal.hintEmpty')}</p>}
                     {messages.map((m, i) => (
                       <div key={i} className={`rounded-lg px-2.5 py-1.5 md:px-3 md:py-2 text-xs md:text-sm break-words ${m.role === 'user' ? 'ml-4 md:ml-6 bg-[#2D5A27] text-white' : 'mr-4 md:mr-6 border border-gray-200 bg-white text-gray-700'} ${m.role === 'assistant' && !m.link ? 'font-mono whitespace-pre-wrap' : ''}`}>
                         {m.content}
                         {m.role === 'assistant' && m.link && m.linkLabel && <Link href={m.link} className="mt-2 inline-block text-xs font-medium hover:underline" style={{ color: VERA_GREEN }}>{m.linkLabel} →</Link>}
                       </div>
                     ))}
-                    {loading && <div className="mr-6 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 font-mono">Thinking…</div>}
+                    {loading && <div className="mr-6 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 font-mono">{t('chat.terminal.thinking')}</div>}
                     <div ref={messagesEndRef} />
                   </div>
                   <div className="flex-shrink-0 flex gap-1.5 md:gap-2 border-t border-gray-100 p-2 md:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-white">
                     <div className="relative flex-1 min-w-0">
                       <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-gray-400 pointer-events-none" strokeWidth={2} />
-                      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()} placeholder="Ask anything else..." disabled={loading} className="w-full rounded-lg border border-gray-200 py-2 pl-8 md:pl-9 pr-2 md:pr-3 text-base outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60 min-w-0" style={{ fontSize: '16px' }} autoComplete="off" />
+                      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()} placeholder={t('chat.terminal.placeholder')} disabled={loading} className="w-full rounded-lg border border-gray-200 py-2 pl-8 md:pl-9 pr-2 md:pr-3 text-base outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]/20 disabled:opacity-60 min-w-0" style={{ fontSize: '16px' }} autoComplete="off" />
                     </div>
                     <button type="button" onClick={() => handleSend()} disabled={loading} className="rounded-lg px-3 py-2 text-white transition hover:opacity-90 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed" style={{ backgroundColor: VERA_GREEN }}><Send className="h-4 w-4" /></button>
                   </div>

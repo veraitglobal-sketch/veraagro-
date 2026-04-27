@@ -82,7 +82,40 @@
   },
   "chat": {
     "needHelp": "Need help?",
-    "getInTouch": "Get in touch"
+    "getInTouch": "Get in touch",
+    "openAssistant": "Open Vera AI assistant",
+    "ariaClose": "Close",
+    "ariaWhatsapp": "WhatsApp",
+    "terminal": {
+      "title": "INTELLIGENCE TERMINAL",
+      "subtitle": "Logistics Analytics v2.1",
+      "tickerNew": "New",
+      "tickerTransit": "Transit",
+      "tickerHub": "→HH",
+      "tickerDone": "Done",
+      "tickerFlash": "New: {{qty}} boxes → {{city}}",
+      "hintEmpty": "Click a category above to see options, or ask any question here.",
+      "placeholder": "Ask anything else…",
+      "thinking": "Thinking…",
+      "back": "Back",
+      "panelTitleLogistics": "Logistics analytics",
+      "ctaBrowseProducts": "Browse Products",
+      "actionLoadOptimization": "Load Optimization",
+      "actionRouteEfficiency": "Route Efficiency",
+      "actionPackagingIntegrity": "Packaging Integrity",
+      "actionCostAnalysis": "Cost Analysis",
+      "actionBrowseProducts": "Browse Products",
+      "actionPreorder": "Pre-order",
+      "actionTraceability": "Traceability",
+      "actionContactSales": "Contact Sales",
+      "actionApplyProducer": "Apply as Producer",
+      "actionCertification": "Certification",
+      "actionResources": "Resources",
+      "actionContact": "Contact",
+      "actionJoinNetwork": "Join Network",
+      "actionProducts": "Products",
+      "actionRegions": "Regions"
+    }
   },
   "shell": {
     "loggedInAs": "Logged in as",
@@ -1932,5 +1965,13 @@
       "wheat": "Wheat",
       "barley": "Barley"
     }
+  },
+  "legalDocsMeta": {
+    "privacyTitle": "Privacy Policy",
+    "privacyUpdated": "Last updated: January 2026",
+    "termsTitle": "Terms of Service",
+    "termsUpdated": "Last updated: January 2026",
+    "cookiesTitle": "Cookie Policy",
+    "cookiesUpdated": "Last updated: January 2026"
   }
 }
