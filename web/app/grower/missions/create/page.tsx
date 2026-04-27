@@ -372,9 +372,10 @@ export default function CreateMissionPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center"
         >
           <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Mission Created Successfully!</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Transport request received</h2>
           <p className="text-gray-600 mb-4">
-            Your transport request has been submitted. A logistics partner will be assigned automatically.
+            Your request is <strong>queued for dispatch</strong>. BioVera operations assigns a cold-chain driver; you
+            can track the run below as soon as it is assigned.
           </p>
           <p className="text-sm text-gray-500">
             Redirecting to{' '}
@@ -414,7 +415,8 @@ export default function CreateMissionPage() {
           </p>
           <p className="text-sm text-gray-600 mb-6 leading-relaxed">
             Choose a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and full <strong>drop-off</strong>{' '}
-            details. A nearby cold truck may auto-assign; otherwise the run stays queued. Order stock on{' '}
+            details. The request is sent to <strong>BioVera operations</strong> (admin panel) — they assign a driver when
+            ready; until then the mission shows as <strong>pending</strong>. Order stock on{' '}
             <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
               Materials
             </Link>{' '}
@@ -427,6 +429,18 @@ export default function CreateMissionPage() {
             </Link>{' '}
             to follow the run (map, status, logistics).
           </p>
+
+          <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-800">
+            <p className="font-medium text-slate-900">Split order (e.g. 800 kg + 200 kg, two farms, same day)</p>
+            <p className="mt-1.5 leading-relaxed">
+              One mission = <strong>one batch</strong> and <strong>one pickup</strong>. You cannot attach two grower lots to a
+              single mission. Each farm that supplies part of a buyer line creates <strong>their own</strong> transport
+              request for <strong>their</strong> batch. Use the <strong>same</strong> destination city and full delivery
+              address on both, and in <strong>Load / dock instructions</strong> write the same purchase reference (e.g. “Order
+              #… — 800 kg, leg 1/2, morning window”) and (“… 200 kg, leg 2/2”) so logistics and the driver see two related
+              runs. They may be assigned to one truck (two stops) or two vehicles—operations decide.
+            </p>
+          </div>
 
           {submitError && (
             <div
@@ -659,8 +673,8 @@ export default function CreateMissionPage() {
               <h3 className="text-sm font-semibold text-gray-900">Where this load is going (delivery)</h3>
               <p className="text-xs text-gray-600">
                 Operations and drivers need a <strong>clear drop-off</strong>. If several small lots go to the{' '}
-                <strong>same city</strong>, dispatch can put them on one truck — use the same city spelling for each
-                mission.
+                <strong>same city</strong>, you can use the same spelling so dispatch can assign the <strong>same
+                driver</strong> to both missions (one truck, two stops) when they are ready.
               </p>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Destination city / region *</label>

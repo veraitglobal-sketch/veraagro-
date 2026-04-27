@@ -10,12 +10,17 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateMissionDto, AcceptMissionDto } from './dto/mission.dto';
+import {
+  CreateMissionDto,
+  AcceptMissionDto,
+  AdminAssignMissionDto,
+} from './dto/mission.dto';
 import { FreshnessService } from '../freshness/freshness.service';
 import { MaterialControlService } from '../material-control/material-control.service';
 import * as crypto from 'crypto';
 import { AuditTrailService } from '../audit-trail/audit-trail.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class MissionsService {
@@ -29,7 +34,13 @@ export class MissionsService {
     private auditTrailService: AuditTrailService,
     @Inject(forwardRef(() => NotificationsGateway))
     private notificationsGateway: NotificationsGateway,
+    private notificationsService: NotificationsService,
   ) {}
+
+  /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
+  private shouldAutoAssignLogistics(): boolean {
+    return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
+  }
 
   /** DB uses FARMER (default) and/or GROWER; both may create transport missions. */
   private isGrowerAccount(roles: string[]): boolean {
@@ -110,11 +121,10 @@ export class MissionsService {
       }
     }
 
-    // Find nearest available logistics partner with frigo vehicle
-    const logisticsPartner = await this.findNearestLogisticsPartner(
-      pickupLocation.lat,
-      pickupLocation.lng,
-    );
+    const autoAssign = this.shouldAutoAssignLogistics();
+    const logisticsPartner = autoAssign
+      ? await this.findNearestLogisticsPartner(pickupLocation.lat, pickupLocation.lng)
+      : null;
 
     // Calculate optimal route (using simple distance calculation for now)
     const routeCalc = await this.calculateOptimalRoute(
@@ -239,6 +249,25 @@ export class MissionsService {
       await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
     } catch (error) {
       console.error('Error sending real-time notification:', error);
+    }
+
+    if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+      try {
+        const g = mission.users_missions_growerIdTousers;
+        const growerLabel = g
+          ? `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Grower'
+          : 'Grower';
+        await this.notificationsService.notifyAdminsForNewTransportRequest({
+          missionNumber: mission.missionNumber,
+          growerLabel,
+          destinationCity: mission.destinationCity,
+          missionId: mission.id,
+        });
+      } catch (e) {
+        this.logger.warn(
+          `notifyAdminsForNewTransportRequest failed: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
     }
 
     return mission;
@@ -528,7 +557,10 @@ export class MissionsService {
       return null;
     }
 
-    const logisticsPartner = await this.findNearestLogisticsPartner(pickup.lat, pickup.lng);
+    const autoAssign = this.shouldAutoAssignLogistics();
+    const logisticsPartner = autoAssign
+      ? await this.findNearestLogisticsPartner(pickup.lat, pickup.lng)
+      : null;
     const partnerLoc = logisticsPartner
       ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation)
       : null;
@@ -599,6 +631,25 @@ export class MissionsService {
       await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
     } catch (error) {
       this.logger.warn(`notifyMissionUpdate failed: ${(error as Error).message}`);
+    }
+
+    if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+      try {
+        const g = mission.users_missions_growerIdTousers;
+        const growerLabel = g
+          ? `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Grower'
+          : 'Grower';
+        await this.notificationsService.notifyAdminsForNewTransportRequest({
+          missionNumber: mission.missionNumber,
+          growerLabel,
+          destinationCity: mission.destinationCity,
+          missionId: mission.id,
+        });
+      } catch (e) {
+        this.logger.warn(
+          `notifyAdminsForNewTransportRequest (harvest mission) failed: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
     }
 
     return mission;
@@ -794,6 +845,135 @@ export class MissionsService {
         batches: true,
       },
     });
+  }
+
+  /** Logistics partners (for admin dispatch dropdown). */
+  async listLogisticsPartnersForAdmin() {
+    return this.prisma.users.findMany({
+      where: { roles: { has: 'LOGISTICS_PARTNER' }, status: 'ACTIVE' },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        partnerCode: true,
+        vehicles: {
+          where: { status: 'AVAILABLE', hasFrigo: true },
+          select: { id: true, licensePlate: true, vehicleNumber: true, status: true },
+        },
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  }
+
+  /**
+   * Assign a driver to a mission that is still PENDING with no logistics partner (operations dispatch).
+   */
+  async adminAssignLogistics(adminId: string, missionId: string, dto: AdminAssignMissionDto) {
+    const mission = await this.prisma.missions.findUnique({ where: { id: missionId } });
+    if (!mission) {
+      throw new NotFoundException('Mission not found');
+    }
+    if (mission.status === 'CANCELLED' || mission.status === 'COMPLETED') {
+      throw new BadRequestException('Cannot assign a completed or cancelled mission');
+    }
+    if (mission.logisticsPartnerId != null) {
+      throw new BadRequestException(
+        'This mission already has a logistics partner. Use Command Control to reassign the driver.',
+      );
+    }
+    if (mission.status !== 'PENDING') {
+      throw new BadRequestException('Only PENDING missions awaiting dispatch can be assigned here');
+    }
+
+    const partner = await this.prisma.users.findFirst({
+      where: {
+        id: dto.logisticsPartnerId,
+        roles: { has: 'LOGISTICS_PARTNER' },
+        status: 'ACTIVE',
+      },
+    });
+    if (!partner) {
+      throw new BadRequestException('Invalid or inactive logistics partner');
+    }
+
+    let vehicle: { id: string } | null = null;
+    if (dto.vehicleId) {
+      vehicle = await this.prisma.vehicles.findFirst({
+        where: {
+          id: dto.vehicleId,
+          logisticsPartnerId: partner.id,
+          status: 'AVAILABLE',
+          hasFrigo: true,
+        },
+        select: { id: true },
+      });
+    }
+    if (!vehicle) {
+      vehicle = await this.prisma.vehicles.findFirst({
+        where: { logisticsPartnerId: partner.id, status: 'AVAILABLE', hasFrigo: true },
+        orderBy: { updatedAt: 'desc' },
+        select: { id: true },
+      });
+    }
+    if (!vehicle) {
+      throw new BadRequestException('No available refrigerated vehicle for this partner');
+    }
+
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      data: {
+        logisticsPartnerId: partner.id,
+        vehicleId: vehicle.id,
+        status: 'ASSIGNED',
+        assignedAt: new Date(),
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+      },
+    });
+
+    try {
+      await this.notificationsService.create({
+        userId: partner.id,
+        type: 'ACTION_REQUIRED',
+        title: 'New mission assigned',
+        message: `Mission ${mission.missionNumber} was assigned to you by operations.`,
+        actionUrl: '/logistics-partner/missions',
+      });
+    } catch (e) {
+      this.logger.warn(`admin assign: notify driver failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    try {
+      await this.notificationsGateway.notifyMissionUpdate(mission.growerId, updated);
+    } catch (e) {
+      this.logger.warn(`admin assign: notify grower failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    try {
+      await this.auditTrailService.createAuditTrail({
+        eventType: 'STATUS_CHANGE',
+        entityType: 'Mission',
+        entityId: missionId,
+        performedByUserId: adminId,
+        newValue: {
+          status: 'ASSIGNED',
+          missionNumber: mission.missionNumber,
+          logisticsPartnerId: partner.id,
+          adminAssigned: true,
+        },
+      });
+    } catch (e) {
+      this.logger.warn(`admin assign: audit failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    return updated;
   }
 
   /**

@@ -40,7 +40,7 @@ export class CommandControlController {
   }
 
   @Post('reassign/:missionId')
-  @Roles('SUPER_ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   async reassignMission(
     @Param('missionId') missionId: string,
     @Body() body: { newDriverId: string; reason: string },

@@ -126,7 +126,10 @@ export default function MissionsCreateScreen() {
         destinationAddress: destinationAddress.trim(),
         loadInstructions: loadInstructions.trim() || undefined,
       });
-      Alert.alert('Transport requested', 'Your mission was created. You can track it under Missions.', [
+      Alert.alert(
+        'Transport requested',
+        'Your request was sent. Operations will assign a driver; track status under Missions.',
+        [
         { text: 'OK', onPress: () => router.replace('/(producer)/missions') },
       ]);
     } catch (e: any) {
@@ -199,6 +202,26 @@ export default function MissionsCreateScreen() {
           <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
             Pick a <Text style={{ fontWeight: '600' }}>packed</Text> lot (status PACKED or quality verified), then pickup GPS and
             address. The server checks materials balance and compliance photos — if something is missing, the error will say what.
+          </Text>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: 'rgba(15, 23, 42, 0.04)',
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 0.5,
+            borderColor: 'rgba(15, 23, 42, 0.12)',
+            padding: theme.spacing.md,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 6 }}>
+            Two farms, one buyer order (e.g. 800 kg + 200 kg)
+          </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18 }}>
+            One trip = one batch. Each grower sends their own request for their lot. Use the same destination city and address;
+            in load instructions put the same order reference and “leg 1/2” vs “leg 2/2”. Logistics may assign one truck (two
+            stops) or two runs.
           </Text>
         </View>
 

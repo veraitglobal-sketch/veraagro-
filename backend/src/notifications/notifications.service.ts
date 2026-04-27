@@ -81,6 +81,46 @@ export class NotificationsService {
   }
 
   /**
+   * In-app alert when a grower submits a transport request (mission pending dispatch).
+   */
+  async notifyAdminsForNewTransportRequest(data: {
+    missionNumber: string;
+    growerLabel: string;
+    destinationCity: string | null;
+    missionId: string;
+  }): Promise<void> {
+    const city = data.destinationCity?.trim() || '—';
+    const message = `${data.missionNumber} — ${data.growerLabel} → ${city}`;
+
+    const admins = await this.prisma.users.findMany({
+      where: {
+        OR: [
+          { roles: { has: 'SUPER_ADMIN' } },
+          { roles: { has: 'ADMIN' } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    for (const a of admins) {
+      try {
+        await this.create({
+          userId: a.id,
+          type: 'ACTION_REQUIRED',
+          title: 'New transport request',
+          message,
+          actionUrl: '/admin/missions',
+        });
+      } catch (e) {
+        this.logger.warn(
+          `notifyAdminsForNewTransportRequest: failed for user ${a.id}`,
+          e,
+        );
+      }
+    }
+  }
+
+  /**
    * Send smart notification based on trigger
    */
   async sendSmartNotification(

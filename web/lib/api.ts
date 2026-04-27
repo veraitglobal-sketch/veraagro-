@@ -196,6 +196,20 @@ export const missionsAPI = {
     const response = await api.post('/missions', data);
     return response.data;
   },
+  getLogisticsPartnersAdmin: async () => {
+    const response = await api.get('/missions/admin/logistics-partners');
+    return response.data;
+  },
+  assignMissionAdmin: async (
+    missionId: string,
+    body: { logisticsPartnerId: string; vehicleId?: string },
+  ) => {
+    const response = await api.patch(
+      `/missions/admin/${encodeURIComponent(missionId)}/assign`,
+      body,
+    );
+    return response.data;
+  },
 };
 
 /** Same-origin BFF: avoids POST hitting the Next app host by mistake; proxies to Nest (see /api/logistics/vehicles). */

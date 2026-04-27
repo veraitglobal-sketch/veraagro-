@@ -58,3 +58,13 @@ export class AcceptMissionDto {
   @IsString()
   vehicleId?: string;
 }
+
+/** Admin assigns a logistics partner to a still-unassigned mission (PENDING, no driver). */
+export class AdminAssignMissionDto {
+  @IsString()
+  logisticsPartnerId: string;
+
+  @IsOptional()
+  @IsString()
+  vehicleId?: string;
+}

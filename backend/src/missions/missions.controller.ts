@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   Param,
   Query,
@@ -10,7 +11,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { MissionsService } from './missions.service';
-import { CreateMissionDto, AcceptMissionDto } from './dto/mission.dto';
+import { CreateMissionDto, AcceptMissionDto, AdminAssignMissionDto } from './dto/mission.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -83,5 +84,23 @@ export class MissionsController {
     @Query('logisticsPartnerId') logisticsPartnerId?: string,
   ) {
     return this.missionsService.findAll({ status, growerId, logisticsPartnerId });
+  }
+
+  @Get('admin/logistics-partners')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async listLogisticsPartnersForAdmin() {
+    return this.missionsService.listLogisticsPartnersForAdmin();
+  }
+
+  @Patch('admin/:id/assign')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async adminAssignMission(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: AdminAssignMissionDto,
+  ) {
+    return this.missionsService.adminAssignLogistics(req.user.id, id, dto);
   }
 }
