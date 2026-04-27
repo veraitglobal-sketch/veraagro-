@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 
 interface AuthGuardProps {
@@ -11,6 +12,7 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children, requiredRoles, redirectTo = '/login/buyer' }: AuthGuardProps) {
+  const { t } = useTranslation();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -41,7 +43,7 @@ export default function AuthGuard({ children, requiredRoles, redirectTo = '/logi
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">{t('authGuard.loading')}</p>
         </div>
       </div>
     );

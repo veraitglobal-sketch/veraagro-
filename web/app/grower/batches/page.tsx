@@ -6,6 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, standardEngineAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useAuth } from '@/lib/auth';
 import {
   Package,
@@ -229,23 +230,21 @@ export default function GrowerBatchesPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Batches" navItems={navItems}>
-        <div className="p-6 bg-gray-50 min-h-screen">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-3xl font-light text-gray-900">My Batches</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Track all your harvest batches and their journey to market
-              </p>
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-            </button>
-          </div>
+        <GrowerPageShell>
+          <GrowerPageHeader
+            title="My Batches"
+            description="Track all your harvest batches and their journey to market"
+            right={
+              <button
+                type="button"
+                onClick={() => setShowFilters(!showFilters)}
+                className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                Filters
+              </button>
+            }
+          />
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg mb-6">
@@ -718,7 +717,7 @@ export default function GrowerBatchesPage() {
               </div>
             </div>
           )}
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

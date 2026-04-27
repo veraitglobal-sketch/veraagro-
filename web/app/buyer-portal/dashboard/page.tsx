@@ -41,6 +41,11 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import {
+  formatDateEn,
+  formatMonthYearLongEnFromYearMonth,
+  formatMonthYearShortEnFromYearMonth,
+} from '@/lib/en-locale-dates';
 
 export default function BuyerDashboardPage() {
   const { user } = useAuth();
@@ -407,12 +412,9 @@ export default function BuyerDashboardPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={spendingData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="month" 
-                    tickFormatter={(value) => {
-                      const date = new Date(value + '-01');
-                      return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-                    }}
+                  <XAxis
+                    dataKey="month"
+                    tickFormatter={(value) => formatMonthYearShortEnFromYearMonth(String(value))}
                   />
                   <YAxis />
                   <Tooltip 
@@ -547,8 +549,8 @@ export default function BuyerDashboardPage() {
                       {(delivery.estimatedDeliveryDate || delivery.assignedAt || delivery.updatedAt) && (
                         <p className="text-xs text-gray-400 mt-1 font-light">
                           {delivery.estimatedDeliveryDate
-                            ? `ETA: ${new Date(delivery.estimatedDeliveryDate).toLocaleDateString()}`
-                            : `Updated: ${new Date(delivery.updatedAt || delivery.assignedAt).toLocaleDateString()}`}
+                            ? `ETA: ${formatDateEn(delivery.estimatedDeliveryDate)}`
+                            : `Updated: ${formatDateEn(delivery.updatedAt || delivery.assignedAt)}`}
                         </p>
                       )}
                     </div>
@@ -584,7 +586,7 @@ export default function BuyerDashboardPage() {
                   <div>
                     <p className="text-sm font-light text-gray-900">{inv.invoiceNumber}</p>
                     <p className="text-xs text-gray-500 font-light">
-                      Order {inv.orderNumber} · {inv.date.toLocaleDateString()}
+                      Order {inv.orderNumber} · {formatDateEn(inv.date)}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -657,7 +659,7 @@ export default function BuyerDashboardPage() {
                           {order.orderNumber || `Order #${order.id.slice(0, 8)}`}
                         </p>
                         <p className="text-xs text-gray-500 font-light">
-                          {order.productName} • {new Date(order.createdAt || Date.now()).toLocaleDateString()}
+                          {order.productName} • {formatDateEn(order.createdAt || Date.now())}
                         </p>
                       </div>
                     </div>

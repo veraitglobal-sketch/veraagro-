@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } fro
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
+import { getPostLoginPath, normalizeUserRoles, type PartnerEntryRedirect } from '../lib/post-login-redirect';
 import { theme } from '../lib/theme';
 
 /**
@@ -28,35 +29,21 @@ export default function PartnerLoginScreen() {
     setLoading(true);
     try {
       const response = await login(username, password);
-      
-      const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      if (userRoles.includes('MATERIAL_SUPPLIER')) {
-        router.replace('/(supplier)/dashboard' as any);
-        return;
-      }
-      const isProducer = userRoles.some((role: string) =>
-        ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role),
-      );
+      const userRoles = normalizeUserRoles(response.user);
+      const rawRedirect = params.redirect;
+      const redirectParam = Array.isArray(rawRedirect) ? rawRedirect[0] : rawRedirect;
+      const partnerEntry: PartnerEntryRedirect =
+        redirectParam === 'estates/new' || redirectParam === 'estates' ? redirectParam : undefined;
+      const path = getPostLoginPath(userRoles, { partnerEntry });
 
-      if (isProducer) {
-        if (params.redirect === 'estates/new') {
-          router.replace('/(producer)/estates/new');
-        } else if (params.redirect === 'estates') {
-          router.replace('/(producer)/estates');
-        } else {
-          router.replace('/(producer)/(tabs)');
-        }
-      } else if (userRoles.includes('LOGISTICS_PARTNER')) {
-        router.replace('/(logistics)' as any);
+      if (path) {
+        router.replace(path as any);
       } else {
-        Alert.alert(
-          t('error') || 'Error',
-          t('partnerLogin.notProducer') || 'This account is not authorized for producer, logistics, or partner store access',
-        );
+        Alert.alert(t('error'), t('partnerLogin.notProducerAccess'));
         await logout();
       }
     } catch (error: any) {
-      Alert.alert(t('error'), error.message || t('partnerLogin.failed'));
+      Alert.alert(t('error'), error?.message || t('partnerLogin.failed'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +68,7 @@ export default function PartnerLoginScreen() {
           color: 'rgba(255, 255, 255, 0.8)',
           letterSpacing: 0.5,
         }}>
-          {t('partnerLogin.subtitle') || 'Sign in to manage your farm'}
+          {t('partnerLogin.subtitle')}
         </Text>
       </View>
 
@@ -102,12 +89,12 @@ export default function PartnerLoginScreen() {
           textTransform: 'uppercase',
           letterSpacing: 1,
         }}>
-          {t('partnerLogin.username') || 'Username / Email / Partner Code'}
+          {t('partnerLogin.username')}
         </Text>
         <TextInput
           value={username}
           onChangeText={setUsername}
-          placeholder={t('partnerLogin.usernamePlaceholder') || 'Enter username, email or partner code'}
+          placeholder={t('partnerLogin.usernamePlaceholder')}
           placeholderTextColor={theme.colors.text.tertiary}
           autoCapitalize="none"
           autoCorrect={false}
@@ -132,12 +119,12 @@ export default function PartnerLoginScreen() {
           textTransform: 'uppercase',
           letterSpacing: 1,
         }}>
-          {t('partnerLogin.password') || 'Password'}
+          {t('partnerLogin.password')}
         </Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
-          placeholder={t('partnerLogin.passwordPlaceholder') || 'Enter password'}
+          placeholder={t('partnerLogin.passwordPlaceholder')}
           placeholderTextColor={theme.colors.text.tertiary}
           secureTextEntry
           style={{
@@ -174,7 +161,7 @@ export default function PartnerLoginScreen() {
               color: theme.colors.text.inverse,
               letterSpacing: 1,
             }}>
-              {t('partnerLogin.button') || 'Sign In'}
+              {t('partnerLogin.button')}
             </Text>
           )}
         </TouchableOpacity>
@@ -191,7 +178,7 @@ export default function PartnerLoginScreen() {
           color: 'rgba(255, 255, 255, 0.8)',
           letterSpacing: 0.5,
         }}>
-          {t('partnerLogin.backToMarketplace') || 'Back to Marketplace'}
+          {t('partnerLogin.backToMarketplaceFull')}
         </Text>
       </TouchableOpacity>
     </View>

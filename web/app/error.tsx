@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslation, Trans } from 'react-i18next';
 import { Home, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function Error({
@@ -12,6 +13,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useTranslation();
   useEffect(() => {
     // Log error to error reporting service
     if (typeof window !== 'undefined') {
@@ -25,7 +27,7 @@ export default function Error({
         <div className="mb-8">
           <Image
             src="/logo1.png"
-            alt="Bio Vera"
+            alt={t('errorPage.logoAlt')}
             width={56}
             height={20}
             className="h-4 w-auto mx-auto mb-8"
@@ -51,20 +53,31 @@ export default function Error({
             className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
-            Try Again
+            {t('errorPage.tryAgain')}
           </button>
           <Link
             href="/"
             className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
-            Go to Homepage
+            {t('errorPage.goHome')}
           </Link>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            If the problem persists, please <Link href="/contact" className="text-[#2D5A27] hover:text-[#23471f]">contact our support team</Link>
+            <Trans
+              i18nKey="errorPage.footerSupport"
+              components={{
+                1: (
+                  <Link
+                    key="1"
+                    href="/contact"
+                    className="text-[#2D5A27] hover:text-[#23471f]"
+                  />
+                ),
+              }}
+            />
           </p>
         </div>
       </div>

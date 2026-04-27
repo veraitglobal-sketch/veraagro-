@@ -1,0 +1,106 @@
+{
+  "brand": { "name": "Bio Vera" },
+  "metadata": {
+    "siteName": "Bio Vera",
+    "siteDescription": "A vertically integrated agricultural network. From field to buyer: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.",
+    "ldJsonDescription": "A vertically integrated agricultural network. From field to buyer with traceable batches, Bio-Ready certification, and digital proof. Open to producers worldwide.",
+    "keywords": [
+      "Bio Vera",
+      "Agricultural network",
+      "Agricultural Technology",
+      "Traceability",
+      "Bio Certification",
+      "EU Market",
+      "Farm to Table",
+      "Digital Passport",
+      "Supply Chain",
+      "Organic Farming",
+      "Sustainable Agriculture",
+      "Food Transparency"
+    ],
+    "ldJsonContactType": "Customer Service"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "close": "Close"
+  },
+  "nav": {
+    "home": "Home",
+    "forBuyers": "For Buyers",
+    "forGrowers": "For Growers",
+    "forSuppliers": "For Suppliers",
+    "forLogistics": "For Logistics",
+    "contact": "Contact",
+    "helpCenter": "Help Center",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "authGuard": { "loading": "Loading..." },
+  "errorPage": {
+    "title": "Something went wrong",
+    "body": "We're sorry, but something unexpected happened. Our team has been notified and is working on a fix.",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Homepage",
+    "footerSupport": "If the problem persists, please <1>contact our support team</1>",
+    "logoAlt": "Bio Vera"
+  },
+  "globalError": {
+    "title": "Application Error",
+    "body": "A critical error occurred. Please refresh the page or contact support if the problem persists.",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Homepage",
+    "logoAlt": "Bio Vera"
+  },
+  "cookieConsent": {
+    "mainBanner": "We use <strong>essential</strong> cookies so our sites and apps work (login, security, your consent choice). Optional cookies help us improve the site (analytics), remember your preferences (functionality), and, if you allow, support marketing. You can accept all, reject non-essential, or choose by category. Full list of cookies, purposes, and retention is in our <cookie>Cookie Policy</cookie> and <privacy>Privacy Policy</privacy>.",
+    "noticeTitle": "Cookie notice",
+    "customize": "Customize",
+    "rejectAll": "Reject All",
+    "acceptAll": "Accept All",
+    "prefsTitle": "Cookie Preferences",
+    "savePrefs": "Save Preferences",
+    "fullPolicyLink": "Full Cookie Policy",
+    "fullListFooter": "Full list of cookies, retention periods, and third-party services: <1>Cookie Policy</1>. How we use data: <2>Privacy Policy</2>.",
+    "essential": {
+      "title": "Essential Cookies",
+      "subtitle": "Required for the services to function",
+      "always": "Always Active",
+      "p1": "Necessary for the site to work. They cannot be disabled.",
+      "details": "Details",
+      "d1": "Purpose:",
+      "d1t": "Login session, authentication token (JWT), security (e.g. CSRF), load balancing, and storing this consent choice.",
+      "d2": "Examples:",
+      "d2t": "Session ID, token (in localStorage), cookie-consent and cookie-consent-date (localStorage).",
+      "d3": "Retention:",
+      "d3t": "Session (until you close the browser) or up to 1 year for persistent ones (e.g. consent)."
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "subtitle": "Help us understand how you use Bio Vera",
+      "p1": "Help us understand how our services are used so we can improve them.",
+      "d1t": "Anonymous statistics: page views, navigation paths, device type, and performance (e.g. load times). No identification of individuals.",
+      "d2t": "Analytics cookies from tools we may use (e.g. page view counters, session duration).",
+      "d3t": "Up to 2 years, depending on the tool. You can turn this category off at any time."
+    },
+    "functionality": {
+      "title": "Functionality Cookies",
+      "subtitle": "Remember your preferences and settings",
+      "p1": "Remember your choices and settings for a more convenient experience.",
+      "d1t": "Language, region, display options (e.g. theme), accessibility settings, and temporary form data to avoid data loss.",
+      "d2t": "preference_*, language, theme, or similar identifiers stored in localStorage/sessionStorage.",
+      "d3t": "Up to 1 year or until you clear site data."
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "subtitle": "Used for advertising and marketing purposes",
+      "p1": "Used for advertising and measuring campaign effectiveness, if we use such tools in the future.",
+      "d1t": "Personalized ads and measurement of ad performance (e.g. conversions). May involve third-party ad partners.",
+      "d2t": "Advertising or marketing cookies set by us or our partners, if we enable them.",
+      "d3t": "As per the relevant provider; typically up to 2 years. You can withdraw consent at any time."
+    }
+  }
+}

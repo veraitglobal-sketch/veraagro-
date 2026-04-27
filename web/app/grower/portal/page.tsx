@@ -11,6 +11,7 @@ import { usersAPI } from '@/lib/api';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { Truck } from 'lucide-react';
 import { missionStatusBadgeClass } from '@/lib/mission-ui';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import type { CommercialAgentPublic } from '@/lib/auth';
 
 // Dynamically import map components to avoid SSR issues
@@ -237,16 +238,20 @@ export default function GrowerPortalPage() {
   if (loading) {
     return (
       <SidebarLayout title="Mission Tracker" navItems={navItems}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading...</div>
-        </div>
+        <GrowerPageShell>
+          <div className="flex h-64 items-center justify-center text-gray-500">Loading…</div>
+        </GrowerPageShell>
       </SidebarLayout>
     );
   }
 
   return (
     <SidebarLayout title="Mission Tracker" navItems={navItems}>
-      <div className="space-y-6">
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader
+          title="Mission tracker"
+          description="Follow transport runs, route, and status for batches you have moved from the farm."
+        />
         {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} className="mb-0" />}
 
         <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-700">
@@ -585,7 +590,7 @@ export default function GrowerPortalPage() {
             </div>
           </motion.div>
         )}
-      </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

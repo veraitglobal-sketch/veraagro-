@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
 import { growerNavItems } from '@/lib/grower-nav';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 const navItems = growerNavItems;
 
@@ -123,20 +124,20 @@ export default function GrowerDashboardPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="Dashboard" navItems={navItems}>
-        <div className="space-y-8">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-light text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-600 font-light mt-1">Parcels, estates, and transport at a glance</p>
-            </div>
-            <button
-              onClick={loadData}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-            >
-              Refresh
-            </button>
-          </div>
+        <GrowerPageShell className="space-y-8">
+          <GrowerPageHeader
+            title="Dashboard"
+            description="Parcels, estates, and transport at a glance"
+            right={
+              <button
+                type="button"
+                onClick={loadData}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+              >
+                Refresh
+              </button>
+            }
+          />
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -362,7 +363,7 @@ export default function GrowerDashboardPage() {
               )}
             </div>
           </div>
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

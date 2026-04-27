@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
 
 export default function SupplierMessagesScreen() {
+  const { t } = useTranslation();
   const [threads, setThreads] = useState<any[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -16,7 +18,7 @@ export default function SupplierMessagesScreen() {
       const t = await b2bSuppliersAPI.getMyThreads();
       setThreads(Array.isArray(t) ? t : []);
     } catch (e) {
-      Alert.alert('Error', e instanceof Error ? e.message : 'Load failed');
+      Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -32,7 +34,7 @@ export default function SupplierMessagesScreen() {
       const m = await b2bSuppliersAPI.getThreadMessages(id);
       setMessages(Array.isArray(m) ? m : []);
     } catch (e) {
-      Alert.alert('Error', e instanceof Error ? e.message : 'Failed');
+      Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.loadFailed'));
     }
   };
 
@@ -45,7 +47,7 @@ export default function SupplierMessagesScreen() {
       setMessages((await b2bSuppliersAPI.getThreadMessages(activeId)) || []);
       await loadThreads();
     } catch (e) {
-      Alert.alert('Error', e instanceof Error ? e.message : 'Send failed');
+      Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.sendFailed'));
     } finally {
       setSending(false);
     }
@@ -66,26 +68,26 @@ export default function SupplierMessagesScreen() {
     >
       <View style={{ flex: 1, flexDirection: 'row' }}>
         <ScrollView style={{ width: '38%', maxWidth: 200, borderRightWidth: 1, borderColor: theme.colors.border }}>
-          {threads.map((t) => (
+          {threads.map((thread) => (
             <TouchableOpacity
-              key={t.id}
-              onPress={() => void openThread(t.id)}
+              key={thread.id}
+              onPress={() => void openThread(thread.id)}
               style={{
                 padding: 12,
-                backgroundColor: activeId === t.id ? theme.colors.primaryLight : 'transparent',
+                backgroundColor: activeId === thread.id ? theme.colors.primaryLight : 'transparent',
               }}
             >
               <Text style={{ fontSize: 12, color: theme.colors.text.primary }} numberOfLines={2}>
-                {t.farmer
-                  ? `${t.farmer.firstName || ''} ${t.farmer.lastName || ''}\n${t.farmer.partnerCode || ''}`
-                  : t.id}
+                {thread.farmer
+                  ? `${thread.farmer.firstName || ''} ${thread.farmer.lastName || ''}\n${thread.farmer.partnerCode || ''}`
+                  : thread.id}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
         <View style={{ flex: 1, padding: 8 }}>
           {!activeId ? (
-            <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 32 }}>Select a thread</Text>
+            <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 32 }}>{t('supplier.selectThread')}</Text>
           ) : (
             <>
               <ScrollView style={{ flex: 1, marginBottom: 8 }} keyboardShouldPersistTaps="handled">
@@ -102,7 +104,7 @@ export default function SupplierMessagesScreen() {
                 <TextInput
                   value={text}
                   onChangeText={setText}
-                  placeholder="Reply…"
+                  placeholder={t('supplier.replyPlaceholder')}
                   style={{
                     flex: 1,
                     borderWidth: 1,
@@ -119,7 +121,7 @@ export default function SupplierMessagesScreen() {
                   disabled={sending}
                   style={{ backgroundColor: theme.colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8 }}
                 >
-                  <Text style={{ color: '#fff' }}>Send</Text>
+                  <Text style={{ color: '#fff' }}>{t('supplier.send')}</Text>
                 </TouchableOpacity>
               </View>
             </>

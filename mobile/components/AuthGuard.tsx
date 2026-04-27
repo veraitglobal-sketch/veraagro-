@@ -31,9 +31,10 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
       // Determine which login screen to show based on route
       const isProducerRoute = path[0] === '(producer)';
       const isLogisticsRoute = path[0] === '(logistics)';
+      const isSupplierRoute = path[0] === '(supplier)';
       const isBuyerRoute = path[0] === '(buyer)';
 
-      if (isProducerRoute || isLogisticsRoute) {
+      if (isProducerRoute || isLogisticsRoute || isSupplierRoute) {
         router.replace('/partner-login');
       } else if (isBuyerRoute) {
         router.replace('/buyer-login');
@@ -51,7 +52,8 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
       if (!hasRequiredRole) {
         const isProducerRoute2 = path[0] === '(producer)';
         const isLogisticsRoute2 = path[0] === '(logistics)';
-        if (isProducerRoute2 || isLogisticsRoute2) {
+        const isSupplierRoute2 = path[0] === '(supplier)';
+        if (isProducerRoute2 || isLogisticsRoute2 || isSupplierRoute2) {
           router.replace('/partner-login');
         } else {
           router.replace('/buyer-login');

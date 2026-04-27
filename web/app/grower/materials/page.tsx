@@ -8,6 +8,7 @@ import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 const navItems = growerNavItems;
 
@@ -222,24 +223,22 @@ export default function GrowerMaterialsPage() {
   if (loading) {
     return (
       <SidebarLayout title="Materials" navItems={navItems}>
-        <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
-          <div className="text-gray-500 text-sm">Loading materials…</div>
-        </div>
+        <GrowerPageShell>
+          <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">Loading materials…</div>
+        </GrowerPageShell>
       </SidebarLayout>
     );
   }
 
   return (
     <SidebarLayout title="Materials" navItems={navItems}>
-      <div className="p-6 bg-gray-50 min-h-screen space-y-6">
-        <div className="mb-2">
-          <h1 className="text-3xl font-light text-gray-900">Materials</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Order official Bio Vera packaging here (crates, label rolls, film). Purchases add to the balances and create label roll IDs for compliance.
-          </p>
-        </div>
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader
+          title="Materials"
+          description="Order official Bio Vera packaging (crates, label rolls, film). Purchases update balances and create label roll IDs for compliance."
+        />
 
-        <GrowerSupplyFlowCard context="materials" />
+        <GrowerSupplyFlowCard context="materials" variant="collapsible" />
 
         <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
           <span className="text-gray-500">Shortcuts</span>
@@ -501,7 +500,7 @@ export default function GrowerMaterialsPage() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

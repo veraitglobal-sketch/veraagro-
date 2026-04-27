@@ -11,6 +11,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { formatDateEn, formatDateTimeEn } from '@/lib/en-locale-dates';
 import {
   User,
   MapPin,
@@ -168,7 +169,7 @@ export default function FarmDetailPage() {
                     <li>Label rolls: {materialBalance.labelRollBalance}</li>
                     <li>Film (m): {materialBalance.filmMeterBalance}</li>
                     <li className="text-xs text-gray-500 pt-1">
-                      Updated: {new Date(materialBalance.lastUpdated).toLocaleString()}
+                      Updated: {formatDateTimeEn(materialBalance.lastUpdated)}
                     </li>
                   </ul>
                 </div>
@@ -186,7 +187,7 @@ export default function FarmDetailPage() {
                       Avg rating: {trust.averageRating} ({trust.totalRatings} total)
                     </li>
                     <li className="text-xs text-gray-500">
-                      Last updated: {new Date(trust.lastUpdated).toLocaleString()}
+                      Last updated: {formatDateTimeEn(trust.lastUpdated)}
                     </li>
                   </ul>
                 </div>
@@ -228,10 +229,10 @@ export default function FarmDetailPage() {
                           </span>
                         </td>
                         <td className="py-2 pr-4 text-gray-600">
-                          {d.createdAt ? new Date(d.createdAt).toLocaleString() : '—'}
+                          {d.createdAt ? formatDateTimeEn(d.createdAt) : '—'}
                         </td>
                         <td className="py-2 text-gray-600">
-                          {d.verifiedAt ? new Date(d.verifiedAt).toLocaleString() : '—'}
+                          {d.verifiedAt ? formatDateTimeEn(d.verifiedAt) : '—'}
                         </td>
                       </tr>
                     ))}
@@ -261,7 +262,7 @@ export default function FarmDetailPage() {
                     {complianceLogs.slice(0, 30).map((c) => (
                       <tr key={c.id} className="border-b border-gray-50">
                         <td className="py-1.5 pr-3 text-gray-600 whitespace-nowrap">
-                          {c.createdAt ? new Date(c.createdAt).toLocaleString() : '—'}
+                          {c.createdAt ? formatDateTimeEn(c.createdAt) : '—'}
                         </td>
                         <td className="py-1.5 pr-3 text-gray-900">{c.entryType}</td>
                         <td className="py-1.5 pr-3">{c.complianceStatus}</td>
@@ -301,9 +302,7 @@ export default function FarmDetailPage() {
                           {b.unit != null && b.unit !== '' ? ` ${b.unit}` : ''}
                         </td>
                         <td className="py-2 pr-3 text-gray-600 whitespace-nowrap">
-                          {b.harvestDate
-                            ? new Date(b.harvestDate).toLocaleDateString()
-                            : '—'}
+                          {b.harvestDate ? formatDateEn(b.harvestDate) : '—'}
                         </td>
                         <td className="py-2 text-gray-800">{b.status ?? '—'}</td>
                       </tr>
@@ -361,16 +360,12 @@ export default function FarmDetailPage() {
                           rel="noopener noreferrer"
                           className="text-[#2D5A27] hover:underline flex items-center gap-1"
                         >
-                          {r.labTestDate
-                            ? new Date(r.labTestDate).toLocaleDateString()
-                            : 'Lab result'}
+                          {r.labTestDate ? formatDateEn(r.labTestDate) : 'Lab result'}
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
                         <span className="text-gray-500">
-                          {r.labTestDate
-                            ? new Date(r.labTestDate).toLocaleDateString()
-                            : 'Lab result'}
+                          {r.labTestDate ? formatDateEn(r.labTestDate) : 'Lab result'}
                         </span>
                       )}
                     </div>
@@ -404,7 +399,7 @@ export default function FarmDetailPage() {
                   </span>
                   {sedexStatus.lastChecked && (
                     <p className="text-sm text-gray-500">
-                      Last checked: {new Date(sedexStatus.lastChecked).toLocaleDateString()}
+                      Last checked: {formatDateEn(sedexStatus.lastChecked)}
                     </p>
                   )}
                 </div>

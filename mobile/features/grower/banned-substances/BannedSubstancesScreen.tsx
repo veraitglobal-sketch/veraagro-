@@ -9,12 +9,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const BANNED_CACHE_KEY = 'banned_substances_cache';
 const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
 
-/** Default banned categories when API is unavailable or offline */
-const DEFAULT_BANNED: { title: string; description: string }[] = [
-  { title: 'Synthetic chemistry', description: 'All synthetic fertilizers and pesticides not on the Bio list.' },
-  { title: 'GMO', description: 'Genetically modified organisms and products.' },
-  { title: 'Banned herbicides', description: 'Products not on the approved (whitelist) list.' },
-  { title: 'Check before use', description: 'Scan barcode – only approved products can be entered.' },
+const DEFAULT_BANNED_KEYS: { title: string; desc: string }[] = [
+  { title: 'producer.bannedSubstances.defSyntheticTitle', desc: 'producer.bannedSubstances.defSyntheticDesc' },
+  { title: 'producer.bannedSubstances.defGmoTitle', desc: 'producer.bannedSubstances.defGmoDesc' },
+  { title: 'producer.bannedSubstances.defHerbTitle', desc: 'producer.bannedSubstances.defHerbDesc' },
+  { title: 'producer.bannedSubstances.defCheckTitle', desc: 'producer.bannedSubstances.defCheckDesc' },
 ];
 
 export default function BannedSubstancesScreen() {
@@ -68,10 +67,10 @@ export default function BannedSubstancesScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t('producer.bannedSubstances.whatIsBanned')}</Text>
-        {DEFAULT_BANNED.map((item, i) => (
-          <View key={i} style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDesc}>{item.description}</Text>
+        {DEFAULT_BANNED_KEYS.map((row) => (
+          <View key={row.title} style={styles.card}>
+            <Text style={styles.cardTitle}>{t(row.title)}</Text>
+            <Text style={styles.cardDesc}>{t(row.desc)}</Text>
           </View>
         ))}
       </View>

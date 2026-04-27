@@ -1,17 +1,18 @@
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Camera, QrCode } from 'lucide-react-native';
+import { QrCode } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../lib/colors';
 import { digitalHandoverAPI } from '../../lib/api';
 import StepIndicator from '../../components/StepIndicator';
 
 /**
- * Driver Handover Initiate Screen
- * Driver scans QR code when arriving at store
+ * Driver: document the load (reminder), then scan store QR to initiate handover.
  */
 export default function HandoverInitiateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { deliveryId } = useLocalSearchParams<{ deliveryId: string }>();
   const [permission, requestPermission] = useCameraPermissions();
@@ -22,7 +23,7 @@ export default function HandoverInitiateScreen() {
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
-        Alert.alert('Permission Required', 'Camera permission is required to scan QR code');
+        Alert.alert(t('error'), t('handover.errCamera'));
         return;
       }
     }
@@ -31,32 +32,22 @@ export default function HandoverInitiateScreen() {
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
     if (!deliveryId) {
-      Alert.alert('Error', 'Delivery ID is missing');
+      Alert.alert(t('error'), t('handover.errDeliveryId'));
       setScanning(false);
       return;
     }
-
     setScanning(false);
     setLoading(true);
-
     try {
-      const handover = await digitalHandoverAPI.initiate({
+      await digitalHandoverAPI.initiate({
         deliveryId,
         qrCode: data,
       });
-
-      Alert.alert(
-        'Handover Initiated',
-        'Store manager has been notified. Please wait for quality audit.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.back(),
-          },
-        ],
-      );
+      Alert.alert(t('handover.initSuccessTitle'), t('handover.initSuccessBody'), [
+        { text: t('common.ok'), onPress: () => router.back() },
+      ]);
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to initiate handover');
+      Alert.alert(t('error'), error.response?.data?.message || t('handover.errInit'));
     } finally {
       setLoading(false);
     }
@@ -64,11 +55,9 @@ export default function HandoverInitiateScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.centered}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={{ marginTop: 16, fontSize: 13, color: colors.text.secondary, fontWeight: '300' }}>
-          Initiating handover...
-        </Text>
+        <Text style={styles.muted}>{t('handover.initiating')}</Text>
       </View>
     );
   }
@@ -76,64 +65,23 @@ export default function HandoverInitiateScreen() {
   if (scanning) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <View style={{ padding: 20, borderBottomWidth: 0.5, borderBottomColor: colors.border }}>
-          <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.5 }}>
-            Scan Store QR Code
-          </Text>
+        <View style={styles.topBar}>
+          <Text style={styles.heading}>{t('handover.scanningTitle')}</Text>
         </View>
-
         <View style={{ flex: 1, position: 'relative' }}>
           <CameraView
             style={StyleSheet.absoluteFill}
             facing="back"
             onBarcodeScanned={handleBarcodeScanned}
-            barcodeScannerSettings={{
-              barcodeTypes: ['qr'],
-            }}
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
           />
-          <View
-            style={[StyleSheet.absoluteFill, { justifyContent: 'center', alignItems: 'center' }]}
-            pointerEvents="box-none"
-          >
-            <View
-              style={{
-                width: 250,
-                height: 250,
-                borderWidth: 0.5,
-                borderColor: colors.primary,
-                borderRadius: 8,
-                backgroundColor: 'transparent',
-              }}
-            />
-            <Text
-              style={{
-                marginTop: 20,
-                fontSize: 13,
-                color: colors.background,
-                fontWeight: '300',
-                textAlign: 'center',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                padding: 8,
-                borderRadius: 4,
-              }}
-            >
-              Position QR code within frame
-            </Text>
+          <View style={[StyleSheet.absoluteFill, styles.overlay]} pointerEvents="box-none">
+            <View style={styles.frame} />
+            <Text style={styles.hintOnCam}>{t('handover.positionQr')}</Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          onPress={() => setScanning(false)}
-          style={{
-            padding: 16,
-            backgroundColor: colors.background,
-            borderTopWidth: 0.5,
-            borderTopColor: colors.border,
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '400', color: colors.text.primary, textAlign: 'center' }}>
-            Cancel
-          </Text>
+        <TouchableOpacity onPress={() => setScanning(false)} style={styles.cancelBar}>
+          <Text style={styles.cancelText}>{t('handover.cancel')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -141,15 +89,23 @@ export default function HandoverInitiateScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ padding: 20, borderBottomWidth: 0.5, borderBottomColor: colors.border }}>
-        <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.5 }}>
-          Initiate Handover
-        </Text>
+      <View style={styles.topBar}>
+        <Text style={styles.heading}>{t('handover.initTitle')}</Text>
       </View>
-
       <View style={{ padding: 20 }}>
-        <StepIndicator currentStep={1} totalSteps={3} labels={['Skeniranje', 'Provera', 'Potpis']} />
-
+        <View
+          style={{
+            backgroundColor: `${colors.primary}0d`,
+            borderRadius: 8,
+            borderWidth: 0.5,
+            borderColor: `${colors.primary}40`,
+            padding: 12,
+            marginBottom: 16,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: colors.text.primary, lineHeight: 18 }}>{t('logistics.handoverInit.documentFirst')}</Text>
+        </View>
+        <StepIndicator currentStep={1} totalSteps={3} labels={[t('handover.stepScan'), t('handover.stepAudit'), t('handover.stepSign')]} />
         <View
           style={{
             backgroundColor: colors.surface,
@@ -160,18 +116,7 @@ export default function HandoverInitiateScreen() {
             marginTop: 20,
           }}
         >
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: '300',
-              color: colors.text.primary,
-              letterSpacing: 0.3,
-              marginBottom: 12,
-            }}
-          >
-            When you arrive at the store, scan the QR code located at the store entrance or provided by the store manager.
-          </Text>
-
+          <Text style={styles.instructions}>{t('handover.initSubtitle')}</Text>
           <TouchableOpacity
             onPress={handleScanQR}
             style={{
@@ -187,7 +132,7 @@ export default function HandoverInitiateScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <QrCode size={20} color={colors.background} strokeWidth={1} />
               <Text style={{ fontSize: 14, fontWeight: '400', color: colors.background, letterSpacing: 0.5 }}>
-                Scan QR Code
+                {t('handover.scanCta')}
               </Text>
             </View>
           </TouchableOpacity>
@@ -196,3 +141,25 @@ export default function HandoverInitiateScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
+  muted: { marginTop: 16, fontSize: 13, color: colors.text.secondary, fontWeight: '300' },
+  topBar: { padding: 20, borderBottomWidth: 0.5, borderBottomColor: colors.border },
+  heading: { fontSize: 16, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.5 },
+  overlay: { justifyContent: 'center', alignItems: 'center' },
+  frame: { width: 250, height: 250, borderWidth: 0.5, borderColor: colors.primary, borderRadius: 8, backgroundColor: 'transparent' },
+  hintOnCam: {
+    marginTop: 20,
+    fontSize: 13,
+    color: colors.background,
+    fontWeight: '300',
+    textAlign: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 8,
+    borderRadius: 4,
+  },
+  cancelBar: { padding: 16, backgroundColor: colors.background, borderTopWidth: 0.5, borderTopColor: colors.border },
+  cancelText: { fontSize: 14, fontWeight: '400', color: colors.text.primary, textAlign: 'center' },
+  instructions: { fontSize: 13, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.3, lineHeight: 20 },
+});

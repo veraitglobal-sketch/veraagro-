@@ -10,6 +10,7 @@ import type { CommercialAgentPublic } from '@/lib/auth';
 import { missionsAPI, usersAPI } from '@/lib/api';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { logisticsPartnerNavItems as navItems } from '@/lib/logistics-nav';
+import { formatDateTimeEn } from '@/lib/en-locale-dates';
 
 // Mission statuses that indicate loading / handover needed
 const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
@@ -139,8 +140,7 @@ export default function LogisticsDashboardPage() {
 
   const formatEta = (eta: string | null | undefined) => {
     if (!eta) return '—';
-    const d = new Date(eta);
-    return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return formatDateTimeEn(eta);
   };
 
   if (isLoading || !isAuthenticated) {

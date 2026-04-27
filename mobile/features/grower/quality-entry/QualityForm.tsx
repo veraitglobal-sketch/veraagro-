@@ -90,7 +90,7 @@ export function QualityForm({
               fontWeight: '300',
               color: colors.text.secondary,
             }}>
-              Status
+              {t('producer.qualityEntry.statusLabel')}
             </Text>
             <View style={{
               paddingHorizontal: theme.spacing.sm,
@@ -125,7 +125,7 @@ export function QualityForm({
         <TextInput
           value={qualityScore}
           onChangeText={setQualityScore}
-          placeholder="e.g. 85"
+          placeholder={t('producer.qualityEntry.scorePlaceholder')}
           keyboardType="numeric"
           style={{
             fontSize: 15,
@@ -154,7 +154,7 @@ export function QualityForm({
         <TextInput
           value={notes}
           onChangeText={setNotes}
-          placeholder="Dodatne napomene o kvalitetu..."
+          placeholder={t('producer.qualityEntry.notesPlaceholder')}
           multiline
           numberOfLines={4}
           style={{

@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } fro
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
+import { getPostLoginPath, normalizeUserRoles } from '../lib/post-login-redirect';
 import { theme } from '../lib/theme';
 
 /**
@@ -20,34 +21,25 @@ export default function BuyerLoginScreen() {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      Alert.alert(t('error') || 'Error', t('buyerLogin.fillAllFields') || 'Please fill all fields');
+      Alert.alert(t('error'), t('buyerLogin.fillAllFields'));
       return;
     }
 
     setLoading(true);
     try {
       const response = await login(username, password);
-      
-      // Check if user has BUYER role or allow any role for buyer portal
-      const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      const isBuyer = userRoles.includes('BUYER') || userRoles.includes('CUSTOMER');
-      
-      if (isBuyer || userRoles.length === 0) {
-        // Navigate to buyer dashboard
-        router.replace('/(buyer)/shop');
-      } else {
-        Alert.alert(
-          t('error') || 'Error',
-          t('buyerLogin.notBuyer') || 'This account is not authorized for buyer access'
-        );
-        await logout();
+      const userRoles = normalizeUserRoles(response.user);
+      // Same home priority as the rest of the app: growers/suppliers who land here by mistake get the right stack.
+      const path = getPostLoginPath(userRoles);
+      if (path) {
+        router.replace(path as any);
+        return;
       }
+      await logout();
+      Alert.alert(t('error'), t('buyerLogin.notBuyer'));
     } catch (error: any) {
       console.error('Login error:', error);
-      Alert.alert(
-        t('error') || 'Error',
-        error.message || t('buyerLogin.failed') || 'Login failed. Please check your credentials.'
-      );
+      Alert.alert(t('error'), error?.message || t('buyerLogin.failed'));
     } finally {
       setLoading(false);
     }
@@ -72,7 +64,7 @@ export default function BuyerLoginScreen() {
           marginBottom: theme.spacing.sm,
           letterSpacing: 2,
         }}>
-          Bio Vera Marketplace
+          {t('buyerLogin.marketplaceTitle')}
         </Text>
         <Text style={{
           fontSize: 13,
@@ -80,7 +72,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
-          {t('buyerLogin.subtitle') || 'Sign in to purchase organic products'}
+          {t('buyerLogin.subtitle')}
         </Text>
       </View>
 
@@ -101,12 +93,12 @@ export default function BuyerLoginScreen() {
           textTransform: 'uppercase',
           letterSpacing: 1,
         }}>
-          {t('buyerLogin.username') || 'Username / Email / Partner Code'}
+          {t('buyerLogin.username')}
         </Text>
         <TextInput
           value={username}
           onChangeText={setUsername}
-          placeholder={t('buyerLogin.usernamePlaceholder') || 'Enter username, email or partner code'}
+          placeholder={t('buyerLogin.usernamePlaceholder')}
           placeholderTextColor={theme.colors.text.tertiary}
           autoCapitalize="none"
           autoCorrect={false}
@@ -131,12 +123,12 @@ export default function BuyerLoginScreen() {
           textTransform: 'uppercase',
           letterSpacing: 1,
         }}>
-          {t('buyerLogin.password') || 'Password'}
+          {t('buyerLogin.password')}
         </Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
-          placeholder={t('buyerLogin.password') || 'Enter password'}
+          placeholder={t('buyerLogin.passwordPlaceholder')}
           placeholderTextColor={theme.colors.text.tertiary}
           secureTextEntry
           style={{
@@ -173,7 +165,7 @@ export default function BuyerLoginScreen() {
               color: theme.colors.text.inverse,
               letterSpacing: 1,
             }}>
-              {t('buyerLogin.login') || 'Sign In'}
+              {t('buyerLogin.login')}
             </Text>
           )}
         </TouchableOpacity>
@@ -193,7 +185,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.secondary,
           letterSpacing: 1,
         }}>
-          {t('buyerLogin.or') || 'OR'}
+          {t('buyerLogin.or')}
         </Text>
         <View style={{ flex: 1, height: 0.5, backgroundColor: 'rgba(0, 0, 0, 0.1)' }} />
       </View>
@@ -218,7 +210,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.primary,
           letterSpacing: 0.5,
         }}>
-          {t('buyerLogin.googleLogin') || 'Continue with Google'}
+          {t('buyerLogin.googleLogin')}
         </Text>
       </TouchableOpacity>
 
@@ -241,7 +233,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
-          {t('buyerLogin.continueAsGuest') || 'Continue as Guest'}
+          {t('buyerLogin.continueAsGuest')}
         </Text>
       </TouchableOpacity>
 
@@ -256,7 +248,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
-          {t('buyerLogin.register') || "Don't have an account? Register your business"}
+          {t('buyerLogin.registerPrompt')}
         </Text>
       </TouchableOpacity>
 
@@ -271,7 +263,7 @@ export default function BuyerLoginScreen() {
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
-          {t('buyerLogin.back') || 'Back to Marketplace'}
+          {t('buyerLogin.backToMarketplace')}
         </Text>
       </TouchableOpacity>
     </View>

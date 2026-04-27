@@ -8,6 +8,7 @@ import { WEB_API_BASE } from '@/lib/api-base';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 /** Shown when POST /missions fails so we see status, message, and non-JSON bodies (e.g. 502 HTML). */
 function formatMissionCreateError(error: unknown): string {
@@ -356,9 +357,11 @@ export default function CreateMissionPage() {
   if (batchesLoading) {
     return (
       <SidebarLayout title="Request Transport" navItems={navItems}>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-        </div>
+        <GrowerPageShell>
+          <div className="flex h-64 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+          </div>
+        </GrowerPageShell>
       </SidebarLayout>
     );
   }
@@ -366,38 +369,47 @@ export default function CreateMissionPage() {
   if (success) {
     return (
       <SidebarLayout title="Request Transport" navItems={navItems}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center"
-        >
-          <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Transport request received</h2>
-          <p className="text-gray-600 mb-4">
-            Your request is <strong>queued for dispatch</strong>. BioVera operations assigns a cold-chain driver; you
-            can track the run below as soon as it is assigned.
-          </p>
-          <p className="text-sm text-gray-500">
-            Redirecting to{' '}
-            <Link href="/grower/portal" className="text-[#2D5A27] font-semibold underline">
-              Mission tracker
-            </Link>{' '}
-            (same as sidebar: /grower/portal)…
-          </p>
-        </motion.div>
+        <GrowerPageShell className="space-y-6">
+          <GrowerPageHeader
+            title="Request transport"
+            description="Your request was sent. You can follow the run in Mission tracker."
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
+          >
+            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
+            <h2 className="mb-2 text-2xl font-semibold text-gray-900">Transport request received</h2>
+            <p className="mb-4 text-gray-600">
+              Your request is <strong>queued for dispatch</strong>. BioVera operations assigns a cold-chain driver; you
+              can track the run below as soon as it is assigned.
+            </p>
+            <p className="text-sm text-gray-500">
+              Redirecting to{' '}
+              <Link href="/grower/portal" className="font-semibold text-[#2D5A27] underline">
+                Mission tracker
+              </Link>{' '}
+              (same as sidebar: /grower/portal)…
+            </p>
+          </motion.div>
+        </GrowerPageShell>
       </SidebarLayout>
     );
   }
 
   return (
     <SidebarLayout title="Request Transport" navItems={navItems}>
-      <div className="space-y-6">
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader
+          title="Request transport"
+          description="Pick a ready batch, pickup location, and delivery. Prerequisites: quality entry and compliance complete for the lot."
+        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Request transport</h2>
           <p className="text-sm text-gray-600 mb-3 leading-relaxed">
             <strong>Before this page:</strong> batch in <strong>PACKED</strong> or <strong>QUALITY_VERIFIED</strong> (
             <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
@@ -751,7 +763,7 @@ export default function CreateMissionPage() {
             </div>
           </form>
         </motion.div>
-      </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

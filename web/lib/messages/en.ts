@@ -24,6 +24,8 @@ export const en = {
     },
     compliancePhotos: {
       pageTitle: 'Compliance Photos',
+      pageDescription:
+        'One lot: your label roll ID plus three photos (punnets, label close-up, palletization). Complete before transport.',
       checklistHeading: 'Photo-Verification Checklist',
       introBeforeStrong: 'One lot = one ',
       introStrong: 'label roll ID',

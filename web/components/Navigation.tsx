@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
 
 export default function Navigation() {
+  const { t } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,27 +16,22 @@ export default function Navigation() {
   const isActive = (path: string) => pathname === path || pathname?.startsWith(path);
 
   // Simplified navigation - only basic links, detailed navigation is in sidebar
-  const getNavLinks = () => {
+  const navLinks = useMemo(() => {
     if (!isAuthenticated || !user) {
       return [
-        { href: '/', label: 'Home' },
-        { href: '/for-buyers', label: 'For Buyers' },
-        { href: '/growers', label: 'For Growers' },
-        { href: '/suppliers', label: 'For Suppliers' },
-        { href: '/logistics-partner', label: 'For Logistics' },
-        { href: '/contact', label: 'Contact' },
+        { href: '/', label: t('nav.home') },
+        { href: '/for-buyers', label: t('nav.forBuyers') },
+        { href: '/growers', label: t('nav.forGrowers') },
+        { href: '/suppliers', label: t('nav.forSuppliers') },
+        { href: '/logistics-partner', label: t('nav.forLogistics') },
+        { href: '/contact', label: t('nav.contact') },
       ];
     }
-
-    // For authenticated users, show minimal navigation
-    // All detailed navigation is in the sidebar when they open their dashboard
     return [
-      { href: '/', label: 'Home' },
-      { href: '/help-center', label: 'Help Center' },
+      { href: '/', label: t('nav.home') },
+      { href: '/help-center', label: t('nav.helpCenter') },
     ];
-  };
-
-  const navLinks = getNavLinks();
+  }, [isAuthenticated, user, t]);
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -44,7 +41,7 @@ export default function Navigation() {
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
             <Image
               src="/logo1.png"
-              alt="Bio Vera"
+              alt={t('brand.name')}
               width={56}
               height={20}
               className="h-4 w-auto bg-transparent"
@@ -94,7 +91,7 @@ export default function Navigation() {
                       href={getDashboardLink()}
                       className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
                     >
-                      Dashboard
+                      {t('nav.dashboard')}
                     </Link>
                   );
                 })()}
@@ -102,7 +99,7 @@ export default function Navigation() {
                   onClick={logout}
                   className="text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
                 >
-                  Logout
+                  {t('nav.logout')}
                 </button>
               </>
             ) : (
@@ -110,7 +107,7 @@ export default function Navigation() {
                 href="/login"
                 className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
               >
-                Login
+                {t('nav.login')}
               </Link>
             )}
           </div>
@@ -121,7 +118,7 @@ export default function Navigation() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden ml-auto min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
             aria-expanded={mobileMenuOpen}
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? (
@@ -156,7 +153,7 @@ export default function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center min-h-[44px] px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] mt-2"
               >
-                Login
+                {t('nav.login')}
               </Link>
             )}
             {isAuthenticated ? (
@@ -182,7 +179,7 @@ export default function Navigation() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center justify-center min-h-[44px] px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] mt-2"
                     >
-                      Dashboard
+                      {t('nav.dashboard')}
                     </Link>
                   );
                 })()}
@@ -194,7 +191,7 @@ export default function Navigation() {
                   }}
                   className="flex items-center min-h-[44px] w-full text-left px-2 text-sm font-medium text-gray-600 hover:text-red-600"
                 >
-                  Logout
+                  {t('nav.logout')}
                 </button>
               </>
             ) : null}

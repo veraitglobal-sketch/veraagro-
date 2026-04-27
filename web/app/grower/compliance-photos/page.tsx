@@ -9,6 +9,7 @@ import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { en } from '@/lib/messages';
 import Link from 'next/link';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 const navItems = growerNavItems;
 const c = en.common;
@@ -294,7 +295,8 @@ export default function CompliancePhotosPage() {
 
   return (
     <SidebarLayout title={m.pageTitle} navItems={navItems}>
-      <div className="space-y-6">
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader title={m.pageTitle} description={m.pageDescription} />
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -567,7 +569,7 @@ export default function CompliancePhotosPage() {
             <p className="text-sm text-amber-800">{m.statusLoadError}</p>
           )}
         </motion.div>
-      </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

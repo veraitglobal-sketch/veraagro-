@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
 import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 type MapItem = {
   id: string;
@@ -254,18 +255,18 @@ export default function GrowerWhereToBuyPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
       <SidebarLayout title="Suppliers & orders" navItems={growerNavItems}>
-        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-          <div className="max-w-6xl mx-auto space-y-5">
-            <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Suppliers &amp; orders</h1>
-                <p className="text-sm text-gray-600 mt-1 max-w-2xl">
-                  Find a partner on the <strong>left</strong> (on desktop) or the <strong>Directory</strong> tab; track
-                  B2B lines on the <strong>right</strong> or <strong>My orders</strong> tab.
-                </p>
-              </div>
-              {!loading && productionCountry && (
-                <p className="text-xs text-gray-500 shrink-0 max-w-sm sm:text-right">
+        <GrowerPageShell className="space-y-5">
+          <GrowerPageHeader
+            title="Suppliers & orders"
+            description={
+              <>
+                Find a partner on the <strong>left</strong> (on desktop) or the <strong>Directory</strong> tab; track
+                B2B lines on the <strong>right</strong> or <strong>My orders</strong> tab.
+              </>
+            }
+            right={
+              !loading && productionCountry ? (
+                <p className="max-w-sm shrink-0 text-xs text-gray-500 sm:text-right">
                   Profile: <span className="font-medium text-gray-700">{productionCountry}</span>
                   {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
                     <span> — similar regions first (unless you use “Nearest to me”).</span>
@@ -273,8 +274,9 @@ export default function GrowerWhereToBuyPage() {
                     <span> — no directory rows for that country yet.</span>
                   )}
                 </p>
-              )}
-            </header>
+              ) : undefined
+            }
+          />
 
             {err && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
@@ -531,8 +533,7 @@ export default function GrowerWhereToBuyPage() {
           </div>
 
             <GrowerSupplyFlowCard context="suppliers" variant="compact" />
-          </div>
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

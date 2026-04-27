@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
 
 const STATUSES = ['PENDING', 'CONFIRMED', 'REJECTED', 'FULFILLED', 'CANCELLED'] as const;
 
-function orderLinesFromItems(items: unknown): string[] {
+function orderLinesFromItems(items: unknown, t: TFunction): string[] {
   if (!Array.isArray(items)) return [];
+  const def = t('supplier.defaultItem');
   return items.map((row) => {
     if (row && typeof row === 'object') {
       const o = row as { label?: string; name?: string; quantity?: number; unit?: string };
-      const title = (o.label || o.name || 'Item').trim() || 'Item';
+      const title = (o.label || o.name || def).trim() || def;
       const u = o.unit && o.unit !== 'order' && o.unit !== 'inquiry' ? ` ${o.unit}` : '';
       return `${title} — ${o.quantity ?? 1}${u}`.trim();
     }
@@ -19,8 +22,11 @@ function orderLinesFromItems(items: unknown): string[] {
 }
 
 export default function SupplierOrdersScreen() {
+  const { t } = useTranslation();
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const linesFor = useCallback((items: unknown) => orderLinesFromItems(items, t), [t]);
 
   const load = async () => {
     setLoading(true);
@@ -28,7 +34,7 @@ export default function SupplierOrdersScreen() {
       const data = await b2bSuppliersAPI.getIncomingOrders();
       setList(Array.isArray(data) ? data : []);
     } catch (e) {
-      Alert.alert('Error', e instanceof Error ? e.message : 'Load failed');
+      Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -44,7 +50,7 @@ export default function SupplierOrdersScreen() {
         await b2bSuppliersAPI.patchOrderStatus(orderId, { status });
         await load();
       } catch (e) {
-        Alert.alert('Error', e instanceof Error ? e.message : 'Update failed');
+        Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.updateFailed'));
       }
     })();
   };
@@ -60,10 +66,10 @@ export default function SupplierOrdersScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: 16 }}>
       {list.length === 0 ? (
-        <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 24 }}>No orders yet</Text>
+        <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 24 }}>{t('supplier.noOrdersYet')}</Text>
       ) : (
         list.map((o) => {
-          const lines = orderLinesFromItems(o.items);
+          const lines = linesFor(o.items);
           return (
           <View
             key={o.id}
@@ -77,10 +83,13 @@ export default function SupplierOrdersScreen() {
             }}
           >
             <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 2 }}>
-              Order ref {o.id ? `${String(o.id).slice(0, 8).toUpperCase()}…` : '—'}
+              {t('supplier.orderRef')}{' '}
+              {o.id ? `${String(o.id).slice(0, 8).toUpperCase()}…` : '—'}
             </Text>
             <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 4 }}>
-              {o.farmer ? `${o.farmer.firstName || ''} ${o.farmer.lastName || ''} · ${o.farmer.partnerCode || ''}` : 'Grower'}
+              {o.farmer
+                ? `${o.farmer.firstName || ''} ${o.farmer.lastName || ''} · ${o.farmer.partnerCode || ''}`
+                : t('supplier.growerFallback')}
             </Text>
             <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 6 }}>
               {o.createdAt ? new Date(o.createdAt).toLocaleString() : ''} · {o.status}
@@ -99,7 +108,9 @@ export default function SupplierOrdersScreen() {
             )}
             {o.farmerReceivedAt && (
               <Text style={{ fontSize: 11, color: '#166534', marginBottom: 6 }}>
-                Grower received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+                {t('supplier.growerReceivedAtFarm', {
+                  when: new Date(o.farmerReceivedAt).toLocaleString(),
+                })}
               </Text>
             )}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>

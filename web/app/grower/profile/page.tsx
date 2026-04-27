@@ -8,6 +8,7 @@ import { Camera, Save, Loader2, QrCode, Download, Copy, Check, ExternalLink, Sma
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { growerNavItems } from '@/lib/grower-nav';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function FarmerProfilePage() {
   const { user } = useAuth();
@@ -150,9 +151,11 @@ export default function FarmerProfilePage() {
     return (
       <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
         <SidebarLayout title="My Profile" navItems={growerNavItems}>
-          <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-[#2D5A27]" />
-          </div>
+          <GrowerPageShell>
+            <div className="flex min-h-[40vh] items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" />
+            </div>
+          </GrowerPageShell>
         </SidebarLayout>
       </AuthGuard>
     );
@@ -161,12 +164,12 @@ export default function FarmerProfilePage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Profile" navItems={growerNavItems}>
-        <div className="p-6 bg-gray-50 min-h-screen">
-          <div className="mb-6">
-            <h1 className="text-3xl font-light text-gray-900">My Profile</h1>
-            <p className="text-sm text-gray-600 mt-1">Public page, your story, and Bio Vera QR for markets and packaging.</p>
-          </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <GrowerPageShell>
+        <GrowerPageHeader
+          title="My profile"
+          description="Public page, your story, and Bio Vera QR for markets and packaging."
+        />
+        <div className="grid grid-cols-1 gap-6 items-stretch lg:grid-cols-2 lg:gap-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sm:p-7 flex flex-col h-full min-h-0">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">My farmer profile</h2>
           <p className="text-sm text-gray-500 mb-6">Details shown on your public page when people scan your QR code.</p>
@@ -422,7 +425,7 @@ export default function FarmerProfilePage() {
           </div>
           </div>
         </div>
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

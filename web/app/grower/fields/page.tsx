@@ -7,6 +7,7 @@ import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
 import { growerNavItems } from '@/lib/grower-nav';
 import { MapPin, Plus, Clock, CheckCircle, Loader2, QrCode } from 'lucide-react';
 import Link from 'next/link';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 const DEFAULT_POLYGON = [
   { lat: 44.7866, lng: 20.4489 },
@@ -154,13 +155,16 @@ export default function GrowerFieldsPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="My Fields" navItems={growerNavItems}>
-        <div className="p-6 bg-gray-50 min-h-screen">
-          <div className="mb-6">
-            <h1 className="text-3xl font-light text-gray-900">My fields &amp; parcels</h1>
-            <p className="text-sm text-gray-600 mt-1 max-w-2xl">
-              Add parcels here; admin must approve. Each approved block gets a <strong>store QR</strong> (sadnja / field story) and you create a <strong>batch</strong> for packed boxes (passport QR per lot on the label).
-            </p>
-          </div>
+        <GrowerPageShell className="space-y-6">
+          <GrowerPageHeader
+            title="My fields & parcels"
+            description={
+              <>
+                Add parcels here; admin must approve. Each approved block gets a <strong>store QR</strong> (field story)
+                and you create a <strong>batch</strong> for packed boxes (passport QR per lot on the label).
+              </>
+            }
+          />
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
@@ -417,7 +421,7 @@ export default function GrowerFieldsPage() {
               </div>
             </div>
           )}
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

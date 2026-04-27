@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
+import { formatDateEn } from '@/lib/en-locale-dates';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -286,7 +287,7 @@ export default function FleetPartnerPage() {
             <div className="p-4 bg-green-50 rounded-lg">
               <p className="text-sm text-gray-500 mb-1">Pending Payout</p>
               <p className="text-2xl font-bold text-green-600">€{weeklyPayout.pendingPayout}</p>
-              <p className="text-xs text-gray-500 mt-1">Next payout: {new Date(weeklyPayout.nextPayoutDate).toLocaleDateString()}</p>
+              <p className="text-xs text-gray-500 mt-1">Next payout: {formatDateEn(weeklyPayout.nextPayoutDate)}</p>
             </div>
           </div>
         </motion.div>

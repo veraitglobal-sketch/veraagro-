@@ -6,6 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSuppliersAdminAPI } from '@/lib/api';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { MessageCircle, Package, Store, User, ChevronDown, ChevronRight, ExternalLink, RefreshCw } from 'lucide-react';
 
 type Overview = Awaited<ReturnType<typeof b2bSuppliersAdminAPI.getNetworkOverview>>;
@@ -211,7 +212,7 @@ export default function AdminSupplierGrowersPage() {
                           {data.recentOrders.map((o) => (
                             <tr key={o.id} className="hover:bg-gray-50/80">
                               <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
-                                {new Date(o.createdAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+                                {formatDateTimeEn(o.createdAt)}
                               </td>
                               <td className="px-3 py-2">
                                 {o.supplier.businessName || o.supplier.partnerCode}

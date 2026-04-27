@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -7,6 +8,9 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Platform,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
@@ -21,9 +25,14 @@ function readyForTransport(b: BatchRow) {
   return b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED';
 }
 
+const HEADER_ACTION_ROW = 48;
+
 export default function MissionsCreateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
+  const scrollRef = useRef<ScrollView>(null);
+  const [keyboardPad, setKeyboardPad] = useState(0);
   const [batches, setBatches] = useState<BatchRow[]>([]);
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [locLoading, setLocLoading] = useState(false);
@@ -54,13 +63,34 @@ export default function MissionsCreateScreen() {
     void loadBatches();
   }, [loadBatches]);
 
-  const getCurrentLocation = async () => {
+  useEffect(() => {
+    const onShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => setKeyboardPad(e.endCoordinates?.height ?? 0),
+    );
+    const onHide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardPad(0),
+    );
+    return () => {
+      onShow.remove();
+      onHide.remove();
+    };
+  }, []);
+
+  const scrollToBottomIfNeeded = useCallback(() => {
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+  }, []);
+
+  const getCurrentLocation = useCallback(async () => {
     setLocationHint(null);
     setLocLoading(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setLocationHint('Allow location to fill GPS and address, or enter them manually below.');
+        setLocationHint(t('producer.missionsCreate.locationHintDenied'));
         return;
       }
       const pos = await Location.getCurrentPositionAsync({
@@ -83,36 +113,51 @@ export default function MissionsCreateScreen() {
           if (line) setPickupAddress(line);
         }
       } catch {
-        setLocationHint('GPS saved. If address is empty, type the full farm pickup address.');
+        setLocationHint(t('producer.missionsCreate.locationHintGps'));
       }
     } catch {
-      setLocationHint('Could not read GPS. Enter latitude, longitude, and address manually.');
+      setLocationHint(t('producer.missionsCreate.locationHintFailed'));
     } finally {
       setLocLoading(false);
     }
-  };
+  }, [t]);
 
   const submit = async () => {
     if (!batchId) {
-      Alert.alert('Batch required', 'Choose a batch that is packed and ready for transport.');
+      Alert.alert(
+        t('producer.missionsCreate.alerts.batchRequired'),
+        t('producer.missionsCreate.alerts.batchRequiredBody'),
+      );
       return;
     }
     if (!pickupAddress.trim()) {
-      Alert.alert('Address required', 'Enter the pickup address.');
+      Alert.alert(
+        t('producer.missionsCreate.alerts.addressRequired'),
+        t('producer.missionsCreate.alerts.addressRequiredBody'),
+      );
       return;
     }
     if (!destinationCity.trim()) {
-      Alert.alert('Destination', 'Enter destination city (for dispatch; same city can go on one truck).');
+      Alert.alert(
+        t('producer.missionsCreate.alerts.destinationTitle'),
+        t('producer.missionsCreate.alerts.destinationCityBody'),
+      );
       return;
     }
     if (!destinationAddress.trim() || destinationAddress.trim().length < 5) {
-      Alert.alert('Destination', 'Enter the full delivery address (buyer, hub, dock).');
+      Alert.alert(
+        t('producer.missionsCreate.alerts.destinationTitle'),
+        t('producer.missionsCreate.alerts.destinationAddressBody'),
+      );
       return;
     }
     const lat = parseFloat(pickupLat);
     const lng = parseFloat(pickupLng);
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
-      Alert.alert('Location required', 'Use “Use my location” or enter latitude and longitude.');
+      Alert.alert(
+        t('producer.missionsCreate.alerts.locationTitle'),
+        t('producer.missionsCreate.alerts.locationBody'),
+      );
       return;
     }
 
@@ -126,16 +171,14 @@ export default function MissionsCreateScreen() {
         destinationAddress: destinationAddress.trim(),
         loadInstructions: loadInstructions.trim() || undefined,
       });
-      Alert.alert(
-        'Transport requested',
-        'Your request was sent. Operations will assign a driver; track status under Missions.',
-        [
-        { text: 'OK', onPress: () => router.replace('/(producer)/missions') },
+      Alert.alert(t('producer.missionsCreate.successTitle'), t('producer.missionsCreate.successBody'), [
+        { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
       ]);
     } catch (e: any) {
       const raw = e?.response?.data?.message;
-      const msg = Array.isArray(raw) ? raw.join(' ') : (raw as string) || e?.message || 'Could not create mission';
-      Alert.alert('Cannot start transport', msg);
+      const msg =
+        Array.isArray(raw) ? raw.join(' ') : (raw as string) || e?.message || t('producer.missionsCreate.alerts.createErrorFallback');
+      Alert.alert(t('producer.missionsCreate.alerts.cannotStart'), msg);
     } finally {
       setSubmitting(false);
     }
@@ -175,20 +218,28 @@ export default function MissionsCreateScreen() {
             letterSpacing: 0.5,
           }}
         >
-          Request transport
+          {t('producer.missionsCreate.title')}
         </Text>
       </View>
 
-      <ScrollView
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingTop: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
-        }}
-        keyboardShouldPersistTaps="handled"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? p.headerTop + HEADER_ACTION_ROW : 0}
       >
+        <ScrollView
+          ref={scrollRef}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingTop: theme.spacing.md,
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            paddingBottom:
+              Math.max(p.bottomInset, theme.spacing.xl) + keyboardPad + 24,
+          }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
         <View
           style={{
             backgroundColor: theme.colors.surface,
@@ -200,9 +251,7 @@ export default function MissionsCreateScreen() {
           }}
         >
           <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
-            Pick a <Text style={{ fontWeight: '600' }}>packed</Text> lot (status PACKED or quality verified), then pickup GPS and
-            full drop-off. Operations assigns a driver when ready (mission stays pending until then). The server checks materials
-            and compliance — if something is missing, the error will say what.
+            {t('producer.missionsCreate.intro')}
           </Text>
         </View>
 
@@ -217,31 +266,32 @@ export default function MissionsCreateScreen() {
           }}
         >
           <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 6 }}>
-            Two farms, one buyer order (e.g. 800 kg + 200 kg)
+            {t('producer.missionsCreate.multiFarmTitle')}
           </Text>
           <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18 }}>
-            One trip = one batch. Each grower sends their own request for their lot. Use the same destination city and address;
-            in load instructions put the same order reference and “leg 1/2” vs “leg 2/2”. Logistics may assign one truck (two
-            stops) or two runs.
+            {t('producer.missionsCreate.multiFarmBody')}
           </Text>
         </View>
 
         {batches.length === 0 ? (
           <View style={{ marginBottom: theme.spacing.lg }}>
             <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20 }}>
-              No batch is ready for transport yet. Finish packing, quality, and compliance photos first — then the lot appears
-              here.
+              {t('producer.missionsCreate.noBatchesBody')}
             </Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batches')}
               style={{ marginTop: theme.spacing.md }}
             >
-              <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '600' }}>Open My batches</Text>
+              <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '600' }}>
+                {t('producer.missionsCreate.openBatchesCta')}
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={{ marginBottom: theme.spacing.lg, gap: theme.spacing.xs }}>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, textTransform: 'uppercase' }}>Batch</Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, textTransform: 'uppercase' }}>
+              {t('producer.missionsCreate.batchLabel')}
+            </Text>
             {batches.map((b) => {
               const selected = batchId === b.id;
               return (
@@ -258,7 +308,7 @@ export default function MissionsCreateScreen() {
                   }}
                 >
                   <Text style={{ fontSize: 14, color: theme.colors.text.primary, fontWeight: '500' }}>
-                    {b.productName || 'Product'} — {b.batchId || b.id.slice(0, 8)}…
+                    {b.productName || t('producer.missionsCreate.productFallback')} — {b.batchId || b.id.slice(0, 8)}…
                   </Text>
                   <Text style={{ fontSize: 11, color: theme.colors.text.secondary, marginTop: 4 }}>
                     {b.quantity} {b.unit} · {b.status}
@@ -289,18 +339,22 @@ export default function MissionsCreateScreen() {
             ) : (
               <MapPin size={18} color={theme.colors.primary} style={{ marginRight: 8 }} />
             )}
-            <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}>Use my location</Text>
+            <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}>
+              {t('producer.missionsCreate.useMyLocation')}
+            </Text>
           </TouchableOpacity>
           {locationHint ? (
             <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: theme.spacing.xs }}>{locationHint}</Text>
           ) : null}
         </View>
 
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Latitude</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.latitude')}
+        </Text>
         <TextInput
           value={pickupLat}
           onChangeText={setPickupLat}
-          placeholder="e.g. 44.812"
+          placeholder={t('producer.missionsCreate.latPlaceholder')}
           keyboardType="decimal-pad"
           style={{
             borderWidth: 0.5,
@@ -312,11 +366,13 @@ export default function MissionsCreateScreen() {
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Longitude</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.longitude')}
+        </Text>
         <TextInput
           value={pickupLng}
           onChangeText={setPickupLng}
-          placeholder="e.g. 20.456"
+          placeholder={t('producer.missionsCreate.lngPlaceholder')}
           keyboardType="decimal-pad"
           style={{
             borderWidth: 0.5,
@@ -328,11 +384,14 @@ export default function MissionsCreateScreen() {
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Pickup address</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.pickupAddress')}
+        </Text>
         <TextInput
           value={pickupAddress}
           onChangeText={setPickupAddress}
-          placeholder="Farm name, street, city"
+          onFocus={scrollToBottomIfNeeded}
+          placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
           multiline
           style={{
             borderWidth: 0.5,
@@ -355,14 +414,16 @@ export default function MissionsCreateScreen() {
             lineHeight: 18,
           }}
         >
-          Where it goes (logistics and drivers need this). Use the same city name on each run you want to combine on
-          one truck.
+          {t('producer.missionsCreate.whereItGoes')}
         </Text>
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Destination city *</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.destinationCity')}
+        </Text>
         <TextInput
           value={destinationCity}
           onChangeText={setDestinationCity}
-          placeholder="e.g. Hamburg"
+          onFocus={scrollToBottomIfNeeded}
+          placeholder={t('producer.missionsCreate.destinationCityPlaceholder')}
           style={{
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
@@ -373,11 +434,14 @@ export default function MissionsCreateScreen() {
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Full delivery address *</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.fullDelivery')}
+        </Text>
         <TextInput
           value={destinationAddress}
           onChangeText={setDestinationAddress}
-          placeholder="Hub / buyer, street, city"
+          onFocus={scrollToBottomIfNeeded}
+          placeholder={t('producer.missionsCreate.fullDeliveryPlaceholder')}
           multiline
           style={{
             borderWidth: 0.5,
@@ -391,11 +455,14 @@ export default function MissionsCreateScreen() {
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Loading notes (optional)</Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+          {t('producer.missionsCreate.loadingNotes')}
+        </Text>
         <TextInput
           value={loadInstructions}
           onChangeText={setLoadInstructions}
-          placeholder="Pallets, time window, dock"
+          onFocus={scrollToBottomIfNeeded}
+          placeholder={t('producer.missionsCreate.loadingNotesPlaceholder')}
           multiline
           style={{
             borderWidth: 0.5,
@@ -430,11 +497,14 @@ export default function MissionsCreateScreen() {
           ) : (
             <>
               <Truck size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>Request transport</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
+                {t('producer.missionsCreate.title')}
+              </Text>
             </>
           )}
         </TouchableOpacity>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

@@ -3,12 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'reac
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
+import { getPostLoginPath, normalizeUserRoles } from '@/lib/post-login-redirect';
 import { theme } from '@/lib/theme';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const [partnerCode, setPartnerCode] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,13 +23,13 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const response = await login(partnerCode, password);
-      const userRoles = response.user.roles || (response.user.role ? [response.user.role] : []);
-      if (userRoles.some((role: string) => ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'].includes(role))) {
-        router.replace('/(producer)/(tabs)');
-      } else if (userRoles.some((role: string) => ['BUYER', 'CUSTOMER'].includes(role))) {
-        router.replace('/(buyer)/shop');
+      const path = getPostLoginPath(normalizeUserRoles(response.user));
+      if (path) {
+        router.replace(path as any);
       } else {
-        router.replace('/(buyer)/shop');
+        await logout();
+        Alert.alert(t('error'), t('login.noRoleForApp'));
+        return;
       }
     } catch (error: any) {
       Alert.alert(t('error'), error.message || t('login.failed'));

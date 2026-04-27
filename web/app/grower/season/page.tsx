@@ -8,6 +8,7 @@ import { growerNavItems } from '@/lib/grower-nav';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import GrowerSeasonJourney from '@/components/grower/GrowerSeasonJourney';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function GrowerFieldSeasonPage() {
   const [loading, setLoading] = useState(true);
@@ -49,24 +50,23 @@ export default function GrowerFieldSeasonPage() {
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title="Steps" navItems={growerNavItems}>
-        <div className="min-h-screen bg-gray-50">
-          <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-            <div className="mb-6 grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-6">
-              <div className="lg:col-span-8">
-                <h1 className="text-3xl font-light tracking-tight text-gray-900">Steps</h1>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  From first setup to transport. The cards below are <strong>12 numbered steps</strong> (full story); the green
-                  sidebar has <strong>11 links</strong> in the same order — a few steps here are split for clarity (e.g. approval,
-                  field work). Use the chips to jump.
-                </p>
-              </div>
-              <div className="lg:col-span-4 flex flex-wrap items-center gap-2 text-xs text-gray-500 lg:justify-end">
-                <span className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 shadow-sm ring-1 ring-gray-200/80">
+        <GrowerPageShell>
+            <GrowerPageHeader
+              title="Steps"
+              description={
+                <>
+                  From first setup to transport. The cards below are <strong>12 numbered steps</strong> (full story); the
+                  green sidebar has <strong>11 links</strong> in the same order — a few steps here are split for clarity (e.g.
+                  approval, field work). Use the chips to jump.
+                </>
+              }
+              right={
+                <span className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 text-xs text-gray-500 shadow-sm ring-1 ring-gray-200/80">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A27]" />
                   12 cards · 11 nav links
                 </span>
-              </div>
-            </div>
+              }
+            />
 
             {error && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
@@ -106,8 +106,7 @@ export default function GrowerFieldSeasonPage() {
             <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
               <GrowerSeasonJourney />
             </div>
-          </div>
-        </div>
+        </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useTranslation, Trans } from 'react-i18next';
 import { X, Settings, Check, Cookie } from 'lucide-react';
 
 interface CookiePreferences {
@@ -12,29 +13,46 @@ interface CookiePreferences {
   marketing: boolean;
 }
 
+type CookieBlock = 'essential' | 'analytics' | 'functionality' | 'marketing';
+
+function DetailList({ block }: { block: CookieBlock }) {
+  const { t } = useTranslation();
+  const p = `cookieConsent.${block}` as const;
+  return (
+    <ul className="mt-2 ml-4 space-y-1 list-disc">
+      <li>
+        <strong>{t('cookieConsent.essential.d1')}</strong> {t(`${p}.d1t` as 'cookieConsent.essential.d1t')}
+      </li>
+      <li>
+        <strong>{t('cookieConsent.essential.d2')}</strong> {t(`${p}.d2t` as 'cookieConsent.essential.d2t')}
+      </li>
+      <li>
+        <strong>{t('cookieConsent.essential.d3')}</strong> {t(`${p}.d3t` as 'cookieConsent.essential.d3t')}
+      </li>
+    </ul>
+  );
+}
+
 export default function CookieConsent() {
+  const { t } = useTranslation();
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
-    essential: true, // Always true, cannot be disabled
+    essential: true,
     analytics: false,
     functionality: false,
     marketing: false,
   });
 
   useEffect(() => {
-    // Check if user has already made a choice
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      // Show banner after a short delay
       setTimeout(() => setShowBanner(true), 500);
     } else {
-      // Load saved preferences
       try {
         const savedPrefs = JSON.parse(consent);
         setPreferences(savedPrefs);
       } catch (e) {
-        // If parsing fails, show banner again
         setShowBanner(true);
       }
     }
@@ -46,7 +64,9 @@ export default function CookieConsent() {
       if (consent) {
         try {
           setPreferences(JSON.parse(consent));
-        } catch (_) {}
+        } catch (_) {
+          // ignore
+        }
       }
       setShowBanner(true);
       setShowSettings(true);
@@ -84,14 +104,12 @@ export default function CookieConsent() {
     localStorage.setItem('cookie-consent-date', new Date().toISOString());
     setShowBanner(false);
     setShowSettings(false);
-    
-    // Trigger custom event for other components to react
     window.dispatchEvent(new CustomEvent('cookie-consent-updated', { detail: prefs }));
   };
 
   const togglePreference = (key: keyof CookiePreferences) => {
-    if (key === 'essential') return; // Essential cookies cannot be disabled
-    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
+    if (key === 'essential') return;
+    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   if (!showBanner) return null;
@@ -108,98 +126,97 @@ export default function CookieConsent() {
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
             {!showSettings ? (
-              // Main Banner
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Cookie className="w-5 h-5 text-[#2D5A27]" />
                     <h3 className="text-base font-light text-gray-900">
-                      Cookie notice
+                      {t('cookieConsent.noticeTitle')}
                     </h3>
                   </div>
                   <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    We use <strong>essential</strong> cookies so our sites and apps work (login, security, your consent choice). 
-                    Optional cookies help us improve the site (analytics), remember your preferences (functionality), and, if you allow, support marketing. 
-                    You can accept all, reject non-essential, or choose by category. Full list of cookies, purposes, and retention is in our{' '}
-                    <Link href="/cookies" className="text-[#2D5A27] hover:underline font-medium">
-                      Cookie Policy
-                    </Link>
-                    {' '}and{' '}
-                    <Link href="/privacy" className="text-[#2D5A27] hover:underline font-medium">
-                      Privacy Policy
-                    </Link>.
+                    <Trans
+                      i18nKey="cookieConsent.mainBanner"
+                      components={{
+                        strong: <strong />,
+                        cookie: <Link href="/cookies" className="text-[#2D5A27] hover:underline font-medium" />,
+                        privacy: <Link href="/privacy" className="text-[#2D5A27] hover:underline font-medium" />,
+                      }}
+                    />
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <button
+                    type="button"
                     onClick={() => setShowSettings(true)}
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
                   >
                     <Settings className="w-4 h-4" />
-                    Customize
+                    {t('cookieConsent.customize')}
                   </button>
                   <button
+                    type="button"
                     onClick={handleRejectAll}
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    Reject All
+                    {t('cookieConsent.rejectAll')}
                   </button>
-                    <button
+                  <button
+                    type="button"
                     onClick={handleAcceptAll}
                     className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
                   >
-                    Accept All
+                    {t('cookieConsent.acceptAll')}
                   </button>
                 </div>
               </div>
             ) : (
-              // Settings Panel
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-light text-gray-900">Cookie Preferences</h3>
+                  <h3 className="text-lg font-light text-gray-900">{t('cookieConsent.prefsTitle')}</h3>
                   <button
+                    type="button"
                     onClick={() => setShowSettings(false)}
                     className="text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label={t('common.close')}
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="space-y-4">
-                  {/* Essential Cookies */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Essential Cookies</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          {t('cookieConsent.essential.title')}
+                        </h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Required for the services to function
+                          {t('cookieConsent.essential.subtitle')}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 text-green-600">
                         <Check className="w-5 h-5" />
-                        <span className="text-sm font-light">Always Active</span>
+                        <span className="text-sm font-light">{t('cookieConsent.essential.always')}</span>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-600 font-light mb-2">
-                      Necessary for the site to work. They cannot be disabled.
-                    </p>
+                    <p className="text-xs text-gray-600 font-light mb-2">{t('cookieConsent.essential.p1')}</p>
                     <details className="text-xs text-gray-500 font-light">
-                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
-                      <ul className="mt-2 ml-4 space-y-1 list-disc">
-                        <li><strong>Purpose:</strong> Login session, authentication token (JWT), security (e.g. CSRF), load balancing, and storing this consent choice.</li>
-                        <li><strong>Examples:</strong> Session ID, token (in localStorage), cookie-consent and cookie-consent-date (localStorage).</li>
-                        <li><strong>Retention:</strong> Session (until you close the browser) or up to 1 year for persistent ones (e.g. consent).</li>
-                      </ul>
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">
+                        {t('cookieConsent.essential.details')}
+                      </summary>
+                      <DetailList block="essential" />
                     </details>
                   </div>
 
-                  {/* Analytics Cookies */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Analytics Cookies</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          {t('cookieConsent.analytics.title')}
+                        </h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Help us understand how you use Bio Vera
+                          {t('cookieConsent.analytics.subtitle')}
                         </p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -209,29 +226,26 @@ export default function CookieConsent() {
                           onChange={() => togglePreference('analytics')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#2D5A27]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#2D5A27]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]" />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light mb-2">
-                      Help us understand how our services are used so we can improve them.
-                    </p>
+                    <p className="text-xs text-gray-600 font-light mb-2">{t('cookieConsent.analytics.p1')}</p>
                     <details className="text-xs text-gray-500 font-light">
-                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
-                      <ul className="mt-2 ml-4 space-y-1 list-disc">
-                        <li><strong>Purpose:</strong> Anonymous statistics: page views, navigation paths, device type, and performance (e.g. load times). No identification of individuals.</li>
-                        <li><strong>Examples:</strong> Analytics cookies from tools we may use (e.g. page view counters, session duration).</li>
-                        <li><strong>Retention:</strong> Up to 2 years, depending on the tool. You can turn this category off at any time.</li>
-                      </ul>
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">
+                        {t('cookieConsent.essential.details')}
+                      </summary>
+                      <DetailList block="analytics" />
                     </details>
                   </div>
 
-                  {/* Functionality Cookies */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Functionality Cookies</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          {t('cookieConsent.functionality.title')}
+                        </h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Remember your preferences and settings
+                          {t('cookieConsent.functionality.subtitle')}
                         </p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -241,29 +255,26 @@ export default function CookieConsent() {
                           onChange={() => togglePreference('functionality')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600" />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light mb-2">
-                      Remember your choices and settings for a more convenient experience.
-                    </p>
+                    <p className="text-xs text-gray-600 font-light mb-2">{t('cookieConsent.functionality.p1')}</p>
                     <details className="text-xs text-gray-500 font-light">
-                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
-                      <ul className="mt-2 ml-4 space-y-1 list-disc">
-                        <li><strong>Purpose:</strong> Language, region, display options (e.g. theme), accessibility settings, and temporary form data to avoid data loss.</li>
-                        <li><strong>Examples:</strong> preference_*, language, theme, or similar identifiers stored in localStorage/sessionStorage.</li>
-                        <li><strong>Retention:</strong> Up to 1 year or until you clear site data.</li>
-                      </ul>
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">
+                        {t('cookieConsent.essential.details')}
+                      </summary>
+                      <DetailList block="functionality" />
                     </details>
                   </div>
 
-                  {/* Marketing Cookies */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Marketing Cookies</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          {t('cookieConsent.marketing.title')}
+                        </h4>
                         <p className="text-xs text-gray-500 font-light mt-1">
-                          Used for advertising and marketing purposes
+                          {t('cookieConsent.marketing.subtitle')}
                         </p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -273,45 +284,48 @@ export default function CookieConsent() {
                           onChange={() => togglePreference('marketing')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D5A27]" />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 font-light mb-2">
-                      Used for advertising and measuring campaign effectiveness, if we use such tools in the future.
-                    </p>
+                    <p className="text-xs text-gray-600 font-light mb-2">{t('cookieConsent.marketing.p1')}</p>
                     <details className="text-xs text-gray-500 font-light">
-                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">Details</summary>
-                      <ul className="mt-2 ml-4 space-y-1 list-disc">
-                        <li><strong>Purpose:</strong> Personalized ads and measurement of ad performance (e.g. conversions). May involve third-party ad partners.</li>
-                        <li><strong>Examples:</strong> Advertising or marketing cookies set by us or our partners, if we enable them.</li>
-                        <li><strong>Retention:</strong> As per the relevant provider; typically up to 2 years. You can withdraw consent at any time.</li>
-                      </ul>
+                      <summary className="cursor-pointer text-[#2D5A27] hover:underline">
+                        {t('cookieConsent.essential.details')}
+                      </summary>
+                      <DetailList block="marketing" />
                     </details>
                   </div>
                 </div>
 
                 <p className="text-xs text-gray-500 font-light">
-                  Full list of cookies, retention periods, and third-party services: <Link href="/cookies" className="text-[#2D5A27] hover:underline">Cookie Policy</Link>. 
-                  How we use data: <Link href="/privacy" className="text-[#2D5A27] hover:underline">Privacy Policy</Link>.
+                  <Trans
+                    i18nKey="cookieConsent.fullListFooter"
+                    components={{
+                      1: <Link href="/cookies" className="text-[#2D5A27] hover:underline" />,
+                      2: <Link href="/privacy" className="text-xs text-gray-500 font-light text-[#2D5A27] hover:underline" />,
+                    }}
+                  />
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
                   <Link
                     href="/cookies"
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    Full Cookie Policy
+                    {t('cookieConsent.fullPolicyLink')}
                   </Link>
                   <button
+                    type="button"
                     onClick={handleRejectAll}
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    Reject All
+                    {t('cookieConsent.rejectAll')}
                   </button>
                   <button
+                    type="button"
                     onClick={handleSavePreferences}
                     className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
                   >
-                    Save Preferences
+                    {t('cookieConsent.savePrefs')}
                   </button>
                 </div>
               </div>

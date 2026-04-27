@@ -20,6 +20,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { formatDateEn } from '@/lib/en-locale-dates';
 
 interface Statistics {
   users: {
@@ -375,7 +376,7 @@ export default function AdminDashboard() {
                       >
                         <span className="text-gray-900 font-medium tabular-nums truncate">{batch.batchId}</span>
                         <span className="shrink-0 text-gray-500">
-                          {batch.harvestDate ? new Date(batch.harvestDate).toLocaleDateString() : '—'}
+                          {batch.harvestDate ? formatDateEn(batch.harvestDate) : '—'}
                         </span>
                       </div>
                     ))

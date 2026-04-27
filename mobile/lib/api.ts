@@ -873,7 +873,7 @@ export interface DigitalHandover {
   initiatedAt: string;
 }
 
-// Compliance Photos API
+// Compliance Photos API (legacy estate uploads — prefer materialControlAPI + batch)
 export interface CompliancePhoto {
   id: string;
   estateId: string;
@@ -886,6 +886,48 @@ export interface CompliancePhoto {
   estate?: Estate;
   parcel?: Parcel;
 }
+
+/** Label roll row from /material-control/my-label-rolls */
+export interface LabelRollRow {
+  serialNumber: string;
+  status: string;
+  soldAt: string | null;
+  productName: string;
+}
+
+/** GET /material-control/compliance-status/:batchId */
+export interface ComplianceBatchStatus {
+  publicBatchId: string;
+  complete: boolean;
+  requiredPhotoTypes: string[];
+  uploadedPhotoTypes: string[];
+  missingPhotoTypes: string[];
+  stickerRollId: string | null;
+  stickerStatus: string | null;
+  lastComplianceAt: string | null;
+}
+
+export const materialControlAPI = {
+  getMyLabelRolls: async (): Promise<LabelRollRow[]> => {
+    const response = await api.get('/material-control/my-label-rolls');
+    return Array.isArray(response.data) ? response.data : [];
+  },
+  getComplianceStatus: async (batchId: string): Promise<ComplianceBatchStatus> => {
+    const response = await api.get(`/material-control/compliance-status/${encodeURIComponent(batchId)}`);
+    return response.data;
+  },
+  verifySticker: async (body: { batchId: string; stickerRollId: string }) => {
+    const response = await api.post('/material-control/verify-sticker', body);
+    return response.data;
+  },
+  /**
+   * Same contract as web: `photos` = three data URLs in order PUNNETS, LABELING, PALLETIZATION.
+   */
+  uploadCompliancePhotos: async (body: { batchId: string; stickerRollId: string; photos: string[] }) => {
+    const response = await api.post('/material-control/compliance-photos', body, { timeout: 120000 });
+    return response.data;
+  },
+};
 
 // Materials Whitelist API
 export interface Material {

@@ -3,10 +3,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
+import { I18nProvider } from "@/components/I18nProvider";
 import Navigation from "@/components/Navigation";
 import CookieConsent from "@/components/CookieConsent";
 import VeraAIChatbotWrapper from "@/components/VeraAIChatbotWrapper";
 import { defaultMetadata } from "./metadata";
+import en from "@/locales/en.json";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -28,6 +30,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = defaultMetadata;
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,16 +46,16 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "Bio Vera",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app",
-              "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app"}/logo1.png`,
-              "description": "A vertically integrated agricultural network. From field to buyer with traceable batches, Bio-Ready certification, and digital proof. Open to producers worldwide.",
-              "sameAs": [],
-              "contactPoint": {
+              name: en.brand.name,
+              url: siteUrl,
+              logo: `${siteUrl}/logo1.png`,
+              description: en.metadata.ldJsonDescription,
+              sameAs: [],
+              contactPoint: {
                 "@type": "ContactPoint",
-                "contactType": "Customer Service",
-                "email": "contact@biovera.app",
-                "telephone": "+4915563740470",
+                contactType: en.metadata.ldJsonContactType,
+                email: "contact@biovera.app",
+                telephone: "+4915563740470",
               },
             }),
           }}
@@ -61,11 +65,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <Navigation />
-          {children}
-          <CookieConsent />
-          <VeraAIChatbotWrapper />
-          <SpeedInsights />
+          <I18nProvider>
+            <Navigation />
+            {children}
+            <CookieConsent />
+            <VeraAIChatbotWrapper />
+            <SpeedInsights />
+          </I18nProvider>
         </AuthProvider>
       </body>
     </html>

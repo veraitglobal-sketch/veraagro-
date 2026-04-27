@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Home, RefreshCw, AlertCircle } from 'lucide-react';
+import i18n from '@/i18n/config';
 
 export default function GlobalError({
   error,
@@ -27,7 +28,7 @@ export default function GlobalError({
             <div className="mb-8">
               <Image
                 src="/logo1.png"
-                alt="Bio Vera"
+                alt={i18n.t('globalError.logoAlt')}
                 width={56}
                 height={20}
                 className="h-4 w-auto mx-auto mb-8"
@@ -48,14 +49,14 @@ export default function GlobalError({
                 className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
-                Try Again
+                {i18n.t('globalError.tryAgain')}
               </button>
               <Link
                 href="/"
                 className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
-                Go to Homepage
+                {i18n.t('globalError.goHome')}
               </Link>
             </div>
           </div>

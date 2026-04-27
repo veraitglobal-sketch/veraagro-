@@ -7,8 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Leaf, MapPin, MapPinned, Check, ChevronRight } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { useAuth } from '../hooks/useAuth';
-
-const PRODUCER_ROLES = ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'] as const;
+import { getPostLoginPath, normalizeUserRoles } from '../lib/post-login-redirect';
 
 export default function LandingScreen() {
   const { t } = useTranslation();
@@ -20,18 +19,7 @@ export default function LandingScreen() {
 
   const redirectTarget = useMemo(() => {
     if (authLoading || !user) return null;
-    const userRoles = user.roles || (user.role ? [user.role] : []);
-    const isProducer = userRoles.some((r) =>
-      (PRODUCER_ROLES as readonly string[]).includes(r)
-    );
-    if (isProducer) return '/(producer)/(tabs)' as const;
-    if (userRoles.includes('BUYER') || userRoles.includes('CUSTOMER')) {
-      return '/(buyer)/shop' as const;
-    }
-    if (userRoles.includes('LOGISTICS_PARTNER')) {
-      return '/(logistics)' as const;
-    }
-    return null;
+    return getPostLoginPath(normalizeUserRoles(user));
   }, [user, authLoading]);
 
   useEffect(() => {

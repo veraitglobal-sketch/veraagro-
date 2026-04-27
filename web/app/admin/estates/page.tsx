@@ -6,6 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI } from '@/lib/api';
 import { MapPin, Check, X, Clock, User } from 'lucide-react';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { formatDateEn } from '@/lib/en-locale-dates';
 
 interface PendingEstate {
   id: string;
@@ -178,7 +179,7 @@ export default function EstatesApprovalPage() {
                         <div>
                           <p className="text-xs text-gray-500 mb-1">Created</p>
                           <p className="text-sm font-medium text-gray-900">
-                            {new Date(estate.createdAt).toLocaleDateString()}
+                            {formatDateEn(estate.createdAt)}
                           </p>
                         </div>
                       </div>

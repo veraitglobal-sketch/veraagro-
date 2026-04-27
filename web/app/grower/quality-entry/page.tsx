@@ -8,6 +8,7 @@ import { growerNavItems } from '@/lib/grower-nav';
 import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 const navItems = growerNavItems;
 
@@ -174,7 +175,11 @@ export default function QualityEntryPage() {
 
   return (
     <SidebarLayout title="Quality Entry" navItems={navItems}>
-      <div className="space-y-6">
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader
+          title="Quality Entry"
+          description="Complete this form before creating a shipment. All fields in the form below are mandatory."
+        />
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -202,10 +207,7 @@ export default function QualityEntryPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Farmer's Quality Entry</h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Complete this form before creating a shipment. All fields are mandatory.
-          </p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Farmer&apos;s Quality Entry</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
@@ -420,7 +422,7 @@ export default function QualityEntryPage() {
             </div>
           </form>
         </motion.div>
-      </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

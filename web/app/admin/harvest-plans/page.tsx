@@ -6,6 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { harvestAnnouncementsAPI } from '@/lib/api';
 import { getAdminNavItems } from '@/lib/admin-nav';
+import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { CalendarRange, Loader2, CheckCircle, XCircle, Clock, User, MapPin } from 'lucide-react';
 
 type Row = {
@@ -129,17 +130,15 @@ function HarvestPlansInner() {
                         </p>
                         <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
                           <CalendarRange className="w-4 h-4" />
-                          Planned harvest: {new Date(r.estimatedDate).toLocaleString()}
+                          Planned harvest: {formatDateTimeEn(r.estimatedDate)}
                           {r.estimatedQuantity != null && ` · ~${r.estimatedQuantity} kg expected`}
                         </p>
                         {(r.plannedLoadingStart || r.plannedLoadingEnd) && (
                           <p className="text-sm text-gray-600">
                             Load window:{' '}
-                            {r.plannedLoadingStart
-                              ? new Date(r.plannedLoadingStart).toLocaleString()
-                              : '—'}{' '}
+                            {r.plannedLoadingStart ? formatDateTimeEn(r.plannedLoadingStart) : '—'}{' '}
                             —{' '}
-                            {r.plannedLoadingEnd ? new Date(r.plannedLoadingEnd).toLocaleString() : '—'}
+                            {r.plannedLoadingEnd ? formatDateTimeEn(r.plannedLoadingEnd) : '—'}
                             {r.loadQuantityKg != null && ` · ${r.loadQuantityKg} kg for load`}
                           </p>
                         )}
