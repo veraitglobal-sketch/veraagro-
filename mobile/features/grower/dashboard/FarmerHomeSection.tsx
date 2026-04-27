@@ -16,6 +16,7 @@ import {
   ShoppingBag,
   Box,
   Truck,
+  QrCode,
 } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
@@ -37,6 +38,7 @@ export type FarmerHomeHandlers = {
   onMaterials: () => void;
   onRequestTransport: () => void;
   onMissions: () => void;
+  onPackageBadges: () => void;
 };
 
 const row = {
@@ -228,6 +230,12 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
                 onPress: handlers.onMissions,
                 icon: <MapPin size={20} color={theme.colors.primary} strokeWidth={1.75} />,
                 titleKey: 'producer.dashboard.farmer.logisticsMissions',
+              },
+              {
+                k: 'badges',
+                onPress: handlers.onPackageBadges,
+                icon: <QrCode size={20} color={theme.colors.primary} strokeWidth={1.75} />,
+                titleKey: 'producer.dashboard.farmer.logisticsBadges',
               },
             ] as const
           ).map((item) => (

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image as ImageIcon } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
@@ -10,6 +10,8 @@ import { GrowthLogCard } from './GrowthLogCard';
 interface GrowthJournalListProps {
   logs: GrowthLog[];
   loading: boolean;
+  /** Loading logs after estate/parcel change (estates already loaded). */
+  logsLoading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
 }
@@ -17,11 +19,15 @@ interface GrowthJournalListProps {
 export function GrowthJournalList({
   logs,
   loading,
+  logsLoading,
   refreshing,
   onRefresh,
 }: GrowthJournalListProps) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
+  const showInitialSpinner = loading && logs.length === 0;
+  const showLogsSpinner = logsLoading && !loading;
+
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -41,10 +47,17 @@ export function GrowthJournalList({
           paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
         }}
       >
-        {loading ? (
+        {showInitialSpinner ? (
           <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
             <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
               {t('producer.growthJournal.loading')}
+            </Text>
+          </View>
+        ) : showLogsSpinner ? (
+          <View style={{ paddingVertical: 24, alignItems: 'center' }}>
+            <ActivityIndicator color={colors.primary} />
+            <Text style={{ color: colors.text.secondary, fontSize: 13, marginTop: 12 }}>
+              {t('producer.growthJournal.loadingLogs')}
             </Text>
           </View>
         ) : logs.length === 0 ? (
@@ -61,10 +74,11 @@ export function GrowthJournalList({
             <ImageIcon size={32} color={colors.text.secondary} strokeWidth={1} />
             <Text
               style={{
-                fontSize: 13,
+                fontSize: 15,
+                fontWeight: '600',
                 marginTop: 12,
                 textAlign: 'center',
-                color: colors.text.secondary,
+                color: colors.text.primary,
               }}
             >
               {t('producer.growthJournal.noLogs')}
@@ -75,6 +89,7 @@ export function GrowthJournalList({
                 marginTop: 8,
                 textAlign: 'center',
                 color: colors.text.secondary,
+                lineHeight: 17,
               }}
             >
               {t('producer.growthJournal.addPhotosToTrack')}

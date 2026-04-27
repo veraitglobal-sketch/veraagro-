@@ -201,29 +201,81 @@ export function MaterialComplianceForm() {
             <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.primary, marginBottom: 8 }}>
               {t('producer.compliance.batchForm.stickerRollLabel')}
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
-              {c.pickableRolls.map((r) => {
-                const sel = c.stickerRollId === r.serialNumber;
-                return (
-                  <TouchableOpacity
-                    key={r.serialNumber}
-                    onPress={() => c.setStickerRollId(r.serialNumber)}
-                    style={{
-                      paddingHorizontal: 10,
-                      paddingVertical: 6,
-                      borderRadius: 8,
-                      borderWidth: 1,
-                      borderColor: sel ? colors.primary : colors.border,
-                      backgroundColor: sel ? `${colors.primary}10` : colors.background,
-                    }}
-                  >
-                    <Text style={{ fontSize: 11, color: sel ? colors.primary : colors.text.secondary }}>
-                      {r.serialNumber}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: 8 }}>
+              {t('producer.compliance.batchForm.labelRollLogicHint')}
+            </Text>
+            {c.pickableRolls.length > 12 ? (
+              <>
+                <TextInput
+                  value={c.labelRollFilter}
+                  onChangeText={c.setLabelRollFilter}
+                  placeholder={t('producer.compliance.batchForm.labelRollSearchPlaceholder')}
+                  placeholderTextColor={colors.text.tertiary}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={{
+                    borderWidth: 0.5,
+                    borderColor: colors.border,
+                    borderRadius: 8,
+                    padding: 12,
+                    fontSize: 14,
+                    color: colors.text.primary,
+                    marginBottom: 8,
+                  }}
+                />
+                {c.stickerRollListMeta.mode === 'search' ? (
+                  <Text style={{ fontSize: 11, color: colors.text.tertiary, marginBottom: 8 }}>
+                    {t('producer.compliance.batchForm.labelRollMatchCount', {
+                      shown: c.stickerRollListForUi.length,
+                      total: c.stickerRollListMeta.matchCount,
+                    })}
+                    {c.stickerRollListMeta.capped
+                      ? ` ${t('producer.compliance.batchForm.labelRollNarrowSearch')}`
+                      : ''}
+                  </Text>
+                ) : c.stickerRollListMeta.mode === 'recent' ? (
+                  <Text style={{ fontSize: 11, color: colors.text.tertiary, marginBottom: 8 }}>
+                    {t('producer.compliance.batchForm.labelRollShowingRecent', {
+                      total: c.stickerRollListMeta.matchCount,
+                    })}
+                  </Text>
+                ) : null}
+              </>
+            ) : null}
+            <ScrollView
+              style={{ maxHeight: 220, marginBottom: 8 }}
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {c.stickerRollListForUi.map((r) => {
+                  const sel = c.stickerRollId === r.serialNumber;
+                  return (
+                    <TouchableOpacity
+                      key={r.serialNumber}
+                      onPress={() => c.setStickerRollId(r.serialNumber)}
+                      style={{
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        borderColor: sel ? colors.primary : colors.border,
+                        backgroundColor: sel ? `${colors.primary}10` : colors.background,
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, color: sel ? colors.primary : colors.text.secondary }}>
+                        {r.serialNumber}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+            {c.pickableRolls.length === 0 ? (
+              <Text style={{ fontSize: 12, color: theme.colors.warning, marginBottom: 8 }}>
+                {t('producer.compliance.batchForm.labelRollNoneAvailable')}
+              </Text>
+            ) : null}
             <View style={{ flexDirection: 'row', gap: 8, marginBottom: 4 }}>
               <TextInput
                 value={c.stickerRollId}

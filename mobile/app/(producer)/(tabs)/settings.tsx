@@ -1,8 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Bell, Moon, Globe, Shield, Info } from 'lucide-react-native';
+import { ArrowLeft, Bell, Globe, Shield, Info } from 'lucide-react-native';
+import Constants from 'expo-constants';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -26,6 +27,7 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
   const [gpsAlways, setGpsAlways] = useState(false);
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   // Load settings on mount
   useEffect(() => {
@@ -46,13 +48,13 @@ export default function SettingsScreen() {
     }
   };
 
-  const saveSetting = async (key: string, value: boolean) => {
+  const saveSetting = useCallback(async (key: string, value: boolean) => {
     try {
-      await AsyncStorage.setItem(key, value.toString());
+      await AsyncStorage.setItem(key, value ? 'true' : 'false');
     } catch (error) {
       console.error('Error saving setting:', error);
     }
-  };
+  }, []);
 
   const handleNotificationsToggle = (value: boolean) => {
     setNotifications(value);
@@ -209,7 +211,7 @@ export default function SettingsScreen() {
                     color: theme.colors.text.primary,
                     letterSpacing: 0.3,
                   }}>
-                    GPS uvek aktivan
+                    {t('producer.settings.gpsAlwaysTitle')}
                   </Text>
                   <Text style={{
                     fontSize: 11,
@@ -218,7 +220,7 @@ export default function SettingsScreen() {
                     marginTop: 2,
                     letterSpacing: 0.2,
                   }}>
-                    Uzmi GPS automatski pri unosu zapisa
+                    {t('producer.settings.gpsAlwaysSubtitle')}
                   </Text>
                 </View>
               </View>
@@ -232,14 +234,23 @@ export default function SettingsScreen() {
           </View>
 
           {/* About */}
-          <View style={{
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() =>
+              Alert.alert(
+                t('producer.settings.aboutAlertTitle'),
+                t('producer.settings.aboutAlertBody', { version: appVersion }),
+              )
+            }
+            style={{
             backgroundColor: theme.colors.surface,
             borderRadius: theme.borderRadius.md,
             padding: theme.spacing.md,
             marginBottom: theme.spacing.md,
             borderWidth: 0.5,
             borderColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
+          }}
+          >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Info size={20} color={theme.colors.text.primary} strokeWidth={1} />
               <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
@@ -249,7 +260,7 @@ export default function SettingsScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  O aplikaciji
+                  {t('producer.settings.aboutTitle')}
                 </Text>
                 <Text style={{
                   fontSize: 11,
@@ -258,11 +269,11 @@ export default function SettingsScreen() {
                   marginTop: 2,
                   letterSpacing: 0.2,
                 }}>
-                  BioVera Producer App v1.0.0
+                  {t('producer.settings.aboutSubtitle', { version: appVersion })}
                 </Text>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

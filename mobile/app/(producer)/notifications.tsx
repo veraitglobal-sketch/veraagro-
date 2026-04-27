@@ -5,6 +5,7 @@ import { ArrowLeft, Bell, AlertCircle, Info, Calendar } from 'lucide-react-nativ
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { notificationsAPI, Notification } from '../../lib/api';
+import { resolveNotificationActionHref } from '../../lib/resolve-notification-action';
 
 /**
  * Notifications Screen
@@ -236,8 +237,9 @@ export default function NotificationsScreen() {
                       if (!notification.read) {
                         markAsRead(notification.id);
                       }
-                      if (notification.actionUrl) {
-                        router.push(notification.actionUrl);
+                      const href = resolveNotificationActionHref(notification.actionUrl);
+                      if (href) {
+                        router.push(href);
                       }
                     }}
                     activeOpacity={0.7}

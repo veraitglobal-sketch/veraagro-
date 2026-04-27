@@ -4,6 +4,12 @@ import { User, Truck, MapPin } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 
+function personLabel(p: { firstName?: string; lastName?: string; name?: string } | null | undefined): string {
+  if (!p) return '';
+  if (p.name) return p.name;
+  return [p.firstName, p.lastName].filter(Boolean).join(' ').trim();
+}
+
 export default function TraceabilityBlock({ batch }: { batch: any }) {
   const { t } = useTranslation();
   return (
@@ -37,7 +43,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
             <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>Transport</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-              {batch.transportedByDriver.firstName} {batch.transportedByDriver.lastName}
+              {personLabel(batch.transportedByDriver)}
             </Text>
           </View>
         </View>

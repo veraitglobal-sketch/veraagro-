@@ -78,6 +78,7 @@ import { KycModule } from './kyc/kyc.module';
 import { TreatmentLogsModule } from './treatment-logs/treatment-logs.module';
 import { HaccpModule } from './haccp/haccp.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
+import { PackageBadgesModule } from './package-badges/package-badges.module';
 
 @Module({
   imports: [
@@ -163,6 +164,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
     TreatmentLogsModule,
     HaccpModule,
     BlockchainModule,
+    PackageBadgesModule,
   ],
   providers: [
     {

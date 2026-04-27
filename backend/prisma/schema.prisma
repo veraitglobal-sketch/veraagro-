@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -88,6 +88,7 @@ model batches {
   order_items                                order_items[]
   quality_entries                            quality_entries?
   temperature_logs                           temperature_logs[]
+  package_badges                             package_badges[]
 
   @@index([batchId])
   @@index([currentHubId])
@@ -122,8 +123,8 @@ model bio_white_list {
   productName  String
   manufacturer String
   description  String?
-  phiDays      Int?     // Pre-Harvest Interval (days) - blocks harvest until elapsed
-  mrlLimit     Float?   // Max residue limit (optional)
+  phiDays      Int? // Pre-Harvest Interval (days) - blocks harvest until elapsed
+  mrlLimit     Float? // Max residue limit (optional)
   isActive     Boolean  @default(true)
   addedBy      String
   createdAt    DateTime @default(now())
@@ -134,40 +135,40 @@ model bio_white_list {
 }
 
 model kyc_documents {
-  id          String   @id @default(uuid())
-  userId      String
-  docType     String   // 'ID_FRONT' | 'ID_BACK' | 'PASSPORT' | 'LAND_REGISTRY' | 'LEASE'
-  fileUrl     String
-  verifiedAt  DateTime?
-  verifiedBy  String?
-  status      String   @default("PENDING") // PENDING | VERIFIED | REJECTED
+  id              String    @id @default(uuid())
+  userId          String
+  docType         String // 'ID_FRONT' | 'ID_BACK' | 'PASSPORT' | 'LAND_REGISTRY' | 'LEASE'
+  fileUrl         String
+  verifiedAt      DateTime?
+  verifiedBy      String?
+  status          String    @default("PENDING") // PENDING | VERIFIED | REJECTED
   rejectionReason String?
-  createdAt   DateTime @default(now())
-  users       users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  users           users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
 }
 
 model treatment_logs {
-  id            String   @id @default(uuid())
-  parcelId      String
-  userId        String
-  productId     String   // bio_white_list.id
-  productName   String
-  dosage        String   // e.g. "2 L/ha"
-  waterVolume   Float?   // litres
-  reason        String?  // e.g. "grey mould protection"
-  appliedAt     DateTime
-  gpsLatitude   Float
-  gpsLongitude  Float
-  gpsAccuracy   Float?
-  deviceId      String?
+  id              String   @id @default(uuid())
+  parcelId        String
+  userId          String
+  productId       String // bio_white_list.id
+  productName     String
+  dosage          String // e.g. "2 L/ha"
+  waterVolume     Float? // litres
+  reason          String? // e.g. "grey mould protection"
+  appliedAt       DateTime
+  gpsLatitude     Float
+  gpsLongitude    Float
+  gpsAccuracy     Float?
+  deviceId        String?
   deviceTimestamp DateTime
-  needsAudit    Boolean  @default(false) // true if submitted offline >24h after apply
-  createdAt     DateTime @default(now())
-  parcels       parcels  @relation(fields: [parcelId], references: [id], onDelete: Cascade)
-  users         users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  needsAudit      Boolean  @default(false) // true if submitted offline >24h after apply
+  createdAt       DateTime @default(now())
+  parcels         parcels  @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  users           users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([parcelId])
   @@index([userId])
@@ -359,7 +360,7 @@ model estates {
   growth_logs            growth_logs[]
   inventory              inventory[]
   line_orders            orders[]            @relation("OrderSellerEstate")
-  fulfilling_orders    orders[]            @relation("OrderFulfillingEstate")
+  fulfilling_orders      orders[]            @relation("OrderFulfillingEstate")
   parcels                parcels[]
   security_alerts        security_alerts[]
 
@@ -521,21 +522,82 @@ model location_logs {
 }
 
 model logistics_handovers {
-  id                     String                  @id
-  missionId              String                  @unique
-  insideTruckTemperature Float
+  id                       String                  @id
+  missionId                String                  @unique
+  insideTruckTemperature   Float
   /// Loading documentation: at least one per category required before READY_FOR_LOADING
-  palletPhotos           Json?
-  truckInteriorPhotos    Json?
-  verifiedBy             String
-  notes                  String?
-  timestamp              DateTime                @default(now())
-  status                 LogisticsHandoverStatus @default(PENDING)
-  missions               missions                @relation(fields: [missionId], references: [id])
+  palletPhotos             Json?
+  truckInteriorPhotos      Json?
+  verifiedBy               String
+  notes                    String?
+  timestamp                DateTime                @default(now())
+  status                   LogisticsHandoverStatus @default(PENDING)
+  /// Receiver (at farm / warehouse) — name + optional canvas/signature image (data URL)
+  receiverName             String?
+  receiverSignatureDataUrl String?                 @db.Text
+  receiverSignedAt         DateTime?
+  receiverProofPdfHash     String?
+  missions                 missions                @relation(fields: [missionId], references: [id])
 
   @@index([missionId])
   @@index([status])
   @@index([verifiedBy])
+}
+
+/// Pallet/box QR hierarchy: parent serial + children; public scan resolves to farmer profile + optional batch.
+model package_badges {
+  id              String                @id @default(uuid())
+  serial          String                @unique
+  parentId        String?
+  type            PackageBadgeType
+  ownerUserId     String?
+  createdByUserId String
+  batchId         String?
+  /// e.g. FARMER-FARMER001 — copied for fast public resolve on any child
+  farmerQrCode    String?
+  lifecycle       PackageBadgeLifecycle @default(ACTIVE)
+  /// Optional link to a print-order row that proposed these serials for the factory
+  printOrderId    String?
+  createdAt       DateTime              @default(now())
+  parent          package_badges?       @relation("BadgeTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children        package_badges[]      @relation("BadgeTree")
+  owner           users?                @relation("PackageBadgeOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  createdBy       users                 @relation("PackageBadgeCreatedBy", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  batch           batches?              @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  printOrder      badge_print_orders?   @relation(fields: [printOrderId], references: [id], onDelete: SetNull)
+
+  @@index([parentId])
+  @@index([ownerUserId])
+  @@index([farmerQrCode])
+  @@index([batchId])
+  @@index([createdAt])
+  @@index([printOrderId])
+  @@index([lifecycle])
+}
+
+/// Porudžbenica/payload za štampu kod eksterne fabrike: plan glavnih (palet/rolo) + podređenih serija, bez obaveze da su već u bazi
+model badge_print_orders {
+  id                String                @id @default(uuid())
+  requesterUserId   String
+  /// MATERIAL_SUPPLIER (štamparija) — opciono za adresiranje i prosleđivanje
+  printerSupplierId String?
+  parentCount       Int
+  childrenPerParent Int
+  serialPrefix      String                @default("PLT")
+  /// Snapshot: orderRef, parents[], children: Record<parent, child[]>
+  planJson          Json
+  notesToPrinter    String?               @db.Text
+  status            BadgePrintOrderStatus @default(DRAFT)
+  sentAt            DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  requester         users                 @relation("BadgePrintOrderRequester", fields: [requesterUserId], references: [id], onDelete: Cascade)
+  printerSupplier   users?                @relation("BadgePrintOrderPrinter", fields: [printerSupplierId], references: [id], onDelete: SetNull)
+  package_badges    package_badges[]
+
+  @@index([requesterUserId, createdAt])
+  @@index([printerSupplierId])
+  @@index([status])
 }
 
 model market_prices {
@@ -595,40 +657,40 @@ model material_types {
 }
 
 model missions {
-  id                                       String               @id
-  missionNumber                            String               @unique
+  id                                       String                 @id
+  missionNumber                            String                 @unique
   growerId                                 String
   batchId                                  String?
   /// Set when this transport run was opened from a grower harvest plan (berba / isporuka)
-  harvestAnnouncementId                    String?              @unique
+  harvestAnnouncementId                    String?                @unique
   pickupLocation                           Json
   pickupAddress                            String
   /// Full delivery / drop-off address (buyer, hub, DC — as agreed for this run)
-  destinationAddress                      String?
+  destinationAddress                       String?
   /// e.g. "Hamburg" — for dispatch to group loads on the same trip
-  destinationCity                         String?
+  destinationCity                          String?
   /// Pallets, time windows, dock — operativa + grower
-  loadInstructions                        String?
+  loadInstructions                         String?
   logisticsPartnerId                       String?
   vehicleId                                String?
   optimalRoute                             Json?
   estimatedPickupTime                      DateTime?
-  status                                   MissionStatus        @default(PENDING)
-  requestedAt                              DateTime             @default(now())
+  status                                   MissionStatus          @default(PENDING)
+  requestedAt                              DateTime               @default(now())
   assignedAt                               DateTime?
   acceptedAt                               DateTime?
   pickedUpAt                               DateTime?
   completedAt                              DateTime?
-  createdAt                                DateTime             @default(now())
+  createdAt                                DateTime               @default(now())
   updatedAt                                DateTime
   border_wait_times                        border_wait_times[]
   location_logs                            location_logs[]
   logistics_handovers                      logistics_handovers?
-  batches                                  batches?                @relation(fields: [batchId], references: [id])
-  harvest_announcement                     harvest_announcements?  @relation(fields: [harvestAnnouncementId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  users_missions_growerIdTousers           users                 @relation("missions_growerIdTousers", fields: [growerId], references: [id])
-  users_missions_logisticsPartnerIdTousers users?                @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
-  vehicles                                 vehicles?             @relation(fields: [vehicleId], references: [id])
+  batches                                  batches?               @relation(fields: [batchId], references: [id])
+  harvest_announcement                     harvest_announcements? @relation(fields: [harvestAnnouncementId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  users_missions_growerIdTousers           users                  @relation("missions_growerIdTousers", fields: [growerId], references: [id])
+  users_missions_logisticsPartnerIdTousers users?                 @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
+  vehicles                                 vehicles?              @relation(fields: [vehicleId], references: [id])
   temperature_logs                         temperature_logs[]
 
   @@index([growerId])
@@ -725,35 +787,35 @@ model orders {
 }
 
 model parcels {
-  id                    String                  @id
-  estateId              String
-  polygonCoordinates    Json
-  calculatedArea        Float
-  inputSerialNumber     String?                 @unique
-  seedId                String?
-  status                ParcelStatus            @default(INVALID)
-  validationError       String?
-  cropType              String?
-  plantingDate          DateTime?
-  expectedHarvestDate   DateTime?
-  approvedAt            DateTime?
-  approvedByUserId      String?
+  id                                    String                  @id
+  estateId                              String
+  polygonCoordinates                    Json
+  calculatedArea                        Float
+  inputSerialNumber                     String?                 @unique
+  seedId                                String?
+  status                                ParcelStatus            @default(INVALID)
+  validationError                       String?
+  cropType                              String?
+  plantingDate                          DateTime?
+  expectedHarvestDate                   DateTime?
+  approvedAt                            DateTime?
+  approvedByUserId                      String?
   /// Public store-facing ID (BIO-PLOT-…); URL /plot/{publicCode} — QR for this parcel / sadnja
-  publicCode            String?                 @unique
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime
-  batches               batches[]
-  compliance_logs       compliance_logs[]
-  growth_logs           growth_logs[]
-  harvest_announcements harvest_announcements[]
-  inventory             inventory[]
-  orders                orders[]
-  estates               estates                 @relation(fields: [estateId], references: [id])
-  seeds                 seeds?                  @relation(fields: [seedId], references: [id])
-  plot_blueprints       plot_blueprints?
-  seed_scans            seed_scans[]
-  treatment_logs        treatment_logs[]
-  users_parcels_approvedByUserIdTousers users?   @relation("parcels_approvedByUserId", fields: [approvedByUserId], references: [id])
+  publicCode                            String?                 @unique
+  createdAt                             DateTime                @default(now())
+  updatedAt                             DateTime
+  batches                               batches[]
+  compliance_logs                       compliance_logs[]
+  growth_logs                           growth_logs[]
+  harvest_announcements                 harvest_announcements[]
+  inventory                             inventory[]
+  orders                                orders[]
+  estates                               estates                 @relation(fields: [estateId], references: [id])
+  seeds                                 seeds?                  @relation(fields: [seedId], references: [id])
+  plot_blueprints                       plot_blueprints?
+  seed_scans                            seed_scans[]
+  treatment_logs                        treatment_logs[]
+  users_parcels_approvedByUserIdTousers users?                  @relation("parcels_approvedByUserId", fields: [approvedByUserId], references: [id])
 
   @@index([estateId])
   @@index([inputSerialNumber])
@@ -762,12 +824,12 @@ model parcels {
 }
 
 model harvest_announcements {
-  id                 String    @id
-  parcelId           String
-  userId             String
-  announcementType   String
-  cropType           String
-  estimatedDate      DateTime
+  id                  String    @id
+  parcelId            String
+  userId              String
+  announcementType    String
+  cropType            String
+  estimatedDate       DateTime
   estimatedQuantity   Float?
   plannedLoadingStart DateTime?
   plannedLoadingEnd   DateTime?
@@ -776,17 +838,17 @@ model harvest_announcements {
   qualityGrade        String?
   sortingSpec         String?
   adminNotes          String?
-  actualDate         DateTime?
-  actualQuantity     Float?
-  status             String    @default("PENDING")
-  notes              String?
-  notifiedAt         DateTime?
-  confirmedAt        DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime
-  parcel             parcels   @relation(fields: [parcelId], references: [id])
-  user               users     @relation(fields: [userId], references: [id])
-  mission            missions?
+  actualDate          DateTime?
+  actualQuantity      Float?
+  status              String    @default("PENDING")
+  notes               String?
+  notifiedAt          DateTime?
+  confirmedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+  parcel              parcels   @relation(fields: [parcelId], references: [id])
+  user                users     @relation(fields: [userId], references: [id])
+  mission             missions?
 
   @@index([parcelId])
   @@index([userId])
@@ -1021,38 +1083,38 @@ model trust_scores {
 }
 
 model users {
-  id                                           String                    @id
-  partnerCode                                  String                    @unique
-  email                                        String?                   @unique
+  id                                           String                       @id
+  partnerCode                                  String                       @unique
+  email                                        String?                      @unique
   phone                                        String?
   firstName                                    String
   lastName                                     String
-  companyPosition                              String?                   // e.g. "Purchasing Manager", "Owner" (buyer self-registration)
+  companyPosition                              String? // e.g. "Purchasing Manager", "Owner" (buyer self-registration)
   /// Company, delivery locations, authorized staff — shared between buyer portal and admin
   buyerCompanyProfile                          Json?
-  roles                                        UserRole[]                @default([FARMER])
-  status                                       UserStatus                @default(PENDING_VERIFICATION)
+  roles                                        UserRole[]                   @default([FARMER])
+  status                                       UserStatus                   @default(PENDING_VERIFICATION)
   passwordHash                                 String
   deviceId                                     String?
-  createdAt                                    DateTime                  @default(now())
+  createdAt                                    DateTime                     @default(now())
   updatedAt                                    DateTime
   lastLoginAt                                  DateTime?
-  isVeraPartner                                Boolean                   @default(false)
-  farmerQrCode                                 String?                   @unique
-  farmerProfileUrl                              String?
+  isVeraPartner                                Boolean                      @default(false)
+  farmerQrCode                                 String?                      @unique
+  farmerProfileUrl                             String?
   farmerPhoto                                  String?
   farmerBio                                    String?
-  productionCountry                            String?                   // e.g. "Serbia", "Italy" – for QR label "Produced in X, Region Y"
+  productionCountry                            String? // e.g. "Serbia", "Italy" – for QR label "Produced in X, Region Y"
   yearsOfExperience                            Int?
-  generation                                   String?                   // e.g., "3rd", "4th"
+  generation                                   String? // e.g., "3rd", "4th"
   audit_trails                                 audit_trails[]
-  batches_batches_harvestedByUserIdTousers     batches[]                 @relation("batches_harvestedByUserIdTousers")
-  batches_batches_transportedByDriverIdTousers batches[]                 @relation("batches_transportedByDriverIdTousers")
+  batches_batches_harvestedByUserIdTousers     batches[]                    @relation("batches_harvestedByUserIdTousers")
+  batches_batches_transportedByDriverIdTousers batches[]                    @relation("batches_transportedByDriverIdTousers")
   bio_vera_standards                           bio_vera_standards[]
   border_wait_times                            border_wait_times[]
   compliance_logs                              compliance_logs[]
   deliveries                                   deliveries[]
-  digital_handovers                            digital_handovers[]       @relation("DriverHandovers")
+  digital_handovers                            digital_handovers[]          @relation("DriverHandovers")
   discount_quota_usage                         discount_quota_usage[]
   distributor_arrivals                         distributor_arrivals[]
   email_verification_token                     email_verification_tokens?
@@ -1066,43 +1128,47 @@ model users {
   location_logs                                location_logs[]
   market_prices                                market_prices[]
   material_inventory                           material_inventory[]
-  missions_missions_growerIdTousers            missions[]                @relation("missions_growerIdTousers")
-  missions_missions_logisticsPartnerIdTousers  missions[]                @relation("missions_logisticsPartnerIdTousers")
+  missions_missions_growerIdTousers            missions[]                   @relation("missions_growerIdTousers")
+  missions_missions_logisticsPartnerIdTousers  missions[]                   @relation("missions_logisticsPartnerIdTousers")
   notifications                                notifications[]
   orders                                       orders[]
-  ratings_ratings_ratedUserIdTousers           ratings[]                 @relation("ratings_ratedUserIdTousers")
-  ratings_ratings_raterIdTousers               ratings[]                 @relation("ratings_raterIdTousers")
+  ratings_ratings_ratedUserIdTousers           ratings[]                    @relation("ratings_ratedUserIdTousers")
+  ratings_ratings_raterIdTousers               ratings[]                    @relation("ratings_raterIdTousers")
   security_alerts                              security_alerts[]
   seed_scans                                   seed_scans[]
   temperature_logs                             temperature_logs[]
   trust_scores                                 trust_scores?
   vehicles                                     vehicles[]
-  vera_insights_vera_insights_createdByTousers vera_insights[]           @relation("vera_insights_createdByTousers")
-  vera_insights_vera_insights_updatedByTousers vera_insights[]           @relation("vera_insights_updatedByTousers")
+  vera_insights_vera_insights_createdByTousers vera_insights[]              @relation("vera_insights_createdByTousers")
+  vera_insights_vera_insights_updatedByTousers vera_insights[]              @relation("vera_insights_updatedByTousers")
   wallets                                      wallets?
-  parcels_approvedByUserId                     parcels[]                 @relation("parcels_approvedByUserId")
+  parcels_approvedByUserId                     parcels[]                    @relation("parcels_approvedByUserId")
   /// B2B material supplier: seeds, inputs — shown on grower "where to buy" map when mapApproved
-  material_supplier_profile                    material_supplier_profiles? @relation("MaterialSupplierUser")
-  supplier_threads_as_farmer                  supplier_threads[]         @relation("SupplierThreadFarmer")
-  supplier_threads_as_supplier                supplier_threads[]         @relation("SupplierThreadSupplier")
-  supplier_thread_messages                    supplier_thread_messages[] @relation("SupplierMessageSender")
-  supplier_direct_orders_as_farmer            supplier_direct_orders[]   @relation("SupplierOrderFarmer")
-  supplier_direct_orders_as_supplier          supplier_direct_orders[]   @relation("SupplierOrderSupplier")
-  supplier_catalog_items                      supplier_catalog_items[]   @relation("SupplierCatalogItems")
+  material_supplier_profile                    material_supplier_profiles?  @relation("MaterialSupplierUser")
+  supplier_threads_as_farmer                   supplier_threads[]           @relation("SupplierThreadFarmer")
+  supplier_threads_as_supplier                 supplier_threads[]           @relation("SupplierThreadSupplier")
+  supplier_thread_messages                     supplier_thread_messages[]   @relation("SupplierMessageSender")
+  supplier_direct_orders_as_farmer             supplier_direct_orders[]     @relation("SupplierOrderFarmer")
+  supplier_direct_orders_as_supplier           supplier_direct_orders[]     @relation("SupplierOrderSupplier")
+  supplier_catalog_items                       supplier_catalog_items[]     @relation("SupplierCatalogItems")
   /// Mobile offline sync: product/cost/certificate drafts ingested from the app
-  grower_mobile_ingest                        grower_mobile_ingest[]
+  grower_mobile_ingest                         grower_mobile_ingest[]
   /// B2B: physical unit barcodes registered by this supplier (stock / sale traceability)
-  supplier_material_barcodes_registered       supplier_material_barcodes[] @relation("SupplierMaterialBarcodes")
+  supplier_material_barcodes_registered        supplier_material_barcodes[] @relation("SupplierMaterialBarcodes")
   /// Barcodes of material sold to this grower (when supplier marks sale)
   supplier_barcodes_sold_to_me                 supplier_material_barcodes[] @relation("SupplierBarcodeSoldToFarmer")
+  package_badges_owned                         package_badges[]             @relation("PackageBadgeOwner")
+  package_badges_created                       package_badges[]             @relation("PackageBadgeCreatedBy")
+  badge_print_orders_requester                 badge_print_orders[]         @relation("BadgePrintOrderRequester")
+  badge_print_orders_printer                   badge_print_orders[]         @relation("BadgePrintOrderPrinter")
   /// When a partner / distributor application is converted to a store user
-  partner_application_links                 partner_applications[]     @relation("PartnerApplicationLinkedUser")
+  partner_application_links                    partner_applications[]       @relation("PartnerApplicationLinkedUser")
   /// Admin-assigned commercial agent (growers, logistics partners, material suppliers)
-  assignedAgentUserId                       String?
-  assignedCommercialAgent                  users?                     @relation("CommercialAgentAssignment", fields: [assignedAgentUserId], references: [id], onDelete: SetNull)
-  accountsWhereIAmCommercialAgent          users[]                    @relation("CommercialAgentAssignment")
+  assignedAgentUserId                          String?
+  assignedCommercialAgent                      users?                       @relation("CommercialAgentAssignment", fields: [assignedAgentUserId], references: [id], onDelete: SetNull)
+  accountsWhereIAmCommercialAgent              users[]                      @relation("CommercialAgentAssignment")
   /// Office address for proximity (only for COMMERCIAL_AGENT users)
-  commercial_agent_profile                 commercial_agent_profiles?
+  commercial_agent_profile                     commercial_agent_profiles?
 
   @@index([partnerCode])
   @@index([assignedAgentUserId])
@@ -1110,42 +1176,42 @@ model users {
 
 /// Bio Vera field / commercial office — used to match growers & partners to nearby agents (admin assigns manually)
 model commercial_agent_profiles {
-  id          String   @id @default(uuid())
-  userId      String   @unique
-  officeName  String?
-  address     String
-  postalCode  String?
-  city        String
-  country     String
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  officeName String?
+  address    String
+  postalCode String?
+  city       String
+  country    String
   /// { "lat": number, "lng": number } — optional; can be geocoded from address later
-  location    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([city, country])
 }
 
 /// Distributor & supplier-partner interest from website (/suppliers) — internal pipeline; admin creates store account when ready.
 model partner_applications {
-  id              String                   @id @default(uuid())
-  referenceCode   String                   @unique
-  companyName     String
-  pib             String?
-  contactPerson   String
-  email           String
-  phone           String?
-  website         String?
-  productType     String?
-  certifications  Json?
-  description     String?                  @db.Text
-  status          PartnerApplicationStatus @default(SUBMITTED)
-  internalNotes   String?                  @db.Text
-  meetingAt       DateTime?
-  linkedUserId    String?
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
-  linkedUser      users?                   @relation("PartnerApplicationLinkedUser", fields: [linkedUserId], references: [id], onDelete: SetNull)
+  id             String                   @id @default(uuid())
+  referenceCode  String                   @unique
+  companyName    String
+  pib            String?
+  contactPerson  String
+  email          String
+  phone          String?
+  website        String?
+  productType    String?
+  certifications Json?
+  description    String?                  @db.Text
+  status         PartnerApplicationStatus @default(SUBMITTED)
+  internalNotes  String?                  @db.Text
+  meetingAt      DateTime?
+  linkedUserId   String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  linkedUser     users?                   @relation("PartnerApplicationLinkedUser", fields: [linkedUserId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([email])
@@ -1183,20 +1249,20 @@ model material_supplier_profiles {
 
 /// Partner store sell list (seeds, inputs, packaging) — created by the supplier; reference for grower direct orders
 model supplier_catalog_items {
-  id             String   @id @default(uuid())
-  supplierUserId String
-  name           String
-  description    String?  @db.Text
-  unit           String   @default("unit")
-  listPrice      Float?
-  sku            String?
+  id                String                       @id @default(uuid())
+  supplierUserId    String
+  name              String
+  description       String?                      @db.Text
+  unit              String                       @default("unit")
+  listPrice         Float?
+  sku               String?
   /// https URL (Vercel Blob) or data URL for product photo (seeds, packaging)
-  imageUrl       String?  @db.Text
-  isActive       Boolean  @default(true)
-  sortOrder      Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  supplier       users    @relation("SupplierCatalogItems", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  imageUrl          String?                      @db.Text
+  isActive          Boolean                      @default(true)
+  sortOrder         Int                          @default(0)
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  supplier          users                        @relation("SupplierCatalogItems", fields: [supplierUserId], references: [id], onDelete: Cascade)
   material_barcodes supplier_material_barcodes[]
 
   @@index([supplierUserId, isActive])
@@ -1204,16 +1270,16 @@ model supplier_catalog_items {
 }
 
 model supplier_threads {
-  id               String   @id @default(uuid())
-  farmerId         String
-  supplierUserId   String
-  lastMessageAt    DateTime @default(now())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  farmer           users    @relation("SupplierThreadFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
-  supplier         users    @relation("SupplierThreadSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
-  messages         supplier_thread_messages[]
-  direct_orders    supplier_direct_orders[]
+  id             String                     @id @default(uuid())
+  farmerId       String
+  supplierUserId String
+  lastMessageAt  DateTime                   @default(now())
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+  farmer         users                      @relation("SupplierThreadFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
+  supplier       users                      @relation("SupplierThreadSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  messages       supplier_thread_messages[]
+  direct_orders  supplier_direct_orders[]
 
   @@unique([farmerId, supplierUserId])
   @@index([supplierUserId])
@@ -1221,36 +1287,36 @@ model supplier_threads {
 }
 
 model supplier_thread_messages {
-  id        String   @id @default(uuid())
+  id        String           @id @default(uuid())
   threadId  String
   senderId  String
   body      String
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime         @default(now())
   thread    supplier_threads @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  sender    users    @relation("SupplierMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  sender    users            @relation("SupplierMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([threadId, createdAt])
 }
 
 model supplier_direct_orders {
-  id                 String    @id @default(uuid())
-  threadId            String?
-  farmerId            String
-  supplierUserId     String
-  status              SupplierDirectOrderStatus @default(PENDING)
+  id                String                       @id @default(uuid())
+  threadId          String?
+  farmerId          String
+  supplierUserId    String
+  status            SupplierDirectOrderStatus    @default(PENDING)
   /// [{ "label": "...", "quantity": 1, "unit": "bag" }]
-  items               Json
-  noteFromFarmer     String?
-  noteFromSupplier   String?
+  items             Json
+  noteFromFarmer    String?
+  noteFromSupplier  String?
   /// Grower marked goods received at the farm (independent of supplier workflow status)
-  farmerReceivedAt   DateTime?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  thread             supplier_threads? @relation(fields: [threadId], references: [id], onDelete: SetNull)
-  farmer             users     @relation("SupplierOrderFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
-  supplier           users     @relation("SupplierOrderSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
-  material_barcodes  supplier_material_barcodes[]
+  farmerReceivedAt  DateTime?
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  thread            supplier_threads?            @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  farmer            users                        @relation("SupplierOrderFarmer", fields: [farmerId], references: [id], onDelete: Cascade)
+  supplier          users                        @relation("SupplierOrderSupplier", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  material_barcodes supplier_material_barcodes[]
 
   @@index([farmerId, createdAt])
   @@index([supplierUserId, status])
@@ -1258,24 +1324,24 @@ model supplier_direct_orders {
 
 /// Physical unit instance: supplier registers barcode on goods-in; marks SOLD when selling to a grower (optional link to order).
 model supplier_material_barcodes {
-  id                 String                        @id @default(uuid())
-  supplierUserId     String
-  catalogItemId      String?
+  id             String                        @id @default(uuid())
+  supplierUserId String
+  catalogItemId  String?
   /// Raw scanned value (EAN-13, Code128, etc.) — unique system-wide for this unit line
-  barcode            String                        @unique
-  status             SupplierMaterialBarcodeStatus @default(IN_STOCK)
-  lotNumber          String?
-  note               String?                       @db.Text
-  receivedAt         DateTime                      @default(now())
-  soldAt             DateTime?
-  soldToFarmerId     String?
-  directOrderId      String?
-  createdAt          DateTime                      @default(now())
-  updatedAt          DateTime                      @updatedAt
-  supplier           users                         @relation("SupplierMaterialBarcodes", fields: [supplierUserId], references: [id], onDelete: Cascade)
-  catalogItem        supplier_catalog_items?       @relation(fields: [catalogItemId], references: [id], onDelete: SetNull)
-  soldToFarmer       users?                        @relation("SupplierBarcodeSoldToFarmer", fields: [soldToFarmerId], references: [id], onDelete: SetNull)
-  directOrder        supplier_direct_orders?       @relation(fields: [directOrderId], references: [id], onDelete: SetNull)
+  barcode        String                        @unique
+  status         SupplierMaterialBarcodeStatus @default(IN_STOCK)
+  lotNumber      String?
+  note           String?                       @db.Text
+  receivedAt     DateTime                      @default(now())
+  soldAt         DateTime?
+  soldToFarmerId String?
+  directOrderId  String?
+  createdAt      DateTime                      @default(now())
+  updatedAt      DateTime                      @updatedAt
+  supplier       users                         @relation("SupplierMaterialBarcodes", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  catalogItem    supplier_catalog_items?       @relation(fields: [catalogItemId], references: [id], onDelete: SetNull)
+  soldToFarmer   users?                        @relation("SupplierBarcodeSoldToFarmer", fields: [soldToFarmerId], references: [id], onDelete: SetNull)
+  directOrder    supplier_direct_orders?       @relation(fields: [directOrderId], references: [id], onDelete: SetNull)
 
   @@index([supplierUserId, status])
   @@index([supplierUserId, createdAt])
@@ -1700,6 +1766,27 @@ enum SupplierDirectOrderStatus {
   CANCELLED
 }
 
+/// Pallet / box / line stickers for product traceability (not B2B material barcodes)
+enum PackageBadgeType {
+  PALLET_MASTER
+  BOX_CHILD
+  ROLL_LINE
+}
+
+/// Status porudžbenice za fabriku (štampa nalepnica) — serije su u planJson, registracija u app ide naknadno
+enum BadgePrintOrderStatus {
+  DRAFT
+  SENT_TO_PRINTER
+  COMPLETED
+  CANCELLED
+}
+
+/// Životni ciklus zapisane nalepnice (nakon povrata supplier poseduje + može predati drugom proizvođaču)
+enum PackageBadgeLifecycle {
+  ACTIVE
+  RETURNED_TO_SUPPLIER
+}
+
 enum SupplierMaterialBarcodeStatus {
   /// Registered on goods-in, not yet marked sold to a grower
   IN_STOCK
@@ -1744,14 +1831,14 @@ enum DigitalHandoverStatus {
 }
 
 model ai_conversations {
-  id                String   @id @default(uuid())
-  sessionId         String
-  messages          Json     // Array of {role: 'user'|'assistant', content: string, timestamp: DateTime}
-  userInfo          Json?    // {ipAddress, userAgent, language}
-  contactRequested  Boolean  @default(false)
-  contactInfo       Json?    // {name, email, phone, message, consentGiven: boolean}
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String   @id @default(uuid())
+  sessionId        String
+  messages         Json // Array of {role: 'user'|'assistant', content: string, timestamp: DateTime}
+  userInfo         Json? // {ipAddress, userAgent, language}
+  contactRequested Boolean  @default(false)
+  contactInfo      Json? // {name, email, phone, message, consentGiven: boolean}
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@index([sessionId])
   @@index([contactRequested])

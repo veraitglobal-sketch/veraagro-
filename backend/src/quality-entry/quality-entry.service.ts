@@ -1,7 +1,18 @@
-import { Injectable, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateQualityEntryDto, LogisticsHandoverDto } from './dto/quality-entry.dto';
+import {
+  CreateQualityEntryDto,
+  LogisticsHandoverDto,
+  HandoverReceiverProofDto,
+} from './dto/quality-entry.dto';
+import { buildLogisticsHandoverReceiverProofPdf } from '../common/pdf/simple-documents-pdf';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -392,5 +403,92 @@ export class QualityEntryService {
     });
 
     return qualityEntry !== null && qualityEntry.status === 'COMPLETED';
+  }
+
+  /**
+   * Receiver at farm/dock: name + optional signature image; PDF hash stored for audit.
+   */
+  async submitHandoverReceiverProof(userId: string, dto: HandoverReceiverProofDto) {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: dto.missionId },
+      include: {
+        logistics_handovers: true,
+        batches: true,
+        users_missions_logisticsPartnerIdTousers: true,
+      },
+    });
+    if (!mission?.logistics_handovers) {
+      throw new BadRequestException(
+        'Loading handover not found for this mission. Complete temperature and photos first.',
+      );
+    }
+    if (mission.logisticsPartnerId !== userId) {
+      throw new ForbiddenException('Only the assigned logistics partner can submit receiver proof');
+    }
+    const h = mission.logistics_handovers;
+    const signedAt = new Date();
+    const lp = mission.users_missions_logisticsPartnerIdTousers;
+    const partnerName = lp ? `${lp.firstName} ${lp.lastName}`.trim() : undefined;
+    const buf = await buildLogisticsHandoverReceiverProofPdf({
+      missionId: mission.id,
+      batchPublicId: mission.batches?.batchId,
+      productName: mission.batches?.productName,
+      receiverName: dto.receiverName.trim(),
+      signedAtIso: signedAt.toISOString(),
+      logisticsPartnerName: partnerName,
+      signatureDataUrl: dto.receiverSignatureDataUrl,
+    });
+    const receiverProofPdfHash = crypto.createHash('sha256').update(buf).digest('hex');
+    await this.prisma.logistics_handovers.update({
+      where: { id: h.id },
+      data: {
+        receiverName: dto.receiverName.trim(),
+        receiverSignatureDataUrl: dto.receiverSignatureDataUrl?.trim() || null,
+        receiverSignedAt: signedAt,
+        receiverProofPdfHash,
+      },
+    });
+    return {
+      success: true as const,
+      receiverProofPdfHash,
+      message: 'Receiver proof saved. Download PDF via GET quality-entry/handover/mission/:missionId/receiver-pdf',
+    };
+  }
+
+  async getHandoverReceiverPdfBuffer(missionId: string, userId: string): Promise<Buffer> {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: missionId },
+      include: {
+        logistics_handovers: true,
+        batches: true,
+        users_missions_logisticsPartnerIdTousers: true,
+      },
+    });
+    if (!mission?.logistics_handovers) {
+      throw new NotFoundException('Handover not found');
+    }
+    const h = mission.logistics_handovers;
+    if (!h.receiverSignedAt || !h.receiverName) {
+      throw new BadRequestException('Receiver proof has not been submitted for this mission');
+    }
+    const requester = await this.prisma.users.findUnique({ where: { id: userId } });
+    const isAdmin = requester?.roles.some((r) => r === 'ADMIN' || r === 'SUPER_ADMIN');
+    if (
+      !isAdmin &&
+      mission.logisticsPartnerId !== userId &&
+      mission.growerId !== userId
+    ) {
+      throw new ForbiddenException('You cannot access this handover document');
+    }
+    const lp = mission.users_missions_logisticsPartnerIdTousers;
+    return buildLogisticsHandoverReceiverProofPdf({
+      missionId: mission.id,
+      batchPublicId: mission.batches?.batchId,
+      productName: mission.batches?.productName,
+      receiverName: h.receiverName,
+      signedAtIso: h.receiverSignedAt.toISOString(),
+      logisticsPartnerName: lp ? `${lp.firstName} ${lp.lastName}`.trim() : undefined,
+      signatureDataUrl: h.receiverSignatureDataUrl || undefined,
+    });
   }
 }

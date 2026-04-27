@@ -91,3 +91,16 @@ export class LogisticsHandoverDto {
   @IsOptional()
   notes?: string;
 }
+
+/** After loading: receiver name + optional signature image (data URL) for paper trail */
+export class HandoverReceiverProofDto {
+  @IsString()
+  missionId: string;
+
+  @IsString()
+  receiverName: string;
+
+  @IsOptional()
+  @IsString()
+  receiverSignatureDataUrl?: string;
+}

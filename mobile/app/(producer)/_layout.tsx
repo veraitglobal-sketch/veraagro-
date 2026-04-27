@@ -50,6 +50,7 @@ export default function ProducerLayout() {
         <Stack.Screen name="vera-insights" />
         <Stack.Screen name="plot-mapper" />
         <Stack.Screen name="packing-flow" options={{ title: 'Packing Flow' }} />
+        <Stack.Screen name="package-badges" options={{ title: 'Package badges' }} />
       </Stack>
       </View>
     </AuthGuard>

@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Truck, Calendar, Clock } from 'lucide-react-native';
+import { Truck, Calendar, Clock, FileSignature } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission } from '../../lib/api';
@@ -86,17 +86,29 @@ export default function LogisticsHomeScreen() {
               {t('logistics.missionsSubtitle')}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={async () => {
-              await logout();
-              router.replace('/partner-login');
-            }}
-            hitSlop={12}
-          >
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, fontWeight: '500' }}>
-              {t('logistics.signOut')}
-            </Text>
-          </TouchableOpacity>
+          <View style={{ alignItems: 'flex-end', gap: 8 }}>
+            <TouchableOpacity
+              onPress={() => router.push('/(logistics)/handover-receiver')}
+              hitSlop={8}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+            >
+              <FileSignature size={14} color={theme.colors.primary} strokeWidth={1.5} />
+              <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '500' }}>
+                {t('logistics.receiverProof.link')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={async () => {
+                await logout();
+                router.replace('/partner-login');
+              }}
+              hitSlop={12}
+            >
+              <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, fontWeight: '500' }}>
+                {t('logistics.signOut')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 

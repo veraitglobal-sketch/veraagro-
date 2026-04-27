@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Alert, Linking } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,6 +37,10 @@ export function useFieldLogData() {
   const [loading, setLoading] = useState(false);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
+  const locationRef = useRef<{ lat: number; lng: number } | null>(null);
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
 
   const loadEstates = useCallback(async () => {
     try {
@@ -65,21 +69,6 @@ export function useFieldLogData() {
     requestPermissions();
   }, [loadEstates, requestPermissions]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const check = async () => {
-        try {
-          const barcode = await AsyncStorage.getItem('last_scanned_barcode');
-          if (barcode) {
-            setMaterialID(barcode);
-            await AsyncStorage.removeItem('last_scanned_barcode');
-          }
-        } catch {}
-      };
-      check();
-    }, [])
-  );
-
   const validateMaterial = useCallback(async () => {
     if (!materialID.trim()) {
       setMaterialValid(null);
@@ -106,18 +95,6 @@ export function useFieldLogData() {
     const t = setTimeout(() => validateMaterial(), 500);
     return () => clearTimeout(t);
   }, [materialID, activityType, validateMaterial]);
-
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const { status } = await Location.getForegroundPermissionsAsync();
-        if (status !== 'granted') return;
-        const gpsAlways = await AsyncStorage.getItem('settings_gps_always');
-        if (gpsAlways === 'true' && !location) getCurrentLocation();
-      } catch {}
-    };
-    check();
-  }, []);
 
   const getCurrentLocation = useCallback(async () => {
     try {
@@ -146,6 +123,29 @@ export function useFieldLogData() {
       setLoading(false);
     }
   }, [currentEstate]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const check = async () => {
+        try {
+          const barcode = await AsyncStorage.getItem('last_scanned_barcode');
+          if (barcode) {
+            setMaterialID(barcode);
+            await AsyncStorage.removeItem('last_scanned_barcode');
+          }
+        } catch {}
+        try {
+          const { status } = await Location.getForegroundPermissionsAsync();
+          if (status !== 'granted') return;
+          const gpsAlways = await AsyncStorage.getItem('settings_gps_always');
+          if (gpsAlways === 'true' && !locationRef.current) {
+            await getCurrentLocation();
+          }
+        } catch {}
+      };
+      void check();
+    }, [getCurrentLocation]),
+  );
 
   const takePhoto = useCallback(async () => {
     try {

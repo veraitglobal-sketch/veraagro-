@@ -26,9 +26,21 @@ const handover = (
   </svg>
 );
 
+const handSignature = (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+    />
+  </svg>
+);
+
 export const logisticsPartnerNavItems: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/logistics-partner/dashboard', label: 'Dashboard', icon: dash },
   { href: '/logistics-partner/missions', label: 'Missions', icon: mission },
   { href: '/logistics-partner/vehicles', label: 'Vehicles', icon: truck },
   { href: '/logistics-partner/handover', label: 'Loading Handover', icon: handover },
+  { href: '/logistics-partner/handover-receiver', label: 'Receiver proof', icon: handSignature },
 ];

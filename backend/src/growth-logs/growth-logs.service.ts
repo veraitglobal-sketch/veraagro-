@@ -186,6 +186,14 @@ export class GrowthLogsService {
     return this.prisma.growth_logs.findMany({
       where: { parcelId },
       orderBy: { createdAt: 'desc' },
+      include: {
+        parcels: {
+          select: {
+            id: true,
+            cropType: true,
+          },
+        },
+      },
     });
   }
 }

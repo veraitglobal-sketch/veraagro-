@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,13 +10,18 @@ import {
 } from '../../../lib/api';
 import { getOrCreateDeviceId } from '../../../lib/device-id';
 import { sha256HexFromImageUri } from '../../../lib/image-hash';
+import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from '../../../lib/image-data-url';
+
+const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
 
 export function useGrowthJournalData() {
   const [logs, setLogs] = useState<GrowthLog[]>([]);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [logsLoading, setLogsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
   const [filterEstate, setFilterEstate] = useState<string>('all');
   const [filterParcel, setFilterParcel] = useState<string>('all');
 
@@ -43,6 +48,7 @@ export function useGrowthJournalData() {
       setLogs([]);
       return;
     }
+    setLogsLoading(true);
     try {
       if (filterParcel !== 'all' && filterParcel) {
         const data = await growthLogsAPI.getAllByParcel(filterParcel);
@@ -54,16 +60,18 @@ export function useGrowthJournalData() {
     } catch (error) {
       console.error('Error loading growth logs:', error);
       setLogs([]);
+    } finally {
+      setLogsLoading(false);
     }
   }, [filterEstate, filterParcel]);
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, [loadData]);
 
   useEffect(() => {
     if (filterEstate !== 'all' && filterEstate) {
-      loadLogs();
+      void loadLogs();
     } else {
       setLogs([]);
     }
@@ -75,98 +83,116 @@ export function useGrowthJournalData() {
     setRefreshing(false);
   }, [loadData, loadLogs]);
 
-  const handleAddPhoto = useCallback(async () => {
-    if (estates.length === 0) return;
-    if (filterEstate === 'all' || !filterEstate) {
-      Alert.alert('Estate', 'Select an estate first (use the filters below).');
-      return;
-    }
-
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-
-    if (cameraStatus !== 'granted' || locationStatus !== 'granted') {
-      Alert.alert('Permissions', 'Camera and location access are required.');
-      return;
-    }
-
-    let location: { lat: number; lng: number } | null = null;
-    try {
-      const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
-    } catch {
-      Alert.alert('Location', 'Could not read GPS. Try again outdoors.');
-      return;
-    }
-
-    let result: ImagePicker.ImagePickerResult;
-    try {
-      result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-    } catch (error) {
-      console.error('Camera error:', error);
-      return;
-    }
-
-    if (result.canceled || !result.assets[0] || !location) return;
-
-    const asset = result.assets[0];
-    setUploading(true);
-    try {
-      const imageHash = await sha256HexFromImageUri(asset.uri);
-      const deviceId = await getOrCreateDeviceId();
-      const deviceTimestamp = new Date().toISOString();
-      const parcelId =
-        filterParcel !== 'all' && filterParcel ? filterParcel : undefined;
-      // Placeholder until a dedicated public image CDN URL exists for this capture
-      const imageUrl = `https://app.biovera.app/growth-log#${imageHash}`;
-
-      await growthLogsAPI.create({
-        estateId: filterEstate,
-        parcelId,
-        imageUrl,
-        imageHash,
-        gpsLatitude: location.lat,
-        gpsLongitude: location.lng,
-        deviceId,
-        deviceTimestamp,
-        notes: 'Growth journal (mobile)',
-      });
-      await loadLogs();
-      Alert.alert('Saved', 'Growth log entry was submitted.');
-    } catch (e: any) {
-      const msg = e?.response?.data?.message || e?.message || 'Failed to save growth log';
-      Alert.alert('Error', String(msg));
-      console.error('Growth log submit:', e);
-    } finally {
-      setUploading(false);
-    }
-  }, [estates.length, filterEstate, filterParcel, loadLogs]);
-
   const selectedEstate = estates.find((e) => e.id === filterEstate);
-  const parcels = selectedEstate?.parcels || [];
+  const parcels = useMemo(
+    () => (selectedEstate?.parcels || []).filter((p) => p.approvedAt),
+    [selectedEstate],
+  );
+
+  const submitAddLog = useCallback(
+    async (payload: { notes: string; growthStage: string | undefined }) => {
+      if (estates.length === 0) return;
+      if (filterEstate === 'all' || !filterEstate) {
+        Alert.alert('Estate', 'Select an estate first (use the filters on this screen).');
+        return;
+      }
+
+      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+
+      if (cameraStatus !== 'granted' || locationStatus !== 'granted') {
+        Alert.alert('Permissions', 'Camera and location access are required.');
+        return;
+      }
+
+      let location: { lat: number; lng: number } | null = null;
+      try {
+        const loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      } catch {
+        Alert.alert('Location', 'Could not read GPS. Try again outdoors.');
+        return;
+      }
+
+      let result: ImagePicker.ImagePickerResult;
+      try {
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 0.8,
+        });
+      } catch (error) {
+        console.error('Camera error:', error);
+        return;
+      }
+
+      if (result.canceled || !result.assets[0] || !location) return;
+      const asset = result.assets[0];
+
+      setUploading(true);
+      try {
+        const imageDataUrl = await imageUriToJpegDataUrl(asset.uri);
+        try {
+          assertDataUrlWithinSize(imageDataUrl, MAX_GROWTH_PHOTO_BYTES);
+        } catch {
+          Alert.alert('Error', 'Photo is too large. Try again with slightly lower quality.');
+          return;
+        }
+
+        const imageHash = await sha256HexFromImageUri(asset.uri);
+        const deviceId = await getOrCreateDeviceId();
+        const deviceTimestamp = new Date().toISOString();
+        const parcelId =
+          filterParcel !== 'all' && filterParcel ? filterParcel : undefined;
+        await growthLogsAPI.create({
+          estateId: filterEstate,
+          parcelId,
+          imageUrl: imageDataUrl,
+          imageHash,
+          gpsLatitude: location.lat,
+          gpsLongitude: location.lng,
+          deviceId,
+          deviceTimestamp,
+          notes: payload.notes.trim() || undefined,
+          growthStage: payload.growthStage,
+        });
+        setAddModalVisible(false);
+        await loadLogs();
+        Alert.alert('Saved', 'Growth log entry was saved.');
+      } catch (e: any) {
+        const msg = e?.response?.data?.message || e?.message || 'Failed to save growth log';
+        Alert.alert('Error', String(msg));
+        console.error('Growth log submit:', e);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [estates.length, filterEstate, filterParcel, loadLogs],
+  );
+
   const sortedLogs = [...logs].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   return {
     estates,
     logs: sortedLogs,
     loading,
+    logsLoading,
     refreshing,
     uploading,
+    addModalVisible,
+    setAddModalVisible,
     filterEstate,
     filterParcel,
     setFilterEstate,
     setFilterParcel,
     parcels,
     onRefresh,
-    handleAddPhoto,
+    submitAddLog,
+    selectedEstate,
   };
 }

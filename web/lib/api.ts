@@ -1130,6 +1130,95 @@ export const batchesAPI = {
   },
 };
 
+export type PackageBadgeType = 'PALLET_MASTER' | 'BOX_CHILD' | 'ROLL_LINE';
+
+export type PackageBadgeScanResult = {
+  scannedSerial: string;
+  isChild: boolean;
+  parent: {
+    serial: string;
+    type: string;
+    farmerQrCode?: string | null;
+    batchId?: string | null;
+    lifecycle?: string;
+  };
+  children: {
+    serial: string;
+    type: string;
+    farmerQrCode?: string | null;
+    batchId?: string | null;
+    lifecycle?: string;
+  }[];
+};
+
+export type PackageBadgePublicResolve = {
+  serial: string;
+  type: string;
+  farmerProfileUrl: string;
+  farmerQrCode?: string | null;
+  publicBatchId?: string | null;
+  passportUrl?: string | null;
+  hint?: string;
+};
+
+export const packageBadgesAPI = {
+  register: async (data: {
+    parentSerial: string;
+    type: PackageBadgeType;
+    childSerials: string[];
+    ownerUserId?: string;
+    batchId?: string;
+    farmerQrCode?: string;
+    printOrderId?: string;
+  }) => {
+    const response = await api.post('/package-badges/register', data);
+    return response.data;
+  },
+  previewPrintOrder: async (data: { parentCount: number; childrenPerParent: number; serialPrefix?: string }) => {
+    const response = await api.post('/package-badges/print-orders/preview', data);
+    return response.data;
+  },
+  createPrintOrder: async (data: {
+    parentCount: number;
+    childrenPerParent: number;
+    serialPrefix?: string;
+    printerSupplierId?: string;
+    notesToPrinter?: string;
+  }) => {
+    const response = await api.post('/package-badges/print-orders', data);
+    return response.data;
+  },
+  listMyPrintOrders: async () => {
+    const response = await api.get('/package-badges/print-orders/mine');
+    return response.data;
+  },
+  markPrintOrderSent: async (id: string) => {
+    const response = await api.patch(`/package-badges/print-orders/${encodeURIComponent(id)}/sent`, {});
+    return response.data;
+  },
+  returnTreeToSupplier: async (data: { rootSerial: string; supplierUserId: string }) => {
+    const response = await api.post('/package-badges/return-to-supplier', data);
+    return response.data;
+  },
+  supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
+    const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
+    return response.data;
+  },
+  /** Authenticated: full tree (grower owns, or logistics/buyer/admin). */
+  scan: async (serial: string): Promise<PackageBadgeScanResult> => {
+    const response = await api.get(`/package-badges/scan/${encodeURIComponent(serial.trim())}`);
+    return response.data;
+  },
+  /** No auth: consumer-style links (farmer page, passport when lot linked). */
+  publicResolve: async (serial: string): Promise<PackageBadgePublicResolve> => {
+    const base = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? process.env.NEXT_PUBLIC_API_URL || 'https://api.biovera.app'
+      : API_URL;
+    const res = await axios.get(`${String(base).replace(/\/$/, '')}/public/badges/${encodeURIComponent(serial.trim())}`);
+    return res.data;
+  },
+};
+
 // Buyer Trade Panel API
 export const buyerTradePanelAPI = {
   getSupplyAndDemand: async () => {

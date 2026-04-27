@@ -13,6 +13,7 @@ export default function LogisticsLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="mission/[id]" />
+          <Stack.Screen name="handover-receiver" />
         </Stack>
       </View>
     </AuthGuard>

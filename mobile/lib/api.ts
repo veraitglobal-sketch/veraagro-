@@ -453,9 +453,20 @@ export interface GrowthLog {
   notes?: string;
   growthStage?: string;
   createdAt: string;
+  deviceTimestamp?: string;
   parcel?: {
     id: string;
     cropType: string;
+  };
+}
+
+/** Prisma returns `parcels` relation; mobile UI expects `parcel`. */
+function normalizeGrowthLogRow(row: Record<string, unknown>): GrowthLog {
+  const parcels = row.parcels as { id: string; cropType: string } | null | undefined;
+  const { parcels: _p, ...rest } = row;
+  return {
+    ...(rest as unknown as GrowthLog),
+    parcel: parcels ? { id: parcels.id, cropType: parcels.cropType } : undefined,
   };
 }
 
@@ -463,7 +474,9 @@ export const growthLogsAPI = {
   getAllByEstate: async (estateId: string): Promise<GrowthLog[]> => {
     try {
       const response = await api.get(`/growth-logs/estate/${estateId}`);
-      return response.data || [];
+      const raw = response.data;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
     } catch (error: any) {
       if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
         console.warn('Backend not available, returning empty growth logs list');
@@ -476,7 +489,9 @@ export const growthLogsAPI = {
   getAllByParcel: async (parcelId: string): Promise<GrowthLog[]> => {
     try {
       const response = await api.get(`/growth-logs/parcel/${parcelId}`);
-      return response.data || [];
+      const raw = response.data;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
     } catch (error: any) {
       if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
         console.warn('Backend not available, returning empty growth logs list');
@@ -751,6 +766,51 @@ export const qualityEntryAPI = {
     const response = await api.get(`/quality-entry/can-create-shipment/${batchId}`);
     return response.data.canCreate || false;
   },
+  /** After loading handover: receiver name + optional signature (data URL) for PDF audit trail */
+  submitHandoverReceiverProof: async (data: {
+    missionId: string;
+    receiverName: string;
+    receiverSignatureDataUrl?: string;
+  }): Promise<{ success: true; receiverProofPdfHash: string; message: string }> => {
+    const response = await api.post('/quality-entry/handover/receiver-proof', data);
+    return response.data;
+  },
+  /**
+   * PDF only exists after submitHandoverReceiverProof. Returns raw bytes (RN-friendly; wrap in
+   * Blob in environments that support it, or write with expo-file-system).
+   */
+  getHandoverReceiverPdf: async (missionId: string): Promise<ArrayBuffer> => {
+    const response = await api.get(
+      `/quality-entry/handover/mission/${encodeURIComponent(missionId)}/receiver-pdf`,
+      { responseType: 'arraybuffer' },
+    );
+    return response.data;
+  },
+};
+
+export type PackageBadgeType = 'PALLET_MASTER' | 'BOX_CHILD' | 'ROLL_LINE';
+
+export const packageBadgesAPI = {
+  register: async (data: {
+    parentSerial: string;
+    type: PackageBadgeType;
+    childSerials: string[];
+    ownerUserId?: string;
+    batchId?: string;
+    farmerQrCode?: string;
+  }) => {
+    const response = await api.post('/package-badges/register', data);
+    return response.data;
+  },
+  scan: async (serial: string) => {
+    const response = await api.get(`/package-badges/scan/${encodeURIComponent(serial)}`);
+    return response.data;
+  },
+  /** Unauthenticated: QR on package resolves to farmer / batch links */
+  publicResolve: async (serial: string) => {
+    const { data } = await axios.get(`${API_URL}/public/badges/${encodeURIComponent(serial)}`);
+    return data;
+  },
 };
 
 // Missions API
@@ -822,14 +882,27 @@ export interface Notification {
   title: string;
   message: string;
   actionUrl?: string;
+  /** Set by client from API `read` or Prisma `status === 'READ'`. */
   read: boolean;
   createdAt: string;
+  /** Present when API returns Prisma row as-is. */
+  status?: 'UNREAD' | 'READ';
+}
+
+function normalizeNotificationRow(n: Record<string, unknown>): Notification {
+  const status = n.status as string | undefined;
+  return {
+    ...(n as unknown as Notification),
+    read: n.read === true || status === 'READ',
+  };
 }
 
 export const notificationsAPI = {
   getAll: async (): Promise<Notification[]> => {
     const response = await api.get('/notifications');
-    return response.data || [];
+    const raw = response.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((n: Record<string, unknown>) => normalizeNotificationRow(n));
   },
   markAsRead: async (id: string): Promise<void> => {
     await api.patch(`/notifications/${id}/read`);

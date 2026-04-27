@@ -349,8 +349,8 @@ export class BatchesService {
    * Get batch traceability (one-click view)
    */
   async getBatchTraceability(batchId: string) {
-    const batch = await this.prisma.batches.findUnique({
-      where: { batchId },
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: batchId }, { batchId: batchId }] },
       include: {
         estates: { include: { users: true } },
         parcels: true,

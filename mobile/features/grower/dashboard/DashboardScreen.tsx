@@ -39,6 +39,7 @@ export default function DashboardScreen() {
     onMaterials: () => router.push('/(producer)/materials'),
     onRequestTransport: () => router.push('/(producer)/missions-create'),
     onMissions: () => router.push('/(producer)/missions'),
+    onPackageBadges: () => router.push('/(producer)/package-badges'),
   };
 
   const hasAlerts =

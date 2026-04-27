@@ -357,3 +357,55 @@ export async function buildInvoicePdf(invoiceData: Record<string, unknown>): Pro
 function sha256Json(data: object): string {
   return createHash('sha256').update(JSON.stringify(data)).digest('hex');
 }
+
+/**
+ * Paper-trail PDF after receiver signs (name + optional signature image) on loading handover.
+ */
+export async function buildLogisticsHandoverReceiverProofPdf(data: {
+  missionId: string;
+  batchPublicId?: string;
+  productName?: string;
+  receiverName: string;
+  signedAtIso: string;
+  logisticsPartnerName?: string;
+  signatureDataUrl?: string;
+}): Promise<Buffer> {
+  return runPdfDocument((doc) => {
+    doc.fontSize(16).text('Bio Vera — Loading handover (receiver proof)', { align: 'center' });
+    doc.moveDown(0.5);
+    doc.fontSize(9).fillColor('#555').text('System-generated for traceability (cold chain + loading evidence).', { align: 'center' });
+    doc.fillColor('#000000');
+    doc.moveDown(1);
+    doc.fontSize(10);
+    doc.text(`Mission ID: ${data.missionId}`);
+    if (data.batchPublicId) {
+      doc.text(`Commercial lot: ${data.batchPublicId}`);
+    }
+    if (data.productName) {
+      doc.text(`Product: ${data.productName}`);
+    }
+    doc.moveDown(0.3);
+    doc.text(`Received by (name): ${data.receiverName}`);
+    doc.text(`Time: ${data.signedAtIso}`);
+    if (data.logisticsPartnerName) {
+      doc.text(`Logistics partner: ${data.logisticsPartnerName}`);
+    }
+    doc.moveDown(0.6);
+    if (data.signatureDataUrl?.startsWith('data:image')) {
+      const m = data.signatureDataUrl.match(/^data:image\/(png|jpeg|jpg);base64,(.+)$/i);
+      if (m?.[2]) {
+        try {
+          const buf = Buffer.from(m[2], 'base64');
+          doc.fontSize(11).text('Signature (electronic or captured):', { underline: true });
+          doc.image(buf, { width: 220 });
+        } catch {
+          doc.text('(Signature image could not be embedded — see raw record in system.)');
+        }
+      }
+    } else {
+      doc.fontSize(9).fillColor('#666').text('No image signature on file; name attestation only.');
+    }
+    doc.moveDown(1.2);
+    doc.fontSize(8).fillColor('#666').text(`Record hash: ${createHash('sha256').update(JSON.stringify(data)).digest('hex')}`);
+  });
+}
