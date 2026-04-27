@@ -113,7 +113,7 @@ export default function Navigation() {
               </>
             ) : (
               <Link
-                href="/login"
+                href={loc('/login')}
                 className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
               >
                 {t('nav.login')}
@@ -161,7 +161,7 @@ export default function Navigation() {
             ))}
             {!isAuthenticated && (
               <Link
-                href="/login"
+                href={loc('/login')}
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center min-h-[44px] px-4 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] mt-2"
               >

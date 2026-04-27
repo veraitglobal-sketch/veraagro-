@@ -11,8 +11,28 @@
     "nameSr": "Srpski"
   },
   "footer": {
+    "tagline": "Vertikalno povezana poljoprivredna mreža za Bio-Ready sertifikaciju i usklađenost sa EU tržištem.",
+    "columnProduct": "Proizvod",
+    "columnCompany": "Kompanija",
+    "columnSupport": "Podrška",
+    "columnLegal": "Pravno",
     "language": "Jezik i region",
-    "languageHint": "Jezik interfejsa"
+    "languageHint": "Jezik interfejsa",
+    "about": "O nama",
+    "careers": "Karijere",
+    "pressKit": "Medijski komplet",
+    "vision": "Vizija",
+    "roadmap": "Plan razvoja",
+    "faq": "ČPP",
+    "security": "Bezbednost",
+    "legalHub": "Pravne informacije",
+    "privacy": "Privatnost",
+    "cookiePolicy": "Politika kolačića",
+    "manageCookies": "Upravljaj kolačićima",
+    "copyright": "© {{year}} Bio Vera. Sva prava zadržana.",
+    "appApple": "Apple",
+    "appAndroid": "Android",
+    "logoAlt": "Bio Vera"
   },
   "languagePage": {
     "eyebrow": "Podešavanja",
@@ -82,6 +102,20 @@
     "logout": "Odjava",
     "openMenu": "Otvori meni",
     "closeMenu": "Zatvori meni"
+  },
+  "loginPage": {
+    "title": "Prijava",
+    "subtitle": "Prijavite se na nalog Bio Vera",
+    "partnerCodeLabel": "Partnerski kod *",
+    "partnerCodePlaceholder": "Unesite partnerski kod",
+    "passwordLabel": "Lozinka *",
+    "passwordPlaceholder": "Unesite lozinku",
+    "signIn": "Prijavi se",
+    "signingIn": "Prijavljivanje…",
+    "backToHome": "← Nazad na početnu",
+    "noAccount": "Nemate nalog?",
+    "register": "Registracija",
+    "errorFailed": "Prijava nije uspela. Proverite podatke."
   },
   "authGuard": {
     "loading": "Učitavanje..."

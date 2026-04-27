@@ -23,6 +23,20 @@ function preferredLocale(request: NextRequest): SiteLocale {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  /** Main marketing login lives under /[locale]/login; keep query (e.g. returnTo). */
+  if (pathname === "/login" || pathname === "/login/") {
+    const locale = preferredLocale(request);
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/login`;
+    const res = NextResponse.redirect(url);
+    res.cookies.set(LOCALE_COOKIE, locale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
+    return res;
+  }
+
   const existingLocale = pathnameStartsWithLocale(pathname);
   if (existingLocale) {
     const res = NextResponse.next();

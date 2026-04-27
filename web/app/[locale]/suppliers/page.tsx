@@ -5,8 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, Download } from 'lucide-react';
 import { suppliersAPI, partnerApplicationsAPI, submitApplicationForm, getFormspreeEndpoint } from '@/lib/api';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function SuppliersPage() {
+  const loc = useLocalizedHref();
   const [formData, setFormData] = useState({
     companyName: '',
     pib: '',
@@ -560,7 +562,7 @@ export default function SuppliersPage() {
                 Check status with your reference
               </Link>
               <span className="text-gray-300">·</span>
-              <Link href="/login" className="text-[#2D5A27] underline">
+              <Link href={loc('/login')} className="text-[#2D5A27] underline">
                 Partner store login
               </Link>
             </p>

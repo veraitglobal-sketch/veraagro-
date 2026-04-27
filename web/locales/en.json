@@ -11,8 +11,28 @@
     "nameSr": "Srpski"
   },
   "footer": {
+    "tagline": "A vertically integrated agricultural network for Bio-Ready certification and EU market compliance.",
+    "columnProduct": "Product",
+    "columnCompany": "Company",
+    "columnSupport": "Support",
+    "columnLegal": "Legal",
     "language": "Language & region",
-    "languageHint": "Interface language"
+    "languageHint": "Interface language",
+    "about": "About",
+    "careers": "Careers",
+    "pressKit": "Press Kit",
+    "vision": "Vision",
+    "roadmap": "Roadmap",
+    "faq": "FAQ",
+    "security": "Security",
+    "legalHub": "Legal",
+    "privacy": "Privacy",
+    "cookiePolicy": "Cookie Policy",
+    "manageCookies": "Manage cookies",
+    "copyright": "© {{year}} Bio Vera. All rights reserved.",
+    "appApple": "Apple",
+    "appAndroid": "Android",
+    "logoAlt": "Bio Vera"
   },
   "languagePage": {
     "eyebrow": "Settings",
@@ -82,6 +102,20 @@
     "logout": "Logout",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
+  },
+  "loginPage": {
+    "title": "Sign in",
+    "subtitle": "Sign in to your Bio Vera account",
+    "partnerCodeLabel": "Partner code *",
+    "partnerCodePlaceholder": "Enter your partner code",
+    "passwordLabel": "Password *",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "backToHome": "← Back to home",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "errorFailed": "Login failed. Please check your credentials."
   },
   "authGuard": {
     "loading": "Loading..."

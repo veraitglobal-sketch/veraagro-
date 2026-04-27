@@ -97,7 +97,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/login"
+                href={loc('/login')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
@@ -112,7 +112,7 @@ export default function Home() {
             </div>
             <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
               <Link
-                href="/login?returnTo=/pre-order-2026"
+                href={`${loc('/login')}?returnTo=${encodeURIComponent('/pre-order-2026')}`}
                 className="text-sm font-light text-gray-500 hover:text-[#2D5A27] transition-colors"
               >
                 {t('home.hero.preOrder')}
@@ -408,7 +408,7 @@ export default function Home() {
               return (
                 <Link
                   key={category.id}
-                  href="/login"
+                  href={loc('/login')}
                   className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg transition-all group hover:border-[#2D5A27] hover:text-[#2D5A27]"
                 >
                   <Icon
@@ -442,7 +442,7 @@ export default function Home() {
                 {t('home.cta.becomeProducer')}
               </Link>
               <Link
-                href="/login"
+                href={loc('/login')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
                 {t('home.cta.startShopping')}

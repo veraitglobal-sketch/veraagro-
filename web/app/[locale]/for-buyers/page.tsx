@@ -26,12 +26,18 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import HarvestCalendar from '@/components/HarvestCalendar';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function ForBuyersPage() {
   const { isAuthenticated, user } = useAuth();
+  const loc = useLocalizedHref();
   const hasBuyerAccess = isAuthenticated && user?.roles?.includes?.('buyer');
-  const ordersHref = hasBuyerAccess ? '/buyer-portal/trade-panel' : '/login?returnTo=/buyer-portal/trade-panel';
-  const preOrderHref = isAuthenticated ? '/pre-order-2026' : '/login?returnTo=/pre-order-2026';
+  const ordersHref = hasBuyerAccess
+    ? '/buyer-portal/trade-panel'
+    : `${loc('/login')}?returnTo=${encodeURIComponent('/buyer-portal/trade-panel')}`;
+  const preOrderHref = isAuthenticated
+    ? '/pre-order-2026'
+    : `${loc('/login')}?returnTo=${encodeURIComponent('/pre-order-2026')}`;
 
   const [interestForm, setInterestForm] = useState({
     companyName: '',
@@ -130,7 +136,7 @@ export default function ForBuyersPage() {
                   Register
                 </Link>
                 <Link
-                  href="/login"
+                  href={loc('/login')}
                   className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <LogIn className="h-4 w-4" />
