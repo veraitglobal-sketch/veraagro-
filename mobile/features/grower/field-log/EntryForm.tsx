@@ -1,9 +1,18 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Camera, MapPin, Check, X } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
-import { useFieldLogData, ACTIVITY_TYPES } from './useFieldLogData';
+import { useFieldLogData, ACTIVITY_TYPES, ActivityType } from './useFieldLogData';
+
+const activityLabelKey: Record<ActivityType, string> = {
+  PLANTING: 'planting',
+  FERTILIZING: 'fertilizing',
+  SPRAYING: 'spraying',
+  HARVEST: 'harvest',
+};
 
 export default function EntryForm() {
+  const { t } = useTranslation();
   const {
     router,
     activityType,
@@ -62,7 +71,7 @@ export default function EntryForm() {
               marginBottom: theme.spacing.sm,
             }}
           >
-            Activity Type
+            {t('producer.fieldLogForm.activityType')}
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
             {ACTIVITY_TYPES.map((type) => {
@@ -89,7 +98,7 @@ export default function EntryForm() {
                       letterSpacing: 0.3,
                     }}
                   >
-                    {type.label}
+                    {t(`producer.fieldLog.${activityLabelKey[type.value]}`)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -107,7 +116,7 @@ export default function EntryForm() {
               marginBottom: theme.spacing.sm,
             }}
           >
-            Material Barcode (optional)
+            {t('producer.fieldLogForm.materialBarcode')}
           </Text>
           <View
             style={{
@@ -129,7 +138,7 @@ export default function EntryForm() {
                 color: theme.colors.text.primary,
                 letterSpacing: 0.2,
               }}
-              placeholder="Scan or enter barcode"
+              placeholder={t('producer.fieldLogForm.materialPlaceholder')}
               placeholderTextColor={theme.colors.text.tertiary}
               value={materialID}
               onChangeText={setMaterialID}
@@ -175,7 +184,7 @@ export default function EntryForm() {
               marginBottom: theme.spacing.sm,
             }}
           >
-            Photo <Text style={{ color: theme.colors.error }}>*</Text>
+            {t('producer.fieldLogForm.photo')} <Text style={{ color: theme.colors.error }}>*</Text>
           </Text>
           <TouchableOpacity
             onPress={takePhoto}
@@ -200,7 +209,7 @@ export default function EntryForm() {
                   letterSpacing: 0.3,
                 }}
               >
-                ✓ Photo loaded successfully
+                ✓ {t('producer.fieldLogForm.photoLoaded')}
               </Text>
             ) : (
               <>
@@ -214,7 +223,7 @@ export default function EntryForm() {
                     letterSpacing: 0.2,
                   }}
                 >
-                  Add photo
+                  {t('producer.fieldLogForm.addPhoto')}
                 </Text>
               </>
             )}
@@ -231,7 +240,7 @@ export default function EntryForm() {
               marginBottom: theme.spacing.sm,
             }}
           >
-            Location <Text style={{ color: theme.colors.error }}>*</Text>
+            {t('producer.fieldLogForm.location')} <Text style={{ color: theme.colors.error }}>*</Text>
           </Text>
           <TouchableOpacity
             onPress={getCurrentLocation}
@@ -272,7 +281,7 @@ export default function EntryForm() {
                         letterSpacing: 0.2,
                       }}
                     >
-                      ✓ Location loaded
+                      ✓ {t('producer.fieldLogForm.locationOk')}
                     </Text>
                   </>
                 ) : (
@@ -284,7 +293,7 @@ export default function EntryForm() {
                       letterSpacing: 0.2,
                     }}
                   >
-                    Get current location
+                    {t('producer.fieldLogForm.getLocation')}
                   </Text>
                 )}
               </View>
@@ -325,7 +334,7 @@ export default function EntryForm() {
                 letterSpacing: 0.5,
               }}
             >
-              Save Entry
+              {t('producer.fieldLogForm.saveEntry')}
             </Text>
           )}
         </TouchableOpacity>

@@ -1,5 +1,6 @@
 import { View, Text, Modal, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { X, Plus, Minus } from 'lucide-react-native';
 import { theme } from '../lib/theme';
@@ -38,6 +39,7 @@ export default function ReservationModal({
   onClose,
   onSuccess,
 }: ReservationModalProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -67,27 +69,27 @@ export default function ReservationModal({
 
   const handleReserve = async () => {
     if (!product || !user) {
-      Alert.alert('Error', 'Product or user information missing');
+      Alert.alert(t('error'), t('reservationModal.missingInfo'));
       return;
     }
 
     if (quantity <= 0 || quantity > maxQuantity) {
-      Alert.alert('Error', `Please select a quantity between 1 and ${maxQuantity}`);
+      Alert.alert(t('error'), t('reservationModal.quantityRange', { max: maxQuantity }));
       return;
     }
 
     if (!product.estate?.id) {
-      Alert.alert('Error', 'Estate information missing');
+      Alert.alert(t('error'), t('reservationModal.estateMissing'));
       return;
     }
 
     if (!product.price) {
-      Alert.alert('Error', 'Product price missing');
+      Alert.alert(t('error'), t('reservationModal.priceMissing'));
       return;
     }
 
     if (!street.trim() || !city.trim()) {
-      Alert.alert('Error', 'Please enter street and city for delivery.');
+      Alert.alert(t('error'), t('reservationModal.addressRequired'));
       return;
     }
 
@@ -112,12 +114,19 @@ export default function ReservationModal({
         JSON.stringify({ street: street.trim(), city: city.trim(), country: country.trim() || 'Germany' }),
       );
 
-      Alert.alert('Success', `Reserved ${quantity} ${unit} of ${product.productName}`);
+      Alert.alert(
+        t('alerts.success'),
+        t('reservationModal.success', {
+          quantity: String(quantity),
+          unit,
+          name: product.productName,
+        }),
+      );
       onSuccess();
       onClose();
       setQuantity(1);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to create reservation');
+      Alert.alert(t('error'), error.message || t('reservationModal.createFailed'));
     } finally {
       setLoading(false);
     }

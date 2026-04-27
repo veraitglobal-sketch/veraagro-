@@ -1,5 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
@@ -13,6 +14,7 @@ import api from '../lib/api';
  * Automatically creates Hub location if GPS is provided
  */
 export default function BuyerRegisterScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,7 @@ export default function BuyerRegisterScreen() {
       // Request permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Location permission is required to appear on the map');
+        Alert.alert(t('buyerRegisterScreen.permDenied'), t('buyerRegisterScreen.permDeniedBody'));
         return;
       }
 
@@ -76,7 +78,7 @@ export default function BuyerRegisterScreen() {
         console.error('Reverse geocoding error:', error);
       }
     } catch (error) {
-      Alert.alert('Error', 'Could not get location');
+      Alert.alert(t('error'), t('buyerRegisterScreen.locationFailed'));
       console.error('Location error:', error);
     } finally {
       setGettingLocation(false);
@@ -86,18 +88,18 @@ export default function BuyerRegisterScreen() {
   const handleRegister = async () => {
     // Validation (email required for self-registration)
     if (!email || !firstName || !lastName || !password) {
-      Alert.alert('Error', 'Please fill in email, name and password');
+      Alert.alert(t('error'), t('buyerRegisterScreen.fillFields'));
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert(t('error'), t('buyerRegisterScreen.passwordMin'));
       return;
     }
 
     // If location is provided, address and city are required
     if (location && (!address || !city)) {
-      Alert.alert('Error', 'Address and city are required when location is provided');
+      Alert.alert(t('error'), t('buyerRegisterScreen.addressWithLocation'));
       return;
     }
 
@@ -118,21 +120,21 @@ export default function BuyerRegisterScreen() {
       });
 
       Alert.alert(
-        'Success',
+        t('buyerRegisterScreen.successTitle'),
         response.data.hub
-          ? 'Registration successful! Your location will appear on the map after admin approval.'
-          : 'Registration successful! You can add your location in your profile.',
+          ? t('buyerRegisterScreen.successHub')
+          : t('buyerRegisterScreen.successNoHub'),
         [
           {
-            text: 'OK',
+            text: t('common.ok'),
             onPress: () => router.replace('/buyer-login'),
           },
         ]
       );
     } catch (error: any) {
       console.error('Registration error:', error);
-      const message = error.response?.data?.message || error.message || 'Registration failed';
-      Alert.alert('Error', message);
+      const message = error.response?.data?.message || error.message || t('buyerRegisterScreen.registrationFailed');
+      Alert.alert(t('error'), message);
     } finally {
       setLoading(false);
     }

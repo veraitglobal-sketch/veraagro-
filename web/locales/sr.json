@@ -197,7 +197,24 @@
       "returnRootSerial": "Glavni serijski broj (koren stabla)",
       "returnSupplierId": "Korisnički id dobavljača (UUID — nalog za materijal/štampu)",
       "returnSubmit": "Vrati etikete dobavljaču",
-      "returnHint": "Posle vraćanja, dobavljač može dodeliti isto stablo drugom proizvođaču (bez reštampe). Ponovo povežite lot kada ponovo dobijete etikete."
+      "returnHint": "Posle vraćanja, dobavljač može dodeliti isto stablo drugom proizvođaču (bez reštampe). Ponovo povežite lot kada ponovo dobijete etikete.",
+      "parentSerialRequired": "Glavni serijski broj je obavezan",
+      "parentSerialPlaceholder": "npr. PLT-2026-001",
+      "childrenPlaceholder": "KUT-001\nKUT-002",
+      "scanSerialRequired": "Unesite serijski broj",
+      "printOrderPrinterSupplierLabel": "Dobavljač za štampu (opciono, UUID)",
+      "printOrderPrinterSupplierPlaceholder": "Iz profila prodavnice / admina",
+      "errPreviewFailed": "Pregled nije uspeo",
+      "errCouldNotSave": "Nije moguće sačuvati",
+      "errEnterReturnFields": "Unesite glavni serijski broj i id dobavljača",
+      "returnSuccess": "Vraćeno {{count}} redova etiketa.",
+      "errReturnFailed": "Vraćanje nije uspelo",
+      "errUpdateFailed": "Ažuriranje nije uspelo",
+      "printOrderNoOrdersYet": "Još nema sačuvanih porudžbina.",
+      "printOrderRowSummary": "{{parentCount}}× glavnih, po {{childrenPerParent}} deteta · {{serialPrefix}}",
+      "scanDetailSerial": "Serijski broj:",
+      "scanDetailType": "Tip:",
+      "scanDetailFarmerQr": "QR proizvođača:"
     },
     "compliancePhotos": {
       "pageTitle": "Fotografije usklađenosti",
@@ -245,7 +262,7 @@
       "cancelKeep": "Otkaži i zadrži postojeću usklađenost",
       "saveSubmit": "Sačuvaj usklađenost (fotografije + rola)",
       "uploading": "Otpremanje...",
-      "replaceWarning": "Ponovno čuvanje zamenjuje prethodne fotografije za {batchId} i ažurira rolu ispod.",
+      "replaceWarning": "Ponovno čuvanje zamenjuje prethodne fotografije za {{batchId}} i ažurira rolu ispod.",
       "statusLoadError": "Status za lot se nije učitao. I dalje možete popuniti; posle čuvanja videćete \"Završeno\".",
       "photoTypes": {
         "PUNNETS": {
@@ -269,11 +286,50 @@
         "selectBatchAndSticker": "Izaberite lot i unesite id role etiketa",
         "verifyFailed": "Potvrda role nije uspela",
         "verificationFailed": "Verifikacija nije uspela",
-        "missingPhotos": "Otpremite sve obavezne fotografije: {labels}",
+        "missingPhotos": "Otpremite sve obavezne fotografije: {{labels}}",
         "uploadFailed": "Otpremanje usklađenosti nije uspelo",
         "genericUploadError": "Otpremanje nije uspelo",
         "photoSize": "Veličina slike mora biti ispod 10 MB"
       }
+    },
+    "dashboard": {
+      "loading": "Učitavanje kontrolne table…",
+      "loadFailed": "Učitavanje kontrolne table nije uspelo",
+      "retry": "Pokušaj ponovo",
+      "description": "Parcele, gazdinstva i transport u jednom pogledu",
+      "refresh": "Osveži",
+      "totalEstates": "Ukupno gazdinstava",
+      "totalParcels": "Ukupno parcela",
+      "certifiedEstates": "Sertifikovana gazdinstva",
+      "stepsBlockTitle": "Koraci",
+      "stepsBlockDescription": "Setva → lot → kvalitet → transport — ceo lanac na jednoj stranici.",
+      "stepsOpen": "Otvori →",
+      "qrAlt": "Vaš Bio Vera QR kod",
+      "qrTitle": "Vaš QR kod",
+      "qrDescription": "Kupci skeniraju i otvaraju vaš javni profil proizvođača.",
+      "qrViewProfile": "Profil i preuzmi QR →",
+      "openPublicProfile": "Javni profil",
+      "myEstates": "Moja gazdinstva",
+      "addEstate": "+ Novo gazdinstvo",
+      "parcelCount_one": "{{count}} parcela",
+      "parcelCount_few": "{{count}} parcele",
+      "parcelCount_other": "{{count}} parcela",
+      "noEstates": "Još nema gazdinstava.",
+      "createFirstEstate": "Kreirajte prvo gazdinstvo →",
+      "financialOverview": "Finansijski pregled",
+      "financialOverviewSub": "Zarada, uštede i provizije",
+      "totalProfit": "Ukupna dobit",
+      "seedMargin": "Marža na seme",
+      "certificationSavings": "Uštede na sertifikaciji",
+      "packagingCommissions": "Provizije na pakovanje",
+      "transportMargin": "Marža na transport",
+      "insuranceCommissions": "Provizije na osiguranje",
+      "recentMissions": "Skorašnje misije",
+      "viewAll": "Sve →",
+      "missionLabel": "Misija #{{id}}",
+      "batch": "Lot",
+      "notAvailable": "N/D",
+      "noMissions": "Još nema misija."
     }
   },
   "adminNav": {
@@ -321,5 +377,56 @@
     "vehicles": "Vozila",
     "loadingHandover": "Predaja pri utovaru",
     "receiverProof": "Potvrda primaoca"
+  },
+  "buyerPortalPages": {
+    "dashboard": "Kontrolna tabla",
+    "orders": "Porudžbine",
+    "inventory": "Dostupni proizvodi",
+    "profile": "Profil kompanije",
+    "deliveries": "Isporuke",
+    "history": "Istorija porudžbina",
+    "tradePanel": "Trgovinski panel",
+    "veraTrade": "Vera trgovina",
+    "suppliers": "Vera partneri",
+    "invoices": "Fakture",
+    "analytics": "Analitika i izveštaji"
+  },
+  "buyerTrade": {
+    "loading": "Učitavanje trgovinskih podataka…",
+    "tagline": "Tržišne informacije u realnom vremenu i trgovina",
+    "refresh": "Osveži"
+  },
+  "logisticsPages": {
+    "dashboard": "Kontrolna tabla logistike",
+    "loadingHandover": "Predaja pri utovaru",
+    "receiverProof": "Potvrda primaoca",
+    "receiverAtHandover": "Primalac na predaji"
+  },
+  "growerPages": {
+    "partnerStore": "Prodavnica partnera",
+    "messages": "Poruke",
+    "missionPipelineHint": "Status misije iz logističkog toka",
+    "fieldsParcels": "Moja polja i parcele",
+    "fieldQrMapTitle": "QR za prodavnice — vodi do ovog bloka (sadnja) i istorije polja",
+    "qualityEntry": "Unos kvaliteta",
+    "requestTransport": "Zahtev za transport"
+  },
+  "supplier": {
+    "nav": {
+      "home": "Početna",
+      "catalog": "Katalog",
+      "orders": "Porudžbine",
+      "messages": "Poruke",
+      "badges": "Bedževi",
+      "settings": "Podešavanja"
+    },
+    "header": {
+      "badge": "Prodavnica partnera",
+      "logOut": "Odjavi se"
+    },
+    "dashboard": {
+      "defaultStoreName": "Vaša prodavnica",
+      "loadError": "Učitavanje nije uspelo"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { estatesAPI, Estate } from '../../../lib/api';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { theme } from '../../../lib/theme';
@@ -14,6 +15,7 @@ function messageFromApiError(error: unknown): string | undefined {
 }
 
 export function useEstatesData() {
+  const { t } = useTranslation();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -48,12 +50,12 @@ export function useEstatesData() {
 
   const handleDelete = useCallback((estate: Estate) => {
     Alert.alert(
-      'Delete Estate',
-      `Are you sure you want to delete "${estate.name}"?`,
+      t('producer.estatesUi.deleteTitle'),
+      t('producer.estatesUi.deleteMessage', { name: estate.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('producer.estatesUi.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -65,15 +67,15 @@ export function useEstatesData() {
               const msg =
                 fromApi ||
                 (status === 403
-                  ? 'You do not have permission, or this estate still has orders or batches that must be resolved first.'
-                  : 'Could not reach the server. Check your connection and try again.');
-              Alert.alert('Error', msg);
+                  ? t('producer.estatesUi.err403')
+                  : t('producer.estatesUi.errNetwork'));
+              Alert.alert(t('error'), msg);
             }
           },
         },
       ]
     );
-  }, [loadEstates]);
+  }, [loadEstates, t]);
 
   const getStatusColor = useCallback((status: string) => {
     switch (status) {
@@ -86,12 +88,12 @@ export function useEstatesData() {
 
   const getStatusLabel = useCallback((status: string) => {
     switch (status) {
-      case 'CERTIFIED': return 'Certified';
-      case 'ACTIVE': return 'Active';
-      case 'PENDING_SETUP': return 'Pending Setup';
+      case 'CERTIFIED': return t('producer.estatesUi.statusCertified');
+      case 'ACTIVE': return t('producer.estatesUi.statusActive');
+      case 'PENDING_SETUP': return t('producer.estatesUi.statusPendingSetup');
       default: return status;
     }
-  }, []);
+  }, [t]);
 
   return {
     estates,

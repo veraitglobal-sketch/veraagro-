@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, packageBadgesAPI, type PackageBadgeType } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
-import { en } from '@/lib/messages';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-
-const copy = en.grower.packageBadges;
 
 function parseChildSerials(raw: string): string[] {
   return [
@@ -29,6 +27,7 @@ function publicBadgeUrl(serial: string): string {
 }
 
 export default function GrowerPackageBadgesPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [batches, setBatches] = useState<{ id: string; batchId: string; productName?: string }[]>([]);
   const [batchesLoading, setBatchesLoading] = useState(true);
@@ -148,7 +147,7 @@ export default function GrowerPackageBadgesPage() {
           ? (err as { response?: { data?: { message?: unknown } } }).response?.data?.message
           : null;
       const msg = Array.isArray(raw) ? raw.join(' ') : raw;
-      setError(typeof msg === 'string' && msg.trim() ? msg : copy.errGeneric);
+      setError(typeof msg === 'string' && msg.trim() ? msg : t('grower.packageBadges.errGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -161,24 +160,24 @@ export default function GrowerPackageBadgesPage() {
       requiredRoles={['GROWER', 'FARMER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN']}
       redirectTo="/login/producer"
     >
-      <SidebarLayout title={copy.pageTitle} navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.packageBadges.pageTitle')} navItems={growerNavItems}>
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
-            title={copy.pageTitle}
-            description={copy.pageDescription}
+            title={t('grower.packageBadges.pageTitle')}
+            description={t('grower.packageBadges.pageDescription')}
             right={
               <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
                 <Link
                   href="/grower/package-badges/print-order"
                   className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
                 >
-                  {copy.headerPrintOrder}
+                  {t('grower.packageBadges.headerPrintOrder')}
                 </Link>
                 <Link
                   href="/grower/package-badges/scan"
                   className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
                 >
-                  {copy.headerScan}
+                  {t('grower.packageBadges.headerScan')}
                 </Link>
               </div>
             }
@@ -190,8 +189,8 @@ export default function GrowerPackageBadgesPage() {
 
           {successSerial && (
             <div className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 p-4 space-y-2">
-              <p className="font-medium text-[#23471f]">{copy.successTitle}</p>
-              <p className="text-sm text-gray-700">{copy.successHint}</p>
+              <p className="font-medium text-[#23471f]">{t('grower.packageBadges.successTitle')}</p>
+              <p className="text-sm text-gray-700">{t('grower.packageBadges.successHint')}</p>
               <code className="block break-all text-xs bg-white/80 border border-gray-200 rounded p-2">{url}</code>
               <button
                 type="button"
@@ -203,31 +202,31 @@ export default function GrowerPackageBadgesPage() {
                 }}
                 className="text-sm font-medium text-[#2D5A27] underline"
               >
-                {copied ? copy.copied : copy.copyUrl}
+                {copied ? t('grower.packageBadges.copied') : t('grower.packageBadges.copyUrl')}
               </button>
             </div>
           )}
 
           <form onSubmit={onSubmit} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-5 max-w-xl">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{copy.parentLabel}</label>
-              <p className="text-xs text-gray-500 mb-2">{copy.parentHint}</p>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.parentLabel')}</label>
+              <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.parentHint')}</p>
               <input
                 value={parentSerial}
                 onChange={(e) => setParentSerial(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder="e.g. PLT-2026-001"
+                placeholder={t('grower.packageBadges.parentSerialPlaceholder')}
                 autoComplete="off"
               />
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-700 mb-2">{copy.typeLabel}</span>
+              <span className="block text-sm font-medium text-gray-700 mb-2">{t('grower.packageBadges.typeLabel')}</span>
               <div className="flex flex-wrap gap-2">
                 {(
                   [
-                    ['PALLET_MASTER', copy.typePallet],
-                    ['ROLL_LINE', copy.typeRoll],
+                    ['PALLET_MASTER', t('grower.packageBadges.typePallet')],
+                    ['ROLL_LINE', t('grower.packageBadges.typeRoll')],
                   ] as const
                 ).map(([v, label]) => (
                   <button
@@ -247,27 +246,31 @@ export default function GrowerPackageBadgesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{copy.childrenLabel}</label>
-              <p className="text-xs text-gray-500 mb-2">{copy.childrenHint}</p>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.childrenLabel')}</label>
+              <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.childrenHint')}</p>
               <textarea
                 value={childrenRaw}
                 onChange={(e) => setChildrenRaw(e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder="BOX-001&#10;BOX-002"
+                placeholder={t('grower.packageBadges.childrenPlaceholder')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{copy.linkPrintOrder}</label>
-              <p className="text-xs text-gray-500 mb-2">{copy.linkPrintOrderHint}</p>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.linkPrintOrder')}</label>
+              <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.linkPrintOrderHint')}</p>
               <select
                 value={selectedPrintOrderId}
                 onChange={(e) => setSelectedPrintOrderId(e.target.value)}
                 disabled={printOrdersLoading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
               >
-                <option value="">{printOrdersLoading ? copy.linkPrintOrderLoading : copy.linkPrintOrderNone}</option>
+                <option value="">
+                  {printOrdersLoading
+                    ? t('grower.packageBadges.linkPrintOrderLoading')
+                    : t('grower.packageBadges.linkPrintOrderNone')}
+                </option>
                 {printOrders.map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.status} · {o.parentCount}×{o.childrenPerParent} · {o.id.slice(0, 8)}…
@@ -277,14 +280,14 @@ export default function GrowerPackageBadgesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{copy.batchLabel}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('grower.packageBadges.batchLabel')}</label>
               <select
                 value={batchInternalId}
                 onChange={(e) => setBatchInternalId(e.target.value)}
                 disabled={batchesLoading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
               >
-                <option value="">{batchesLoading ? copy.loadingBatches : copy.batchNone}</option>
+                <option value="">{batchesLoading ? t('grower.packageBadges.loadingBatches') : t('grower.packageBadges.batchNone')}</option>
                 {batches.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.batchId}
@@ -302,10 +305,10 @@ export default function GrowerPackageBadgesPage() {
               {submitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {copy.submitting}
+                  {t('grower.packageBadges.submitting')}
                 </>
               ) : (
-                copy.submit
+                t('grower.packageBadges.submit')
               )}
             </button>
           </form>

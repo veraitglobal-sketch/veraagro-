@@ -197,7 +197,24 @@
       "returnRootSerial": "Master serial (root of tree)",
       "returnSupplierId": "Supplier user id (UUID — material / printer account)",
       "returnSubmit": "Return labels to supplier",
-      "returnHint": "After return, the supplier can assign the same tree to another grower (no re-print). Link lot again after you receive labels back on a new sale."
+      "returnHint": "After return, the supplier can assign the same tree to another grower (no re-print). Link lot again after you receive labels back on a new sale.",
+      "parentSerialRequired": "Parent serial is required",
+      "parentSerialPlaceholder": "e.g. PLT-2026-001",
+      "childrenPlaceholder": "BOX-001\nBOX-002",
+      "scanSerialRequired": "Enter a serial",
+      "printOrderPrinterSupplierLabel": "Printer supplier (optional, UUID)",
+      "printOrderPrinterSupplierPlaceholder": "From store profile / admin",
+      "errPreviewFailed": "Preview failed",
+      "errCouldNotSave": "Could not save",
+      "errEnterReturnFields": "Enter master serial and supplier id",
+      "returnSuccess": "Returned {{count}} label row(s).",
+      "errReturnFailed": "Return failed",
+      "errUpdateFailed": "Update failed",
+      "printOrderNoOrdersYet": "No saved orders yet.",
+      "printOrderRowSummary": "{{parentCount}}× master, {{childrenPerParent}} children each · {{serialPrefix}}",
+      "scanDetailSerial": "Serial:",
+      "scanDetailType": "Type:",
+      "scanDetailFarmerQr": "Farmer QR:"
     },
     "compliancePhotos": {
       "pageTitle": "Compliance Photos",
@@ -245,7 +262,7 @@
       "cancelKeep": "Cancel and keep existing compliance",
       "saveSubmit": "Save compliance (photos + roll)",
       "uploading": "Uploading...",
-      "replaceWarning": "Re-saving replaces the previous photos for {batchId} and keeps or updates the label roll you confirm below.",
+      "replaceWarning": "Re-saving replaces the previous photos for {{batchId}} and keeps or updates the label roll you confirm below.",
       "statusLoadError": "Status for this lot could not be loaded. You can still fill the form; after saving, the page will show “Resolved” when everything is on file.",
       "photoTypes": {
         "PUNNETS": {
@@ -269,11 +286,49 @@
         "selectBatchAndSticker": "Please select a batch and enter sticker roll ID",
         "verifyFailed": "Failed to verify sticker roll",
         "verificationFailed": "Verification failed",
-        "missingPhotos": "Please upload all required photos: {labels}",
+        "missingPhotos": "Please upload all required photos: {{labels}}",
         "uploadFailed": "Failed to upload compliance photos",
         "genericUploadError": "Upload failed",
         "photoSize": "Photo size must be less than 10MB"
       }
+    },
+    "dashboard": {
+      "loading": "Loading dashboard...",
+      "loadFailed": "Failed to load dashboard data",
+      "retry": "Retry",
+      "description": "Parcels, estates, and transport at a glance",
+      "refresh": "Refresh",
+      "totalEstates": "Total estates",
+      "totalParcels": "Total parcels",
+      "certifiedEstates": "Certified estates",
+      "stepsBlockTitle": "Steps",
+      "stepsBlockDescription": "Sowing → lot → quality → transport — full chain on one page.",
+      "stepsOpen": "Open →",
+      "qrAlt": "Your Bio Vera QR code",
+      "qrTitle": "Your QR code",
+      "qrDescription": "Customers scan this to open your public farmer profile.",
+      "qrViewProfile": "View profile & download QR →",
+      "openPublicProfile": "Open public profile",
+      "myEstates": "My estates",
+      "addEstate": "+ Add estate",
+      "parcelCount_one": "{{count}} parcel",
+      "parcelCount_other": "{{count}} parcels",
+      "noEstates": "No estates yet.",
+      "createFirstEstate": "Create your first estate →",
+      "financialOverview": "Financial overview",
+      "financialOverviewSub": "Your earnings, savings, and commissions",
+      "totalProfit": "Total profit",
+      "seedMargin": "Seed margin",
+      "certificationSavings": "Certification savings",
+      "packagingCommissions": "Packaging commissions",
+      "transportMargin": "Transport margin",
+      "insuranceCommissions": "Insurance commissions",
+      "recentMissions": "Recent missions",
+      "viewAll": "View all →",
+      "missionLabel": "Mission #{{id}}",
+      "batch": "Batch",
+      "notAvailable": "N/A",
+      "noMissions": "No missions yet."
     }
   },
   "adminNav": {
@@ -321,5 +376,56 @@
     "vehicles": "Vehicles",
     "loadingHandover": "Loading handover",
     "receiverProof": "Receiver proof"
+  },
+  "buyerPortalPages": {
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "inventory": "Available products",
+    "profile": "Company profile",
+    "deliveries": "My deliveries",
+    "history": "Order history",
+    "tradePanel": "Trade panel",
+    "veraTrade": "Vera trade",
+    "suppliers": "Vera partners",
+    "invoices": "Invoices",
+    "analytics": "Analytics & reports"
+  },
+  "buyerTrade": {
+    "loading": "Loading trade data...",
+    "tagline": "Real-time market intelligence & trading desk",
+    "refresh": "Refresh"
+  },
+  "logisticsPages": {
+    "dashboard": "Logistics dashboard",
+    "loadingHandover": "Loading handover",
+    "receiverProof": "Receiver proof",
+    "receiverAtHandover": "Receiver at handover"
+  },
+  "growerPages": {
+    "partnerStore": "Partner store",
+    "messages": "Messages",
+    "missionPipelineHint": "Mission status from logistics pipeline",
+    "fieldsParcels": "My fields & parcels",
+    "fieldQrMapTitle": "QR for shops — links to this block (sadnja) and field history",
+    "qualityEntry": "Quality entry",
+    "requestTransport": "Request transport"
+  },
+  "supplier": {
+    "nav": {
+      "home": "Home",
+      "catalog": "Catalog",
+      "orders": "Orders",
+      "messages": "Messages",
+      "badges": "Badges",
+      "settings": "Settings"
+    },
+    "header": {
+      "badge": "Partner store",
+      "logOut": "Log out"
+    },
+    "dashboard": {
+      "defaultStoreName": "Your store",
+      "loadError": "Could not load"
+    }
   }
 }

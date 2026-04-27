@@ -882,6 +882,59 @@
       "savedOnDevice_plural": "Sačuvano na uređaju: {{count}} stavki",
       "allSent": "Sve poslato",
       "itemsNotSent": "Nije moguće poslati {{count}} stavke."
+    },
+    "fieldLogForm": {
+      "activityType": "Vrsta aktivnosti",
+      "materialBarcode": "Barkod materijala (opciono)",
+      "materialPlaceholder": "Skeniraj ili unesi barkod",
+      "photo": "Fotografija",
+      "location": "Lokacija",
+      "saveEntry": "Sačuvaj unos",
+      "warningNotOnParcel": "Upozorenje: nisi na svojoj parceli!",
+      "photoLoaded": "Fotografija učitana",
+      "addPhoto": "Dodaj fotografiju",
+      "getLocation": "Trenutna lokacija",
+      "locationOk": "Lokacija učitana"
+    },
+    "fieldLogAlerts": {
+      "permTitle": "Dozvole",
+      "permBody": "Potrebni su pristup kameri i lokaciji",
+      "locSettingsTitle": "Lokacija je obavezna",
+      "locSettingsBody": "Uključi lokaciju u podešavanjima.",
+      "locationError": "Greška lokacije",
+      "locationErrorFallback": "Nije moguće dobiti lokaciju.",
+      "openSettings": "Otvori podešavanja",
+      "cameraError": "Nije moguće otvoriti kameru",
+      "saveOk": "Unos sačuvan. Biće poslat kada budeš onlajn.",
+      "saveFailed": "Nije moguće sačuvati unos",
+      "selectActivity": "Izaberi vrstu aktivnosti",
+      "photoRequired": "Fotografija je obavezna",
+      "locationRequired": "Lokacija je obavezna",
+      "materialInvalid": "Materijal nije validan. Proveri barkod ili kod semena.",
+      "gpsOffParcelTitle": "Upozorenje",
+      "gpsOffParcelBody": "Nisi na svojoj parceli! Da li želiš da nastaviš?"
+    },
+    "growthJournalAlerts": {
+      "estateTitle": "Gazdinstvo",
+      "estateBody": "Prvo izaberi gazdinstvo (filteri na ovom ekranu).",
+      "permTitle": "Dozvole",
+      "permBody": "Potrebni su pristup kameri i lokaciji.",
+      "gpsErrorTitle": "Lokacija",
+      "gpsErrorBody": "GPS nije učitan. Pokušaj ponovo napolju.",
+      "photoLarge": "Slika je prevelika. Pokušaj sa manjom kvalitetom.",
+      "savedTitle": "Sačuvano",
+      "savedBody": "Unos u dnevnik rasta je sačuvan.",
+      "saveFailed": "Nije moguće sačuvati dnevnik rasta"
+    },
+    "estatesUi": {
+      "deleteTitle": "Obriši njivu",
+      "deleteMessage": "Da li stvarno želiš da obrišeš „{{name}}”?",
+      "delete": "Obriši",
+      "err403": "Nemaš dozvolu, ili ova njiva još ima porudžbine ili partije koje treba rešiti.",
+      "errNetwork": "Nije moguće dobiti server. Proveri mrežu i pokušaj ponovo.",
+      "statusCertified": "Sertifikovano",
+      "statusActive": "Aktivno",
+      "statusPendingSetup": "Čeka se podešavanje"
     }
   },
   "buyer": {
@@ -961,7 +1014,14 @@
       "purchaseHistory": "Istorija kupovine",
       "viewOrders": "Pogledaj porudžbine",
       "logout": "Odjavi se",
-      "logoutConfirm": "Da li ste sigurni da želite da se odjavite?"
+      "logoutConfirm": "Da li ste sigurni da želite da se odjavite?",
+      "tabGeneral": "Opšte",
+      "tabLocations": "Lokacije",
+      "tabStaff": "Osoblje",
+      "companyCore": "Osnovni podaci firme",
+      "legalEntity": "Pravno lice",
+      "save": "Sačuvaj",
+      "edit": "Izmeni"
     },
     "checkout": {
       "fillRequired": "Popuni sva obavezna polja",
@@ -1008,7 +1068,10 @@
     "retry": "Pokušaj ponovo",
     "next": "Dalje",
     "ok": "U redu",
-    "all": "Sve"
+    "all": "Sve",
+    "delete": "Obriši",
+    "openSettings": "Otvori podešavanja",
+    "continue": "Nastavi"
   },
   "navigation": {
     "appName": "Vera",
@@ -1142,5 +1205,44 @@
       "capture": "Snimi lokaciju",
       "captured": "Lokacija zabeležena"
     }
+  },
+  "buyerRegisterScreen": {
+    "permDenied": "Dozvola odbijena",
+    "permDeniedBody": "Dozvola za lokaciju je potrebna da bi se pojavio na mapi",
+    "locationFailed": "Nije moguće dobiti lokaciju",
+    "fillFields": "Unesi e-poštu, ime i lozinku",
+    "passwordMin": "Lozinka mora imati bar 6 znakova",
+    "addressWithLocation": "Adresa i grad su obavezni kada je lokacija uključena",
+    "successTitle": "Uspešno",
+    "successHub": "Registracija uspešna! Lokacija će se pojaviti na mapi posle odobrenja admina.",
+    "successNoHub": "Registracija uspešna! Adresu možeš dodati u profilu.",
+    "registrationFailed": "Registracija nije uspela"
+  },
+  "reservationModal": {
+    "missingInfo": "Nedostaju podaci o proizvodu ili korisniku",
+    "quantityRange": "Izaberi količinu od 1 do {{max}}",
+    "estateMissing": "Nedostaju podaci o farmi",
+    "priceMissing": "Nedostaje cena proizvoda",
+    "addressRequired": "Unesi ulicu i grad za isporuku.",
+    "success": "Rezervisano {{quantity}} {{unit}} — {{name}}",
+    "createFailed": "Nije moguće kreirati rezervaciju"
+  },
+  "veraBag": {
+    "permTitle": "Dozvola potrebna",
+    "permCamera": "Potreban je pristup kameri",
+    "permGallery": "Potreban je pristup galeriji",
+    "addPhotoFailed": "Dodavanje fotografije nije uspelo",
+    "categorySeed": "Seme i setva",
+    "categoryTreatment": "Tretman",
+    "categoryHarvest": "Žetva"
+  },
+  "b2bSupplier": {
+    "signInTitle": "Prijava",
+    "signInBody": "Prijavi se kao proizvođač da naručiš.",
+    "sentTitle": "Poslato",
+    "sentBody": "Zahtev poslat. Snabdevač može potvrditi u svom nalogu.",
+    "loadFailed": "Učitavanje nije uspelo",
+    "sendFailed": "Slanje nije uspelo",
+    "orderFailed": "Porudžbina nije uspela"
   }
 }

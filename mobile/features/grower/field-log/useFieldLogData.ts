@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Alert, Linking } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
@@ -19,14 +20,15 @@ const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType'
   HARVEST: 'Harvest',
 };
 
-export const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
-  { value: 'PLANTING', label: 'Planting' },
-  { value: 'FERTILIZING', label: 'Fertilizing' },
-  { value: 'SPRAYING', label: 'Spraying' },
-  { value: 'HARVEST', label: 'Harvest' },
+export const ACTIVITY_TYPES: { value: ActivityType }[] = [
+  { value: 'PLANTING' },
+  { value: 'FERTILIZING' },
+  { value: 'SPRAYING' },
+  { value: 'HARVEST' },
 ];
 
 export function useFieldLogData() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [activityType, setActivityType] = useState<ActivityType | ''>('');
   const [materialID, setMaterialID] = useState('');
@@ -60,9 +62,9 @@ export function useFieldLogData() {
       Location.requestForegroundPermissionsAsync(),
     ]);
     if (cameraStatus.status !== 'granted' || locationStatus.status !== 'granted') {
-      Alert.alert('Permissions', 'Camera and location permissions are required');
+      Alert.alert(t('producer.fieldLogAlerts.permTitle'), t('producer.fieldLogAlerts.permBody'));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadEstates();
@@ -101,9 +103,9 @@ export function useFieldLogData() {
       setLoading(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Location Permission Required', 'Please enable location in settings.', [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        Alert.alert(t('producer.fieldLogAlerts.locSettingsTitle'), t('producer.fieldLogAlerts.locSettingsBody'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => Linking.openSettings() },
         ]);
         setLoading(false);
         return;
@@ -118,11 +120,14 @@ export function useFieldLogData() {
         setGpsWarning(!isValid);
       }
     } catch (error: any) {
-      Alert.alert('Location Error', error.message || 'Unable to get location.');
+      Alert.alert(
+        t('producer.fieldLogAlerts.locationError'),
+        error.message || t('producer.fieldLogAlerts.locationErrorFallback'),
+      );
     } finally {
       setLoading(false);
     }
-  }, [currentEstate]);
+  }, [currentEstate, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -157,9 +162,9 @@ export function useFieldLogData() {
       });
       if (!result.canceled && result.assets[0]) setPhotoUri(result.assets[0].uri);
     } catch {
-      Alert.alert('Error', 'Unable to open camera');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.cameraError'));
     }
-  }, []);
+  }, [t]);
 
   const saveEntry = useCallback(async () => {
     try {
@@ -171,7 +176,7 @@ export function useFieldLogData() {
         photoUri: photoUri!,
         location: location!,
       });
-      Alert.alert('Success', 'Entry saved. Will be sent when online.');
+      Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveOk'));
       setActivityType('');
       setMaterialID('');
       setPhotoUri(null);
@@ -179,38 +184,38 @@ export function useFieldLogData() {
       setGpsWarning(false);
       setMaterialValid(null);
     } catch (error) {
-      Alert.alert('Error', 'Unable to save entry');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
     } finally {
       setLoading(false);
     }
-  }, [activityType, materialID, photoUri, location, currentEstate?.id]);
+  }, [activityType, materialID, photoUri, location, currentEstate?.id, t]);
 
   const handleSubmit = useCallback(async () => {
     if (!activityType) {
-      Alert.alert('Error', 'Select activity type');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.selectActivity'));
       return;
     }
     if (!photoUri) {
-      Alert.alert('Error', 'Photo is required');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.photoRequired'));
       return;
     }
     if (!location) {
-      Alert.alert('Error', 'Location is required');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.locationRequired'));
       return;
     }
     if (materialID && materialValid === false) {
-      Alert.alert('Error', 'Material is not valid. Please check the barcode or seed code.');
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.materialInvalid'));
       return;
     }
     if (gpsWarning) {
-      Alert.alert('Warning', 'You are not on your parcel! Do you want to continue?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Continue', onPress: saveEntry },
+      Alert.alert(t('producer.fieldLogAlerts.gpsOffParcelTitle'), t('producer.fieldLogAlerts.gpsOffParcelBody'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.continue'), onPress: saveEntry },
       ]);
       return;
     }
     await saveEntry();
-  }, [activityType, photoUri, location, materialID, materialValid, gpsWarning, saveEntry]);
+  }, [activityType, photoUri, location, materialID, materialValid, gpsWarning, saveEntry, t]);
 
   return {
     router,

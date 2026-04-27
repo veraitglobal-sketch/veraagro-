@@ -882,6 +882,59 @@
       "savedOnDevice_plural": "Saved on device: {{count}} items",
       "allSent": "All sent",
       "itemsNotSent": "Could not send {{count}} item(s)."
+    },
+    "fieldLogForm": {
+      "activityType": "Activity type",
+      "materialBarcode": "Material barcode (optional)",
+      "materialPlaceholder": "Scan or enter barcode",
+      "photo": "Photo",
+      "location": "Location",
+      "saveEntry": "Save entry",
+      "warningNotOnParcel": "Warning: You are not on your parcel!",
+      "photoLoaded": "Photo loaded successfully",
+      "addPhoto": "Add photo",
+      "getLocation": "Get current location",
+      "locationOk": "Location loaded"
+    },
+    "fieldLogAlerts": {
+      "permTitle": "Permissions",
+      "permBody": "Camera and location permissions are required",
+      "locSettingsTitle": "Location permission required",
+      "locSettingsBody": "Please enable location in settings.",
+      "locationError": "Location error",
+      "locationErrorFallback": "Unable to get location.",
+      "openSettings": "Open settings",
+      "cameraError": "Unable to open camera",
+      "saveOk": "Entry saved. Will be sent when online.",
+      "saveFailed": "Unable to save entry",
+      "selectActivity": "Select activity type",
+      "photoRequired": "Photo is required",
+      "locationRequired": "Location is required",
+      "materialInvalid": "Material is not valid. Check the barcode or seed code.",
+      "gpsOffParcelTitle": "Warning",
+      "gpsOffParcelBody": "You are not on your parcel! Do you want to continue?"
+    },
+    "growthJournalAlerts": {
+      "estateTitle": "Estate",
+      "estateBody": "Select an estate first (use the filters on this screen).",
+      "permTitle": "Permissions",
+      "permBody": "Camera and location access are required.",
+      "gpsErrorTitle": "Location",
+      "gpsErrorBody": "Could not read GPS. Try again outdoors.",
+      "photoLarge": "Photo is too large. Try again with slightly lower quality.",
+      "savedTitle": "Saved",
+      "savedBody": "Growth log entry was saved.",
+      "saveFailed": "Failed to save growth log"
+    },
+    "estatesUi": {
+      "deleteTitle": "Delete field",
+      "deleteMessage": "Are you sure you want to delete \"{{name}}\"?",
+      "delete": "Delete",
+      "err403": "You do not have permission, or this field still has orders or batches that must be resolved first.",
+      "errNetwork": "Could not reach the server. Check your connection and try again.",
+      "statusCertified": "Certified",
+      "statusActive": "Active",
+      "statusPendingSetup": "Pending setup"
     }
   },
   "buyer": {
@@ -961,7 +1014,14 @@
       "purchaseHistory": "Purchase history",
       "viewOrders": "View orders",
       "logout": "Log out",
-      "logoutConfirm": "Are you sure you want to sign out?"
+      "logoutConfirm": "Are you sure you want to sign out?",
+      "tabGeneral": "General",
+      "tabLocations": "Locations",
+      "tabStaff": "Staff",
+      "companyCore": "Company core",
+      "legalEntity": "Legal entity",
+      "save": "Save",
+      "edit": "Edit"
     },
     "checkout": {
       "fillRequired": "Please fill all required fields",
@@ -1008,7 +1068,10 @@
     "retry": "Try again",
     "next": "Next",
     "ok": "OK",
-    "all": "All"
+    "all": "All",
+    "delete": "Delete",
+    "openSettings": "Open settings",
+    "continue": "Continue"
   },
   "navigation": {
     "appName": "Vera",
@@ -1142,5 +1205,44 @@
       "capture": "Capture location",
       "captured": "Location recorded"
     }
+  },
+  "buyerRegisterScreen": {
+    "permDenied": "Permission denied",
+    "permDeniedBody": "Location permission is required to appear on the map",
+    "locationFailed": "Could not get location",
+    "fillFields": "Please fill in email, name and password",
+    "passwordMin": "Password must be at least 6 characters",
+    "addressWithLocation": "Address and city are required when location is provided",
+    "successTitle": "Success",
+    "successHub": "Registration successful! Your location will appear on the map after admin approval.",
+    "successNoHub": "Registration successful! You can add your location in your profile.",
+    "registrationFailed": "Registration failed"
+  },
+  "reservationModal": {
+    "missingInfo": "Product or user information missing",
+    "quantityRange": "Please select a quantity between 1 and {{max}}",
+    "estateMissing": "Estate information missing",
+    "priceMissing": "Product price missing",
+    "addressRequired": "Please enter street and city for delivery.",
+    "success": "Reserved {{quantity}} {{unit}} of {{name}}",
+    "createFailed": "Failed to create reservation"
+  },
+  "veraBag": {
+    "permTitle": "Permission required",
+    "permCamera": "Camera permission is required",
+    "permGallery": "Gallery permission is required",
+    "addPhotoFailed": "Failed to add photo",
+    "categorySeed": "Seed & planting",
+    "categoryTreatment": "Treatment",
+    "categoryHarvest": "Harvest"
+  },
+  "b2bSupplier": {
+    "signInTitle": "Sign in",
+    "signInBody": "Log in as a grower to order.",
+    "sentTitle": "Sent",
+    "sentBody": "Order request sent. The supplier can confirm in their account.",
+    "loadFailed": "Load failed",
+    "sendFailed": "Send failed",
+    "orderFailed": "Order failed"
   }
 }

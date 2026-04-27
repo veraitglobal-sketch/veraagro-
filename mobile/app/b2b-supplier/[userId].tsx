@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth';
@@ -22,6 +23,7 @@ type Msg = { id: string; body: string; createdAt: string; sender: { firstName: s
  * Grower: contact material supplier (seeds, inputs) — thread + short direct order
  */
 export default function B2bSupplierScreen() {
+  const { t } = useTranslation();
   const { userId } = useLocalSearchParams<{ userId: string }>();
   const router = useRouter();
   const { token } = useAuth();
@@ -41,17 +43,17 @@ export default function B2bSupplierScreen() {
       const p = await b2bSuppliersAPI.getPublic(userId);
       setProfile(p);
       if (token) {
-        const t = await b2bSuppliersAPI.getOrCreateThread(userId);
-        setThreadId(t.id);
-        const msgs = await b2bSuppliersAPI.getMessages(t.id);
+        const thread = await b2bSuppliersAPI.getOrCreateThread(userId);
+        setThreadId(thread.id);
+        const msgs = await b2bSuppliersAPI.getMessages(thread.id);
         setMessages(msgs);
       }
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.message || e?.message || 'Load failed');
+      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [userId, token]);
+  }, [userId, token, t]);
 
   useEffect(() => {
     void load();
@@ -66,7 +68,7 @@ export default function B2bSupplierScreen() {
       const msgs = await b2bSuppliersAPI.getMessages(threadId);
       setMessages(msgs);
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.message || e?.message || 'Send failed');
+      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.sendFailed'));
     } finally {
       setSending(false);
     }
@@ -77,7 +79,7 @@ export default function B2bSupplierScreen() {
     const label = orderLine.trim() || 'Request quote';
     const qty = parseFloat(orderQty) || 1;
     if (!token) {
-      Alert.alert('Sign in', 'Log in as a grower to order.');
+      Alert.alert(t('b2bSupplier.signInTitle'), t('b2bSupplier.signInBody'));
       return;
     }
     try {
@@ -87,9 +89,9 @@ export default function B2bSupplierScreen() {
         note: 'Direct order from app',
         threadId: threadId || undefined,
       });
-      Alert.alert('Sent', 'Order request sent. The supplier can confirm in their account.');
+      Alert.alert(t('b2bSupplier.sentTitle'), t('b2bSupplier.sentBody'));
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.message || e?.message || 'Order failed');
+      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.orderFailed'));
     }
   };
 

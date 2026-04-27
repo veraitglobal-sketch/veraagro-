@@ -1,20 +1,26 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 
-const nav = [
-  { href: '/supplier/dashboard', label: 'Home' },
-  { href: '/supplier/catalog', label: 'Catalog' },
-  { href: '/supplier/orders', label: 'Orders' },
-  { href: '/supplier/messages', label: 'Messages' },
-  { href: '/supplier/package-badges', label: 'Badges' },
-  { href: '/supplier/settings', label: 'Settings' },
-] as const;
-
 export default function SupplierHeader() {
+  const { t, i18n } = useTranslation();
+  const nav = useMemo(
+    () =>
+      [
+        { href: '/supplier/dashboard', label: t('supplier.nav.home') },
+        { href: '/supplier/catalog', label: t('supplier.nav.catalog') },
+        { href: '/supplier/orders', label: t('supplier.nav.orders') },
+        { href: '/supplier/messages', label: t('supplier.nav.messages') },
+        { href: '/supplier/package-badges', label: t('supplier.nav.badges') },
+        { href: '/supplier/settings', label: t('supplier.nav.settings') },
+      ] as const,
+    [t, i18n.language],
+  );
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -26,7 +32,7 @@ export default function SupplierHeader() {
           <Link href="/supplier/dashboard" className="flex items-center">
             <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto" />
           </Link>
-          <span className="text-xs text-gray-500">Partner store</span>
+          <span className="text-xs text-gray-500">{t('supplier.header.badge')}</span>
         </div>
         <nav className="flex flex-wrap gap-1">
           {nav.map((item) => (
@@ -55,7 +61,7 @@ export default function SupplierHeader() {
             }}
             className="text-xs text-red-600 hover:underline"
           >
-            Log out
+            {t('supplier.header.logOut')}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import {
@@ -15,6 +16,7 @@ import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from '../../../lib/ima
 const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
 
 export function useGrowthJournalData() {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<GrowthLog[]>([]);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,7 +95,7 @@ export function useGrowthJournalData() {
     async (payload: { notes: string; growthStage: string | undefined }) => {
       if (estates.length === 0) return;
       if (filterEstate === 'all' || !filterEstate) {
-        Alert.alert('Estate', 'Select an estate first (use the filters on this screen).');
+        Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
         return;
       }
 
@@ -101,7 +103,7 @@ export function useGrowthJournalData() {
       const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
 
       if (cameraStatus !== 'granted' || locationStatus !== 'granted') {
-        Alert.alert('Permissions', 'Camera and location access are required.');
+        Alert.alert(t('producer.growthJournalAlerts.permTitle'), t('producer.growthJournalAlerts.permBody'));
         return;
       }
 
@@ -112,7 +114,7 @@ export function useGrowthJournalData() {
         });
         location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
       } catch {
-        Alert.alert('Location', 'Could not read GPS. Try again outdoors.');
+        Alert.alert(t('producer.growthJournalAlerts.gpsErrorTitle'), t('producer.growthJournalAlerts.gpsErrorBody'));
         return;
       }
 
@@ -138,7 +140,7 @@ export function useGrowthJournalData() {
         try {
           assertDataUrlWithinSize(imageDataUrl, MAX_GROWTH_PHOTO_BYTES);
         } catch {
-          Alert.alert('Error', 'Photo is too large. Try again with slightly lower quality.');
+          Alert.alert(t('error'), t('producer.growthJournalAlerts.photoLarge'));
           return;
         }
 
@@ -161,16 +163,16 @@ export function useGrowthJournalData() {
         });
         setAddModalVisible(false);
         await loadLogs();
-        Alert.alert('Saved', 'Growth log entry was saved.');
+        Alert.alert(t('producer.growthJournalAlerts.savedTitle'), t('producer.growthJournalAlerts.savedBody'));
       } catch (e: any) {
-        const msg = e?.response?.data?.message || e?.message || 'Failed to save growth log';
-        Alert.alert('Error', String(msg));
+        const msg = e?.response?.data?.message || e?.message || t('producer.growthJournalAlerts.saveFailed');
+        Alert.alert(t('error'), String(msg));
         console.error('Growth log submit:', e);
       } finally {
         setUploading(false);
       }
     },
-    [estates.length, filterEstate, filterParcel, loadLogs],
+    [estates.length, filterEstate, filterParcel, loadLogs, t],
   );
 
   const sortedLogs = [...logs].sort(

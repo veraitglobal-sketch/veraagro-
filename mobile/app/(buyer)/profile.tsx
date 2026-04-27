@@ -233,9 +233,9 @@ export default function ProfileScreen() {
             marginBottom: theme.spacing.lg,
           }}>
             {[
-              { id: 'general' as TabType, label: 'General', icon: Building2 },
-              { id: 'locations' as TabType, label: 'Locations', icon: Truck },
-              { id: 'staff' as TabType, label: 'Staff', icon: Users },
+              { id: 'general' as TabType, label: t('buyer.profile.tabGeneral'), icon: Building2 },
+              { id: 'locations' as TabType, label: t('buyer.profile.tabLocations'), icon: Truck },
+              { id: 'staff' as TabType, label: t('buyer.profile.tabStaff'), icon: Users },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -315,7 +315,7 @@ export default function ProfileScreen() {
                     color: theme.colors.text.primary,
                     letterSpacing: 0.5,
                   }}>
-                    Company Core
+                    {t('buyer.profile.companyCore')}
                   </Text>
                   <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
                     <Text style={{
@@ -324,7 +324,7 @@ export default function ProfileScreen() {
                       color: theme.colors.primary,
                       letterSpacing: 0.3,
                     }}>
-                      {isEditing ? 'Save' : 'Edit'}
+                      {isEditing ? t('buyer.profile.save') : t('buyer.profile.edit')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -338,7 +338,7 @@ export default function ProfileScreen() {
                     marginBottom: theme.spacing.sm,
                     textTransform: 'uppercase',
                   }}>
-                    Legal Entity
+                    {t('buyer.profile.legalEntity')}
                   </Text>
                   {isEditing ? (
                     <TextInput

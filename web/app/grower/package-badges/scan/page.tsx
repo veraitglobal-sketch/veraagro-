@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
@@ -11,10 +12,7 @@ import {
 } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
-import { en } from '@/lib/messages';
 import { ExternalLink, Loader2, Package, Boxes } from 'lucide-react';
-
-const copy = en.grower.packageBadges;
 
 function errMessage(err: unknown, fallback: string): string {
   const e = err as { response?: { data?: { message?: unknown } } };
@@ -25,6 +23,7 @@ function errMessage(err: unknown, fallback: string): string {
 }
 
 export default function GrowerPackageBadgesScanPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [serial, setSerial] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,7 +35,7 @@ export default function GrowerPackageBadgesScanPage() {
     e.preventDefault();
     const s = serial.trim();
     if (!s) {
-      setError('Enter a serial');
+      setError(t('grower.packageBadges.scanSerialRequired'));
       return;
     }
     setError(null);
@@ -53,7 +52,7 @@ export default function GrowerPackageBadgesScanPage() {
         setPublicInfo(pub.value);
       }
     } catch (err) {
-      setError(errMessage(err, copy.scanErrGeneric));
+      setError(errMessage(err, t('grower.packageBadges.scanErrGeneric')));
     } finally {
       setLoading(false);
     }
@@ -64,17 +63,17 @@ export default function GrowerPackageBadgesScanPage() {
       requiredRoles={['GROWER', 'FARMER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN']}
       redirectTo="/login/producer"
     >
-      <SidebarLayout title={copy.scanPageTitle} navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.packageBadges.scanPageTitle')} navItems={growerNavItems}>
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
-            title={copy.scanPageTitle}
-            description={copy.scanPageDescription}
+            title={t('grower.packageBadges.scanPageTitle')}
+            description={t('grower.packageBadges.scanPageDescription')}
             right={
               <Link
                 href="/grower/package-badges"
                 className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
               >
-                {copy.scanBackRegister}
+                {t('grower.packageBadges.scanBackRegister')}
               </Link>
             }
           />
@@ -84,12 +83,14 @@ export default function GrowerPackageBadgesScanPage() {
             className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm max-w-xl space-y-4"
           >
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{copy.scanSerialLabel}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('grower.packageBadges.scanSerialLabel')}
+              </label>
               <input
                 value={serial}
                 onChange={(e) => setSerial(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder={copy.scanSerialPlaceholder}
+                placeholder={t('grower.packageBadges.scanSerialPlaceholder')}
                 autoComplete="off"
               />
             </div>
@@ -102,7 +103,7 @@ export default function GrowerPackageBadgesScanPage() {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2.5 text-white font-medium hover:bg-[#23471f] disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {loading ? copy.scanSubmitting : copy.scanSubmit}
+              {loading ? t('grower.packageBadges.scanSubmitting') : t('grower.packageBadges.scanSubmit')}
             </button>
           </form>
 
@@ -110,53 +111,53 @@ export default function GrowerPackageBadgesScanPage() {
             <div className="space-y-4 max-w-3xl">
               {tree.parent.lifecycle === 'RETURNED_TO_SUPPLIER' && (
                 <p className="text-sm text-amber-900 bg-amber-100 border border-amber-300 rounded-lg px-3 py-2">
-                  {copy.scanReturnedWarning}
+                  {t('grower.packageBadges.scanReturnedWarning')}
                 </p>
               )}
               {tree.isChild && (
                 <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                  {copy.scanChildBadge}
+                  {t('grower.packageBadges.scanChildBadge')}
                 </p>
               )}
 
               <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                  {copy.scanScannedAs}
+                  {t('grower.packageBadges.scanScannedAs')}
                 </h3>
                 <p className="font-mono text-lg text-gray-900 mb-4">{tree.scannedSerial}</p>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
                   <Package className="h-4 w-4" />
-                  {copy.scanMasterBadge}
+                  {t('grower.packageBadges.scanMasterBadge')}
                 </h3>
                 <div className="rounded-md bg-gray-50 border border-gray-100 p-3 font-mono text-sm">
                   <div>
-                    <span className="text-gray-500">Serial:</span> {tree.parent.serial}
+                    <span className="text-gray-500">{t('grower.packageBadges.scanDetailSerial')}</span> {tree.parent.serial}
                   </div>
                   <div>
-                    <span className="text-gray-500">Type:</span> {tree.parent.type}
+                    <span className="text-gray-500">{t('grower.packageBadges.scanDetailType')}</span> {tree.parent.type}
                   </div>
                   {tree.parent.lifecycle ? (
                     <div>
-                      <span className="text-gray-500">{copy.scanLifecycle}:</span> {tree.parent.lifecycle}
+                      <span className="text-gray-500">{t('grower.packageBadges.scanLifecycle')}:</span> {tree.parent.lifecycle}
                     </div>
                   ) : null}
                   {tree.parent.farmerQrCode ? (
                     <div>
-                      <span className="text-gray-500">Farmer QR:</span> {tree.parent.farmerQrCode}
+                      <span className="text-gray-500">{t('grower.packageBadges.scanDetailFarmerQr')}</span> {tree.parent.farmerQrCode}
                     </div>
                   ) : null}
                   {tree.parent.batchId ? (
                     <div className="text-xs text-gray-400 mt-1">
-                      {copy.scanInternalBatchId}: {tree.parent.batchId}
+                      {t('grower.packageBadges.scanInternalBatchId')}: {tree.parent.batchId}
                     </div>
                   ) : null}
                 </div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mt-5 mb-2 flex items-center gap-2">
                   <Boxes className="h-4 w-4" />
-                  {copy.scanChildrenHeading}
+                  {t('grower.packageBadges.scanChildrenHeading')}
                 </h3>
                 {tree.children.length === 0 ? (
-                  <p className="text-sm text-gray-600">{copy.scanNoChildren}</p>
+                  <p className="text-sm text-gray-600">{t('grower.packageBadges.scanNoChildren')}</p>
                 ) : (
                   <ul className="divide-y divide-gray-100 border border-gray-200 rounded-md overflow-hidden">
                     {tree.children.map((c) => (
@@ -177,7 +178,9 @@ export default function GrowerPackageBadgesScanPage() {
 
               {publicInfo && (
                 <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-5">
-                  <h3 className="text-sm font-semibold text-[#23471f] mb-3">{copy.scanPublicLinks}</h3>
+                  <h3 className="text-sm font-semibold text-[#23471f] mb-3">
+                    {t('grower.packageBadges.scanPublicLinks')}
+                  </h3>
                   {publicInfo.hint ? <p className="text-xs text-gray-600 mb-3">{publicInfo.hint}</p> : null}
                   <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
                     {publicInfo.farmerProfileUrl ? (
@@ -187,7 +190,7 @@ export default function GrowerPackageBadgesScanPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2D5A27] hover:underline"
                       >
-                        {copy.scanFarmerLink}
+                        {t('grower.packageBadges.scanFarmerLink')}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     ) : null}
@@ -198,11 +201,11 @@ export default function GrowerPackageBadgesScanPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2D5A27] hover:underline"
                       >
-                        {copy.scanPassportLink}
+                        {t('grower.packageBadges.scanPassportLink')}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     ) : (
-                      <p className="text-sm text-gray-600">{copy.scanNoPassport}</p>
+                      <p className="text-sm text-gray-600">{t('grower.packageBadges.scanNoPassport')}</p>
                     )}
                   </div>
                 </div>
@@ -211,9 +214,9 @@ export default function GrowerPackageBadgesScanPage() {
           )}
 
           <p className="text-sm text-gray-600">
-            {copy.scanToRegister}{' '}
+            {t('grower.packageBadges.scanToRegister')}{' '}
             <Link href="/grower/package-badges" className="font-medium text-[#2D5A27] hover:underline">
-              {en.grower.nav.packageBadges}
+              {t('grower.nav.packageBadges')}
             </Link>
             .
           </p>

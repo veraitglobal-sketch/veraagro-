@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { packageBadgesAPI } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
-import { en } from '@/lib/messages';
 import { Loader2 } from 'lucide-react';
-
-const copy = en.grower.packageBadges;
 
 type Plan = {
   orderRef?: string;
@@ -32,6 +30,7 @@ type PrintOrderRow = {
 };
 
 export default function GrowerPackageBadgesPrintOrderPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [parentCount, setParentCount] = useState(1);
   const [childrenPerParent, setChildrenPerParent] = useState(0);
@@ -73,7 +72,7 @@ export default function GrowerPackageBadgesPrintOrderPage() {
       });
       setPreview(data as Plan);
     } catch (e: unknown) {
-      setError(errMsg(e, 'Preview failed'));
+      setError(errMsg(e, t('grower.packageBadges.errPreviewFailed')));
     } finally {
       setLoadingPreview(false);
     }
@@ -93,7 +92,7 @@ export default function GrowerPackageBadgesPrintOrderPage() {
       setReturnOk(null);
       loadOrders();
     } catch (e: unknown) {
-      setError(errMsg(e, 'Could not save'));
+      setError(errMsg(e, t('grower.packageBadges.errCouldNotSave')));
     } finally {
       setLoadingSave(false);
     }
@@ -104,7 +103,7 @@ export default function GrowerPackageBadgesPrintOrderPage() {
     setError(null);
     setReturnOk(null);
     if (!returnRoot.trim() || !returnSupplierId.trim()) {
-      setError('Enter master serial and supplier id');
+      setError(t('grower.packageBadges.errEnterReturnFields'));
       return;
     }
     setReturnLoading(true);
@@ -113,10 +112,14 @@ export default function GrowerPackageBadgesPrintOrderPage() {
         rootSerial: returnRoot.trim(),
         supplierUserId: returnSupplierId.trim(),
       });
-      setReturnOk(`Returned ${(r as { returnedIds?: string[] }).returnedIds?.length ?? 0} label row(s).`);
+      setReturnOk(
+        t('grower.packageBadges.returnSuccess', {
+          count: (r as { returnedIds?: string[] }).returnedIds?.length ?? 0,
+        }),
+      );
       setReturnRoot('');
     } catch (e: unknown) {
-      setError(errMsg(e, 'Return failed'));
+      setError(errMsg(e, t('grower.packageBadges.errReturnFailed')));
     } finally {
       setReturnLoading(false);
     }
@@ -127,14 +130,14 @@ export default function GrowerPackageBadgesPrintOrderPage() {
       requiredRoles={['GROWER', 'FARMER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN']}
       redirectTo="/login/producer"
     >
-      <SidebarLayout title={copy.printOrderTitle} navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.packageBadges.printOrderTitle')} navItems={growerNavItems}>
         <GrowerPageShell className="space-y-6 max-w-3xl">
           <GrowerPageHeader
-            title={copy.printOrderTitle}
-            description={copy.printOrderDescription}
+            title={t('grower.packageBadges.printOrderTitle')}
+            description={t('grower.packageBadges.printOrderDescription')}
             right={
               <Link href="/grower/package-badges" className="text-sm font-medium text-[#2D5A27] hover:underline">
-                ← {en.grower.nav.packageBadges}
+                ← {t('grower.nav.packageBadges')}
               </Link>
             }
           />
@@ -145,7 +148,9 @@ export default function GrowerPackageBadgesPrintOrderPage() {
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium text-gray-700">{copy.printOrderParentCount}</label>
+                <label className="text-sm font-medium text-gray-700">
+                  {t('grower.packageBadges.printOrderParentCount')}
+                </label>
                 <input
                   type="number"
                   min={1}
@@ -156,7 +161,9 @@ export default function GrowerPackageBadgesPrintOrderPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">{copy.printOrderChildren}</label>
+                <label className="text-sm font-medium text-gray-700">
+                  {t('grower.packageBadges.printOrderChildren')}
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -168,7 +175,9 @@ export default function GrowerPackageBadgesPrintOrderPage() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">{copy.printOrderPrefix}</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t('grower.packageBadges.printOrderPrefix')}
+              </label>
               <input
                 value={serialPrefix}
                 onChange={(e) => setSerialPrefix(e.target.value.toUpperCase())}
@@ -176,16 +185,20 @@ export default function GrowerPackageBadgesPrintOrderPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Printer supplier (optional, UUID)</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t('grower.packageBadges.printOrderPrinterSupplierLabel')}
+              </label>
               <input
                 value={printerSupplierId}
                 onChange={(e) => setPrinterSupplierId(e.target.value)}
-                placeholder="From store profile / admin"
+                placeholder={t('grower.packageBadges.printOrderPrinterSupplierPlaceholder')}
                 className="mt-1 w-full rounded border border-gray-300 px-3 py-2 font-mono text-sm"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">{copy.printOrderNotes}</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t('grower.packageBadges.printOrderNotes')}
+              </label>
               <textarea
                 value={notesToPrinter}
                 onChange={(e) => setNotesToPrinter(e.target.value)}
@@ -201,7 +214,7 @@ export default function GrowerPackageBadgesPrintOrderPage() {
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50"
               >
                 {loadingPreview ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {copy.printOrderPreview}
+                {t('grower.packageBadges.printOrderPreview')}
               </button>
               <button
                 type="button"
@@ -210,12 +223,12 @@ export default function GrowerPackageBadgesPrintOrderPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
               >
                 {loadingSave ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {copy.printOrderSave}
+                {t('grower.packageBadges.printOrderSave')}
               </button>
             </div>
             {preview && (
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">{copy.printOrderJson}</p>
+                <p className="text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.printOrderJson')}</p>
                 <pre className="text-xs overflow-auto max-h-64 rounded border border-gray-200 bg-gray-50 p-3">
                   {JSON.stringify(preview, null, 2)}
                 </pre>
@@ -224,11 +237,11 @@ export default function GrowerPackageBadgesPrintOrderPage() {
           </div>
 
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">{copy.printOrderList}</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('grower.packageBadges.printOrderList')}</h2>
             {loadingOrders ? (
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
             ) : orders.length === 0 ? (
-              <p className="text-sm text-gray-500">No saved orders yet.</p>
+              <p className="text-sm text-gray-500">{t('grower.packageBadges.printOrderNoOrdersYet')}</p>
             ) : (
               <ul className="space-y-3">
                 {orders.map((o) => (
@@ -238,7 +251,11 @@ export default function GrowerPackageBadgesPrintOrderPage() {
                       <span className="text-gray-600">{o.status}</span>
                     </div>
                     <p className="text-gray-700 mt-1">
-                      {o.parentCount}× master, {o.childrenPerParent} children each · {o.serialPrefix}
+                      {t('grower.packageBadges.printOrderRowSummary', {
+                        parentCount: o.parentCount,
+                        childrenPerParent: o.childrenPerParent,
+                        serialPrefix: o.serialPrefix,
+                      })}
                     </p>
                     {o.status === 'DRAFT' && (
                       <button
@@ -248,12 +265,12 @@ export default function GrowerPackageBadgesPrintOrderPage() {
                             await packageBadgesAPI.markPrintOrderSent(o.id);
                             loadOrders();
                           } catch (e) {
-                            setError(errMsg(e, 'Update failed'));
+                            setError(errMsg(e, t('grower.packageBadges.errUpdateFailed')));
                           }
                         }}
                         className="mt-2 text-sm text-[#2D5A27] font-medium hover:underline"
                       >
-                        {copy.printOrderMarkSent}
+                        {t('grower.packageBadges.printOrderMarkSent')}
                       </button>
                     )}
                   </li>
@@ -263,10 +280,14 @@ export default function GrowerPackageBadgesPrintOrderPage() {
           </div>
 
           <form onSubmit={onReturn} className="rounded-lg border border-amber-200 bg-amber-50/50 p-6 space-y-3">
-            <h2 className="text-lg font-semibold text-gray-900">{copy.returnSectionTitle}</h2>
-            <p className="text-sm text-gray-600">{copy.returnHint}</p>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t('grower.packageBadges.returnSectionTitle')}
+            </h2>
+            <p className="text-sm text-gray-600">{t('grower.packageBadges.returnHint')}</p>
             <div>
-              <label className="text-sm font-medium text-gray-700">{copy.returnRootSerial}</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t('grower.packageBadges.returnRootSerial')}
+              </label>
               <input
                 value={returnRoot}
                 onChange={(e) => setReturnRoot(e.target.value)}
@@ -274,7 +295,9 @@ export default function GrowerPackageBadgesPrintOrderPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">{copy.returnSupplierId}</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t('grower.packageBadges.returnSupplierId')}
+              </label>
               <input
                 value={returnSupplierId}
                 onChange={(e) => setReturnSupplierId(e.target.value)}
@@ -286,7 +309,7 @@ export default function GrowerPackageBadgesPrintOrderPage() {
               disabled={returnLoading}
               className="rounded-lg bg-amber-900/90 text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
-              {returnLoading ? '…' : copy.returnSubmit}
+              {returnLoading ? '…' : t('grower.packageBadges.returnSubmit')}
             </button>
           </form>
         </GrowerPageShell>

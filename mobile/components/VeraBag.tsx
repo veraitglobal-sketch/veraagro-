@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Camera, Image as ImageIcon, X, Package } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 // Watermark will be added via overlay in UI
@@ -20,17 +21,21 @@ interface VeraBagProps {
   onSave?: (photos: Photo[]) => void;
 }
 
-const CATEGORIES = [
-  { value: 'SEED_PLANTING', label: 'Seed & planting', icon: Package },
-  { value: 'TREATMENT', label: 'Treatment', icon: Package },
-  { value: 'HARVEST', label: 'Harvest', icon: Package },
-] as const;
-
 /**
  * VeraBag Component
  * Digital bag for visual evidence with watermark
  */
 export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
+  const { t } = useTranslation();
+  const CATEGORIES = useMemo(
+    () =>
+      [
+        { value: 'SEED_PLANTING' as const, label: t('veraBag.categorySeed'), icon: Package },
+        { value: 'TREATMENT' as const, label: t('veraBag.categoryTreatment'), icon: Package },
+        { value: 'HARVEST' as const, label: t('veraBag.categoryHarvest'), icon: Package },
+      ] as const,
+    [t],
+  );
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<'SEED_PLANTING' | 'TREATMENT' | 'HARVEST'>('SEED_PLANTING');
   const [uploading, setUploading] = useState(false);
@@ -38,7 +43,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
   const handleTakePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Camera permission is required');
+      Alert.alert(t('veraBag.permTitle'), t('veraBag.permCamera'));
       return;
     }
 
@@ -56,7 +61,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
   const handlePickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Gallery permission is required');
+      Alert.alert(t('veraBag.permTitle'), t('veraBag.permGallery'));
       return;
     }
 
@@ -100,7 +105,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
         onSave([...photos, photo]);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to add photo');
+      Alert.alert(t('error'), t('veraBag.addPhotoFailed'));
     } finally {
       setUploading(false);
     }

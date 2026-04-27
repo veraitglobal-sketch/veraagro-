@@ -34,7 +34,7 @@ export default function StepCamera({
   const pickImage = async (type: 'crate' | 'quality') => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(t('alerts.warning'), 'Camera permission is required');
+      Alert.alert(t('alerts.warning'), t('producer.scanner.cameraPermissionBody'));
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
