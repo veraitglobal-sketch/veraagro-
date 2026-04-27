@@ -249,7 +249,7 @@ export default function OrderTrackingScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.secondary,
               }}>
-                Ukupno
+                {t('common.total')}
               </Text>
               <Text style={{
                 fontSize: 16,

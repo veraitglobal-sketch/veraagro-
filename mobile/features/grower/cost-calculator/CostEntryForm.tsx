@@ -41,7 +41,7 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
       />
       <TextInput
         style={styles.input}
-        placeholder="Iznos (EUR)"
+        placeholder={t('producer.costCalculator.amountPlaceholder')}
         placeholderTextColor={theme.colors.text.tertiary}
         value={amount}
         onChangeText={setAmount}

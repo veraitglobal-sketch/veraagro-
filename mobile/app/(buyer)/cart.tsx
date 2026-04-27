@@ -135,7 +135,7 @@ export default function CartScreen() {
             color: theme.colors.text.secondary,
             letterSpacing: 0.5,
           }}>
-            Ukupno
+            {t('common.total')}
           </Text>
           <Text style={{
             fontSize: 20,

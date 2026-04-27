@@ -9,6 +9,8 @@ import type { BatchItem } from './useQualityEntryData';
 export interface QualityFormProps {
   selectedBatch: BatchItem | undefined;
   qualityEntry: QualityEntry | null;
+  /** When false, score/notes are read-only (entry already submitted / completed). */
+  canEdit: boolean;
   qualityScore: string;
   setQualityScore: (v: string) => void;
   notes: string;
@@ -26,6 +28,7 @@ export interface QualityFormProps {
 export function QualityForm({
   selectedBatch,
   qualityEntry,
+  canEdit,
   qualityScore,
   setQualityScore,
   notes,
@@ -125,6 +128,7 @@ export function QualityForm({
         <TextInput
           value={qualityScore}
           onChangeText={setQualityScore}
+          editable={canEdit}
           placeholder={t('producer.qualityEntry.scorePlaceholder')}
           keyboardType="numeric"
           style={{
@@ -135,7 +139,8 @@ export function QualityForm({
             borderColor: colors.border,
             borderRadius: theme.borderRadius.sm,
             padding: theme.spacing.md,
-            backgroundColor: colors.background,
+            backgroundColor: canEdit ? colors.background : colors.surface,
+            opacity: canEdit ? 1 : 0.85,
           }}
         />
       </View>
@@ -154,6 +159,7 @@ export function QualityForm({
         <TextInput
           value={notes}
           onChangeText={setNotes}
+          editable={canEdit}
           placeholder={t('producer.qualityEntry.notesPlaceholder')}
           multiline
           numberOfLines={4}
@@ -165,15 +171,16 @@ export function QualityForm({
             borderColor: colors.border,
             borderRadius: theme.borderRadius.sm,
             padding: theme.spacing.md,
-            backgroundColor: colors.background,
+            backgroundColor: canEdit ? colors.background : colors.surface,
             minHeight: 100,
             textAlignVertical: 'top',
+            opacity: canEdit ? 1 : 0.85,
           }}
         />
       </View>
 
       {/* Save Button */}
-      {(!qualityEntry || qualityEntry.status === 'DRAFT') && (
+      {canEdit && (
         <TouchableOpacity
           onPress={handleSave}
           disabled={saving}

@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LogOut, MapPin, Package, Building2, Truck, Users, Plus, X } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
+import { LanguageSettingsBlock } from '../../components/LanguageSettingsBlock';
 
 interface DeliveryLocation {
   id: string;
@@ -58,7 +59,7 @@ export default function ProfileScreen() {
   const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocation[]>([
     {
       id: '1',
-      alias: 'Glavni Distributivni Centar - Hamburg',
+      alias: 'Main distribution center — Hamburg',
       address: 'Hamburger Straße 123',
       city: 'Hamburg',
       postalCode: '20095',
@@ -191,12 +192,12 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     Alert.alert(
-      t('buyer.profile.logout') || 'Logout',
-      t('buyer.profile.logoutConfirm') || 'Are you sure you want to logout?',
+      t('buyer.profile.logout'),
+      t('buyer.profile.logoutConfirm'),
       [
-        { text: t('common.cancel') || 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: t('buyer.profile.logout') || 'Logout',
+          text: t('buyer.profile.logout'),
           style: 'destructive',
           onPress: async () => {
             await logout();
@@ -219,8 +220,10 @@ export default function ProfileScreen() {
             marginBottom: theme.spacing.lg,
             letterSpacing: 1,
           }}>
-            {t('buyer.profile.title') || 'Profile'}
+            {t('buyer.profile.title')}
           </Text>
+
+          <LanguageSettingsBlock />
 
           {/* Tabs */}
           <View style={{
@@ -724,7 +727,7 @@ export default function ProfileScreen() {
 
             <ScrollView>
               <TextInput
-                placeholder="Alias (e.g., Glavni Distributivni Centar)"
+                placeholder="Alias (e.g., Main distribution center)"
                 value={newLocation.alias}
                 onChangeText={(text) => setNewLocation({ ...newLocation, alias: text })}
                 style={{

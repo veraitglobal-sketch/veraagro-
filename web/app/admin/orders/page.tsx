@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { ordersAPI, estatesAPI } from '@/lib/api';
-import { ShoppingCart, Search } from 'lucide-react';
+import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
+import { ShoppingCart, Truck } from 'lucide-react';
 
 import { getAdminNavItems } from '@/lib/admin-nav';
 
@@ -36,6 +36,14 @@ export default function OrdersManagementPage() {
     orderNumber: string;
   } | null>(null);
   const [bankTxId, setBankTxId] = useState('');
+  const [missionModal, setMissionModal] = useState<{
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
+  const [missionOpsNotes, setMissionOpsNotes] = useState('');
+  const [missionChannel, setMissionChannel] = useState<'' | 'INDUSTRIAL' | 'RETAIL' | 'MIXED'>('');
+  const [missionTargetKg, setMissionTargetKg] = useState('');
+  const [missionSaving, setMissionSaving] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -115,6 +123,31 @@ export default function OrdersManagementPage() {
     }
   };
 
+  const createFarmMission = async () => {
+    if (!missionModal) return;
+    setMissionSaving(true);
+    setError(null);
+    try {
+      const kg = missionTargetKg.trim() ? parseFloat(missionTargetKg.replace(',', '.')) : undefined;
+      await missionsAPI.createFromOrderAdmin({
+        orderId: missionModal.orderId,
+        opsNotes: missionOpsNotes.trim() || undefined,
+        channel: missionChannel || undefined,
+        targetKg: kg != null && !Number.isNaN(kg) ? kg : undefined,
+      });
+      setMissionModal(null);
+      setMissionOpsNotes('');
+      setMissionChannel('');
+      setMissionTargetKg('');
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message || err.message || 'Could not create mission for this order',
+      );
+    } finally {
+      setMissionSaving(false);
+    }
+  };
+
   const updateFulfillment = async (orderId: string, fulfillingEstateId: string | null) => {
     try {
       setSavingId(orderId);
@@ -140,7 +173,13 @@ export default function OrdersManagementPage() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-light text-gray-900">Orders Management</h1>
-              <p className="text-sm text-gray-600 mt-1">View and manage all orders</p>
+              <p className="text-sm text-gray-600 mt-1 max-w-3xl">
+                Assign a <strong>fulfilling farm</strong> to connect the buyer to a grower. Then use{' '}
+                <strong>Prep + mission</strong> to send them a transport task with your notes (kg, industrial / retail, packaging).
+                The mission is <strong>PENDING</strong> until you assign logistics in{' '}
+                <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">Missions</a> or a driver claims
+                it.
+              </p>
             </div>
           </div>
 
@@ -168,6 +207,7 @@ export default function OrdersManagementPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fulfilling farm</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grower mission</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Change status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
@@ -209,6 +249,26 @@ export default function OrdersManagementPage() {
                             </option>
                           ))}
                         </select>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap max-w-[12rem]">
+                        <button
+                          type="button"
+                          disabled={!order.fulfillingEstateId || savingId === order.id}
+                          onClick={() => {
+                            setMissionOpsNotes('');
+                            setMissionChannel('');
+                            setMissionTargetKg('');
+                            setMissionModal({ orderId: order.id, orderNumber: order.orderNumber });
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-medium rounded-md px-2.5 py-1.5 border border-[#2D5A27]/30 text-[#2D5A27] hover:bg-[#2D5A27]/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                          title="Create a PENDING mission for this grower with prep notes (set fulfilling farm first)"
+                        >
+                          <Truck className="w-3.5 h-3.5" />
+                          Prep + mission
+                        </button>
+                        {!order.fulfillingEstateId && (
+                          <p className="text-[10px] text-amber-700 mt-1">Set farm first</p>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {order.status === 'PENDING' ? (
@@ -277,6 +337,88 @@ export default function OrdersManagementPage() {
             </div>
           )}
         </div>
+
+        {missionModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mission-modal-title"
+          >
+            <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 space-y-4">
+              <h2 id="mission-modal-title" className="text-lg font-medium text-gray-900">
+                Prep &amp; transport mission
+              </h2>
+              <p className="text-sm text-gray-600">
+                Order <span className="font-mono">{missionModal.orderNumber}</span> — creates a task for the assigned
+                grower with pickup on their farm and delivery to the address on the order. Stays PENDING for dispatch
+                (you assign a driver) or for logistics to claim.
+              </p>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Target kg (optional)</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={missionTargetKg}
+                  onChange={(e) => setMissionTargetKg(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  placeholder="e.g. 500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Channel (optional)</label>
+                <select
+                  value={missionChannel}
+                  onChange={(e) =>
+                    setMissionChannel(
+                      (e.target.value as '' | 'INDUSTRIAL' | 'RETAIL' | 'MIXED') || '',
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                >
+                  <option value="">(not set)</option>
+                  <option value="INDUSTRIAL">Industrial</option>
+                  <option value="RETAIL">Retail</option>
+                  <option value="MIXED">Mixed</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Operativa notes (class, box type, time window, buyer ref…)
+                </label>
+                <textarea
+                  value={missionOpsNotes}
+                  onChange={(e) => setMissionOpsNotes(e.target.value)}
+                  rows={4}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  placeholder="What the grower should prepare and how it should be sorted/packed for this buyer."
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMissionModal(null);
+                    setMissionOpsNotes('');
+                    setMissionChannel('');
+                    setMissionTargetKg('');
+                  }}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={missionSaving}
+                  onClick={() => void createFarmMission()}
+                  className="px-4 py-2 text-sm rounded-md bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
+                >
+                  {missionSaving ? 'Creating…' : 'Create mission'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {bankModal && (
           <div

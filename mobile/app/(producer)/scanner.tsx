@@ -20,6 +20,7 @@ export default function ScannerScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ returnTo?: string }>();
   const isForProducts = params.returnTo === 'products' || params.returnTo === 'seed-registration';
+  const isMaterialAdd = params.returnTo === 'material-add';
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState<string | null>(null);
@@ -43,6 +44,12 @@ export default function ScannerScreen() {
     try {
       if (isForProducts) {
         await AsyncStorage.setItem('last_scanned_qr', data);
+        setValidating(false);
+        router.back();
+        return;
+      }
+      if (isMaterialAdd) {
+        await AsyncStorage.setItem('last_material_barcode', data);
         setValidating(false);
         router.back();
         return;

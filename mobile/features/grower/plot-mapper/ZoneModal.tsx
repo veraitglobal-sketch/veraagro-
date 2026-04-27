@@ -93,7 +93,7 @@ export function ZoneModal({
                   marginBottom: 6,
                 }}
               >
-                Tip useva
+                {t('producer.plotMapper.cropType')}
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -136,7 +136,7 @@ export function ZoneModal({
                   marginBottom: 6,
                 }}
               >
-                Datum sadnje
+                {t('producer.plotMapper.plantingDate')}
               </Text>
               <TextInput
                 value={zonePlantingDate.toISOString().split('T')[0]}

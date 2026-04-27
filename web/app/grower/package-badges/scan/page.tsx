@@ -107,6 +107,11 @@ export default function GrowerPackageBadgesScanPage() {
 
           {tree && (
             <div className="space-y-4 max-w-3xl">
+              {tree.parent.lifecycle === 'RETURNED_TO_SUPPLIER' && (
+                <p className="text-sm text-amber-900 bg-amber-100 border border-amber-300 rounded-lg px-3 py-2">
+                  {copy.scanReturnedWarning}
+                </p>
+              )}
               {tree.isChild && (
                 <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                   {copy.scanChildBadge}
@@ -129,6 +134,11 @@ export default function GrowerPackageBadgesScanPage() {
                   <div>
                     <span className="text-gray-500">Type:</span> {tree.parent.type}
                   </div>
+                  {tree.parent.lifecycle ? (
+                    <div>
+                      <span className="text-gray-500">{copy.scanLifecycle}:</span> {tree.parent.lifecycle}
+                    </div>
+                  ) : null}
                   {tree.parent.farmerQrCode ? (
                     <div>
                       <span className="text-gray-500">Farmer QR:</span> {tree.parent.farmerQrCode}
@@ -149,9 +159,15 @@ export default function GrowerPackageBadgesScanPage() {
                 ) : (
                   <ul className="divide-y divide-gray-100 border border-gray-200 rounded-md overflow-hidden">
                     {tree.children.map((c) => (
-                      <li key={c.serial} className="px-3 py-2 text-sm font-mono bg-white flex flex-wrap justify-between gap-2">
+                      <li
+                        key={c.serial}
+                        className="px-3 py-2 text-sm font-mono bg-white flex flex-wrap justify-between items-center gap-2"
+                      >
                         <span>{c.serial}</span>
-                        <span className="text-gray-500 text-xs">{c.type}</span>
+                        <span className="text-gray-500 text-xs text-right">
+                          {c.type}
+                          {c.lifecycle ? ` · ${c.lifecycle}` : ''}
+                        </span>
                       </li>
                     ))}
                   </ul>

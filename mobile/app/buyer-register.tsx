@@ -9,7 +9,7 @@ import api from '../lib/api';
 
 /**
  * Buyer Registration Screen
- * For commercial buyers (mini markets, piljarnice)
+ * For commercial buyers (mini markets, greengrocers / produce shops)
  * Automatically creates Hub location if GPS is provided
  */
 export default function BuyerRegisterScreen() {
@@ -193,7 +193,7 @@ export default function BuyerRegisterScreen() {
             lineHeight: 18,
             letterSpacing: 0.2,
           }}>
-            Register your business (mini market, piljarnica) to appear on the map where customers can find BioVera products.
+            Register your business (mini market, greengrocer, or produce shop) to appear on the map where customers can find BioVera products.
           </Text>
         </View>
 

@@ -11,7 +11,12 @@ import {
   Request,
 } from '@nestjs/common';
 import { MissionsService } from './missions.service';
-import { CreateMissionDto, AcceptMissionDto, AdminAssignMissionDto } from './dto/mission.dto';
+import {
+  CreateMissionDto,
+  AcceptMissionDto,
+  AdminAssignMissionDto,
+  AdminCreateMissionFromOrderDto,
+} from './dto/mission.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -102,6 +107,17 @@ export class MissionsController {
     @Body() dto: AdminAssignMissionDto,
   ) {
     return this.missionsService.adminAssignLogistics(req.user.id, id, dto);
+  }
+
+  /** Link buyer order (fulfilling farm set) to a PENDING grower mission with prep instructions. */
+  @Post('admin/from-order')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async adminCreateMissionFromOrder(
+    @Request() req,
+    @Body() dto: AdminCreateMissionFromOrderDto,
+  ) {
+    return this.missionsService.adminCreateMissionFromOrder(req.user.id, dto);
   }
 
   /** Mobile + deep links: one mission the caller may view (grower, logistics, or unclaimed pool). */

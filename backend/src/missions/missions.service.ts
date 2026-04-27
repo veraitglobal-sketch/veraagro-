@@ -14,6 +14,7 @@ import {
   CreateMissionDto,
   AcceptMissionDto,
   AdminAssignMissionDto,
+  AdminCreateMissionFromOrderDto,
 } from './dto/mission.dto';
 import { FreshnessService } from '../freshness/freshness.service';
 import { MaterialControlService } from '../material-control/material-control.service';
@@ -40,6 +41,85 @@ export class MissionsService {
   /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
   private shouldAutoAssignLogistics(): boolean {
     return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
+  }
+
+  /**
+   * When true, a batch with a parcel must have a CONFIRMED harvest (berba) plan before transport.
+   * Admins confirm plans in /admin/harvest-plans. Set in production to match "ops order → then ship" flow.
+   */
+  private requireConfirmedHarvestPlan(): boolean {
+    return process.env.MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN === 'true';
+  }
+
+  /**
+   * Resolves which harvest_announcement to attach (1:1 with mission when set). Second transport for same
+   * plan leaves link null so the unique constraint is not violated.
+   */
+  private async resolveHarvestAnnouncementIdForCreate(
+    growerId: string,
+    batch: { id: string; parcelId: string | null } | null,
+    dto: CreateMissionDto,
+  ): Promise<string | null> {
+    if (dto.harvestAnnouncementId?.trim()) {
+      const id = dto.harvestAnnouncementId.trim();
+      const ann = await this.prisma.harvest_announcements.findFirst({
+        where: { id, userId: growerId },
+        include: { parcel: { select: { estateId: true } } },
+      });
+      if (!ann) {
+        throw new BadRequestException('Invalid harvest plan id (not found or not yours).');
+      }
+      if (batch?.parcelId && ann.parcelId !== batch.parcelId) {
+        throw new BadRequestException('Harvest plan does not match the selected batch parcel.');
+      }
+      if (this.requireConfirmedHarvestPlan() && ann.status !== 'CONFIRMED') {
+        throw new BadRequestException(
+          'Operativa mora prvo potvrditi plan berbe (admin: Harvest plans / CONFIRMED). ' +
+            'Ops must confirm the harvest plan before transport.',
+        );
+      }
+      const taken = await this.prisma.missions.findFirst({ where: { harvestAnnouncementId: id } });
+      if (taken) {
+        return null;
+      }
+      return id;
+    }
+
+    if (!batch?.parcelId) {
+      if (this.requireConfirmedHarvestPlan()) {
+        this.logger.warn(
+          `missions: batch ${batch?.id} has no parcelId; cannot require CONFIRMED harvest (MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN)`,
+        );
+      }
+      return null;
+    }
+
+    const plan = await this.prisma.harvest_announcements.findFirst({
+      where: {
+        parcelId: batch.parcelId,
+        userId: growerId,
+        announcementType: 'HARVEST',
+        status: 'CONFIRMED',
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!plan) {
+      if (this.requireConfirmedHarvestPlan()) {
+        throw new BadRequestException(
+          'Transport is only available after operations confirms your harvest plan. ' +
+            'Submit your harvest (berba) in the app, then wait for confirmation — or ask your contact at Vera. ' +
+            'Admin: Harvest plans → Confirm.',
+        );
+      }
+      return null;
+    }
+
+    const already = await this.prisma.missions.findFirst({ where: { harvestAnnouncementId: plan.id } });
+    if (already) {
+      return null;
+    }
+    return plan.id;
   }
 
   /** DB uses FARMER (default) and/or GROWER; both may create transport missions. */
@@ -141,6 +221,12 @@ export class MissionsService {
       },
     } as Prisma.InputJsonValue;
 
+    const linkedHarvestId = await this.resolveHarvestAnnouncementIdForCreate(
+      growerId,
+      batch ? { id: batch.id, parcelId: batch.parcelId } : null,
+      dto,
+    );
+
     // Generate mission number
     const missionNumber = await this.generateMissionNumber();
 
@@ -153,6 +239,7 @@ export class MissionsService {
           missionNumber,
           growerId,
           batchId: dto.batchId,
+          harvestAnnouncementId: linkedHarvestId,
           pickupLocation: pickupLocation as any,
           pickupAddress: (dto.pickupAddress || '').trim() || '—',
           destinationAddress: dto.destinationAddress?.trim() || null,
@@ -1026,6 +1113,236 @@ export class MissionsService {
     return updated;
   }
 
+  private static estatePolygonCentroid(polygonCoordinates: unknown): { lat: number; lng: number } | null {
+    if (polygonCoordinates == null) return null;
+    const raw = polygonCoordinates as { lat?: number; lng?: number; coordinates?: unknown[] };
+    if (Number.isFinite(raw.lat) && Number.isFinite(raw.lng)) {
+      return { lat: Number(raw.lat), lng: Number(raw.lng) };
+    }
+    let ring: unknown[] | null = null;
+    if (Array.isArray(polygonCoordinates)) {
+      const arr = polygonCoordinates as unknown[];
+      const a0 = arr[0];
+      if (arr.length > 0 && Array.isArray(a0) && a0.length > 0) {
+        const a00 = a0[0] as unknown;
+        if (Array.isArray(a00) && typeof (a00 as number[])[0] === 'number') {
+          ring = a0 as unknown[];
+        } else {
+          ring = arr;
+        }
+      } else {
+        ring = arr;
+      }
+    } else if (Array.isArray(raw.coordinates?.[0])) {
+      ring = raw.coordinates[0] as unknown[];
+    } else if (Array.isArray(raw.coordinates)) {
+      ring = raw.coordinates as unknown[];
+    }
+    if (!Array.isArray(ring) || ring.length < 1) return null;
+    let sumLat = 0;
+    let sumLng = 0;
+    let n = 0;
+    for (const p of ring) {
+      let lat: number | undefined;
+      let lng: number | undefined;
+      if (Array.isArray(p) && p.length >= 2) {
+        lng = Number(p[0]);
+        lat = Number(p[1]);
+      } else if (p && typeof p === 'object') {
+        const o = p as Record<string, unknown>;
+        lat = Number(o.lat ?? o.latitude);
+        lng = Number(o.lng ?? o.longitude);
+      }
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        sumLat += lat as number;
+        sumLng += lng as number;
+        n++;
+      }
+    }
+    if (!n) return null;
+    return { lat: sumLat / n, lng: sumLng / n };
+  }
+
+  private static formatOrderDestination(deliveryAddress: unknown): { full: string; city: string } {
+    if (deliveryAddress == null) return { full: '—', city: '—' };
+    if (typeof deliveryAddress === 'string') {
+      const s = deliveryAddress.trim();
+      return { full: s.slice(0, 2000) || '—', city: '—' };
+    }
+    const o = deliveryAddress as Record<string, unknown>;
+    const city = String(o.city ?? o.town ?? '').trim() || '—';
+    const parts = [o.street, o.address, o.postalCode, o.city, o.country]
+      .map((x) => (x == null ? '' : String(x).trim()))
+      .filter(Boolean);
+    const full = (parts.length ? parts.join(', ') : JSON.stringify(deliveryAddress)).slice(0, 2000);
+    return { full: full || '—', city: city.slice(0, 200) };
+  }
+
+  /**
+   * Operations links a buyer order to a fulfilling farm, then creates a PENDING grower mission with
+   * clear prep instructions. Grower sees it in the app; logistics is assigned here or self-claimed later.
+   */
+  async adminCreateMissionFromOrder(adminUserId: string, dto: AdminCreateMissionFromOrderDto) {
+    const order = await this.prisma.orders.findUnique({
+      where: { id: dto.orderId },
+      include: {
+        fulfilling_estate: { select: { id: true, name: true, ownerId: true, polygonCoordinates: true } },
+        users: { select: { firstName: true, lastName: true, email: true } },
+      },
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    if (!order.fulfillingEstateId || !order.fulfilling_estate) {
+      throw new BadRequestException(
+        'Set a fulfilling farm on the order first (Fulfilling farm in Orders admin), then create the mission.',
+      );
+    }
+
+    const existingOpen = await this.prisma.missions.findFirst({
+      where: {
+        orderId: order.id,
+        status: { notIn: ['COMPLETED', 'CANCELLED'] },
+      },
+    });
+    if (existingOpen) {
+      throw new BadRequestException(
+        `An open mission already exists for this order (${existingOpen.missionNumber}). Use Missions to assign or cancel it first.`,
+      );
+    }
+
+    const estate = order.fulfilling_estate;
+    const growerId = estate.ownerId;
+    const c = MissionsService.estatePolygonCentroid(estate.polygonCoordinates);
+    if (!c) {
+      throw new BadRequestException(
+        'Could not derive pickup GPS from the estate map. Update the field boundary, or the grower can still use Request transport with manual GPS when the lot is ready.',
+      );
+    }
+    const pickupLocation = { lat: c.lat, lng: c.lng, address: estate.name };
+    const { full: destFull, city: destCity } = MissionsService.formatOrderDestination(
+      order.deliveryAddress,
+    );
+
+    const buyerName =
+      [order.users?.firstName, order.users?.lastName].filter(Boolean).join(' ').trim() || 'buyer';
+    const ch = dto.channel
+      ? `Channel: ${dto.channel} (industrial / retail prep).`
+      : '';
+    const kg = dto.targetKg != null && Number.isFinite(dto.targetKg) ? `Target for this run: ${dto.targetKg} kg.` : '';
+    const op = (dto.opsNotes || '').trim();
+    const loadLines = [
+      `[From buyer order ${order.orderNumber} — product: ${order.productName}, line qty ${order.quantity} ${order.unit} — buyer: ${buyerName}]`,
+      ch,
+      kg,
+      `Order line notes: ${(order.deliveryNotes || '—').slice(0, 1500)}`,
+      op ? `Operativa: ${op}` : '',
+    ]
+      .filter((line) => line && String(line).trim().length > 0)
+      .join('\n');
+
+    const autoAssign = this.shouldAutoAssignLogistics();
+    const logisticsPartner = autoAssign
+      ? await this.findNearestLogisticsPartner(pickupLocation.lat, pickupLocation.lng)
+      : null;
+
+    const routeCalc = await this.calculateOptimalRoute(
+      pickupLocation,
+      logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
+    );
+    const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
+    const routeWithDest = {
+      ...optimalRoute,
+      destination: { address: destFull, city: destCity },
+    } as Prisma.InputJsonValue;
+
+    const missionNumber = await this.generateMissionNumber();
+
+    const mission = await this.prisma.missions.create({
+      data: {
+        id: crypto.randomUUID(),
+        missionNumber,
+        growerId,
+        orderId: order.id,
+        batchId: null,
+        harvestAnnouncementId: null,
+        pickupLocation: { lat: pickupLocation.lat, lng: pickupLocation.lng } as any,
+        pickupAddress: `${estate.name} (farm)`,
+        destinationAddress: destFull,
+        destinationCity: destCity,
+        loadInstructions: loadLines.slice(0, 10000),
+        logisticsPartnerId: logisticsPartner?.id ?? null,
+        vehicleId: logisticsPartner?.vehicleId ?? null,
+        optimalRoute: routeWithDest,
+        estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
+        status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
+        assignedAt: logisticsPartner ? new Date() : null,
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+        orders: { select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true } },
+      },
+    });
+
+    try {
+      await this.auditTrailService.createAuditTrail({
+        eventType: 'STATUS_CHANGE',
+        entityType: 'Mission',
+        entityId: mission.id,
+        performedByUserId: adminUserId,
+        newValue: {
+          source: 'admin_from_order',
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          status: mission.status,
+          missionNumber: mission.missionNumber,
+        } as any,
+      });
+    } catch (e) {
+      this.logger.warn(`adminCreateMissionFromOrder audit: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    try {
+      await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
+    } catch (e) {
+      this.logger.warn(`adminCreateMissionFromOrder socket grower: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    try {
+      await this.notificationsService.create({
+        userId: growerId,
+        type: 'ACTION_REQUIRED',
+        title: 'Instrukcija: porudžbina kupca i priprema',
+        message: `Porudžbina ${order.orderNumber} — ${order.productName} (${order.quantity} ${order.unit}). ` +
+          `Pogledajte Missions: instrukcije za pripremu / kanal. Kada vam bude spreman lot, operativa dodeljuje prevoz (ili otvorena tura).`,
+        actionUrl: '/grower/portal',
+      });
+    } catch (e) {
+      this.logger.warn(`adminCreateMissionFromOrder notify grower: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+      try {
+        await this.notificationsService.notifyAdminsForNewTransportRequest({
+          missionNumber: mission.missionNumber,
+          growerLabel: estate.name,
+          destinationCity: mission.destinationCity,
+          missionId: mission.id,
+        });
+      } catch (e) {
+        this.logger.warn(
+          `adminCreateMissionFromOrder notify admins: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
+    }
+
+    return mission;
+  }
+
   /**
    * Get all missions (Admin only)
    */
@@ -1064,6 +1381,7 @@ export class MissionsService {
           },
         },
         vehicles: true,
+        orders: { select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true } },
         batches: {
           select: {
             id: true,

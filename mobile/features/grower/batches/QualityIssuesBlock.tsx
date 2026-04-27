@@ -1,9 +1,11 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 
 export default function QualityIssuesBlock({ qualityIssues }: { qualityIssues: any }) {
+  const { t } = useTranslation();
   if (!qualityIssues) return null;
   const text = typeof qualityIssues === 'string' ? qualityIssues : qualityIssues?.issue;
   const timestamp = typeof qualityIssues === 'object' && qualityIssues?.timestamp;
@@ -20,7 +22,7 @@ export default function QualityIssuesBlock({ qualityIssues }: { qualityIssues: a
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
         <AlertCircle size={18} color={colors.error} strokeWidth={1} />
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.error, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          Problemi sa kvalitetom
+          {t('producer.batches.qualityIssuesHeading')}
         </Text>
       </View>
       {text && <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>{text}</Text>}

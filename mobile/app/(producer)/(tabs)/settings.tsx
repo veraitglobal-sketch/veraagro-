@@ -2,11 +2,12 @@ import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-n
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Bell, Globe, Shield, Info } from 'lucide-react-native';
+import { ArrowLeft, Bell, RefreshCw, Shield, Info } from 'lucide-react-native';
 import Constants from 'expo-constants';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SETTINGS_KEYS = {
@@ -110,6 +111,8 @@ export default function SettingsScreen() {
             paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
           }}
         >
+          <LanguageSettingsBlock />
+
           {/* Notifications */}
           <View style={{
             backgroundColor: theme.colors.surface,
@@ -162,7 +165,7 @@ export default function SettingsScreen() {
           }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                <Globe size={20} color={theme.colors.text.primary} strokeWidth={1} />
+                <RefreshCw size={20} color={theme.colors.text.primary} strokeWidth={1} />
                 <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
                   <Text style={{
                     fontSize: 14,

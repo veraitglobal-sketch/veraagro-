@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Download, MapPin, ChevronRight } from 'lucide-react-native';
+import { Download, MapPin, ChevronRight, Plus } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -9,6 +10,7 @@ import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useMaterialsData } from './useMaterialsData';
 import { WhitelistSearch } from './WhitelistSearch';
 import { MaterialList } from './MaterialList';
+import { AddMaterialSheet } from './AddMaterialSheet';
 
 /**
  * Materials (whitelist) screen: header, search + filters, list with refresh.
@@ -19,6 +21,7 @@ export function MaterialsScreen() {
   const router = useRouter();
   const data = useMaterialsData();
   const p = useBioVeraScreenPadding();
+  const [addOpen, setAddOpen] = useState(false);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
@@ -26,11 +29,16 @@ export function MaterialsScreen() {
         title={t('producer.materials.screenTitle')}
         left="back"
         right={
-          data.lastSync ? (
-            <TouchableOpacity onPress={data.loadMaterials} hitSlop={8}>
-              <Download size={20} color={colors.text.secondary} strokeWidth={1} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <TouchableOpacity onPress={() => setAddOpen(true)} hitSlop={8} accessibilityLabel={t('producer.materials.addButton')}>
+              <Plus size={22} color={theme.colors.primary} strokeWidth={2} />
             </TouchableOpacity>
-          ) : null
+            {data.lastSync ? (
+              <TouchableOpacity onPress={data.loadMaterials} hitSlop={8} accessibilityLabel={t('producer.materials.loading')}>
+                <Download size={20} color={colors.text.secondary} strokeWidth={1} />
+              </TouchableOpacity>
+            ) : null}
+          </View>
         }
       />
 
@@ -41,6 +49,26 @@ export function MaterialsScreen() {
           paddingBottom: theme.spacing.sm,
         }}
       >
+        <TouchableOpacity
+          onPress={() => setAddOpen(true)}
+          activeOpacity={0.8}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 12,
+            paddingHorizontal: theme.spacing.md,
+            backgroundColor: `${theme.colors.primary}12`,
+            borderRadius: theme.borderRadius.lg,
+            borderWidth: 1,
+            borderColor: `${theme.colors.primary}35`,
+            marginBottom: theme.spacing.sm,
+            gap: 8,
+          }}
+        >
+          <Plus size={20} color={theme.colors.primary} strokeWidth={2} />
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary }}>{t('producer.materials.addButton')}</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push('/map')}
           activeOpacity={0.75}
@@ -111,6 +139,12 @@ export function MaterialsScreen() {
           />
         </View>
       </ScrollView>
+
+      <AddMaterialSheet
+        visible={addOpen}
+        onClose={() => setAddOpen(false)}
+        onSuccess={data.loadMaterials}
+      />
     </View>
   );
 }

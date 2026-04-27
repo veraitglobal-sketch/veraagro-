@@ -257,6 +257,30 @@ export default function MissionsCreateScreen() {
 
         <View
           style={{
+            backgroundColor: theme.colors.background,
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 0.5,
+            borderColor: `${theme.colors.primary}30`,
+            padding: theme.spacing.md,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
+            {t('producer.missionsCreate.workflowTitle')}
+          </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: 6 }}>
+            {t('producer.missionsCreate.workflowStep1')}
+          </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: 6 }}>
+            {t('producer.missionsCreate.workflowStep2')}
+          </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18 }}>
+            {t('producer.missionsCreate.workflowStep3')}
+          </Text>
+        </View>
+
+        <View
+          style={{
             backgroundColor: 'rgba(15, 23, 42, 0.04)',
             borderRadius: theme.borderRadius.md,
             borderWidth: 0.5,

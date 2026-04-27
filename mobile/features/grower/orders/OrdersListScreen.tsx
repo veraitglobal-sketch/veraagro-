@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Package, Calendar, Euro } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -21,13 +22,14 @@ const FILTER_OPTIONS: { id: OrderFilterStatus; label: string }[] = [
  * Orders list screen (producer): header, filters, list with refresh.
  */
 export function OrdersListScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const data = useOrdersListData();
   const p = useBioVeraScreenPadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <BioVeraSubpageHeader title="Orders" left="back" />
+      <BioVeraSubpageHeader title={t('navigation.orders')} left="back" />
 
       <View
         style={{

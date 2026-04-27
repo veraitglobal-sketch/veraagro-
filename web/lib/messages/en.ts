@@ -1,175 +1,18 @@
 /**
- * English UI copy — single locale for now. Import `en` from `@/lib/messages`.
- * Add `sr.ts` later and a small loader if you introduce multi-language.
+ * Grower + shared dashboard copy for the web app.
+ * **Source of truth:** `locales/en.json` (`common`, `grower` keys) — re-exported here so
+ * existing `import { en } from '@/lib/messages'` keeps working. Add `sr.json` later and
+ * wire `i18n` the same way as mobile when you add a language switcher.
  */
+import locale from '../../locales/en.json';
+
 export const en = {
   common: {
-    requestFailed: 'Request failed',
-    emDash: '—',
-    unitKg: 'kg',
+    requestFailed: locale.common.requestFailed,
+    emDash: locale.common.emDash,
+    unitKg: locale.common.unitKg,
   },
-  grower: {
-    nav: {
-      dashboard: 'Dashboard',
-      steps: 'Steps',
-      myFields: 'My fields',
-      materials: 'Materials',
-      suppliersAndOrders: 'Suppliers & orders',
-      myBatches: 'My batches',
-      qualityEntry: 'Quality entry',
-      compliancePhotos: 'Compliance photos',
-      requestTransport: 'Request transport',
-      missionTracker: 'Mission tracker',
-      myProfile: 'My profile',
-      packageBadges: 'Package badges',
-      scanPackageBadges: 'Scan badges',
-      printOrderNav: 'Print order',
-    },
-    packageBadges: {
-      pageTitle: 'Register package badges',
-      pageDescription:
-        'Link a master label (pallet or roll) to box serials. Print QR codes pointing at the public URL for traceability.',
-      parentLabel: 'Parent (master) serial *',
-      parentHint: 'Unique code on the pallet master or roll label.',
-      typeLabel: 'Parent type *',
-      typePallet: 'Pallet master',
-      typeRoll: 'Label roll / line',
-      childrenLabel: 'Child serials (boxes, etc.)',
-      childrenHint: 'One per line, or separated by commas. Leave empty if you only register the parent.',
-      batchLabel: 'Link to lot (optional)',
-      batchNone: '— No batch —',
-      submit: 'Register badges',
-      submitting: 'Saving…',
-      successTitle: 'Badges registered',
-      successHint: 'Use this URL in QR codes for scanning (opens farmer + passport when a lot is linked):',
-      copyUrl: 'Copy URL',
-      copied: 'Copied',
-      errGeneric: 'Could not register badges',
-      loadingBatches: 'Loading batches…',
-      scanPageTitle: 'Look up package badge',
-      scanPageDescription:
-        'Enter or paste a serial from a pallet, box, or label. You see the badge tree and links to the farmer profile and lot passport when available.',
-      scanSerialLabel: 'Serial *',
-      scanSerialPlaceholder: 'e.g. PLT-2026-001 or BOX-042',
-      scanSubmit: 'Look up',
-      scanSubmitting: 'Loading…',
-      scanErrGeneric: 'Could not load badge',
-      scanScannedAs: 'You looked up',
-      scanChildBadge: 'This code is a child (box/unit) under the master below.',
-      scanMasterBadge: 'Master (parent) serial',
-      scanChildrenHeading: 'Linked child serials',
-      scanNoChildren: 'No child serials registered under this master.',
-      scanPublicLinks: 'Public links (same as QR scan)',
-      scanFarmerLink: 'Farmer profile',
-      scanPassportLink: 'Lot passport',
-      scanNoPassport: 'No lot passport until a batch is linked to this badge tree.',
-      scanInternalBatchId: 'Internal batch id (reference)',
-      scanToRegister: 'Register new badges',
-      scanBackRegister: '← Register badges',
-      registerLinkScan: 'Look up a badge',
-      printOrderTitle: 'Print order for factory',
-      printOrderDescription:
-        'Preview master + box serial numbers for your printer, save a print order, mark it sent, then register the same serials in “Package badges” when labels arrive. Optional: link supplier (material store) for addressing.',
-      printOrderParentCount: 'Number of master labels (pallets / rolls)',
-      printOrderChildren: 'Boxes (or units) per master',
-      printOrderPrefix: 'Serial prefix',
-      printOrderNotes: 'Notes to printer',
-      printOrderPreview: 'Preview numbers',
-      printOrderSave: 'Save print order',
-      printOrderMarkSent: 'Mark sent to printer',
-      printOrderList: 'Your print orders',
-      printOrderJson: 'Generated plan (copy to factory)',
-      returnSectionTitle: 'Return unused tree to supplier',
-      returnRootSerial: 'Master serial (root of tree)',
-      returnSupplierId: 'Supplier user id (UUID — material / printer account)',
-      returnSubmit: 'Return labels to supplier',
-      returnHint:
-        'After return, the supplier can assign the same tree to another grower (no re-print). Link lot again after you receive labels back on a new sale.',
-    },
-    compliancePhotos: {
-      pageTitle: 'Compliance Photos',
-      pageDescription:
-        'One lot: your label roll ID plus three photos (punnets, label close-up, palletization). Complete before transport.',
-      checklistHeading: 'Photo-Verification Checklist',
-      introBeforeStrong: 'One lot = one ',
-      introStrong: 'label roll ID',
-      introAfterStrong:
-        ' (the material you bought) + three photos documenting how that lot was packed. You are not entering a separate ID for every crate, pallet, or 30L roll — you pick the ',
-      introEmphasisOne: 'one',
-      introEnd: " official sticker roll used for this batch's labels.",
-      explainerTitle: 'What is Sticker Roll ID (not “per box” or “per pallet”)?',
-      explainerBullets: [
-        'Sticker Roll ID is the serial of your purchased Bio Vera label roll (QR stickers). It proves which official material you used. One ID per lot in this form — the same ID whether you photograph punnets, a label close-up, or palletization.',
-        'The three photos are evidence of how you applied packaging: logo on punnets, a readable sticker/QR, and film/palletization. They are not three different roll serials.',
-        'If you have many label rolls in stock, choose the roll you actually used for this lot from the list (or type the serial) — you do not register every roll number on your farm here.',
-      ],
-      materialsLink: 'Materials',
-      idFormatHint: 'IDs are created when you order rolls from',
-      idFormatExample: 'Example format:',
-      selectLot: 'Select lot (batch) *',
-      loadingBatches: 'Loading batches…',
-      noBatches:
-        'No batches yet.',
-      createBatch: 'Create a batch',
-      noBatchesSuffix: 'for an approved parcel first.',
-      selectBatchPlaceholder: '-- Select batch --',
-      loadingStatus: 'Loading compliance status for this lot…',
-      resolvedBadge: 'Resolved for this lot',
-      complianceCompleteTitle: 'Compliance complete',
-      resolvedBody:
-        'has the required photos and a label roll on file. You do not need to repeat the steps unless you are correcting something.',
-      resolvedLotPrefix: 'Lot',
-      stickerRollDt: 'Sticker Roll ID (label stock)',
-      lastUpdated: 'Last updated',
-      photoTypesOnFile: 'Photo types on file',
-      updatePhotosCta: 'Update photos or change label roll',
-      stickerRollLabel: 'Sticker Roll ID *',
-      pickRollPlaceholder: '— Pick from your label rolls (fastest) —',
-      rollAvailable: '· available',
-      rollOnLot: '· on this lot',
-      stickerInputPlaceholder: 'Or type / scan exact serial (LABEL-ROLL-…)',
-      verify: 'Verify',
-      stickerHelp:
-        'Choose one serial from the dropdown if you have many — only the roll you use for this lot matters here.',
-      requiredPhotosHeading: 'Required compliance photos',
-      photoAddedPending: 'Photo added (not yet saved until you submit)',
-      clickToUpload: 'Click to upload',
-      cancelKeep: 'Cancel and keep existing compliance',
-      saveSubmit: 'Save compliance (photos + roll)',
-      uploading: 'Uploading...',
-      replaceWarning:
-        'Re-saving replaces the previous photos for {batchId} and keeps or updates the label roll you confirm below.',
-      statusLoadError:
-        'Status for this lot could not be loaded. You can still fill the form; after saving, the page will show “Resolved” when everything is on file.',
-      photoTypes: {
-        PUNNETS: {
-          label: 'Punnets with Bio Vera Logo',
-          description: 'Show our logo on the crates',
-        },
-        LABELING: {
-          label: 'Labeling Close-up',
-          description: 'Close-up of our official sticker with QR code',
-        },
-        PALLETIZATION: {
-          label: 'Palletization',
-          description: 'Showing our specific protective film is used',
-        },
-      },
-      feedback: {
-        stickerVerified: 'Sticker roll verified successfully!',
-        saveSuccess: 'Compliance saved. This lot is marked complete for photos and label roll.',
-      },
-      errors: {
-        selectBatchAndSticker: 'Please select a batch and enter sticker roll ID',
-        verifyFailed: 'Failed to verify sticker roll',
-        verificationFailed: 'Verification failed',
-        missingPhotos: 'Please upload all required photos: {labels}',
-        uploadFailed: 'Failed to upload compliance photos',
-        genericUploadError: 'Upload failed',
-        photoSize: 'Photo size must be less than 10MB',
-      },
-    },
-  },
+  grower: locale.grower,
 } as const;
 
 export type EnMessages = typeof en;

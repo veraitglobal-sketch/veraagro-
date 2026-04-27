@@ -56,10 +56,40 @@ export class ComplianceController {
    */
   @Post('white-list')
   @Roles('ADMIN', 'SUPER_ADMIN')
-  async addToWhiteList(@Request() req, @Body() body: { barcode: string; productName: string; manufacturer: string; description?: string }) {
+  async addToWhiteList(
+    @Request() req,
+    @Body()
+    body: {
+      barcode: string;
+      productName: string;
+      manufacturer: string;
+      description?: string;
+      materialType?: string;
+    },
+  ) {
     return this.complianceService.addToWhiteList({
       ...body,
       addedBy: req.user.id,
+    });
+  }
+
+  /** Grower: add name + barcode + type to the same whitelist (visible in Materials + field checks). */
+  @Post('white-list/grower')
+  @Roles('FARMER', 'GROWER')
+  async growerAddToWhiteList(
+    @Request() req,
+    @Body()
+    body: {
+      barcode: string;
+      productName: string;
+      manufacturer?: string;
+      materialType: string;
+      description?: string;
+    },
+  ) {
+    return this.complianceService.submitGrowerMaterial({
+      ...body,
+      userId: req.user.id,
     });
   }
 

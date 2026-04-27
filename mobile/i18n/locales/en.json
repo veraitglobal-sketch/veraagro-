@@ -216,6 +216,57 @@
       "harvest": "Harvest",
       "wallet": "Wallet"
     },
+    "offline": {
+      "banner": "You're offline. Lists show the last sync; new work is saved and sent when you're back online."
+    },
+    "packageBadges": {
+      "title": "Package badges",
+      "subtitle": "Register a master serial (pallet or roll) and optional box serials. Link a lot so QR scans open the product passport.",
+      "parentLabel": "Parent (master) serial",
+      "parentHint": "Must be unique. Printed on the master label.",
+      "parentPh": "e.g. PLT-2026-001",
+      "typeLabel": "Parent type",
+      "typePallet": "Pallet master",
+      "typeRoll": "Label roll / line",
+      "childrenLabel": "Child serials (optional)",
+      "childrenHint": "One per line or comma-separated — individual boxes or units.",
+      "childrenPh": "BOX-001, BOX-002",
+      "batchLabel": "Link to lot (optional)",
+      "batchNone": "No batch",
+      "loadingBatches": "Loading batches…",
+      "submit": "Register badges",
+      "successTitle": "Saved",
+      "successBody": "Use the public URL in your QR codes (API /public/badges/…). You can share it from the next step.",
+      "shareUrl": "Share URL",
+      "errTitle": "Error",
+      "errParent": "Enter a parent serial",
+      "errGeneric": "Could not register. Check serials are unique.",
+      "qrHint": "Encode the public badge URL (see Share) in QR codes so scans open your farmer profile and lot passport when a batch is linked.",
+      "linkPrintOrder": "Link to print order (optional)",
+      "linkPrintOrderLoading": "Loading orders…",
+      "linkPrintHint": "Pick a saved factory order — it completes when you register these serials.",
+      "openPrintOrder": "Factory print order",
+      "printScreenTitle": "Factory print order",
+      "printScreenSub": "Preview serials, save an order for the printer, mark sent, then register the same codes in Package badges.",
+      "printParentN": "Number of masters",
+      "printChildN": "Children per master",
+      "printPrefix": "Prefix",
+      "printNotes": "Notes to printer",
+      "printPreview": "Preview",
+      "printSave": "Save order",
+      "printErr": "Request failed",
+      "printSaved": "Print order saved",
+      "printList": "Your orders",
+      "printListEmpty": "No orders yet",
+      "printMarkSent": "Mark sent to printer",
+      "returnTitle": "Return tree to supplier",
+      "returnSub": "Unused labels: return the whole tree to your material supplier account.",
+      "returnRoot": "Master serial",
+      "returnSupp": "Supplier user id (UUID)",
+      "returnCta": "Return to supplier",
+      "returnFill": "Enter master serial and supplier id",
+      "returnOk": "Return recorded"
+    },
     "dashboard": {
       "partner": "Code",
       "nextStep": {
@@ -288,30 +339,6 @@
         "openPartner": "Messages & store",
         "threads": "Conversations",
         "emptyThreads": "No conversations yet. Start from a partner on the map."
-      },
-      "packageBadges": {
-        "title": "Package badges",
-        "subtitle": "Register a master serial (pallet or roll) and optional box serials. Link a lot for passport URLs in QR scans.",
-        "parentLabel": "Parent (master) serial",
-        "parentHint": "Must be unique. Printed on the master label.",
-        "parentPh": "e.g. PLT-2026-001",
-        "typeLabel": "Parent type",
-        "typePallet": "Pallet master",
-        "typeRoll": "Label roll / line",
-        "childrenLabel": "Child serials (optional)",
-        "childrenHint": "One per line or comma-separated — individual boxes or units.",
-        "childrenPh": "BOX-001, BOX-002",
-        "batchLabel": "Link to lot (optional)",
-        "batchNone": "No batch",
-        "loadingBatches": "Loading batches…",
-        "submit": "Register badges",
-        "successTitle": "Saved",
-        "successBody": "Use the public URL in your QR codes (API /public/badges/…). You can share it from the next step.",
-        "shareUrl": "Share URL",
-        "errTitle": "Error",
-        "errParent": "Enter a parent serial",
-        "errGeneric": "Could not register. Check serials are unique.",
-        "qrHint": "Encode the public badge URL (see Share) in QR codes so scans open your farmer profile and lot passport when a batch is linked."
       },
       "quickActions": "Quick actions",
       "more": "More",
@@ -443,12 +470,14 @@
       "variety": "Which kind?",
       "saveEstate": "Save",
       "myFields": "My fields",
-      "parcelsWithCount": "Parcels ({{count}})"
+      "parcelsWithCount": "Parcels ({{count}})",
+      "editEstateTitle": "Edit field"
     },
     "harvest": {
-      "planIntro": "Send an official harvest plan to the team: date, quantity, load window, channel, and quality. They will confirm in the admin panel.",
+      "planIntro": "Send a harvest plan to the team (date, quantity, load window, channel, quality). You do not need to be on the plot — optional GPS below is only for notes. On-plot checks apply to field diary photos and spraying, not this form.",
       "sendPlan": "Send harvest plan",
       "planSent": "Your plan was sent. The team will review it.",
+      "queuedOffline": "Saved offline. It will be sent when you're online.",
       "selectParcel": "Parcel (approved)",
       "noApprovedParcels": "You need at least one approved parcel. Open Steps or My fields.",
       "plannedLoadDate": "Planned load day (optional)",
@@ -499,7 +528,9 @@
       "quantity": "Quantity",
       "orderDetails": "Order details",
       "unitPrice": "Unit price",
-      "total": "Total"
+      "total": "Total",
+      "deliveryAddress": "Delivery address",
+      "buyerSection": "Buyer"
     },
     "wallet": {
       "pending": "Pending",
@@ -520,12 +551,14 @@
       "planSaved": "Parcel plan saved",
       "savePlan": "Save plan",
       "cropType": "Crop type",
+      "plantingDate": "Planting date",
       "saveZone": "Save zone",
       "length": "Length (m)",
       "width": "Width (m)",
       "totalArea": "Total area"
     },
     "qualityEntry": {
+      "screenTitle": "Quality entry",
       "selectBatch": "Select a batch",
       "qualityScoreRange": "Quality score must be between 0 and 100",
       "qualityScore": "Quality score (0-100, optional)",
@@ -534,6 +567,11 @@
       "notesPlaceholder": "Additional notes on quality (optional)",
       "statusLabel": "Status",
       "saved": "Quality saved",
+      "saveSuccessBody": "Your quality entry was submitted. Tap OK to go back.",
+      "statusDraft": "Draft",
+      "statusCompleted": "Submitted / complete",
+      "statusVerified": "Verified",
+      "statusRejected": "Rejected",
       "saveFailed": "Could not save quality",
       "noBatches": "No batches available for quality entry",
       "product": "Product",
@@ -570,6 +608,7 @@
       "loading": "Loading…",
       "noCosts": "No costs entered. Add amount or transfer from My products.",
       "costNamePlaceholder": "Cost name (e.g. Fuel, Fertilizer)",
+      "amountPlaceholder": "Amount (EUR)",
       "saving": "Saving…",
       "addCost": "Add cost",
       "total": "Total",
@@ -651,7 +690,9 @@
       "quantity": "Quantity",
       "loading": "Loading…",
       "notFound": "Batch not found",
-      "detailScreenTitle": "Batch details"
+      "detailScreenTitle": "Batch details",
+      "currentLocation": "Current location",
+      "qualityIssuesHeading": "Quality issues"
     },
     "missions": {
       "detailScreenTitle": "Mission details",
@@ -679,11 +720,17 @@
       "total": "Total",
       "created": "Created",
       "inTransit": "In transit",
-      "enRouteToDestination": "En route to destination"
+      "enRouteToDestination": "En route to destination",
+      "consumerFeedbackTitle": "Consumer feedback",
+      "ratingWithMax": "Rating: {{n}}/5"
     },
     "missionsCreate": {
       "title": "Request transport",
-      "intro": "Pick a packed lot (status PACKED or quality verified), then pickup GPS and full drop-off. Operations assigns a driver when ready (mission stays pending until then). The server checks materials and compliance — if something is missing, the error will say what.",
+      "intro": "Use this when a lot is ready to leave the farm. You should have reported harvest in Harvest first, and operations can confirm the plan in their admin. Then pack the lot, complete quality, and open this screen. This sends a transport request: it stays PENDING until operations assigns a driver, or a logistics partner claims it. Materials and compliance are checked on the server — errors explain what to fix.",
+      "workflowTitle": "How it fits the process",
+      "workflowStep1": "1) Report harvest — the team sees your plan (dates, channel, expected quantity).",
+      "workflowStep2": "2) They confirm what to prepare and coordinate with you (admin \"Harvest plans\" + notes to you in process).",
+      "workflowStep3": "3) When the lot is packed (PACKED / quality done), fill pickup and destination here to book pickup. You do not pick the driver here — that is operations, or a driver can take an open PENDING run.",
       "multiFarmTitle": "Two farms, one buyer order (e.g. 800 kg + 200 kg)",
       "multiFarmBody": "One trip = one batch. Each grower sends their own request for their lot. Use the same destination city and address; in load instructions put the same order reference and “leg 1/2” vs “leg 2/2”. Logistics may assign one truck (two stops) or two runs.",
       "noBatchesBody": "No batch is ready for transport yet. Finish packing, quality, and compliance photos first — then the lot appears here.",
@@ -742,7 +789,25 @@
       "barcode": "Barcode",
       "lastSync": "Last sync",
       "materialCount": "{{count}} material",
-      "materialCount_plural": "{{count}} materials"
+      "materialCount_plural": "{{count}} materials",
+      "addButton": "Add material",
+      "addForm": {
+        "title": "Add material",
+        "lead": "Enter the product name, scan or type the barcode, and choose what it is (seed, spray, fertilizer, or other). It is added to your allowed list for field diaries and checks.",
+        "name": "Product / material name",
+        "namePh": "e.g. Organic NP liquid 5-5",
+        "type": "What is it?",
+        "barcode": "Barcode",
+        "barcodePh": "Numbers from the label",
+        "barcodeHint": "Scan with the camera or type the code from the packaging.",
+        "manufacturer": "Manufacturer (optional)",
+        "manufacturerPh": "Brand on the pack",
+        "save": "Save to list",
+        "fillRequired": "Enter name and barcode.",
+        "barcodeShort": "Barcode must be at least 3 characters.",
+        "saved": "Material saved. It appears in the list and in field log checks.",
+        "saveFailed": "Could not save. This barcode may already exist."
+      }
     },
     "certifications": {
       "notDone": "Not done",
@@ -796,6 +861,10 @@
       "tapForDetail": "Tap for full detail and map"
     },
     "settings": {
+      "language": "Language",
+      "languageDescription": "Choose English or Serbian. The entire app (producer, buyer, and shared screens) uses this language. Your choice is saved on this device.",
+      "languageEnglish": "English",
+      "languageSerbian": "Serbian",
       "orderNotifications": "Order and status notifications",
       "autoSyncRecords": "Automatically send records when online",
       "notifications": "Notifications",
@@ -817,9 +886,14 @@
   },
   "buyer": {
     "tabs": {
+      "dashboard": "Dashboard",
       "shop": "Shop",
+      "cart": "Cart",
+      "checkout": "Checkout",
+      "orderTracking": "Order tracking",
       "orders": "Orders",
       "veraStandard": "Bio Vera Standard",
+      "standardTab": "Standard",
       "profile": "Profile"
     },
     "shop": {
@@ -886,7 +960,8 @@
       "addAddress": "Add address",
       "purchaseHistory": "Purchase history",
       "viewOrders": "View orders",
-      "logout": "Log out"
+      "logout": "Log out",
+      "logoutConfirm": "Are you sure you want to sign out?"
     },
     "checkout": {
       "fillRequired": "Please fill all required fields",
@@ -926,20 +1001,34 @@
   },
   "common": {
     "currency": "EUR",
+    "total": "Total",
     "back": "Back",
     "close": "Close",
+    "cancel": "Cancel",
     "retry": "Try again",
     "next": "Next",
     "ok": "OK",
     "all": "All"
   },
+  "navigation": {
+    "appName": "Vera",
+    "orders": "Orders",
+    "scanBarcode": "Scan barcode",
+    "requestTransport": "Request transport",
+    "partnerOrders": "Partner orders",
+    "packingFlow": "Packing flow",
+    "packageBadges": "Package badges"
+  },
   "login": {
-    "subtitle": "Sign in to access your account",
-    "username": "Username / Email / Partner Code",
-    "usernamePlaceholder": "Enter username, email or partner code",
+    "subtitle": "Producers, logistics & partners — one secure sign-in.",
+    "username": "Sign-in",
+    "usernameHelper": "Email, username or partner code",
+    "usernamePlaceholder": "you@farm.com or your partner code",
     "partnerCode": "Partner code",
     "password": "Password",
-    "passwordPlaceholder": "Enter password",
+    "passwordPlaceholder": "Your password",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
     "fillAllFields": "Please fill all fields",
     "failed": "Login failed. Please check your credentials.",
     "loading": "Signing in...",

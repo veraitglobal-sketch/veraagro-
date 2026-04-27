@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { materialsAPI, Material } from '../../../lib/api';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { colors } from '../../../lib/colors';
@@ -6,6 +7,7 @@ import { colors } from '../../../lib/colors';
 export type MaterialFilterType = 'all' | 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER';
 
 export function useMaterialsData() {
+  const { t } = useTranslation();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -25,7 +27,10 @@ export function useMaterialsData() {
         setLastSync(new Date());
       }
     } catch (error) {
-      console.error('Error loading materials:', error);
+      // Network/offline: fallback below; avoid console.error so RN LogBox does not show a full-screen strip on unrelated screens
+      if (__DEV__) {
+        console.warn('Materials whitelist unavailable, using cache if any:', error);
+      }
       const cachedBarcodes = await offlineStorage.getWhitelist();
       if (cachedBarcodes.length > 0) {
         const cachedMaterials: Material[] = cachedBarcodes.map(barcode => ({
@@ -81,15 +86,23 @@ export function useMaterialsData() {
     }
   }, []);
 
-  const getTypeLabel = useCallback((type: string) => {
-    switch (type) {
-      case 'FERTILIZER': return 'Fertilizer';
-      case 'PESTICIDE': return 'Pesticid';
-      case 'SEED': return 'Seme';
-      case 'OTHER': return 'Ostalo';
-      default: return type;
-    }
-  }, []);
+  const getTypeLabel = useCallback(
+    (type: string) => {
+      switch (type) {
+        case 'FERTILIZER':
+          return t('producer.materials.fertilizer');
+        case 'PESTICIDE':
+          return t('producer.materials.pesticide');
+        case 'SEED':
+          return t('producer.materials.seed');
+        case 'OTHER':
+          return t('producer.materials.other');
+        default:
+          return type;
+      }
+    },
+    [t],
+  );
 
   return {
     materials,

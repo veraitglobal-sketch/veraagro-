@@ -17,37 +17,10 @@ import {
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import type { SidebarNavGroup } from '@/components/SidebarLayout';
+import locale from '@/locales/en.json';
 
-/** Admin navigation labels (English only) */
-const labels = {
-  dashboard: 'Dashboard',
-  users: 'Users',
-  supplierStores: 'Supplier stores (map)',
-  supplierFarmers: 'Suppliers & growers (B2B)',
-  partnerApplications: 'Partner applications',
-  products: 'Products',
-  orders: 'Orders',
-  supplySnapshot: 'Stock vs open orders',
-  missions: 'Missions',
-  security: 'Security Alerts',
-  marketPrices: 'Market Prices',
-  standards: 'Bio Vera Standards',
-  haccp: 'HACCP Monitoring',
-  veraInsights: 'Vera Insights',
-  commandControl: 'Command & Control',
-  estates: 'Estate Approval',
-  aiConversations: 'AI Conversations',
-  testBatch: 'Test batch',
-  njivaBlockchain: 'Field → Blockchain',
-  parcelsPending: 'Parcels pending',
-  harvestPlans: 'Harvest plans',
-  growerOps: 'Grower ops',
-  goParcelsPending: 'Parcels pending',
-  goEstates: 'Estates & setup',
-  goHarvestPlans: 'Harvest plans',
-  goHaccp: 'HACCP / field',
-  goBatchesPlatform: 'Batches (online)',
-} as const;
+/** Admin navigation — English copy from `locales/en.json` (`adminNav`) for future i18n. */
+const labels = locale.adminNav;
 
 // Dashboard icon component
 const DashboardIcon = () => (
@@ -171,7 +144,7 @@ export function getAdminNavItems() {
     },
     { 
       href: '/admin/njiva-blockchain', 
-      label: labels.njivaBlockchain, 
+      label: labels.fieldBlockchain, 
       icon: <MapPin className="w-5 h-5" /> 
     },
     { 

@@ -734,7 +734,8 @@ export const batchesAPI = {
 export interface QualityEntry {
   id: string;
   batchId: string;
-  status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+  /** Aligned with Prisma `QualityEntryStatus` (backend) */
+  status: 'DRAFT' | 'COMPLETED' | 'VERIFIED' | 'REJECTED';
   qualityScore?: number;
   notes?: string;
   createdAt: string;
@@ -798,8 +799,40 @@ export const packageBadgesAPI = {
     ownerUserId?: string;
     batchId?: string;
     farmerQrCode?: string;
+    printOrderId?: string;
   }) => {
     const response = await api.post('/package-badges/register', data);
+    return response.data;
+  },
+  previewPrintOrder: async (data: { parentCount: number; childrenPerParent: number; serialPrefix?: string }) => {
+    const response = await api.post('/package-badges/print-orders/preview', data);
+    return response.data;
+  },
+  createPrintOrder: async (data: {
+    parentCount: number;
+    childrenPerParent: number;
+    serialPrefix?: string;
+    printerSupplierId?: string;
+    notesToPrinter?: string;
+  }) => {
+    const response = await api.post('/package-badges/print-orders', data);
+    return response.data;
+  },
+  listMyPrintOrders: async () => {
+    const response = await api.get('/package-badges/print-orders/mine');
+    return response.data;
+  },
+  markPrintOrderSent: async (id: string) => {
+    const response = await api.patch(`/package-badges/print-orders/${encodeURIComponent(id)}/sent`, {});
+    return response.data;
+  },
+  returnTreeToSupplier: async (data: { rootSerial: string; supplierUserId: string }) => {
+    const response = await api.post('/package-badges/return-to-supplier', data);
+    return response.data;
+  },
+  /** MATERIAL_SUPPLIER: tree returned from grower — assign to new grower */
+  supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
+    const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
     return response.data;
   },
   scan: async (serial: string) => {
@@ -1081,7 +1114,20 @@ export const materialsAPI = {
   getWhitelist: async (): Promise<Material[]> => {
     try {
       const response = await api.get('/compliance/white-list');
-      return response.data || [];
+      const raw = response.data;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((row: Record<string, unknown>) => ({
+        id: String(row.id ?? row.barcode),
+        barcode: String(row.barcode ?? ''),
+        name: (row.name as string) || (row.productName as string) || undefined,
+        productName: (row.productName as string) || undefined,
+        type:
+          ((row.materialType || row.type) as Material['type']) || 'OTHER',
+        manufacturer: (row.manufacturer as string) || undefined,
+        certification: (row.certification as string) || undefined,
+        phiDays: row.phiDays != null ? Number(row.phiDays) : undefined,
+        mrlLimit: row.mrlLimit != null ? Number(row.mrlLimit) : undefined,
+      }));
     } catch (error: any) {
       // If backend not available, return empty array
       if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
@@ -1090,6 +1136,19 @@ export const materialsAPI = {
       }
       throw error;
     }
+  },
+  /**
+   * Register a product on the compliance whitelist: display name, barcode, category (seed / spray / fert / other).
+   */
+  submitGrower: async (body: {
+    barcode: string;
+    productName: string;
+    manufacturer?: string;
+    materialType: 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER';
+    description?: string;
+  }) => {
+    const response = await api.post('/compliance/white-list/grower', body);
+    return response.data;
   },
 };
 

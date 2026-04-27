@@ -122,6 +122,8 @@ model bio_white_list {
   barcode      String   @unique
   productName  String
   manufacturer String
+  /// FERTILIZER | PESTICIDE | SEED | OTHER — grower + admin; filters in app
+  materialType String   @default("OTHER")
   description  String?
   phiDays      Int? // Pre-Harvest Interval (days) - blocks harvest until elapsed
   mrlLimit     Float? // Max residue limit (optional)
@@ -132,6 +134,7 @@ model bio_white_list {
 
   @@index([barcode])
   @@index([isActive])
+  @@index([materialType])
 }
 
 model kyc_documents {
@@ -688,6 +691,9 @@ model missions {
   logistics_handovers                      logistics_handovers?
   batches                                  batches?               @relation(fields: [batchId], references: [id])
   harvest_announcement                     harvest_announcements? @relation(fields: [harvestAnnouncementId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  /// Buyer sales order this run fulfills (operativa links order → grower mission)
+  orderId                                  String?
+  orders                                   orders?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
   users_missions_growerIdTousers           users                  @relation("missions_growerIdTousers", fields: [growerId], references: [id])
   users_missions_logisticsPartnerIdTousers users?                 @relation("missions_logisticsPartnerIdTousers", fields: [logisticsPartnerId], references: [id])
   vehicles                                 vehicles?              @relation(fields: [vehicleId], references: [id])
@@ -699,6 +705,7 @@ model missions {
   @@index([status])
   @@index([harvestAnnouncementId])
   @@index([destinationCity])
+  @@index([orderId])
 }
 
 model notification_templates {
@@ -778,6 +785,7 @@ model orders {
   parcels              parcels?               @relation(fields: [parcelId], references: [id])
   payments             payments?
   ratings              ratings[]
+  missions             missions[]
 
   @@index([buyerId])
   @@index([estateId])

@@ -12,7 +12,7 @@ export interface BatchSelectorProps {
 }
 
 /**
- * Horizontal list of PACKED batches to select one for quality entry.
+ * Horizontal list of non-terminal batches (same idea as web — not only PACKED).
  * Receives data from useQualityEntryData (call hook in parent and pass props).
  */
 export function BatchSelector({

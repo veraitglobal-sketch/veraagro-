@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MessageSquare } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -8,6 +9,7 @@ interface ConsumerFeedbackBlockProps {
 }
 
 export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBlockProps) {
+  const { t } = useTranslation();
   if (!feedback) return null;
   return (
     <View
@@ -31,7 +33,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
             letterSpacing: 0.3,
           }}
         >
-          Feedback kupca
+          {t('producer.missions.consumerFeedbackTitle')}
         </Text>
       </View>
       {feedback.rating != null && (
@@ -43,7 +45,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
             marginBottom: theme.spacing.xs,
           }}
         >
-          Ocena: {feedback.rating}/5
+          {t('producer.missions.ratingWithMax', { n: feedback.rating })}
         </Text>
       )}
       {feedback.comment && (

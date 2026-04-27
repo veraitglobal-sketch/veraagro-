@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import i18n from '../../i18n/config';
 import { theme } from '../../lib/theme';
 
 /**
@@ -16,7 +17,7 @@ export default function TabLayout() {
         headerLargeTitle: false,
       }}
     >
-      <Stack.Screen name="dashboard" options={{ title: 'Vera' }} />
+      <Stack.Screen name="dashboard" options={{ title: i18n.t('navigation.appName') }} />
     </Stack>
   );
 }

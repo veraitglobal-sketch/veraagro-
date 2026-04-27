@@ -2,18 +2,10 @@
 
 import { ShoppingCart, FileText, Building2, Truck, BarChart3 } from 'lucide-react';
 import { ReactNode, createElement } from 'react';
+import locale from '@/locales/en.json';
 
-// Buyer portal nav labels (English only for web UI)
-const navLabels = {
-  dashboard: 'Dashboard',
-  orders: 'Orders',
-  preOrder2026: 'Pre-order 2026',
-  directOrders: 'Direct orders',
-  invoices: 'Invoices',
-  deliveries: 'Deliveries',
-  analytics: 'Analytics',
-  companyProfile: 'Company Profile',
-};
+// English copy: `locales/en.json` → `buyerPortalNav` (add more locales later)
+const navLabels = locale.buyerPortalNav;
 
 // Dashboard icon component - returns JSX element
 const DashboardIcon = () => (

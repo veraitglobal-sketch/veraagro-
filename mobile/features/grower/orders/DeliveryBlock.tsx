@@ -1,10 +1,12 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { Order } from '../../../lib/api';
 
 export default function DeliveryBlock({ order }: { order: Order }) {
+  const { t } = useTranslation();
   const addr = order.deliveryAddress;
   if (!addr) return null;
   return (
@@ -21,7 +23,7 @@ export default function DeliveryBlock({ order }: { order: Order }) {
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
         <MapPin size={18} color={colors.text.primary} strokeWidth={1} />
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          Adresa isporuke
+          {t('producer.orders.deliveryAddress')}
         </Text>
       </View>
       {typeof addr === 'string' ? (

@@ -51,6 +51,10 @@ export default function PackageBadgesScreen() {
   const [batchInternalId, setBatchInternalId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [openBatchPicker, setOpenBatchPicker] = useState(false);
+  const [printOrders, setPrintOrders] = useState<{ id: string; status: string }[]>([]);
+  const [printOrdersLoading, setPrintOrdersLoading] = useState(true);
+  const [selectedPrintOrderId, setSelectedPrintOrderId] = useState<string | null>(null);
+  const [openPrintPicker, setOpenPrintPicker] = useState(false);
 
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
@@ -75,6 +79,29 @@ export default function PackageBadgesScreen() {
     void loadBatches();
   }, [loadBatches]);
 
+  const loadPrintOrders = useCallback(async () => {
+    setPrintOrdersLoading(true);
+    try {
+      const data = await packageBadgesAPI.listMyPrintOrders();
+      const arr = Array.isArray(data) ? data : [];
+      setPrintOrders(
+        arr
+          .filter(
+            (o: { status?: string }) => o?.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED',
+          )
+          .map((o: { id: string; status: string }) => ({ id: o.id, status: o.status })),
+      );
+    } catch {
+      setPrintOrders([]);
+    } finally {
+      setPrintOrdersLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPrintOrders();
+  }, [loadPrintOrders]);
+
   const selectedBatchLabel = batchInternalId
     ? (() => {
         const b = batches.find((x) => x.id === batchInternalId);
@@ -96,7 +123,10 @@ export default function PackageBadgesScreen() {
         type: badgeType,
         childSerials,
         ...(batchInternalId ? { batchId: batchInternalId } : {}),
+        ...(selectedPrintOrderId ? { printOrderId: selectedPrintOrderId } : {}),
       });
+      setSelectedPrintOrderId(null);
+      void loadPrintOrders();
       const url = publicBadgeUrl(parent);
       Alert.alert(t('producer.packageBadges.successTitle'), t('producer.packageBadges.successBody'), [
         { text: t('producer.packageBadges.shareUrl'), onPress: () => void Share.share({ message: url, title: url }) },
@@ -139,6 +169,14 @@ export default function PackageBadgesScreen() {
         >
           <ChevronLeft size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
           <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>{t('common.back')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push('/(producer)/package-badges-print-order')}
+          style={{ marginBottom: 10 }}
+        >
+          <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '600' }}>
+            {t('producer.packageBadges.openPrintOrder')} →
+          </Text>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <QrCode size={22} color={theme.colors.primary} strokeWidth={1.75} />
@@ -210,6 +248,59 @@ export default function PackageBadgesScreen() {
             );
           })}
         </View>
+
+        <Text style={[labelStyle, { marginTop: 16 }]}>{t('producer.packageBadges.linkPrintOrder')}</Text>
+        <Text style={hintStyle}>{t('producer.packageBadges.linkPrintHint')}</Text>
+        <TouchableOpacity
+          onPress={() => setOpenPrintPicker((o) => !o)}
+          style={[inputStyle, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
+        >
+          <Text
+            style={{
+              fontSize: 15,
+              color: selectedPrintOrderId
+                ? theme.colors.text.primary
+                : theme.colors.text.tertiary,
+              flex: 1,
+            }}
+            numberOfLines={1}
+          >
+            {printOrdersLoading
+              ? t('producer.packageBadges.linkPrintOrderLoading')
+              : selectedPrintOrderId
+                ? `${printOrders.find((x) => x.id === selectedPrintOrderId)?.status ?? ''} · ${selectedPrintOrderId.slice(0, 8)}`
+                : '—'}
+          </Text>
+        </TouchableOpacity>
+        {openPrintPicker && !printOrdersLoading && (
+          <View style={{ maxHeight: 160, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.borderRadius.md, marginBottom: 12 }}>
+            <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedPrintOrderId(null);
+                  setOpenPrintPicker(false);
+                }}
+                style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+              >
+                <Text style={{ color: theme.colors.text.secondary }}>—</Text>
+              </TouchableOpacity>
+              {printOrders.map((o) => (
+                <TouchableOpacity
+                  key={o.id}
+                  onPress={() => {
+                    setSelectedPrintOrderId(o.id);
+                    setOpenPrintPicker(false);
+                  }}
+                  style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+                >
+                  <Text style={{ color: theme.colors.text.primary, fontSize: 13 }}>
+                    {o.status} · {o.id.slice(0, 8)}…
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <Text style={[labelStyle, { marginTop: 20 }]}>{t('producer.packageBadges.childrenLabel')}</Text>
         <Text style={hintStyle}>{t('producer.packageBadges.childrenHint')}</Text>

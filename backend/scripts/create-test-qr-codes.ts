@@ -30,7 +30,7 @@ async function createTestQRCodes() {
     console.log('✅ Test seed created:', testSeed.serialNumber);
 
     // 2. Add test fertilizer to Bio-White-List
-    const testFertilizer = await (prisma as any).bioWhiteList.upsert({
+    const testFertilizer = await prisma.bio_white_list.upsert({
       where: { barcode: 'TEST-FERT-001' },
       update: {},
       create: {
@@ -39,7 +39,9 @@ async function createTestQRCodes() {
         productName: 'Test Organic Fertilizer',
         manufacturer: 'Test Company',
         description: 'Test fertilizer for development and testing',
+        addedBy: 'system-seed-script',
         isActive: true,
+        updatedAt: new Date(),
       },
     });
 

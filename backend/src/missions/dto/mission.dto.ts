@@ -5,6 +5,7 @@ import {
   ValidateNested,
   IsNumber,
   MaxLength,
+  IsIn,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -51,6 +52,12 @@ export class CreateMissionDto {
   @IsString()
   @MaxLength(2000)
   loadInstructions?: string;
+
+  /** Optional: link to grower harvest plan row (berba) — usually auto-set from batch parcel */
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  harvestAnnouncementId?: string;
 }
 
 export class AcceptMissionDto {
@@ -67,4 +74,28 @@ export class AdminAssignMissionDto {
   @IsOptional()
   @IsString()
   vehicleId?: string;
+}
+
+/** Create a PENDING grower mission from a buyer order (operativa: prep + later pickup for that order). */
+export class AdminCreateMissionFromOrderDto {
+  @IsString()
+  orderId: string;
+
+  /** Free-text: packaging, class, time window, buyer reference, internal codification */
+  @IsOptional()
+  @IsString()
+  @MaxLength(8000)
+  opsNotes?: string;
+
+  /** INDUSTRIAL | RETAIL | MIXED — shown in grower + logistics instructions */
+  @IsOptional()
+  @IsString()
+  @IsIn(['INDUSTRIAL', 'RETAIL', 'MIXED'])
+  channel?: 'INDUSTRIAL' | 'RETAIL' | 'MIXED';
+
+  /** Target weight (kg) you expect the grower to release for this run */
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  targetKg?: number;
 }

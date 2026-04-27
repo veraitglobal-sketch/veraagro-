@@ -1,7 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { estatesAPI, Estate } from '../../../lib/api';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { theme } from '../../../lib/theme';
+
+function messageFromApiError(error: unknown): string | undefined {
+  const r = (error as { response?: { data?: unknown } })?.response?.data;
+  if (!r || typeof r !== 'object' || !('message' in r)) return undefined;
+  const m = (r as { message?: string | string[] }).message;
+  if (typeof m === 'string') return m;
+  if (Array.isArray(m)) return m.join(' ');
+  return undefined;
+}
 
 export function useEstatesData() {
   const [estates, setEstates] = useState<Estate[]>([]);
@@ -11,11 +21,16 @@ export function useEstatesData() {
   const loadEstates = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await estatesAPI.getAll();
-      setEstates(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error loading estates:', error);
-      setEstates([]);
+      try {
+        const data = await estatesAPI.getAll();
+        const list = Array.isArray(data) ? data : [];
+        setEstates(list);
+        await growerOfflineCache.saveEstates(list);
+      } catch (error) {
+        const cached = await growerOfflineCache.loadEstates();
+        setEstates(cached ?? []);
+        if (!cached) console.error('Error loading estates:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -44,12 +59,15 @@ export function useEstatesData() {
             try {
               await estatesAPI.delete(estate.id);
               await loadEstates();
-            } catch (error: any) {
+            } catch (error: unknown) {
+              const fromApi = messageFromApiError(error);
+              const status = (error as { response?: { status?: number } })?.response?.status;
               const msg =
-                error?.response?.data?.message ||
-                (error?.response?.status === 403 ? 'You do not have permission to delete this estate, or it has parcels that must be deleted first.' : 'Unable to delete estate');
+                fromApi ||
+                (status === 403
+                  ? 'You do not have permission, or this estate still has orders or batches that must be resolved first.'
+                  : 'Could not reach the server. Check your connection and try again.');
               Alert.alert('Error', msg);
-              console.error('Error deleting estate:', error);
             }
           },
         },

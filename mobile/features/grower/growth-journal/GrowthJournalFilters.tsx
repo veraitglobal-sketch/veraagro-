@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
@@ -26,6 +26,13 @@ export function GrowthJournalFilters({
   const p = useBioVeraScreenPadding();
   if (estates.length === 0) return null;
 
+  const labelStyle = {
+    fontSize: 12,
+    fontWeight: '300' as const,
+    color: colors.text.secondary,
+    marginBottom: theme.spacing.xs,
+  };
+
   return (
     <View
       style={{
@@ -37,66 +44,48 @@ export function GrowthJournalFilters({
         backgroundColor: colors.background,
       }}
     >
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: theme.spacing.sm,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          <Text
+      <Text style={labelStyle}>{t('producer.growthJournal.estateLabel')}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: theme.spacing.sm,
+          marginBottom: parcels.length > 0 ? theme.spacing.md : 0,
+        }}
+      >
+        {estates.map((estate) => (
+          <TouchableOpacity
+            key={estate.id}
+            onPress={() => {
+              onEstateChange(estate.id);
+              onParcelChange('all');
+            }}
             style={{
-              fontSize: 12,
-              fontWeight: '300',
-              color: colors.text.secondary,
-              marginRight: theme.spacing.xs,
+              paddingHorizontal: theme.spacing.md,
+              paddingVertical: theme.spacing.sm,
+              borderRadius: theme.borderRadius.sm,
+              borderWidth: 0.5,
+              borderColor: filterEstate === estate.id ? colors.primary : colors.border,
+              backgroundColor: filterEstate === estate.id ? `${colors.primary}10` : 'transparent',
             }}
           >
-            {t('producer.growthJournal.estateLabel')}
-          </Text>
-          {estates.map((estate) => (
-            <TouchableOpacity
-              key={estate.id}
-              onPress={() => {
-                onEstateChange(estate.id);
-                onParcelChange('all');
-              }}
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                paddingVertical: theme.spacing.sm,
-                borderRadius: theme.borderRadius.sm,
-                borderWidth: 0.5,
-                borderColor: filterEstate === estate.id ? colors.primary : colors.border,
-                backgroundColor:
-                  filterEstate === estate.id ? `${colors.primary}10` : 'transparent',
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '300',
-                  color: filterEstate === estate.id ? colors.primary : colors.text.secondary,
-                  letterSpacing: 0.3,
-                }}
-              >
-                {estate.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        {parcels.length > 0 && (
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
             <Text
               style={{
                 fontSize: 12,
                 fontWeight: '300',
-                color: colors.text.secondary,
-                marginRight: theme.spacing.xs,
+                color: filterEstate === estate.id ? colors.primary : colors.text.secondary,
+                letterSpacing: 0.3,
               }}
             >
-              {t('producer.growthJournal.parcelLabel')}
+              {estate.name}
             </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      {parcels.length > 0 && (
+        <>
+          <Text style={labelStyle}>{t('producer.growthJournal.parcelLabel')}</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
             <TouchableOpacity
               onPress={() => onParcelChange('all')}
               style={{
@@ -147,8 +136,8 @@ export function GrowthJournalFilters({
               </TouchableOpacity>
             ))}
           </View>
-        )}
-      </ScrollView>
+        </>
+      )}
     </View>
   );
 }

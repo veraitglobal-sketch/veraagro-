@@ -16,6 +16,7 @@ import {
 import { syncService } from '../../../lib/sync-service';
 import { useSocket } from '../../../hooks/useSocket';
 import { API_URL } from '../../../lib/api-url';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 
 export interface FinancialData {
   totalEarned: number;
@@ -73,9 +74,12 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const loadEstates = useCallback(async () => {
     try {
       const data = await estatesAPI.getAll();
-      setEstates(Array.isArray(data) ? data : []);
+      const list = Array.isArray(data) ? data : [];
+      setEstates(list);
+      await growerOfflineCache.saveEstates(list);
     } catch {
-      setEstates([]);
+      const cached = await growerOfflineCache.loadEstates();
+      setEstates(cached ?? []);
     }
   }, []);
 
@@ -140,6 +144,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     try {
       const batches = await batchesAPI.getAll();
       const arr = Array.isArray(batches) ? batches : [];
+      await growerOfflineCache.saveBatches(arr);
       setBatchesReadyForTransport(
         arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
       );
@@ -148,8 +153,15 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         .slice(0, 5);
       setActiveBatches(active);
     } catch {
-      setActiveBatches([]);
-      setBatchesReadyForTransport(0);
+      const cached = await growerOfflineCache.loadBatches();
+      const arr = cached ?? [];
+      setBatchesReadyForTransport(
+        arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
+      );
+      const active = arr
+        .filter((b: any) => b?.status === 'PACKED' || b?.status === 'IN_HUB' || b?.status === 'IN_TRANSIT')
+        .slice(0, 5);
+      setActiveBatches(active);
     }
   }, []);
 

@@ -1,8 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 import { qualityEntryAPI, QualityEntry, batchesAPI } from '../../../lib/api';
 import { colors } from '../../../lib/colors';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+
+/** Batches where a new quality entry is not applicable (web may still list them). */
+const TERMINAL_BATCH_STATUSES = new Set(['DELIVERED', 'EXPIRED', 'RETURNED']);
+
+function batchesEligibleForQualityList(raw: BatchItem[]): BatchItem[] {
+  return raw.filter((b) => {
+    if (!b?.id) return false;
+    if (!b.status) return true;
+    return !TERMINAL_BATCH_STATUSES.has(b.status);
+  });
+}
 
 export interface BatchItem {
   id: string;
@@ -15,6 +28,7 @@ export interface BatchItem {
 
 export function useQualityEntryData() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [batches, setBatches] = useState<BatchItem[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState<string>('');
   const [qualityEntry, setQualityEntry] = useState<QualityEntry | null>(null);
@@ -27,14 +41,21 @@ export function useQualityEntryData() {
   const loadBatches = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await batchesAPI.getAll();
-      const raw = Array.isArray(data) ? data : [];
-      const packedBatches = raw.filter((b: BatchItem) => b.status === 'PACKED');
-      setBatches(packedBatches);
-      // Keep prior selection if still in list; else first packed batch or clear (stale id → form must not break)
+      let raw: BatchItem[] = [];
+      try {
+        const data = await batchesAPI.getAll();
+        raw = Array.isArray(data) ? data : [];
+        await growerOfflineCache.saveBatches(raw);
+      } catch (error) {
+        console.error('Error loading batches:', error);
+        const cached = await growerOfflineCache.loadBatches<BatchItem>();
+        raw = cached ?? [];
+      }
+      const list = batchesEligibleForQualityList(raw);
+      setBatches(list);
       setSelectedBatchId((prev) => {
-        if (prev && packedBatches.some((b) => b.id === prev)) return prev;
-        return packedBatches[0]?.id ?? '';
+        if (prev && list.some((b) => b.id === prev)) return prev;
+        return list[0]?.id ?? '';
       });
     } catch (error) {
       console.error('Error loading batches:', error);
@@ -72,6 +93,12 @@ export function useQualityEntryData() {
     }
   }, [selectedBatchId, loadQualityEntry]);
 
+  /** Only draft (or no row yet) can be edited; sent / finished rows are read-only. */
+  const canEditQuality = useMemo(
+    () => !qualityEntry || qualityEntry.status === 'DRAFT',
+    [qualityEntry],
+  );
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([loadBatches(), selectedBatchId ? loadQualityEntry() : Promise.resolve()]);
@@ -81,6 +108,9 @@ export function useQualityEntryData() {
   const handleSave = useCallback(async () => {
     if (!selectedBatchId) {
       Alert.alert(t('error'), t('producer.qualityEntry.selectBatch'));
+      return;
+    }
+    if (qualityEntry && qualityEntry.status !== 'DRAFT') {
       return;
     }
     if (qualityScore && (isNaN(parseFloat(qualityScore)) || parseFloat(qualityScore) < 0 || parseFloat(qualityScore) > 100)) {
@@ -95,7 +125,15 @@ export function useQualityEntryData() {
         notes: notes.trim() || undefined,
       });
       await loadQualityEntry();
-      Alert.alert(t('alerts.success'), t('producer.qualityEntry.saved'));
+      Alert.alert(t('alerts.success'), t('producer.qualityEntry.saveSuccessBody'), [
+        {
+          text: t('common.ok'),
+          onPress: () => {
+            if (router.canGoBack()) router.back();
+            else router.replace('/(producer)/(tabs)/shop');
+          },
+        },
+      ]);
     } catch (error: unknown) {
       const ax = error as { response?: { data?: { message?: string | string[] } } };
       const fromApi = ax?.response?.data?.message;
@@ -107,26 +145,26 @@ export function useQualityEntryData() {
     } finally {
       setSaving(false);
     }
-  }, [selectedBatchId, qualityScore, notes, loadQualityEntry]);
+  }, [selectedBatchId, qualityEntry, qualityScore, notes, loadQualityEntry, router, t]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DRAFT': return colors.warning;
-      case 'SUBMITTED': return colors.accent;
-      case 'APPROVED': return colors.primary;
+      case 'COMPLETED': return colors.accent;
+      case 'VERIFIED': return colors.primary;
       case 'REJECTED': return colors.error;
       default: return colors.text.secondary;
     }
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'DRAFT': return 'Nacrt';
-      case 'SUBMITTED': return 'Poslato';
-      case 'APPROVED': return 'Odobreno';
-      case 'REJECTED': return 'Odbijeno';
-      default: return status;
-    }
+    const keys: Record<string, string> = {
+      DRAFT: 'producer.qualityEntry.statusDraft',
+      COMPLETED: 'producer.qualityEntry.statusCompleted',
+      VERIFIED: 'producer.qualityEntry.statusVerified',
+      REJECTED: 'producer.qualityEntry.statusRejected',
+    };
+    return keys[status] ? t(keys[status]) : status;
   };
 
   const selectedBatch = batches.find(b => b.id === selectedBatchId);
@@ -150,5 +188,6 @@ export function useQualityEntryData() {
     handleSave,
     getStatusColor,
     getStatusLabel,
+    canEditQuality,
   };
 }

@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+import locale from '@/locales/en.json';
+
+const t = locale.logisticsPartnerNav;
 
 const dash = (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
@@ -38,9 +41,9 @@ const handSignature = (
 );
 
 export const logisticsPartnerNavItems: { href: string; label: string; icon: ReactNode }[] = [
-  { href: '/logistics-partner/dashboard', label: 'Dashboard', icon: dash },
-  { href: '/logistics-partner/missions', label: 'Missions', icon: mission },
-  { href: '/logistics-partner/vehicles', label: 'Vehicles', icon: truck },
-  { href: '/logistics-partner/handover', label: 'Loading Handover', icon: handover },
-  { href: '/logistics-partner/handover-receiver', label: 'Receiver proof', icon: handSignature },
+  { href: '/logistics-partner/dashboard', label: t.dashboard, icon: dash },
+  { href: '/logistics-partner/missions', label: t.missions, icon: mission },
+  { href: '/logistics-partner/vehicles', label: t.vehicles, icon: truck },
+  { href: '/logistics-partner/handover', label: t.loadingHandover, icon: handover },
+  { href: '/logistics-partner/handover-receiver', label: t.receiverProof, icon: handSignature },
 ];

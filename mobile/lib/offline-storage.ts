@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { CreateHarvestPlanBody } from './api';
 
 const PENDING_ENTRIES_KEY = 'pending_field_entries';
+const PENDING_HARVEST_KEY = 'pending_harvest_plans';
 const PENDING_PRODUCTS_KEY = 'pending_products';
 const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
@@ -59,6 +61,15 @@ export interface PendingCertificatePhoto {
   certificateTitle: string;
   photoUri: string;
   timestamp: string;
+  status: 'pending' | 'syncing' | 'synced' | 'error';
+  error?: string;
+}
+
+/** Harvest plan queued when offline; POST /harvest-announcements on sync. */
+export interface PendingHarvestPlan {
+  id: string;
+  payload: CreateHarvestPlanBody;
+  createdAt: string;
   status: 'pending' | 'syncing' | 'synced' | 'error';
   error?: string;
 }
@@ -314,6 +325,52 @@ export const offlineStorage = {
       }
     } catch (e) {
       console.error('Error updating certificate photo status:', e);
+    }
+  },
+
+  async getPendingHarvestPlans(): Promise<PendingHarvestPlan[]> {
+    try {
+      const data = await AsyncStorage.getItem(PENDING_HARVEST_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async savePendingHarvestPlan(
+    entry: Pick<PendingHarvestPlan, 'payload'>,
+  ): Promise<string> {
+    const list = await this.getPendingHarvestPlans();
+    const newEntry: PendingHarvestPlan = {
+      ...entry,
+      id: `harvest_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+    };
+    list.push(newEntry);
+    await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(list));
+    return newEntry.id;
+  },
+
+  async removeHarvestPlan(id: string): Promise<void> {
+    const list = await this.getPendingHarvestPlans();
+    await AsyncStorage.setItem(
+      PENDING_HARVEST_KEY,
+      JSON.stringify(list.filter((h) => h.id !== id)),
+    );
+  },
+
+  async updateHarvestPlanStatus(
+    id: string,
+    status: PendingHarvestPlan['status'],
+    error?: string,
+  ): Promise<void> {
+    const list = await this.getPendingHarvestPlans();
+    const item = list.find((h) => h.id === id);
+    if (item) {
+      item.status = status;
+      if (error !== undefined) item.error = error;
+      await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(list));
     }
   },
 };

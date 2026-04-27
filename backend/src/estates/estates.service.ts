@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
 import * as crypto from 'crypto';
@@ -199,6 +204,10 @@ export class EstatesService {
   }
 
   async delete(id: string, userId: string, isAdmin = false) {
+    if (isSystemEstateId(id)) {
+      throw new BadRequestException('Cannot delete a system estate');
+    }
+
     const estate = await this.prisma.estates.findUnique({ where: { id } });
     if (!estate) throw new NotFoundException('Estate not found');
 
@@ -207,18 +216,52 @@ export class EstatesService {
       throw new ForbiddenException('Access denied');
     }
 
-    // Check if estate has parcels
-    const parcelsCount = await this.prisma.parcels.count({
-      where: { estateId: id },
-    });
+    const [batchCount, orderCount] = await Promise.all([
+      this.prisma.batches.count({ where: { estateId: id } }),
+      this.prisma.orders.count({
+        where: {
+          OR: [{ estateId: id }, { fulfillingEstateId: id }],
+        },
+      }),
+    ]);
 
-    if (parcelsCount > 0) {
-      throw new ForbiddenException('Cannot delete estate with existing parcels. Please delete parcels first.');
+    if (batchCount > 0) {
+      throw new ForbiddenException(
+        'Cannot delete an estate that has product batches. Remove or reassign those batches first.',
+      );
+    }
+    if (orderCount > 0) {
+      throw new ForbiddenException(
+        'Cannot delete an estate that is linked to shop or delivery orders.',
+      );
     }
 
-    return this.prisma.estates.delete({
-      where: { id },
+    const parcelIds = (
+      await this.prisma.parcels.findMany({
+        where: { estateId: id },
+        select: { id: true },
+      })
+    ).map((p) => p.id);
+
+    await this.prisma.$transaction(async (tx) => {
+      if (parcelIds.length > 0) {
+        await tx.harvest_announcements.deleteMany({
+          where: { parcelId: { in: parcelIds } },
+        });
+        await tx.plot_blueprints.deleteMany({
+          where: { parcelId: { in: parcelIds } },
+        });
+        await tx.parcels.deleteMany({ where: { estateId: id } });
+      }
+      await tx.growth_logs.deleteMany({ where: { estateId: id } });
+      await tx.compliance_logs.deleteMany({ where: { estateId: id } });
+      await tx.digital_passports.deleteMany({ where: { estateId: id } });
+      await tx.security_alerts.deleteMany({ where: { estateId: id } });
+      await tx.inventory.deleteMany({ where: { estateId: id } });
+      await tx.estates.delete({ where: { id } });
     });
+
+    return { id, deleted: true as const };
   }
 
   async startCertification(estateId: string, userId: string) {

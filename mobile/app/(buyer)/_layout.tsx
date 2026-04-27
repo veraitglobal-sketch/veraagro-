@@ -52,8 +52,8 @@ export default function BuyerLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard',
-          tabBarLabel: 'Dashboard',
+          title: t('buyer.tabs.dashboard'),
+          tabBarLabel: t('buyer.tabs.dashboard'),
           tabBarIcon: ({ color }) => <LayoutDashboard size={20} color={color} strokeWidth={1.5} />,
         }}
       />
@@ -68,8 +68,8 @@ export default function BuyerLayout() {
       <Tabs.Screen
         name="cart"
         options={{
-          title: 'Cart',
-          tabBarLabel: 'Cart',
+          title: t('buyer.tabs.cart'),
+          tabBarLabel: t('buyer.tabs.cart'),
           tabBarIcon: ({ color }) => <ShoppingBag size={20} color={color} strokeWidth={1.5} />,
           href: null, // Hide from tabs, accessible via navigation
         }}
@@ -77,7 +77,7 @@ export default function BuyerLayout() {
       <Tabs.Screen
         name="checkout"
         options={{
-          title: 'Checkout',
+          title: t('buyer.tabs.checkout'),
           href: null, // Hide from tabs
         }}
       />
@@ -90,7 +90,7 @@ export default function BuyerLayout() {
       <Tabs.Screen
         name="order/[id]"
         options={{
-          title: 'Order Tracking',
+          title: t('buyer.tabs.orderTracking'),
           href: null, // Hide from tabs
         }}
       />
@@ -98,7 +98,7 @@ export default function BuyerLayout() {
         name="orders"
         options={{
           title: t('buyer.tabs.orders'),
-          tabBarLabel: 'Orders',
+          tabBarLabel: t('buyer.tabs.orders'),
           tabBarIcon: ({ color }) => <Package size={20} color={color} strokeWidth={1.5} />,
         }}
       />
@@ -106,7 +106,7 @@ export default function BuyerLayout() {
         name="vera-standard"
         options={{
           title: t('buyer.tabs.veraStandard'),
-          tabBarLabel: 'Standard',
+          tabBarLabel: t('buyer.tabs.standardTab'),
           tabBarIcon: ({ color }) => <CheckCircle2 size={20} color={color} strokeWidth={1.5} />,
         }}
       />

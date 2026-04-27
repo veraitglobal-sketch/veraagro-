@@ -10,6 +10,7 @@ import axios from 'axios';
 import { API_URL } from './api-url';
 import type { Estate } from './api';
 import i18n from '../i18n/config';
+import { growerOfflineCache } from './grower-offline-cache';
 
 // Create API instance for sync
 const syncApi = axios.create({
@@ -47,17 +48,20 @@ export const syncService = {
    */
   async getSyncStatus(): Promise<SyncStatus> {
     try {
-      const [entries, products, costs, certPhotos] = await Promise.all([
+      const [entries, products, costs, certPhotos, harvests] = await Promise.all([
         offlineStorage.getPendingEntries(),
         offlineStorage.getPendingProducts(),
         offlineStorage.getPendingCosts(),
         offlineStorage.getPendingCertificatePhotos(),
+        offlineStorage.getPendingHarvestPlans(),
       ]);
       const pendingEntries = entries.filter((e) => e.status === 'pending').length;
       const pendingProducts = products.filter((p) => p.status === 'pending').length;
       const pendingCosts = costs.filter((c) => c.status === 'pending').length;
       const pendingCertPhotos = certPhotos.filter((c) => c.status === 'pending').length;
-      const pendingCount = pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos;
+      const pendingHarvests = harvests.filter((h) => h.status === 'pending').length;
+      const pendingCount =
+        pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests;
 
       const statusData = await AsyncStorage.getItem(SYNC_STATUS_KEY);
       const status = statusData ? JSON.parse(statusData) : {};
@@ -117,10 +121,17 @@ export const syncService = {
           'Žetva': 'BERBA',
         };
 
-        // Prefer estate recorded at save time so GPS matches the right polygon (not always estates[0]).
+        // Prefer estate recorded at save time; use live list or last cached copy when offline.
         const { estatesAPI } = await import('./api');
-        const estates = await estatesAPI.getAll();
-        const list: Estate[] = Array.isArray(estates) ? estates : [];
+        let list: Estate[] = [];
+        try {
+          const estates = await estatesAPI.getAll();
+          list = Array.isArray(estates) ? estates : [];
+          await growerOfflineCache.saveEstates(list);
+        } catch {
+          const cached = await growerOfflineCache.loadEstates();
+          list = cached ?? [];
+        }
         // Avoid `estateId && find`: empty string `""` would short-circuit to `""` and poison the union type.
         const preferred: Estate | undefined = entry.estateId
           ? list.find((e) => e.id === entry.estateId)
@@ -289,6 +300,32 @@ export const syncService = {
   /**
    * Sync pending certificate photos (when endpoint exists)
    */
+  async syncPendingHarvestPlans(): Promise<{ success: number; failed: number }> {
+    const pending = await offlineStorage.getPendingHarvestPlans();
+    const toSync = pending.filter((h) => h.status === 'pending');
+    if (toSync.length === 0) return { success: 0, failed: 0 };
+
+    const token = await AsyncStorage.getItem('auth_token');
+    let success = 0;
+    let failed = 0;
+
+    for (const h of toSync) {
+      try {
+        await offlineStorage.updateHarvestPlanStatus(h.id, 'syncing');
+        await syncApi.post('/harvest-announcements', h.payload, {
+          headers: { Authorization: token ? `Bearer ${token}` : '' },
+        });
+        await offlineStorage.removeHarvestPlan(h.id);
+        success++;
+      } catch (err: unknown) {
+        const msg = getApiErrorMessage(err, 'Sync failed');
+        await offlineStorage.updateHarvestPlanStatus(h.id, 'error', msg);
+        failed++;
+      }
+    }
+    return { success, failed };
+  },
+
   async syncPendingCertificatePhotos(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingCertificatePhotos();
     const toSync = pending.filter((p) => p.status === 'pending');
@@ -330,15 +367,27 @@ export const syncService = {
   /**
    * Sync all pending data: entries, products, costs, certificate photos
    */
-  async syncAll(): Promise<{ entries: { success: number; failed: number }; products: { success: number; failed: number }; costs: { success: number; failed: number }; certificatePhotos: { success: number; failed: number } }> {
+  async syncAll(): Promise<{
+    entries: { success: number; failed: number };
+    products: { success: number; failed: number };
+    costs: { success: number; failed: number };
+    certificatePhotos: { success: number; failed: number };
+    harvestPlans: { success: number; failed: number };
+  }> {
     await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
 
     const entries = await this.syncPendingEntries();
     const products = await this.syncPendingProducts();
     const costs = await this.syncPendingCosts();
     const certificatePhotos = await this.syncPendingCertificatePhotos();
+    const harvestPlans = await this.syncPendingHarvestPlans();
 
-    const totalFailed = entries.failed + products.failed + costs.failed + certificatePhotos.failed;
+    const totalFailed =
+      entries.failed +
+      products.failed +
+      costs.failed +
+      certificatePhotos.failed +
+      harvestPlans.failed;
     await AsyncStorage.setItem(
       SYNC_STATUS_KEY,
       JSON.stringify({
@@ -348,7 +397,7 @@ export const syncService = {
       })
     );
 
-    return { entries, products, costs, certificatePhotos };
+    return { entries, products, costs, certificatePhotos, harvestPlans };
   },
 
   /**

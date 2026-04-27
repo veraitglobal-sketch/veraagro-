@@ -94,11 +94,23 @@ export class HarvestAnnouncementsService {
     // 2. PHI Check: Block harvest if Pre-Harvest Interval not elapsed
     const { date: earliestHarvest, reason } = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
     const harvestDate = new Date(dto.estimatedDate);
+    if (Number.isNaN(harvestDate.getTime())) {
+      throw new BadRequestException('Invalid planned harvest date.');
+    }
     if (earliestHarvest && harvestDate < earliestHarvest) {
       throw new BadRequestException(
         `Harvest blocked: ${reason || 'Pre-harvest interval'}. Earliest harvest date: ${earliestHarvest.toISOString().split('T')[0]}`,
       );
     }
+
+    const toValidDate = (iso: string | undefined, label: string): Date | undefined => {
+      if (!iso?.trim()) return undefined;
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) {
+        throw new BadRequestException(`Invalid date: ${label}`);
+      }
+      return d;
+    };
 
     // 3. Create announcement
     const announcement = await this.prisma.harvest_announcements.create({
@@ -108,10 +120,10 @@ export class HarvestAnnouncementsService {
         userId,
         announcementType: dto.announcementType,
         cropType: dto.cropType,
-        estimatedDate: new Date(dto.estimatedDate),
+        estimatedDate: harvestDate,
         estimatedQuantity: dto.estimatedQuantity,
-        plannedLoadingStart: dto.plannedLoadingStart ? new Date(dto.plannedLoadingStart) : undefined,
-        plannedLoadingEnd: dto.plannedLoadingEnd ? new Date(dto.plannedLoadingEnd) : undefined,
+        plannedLoadingStart: toValidDate(dto.plannedLoadingStart, 'planned loading start'),
+        plannedLoadingEnd: toValidDate(dto.plannedLoadingEnd, 'planned loading end'),
         loadQuantityKg: dto.loadQuantityKg ?? undefined,
         marketChannel: dto.marketChannel ?? undefined,
         qualityGrade: dto.qualityGrade ?? undefined,
@@ -121,15 +133,7 @@ export class HarvestAnnouncementsService {
         updatedAt: new Date(),
       },
       include: {
-        parcel: {
-          include: {
-            estates: {
-              include: {
-                users: true,
-              },
-            },
-          },
-        },
+        parcel: { include: { estates: true } },
         user: true,
       },
     });
@@ -151,22 +155,19 @@ export class HarvestAnnouncementsService {
       }
     }
 
-    return this.prisma.harvest_announcements.findUnique({
-      where: { id: announcement.id },
-      include: {
-        parcel: {
-          include: {
-            estates: {
-              include: {
-                users: true,
-              },
-            },
-          },
+    try {
+      return await this.prisma.harvest_announcements.findUnique({
+        where: { id: announcement.id },
+        include: {
+          parcel: { include: { estates: true } },
+          user: true,
+          mission: true,
         },
-        user: true,
-        mission: true,
-      },
-    });
+      });
+    } catch (e) {
+      this.logger.error(`findUnique after harvest create failed: ${(e as Error).message}`);
+      return announcement;
+    }
   }
 
   /**

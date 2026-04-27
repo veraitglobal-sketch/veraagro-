@@ -209,6 +209,7 @@ When implementing features, follow this priority:
 ## 🔄 Integration Checklist
 
 Before marking a feature as complete:
+- [ ] **Cross-surface parity** — if you add or change a backend contract (new fields, routes, or flows), wire the same capability on every surface that should support it (typically **web** + **mobile** for grower/seller actions; **supplier** or **admin** where a role has its own app). Do not leave API-only or web-only “half” unless explicitly out of scope; note migrations (`prisma migrate deploy`) for schema changes.
 - [ ] Works offline (IndexedDB/SQLite)
 - [ ] Barcode validation implemented
 - [ ] GPS validation implemented

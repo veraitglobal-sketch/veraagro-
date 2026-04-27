@@ -210,6 +210,16 @@ export const missionsAPI = {
     );
     return response.data;
   },
+  /** Operations: buyer order + fulfilling farm → PENDING grower mission (prep + destination for later pickup) */
+  createFromOrderAdmin: async (body: {
+    orderId: string;
+    opsNotes?: string;
+    channel?: 'INDUSTRIAL' | 'RETAIL' | 'MIXED';
+    targetKg?: number;
+  }) => {
+    const response = await api.post('/missions/admin/from-order', body);
+    return response.data;
+  },
 };
 
 /** Same-origin BFF: avoids POST hitting the Next app host by mistake; proxies to Nest (see /api/logistics/vehicles). */

@@ -41,6 +41,11 @@ export default function GrowerPackageBadgesPage() {
   const [error, setError] = useState<string | null>(null);
   const [successSerial, setSuccessSerial] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [printOrders, setPrintOrders] = useState<{ id: string; status: string; parentCount: number; childrenPerParent: number }[]>(
+    [],
+  );
+  const [printOrdersLoading, setPrintOrdersLoading] = useState(true);
+  const [selectedPrintOrderId, setSelectedPrintOrderId] = useState('');
 
   useEffect(() => {
     let c = false;
@@ -69,6 +74,38 @@ export default function GrowerPackageBadgesPage() {
     };
   }, []);
 
+  useEffect(() => {
+    let c = false;
+    setPrintOrdersLoading(true);
+    packageBadgesAPI
+      .listMyPrintOrders()
+      .then((data: unknown) => {
+        if (c) return;
+        const arr = Array.isArray(data) ? data : [];
+        setPrintOrders(
+          arr
+            .filter(
+              (o: { status?: string }) => o?.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED',
+            )
+            .map((o: { id: string; status: string; parentCount: number; childrenPerParent: number }) => ({
+              id: o.id,
+              status: o.status,
+              parentCount: o.parentCount,
+              childrenPerParent: o.childrenPerParent,
+            })),
+        );
+      })
+      .catch(() => {
+        if (!c) setPrintOrders([]);
+      })
+      .finally(() => {
+        if (!c) setPrintOrdersLoading(false);
+      });
+    return () => {
+      c = true;
+    };
+  }, []);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -86,8 +123,24 @@ export default function GrowerPackageBadgesPage() {
         type: badgeType,
         childSerials,
         ...(batchInternalId ? { batchId: batchInternalId } : {}),
+        ...(selectedPrintOrderId ? { printOrderId: selectedPrintOrderId } : {}),
       });
       setSuccessSerial(p);
+      setSelectedPrintOrderId('');
+      const next = await packageBadgesAPI.listMyPrintOrders().catch(() => []);
+      const arr = Array.isArray(next) ? next : [];
+      setPrintOrders(
+        arr
+          .filter(
+            (o: { status?: string }) => o?.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED',
+          )
+          .map((o: { id: string; status: string; parentCount: number; childrenPerParent: number }) => ({
+            id: o.id,
+            status: o.status,
+            parentCount: o.parentCount,
+            childrenPerParent: o.childrenPerParent,
+          })),
+      );
     } catch (err: unknown) {
       const raw =
         err && typeof err === 'object' && 'response' in err
@@ -113,12 +166,20 @@ export default function GrowerPackageBadgesPage() {
             title={copy.pageTitle}
             description={copy.pageDescription}
             right={
-              <Link
-                href="/grower/package-badges/scan"
-                className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
-              >
-                {copy.registerLinkScan}
-              </Link>
+              <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
+                <Link
+                  href="/grower/package-badges/print-order"
+                  className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
+                >
+                  {copy.headerPrintOrder}
+                </Link>
+                <Link
+                  href="/grower/package-badges/scan"
+                  className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
+                >
+                  {copy.headerScan}
+                </Link>
+              </div>
             }
           />
 
@@ -194,6 +255,24 @@ export default function GrowerPackageBadgesPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 placeholder="BOX-001&#10;BOX-002"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{copy.linkPrintOrder}</label>
+              <p className="text-xs text-gray-500 mb-2">{copy.linkPrintOrderHint}</p>
+              <select
+                value={selectedPrintOrderId}
+                onChange={(e) => setSelectedPrintOrderId(e.target.value)}
+                disabled={printOrdersLoading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
+              >
+                <option value="">{printOrdersLoading ? copy.linkPrintOrderLoading : copy.linkPrintOrderNone}</option>
+                {printOrders.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.status} · {o.parentCount}×{o.childrenPerParent} · {o.id.slice(0, 8)}…
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

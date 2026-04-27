@@ -1,4 +1,5 @@
-import { Injectable, ForbiddenException, Logger, Inject } from '@nestjs/common';
+import { Injectable, ForbiddenException, BadRequestException, Logger, Inject } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -43,9 +44,11 @@ export class ComplianceService {
 
     if (!whiteListEntry) {
       // Cache miss - query database
-      whiteListEntry = await (this.prisma as any).bioWhiteList.findUnique({
-        where: { barcode },
-      }).catch(() => null);
+      whiteListEntry = await this.prisma.bio_white_list
+        .findUnique({
+          where: { barcode },
+        })
+        .catch(() => null);
 
       // Cache result (even if null to prevent repeated queries)
       if (whiteListEntry) {
@@ -263,6 +266,12 @@ export class ComplianceService {
     };
   }
 
+  private normalizeMaterialType(raw?: string): 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER' {
+    const u = (raw || 'OTHER').toUpperCase();
+    if (u === 'FERTILIZER' || u === 'PESTICIDE' || u === 'SEED' || u === 'OTHER') return u;
+    return 'OTHER';
+  }
+
   /**
    * Add barcode to Bio-White-List (Admin only)
    */
@@ -271,27 +280,78 @@ export class ComplianceService {
     productName: string;
     manufacturer: string;
     description?: string;
+    materialType?: string;
     addedBy: string;
   }) {
-    return (this.prisma as any).bioWhiteList.create({
+    const row = await this.prisma.bio_white_list.create({
       data: {
-        barcode: data.barcode,
-        productName: data.productName,
-        manufacturer: data.manufacturer,
+        id: crypto.randomUUID(),
+        barcode: data.barcode.trim(),
+        productName: data.productName.trim(),
+        manufacturer: data.manufacturer.trim(),
+        materialType: this.normalizeMaterialType(data.materialType),
         description: data.description,
         addedBy: data.addedBy,
         isActive: true,
+        updatedAt: new Date(),
       },
     });
+    await this.cacheManager.del(`${this.WHITE_LIST_CACHE_KEY}:${data.barcode.trim()}`);
+    return row;
+  }
+
+  /**
+   * Grower registers a material on the whitelist (name + barcode + category). Same list as admin; ops can deactivate.
+   */
+  async submitGrowerMaterial(data: {
+    barcode: string;
+    productName: string;
+    manufacturer?: string;
+    materialType: string;
+    description?: string;
+    userId: string;
+  }) {
+    const barcode = data.barcode.trim();
+    if (barcode.length < 3) {
+      throw new BadRequestException('Barcode is too short (minimum 3 characters).');
+    }
+    if (barcode.length > 64) {
+      throw new BadRequestException('Barcode is too long.');
+    }
+    const name = data.productName.trim();
+    if (!name) {
+      throw new BadRequestException('Enter the product / material name.');
+    }
+    const exists = await this.prisma.bio_white_list.findUnique({ where: { barcode } });
+    if (exists) {
+      throw new BadRequestException(
+        'This barcode is already on the list. Search for it or ask operations if it should be updated.',
+      );
+    }
+    const row = await this.prisma.bio_white_list.create({
+      data: {
+        id: crypto.randomUUID(),
+        barcode,
+        productName: name,
+        manufacturer: (data.manufacturer || '—').trim() || '—',
+        materialType: this.normalizeMaterialType(data.materialType),
+        description: data.description?.trim() || null,
+        addedBy: data.userId,
+        isActive: true,
+        updatedAt: new Date(),
+      },
+    });
+    await this.cacheManager.del(`${this.WHITE_LIST_CACHE_KEY}:${barcode}`);
+    return row;
   }
 
   /**
    * Remove or deactivate barcode from Bio-White-List
    */
   async removeFromWhiteList(barcode: string) {
-    const result = await (this.prisma as any).bioWhiteList.update({
+    const result = await this.prisma.bio_white_list.update({
       where: { barcode },
-      data: { isActive: false },
+      data: { isActive: false, updatedAt: new Date() },
     });
 
     // PERFORMANCE: Invalidate cache for this barcode
@@ -305,7 +365,7 @@ export class ComplianceService {
    * Get all white list entries
    */
   async getWhiteList(activeOnly: boolean = true) {
-    return (this.prisma as any).bioWhiteList.findMany({
+    return this.prisma.bio_white_list.findMany({
       where: activeOnly ? { isActive: true } : {},
       orderBy: { createdAt: 'desc' },
     });

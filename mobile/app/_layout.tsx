@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../contexts/AuthContext';
 import { CartProvider } from '../hooks/useCart';
 import '../i18n/config';
+import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
 import { theme } from '../lib/theme';
 
@@ -23,6 +25,9 @@ const stackHeaderTitleStyle = {
 } as const;
 
 export default function RootLayout() {
+  useEffect(() => {
+    void applySavedLanguagePreference();
+  }, []);
   return (
     <SafeAreaProvider>
     <AuthProvider>

@@ -112,8 +112,10 @@ export default function MissionsManagementPage() {
             <div>
               <h1 className="text-2xl font-light text-gray-900">Missions &amp; transport dispatch</h1>
               <p className="text-sm text-gray-600 mt-1">
-                Grower transport requests appear as <strong>PENDING</strong> until you assign a cold-chain driver. Logistics
-                can still self-claim unassigned runs in their app unless you lock that in process.
+                Flow: <strong>Harvest plan</strong> (grower) → you confirm in Harvest plans, grower ships when ready →{' '}
+                <strong>Request transport</strong> creates a mission. Here: <strong>PENDING</strong> = no driver yet — you
+                can <strong>Assign</strong> a specific partner and vehicle, or leave the mission open for logistics to{' '}
+                <em>claim</em> in their app (first-come, then accept).
               </p>
             </div>
           </div>
@@ -176,6 +178,7 @@ export default function MissionsManagementPage() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mission</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grower</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Buyer order</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Driver</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -205,6 +208,13 @@ export default function MissionsManagementPage() {
                             <div className="text-xs text-gray-500 line-clamp-2">{mission.destinationAddress}</div>
                           )}
                         </td>
+                        <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                          {mission.orders?.orderNumber ? (
+                            <span className="font-mono text-xs">{mission.orders.orderNumber}</span>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {mission.users_missions_logisticsPartnerIdTousers?.firstName}{' '}
                           {mission.users_missions_logisticsPartnerIdTousers?.lastName || (
@@ -212,7 +222,7 @@ export default function MissionsManagementPage() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                          {mission.batches?.productName || 'N/A'}
+                          {mission.batches?.productName || mission.orders?.productName || '—'}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           <span

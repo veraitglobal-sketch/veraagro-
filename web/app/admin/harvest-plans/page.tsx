@@ -93,7 +93,13 @@ function HarvestPlansInner() {
         <div className="p-6 max-w-4xl">
           <h1 className="text-2xl font-light text-gray-900 mb-1">Harvest &amp; planting plans</h1>
           <p className="text-sm text-gray-600 mb-6">
-            Growers submit planned dates, load quantities, and channel (industrial / retail). You confirm, adjust internally, and coordinate operations.
+            Growers report planned harvests (berba) — this is the first step. Use <strong>Confirm</strong> when operations has
+            told them what to prepare and you are aligned. <strong>Internal notes</strong> are for your team (what to
+            expect, how much, dock). When the lot is packed, they use <em>Request transport</em> in the app: that creates a
+            mission. You then assign a driver in <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">Missions &amp; transport</a> or leave
+            it <strong>PENDING</strong> so logistics can claim the run in their app. If the API has{' '}
+            <code className="text-xs bg-gray-100 px-1 rounded">MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN=true</code>, transport
+            is blocked until the plan is <strong>CONFIRMED</strong> here.
           </p>
 
           {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>}

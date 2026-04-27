@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { User } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -8,6 +9,7 @@ interface BuyerBlockProps {
 }
 
 export default function BuyerBlock({ buyer }: BuyerBlockProps) {
+  const { t } = useTranslation();
   if (!buyer) return null;
   return (
     <View
@@ -23,7 +25,7 @@ export default function BuyerBlock({ buyer }: BuyerBlockProps) {
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
         <User size={18} color={colors.text.primary} strokeWidth={1} />
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          Kupac
+          {t('producer.orders.buyerSection')}
         </Text>
       </View>
       <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>

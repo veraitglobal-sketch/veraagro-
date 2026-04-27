@@ -2,8 +2,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
-import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '../../../lib/api';
-import { verifyGPS } from '../../../lib/integrity-guard';
+import {
+  estatesAPI,
+  harvestAnnouncementsAPI,
+  parcelsAPI,
+  type CreateHarvestPlanBody,
+} from '../../../lib/api';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { offlineStorage } from '../../../lib/offline-storage';
+import { syncService } from '../../../lib/sync-service';
 
 export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce', 'Other'];
 
@@ -27,21 +35,30 @@ export function useHarvestData() {
   const [growerNotes, setGrowerNotes] = useState('');
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [gpsWarning, setGpsWarning] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [estate, setEstate] = useState<{
-    polygonCoordinates?: Array<{ lat: number; lng: number }>;
-  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         setParcelsLoading(true);
-        const list = await estatesAPI.getAll();
+        let estates: Awaited<ReturnType<typeof estatesAPI.getAll>> = [];
+        try {
+          const raw = await estatesAPI.getAll();
+          estates = Array.isArray(raw) ? raw : [];
+          await growerOfflineCache.saveEstates(estates);
+        } catch {
+          estates = (await growerOfflineCache.loadEstates()) ?? [];
+        }
         const out: ParcelOption[] = [];
-        for (const e of Array.isArray(list) ? list : []) {
-          const ps = await parcelsAPI.getByEstate(e.id);
+        for (const e of estates) {
+          let ps: Awaited<ReturnType<typeof parcelsAPI.getByEstate>> = [];
+          try {
+            ps = await parcelsAPI.getByEstate(e.id);
+            await growerOfflineCache.saveParcels(e.id, ps);
+          } catch {
+            ps = (await growerOfflineCache.loadParcels(e.id)) ?? [];
+          }
           for (const p of ps || []) {
             if (p.approvedAt) {
               out.push({ id: p.id, label: `${e.name} — ${p.cropType || 'Parcel'}` });
@@ -51,11 +68,6 @@ export function useHarvestData() {
         if (cancelled) return;
         setApprovedParcels(out);
         if (out.length === 1) setParcelId(out[0].id);
-        if (list?.length === 1) {
-          setEstate({ polygonCoordinates: list[0].polygonCoordinates as any });
-        } else {
-          setEstate(null);
-        }
       } catch (e) {
         console.error(e);
         setApprovedParcels([]);
@@ -69,47 +81,23 @@ export function useHarvestData() {
   }, []);
 
   useEffect(() => {
-    if (!parcelId) return;
-    (async () => {
-      try {
-        const list = await estatesAPI.getAll();
-        for (const e of list || []) {
-          const ps = await parcelsAPI.getByEstate(e.id);
-          if (ps?.some((p) => p.id === parcelId)) {
-            setEstate({ polygonCoordinates: e.polygonCoordinates as any });
-            return;
-          }
-        }
-      } catch {
-        // ignore
-      }
-    })();
-  }, [parcelId]);
-
-  useEffect(() => {
     Location.requestForegroundPermissionsAsync().then(({ status }) => {
       if (status !== 'granted') Alert.alert(t('producer.estates.permissionsTitle'), t('producer.estates.locationPermissionRequired'));
     });
   }, [t]);
 
+  /** GPS is optional for a harvest *plan* — only for notes/traceability, not to prove you are on the plot. */
   const getCurrentLocation = useCallback(async () => {
     try {
       setLoading(true);
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
-      setLocation(userLocation);
-      if (estate?.polygonCoordinates) {
-        const isValid = verifyGPS(userLocation, { polygonCoordinates: estate.polygonCoordinates as any });
-        setGpsWarning(!isValid);
-      } else {
-        setGpsWarning(false);
-      }
+      setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
     } catch (error) {
       Alert.alert(t('error'), t('producer.harvest.locationFailed'));
     } finally {
       setLoading(false);
     }
-  }, [estate, t]);
+  }, [t]);
 
   const handleSubmit = useCallback(async () => {
     if (!parcelId) {
@@ -144,35 +132,61 @@ export function useHarvestData() {
       plannedLoadingEnd = `${plannedLoadDate}T19:00:00.000Z`;
     }
 
+    const resetAfterSuccess = () => {
+      setCropType('');
+      setEstimatedQuantity('');
+      setLoadQuantity('');
+      setPlannedLoadDate('');
+      setMarketChannel('');
+      setQualityGrade('');
+      setSortingSpec('');
+      setGrowerNotes('');
+      setLocation(null);
+    };
+
     const run = async () => {
+      const payload: CreateHarvestPlanBody = {
+        parcelId,
+        announcementType: 'HARVEST',
+        cropType: cropType.trim(),
+        estimatedDate: estimatedDateIso,
+        estimatedQuantity: estQty,
+        plannedLoadingStart,
+        plannedLoadingEnd,
+        loadQuantityKg: !Number.isNaN(loadKg) && loadKg > 0 ? loadKg : estQty,
+        marketChannel: marketChannel || undefined,
+        qualityGrade: qualityGrade.trim() || undefined,
+        sortingSpec: sortingSpec.trim() || undefined,
+        notes: buildNotes(),
+      };
       try {
         setLoading(true);
-        await harvestAnnouncementsAPI.create({
-          parcelId,
-          announcementType: 'HARVEST',
-          cropType: cropType.trim(),
-          estimatedDate: estimatedDateIso,
-          estimatedQuantity: estQty,
-          plannedLoadingStart,
-          plannedLoadingEnd,
-          loadQuantityKg: !Number.isNaN(loadKg) && loadKg > 0 ? loadKg : estQty,
-          marketChannel: marketChannel || undefined,
-          qualityGrade: qualityGrade.trim() || undefined,
-          sortingSpec: sortingSpec.trim() || undefined,
-          notes: buildNotes(),
-        });
+        if (!(await isDeviceOnline())) {
+          await offlineStorage.savePendingHarvestPlan({ payload });
+          void syncService.getSyncStatus();
+          Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
+          resetAfterSuccess();
+          return;
+        }
+        await harvestAnnouncementsAPI.create(payload);
         Alert.alert(t('alerts.success'), t('producer.harvest.planSent'));
-        setCropType('');
-        setEstimatedQuantity('');
-        setLoadQuantity('');
-        setPlannedLoadDate('');
-        setMarketChannel('');
-        setQualityGrade('');
-        setSortingSpec('');
-        setGrowerNotes('');
-        setLocation(null);
-        setGpsWarning(false);
+        resetAfterSuccess();
       } catch (e: any) {
+        const net =
+          e?.code === 'ERR_NETWORK' ||
+          e?.code === 'ECONNREFUSED' ||
+          (typeof e?.message === 'string' && e.message.includes('Network Error'));
+        if (net) {
+          try {
+            await offlineStorage.savePendingHarvestPlan({ payload });
+            void syncService.getSyncStatus();
+            Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
+            resetAfterSuccess();
+            return;
+          } catch {
+            // fall through
+          }
+        }
         const raw = e?.response?.data?.message || e?.message || t('producer.harvest.saveFailed');
         const msg = Array.isArray(raw) ? raw.join(' ') : String(raw);
         Alert.alert(t('error'), msg);
@@ -181,13 +195,6 @@ export function useHarvestData() {
       }
     };
 
-    if (gpsWarning) {
-      Alert.alert(t('alerts.warning'), t('producer.harvest.notOnParcel'), [
-        { text: t('producer.harvest.cancel'), style: 'cancel' },
-        { text: t('producer.harvest.continue'), onPress: run },
-      ]);
-      return;
-    }
     await run();
   }, [
     parcelId,
@@ -201,7 +208,6 @@ export function useHarvestData() {
     sortingSpec,
     growerNotes,
     location,
-    gpsWarning,
     t,
   ]);
 
@@ -231,7 +237,6 @@ export function useHarvestData() {
     growerNotes,
     setGrowerNotes,
     location,
-    gpsWarning,
     loading,
     getCurrentLocation,
     handleSubmit,

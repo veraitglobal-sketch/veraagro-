@@ -52,7 +52,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <MapPin size={14} color={colors.text.secondary} strokeWidth={1} />
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
-            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>Trenutna lokacija</Text>
+            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>{t('producer.batches.currentLocation')}</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
               {batch.currentHub.name || 'Hub'}
             </Text>

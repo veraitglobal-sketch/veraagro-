@@ -53,9 +53,11 @@ export class IntegrityGuardService {
 
       if (!whiteListEntry) {
         // Cache miss - query database
-        whiteListEntry = await (this.prisma as any).bioWhiteList.findUnique({
-          where: { barcode },
-        }).catch(() => null);
+        whiteListEntry = await this.prisma.bio_white_list
+          .findUnique({
+            where: { barcode },
+          })
+          .catch(() => null);
 
         // Cache result (even if null to prevent repeated queries)
         if (whiteListEntry) {

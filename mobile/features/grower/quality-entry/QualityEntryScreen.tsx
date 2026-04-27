@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Save } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -13,16 +14,17 @@ import { QualityForm } from './QualityForm';
  * Uses useQualityEntryData once and passes data to BatchSelector and QualityForm.
  */
 export function QualityEntryScreen() {
+  const { t } = useTranslation();
   const data = useQualityEntryData();
   const p = useBioVeraScreenPadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <BioVeraSubpageHeader
-        title="Unos Kvaliteta"
+        title={t('producer.qualityEntry.screenTitle')}
         left="back"
         right={
-          data.qualityEntry ? (
+          data.canEditQuality ? (
             <TouchableOpacity onPress={data.handleSave} disabled={data.saving} hitSlop={8}>
               {data.saving ? (
                 <ActivityIndicator size="small" color={colors.primary} />
@@ -61,6 +63,7 @@ export function QualityEntryScreen() {
           <QualityForm
             selectedBatch={data.selectedBatch}
             qualityEntry={data.qualityEntry}
+            canEdit={data.canEditQuality}
             qualityScore={data.qualityScore}
             setQualityScore={data.setQualityScore}
             notes={data.notes}

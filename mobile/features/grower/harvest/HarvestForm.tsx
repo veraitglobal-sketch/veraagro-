@@ -17,21 +17,6 @@ export default function HarvestForm() {
           {t('producer.harvest.planIntro')}
         </Text>
 
-        {h.gpsWarning && (
-          <View
-            style={{
-              backgroundColor: '#FEF3C7',
-              borderWidth: 0.5,
-              borderColor: '#F59E0B',
-              borderRadius: 8,
-              padding: 16,
-              marginBottom: 16,
-            }}
-          >
-            <Text style={{ fontSize: 13, color: '#92400E' }}>{t('producer.harvest.notOnParcelWarning')}</Text>
-          </View>
-        )}
-
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
             {t('producer.harvest.selectParcel')} <Text style={{ color: colors.error }}>*</Text>

@@ -114,7 +114,7 @@ export default function EditEstateScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <BioVeraSubpageHeader
-        title="Izmeni Njivu"
+        title={t('producer.estates.editEstateTitle')}
         left="back"
         right={
           <TouchableOpacity onPress={handleSave} disabled={loading} hitSlop={8}>
@@ -145,7 +145,7 @@ export default function EditEstateScreen() {
               marginBottom: theme.spacing.xs,
               letterSpacing: 0.3,
             }}>
-              Naziv njive
+              {t('producer.estates.estateName')}
             </Text>
             <TextInput
               value={name}
