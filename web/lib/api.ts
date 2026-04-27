@@ -388,6 +388,35 @@ export const harvestAnnouncementsAPI = {
     const response = await api.put(`/harvest-announcements/${id}/status`, { status });
     return response.data;
   },
+  /** Grower: list own planting & harvest plans */
+  getMine: async () => {
+    const response = await api.get('/harvest-announcements/my-announcements');
+    return response.data || [];
+  },
+  /** Grower: register planting or expected harvest (requires admin-approved parcel) */
+  create: async (body: {
+    parcelId: string;
+    announcementType: 'HARVEST' | 'PLANTING';
+    cropType: string;
+    estimatedDate: string;
+    estimatedQuantity?: number;
+    notes?: string;
+  }) => {
+    const response = await api.post('/harvest-announcements', body);
+    return response.data;
+  },
+};
+
+/** Growth journal entries (read-only on web; create from mobile with photo + GPS) */
+export const growthLogsAPI = {
+  listByEstate: async (estateId: string) => {
+    const response = await api.get(`/growth-logs/estate/${encodeURIComponent(estateId)}`);
+    return response.data || [];
+  },
+  listByParcel: async (parcelId: string) => {
+    const response = await api.get(`/growth-logs/parcel/${encodeURIComponent(parcelId)}`);
+    return response.data || [];
+  },
 };
 
 // Smart Lock API

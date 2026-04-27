@@ -221,6 +221,9 @@ export default function GrowerFieldsPage() {
                   </div>
 
                   <div className="space-y-3 mb-4">
+                    {(estate.parcels || []).length === 0 && (
+                      <p className="text-sm text-gray-500 font-light py-2">{t('growerPages.fieldsNoParcelsOnEstate')}</p>
+                    )}
                     {(estate.parcels || []).map((parcel) => (
                       <div
                         key={parcel.id}

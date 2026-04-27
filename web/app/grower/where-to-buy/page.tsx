@@ -8,10 +8,12 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
 import Link from 'next/link';
-import { List, MapPinned, Navigation, Store, Globe, ShoppingBag } from 'lucide-react';
+import { List, MapPinned, MessageCircle, Store, Globe, ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+
+const PAGE_SIZE = 8;
 
 type MapItem = {
   id: string;
@@ -23,7 +25,6 @@ type MapItem = {
   longitude: number;
   kind: 'retail' | 'supplier';
   description?: string;
-  /** B2B partner user id — link to /grower/where-to-buy/store/[id] */
   supplierUserId?: string;
 };
 
@@ -61,26 +62,10 @@ function formatAddressLine(loc: MapItem) {
   return parts.join(' · ');
 }
 
-function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
-  const R = 6371;
-  const dLat = ((bLat - aLat) * Math.PI) / 180;
-  const dLng = ((bLng - aLng) * Math.PI) / 180;
-  const x =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((aLat * Math.PI) / 180) *
-      Math.cos((bLat * Math.PI) / 180) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-  return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
-}
-
 function normalizeCountry(c: string | undefined) {
   return (c || '').trim() || '—';
 }
 
-/**
- * No map: country tabs, optional city, “nearest to me” from coordinates on file + browser location.
- */
 export default function GrowerWhereToBuyPage() {
   const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
@@ -89,13 +74,8 @@ export default function GrowerWhereToBuyPage() {
   const [err, setErr] = useState<string | null>(null);
   const [productionCountry, setProductionCountry] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string>('ALL');
-  const [selectedCity, setSelectedCity] = useState<string>('ALL');
-  const [nearMe, setNearMe] = useState(false);
-  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
-  const [locating, setLocating] = useState(false);
-  const [geoHint, setGeoHint] = useState<string | null>(null);
-  /** On small screens: one primary pane at a time; desktop shows both columns. */
   const [mobilePanel, setMobilePanel] = useState<'directory' | 'orders'>('directory');
+  const [page, setPage] = useState(1);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -114,7 +94,7 @@ export default function GrowerWhereToBuyPage() {
         setProductionCountry(null);
       }
       if (!rRetail.ok || !rSup.ok) {
-        setErr('Could not load directory. Check that the API is running and NEXT_PUBLIC_API_URL is set on the site.');
+        setErr(t('growerPages.directoryLoadError'));
         setItems([]);
         return;
       }
@@ -166,12 +146,12 @@ export default function GrowerWhereToBuyPage() {
         }));
       setItems([...retailM, ...supM]);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed to load');
+      setErr(e instanceof Error ? e.message : t('growerPages.loadFailed'));
       setItems([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -188,72 +168,26 @@ export default function GrowerWhereToBuyPage() {
     return items.filter((i) => normalizeCountry(i.country) === selectedCountry);
   }, [items, selectedCountry]);
 
-  const cityOptions = useMemo(() => {
-    const set = new Set<string>();
-    filteredByCountry.forEach((i) => {
-      const c = (i.city || '').trim();
-      if (c) set.add(c);
-    });
-    return ['ALL', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
-  }, [filteredByCountry]);
+  const sortedForList = useMemo(
+    () => sortItemsByProfileCountry(filteredByCountry, productionCountry),
+    [filteredByCountry, productionCountry],
+  );
 
-  const filtered = useMemo(() => {
-    if (selectedCity === 'ALL') return filteredByCountry;
-    return filteredByCountry.filter((i) => (i.city || '').trim() === selectedCity);
-  }, [filteredByCountry, selectedCity]);
+  const totalPages = Math.max(1, Math.ceil(sortedForList.length / PAGE_SIZE));
+  const pageClamped = Math.min(page, totalPages);
+  const pageItems = useMemo(() => {
+    const p = Math.min(page, totalPages);
+    const start = (p - 1) * PAGE_SIZE;
+    return sortedForList.slice(start, start + PAGE_SIZE);
+  }, [sortedForList, page, totalPages]);
 
-  const sortedForList = useMemo(() => {
-    const base = sortItemsByProfileCountry(filtered, productionCountry);
-    if (nearMe && userPos) {
-      return [...base].sort(
-        (a, b) =>
-          haversineKm(userPos.lat, userPos.lng, a.latitude, a.longitude) -
-          haversineKm(userPos.lat, userPos.lng, b.latitude, b.longitude),
-      );
-    }
-    return base;
-  }, [filtered, productionCountry, nearMe, userPos]);
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCountry]);
 
-  const requestNearMe = () => {
-    if (typeof window === 'undefined' || !navigator.geolocation) {
-      setGeoHint('Location is not available in this browser. Enter your city with the country filter, or type coordinates in another tool and pick the nearest result.');
-      return;
-    }
-    setGeoHint(null);
-    setLocating(true);
-    const ok = (pos: GeolocationPosition) => {
-      setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      setNearMe(true);
-      setLocating(false);
-      setGeoHint(null);
-    };
-    const fail = (msg: string) => {
-      setLocating(false);
-      setGeoHint(msg);
-    };
-    const opts: PositionOptions = { enableHighAccuracy: true, timeout: 40_000, maximumAge: 2 * 60_000 };
-    navigator.geolocation.getCurrentPosition(ok, (err) => {
-      if (err && typeof err === 'object' && 'code' in err && (err as GeolocationPositionError).code === 1) {
-        fail('Location permission was denied. Allow location for this site in the browser, or use country / city filters instead of “Nearest to me”.');
-        return;
-      }
-      // Retry once with looser settings (faster on weak GPS / Wi‑Fi)
-      navigator.geolocation.getCurrentPosition(
-        ok,
-        () =>
-          fail(
-            'Could not get GPS in time. Try again outdoors or with Wi‑Fi on, or sort by country / city; you can still use the list without “Nearest to me”.',
-          ),
-        { enableHighAccuracy: false, timeout: 25_000, maximumAge: 10 * 60_000 },
-      );
-    }, opts);
-  };
-
-  const clearNearMe = () => {
-    setNearMe(false);
-    setUserPos(null);
-    setGeoHint(null);
-  };
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
@@ -277,259 +211,244 @@ export default function GrowerWhereToBuyPage() {
             }
           />
 
-            {err && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
-            )}
+          {err && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
+          )}
 
-            {/* Mobile / tablet: switch between the two main jobs without endless scrolling */}
-            <div
-              className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-sm lg:hidden"
-              role="tablist"
-              aria-label="Section"
+          <div
+            className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-sm lg:hidden"
+            role="tablist"
+            aria-label={t('grower.nav.suppliersAndOrders')}
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobilePanel === 'directory'}
+              onClick={() => setMobilePanel('directory')}
+              className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                mobilePanel === 'directory' ? 'bg-[#2D5A27] text-white shadow' : 'text-gray-700 hover:bg-gray-50'
+              }`}
             >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mobilePanel === 'directory'}
-                onClick={() => setMobilePanel('directory')}
-                className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  mobilePanel === 'directory'
-                    ? 'bg-[#2D5A27] text-white shadow'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {t('growerPages.directoryTab')}
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mobilePanel === 'orders'}
-                onClick={() => {
-                  setMobilePanel('orders');
-                  if (typeof document !== 'undefined') {
-                    const el = document.getElementById('my-orders');
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  mobilePanel === 'orders'
-                    ? 'bg-[#2D5A27] text-white shadow'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {t('growerPages.b2bOrdersTitle')}
-              </button>
-            </div>
+              {t('growerPages.directoryTab')}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobilePanel === 'orders'}
+              onClick={() => {
+                setMobilePanel('orders');
+                if (typeof document !== 'undefined') {
+                  const el = document.getElementById('my-orders');
+                  el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                mobilePanel === 'orders' ? 'bg-[#2D5A27] text-white shadow' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {t('growerPages.b2bOrdersTitle')}
+            </button>
+          </div>
 
-            <p className="text-xs text-gray-500 -mt-1 lg:hidden">{t('growerPages.mobileTabHint')}</p>
+          <p className="text-xs text-gray-500 -mt-1 lg:hidden">{t('growerPages.mobileTabHint')}</p>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8 items-start">
             <div
               className={`${
                 mobilePanel === 'directory' ? 'block' : 'hidden'
-              } lg:block flex min-h-0 min-w-0 flex-col rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-6`}
+              } lg:col-span-7 lg:block min-h-0 min-w-0 flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6`}
             >
               {loading ? (
                 <p className="text-sm text-gray-500">{t('growerPages.loadingDirectory')}</p>
               ) : items.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-sm text-gray-600 text-center">
                   <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                  <p className="font-medium text-gray-800">No locations in the public directory yet</p>
-                  <p className="mt-3 font-light max-w-md mx-auto">
-                    Ask a Bio Vera admin to approve partner entries or add retail hub data. When entries exist, use the
-                    country and city filters here.
-                  </p>
+                  <p className="font-medium text-gray-800">{t('growerPages.emptyDirectoryTitle')}</p>
+                  <p className="mt-3 font-light max-w-md mx-auto">{t('growerPages.emptyDirectoryBody')}</p>
                   <button
                     type="button"
                     onClick={() => void load()}
                     className="mt-4 text-sm text-[#2D5A27] font-medium hover:underline"
                   >
-                    Retry
+                    {t('growerPages.retry')}
                   </button>
                 </div>
               ) : (
                 <>
-                  <div className="mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Supplier directory</h2>
-                    <p className="text-sm text-gray-600 mt-0.5">
-                      Filter by country, optionally city; open a <strong>Partner store</strong> to order or message.
+                  <div className="mb-5">
+                    <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.directoryTitle')}</h2>
+                    <p className="text-sm text-gray-600 mt-1 font-light leading-relaxed">
+                      {t('growerPages.directoryLead')}
                     </p>
-                    <p className="text-xs text-amber-900/80 mt-2 rounded-md bg-amber-50 border border-amber-100/80 px-2.5 py-1.5">
-                      Listings use <strong>approved</strong> partner addresses and retail hub data — if someone is
-                      missing, it is not yet on the public map.
+                    <p className="text-xs text-amber-900/80 mt-3 rounded-lg bg-amber-50 border border-amber-100/80 px-3 py-2">
+                      {t('growerPages.directoryDisclaimer')}
                     </p>
                   </div>
-              <div className="mb-4 space-y-3">
-                <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5" />
-                  Country
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {countryOptions.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => {
-                        setSelectedCountry(c);
-                        setSelectedCity('ALL');
-                      }}
-                      className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                        selectedCountry === c
-                          ? 'bg-[#2D5A27] text-white'
-                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                      }`}
-                    >
-                      {c === 'ALL' ? 'All countries' : c}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  <div className="mb-5">
+                    <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5 mb-2">
+                      <Globe className="h-3.5 w-3.5" />
+                      {t('growerPages.filterByCountry')}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {countryOptions.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCountry(c);
+                            setPage(1);
+                          }}
+                          className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                            selectedCountry === c
+                              ? 'bg-[#2D5A27] text-white'
+                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                          }`}
+                        >
+                          {c === 'ALL' ? t('growerPages.allCountries') : c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              {selectedCountry !== 'ALL' && cityOptions.length > 1 && (
-                <div className="mb-4 space-y-2">
-                  <p className="text-xs font-medium text-gray-700">City (optional)</p>
-                  <div className="flex flex-wrap gap-2">
-                    {cityOptions.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setSelectedCity(c)}
-                        className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                          selectedCity === c
-                            ? 'bg-[#2D5A27]/15 text-[#23471f] ring-1 ring-[#2D5A27]/40'
-                            : 'bg-white border border-gray-200 text-gray-800 hover:border-gray-300'
-                        }`}
-                      >
-                        {c === 'ALL' ? 'All cities' : c}
-                      </button>
-                    ))}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-1">
+                      <List className="h-4 w-4 text-[#2D5A27]" />
+                      {t('growerPages.locationsTitle')}
+                    </h3>
+                    <p className="text-xs text-gray-500 font-light mb-4">{t('growerPages.locationsHint')}</p>
+                    {sortedForList.length === 0 && items.length > 0 ? (
+                      <p className="text-sm text-gray-500 font-light py-6 text-center rounded-xl border border-dashed border-gray-200 bg-gray-50/50">
+                        {t('growerPages.noLocationsForCountry')}
+                      </p>
+                    ) : (
+                    <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                      {pageItems.map((loc) => {
+                        const inRegion = productionCountry && countriesLikelyMatch(productionCountry, loc.country);
+                        return (
+                          <li
+                            key={loc.id}
+                            className={`px-4 py-3.5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${
+                              inRegion ? 'bg-[#2D5A27]/5' : ''
+                            }`}
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
+                                {loc.name}
+                                {inRegion && (
+                                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-1.5 py-0.5 rounded">
+                                    {t('growerPages.yourRegion')}
+                                  </span>
+                                )}
+                              </p>
+                              <p className="text-sm text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
+                                <MapPinned className="h-3.5 w-3.5 text-gray-400 shrink-0 mt-0.5" />
+                                <span>{formatAddressLine(loc)}</span>
+                              </p>
+                              {loc.description && loc.kind === 'supplier' && (
+                                <p className="text-xs text-gray-500 font-light mt-1 line-clamp-2">{loc.description}</p>
+                              )}
+                            </div>
+                            <div className="shrink-0 flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+                              <span
+                                className={`text-xs font-medium px-2.5 py-0.5 rounded-md w-fit ${
+                                  loc.kind === 'supplier'
+                                    ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
+                                    : 'bg-emerald-50 text-emerald-900 border border-emerald-200/80'
+                                }`}
+                              >
+                                {loc.kind === 'supplier' ? t('growerPages.partnerStore') : t('growerPages.retailPickup')}
+                              </span>
+                              {loc.kind === 'supplier' && loc.supplierUserId && (
+                                <Link
+                                  href={`/grower/where-to-buy/store/${encodeURIComponent(loc.supplierUserId)}`}
+                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#2D5A27] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#23471f] w-full sm:w-auto"
+                                >
+                                  <ShoppingBag className="h-3.5 w-3.5" />
+                                  {t('growerPages.catalogOrder')}
+                                </Link>
+                              )}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {!loading && items.length > 0 && totalPages > 1 && (
+                <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-600">
+                  <p className="text-xs text-gray-500">
+                    {t('growerPages.paginationSummary', {
+                      from: (pageClamped - 1) * PAGE_SIZE + 1,
+                      to: Math.min(pageClamped * PAGE_SIZE, sortedForList.length),
+                      total: sortedForList.length,
+                    })}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={pageClamped <= 1}
+                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-gray-50"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      {t('growerPages.pagePrev')}
+                    </button>
+                    <span className="text-xs text-gray-500 tabular-nums">
+                      {t('growerPages.pageOf', { page: pageClamped, totalPages })}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={pageClamped >= totalPages}
+                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-gray-50"
+                    >
+                      {t('growerPages.pageNext')}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               )}
 
-              <div className="mb-3 space-y-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  {!nearMe ? (
-                    <button
-                      type="button"
-                      onClick={() => void requestNearMe()}
-                      disabled={locating}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
-                    >
-                      <Navigation className="h-4 w-4" />
-                      {locating ? 'Getting location…' : 'Nearest to me'}
-                    </button>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-600">
-                        Sorted by distance{userPos ? ` — ${sortedForList.length} result(s)` : ''}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={clearNearMe}
-                        className="text-sm text-[#2D5A27] font-medium hover:underline"
-                      >
-                        Clear
-                      </button>
-                    </>
-                  )}
-                </div>
-                {geoHint && (
-                  <p className="text-xs text-amber-900/90 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-                    {geoHint}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-2">
-                  <List className="h-4 w-4 text-[#2D5A27]" />
-                  Locations
-                </h3>
-                <p className="text-xs text-gray-500 font-light mb-3">
-                  <strong>Partner store</strong> = catalog and direct order; retail = hub pickup.
-                </p>
-                <ul className="divide-y divide-gray-100 overflow-hidden rounded-lg border border-gray-200 bg-white">
-                  {sortedForList.map((loc) => {
-                    const inRegion = productionCountry && countriesLikelyMatch(productionCountry, loc.country);
-                    const distKm =
-                      nearMe && userPos
-                        ? haversineKm(userPos.lat, userPos.lng, loc.latitude, loc.longitude)
-                        : null;
-                    return (
-                      <li
-                        key={loc.id}
-                        className={`px-4 py-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${
-                          inRegion && !nearMe ? 'bg-[#2D5A27]/5' : ''
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
-                            {loc.name}
-                            {inRegion && !nearMe && (
-                              <span className="text-[10px] font-medium uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-1.5 py-0.5 rounded">
-                                Your region
-                              </span>
-                            )}
-                            {distKm != null && (
-                              <span className="text-[10px] font-medium text-gray-500">
-                                {distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(1)} km`}
-                              </span>
-                            )}
-                          </p>
-                          <p className="text-sm text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
-                            <MapPinned className="h-3.5 w-3.5 text-gray-400 shrink-0 mt-0.5" />
-                            <span>{formatAddressLine(loc)}</span>
-                          </p>
-                          {loc.description && loc.kind === 'supplier' && (
-                            <p className="text-xs text-gray-500 font-light mt-1 line-clamp-2">{loc.description}</p>
-                          )}
-                        </div>
-                        <div className="shrink-0 flex flex-col sm:items-end gap-2 w-full sm:w-auto">
-                          <span
-                            className={`text-xs font-medium px-2 py-0.5 rounded-md w-fit ${
-                              loc.kind === 'supplier'
-                                ? 'bg-orange-50 text-orange-900 border border-orange-200/80'
-                                : 'bg-green-50 text-green-900 border border-green-200/80'
-                            }`}
-                          >
-                            {loc.kind === 'supplier' ? 'Partner store' : 'Retail / pickup'}
-                          </span>
-                          {loc.kind === 'supplier' && loc.supplierUserId && (
-                            <Link
-                              href={`/grower/where-to-buy/store/${encodeURIComponent(loc.supplierUserId)}`}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#2D5A27] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#23471f] w-full sm:w-auto"
-                            >
-                              <ShoppingBag className="h-3.5 w-3.5" />
-                              Catalog &amp; order
-                            </Link>
-                          )}
-                        </div>
-                      </li>
-                    );
+              {!loading && items.length > 0 && (
+                <p className="mt-3 text-xs text-gray-400">
+                  {t('growerPages.countLine', {
+                    retail: items.filter((i) => i.kind === 'retail').length,
+                    partners: items.filter((i) => i.kind === 'supplier').length,
                   })}
-                </ul>
-              </div>
-
-              <p className="mt-3 text-xs text-gray-400">
-                {items.filter((i) => i.kind === 'retail').length} retail ·{' '}
-                {items.filter((i) => i.kind === 'supplier').length} partner
-                {selectedCountry !== 'ALL' && ` · ${sortedForList.length} shown`}
-              </p>
-            </>
+                  {selectedCountry !== 'ALL' &&
+                    t('growerPages.countFiltered', { n: sortedForList.length })}
+                </p>
               )}
             </div>
 
             <div
               className={`${
                 mobilePanel === 'orders' ? 'block' : 'hidden'
-              } lg:block min-w-0`}
+              } lg:col-span-5 lg:block min-w-0 space-y-4`}
             >
-              <PartnerB2BPanel />
+              <Link
+                href="/grower/where-to-buy/messages"
+                className="flex items-center justify-between gap-3 rounded-xl border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-left hover:border-[#2D5A27]/40 transition-colors"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-[#2D5A27]" />
+                    {t('growerPages.messagesCtaTitle')}
+                  </p>
+                  <p className="text-xs text-gray-600 font-light mt-0.5">{t('growerPages.messagesCtaBody')}</p>
+                </div>
+                <span className="text-sm font-medium text-[#2D5A27] shrink-0">{t('growerPages.openInbox')}</span>
+              </Link>
+              <div id="my-orders">
+                <PartnerB2BPanel />
+              </div>
             </div>
           </div>
 
-            <GrowerSupplyFlowCard context="suppliers" variant="compact" />
+          <GrowerSupplyFlowCard context="suppliers" variant="compact" />
         </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>

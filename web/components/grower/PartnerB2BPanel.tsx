@@ -18,25 +18,26 @@ function formatB2bOrderLines(items: unknown): string[] {
   });
 }
 
-function supplierDisplayName(o: {
-  supplier: { firstName: string | null; lastName: string | null; partnerCode: string | null } | null;
-}) {
-  if (!o.supplier) return 'Partner';
+function supplierDisplayName(
+  o: {
+    supplier: { firstName: string | null; lastName: string | null; partnerCode: string | null } | null;
+  },
+  t: (k: string) => string,
+) {
+  if (!o.supplier) return t('growerPages.partner');
   const n = [o.supplier.firstName, o.supplier.lastName].filter(Boolean).join(' ').trim();
   if (n) return n;
-  return o.supplier.partnerCode || 'Partner';
+  return o.supplier.partnerCode || t('growerPages.partner');
+}
+
+function b2bStatusLabel(status: string, t: (k: string) => string) {
+  const key = `growerPages.b2bStatus_${status}` as const;
+  const translated = t(key);
+  if (translated !== key) return translated;
+  return status.replace(/_/g, ' ');
 }
 
 type OrderRow = Awaited<ReturnType<typeof growerSupplierB2bAPI.getMyDirectOrders>>[number];
-type ThreadRow = Awaited<ReturnType<typeof growerSupplierB2bAPI.getMyThreads>>[number];
-
-function threadTitle(t: ThreadRow) {
-  const b = t.supplier?.material_supplier_profile?.businessName;
-  if (b) return b;
-  const n = [t.supplier?.firstName, t.supplier?.lastName].filter(Boolean).join(' ').trim();
-  return n || t.supplier?.partnerCode || 'Partner';
-}
-
 type PartnerB2BPanelProps = {
   className?: string;
 };
@@ -47,7 +48,6 @@ type PartnerB2BPanelProps = {
 export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps) {
   const { t } = useTranslation();
   const [orders, setOrders] = useState<OrderRow[]>([]);
-  const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [receiving, setReceiving] = useState<string | null>(null);
@@ -56,21 +56,19 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
     setErr(null);
     setLoading(true);
     try {
-      const [o, th] = await Promise.all([
-        growerSupplierB2bAPI.getMyDirectOrders(),
-        growerSupplierB2bAPI.getMyThreads(),
-      ]);
+      const o = await growerSupplierB2bAPI.getMyDirectOrders();
       setOrders(o);
-      setThreads(th);
     } catch (e) {
       setErr(
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          (e instanceof Error ? e.message : 'Failed to load'),
+        String(
+          (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            (e instanceof Error ? e.message : t('growerPages.loadFailed')),
+        ),
       );
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const markReceivedAtFarm = async (orderId: string) => {
     setReceiving(orderId);
@@ -82,7 +80,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
       const msg =
         (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
       const text = Array.isArray(msg) ? msg.join(' ') : msg;
-      setErr(text || (e instanceof Error ? e.message : 'Could not mark receipt'));
+      setErr(text || (e instanceof Error ? e.message : t('growerPages.loadFailed')));
     } finally {
       setReceiving(null);
     }
@@ -131,16 +129,16 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
           <section>
             <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-3">
               <Package className="h-4 w-4 text-[#2D5A27]" />
-              Direct orders
+              {t('growerPages.b2bDirectOrders')}
             </h3>
             {orders.length === 0 ? (
-              <p className="text-sm text-gray-500 font-light">No orders yet — use a partner store from the directory.</p>
+              <p className="text-sm text-gray-500 font-light">{t('growerPages.b2bNoOrdersYet')}</p>
             ) : (
-              <ul className="space-y-3 max-h-[min(40vh,28rem)] overflow-y-auto pr-1">
+              <ul className="space-y-3 max-h-[min(50vh,32rem)] overflow-y-auto pr-1 [scrollbar-gutter:stable]">
                 {orders.map((o) => (
                   <li key={o.id} className="rounded-lg border border-gray-200 bg-gray-50/80 p-3 text-sm">
                     <div className="flex flex-wrap justify-between gap-2 mb-2">
-                      <span className="font-medium text-gray-900">{supplierDisplayName(o)}</span>
+                      <span className="font-medium text-gray-900">{supplierDisplayName(o, t)}</span>
                       <span
                         className={`text-xs font-medium rounded-full px-2 py-0.5 ${
                           o.status === 'FULFILLED' || o.status === 'CONFIRMED'
@@ -150,7 +148,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                               : 'bg-amber-50 text-amber-900'
                         }`}
                       >
-                        {o.status.replace(/_/g, ' ')}
+                        {b2bStatusLabel(o.status, t)}
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 mb-2">
@@ -212,41 +210,14 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                 ))}
               </ul>
             )}
-          </section>
-
-          <section>
-            <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-3">
-              <Inbox className="h-4 w-4 text-[#2D5A27]" />
-              {t('growerPages.b2bConversations')}
-            </h3>
-            {threads.length === 0 ? (
-              <p className="text-sm text-gray-500 font-light">{t('growerPages.b2bNoThreads')}</p>
-            ) : (
-              <ul className="space-y-2 max-h-[min(32vh,22rem)] overflow-y-auto pr-1">
-                {threads.map((thread) => (
-                  <li key={thread.id}>
-                    <Link
-                      href={`/grower/where-to-buy/thread/${thread.id}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm hover:border-[#2D5A27]/30 transition-colors"
-                    >
-                      <div className="min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{threadTitle(thread)}</p>
-                        {thread.supplier?.material_supplier_profile?.city && (
-                          <p className="text-xs text-gray-500 font-light truncate">
-                            {[thread.supplier.material_supplier_profile.city, thread.supplier.material_supplier_profile.country]
-                              .filter(Boolean)
-                              .join(' · ')}
-                          </p>
-                        )}
-                      </div>
-                      <span className="text-xs text-gray-400 whitespace-nowrap shrink-0">
-                        {new Date(thread.lastMessageAt).toLocaleDateString()}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="pt-1 border-t border-gray-100">
+              <p className="text-xs text-gray-500 font-light">
+                {t('growerPages.b2bConversations')}:{' '}
+                <Link href="/grower/where-to-buy/messages" className="text-[#2D5A27] font-medium hover:underline">
+                  {t('growerPages.openInbox')}
+                </Link>
+              </p>
+            </div>
           </section>
         </>
       )}
