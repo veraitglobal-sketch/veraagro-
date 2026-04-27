@@ -10,6 +10,35 @@
     "nameEn": "English",
     "nameSr": "Srpski"
   },
+  "footer": {
+    "language": "Language & region",
+    "languageHint": "Interface language"
+  },
+  "languagePage": {
+    "eyebrow": "Settings",
+    "title": "Language & region",
+    "intro": "Choose how Bio Vera speaks to you on this website. We save your choice in the browser (cookie) so the next visit stays consistent. The same options are in the top bar; here you can read what each language is for and switch in one place — same clean Vera look as our legal cards.",
+    "sectionTitle": "Available languages",
+    "sectionSubtitle": "Pick the language you understand best for public pages, help text, and buttons.",
+    "activeBadge": "Active",
+    "useThisLanguage": "Use this language",
+    "alreadyUsing": "Currently active",
+    "futureNote": "More languages will appear here as we grow into new regions. If you need a specific locale for a contract or partner onboarding, contact us — we are expanding coverage step by step.",
+    "cardLinkTitle": "Language & region",
+    "cardLinkBody": "Choose English or Serbian for the site. Your choice is remembered for the next visit.",
+    "backToLegal": "Legal information",
+    "backHome": "Home",
+    "locales": {
+      "en": {
+        "title": "English",
+        "body": "Full interface in English: marketing pages, help, and account screens where English is the primary copy. Best if your team, buyers, or auditors work in English."
+      },
+      "sr": {
+        "title": "Srpski",
+        "body": "Ceo javni deo i formulari na srpskom, u skladu sa proširenjem na tržište i proizvođače u regionu. Izbor se pamti i na sledećem posetu ostaje isti."
+      }
+    }
+  },
   "metadata": {
     "siteName": "Bio Vera",
     "siteDescription": "A vertically integrated agricultural network. From field to buyer: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.",

@@ -7,13 +7,6 @@ import Footer from "@/components/Footer";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import { useSiteLocale } from "@/hooks/useSiteLocale";
 import { siteLocales } from "@/lib/i18n-routing";
-import type { SiteLocale } from "@/i18n/config";
-
-const LOCALE_DETAIL_KEYS: Record<SiteLocale, { title: string; body: string }> = {
-  en: { title: "languagePage.locales.en.title", body: "languagePage.locales.en.body" },
-  sr: { title: "languagePage.locales.sr.title", body: "languagePage.locales.sr.body" },
-};
-
 export default function LanguageSettingsPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
@@ -38,7 +31,6 @@ export default function LanguageSettingsPage() {
 
             <div className="grid sm:grid-cols-2 gap-6">
               {siteLocales.map((code) => {
-                const keys = LOCALE_DETAIL_KEYS[code];
                 const isActive = current === code;
                 return (
                   <div
@@ -55,8 +47,12 @@ export default function LanguageSettingsPage() {
                         {t("languagePage.activeBadge")}
                       </span>
                     )}
-                    <h3 className="text-lg font-medium text-gray-900 pr-24 mb-2">{t(keys.title)}</h3>
-                    <p className="text-sm text-gray-600 font-light leading-relaxed flex-1 mb-6">{t(keys.body)}</p>
+                    <h3 className="text-lg font-medium text-gray-900 pr-24 mb-2">
+                      {t(`languagePage.locales.${code}.title` as const)}
+                    </h3>
+                    <p className="text-sm text-gray-600 font-light leading-relaxed flex-1 mb-6">
+                      {t(`languagePage.locales.${code}.body` as const)}
+                    </p>
                     <button
                       type="button"
                       disabled={isActive}

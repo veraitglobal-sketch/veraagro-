@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { LegalLanguageCard } from '@/components/LegalLanguageCard';
 
 export default function LegalPage() {
   return (
@@ -71,6 +72,8 @@ export default function LegalPage() {
                     Understand how we use cookies and similar technologies on our websites and apps.
                   </p>
                 </Link>
+
+                <LegalLanguageCard />
               </div>
             </div>
           </div>

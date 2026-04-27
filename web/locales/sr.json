@@ -10,6 +10,35 @@
     "nameEn": "English",
     "nameSr": "Srpski"
   },
+  "footer": {
+    "language": "Jezik i region",
+    "languageHint": "Jezik interfejsa"
+  },
+  "languagePage": {
+    "eyebrow": "Podešavanja",
+    "title": "Jezik i region",
+    "intro": "Izaberite na kom jeziku želite da vam Bio Vera prikaže ovaj sajt. Izbor čuvamo u pregledaču (kolačić) da sledeći put ne biste morali ponovo. Ista podešavanja su i gore u traci; ovde je sve na jednom mestu — isti čist Vera izgled kao kod pravnih kartica.",
+    "sectionTitle": "Jezici koje trenutno nudimo",
+    "sectionSubtitle": "Izaberite jezik koji vam najviše odgovara za tekstove, pomoć i dugmad na javnim stranicama.",
+    "activeBadge": "Aktivno",
+    "useThisLanguage": "Koristi ovaj jezik",
+    "alreadyUsing": "Trenutno je izabrano",
+    "futureNote": "Ovde će se pojavljivati i drugi jezici kako širimo tržišta. Ako vam treba poseban jezik za ugovor ili partnera, javite nam se — proširenje radimo postepeno.",
+    "cardLinkTitle": "Jezik i region",
+    "cardLinkBody": "Izaberite engleski ili srpski za sajt. Izbor se pamti za sledeći dolazak.",
+    "backToLegal": "Pravne informacije",
+    "backHome": "Početna",
+    "locales": {
+      "en": {
+        "title": "English",
+        "body": "Ceo interfejs na engleskom: marketinške stranice, pomoć i nalozi gde je engleski primarni. Pogodno ako tim, kupci ili revizori rade na engleskom."
+      },
+      "sr": {
+        "title": "Srpski",
+        "body": "Javni deo sajta i formulari na srpskom, u skladu sa proizvođačima i tržištem u regionu. Izbor se pamti i pri sledećem posetu ostaje isti."
+      }
+    }
+  },
   "metadata": {
     "siteName": "Bio Vera",
     "siteDescription": "Vertikalno povezana poljoprivredna mreža. Od polja do kupca: partije sa tragom, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",

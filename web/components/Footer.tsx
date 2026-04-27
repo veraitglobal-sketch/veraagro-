@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 /**
  * Shared footer – same as main page. Use on all public pages for consistency.
  */
 export default function Footer() {
+  const { t } = useTranslation();
   const loc = useLocalizedHref();
 
   return (
@@ -71,6 +74,14 @@ export default function Footer() {
             <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
             <ul className="space-y-1 text-sm text-gray-600">
               <li><Link href={loc('/legal')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+              <li>
+                <Link
+                  href={loc('/language')}
+                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
+                >
+                  {t('footer.language')}
+                </Link>
+              </li>
               <li><Link href={loc('/privacy')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
               <li><Link href={loc('/cookies')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Cookie Policy</Link></li>
               <li>
@@ -85,8 +96,15 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-200 pt-6 md:pt-8 text-center text-xs sm:text-sm text-gray-500">
+        <div className="border-t border-gray-200 pt-6 md:pt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
           <p>&copy; 2026 Bio Vera. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <span className="text-gray-400 hidden sm:inline" aria-hidden>
+              |
+            </span>
+            <span className="text-gray-500">{t('footer.languageHint')}</span>
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </footer>
