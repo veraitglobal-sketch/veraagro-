@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { harvestAnnouncementsAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { CalendarRange, Loader2, CheckCircle, XCircle, Clock, User, MapPin } from 'lucide-react';
 
@@ -28,7 +28,7 @@ type Row = {
 };
 
 function HarvestPlansInner() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const searchParams = useSearchParams();
   const highlightId = searchParams.get('id');
   const [rows, setRows] = useState<Row[]>([]);
@@ -93,7 +93,7 @@ function HarvestPlansInner() {
         <div className="p-6 max-w-4xl">
           <h1 className="text-2xl font-light text-gray-900 mb-1">Harvest &amp; planting plans</h1>
           <p className="text-sm text-gray-600 mb-6">
-            Growers report planned harvests (berba) — this is the first step. Use <strong>Confirm</strong> when operations has
+            Growers report planned harvests—this is the first step. Use <strong>Confirm</strong> when operations has
             told them what to prepare and you are aligned. <strong>Internal notes</strong> are for your team (what to
             expect, how much, dock). When the lot is packed, they use <em>Request transport</em> in the app: that creates a
             mission. You then assign a driver in <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">Missions &amp; transport</a> or leave

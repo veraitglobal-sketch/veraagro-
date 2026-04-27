@@ -4,7 +4,7 @@ import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { MapPin, Package, FileText, ExternalLink, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -17,8 +17,8 @@ const DEFAULT_POLYGON = [
 
 type Step = 'field' | 'entry' | 'result';
 
-export default function NjivaBlockchainPage() {
-  const adminNavItems = getAdminNavItems();
+export default function FieldBlockchainPage() {
+  const adminNavItems = useAdminNavItems();
   const [step, setStep] = useState<Step>('field');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

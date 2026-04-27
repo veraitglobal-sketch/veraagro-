@@ -15,12 +15,11 @@ import {
   Inbox,
   Layers,
 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { SidebarNavGroup } from '@/components/SidebarLayout';
-import locale from '@/locales/en.json';
-
-/** Admin navigation — English copy from `locales/en.json` (`adminNav`) for future i18n. */
-const labels = locale.adminNav;
+import i18n from '@/i18n/config';
 
 // Dashboard icon component
 const DashboardIcon = () => (
@@ -50,114 +49,40 @@ const CommandControlIcon = () => (
   </svg>
 );
 
-export function getAdminNavItems() {
+export function buildAdminNavItems(t: TFunction) {
   return [
-    { 
-      href: '/admin', 
-      label: labels.dashboard, 
-      icon: <DashboardIcon /> 
-    },
-    { 
-      href: '/admin/users', 
-      label: labels.users, 
-      icon: <Users className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/partner-applications', 
-      label: labels.partnerApplications, 
-      icon: <Inbox className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/supplier-stores', 
-      label: labels.supplierStores, 
-      icon: <Store className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/supplier-growers', 
-      label: labels.supplierFarmers, 
-      icon: <MessageCircle className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/products', 
-      label: labels.products, 
-      icon: <Package className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/orders', 
-      label: labels.orders, 
-      icon: <ShoppingCart className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/operations', 
-      label: labels.supplySnapshot, 
-      icon: <Layers className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/missions', 
-      label: labels.missions, 
-      icon: <Activity className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/security', 
-      label: labels.security, 
-      icon: <AlertTriangle className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/market-prices', 
-      label: labels.marketPrices, 
-      icon: <MarketPricesIcon /> 
-    },
-    { 
-      href: '/admin/standards', 
-      label: labels.standards, 
-      icon: <StandardsIcon /> 
-    },
-    { 
-      href: '/admin/haccp', 
-      label: labels.haccp, 
-      icon: <ClipboardCheck className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/vera-insights', 
-      label: labels.veraInsights, 
-      icon: <TrendingUp className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/command-control', 
-      label: labels.commandControl, 
-      icon: <CommandControlIcon /> 
-    },
-    { 
-      href: '/admin/estates', 
-      label: labels.estates, 
-      icon: <MapPin className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/ai-conversations', 
-      label: labels.aiConversations, 
-      icon: <MessageCircle className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/test-batch', 
-      label: labels.testBatch, 
-      icon: <Package className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/njiva-blockchain', 
-      label: labels.fieldBlockchain, 
-      icon: <MapPin className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/parcels-pending', 
-      label: labels.parcelsPending, 
-      icon: <MapPin className="w-5 h-5" /> 
-    },
-    { 
-      href: '/admin/harvest-plans', 
-      label: labels.harvestPlans, 
-      icon: <CalendarRange className="w-5 h-5" /> 
-    },
+    { href: '/admin', label: t('adminNav.dashboard'), icon: <DashboardIcon /> },
+    { href: '/admin/users', label: t('adminNav.users'), icon: <Users className="w-5 h-5" /> },
+    { href: '/admin/partner-applications', label: t('adminNav.partnerApplications'), icon: <Inbox className="w-5 h-5" /> },
+    { href: '/admin/supplier-stores', label: t('adminNav.supplierStores'), icon: <Store className="w-5 h-5" /> },
+    { href: '/admin/supplier-growers', label: t('adminNav.supplierFarmers'), icon: <MessageCircle className="w-5 h-5" /> },
+    { href: '/admin/products', label: t('adminNav.products'), icon: <Package className="w-5 h-5" /> },
+    { href: '/admin/orders', label: t('adminNav.orders'), icon: <ShoppingCart className="w-5 h-5" /> },
+    { href: '/admin/operations', label: t('adminNav.supplySnapshot'), icon: <Layers className="w-5 h-5" /> },
+    { href: '/admin/missions', label: t('adminNav.missions'), icon: <Activity className="w-5 h-5" /> },
+    { href: '/admin/security', label: t('adminNav.security'), icon: <AlertTriangle className="w-5 h-5" /> },
+    { href: '/admin/market-prices', label: t('adminNav.marketPrices'), icon: <MarketPricesIcon /> },
+    { href: '/admin/standards', label: t('adminNav.standards'), icon: <StandardsIcon /> },
+    { href: '/admin/haccp', label: t('adminNav.haccp'), icon: <ClipboardCheck className="w-5 h-5" /> },
+    { href: '/admin/vera-insights', label: t('adminNav.veraInsights'), icon: <TrendingUp className="w-5 h-5" /> },
+    { href: '/admin/command-control', label: t('adminNav.commandControl'), icon: <CommandControlIcon /> },
+    { href: '/admin/estates', label: t('adminNav.estates'), icon: <MapPin className="w-5 h-5" /> },
+    { href: '/admin/ai-conversations', label: t('adminNav.aiConversations'), icon: <MessageCircle className="w-5 h-5" /> },
+    { href: '/admin/test-batch', label: t('adminNav.testBatch'), icon: <Package className="w-5 h-5" /> },
+    { href: '/admin/field-blockchain', label: t('adminNav.fieldBlockchain'), icon: <MapPin className="w-5 h-5" /> },
+    { href: '/admin/parcels-pending', label: t('adminNav.parcelsPending'), icon: <MapPin className="w-5 h-5" /> },
+    { href: '/admin/harvest-plans', label: t('adminNav.harvestPlans'), icon: <CalendarRange className="w-5 h-5" /> },
   ];
+}
+
+export function useAdminNavItems() {
+  const { t, i18n } = useTranslation();
+  return useMemo(() => buildAdminNavItems(t), [t, i18n.language]);
+}
+
+/** Non-hook fallback (e.g. rare server paths); uses current i18n language. */
+export function getAdminNavItems() {
+  return buildAdminNavItems(i18n.t.bind(i18n));
 }
 
 /** Dashboard `/admin/statistics` shape (subset) for Grower ops badges */
@@ -170,42 +95,50 @@ export type AdminDashStats = {
 /**
  * Shortcuts + counts for grower-related admin work (shown below main admin nav).
  */
-export function getAdminGrowerOpsGroup(stats: AdminDashStats | null): SidebarNavGroup {
-  const t = labels;
+export function buildAdminGrowerOpsGroup(t: TFunction, stats: AdminDashStats | null): SidebarNavGroup {
   const pa = stats?.parcels?.pendingApproval;
   const es = stats?.estates?.pendingSetup;
   const batchTotal = stats?.batches?.total;
   return {
-    title: t.growerOps,
+    title: t('adminNav.growerOps'),
     items: [
       {
         href: '/admin/parcels-pending',
-        label: t.goParcelsPending,
+        label: t('adminNav.goParcelsPending'),
         icon: <MapPin className="w-5 h-5 flex-shrink-0" />,
         badge: pa != null && pa > 0 ? pa : undefined,
       },
       {
         href: '/admin/estates',
-        label: t.goEstates,
+        label: t('adminNav.goEstates'),
         icon: <MapPin className="w-5 h-5 flex-shrink-0 opacity-80" />,
         badge: es != null && es > 0 ? es : undefined,
       },
       {
         href: '/admin/harvest-plans',
-        label: t.goHarvestPlans,
+        label: t('adminNav.goHarvestPlans'),
         icon: <CalendarRange className="w-5 h-5 flex-shrink-0" />,
       },
       {
         href: '/admin/haccp',
-        label: t.goHaccp,
+        label: t('adminNav.goHaccp'),
         icon: <ClipboardCheck className="w-5 h-5 flex-shrink-0" />,
       },
       {
         href: '/admin',
-        label: t.goBatchesPlatform,
+        label: t('adminNav.goBatchesPlatform'),
         icon: <Package className="w-5 h-5 flex-shrink-0" />,
         badge: batchTotal != null && batchTotal > 0 ? batchTotal : undefined,
       },
     ],
   };
+}
+
+export function useAdminGrowerOpsGroup(stats: AdminDashStats | null) {
+  const { t, i18n } = useTranslation();
+  return useMemo(() => buildAdminGrowerOpsGroup(t, stats), [t, i18n.language, stats]);
+}
+
+export function getAdminGrowerOpsGroup(stats: AdminDashStats | null) {
+  return buildAdminGrowerOpsGroup(i18n.t.bind(i18n), stats);
 }

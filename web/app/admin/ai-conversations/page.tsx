@@ -5,7 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { motion } from 'framer-motion';
 import { MessageCircle, Search, Filter, Download, Mail, Phone, User, Calendar, CheckCircle2, XCircle } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import api from '@/lib/api';
 
 interface Conversation {
@@ -27,7 +27,7 @@ interface Conversation {
 }
 
 export default function AIConversationsPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [contactRequests, setContactRequests] = useState<Conversation[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'contacts'>('all');

@@ -86,7 +86,7 @@ export class HarvestAnnouncementsService {
       });
       if (activeHarvest) {
         throw new BadRequestException(
-          'Berba je već prijavljena za ovu parcelu — nije potrebno ponovo slanje. Sledeći korak: otvorite Request transport (ili Missions) da prijavite prevoz, ili proverite Mission Tracker. / Harvest is already registered for this parcel. Next: open Request transport (Missions) to book pickup, or check Mission tracker.',
+          'Harvest is already registered for this parcel. Do not submit again. Next: open Request transport (Missions) to book pickup, or check Mission Tracker.',
         );
       }
     }

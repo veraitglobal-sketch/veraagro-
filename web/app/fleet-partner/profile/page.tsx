@@ -15,7 +15,7 @@ const navItems = [
 export default function CompanyProfilePage() {
   const [companyInfo, setCompanyInfo] = useState({
     name: 'Hans Logistics',
-    contactPerson: 'Hans Müller',
+    contactPerson: 'John Miller',
     email: 'hans@hanslogistics.de',
     phone: '+49 40 12345678',
     address: 'Hamburg, Germany',
@@ -23,11 +23,11 @@ export default function CompanyProfilePage() {
   });
 
   const [fleet, setFleet] = useState([
-    { id: 1, vehicleNumber: 'VAN-001', type: 'Frigo Van', licensePlate: 'HH-AB 123', status: 'Active' },
-    { id: 2, vehicleNumber: 'VAN-002', type: 'Frigo Van', licensePlate: 'HH-CD 456', status: 'Active' },
-    { id: 3, vehicleNumber: 'VAN-003', type: 'Frigo Van', licensePlate: 'HH-EF 789', status: 'Active' },
-    { id: 4, vehicleNumber: 'VAN-004', type: 'Frigo Van', licensePlate: 'HH-GH 012', status: 'Active' },
-    { id: 5, vehicleNumber: 'VAN-005', type: 'Frigo Van', licensePlate: 'HH-IJ 345', status: 'Active' },
+    { id: 1, vehicleNumber: 'VAN-001', type: 'Refrigerated van', licensePlate: 'HH-AB 123', status: 'Active' },
+    { id: 2, vehicleNumber: 'VAN-002', type: 'Refrigerated van', licensePlate: 'HH-CD 456', status: 'Active' },
+    { id: 3, vehicleNumber: 'VAN-003', type: 'Refrigerated van', licensePlate: 'HH-EF 789', status: 'Active' },
+    { id: 4, vehicleNumber: 'VAN-004', type: 'Refrigerated van', licensePlate: 'HH-GH 012', status: 'Active' },
+    { id: 5, vehicleNumber: 'VAN-005', type: 'Refrigerated van', licensePlate: 'HH-IJ 345', status: 'Active' },
   ]);
 
   const [isEditing, setIsEditing] = useState(false);

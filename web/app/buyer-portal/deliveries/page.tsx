@@ -5,10 +5,10 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
 import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown } from 'lucide-react';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function DeliveriesPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

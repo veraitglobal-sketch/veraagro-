@@ -18,7 +18,7 @@ export default function FleetPartnerPage() {
   const [companyProfile] = useState({
     name: 'Hans Logistics',
     fleetSize: 5,
-    vehicleType: 'Frigo Vans',
+    vehicleType: 'Refrigerated vans',
     status: 'Active',
   });
 

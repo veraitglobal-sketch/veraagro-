@@ -26,6 +26,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/admin/njiva-blockchain",
+        destination: "/admin/field-blockchain",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

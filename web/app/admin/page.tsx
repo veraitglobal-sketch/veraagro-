@@ -19,7 +19,7 @@ import {
   Calendar,
   Layers,
 } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { formatDateEn } from '@/lib/en-locale-dates';
 
 interface Statistics {
@@ -55,7 +55,7 @@ interface Statistics {
 }
 
 export default function AdminDashboard() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [statistics, setStatistics] = useState<Statistics | null>(null);
   const [recentActivities, setRecentActivities] = useState<any>(null);
   const [loading, setLoading] = useState(true);

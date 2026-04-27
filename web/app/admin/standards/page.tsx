@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 
 interface BioVeraStandard {
@@ -23,7 +23,7 @@ interface BioVeraStandard {
 }
 
 export default function AdminStandardsPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [standard, setStandard] = useState<BioVeraStandard | null>(null);
   const [formData, setFormData] = useState({

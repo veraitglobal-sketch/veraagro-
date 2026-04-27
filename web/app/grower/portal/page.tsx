@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { usersAPI } from '@/lib/api';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
@@ -21,7 +21,6 @@ const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { 
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 const Polyline = dynamic(() => import('react-leaflet').then(mod => mod.Polyline), { ssr: false });
 
-const navItems = growerNavItems;
 
 interface MissionTracker {
   missionId: string;
@@ -106,6 +105,7 @@ interface FinancialStatus {
 }
 
 export default function GrowerPortalPage() {
+  const navItems = useGrowerNavItems();
   const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');

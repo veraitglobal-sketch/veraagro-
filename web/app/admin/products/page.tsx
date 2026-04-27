@@ -4,10 +4,10 @@ import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { Package, Plus } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 export default function ProductsManagementPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
       <SidebarLayout title="Product Catalog" navItems={adminNavItems}>

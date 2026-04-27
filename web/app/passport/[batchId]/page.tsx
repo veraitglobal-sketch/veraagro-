@@ -499,7 +499,7 @@ export default function ProductPassportPage() {
             </div>
             {(data.origin.parcelMapCenter || data.origin.estateMapCenter) && (
               <div className="text-[11px] font-mono text-gray-600 border-t border-gray-100 pt-3">
-                <span className="text-gray-500 font-sans block mb-1">Approx. map centre (verified polygon)</span>
+                <span className="text-gray-500 font-sans block mb-1">Approx. map center (verified polygon)</span>
                 {data.origin.parcelMapCenter && (
                   <span className="block">
                     Plot: {data.origin.parcelMapCenter.lat.toFixed(5)}, {data.origin.parcelMapCenter.lng.toFixed(5)}

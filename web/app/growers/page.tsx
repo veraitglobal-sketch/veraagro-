@@ -212,7 +212,7 @@ export default function GrowersPage() {
               },
               {
                 title: 'Logistics Priority',
-                description: 'Our Frigo-Fleet picks up your goods at the exact scheduled minute. Zero wait time. Your harvest gets priority treatment from field to market.',
+                description: 'Our refrigerated fleet picks up your goods at the exact scheduled minute. Zero wait time. Your harvest gets priority treatment from field to market.',
               },
               {
                 title: 'Automated Payments',

@@ -7,10 +7,11 @@ import Image from 'next/image';
 import { Camera, Save, Loader2, QrCode, Download, Copy, Check, ExternalLink, Smartphone, Package, Share2 } from 'lucide-react';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function FarmerProfilePage() {
+  const growerNavItems = useGrowerNavItems();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);

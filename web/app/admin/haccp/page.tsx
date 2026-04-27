@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { haccpAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { Shield, RefreshCw, CheckCircle, Clock, XCircle, Thermometer } from 'lucide-react';
 import Link from 'next/link';
 
@@ -28,7 +28,7 @@ interface HaccpRow {
 }
 
 export default function HaccpMonitoringPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [rows, setRows] = useState<HaccpRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

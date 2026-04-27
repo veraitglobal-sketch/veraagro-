@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { MapPin, Plus, Clock, CheckCircle, Loader2, QrCode } from 'lucide-react';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
@@ -33,6 +33,7 @@ interface Estate {
 }
 
 export default function GrowerFieldsPage() {
+  const growerNavItems = useGrowerNavItems();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

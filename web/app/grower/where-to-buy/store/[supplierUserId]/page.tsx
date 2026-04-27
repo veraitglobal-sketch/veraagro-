@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI } from '@/lib/api';
 import { ArrowLeft, Store, Package, Send, Loader2 } from 'lucide-react';
 
 type StoreData = Awaited<ReturnType<typeof growerSupplierB2bAPI.getPublicStore>>;
 
 export default function GrowerPartnerStorePage() {
+  const growerNavItems = useGrowerNavItems();
   const params = useParams();
   const router = useRouter();
   const supplierUserId = typeof params?.supplierUserId === 'string' ? params.supplierUserId : '';

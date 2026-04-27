@@ -7,7 +7,7 @@ import { marketPricesAPI, buyerTradePanelAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { DollarSign, Plus, Edit2, TrendingUp, TrendingDown, Minus, AlertTriangle, Zap } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 interface MarketPrice {
   id: string;
@@ -23,7 +23,7 @@ interface MarketPrice {
 }
 
 export default function MarketPricesPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [prices, setPrices] = useState<MarketPrice[]>([]);
   const [loading, setLoading] = useState(true);

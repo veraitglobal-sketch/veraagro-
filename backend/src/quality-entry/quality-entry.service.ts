@@ -78,7 +78,7 @@ export class QualityEntryService {
 
     if (existing) {
       throw new BadRequestException(
-        'Unos kvaliteta za ovaj lot već postoji. Ne šaljite ponovo. Nastavite sa prevozom (Request transport) ili proverite lot u My Batches. / A quality entry for this batch already exists. Continue with Request transport or check My Batches — no need to submit again.',
+        'A quality entry for this batch already exists. Do not submit again. Continue with Request transport or check My Batches.',
       );
     }
 

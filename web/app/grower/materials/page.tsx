@@ -2,14 +2,13 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 
-const navItems = growerNavItems;
 
 function messageFromApiPayload(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
@@ -43,6 +42,7 @@ interface LabelRollRow {
 }
 
 export default function GrowerMaterialsPage() {
+  const navItems = useGrowerNavItems();
   const [balance, setBalance] = useState<MaterialBalance | null>(null);
   const [materialTypes, setMaterialTypes] = useState<MaterialType[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState<string>('');
@@ -280,7 +280,7 @@ export default function GrowerMaterialsPage() {
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">Film (metres)</div>
+            <div className="mt-1 text-sm text-gray-600">Film (meters)</div>
           </div>
         </div>
 
@@ -312,7 +312,7 @@ export default function GrowerMaterialsPage() {
         <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">Purchase official materials</h2>
           <p className="mb-4 text-sm text-gray-500">
-            Pick <strong>crate</strong>, <strong>label roll</strong>, or <strong>film</strong> (metres) — the three balances above update when the order succeeds.
+            Pick <strong>crate</strong>, <strong>label roll</strong>, or <strong>film</strong> (meters) — the three balances above update when the order succeeds.
           </p>
           <div className="space-y-4">
             <div>

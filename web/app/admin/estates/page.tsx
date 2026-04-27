@@ -5,7 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI } from '@/lib/api';
 import { MapPin, Check, X, Clock, User } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { formatDateEn } from '@/lib/en-locale-dates';
 
 interface PendingEstate {
@@ -32,7 +32,7 @@ interface PendingEstate {
 }
 
 export default function EstatesApprovalPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [estates, setEstates] = useState<PendingEstate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

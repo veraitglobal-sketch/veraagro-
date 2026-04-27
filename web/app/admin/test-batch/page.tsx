@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, estatesAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { Package, ExternalLink, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminTestBatchPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [estates, setEstates] = useState<{ id: string; name?: string }[]>([]);
   const [loadingEstates, setLoadingEstates] = useState(true);
   const [submitting, setSubmitting] = useState(false);

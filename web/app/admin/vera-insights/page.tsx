@@ -5,7 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { TrendingUp, TrendingDown, Minus, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 interface VeraInsight {
   id: string;
@@ -28,7 +28,7 @@ interface VeraInsight {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export default function AdminVeraInsightsPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [insights, setInsights] = useState<VeraInsight[]>([]);
   const [loading, setLoading] = useState(true);

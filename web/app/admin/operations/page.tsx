@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { adminAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { Package, AlertCircle, RefreshCw } from 'lucide-react';
 
 type SupplyRow = {
@@ -27,7 +27,7 @@ type SupplyPayload = {
 };
 
 export default function AdminOperationsSupplyPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [data, setData] = useState<SupplyPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

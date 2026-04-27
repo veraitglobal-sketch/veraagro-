@@ -9,7 +9,7 @@ import {
   type PackageBadgeScanResult,
   type PackageBadgePublicResolve,
 } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { en } from '@/lib/messages';
 import { ExternalLink, Loader2, Package, Boxes } from 'lucide-react';
@@ -25,6 +25,7 @@ function errMessage(err: unknown, fallback: string): string {
 }
 
 export default function GrowerPackageBadgesScanPage() {
+  const growerNavItems = useGrowerNavItems();
   const [serial, setSerial] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -6,10 +6,10 @@ import AuthGuard from '@/components/AuthGuard';
 import { inventoryAPI, digitalPassportsAPI } from '@/lib/api';
 import { Package, MapPin, Search, Camera, FileText, Leaf, Mountain, QrCode, Eye, X } from 'lucide-react';
 import Image from 'next/image';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function InventoryPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

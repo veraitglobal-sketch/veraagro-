@@ -2,6 +2,11 @@
   "brand": {
     "name": "Bio Vera"
   },
+  "locale": {
+    "aria": "Language",
+    "enShort": "EN",
+    "srShort": "SR"
+  },
   "metadata": {
     "siteName": "Bio Vera",
     "siteDescription": "A vertically integrated agricultural network. From field to buyer: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.",

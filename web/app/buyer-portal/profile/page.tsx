@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { MapPin, Plus, X, Building2, Users, Truck, Loader2 } from 'lucide-react';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { buyersAPI } from '@/lib/api';
 
 interface DeliveryLocation {
@@ -52,7 +52,7 @@ function showField(v: string) {
 }
 
 export default function BuyerProfilePage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [isEditing, setIsEditing] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);

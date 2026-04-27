@@ -245,7 +245,7 @@ export default function SuppliersPage() {
               },
               {
                 title: 'Integrated logistics',
-                description: 'Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometres, lower costs.',
+                description: 'Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometers, lower costs.',
               },
               {
                 title: 'National coverage preferred',

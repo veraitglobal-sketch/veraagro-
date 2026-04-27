@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/auth';
 import type { CommercialAgentPublic } from '@/lib/auth';
 import { missionsAPI, usersAPI } from '@/lib/api';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
-import { logisticsPartnerNavItems as navItems } from '@/lib/logistics-nav';
+import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 
 // Mission statuses that indicate loading / handover needed
@@ -54,6 +54,7 @@ interface Mission {
 }
 
 export default function LogisticsDashboardPage() {
+  const navItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -192,7 +193,7 @@ export default function LogisticsDashboardPage() {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
           >
-            <p className="text-sm text-gray-500 mb-1">Active tours</p>
+            <p className="text-sm text-gray-500 mb-1">Ongoing missions</p>
             <p className="text-2xl font-semibold text-[#2D5A27]">{loading ? '—' : activeMissions.length}</p>
           </motion.div>
           <motion.div
@@ -215,7 +216,7 @@ export default function LogisticsDashboardPage() {
           </motion.div>
         </div>
 
-        {/* Active Tours */}
+        {/* Ongoing missions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -223,7 +224,7 @@ export default function LogisticsDashboardPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Active tours</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Ongoing missions</h2>
             <Link
               href="/logistics-partner/missions"
               className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium"
@@ -243,8 +244,8 @@ export default function LogisticsDashboardPage() {
               <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <p className="font-medium">No active tours</p>
-              <p className="text-sm mt-1">New tours will appear in the Missions tab</p>
+              <p className="font-medium">No ongoing missions</p>
+              <p className="text-sm mt-1">New missions will show in the Missions tab</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -346,7 +347,7 @@ export default function LogisticsDashboardPage() {
               <div>
                 <p className="text-sm font-medium text-amber-800">Loading in progress</p>
                 <p className="text-sm text-amber-700 mt-1">
-                  One or more tours are waiting for temperature verification. Check the truck temperature and complete Loading Handover.
+                  One or more missions need temperature verification. Check the truck temperature and complete Loading Handover.
                 </p>
                 <Link
                   href="/logistics-partner/handover"

@@ -7,12 +7,11 @@ import { estatesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
-const navItems = growerNavItems;
-
 export default function GrowerDashboardPage() {
+  const navItems = useGrowerNavItems();
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [estates, setEstates] = useState<any[]>([]);

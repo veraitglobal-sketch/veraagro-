@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { securityAlertsAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 interface SecurityAlert {
   id: string;
@@ -29,7 +29,7 @@ interface SecurityAlert {
 }
 
 export default function SecurityAlertsPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

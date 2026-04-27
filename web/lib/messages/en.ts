@@ -1,8 +1,7 @@
 /**
  * Grower + shared dashboard copy for the web app.
- * **Source of truth:** `locales/en.json` (`common`, `grower` keys) — re-exported here so
- * existing `import { en } from '@/lib/messages'` keeps working. Add `sr.json` later and
- * wire `i18n` the same way as mobile when you add a language switcher.
+ * **Source of truth:** `locales/en.json`. For runtime language, use `useTranslation()` from `react-i18next`
+ * (keys under `grower.*`). The `en` export remains for legacy module-level copy on a few pages being migrated.
  */
 import locale from '../../locales/en.json';
 

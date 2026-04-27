@@ -40,7 +40,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import {
   formatDateEn,
   formatMonthYearLongEnFromYearMonth,
@@ -49,7 +49,7 @@ import {
 
 export default function BuyerDashboardPage() {
   const { user } = useAuth();
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const router = useRouter();
   const [statistics, setStatistics] = useState<any>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);

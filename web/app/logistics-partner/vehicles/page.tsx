@@ -6,7 +6,7 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { logisticsVehiclesAPI } from '@/lib/api';
-import { logisticsPartnerNavItems } from '@/lib/logistics-nav';
+import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
 type Vehicle = {
   id: string;
@@ -30,6 +30,7 @@ const VEHICLE_TYPE_OPTIONS = [
 ];
 
 export default function LogisticsVehiclesPage() {
+  const logisticsPartnerNavItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [list, setList] = useState<Vehicle[]>([]);
@@ -213,7 +214,7 @@ export default function LogisticsVehiclesPage() {
                           </p>
                         )}
                         <p className="text-xs text-gray-500 mt-1">
-                          {v.vehicleNumber} · Fridge {v.tempRangeMin}–{v.tempRangeMax}°C ·{' '}
+                          {v.vehicleNumber} · Cooling {v.tempRangeMin}–{v.tempRangeMax}°C ·{' '}
                           <span className="capitalize">{v.status.toLowerCase().replace('_', ' ')}</span>
                         </p>
                       </div>

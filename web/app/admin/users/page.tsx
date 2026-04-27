@@ -7,7 +7,7 @@ import { usersAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound, Copy } from 'lucide-react';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 interface User {
   id: string;
@@ -43,7 +43,7 @@ interface User {
 }
 
 export default function UsersManagementPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

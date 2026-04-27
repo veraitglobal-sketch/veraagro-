@@ -3,15 +3,13 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/lib/auth';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { en } from '@/lib/messages';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
-const navItems = growerNavItems;
 const c = en.common;
 const m = en.grower.compliancePhotos;
 
@@ -50,7 +48,7 @@ function messageFromApiPayload(data: unknown): string {
 }
 
 export default function CompliancePhotosPage() {
-  useAuth();
+  const navItems = useGrowerNavItems();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [stickerRollId, setStickerRollId] = useState<string>('');
   const [photos, setPhotos] = useState<{ [key: string]: string }>({});

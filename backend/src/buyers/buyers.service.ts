@@ -137,7 +137,7 @@ export class BuyersService {
         if (supplier.estateId === 'PENDING_FULFILLMENT') {
           return {
             estateId: supplier.estateId,
-            estateName: 'Čeka dodelu gazdinstva',
+            estateName: 'Awaiting estate assignment',
             farmerName: '—',
             totalSpent: supplier._sum.totalAmount || 0,
             orderCount: supplier._count,

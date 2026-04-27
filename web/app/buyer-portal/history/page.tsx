@@ -5,10 +5,10 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI } from '@/lib/api';
 import { Clock, Package, CheckCircle, XCircle } from 'lucide-react';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function OrderHistoryPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

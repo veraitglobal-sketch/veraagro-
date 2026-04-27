@@ -45,7 +45,7 @@ export class DeliveriesService {
     const pickup = getPickupEstate(order);
     if (!pickup) {
       throw new BadRequestException(
-        'Dodela prevoza: u adminu dodeli gazdinstvo koje ispunjava porudžbinu, ili naručilac nije povezan sa realnim gazdinstvom (stari zapis).',
+        'Cannot assign delivery: in admin, link the fulfilling estate to this order, or the buyer may not be tied to a real estate (legacy record).',
       );
     }
 
@@ -80,8 +80,8 @@ export class DeliveriesService {
     await this.notificationsService.create({
       userId: driverId,
       type: 'ACTION_REQUIRED',
-      title: 'Nova tura dodeljena',
-      message: `Nova dostava: ${order.orderNumber}. Kombi stiže za 20 min.`,
+      title: 'New run assigned',
+      message: `New delivery: ${order.orderNumber}. Van arriving in ~20 minutes.`,
       actionUrl: `/deliveries/${delivery.id}`,
     });
 
@@ -89,8 +89,8 @@ export class DeliveriesService {
     await this.notificationsService.create({
       userId: pickup.ownerId,
       type: 'REMINDER',
-      title: 'Kombi stiže',
-      message: `Vozač ${driverId} stiže za 20 minuta da pokupi robu.`,
+      title: 'Van on the way',
+      message: `Driver ${driverId} will arrive in ~20 minutes to pick up the load.`,
       actionUrl: `/orders/${orderId}`,
     });
 
@@ -144,8 +144,8 @@ export class DeliveriesService {
     await this.notificationsService.create({
       userId: delivery.orders.buyerId,
       type: 'SYSTEM',
-      title: 'Roba je pokupljena',
-      message: `Tvoj Bio paket je spakovan i u transportu.`,
+      title: 'Order picked up',
+      message: `Your Bio Vera order is packed and in transit.`,
       actionUrl: `/orders/${delivery.orderId}`,
     });
 
@@ -230,16 +230,16 @@ export class DeliveriesService {
       await this.notificationsService.create({
         userId: farmerUid,
         type: 'SYSTEM',
-        title: 'Dostava potvrđena',
-        message: `Plaćanje je oslobođeno za porudžbinu ${delivery.orders.orderNumber}`,
+        title: 'Delivery confirmed',
+        message: `Payment released for order ${delivery.orders.orderNumber}.`,
       });
     }
 
     await this.notificationsService.create({
       userId: delivery.driverId,
       type: 'SYSTEM',
-      title: 'Dostava završena',
-      message: `Plaćanje je oslobođeno za dostavu ${delivery.deliveryNumber}`,
+      title: 'Delivery completed',
+      message: `Payment released for delivery ${delivery.deliveryNumber}.`,
     });
 
     return {

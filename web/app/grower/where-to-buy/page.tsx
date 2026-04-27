@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { getPublicApiBase } from '@/lib/public-api';
 import { usersAPI } from '@/lib/api';
 import Link from 'next/link';
@@ -81,6 +81,7 @@ function normalizeCountry(c: string | undefined) {
  * No map: country tabs, optional city, “nearest to me” from coordinates on file + browser location.
  */
 export default function GrowerWhereToBuyPage() {
+  const growerNavItems = useGrowerNavItems();
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);

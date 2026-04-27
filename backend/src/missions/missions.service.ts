@@ -74,8 +74,7 @@ export class MissionsService {
       }
       if (this.requireConfirmedHarvestPlan() && ann.status !== 'CONFIRMED') {
         throw new BadRequestException(
-          'Operativa mora prvo potvrditi plan berbe (admin: Harvest plans / CONFIRMED). ' +
-            'Ops must confirm the harvest plan before transport.',
+          'Operations must confirm the harvest plan first (admin: Harvest plans → status CONFIRMED) before transport.',
         );
       }
       const taken = await this.prisma.missions.findFirst({ where: { harvestAnnouncementId: id } });
@@ -108,7 +107,7 @@ export class MissionsService {
       if (this.requireConfirmedHarvestPlan()) {
         throw new BadRequestException(
           'Transport is only available after operations confirms your harvest plan. ' +
-            'Submit your harvest (berba) in the app, then wait for confirmation — or ask your contact at Vera. ' +
+            'Submit your harvest plan in the app, then wait for confirmation — or ask your contact at Vera. ' +
             'Admin: Harvest plans → Confirm.',
         );
       }
@@ -1316,9 +1315,9 @@ export class MissionsService {
       await this.notificationsService.create({
         userId: growerId,
         type: 'ACTION_REQUIRED',
-        title: 'Instrukcija: porudžbina kupca i priprema',
-        message: `Porudžbina ${order.orderNumber} — ${order.productName} (${order.quantity} ${order.unit}). ` +
-          `Pogledajte Missions: instrukcije za pripremu / kanal. Kada vam bude spreman lot, operativa dodeljuje prevoz (ili otvorena tura).`,
+        title: 'Action required: buyer order and prep',
+        message: `Order ${order.orderNumber} — ${order.productName} (${order.quantity} ${order.unit}). ` +
+          `Open Missions for prep and channel instructions. When your lot is ready, operations will assign transport (or an open run).`,
         actionUrl: '/grower/portal',
       });
     } catch (e) {

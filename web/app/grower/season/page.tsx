@@ -4,13 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import GrowerSeasonJourney from '@/components/grower/GrowerSeasonJourney';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function GrowerFieldSeasonPage() {
+  const growerNavItems = useGrowerNavItems();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasParcel, setHasParcel] = useState(false);

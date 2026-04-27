@@ -10,7 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { formatDateEn, formatDateTimeEn } from '@/lib/en-locale-dates';
 import {
   User,
@@ -31,7 +31,7 @@ export default function FarmDetailPage() {
   const params = useParams();
   const router = useRouter();
   const farmerId = params?.id as string;
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [data, setData] = useState<FarmDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

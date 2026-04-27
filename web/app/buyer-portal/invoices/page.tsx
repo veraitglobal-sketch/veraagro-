@@ -20,7 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { invoicesAPI } from '@/lib/api';
 import {
   getBuyerInvoiceDisplayStatus,
@@ -28,7 +28,7 @@ import {
 } from '@/lib/invoice-payment-status';
 
 export default function InvoicesPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const router = useRouter();
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

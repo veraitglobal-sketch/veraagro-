@@ -6,7 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
-import { logisticsPartnerNavItems as navItems } from '@/lib/logistics-nav';
+import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2 } from 'lucide-react';
 
@@ -34,6 +34,7 @@ interface Mission {
 }
 
 export default function LogisticsHandoverPage() {
+  const navItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);

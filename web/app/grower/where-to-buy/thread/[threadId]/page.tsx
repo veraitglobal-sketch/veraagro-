@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI } from '@/lib/api';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
 
 export default function GrowerSupplierThreadPage() {
+  const growerNavItems = useGrowerNavItems();
   const params = useParams();
   const threadId = typeof params?.threadId === 'string' ? params.threadId : '';
 

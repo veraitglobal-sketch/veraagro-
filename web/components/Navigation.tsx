@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navigation() {
   const { t } = useTranslation();
@@ -67,8 +68,9 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Login / Dashboard (right) */}
-          <div className="hidden md:flex flex-shrink-0 items-center gap-4 ml-auto">
+          {/* Language + login / dashboard (right) */}
+          <div className="hidden md:flex flex-shrink-0 items-center gap-3 ml-auto">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <>
                 {(() => {
@@ -112,11 +114,13 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Mobile menu — right, 44px min touch target */}
-          <button
+          <div className="md:hidden ml-auto flex items-center gap-2">
+            <LanguageSwitcher />
+            {/* Mobile menu — right, 44px min touch target */}
+            <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden ml-auto min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
@@ -128,6 +132,7 @@ export default function Navigation() {
               )}
             </svg>
           </button>
+          </div>
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import Link from 'next/link';
 import { commandControlAPI } from '@/lib/api';
 
@@ -25,7 +25,7 @@ type ViolationRow = {
 };
 
 export default function CommandControlPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [systemStatus, setSystemStatus] = useState({ paused: false });
   const [activeMissions, setActiveMissions] = useState<LiveMission[]>([]);
   const [violations, setViolations] = useState<ViolationRow[]>([]);

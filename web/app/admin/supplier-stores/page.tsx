@@ -4,7 +4,7 @@ import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSuppliersAdminAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { Store } from 'lucide-react';
 import Link from 'next/link';
 
@@ -22,7 +22,7 @@ function getApiErrorMessage(e: unknown): string {
  * No public registration; partners are created by admin only.
  */
 export default function AdminSupplierStoresPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);

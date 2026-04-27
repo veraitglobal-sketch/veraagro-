@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
 import { ShoppingCart, Truck } from 'lucide-react';
 
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 /** Prisma OrderStatus — must match backend */
 const ORDER_STATUSES = [
@@ -23,7 +23,7 @@ const ORDER_STATUSES = [
 ] as const;
 
 export default function OrdersManagementPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [fulfillmentEstates, setFulfillmentEstates] = useState<
     { id: string; name: string; ownerId: string }[]
@@ -384,7 +384,7 @@ export default function OrdersManagementPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Operativa notes (class, box type, time window, buyer ref…)
+                  Operations notes (class, box type, time window, buyer ref…)
                 </label>
                 <textarea
                   value={missionOpsNotes}

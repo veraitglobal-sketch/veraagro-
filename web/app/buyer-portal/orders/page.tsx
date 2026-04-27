@@ -12,11 +12,11 @@ import {
 } from '@/lib/buyer-order-status';
 import Link from 'next/link';
 import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { PaymentInstructionsPanel } from '@/components/PaymentInstructionsPanel';
 
 export default function OrdersPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

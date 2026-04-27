@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI } from '@/lib/api';
-import { logisticsPartnerNavItems } from '@/lib/logistics-nav';
+import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
 const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
 const ACTIVE_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'PICKED_UP', 'IN_TRANSIT', 'READY_FOR_LOADING'];
@@ -99,6 +99,7 @@ function siblingsByCity(all: Mission[], m: Mission): Mission[] {
 }
 
 export default function LogisticsMissionsPage() {
+  const logisticsPartnerNavItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);

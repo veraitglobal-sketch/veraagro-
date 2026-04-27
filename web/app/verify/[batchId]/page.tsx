@@ -324,7 +324,7 @@ export default function VerifyPage() {
                 <div className="flex-1 pb-6">
                   <p className="text-xs text-gray-500 mb-1">In Transit</p>
                   <p className="text-sm font-semibold text-gray-900 mb-1">{formatDateTime(data.timeline.loaded)}</p>
-                  <p className="text-sm text-gray-600">Frigo-Truck {data.transit.vehicleNumber}</p>
+                  <p className="text-sm text-gray-600">Refrigerated truck {data.transit.vehicleNumber}</p>
                   <p className="text-xs text-gray-500 mt-1">Travel time: {data.transit.travelTimeHours.toFixed(1)} hours</p>
                 </div>
               </div>

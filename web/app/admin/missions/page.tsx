@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { missionsAPI } from '@/lib/api';
 import { Activity, Truck } from 'lucide-react';
 
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 
 type Lp = {
   id: string;
@@ -19,7 +19,7 @@ type Lp = {
 };
 
 export default function MissionsManagementPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [missions, setMissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -298,7 +298,7 @@ export default function MissionsManagementPage() {
                           <option key={p.id} value={p.id}>
                             {p.firstName} {p.lastName}
                             {p.partnerCode ? ` (${p.partnerCode})` : ''}
-                            {p.vehicles?.length ? ` — ${p.vehicles.length} vehicle(s)` : ' — no frigo available'}
+                            {p.vehicles?.length ? ` — ${p.vehicles.length} vehicle(s)` : ' — no temperature-controlled vehicle available'}
                           </option>
                         ))}
                       </select>

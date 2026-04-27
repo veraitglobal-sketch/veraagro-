@@ -83,7 +83,7 @@ BioVera is a vertically integrated agrotech platform connecting European agricul
 - Ensures financial planning
 
 **Logistics Priority:**
-- Frigo-Fleet picks up goods at exact scheduled minute
+- The refrigerated fleet picks up goods at the exact scheduled minute
 - Zero wait time
 - Harvest gets priority treatment from field to market
 - Direct packaging at farm in Vera packaging
@@ -128,36 +128,30 @@ BioVera is a vertically integrated agrotech platform connecting European agricul
 - Quality entry system
 - Batch management
 
-### GROWER WEB DASHBOARD (LOGGED-IN) – MENI, RUTE, SMISAO
-Kada je proizvođač (grower) ulogovan na webu, levi meni vodi do istih sadržaja na svim stranicama. Glavne rute (prefiks /grower):
-- **/grower** – Dashboard, pregled i prečice
-- **/grower/portal** – **Mission Tracker**: transportne misije (status prevoza, vozač, vozilo, etape puta). Ako lista ne učita, pokušaj osvežavanje; ovo nije stranica digitalnog pasoša proizvoda, već **transport**
-- **/grower/missions/create** – **Request transport** (prijava prevoza / pickup). Obrati pažnju na poruke forme: možda ne možeš da naručiš transport dok nisu rešeni materijali, compliance fotografije itd. (form obično objašnjava šta fali)
-- **/grower/batches** – **My Batches** (lotovi posle berbe, QR, status, povezivanje s misijama)
-- **/grower/fields** – **My Fields** (gazdinstva, parcele, kreiranje lotova; parcele mogu biti u čekanju admin odobrenja)
-- **/grower/season** – **Steps** (koraci sezone / poljski tok u toku sezone)
-- **/grower/where-to-buy** – **Suppliers & orders (B2B)**: **ovde grower pronalazi odobrene Vera dobavljače materijala** i naručuje, vidi porudžbine i po mogućnosti poruke. Ovo nije „Google Maps udaljenost u km” – mreža je partnerska (whitelist). Za „najbliži” u smislu geografske udaljenosti, aplikacija ne mora uvek imati mapu: prvo otvori ovu stranicu, biraš/dobijaš dodeljenog partnera; ako nema stavke, proveri odobrenje naloga, **Materials** i podršku
-- **/grower/materials** – katalog (kutije, etikete, filmovi…) – povezano s pravilima platforme
-- **/grower/quality-entry** – **Quality entry** (potpuni upis: vreme/klime, pre-cool, 3 fotografije kutija, potvrda). **Jedan unos kvaliteta po lotu (batch)** – drugi pokušaj: sistem prijavljuje da unos već postoji; onda ne ponovo slati isto, već **Request transport** ili **My Batches**
-- **/grower/compliance-photos** – uskladu/compliance slike
-- **/grower/profile** – profil
-Digitalni **paspoš (passport) javnog lanca** obično ide preko koda/ID-ja (npr. /passport/[batchId] gde je batchId stvarni lot ID), ne u Mission Trackeru
+### GROWER WEB DASHBOARD (LOGGED-IN) – ROUTES AND MEANING
+When a grower is logged in on the web, the sidebar links to the same areas on every page. Main routes (prefix /grower):
+- **/grower** – Dashboard, overview, shortcuts
+- **/grower/portal** – **Mission Tracker**: transport missions (status, driver, vehicle, legs). If the list fails to load, try a refresh; this is not the product digital passport page—it is **transport**
+- **/grower/missions/create** – **Request transport** (book pickup). Form messages may block transport until materials, compliance photos, etc. are satisfied (the form usually explains what is missing)
+- **/grower/batches** – **My Batches** (post-harvest lots, QR, status, mission links)
+- **/grower/fields** – **My Fields** (estates, parcels, batch creation; parcels may await admin approval)
+- **/grower/season** – **Steps** (season steps / field workflow through the season)
+- **/grower/where-to-buy** – **Suppliers & orders (B2B)**: here the grower finds **approved Vera material suppliers**, places orders, sees order history and sometimes messages. This is not a public "nearest on map" search—the network is partner-based. For "nearest" by distance, the app may not always show a km map: open this page first, pick or receive an assigned partner; if nothing appears, check account approval, **Materials**, and support
+- **/grower/materials** – catalog (boxes, labels, film…) per platform rules
+- **/grower/quality-entry** – **Quality entry** (full record: time/weather, pre-cool, three crate photos, confirmation). **One quality entry per lot (batch)**—a second attempt shows "already exists"; do not resubmit the same—use **Request transport** or **My Batches**
+- **/grower/compliance-photos** – compliance photos
+- **/grower/profile** – profile
+The public-chain **passport** usually uses a code/ID (e.g. /passport/[batchId] with a real batch id), not Mission Tracker
 
-### ČESTA PITANJA I „ZAŠTO JE OVAKO” (GROWER, GREŠKE, SLEDEĆI KORAC)
-- **Gde da nađem najbližeg suppliera?** (grower) – Nisi na javnoj mapi. Uloguj se, otvori **Suppliers & orders** = /grower/where-to-buy. Tamo B2B dobavljači odobreni od strane platforme, porudžbine i komunikacija. Ako nemaš listing, moguć razlog: nalog, prazen katalog tipova, ili prvo popuni **Materials** / očekuj dodelu – **Help** ili /contact ako treba
-- **Prijava berbe dva puta (harvest već poslat)** – Za istu **parcelu** ne treba slati dva aktivna plana berbe. Poruka: berba već prijavljena. Sledeći korak: **Request transport** (/grower/missions/create) i **Mission Tracker** (/grower/portal)
-- **Quality entry: Internal server error / već postoji** – Ako već postoji: ne duplirati, nastavi transport / lot. Ako greška servera: proveri polja, 3 fotke, pokušaj posle, pa podrška ako ostane
-- **Mission Tracker: Internal server error** – Greška servera pri učitavanju liste **misija**; osvežavanje, kasnije ponovo, ili podrška. Nije to isto kao greška na pasošu
-- **Request transport blokiran** – Često zato što fali uslov (npr. **Materials** ili **compliance-photos**); pročitaj crvene poruke na formi i linkove u istoj stranici
-- **Prazan Materials / Select material** – Mogu prvo da budu inicijalizovani tipovi materijala; ako je prazno, podrška ili admin. Grower bira u skladu s whitelist-om
-- **Passport nema podataka** – Uveri se da koristiš **stvaran batchId** (identifikator lota) u URL-u, ne proizvoljan string; otvori lot iz **My Batches**
-- Uvek može **Help Center** /help-center, **FAQ** /faq, **Kontakt** /contact kada nešto nije u bazi
-
-### GROWER WEB (EN – mirror for the model)
-- **Suppliers (nearest / where to find)**: As a **logged-in grower**, use **Suppliers & orders** at /grower/where-to-buy for B2B approved suppliers and orders. It is not a public "nearest on map" search; use the in-app list and your assigned partner where applicable.
-- **Duplicate harvest** → **Request transport** and **Mission Tracker**; do not register harvest again for the same active parcel.
-- **Quality entry**: one per batch; if already exists, proceed with **Request transport** or **My Batches**.
-- **Mission Tracker errors**: refresh; server issues are separate from digital passport.
+### COMMON GROWER QUESTIONS (ERRORS AND NEXT STEPS)
+- **Where is the nearest supplier?** – You are not on a public map. Sign in and open **Suppliers & orders** at /grower/where-to-buy. There you get B2B suppliers approved by the platform, orders, and messaging. If the list is empty, check your account, whether material types are populated, or complete **Materials** / wait for assignment—use **Help** or /contact
+- **Harvest registered twice** – Do not create two active harvest plans for the same **parcel**. If you see "harvest already registered," next steps: **Request transport** (/grower/missions/create) and **Mission Tracker** (/grower/portal)
+- **Quality entry: server error / already exists** – If one exists, do not duplicate; continue with transport or the lot. On server errors: check fields, three photos, retry later, then support if it persists
+- **Mission Tracker: internal server error** – Error loading the **mission** list; refresh, try later, or contact support. This is not the same as a passport error
+- **Request transport blocked** – Often a missing prerequisite (**Materials** or **compliance-photos**); read red messages on the form and links on the same page
+- **Empty Materials / select material** – Types may need initialization; if still empty, contact support or admin. The grower chooses per the approved list
+- **Passport shows no data** – Use a real **batchId** in the URL, not an arbitrary string; open the lot from **My Batches**
+- Use **Help Center** /help-center, **FAQ** /faq, **Contact** /contact when something is not in the knowledge base
 
 **Resources Available:**
 - Grower Prospect PDF
@@ -743,17 +737,17 @@ Digitalni **paspoš (passport) javnog lanca** obično ide preko koda/ID-ja (npr.
    */
   private getQuickResponses(): Record<string, string> {
     return {
-      najbli: `**Grower: gde je "najbliži" dobavljač / supplier?** Na Bio Vera platformi ulogovani proizvođač ne traži dobavljača preko javne mape udaljenosti. Otvori levi meni **Suppliers & orders** (putanja \`/grower/where-to-buy\`). Tu su **B2B odobreni dobavljači** (materijal, porudžbine, poruke). Ako lista nije puna, proveri odobrenje naloga i stranicu **Materials**; za pomoć koristi **Help Center** (\`/help-center\`) ili **Contact** (\`/contact\`). / **English:** As a logged-in grower, use **Suppliers & orders** at \`/grower/where-to-buy\` for approved B2B suppliers—not a public "nearest on map" search.`,
+      najbli: `**Grower: "nearest" supplier?** Logged-in growers do not use a public distance map. Open **Suppliers & orders** at \`/grower/where-to-buy\` for **approved B2B suppliers** (material, orders, messages). If the list is empty, check account approval and **Materials**; use **Help Center** (\`/help-center\`) or **Contact** (\`/contact\`) for help.`,
 
-      dobavlj: `**Grower i dobavljači (materijal):** Porudžbine prema odobrenim partnerima: **Suppliers & orders** → \`/grower/where-to-buy\`. **Ako želiš da postaneš dobavljač platforme** (kompanija koja snabdeva Veru), to je odvojeno: stranica **/suppliers** (prijava partnera). Ne mešaj ta dva toka.`,
+      dobavlj: `**Growers and suppliers (material):** Orders to approved partners: **Suppliers & orders** → \`/grower/where-to-buy\`. **To become a platform supplier** (a company that supplies Bio Vera), use **/suppliers** (separate partner signup). These two flows are different.`,
 
-      'mission tracker': `**Mission Tracker** (\`/grower/portal\`) prikazuje **transportne misije** (pickup, vozač, status). Ako vidiš grešku servera, osveži stranicu ili pokušaj kasnije; u toku je učitavanje liste misija. Naredni korak posle prijave berbe obično uključuje **Request transport** (\`/grower/missions/create\`). Pasoš proizvoda je u **My Batches** / passport linku, ne u Mission Trackeru.`,
+      'mission tracker': `**Mission Tracker** (\`/grower/portal\`) shows **transport missions** (pickup, driver, status). If you see a server error, refresh or try again while the mission list loads. After registering harvest, the usual next step is **Request transport** (\`/grower/missions/create\`). The product passport lives under **My Batches** / passport link—not in Mission Tracker.`,
 
-      'quality entry': `**Quality entry** (\`/grower/quality-entry\`): jedan puni unos po lotu (batch). Ako piše da unos već postoji, ne dupliraj—nastavi sa **Request transport** ili proveri **My Batches**. Greška servera: proveri polja, 3 fotografije, pokušaj ponovo; ako ostane, kontaktiraj podršku.`,
+      'quality entry': `**Quality entry** (\`/grower/quality-entry\`): one full submission per lot (batch). If it says an entry already exists, do not duplicate—continue with **Request transport** or check **My Batches**. On server errors: check fields, three photos, retry; if it persists, contact support.`,
 
-      berba: `**Prijava berbe (harvest plan):** Ako sistem kaže da je berba već prijavljena za parcelu, ne šalji isto ponovo. Sledeći korak: **Request transport** (\`/grower/missions/create\`) i prati status u **Mission Tracker** (\`/grower/portal\`).`,
+      berba: `**Harvest plan:** If the app says harvest is already registered for a parcel, do not submit again. Next: **Request transport** (\`/grower/missions/create\`) and track status in **Mission Tracker** (\`/grower/portal\`).`,
 
-      suppl: `**Supplier – dve stvari:** (1) **Grower** koji traži od koga da kupi materijal (kutije, folija…): meni **Suppliers & orders** → \`/grower/where-to-buy\` (B2B odobreni partneri). (2) **Kompanija** koja želi da postane dobavljač platformi: \`/suppliers\` (posebna prijava). Ako si grower i pitaš "najbliži", platforma ne mora imati mapu km – prvo B2B lista na \`/grower/where-to-buy\`.`,
+      suppl: `**Suppliers—two things:** (1) A **grower** buying material (boxes, film…): **Suppliers & orders** → \`/grower/where-to-buy\` (B2B approved partners). (2) A **company** applying to supply the platform: \`/suppliers\`. If you are a grower asking for "nearest," the platform may not show km on a map—use the B2B list at \`/grower/where-to-buy\` first.`,
 
       'empty mile': `**Empty Mile Reduction** - Our system automatically matches return trips with new pickups, reducing empty truck journeys by up to 40%. This saves fuel costs, reduces carbon footprint, and increases your revenue per trip. After delivery, the system automatically finds nearby pickups and suggests optimal return routes with cargo. [Learn more about logistics]`,
       

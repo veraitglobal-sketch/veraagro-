@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { missionsAPI, batchesAPI } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
@@ -61,7 +61,6 @@ function formatMissionCreateError(error: unknown): string {
   return `${prefix}\n\n${body}`;
 }
 
-const navItems = growerNavItems;
 
 interface Batch {
   id: string;
@@ -80,6 +79,7 @@ const GEO_OPTIONS: PositionOptions = {
 };
 
 export default function CreateMissionPage() {
+  const navItems = useGrowerNavItems();
   /** Initial batch list only (do not conflate with GPS) */
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [locationLoading, setLocationLoading] = useState(false);

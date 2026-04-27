@@ -5,7 +5,7 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, standardEngineAPI } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useAuth } from '@/lib/auth';
 import {
@@ -23,7 +23,6 @@ import {
   QrCode,
 } from 'lucide-react';
 
-const navItems = growerNavItems;
 
 function formatCurrentLocation(loc: unknown): string {
   if (loc == null) return '—';
@@ -58,6 +57,7 @@ interface Batch {
 }
 
 export default function GrowerBatchesPage() {
+  const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [batches, setBatches] = useState<Batch[]>([]);
   const [filteredBatches, setFilteredBatches] = useState<Batch[]>([]);

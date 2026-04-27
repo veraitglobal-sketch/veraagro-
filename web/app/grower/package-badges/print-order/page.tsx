@@ -5,7 +5,7 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { packageBadgesAPI } from '@/lib/api';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { en } from '@/lib/messages';
 import { Loader2 } from 'lucide-react';
@@ -32,6 +32,7 @@ type PrintOrderRow = {
 };
 
 export default function GrowerPackageBadgesPrintOrderPage() {
+  const growerNavItems = useGrowerNavItems();
   const [parentCount, setParentCount] = useState(1);
   const [childrenPerParent, setChildrenPerParent] = useState(0);
   const [serialPrefix, setSerialPrefix] = useState('PLT');

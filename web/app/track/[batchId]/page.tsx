@@ -1,10 +1,8 @@
 'use client';
 
 /**
- * Public Track page – for buyers (Aldi)
- * app.biovera.de/track/[batchId]
- * HACCP Status: Verified | Pending
- * Compliance photos, temperature, PDF download (placeholder)
+ * Public track page for retail buyers — batch traceability.
+ * HACCP status: verified | pending. Compliance photos, temperature, PDF (placeholders as implemented).
  */
 
 import { useState, useEffect } from 'react';

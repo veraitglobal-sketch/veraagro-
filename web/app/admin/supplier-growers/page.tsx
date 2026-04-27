@@ -5,14 +5,14 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSuppliersAdminAPI } from '@/lib/api';
-import { getAdminNavItems } from '@/lib/admin-nav';
+import { useAdminNavItems } from '@/lib/admin-nav';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { MessageCircle, Package, Store, User, ChevronDown, ChevronRight, ExternalLink, RefreshCw } from 'lucide-react';
 
 type Overview = Awaited<ReturnType<typeof b2bSuppliersAdminAPI.getNetworkOverview>>;
 
 export default function AdminSupplierGrowersPage() {
-  const adminNavItems = getAdminNavItems();
+  const adminNavItems = useAdminNavItems();
   const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

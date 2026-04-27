@@ -4,15 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
-import { growerNavItems } from '@/lib/grower-nav';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
-const navItems = growerNavItems;
 
 export default function QualityEntryPage() {
+  const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [formData, setFormData] = useState({

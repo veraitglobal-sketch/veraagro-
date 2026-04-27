@@ -40,10 +40,10 @@ import {
   Cell,
 } from 'recharts';
 
-import { getBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function TradePanelPage() {
-  const buyerPortalNavItems = getBuyerPortalNavItems();
+  const buyerPortalNavItems = useBuyerPortalNavItems();
   const [supplyDemand, setSupplyDemand] = useState<any>(null);
   const [prices, setPrices] = useState<any>(null);
   const [forecast, setForecast] = useState<any>(null);

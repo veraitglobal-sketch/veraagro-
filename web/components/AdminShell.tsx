@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
-import { getAdminNavItems, getAdminGrowerOpsGroup, type AdminDashStats } from '@/lib/admin-nav';
+import { useAdminNavItems, useAdminGrowerOpsGroup, type AdminDashStats } from '@/lib/admin-nav';
 import { adminAPI } from '@/lib/api';
 
 type Props = {
@@ -15,6 +15,8 @@ type Props = {
  */
 export default function AdminShell({ title, children }: Props) {
   const [stats, setStats] = useState<AdminDashStats | null>(null);
+  const adminNavItems = useAdminNavItems();
+  const growerOps = useAdminGrowerOpsGroup(stats);
 
   useEffect(() => {
     adminAPI
@@ -23,10 +25,10 @@ export default function AdminShell({ title, children }: Props) {
       .catch(() => setStats({}));
   }, []);
 
-  const navGroups = [getAdminGrowerOpsGroup(stats)];
+  const navGroups = [growerOps];
 
   return (
-    <SidebarLayout title={title} navItems={getAdminNavItems()} navGroups={navGroups}>
+    <SidebarLayout title={title} navItems={adminNavItems} navGroups={navGroups}>
       {children}
     </SidebarLayout>
   );

@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
-import locale from '@/locales/en.json';
+'use client';
 
-const t = locale.logisticsPartnerNav;
+import type { ReactNode } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 const dash = (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
@@ -40,10 +42,17 @@ const handSignature = (
   </svg>
 );
 
-export const logisticsPartnerNavItems: { href: string; label: string; icon: ReactNode }[] = [
-  { href: '/logistics-partner/dashboard', label: t.dashboard, icon: dash },
-  { href: '/logistics-partner/missions', label: t.missions, icon: mission },
-  { href: '/logistics-partner/vehicles', label: t.vehicles, icon: truck },
-  { href: '/logistics-partner/handover', label: t.loadingHandover, icon: handover },
-  { href: '/logistics-partner/handover-receiver', label: t.receiverProof, icon: handSignature },
-];
+export function buildLogisticsPartnerNavItems(t: TFunction): { href: string; label: string; icon: ReactNode }[] {
+  return [
+    { href: '/logistics-partner/dashboard', label: t('logisticsPartnerNav.dashboard'), icon: dash },
+    { href: '/logistics-partner/missions', label: t('logisticsPartnerNav.missions'), icon: mission },
+    { href: '/logistics-partner/vehicles', label: t('logisticsPartnerNav.vehicles'), icon: truck },
+    { href: '/logistics-partner/handover', label: t('logisticsPartnerNav.loadingHandover'), icon: handover },
+    { href: '/logistics-partner/handover-receiver', label: t('logisticsPartnerNav.receiverProof'), icon: handSignature },
+  ];
+}
+
+export function useLogisticsPartnerNavItems() {
+  const { t, i18n } = useTranslation();
+  return useMemo(() => buildLogisticsPartnerNavItems(t), [t, i18n.language]);
+}

@@ -45,8 +45,8 @@ export class OrdersService {
         select: { id: true, name: true },
       });
       const line = ref
-        ? `Operativa: traženo gazdinstvo/parcela: ${ref.name} (${ref.id}).`
-        : `Operativa: referenca u zahtevu: ${data.estateId} (nije pronađena u sistemu).`;
+        ? `Ops: requested estate/parcel: ${ref.name} (${ref.id}).`
+        : `Ops: request references estate ${data.estateId} (not found in system).`;
       deliveryNotes = [line, data.deliveryNotes].filter(Boolean).join(' ');
     }
 
@@ -92,7 +92,7 @@ export class OrdersService {
       [buyer?.firstName, buyer?.lastName].filter(Boolean).join(' ').trim() ||
       buyer?.email ||
       'Buyer';
-    const estateName = 'Vera (dodela gazdinstva u operativi)';
+    const estateName = 'Vera (fulfilling estate assigned in ops)';
 
     void this.emailService
       .sendNewOrderAdminNotification({
