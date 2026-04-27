@@ -5,9 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { contactAPI } from '@/lib/api';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function ContactPage() {
+  const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -40,7 +44,7 @@ export default function ContactPage() {
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
         setSubmitStatus('error');
-        setErrorMessage((result && result.message) || 'Something went wrong. Please try again.');
+        setErrorMessage((result && result.message) || t('contactPage.errorResult'));
         setTimeout(() => {
           setSubmitStatus('idle');
           setErrorMessage('');
@@ -58,13 +62,13 @@ export default function ContactPage() {
         const data = error.response.data;
         
         if (status === 400) {
-          msg = data?.message || 'Please check your input and try again.';
+          msg = data?.message || t('contactPage.errCheckInput');
         } else if (status === 429) {
-          msg = 'Too many requests. Please wait a few minutes and try again.';
+          msg = t('contactPage.errRateLimit');
         } else if (status >= 500) {
-          msg = 'Server error. Please try again later or contact us at info@biovera.app';
+          msg = t('contactPage.errServer');
         } else {
-          msg = data?.message || 'An error occurred. Please try again.';
+          msg = data?.message || t('contactPage.errHttp');
         }
       } else if (
         error.code === 'ECONNABORTED' ||
@@ -72,15 +76,15 @@ export default function ContactPage() {
         error.name === 'TimeoutError' ||
         error.name === 'AbortError'
       ) {
-        msg = 'Request timed out. Please try again or email us at info@biovera.app';
+        msg = t('contactPage.errTimeout');
       } else if (error.message === 'Failed to fetch') {
-        msg = 'Could not reach server. Please check your connection or email us at info@biovera.app';
+        msg = t('contactPage.errNetwork');
       } else if (error.request) {
-        msg = 'Could not reach server. Please check your connection or email us at info@biovera.app';
+        msg = t('contactPage.errNetwork');
       } else {
-        msg = 'Something went wrong. Please try again or email us at info@biovera.app';
+        msg = t('contactPage.errUnknown');
       }
-      setErrorMessage(msg || 'Please try again or contact us at info@biovera.app');
+      setErrorMessage(msg || t('contactPage.errUnknown'));
 
       setTimeout(() => {
         setSubmitStatus('idle');
@@ -104,10 +108,10 @@ export default function ContactPage() {
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Image 
                 src="/logo1.png" 
-                alt="Bio Vera" 
+                alt={t('footer.logoAlt')} 
                 width={56} 
                 height={20} 
                 className="h-4 w-auto"
@@ -115,8 +119,8 @@ export default function ContactPage() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                Home
+              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
+                {t('nav.home')}
               </Link>
             </nav>
           </div>
@@ -134,10 +138,10 @@ export default function ContactPage() {
             className="text-center mb-16"
           >
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              Get in Touch
+              {t('contactPage.heroTitle')}
             </h1>
             <p className="text-lg text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
-              Have questions about Bio Vera? We're here to help. Reach out to us and we'll get back to you as soon as possible.
+              {t('contactPage.heroSubtitle')}
             </p>
           </motion.div>
 
@@ -149,7 +153,7 @@ export default function ContactPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <h2 className="text-2xl font-light text-gray-900 mb-6">Contact Information</h2>
+                <h2 className="text-2xl font-light text-gray-900 mb-6">{t('contactPage.contactInfoTitle')}</h2>
                 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
@@ -157,7 +161,7 @@ export default function ContactPage() {
                       <Mail className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-1">Email</h3>
+                      <h3 className="text-sm font-medium text-gray-900 mb-1">{t('contactPage.labelEmail')}</h3>
                       <a 
                         href="mailto:info@biovera.app" 
                         className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
@@ -179,7 +183,7 @@ export default function ContactPage() {
                       <Phone className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-1">Phone</h3>
+                      <h3 className="text-sm font-medium text-gray-900 mb-1">{t('contactPage.labelPhone')}</h3>
                       <a
                         href="tel:+4915563740470"
                         className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
@@ -187,7 +191,7 @@ export default function ContactPage() {
                         +49 155 63740470
                       </a>
                       <p className="text-sm text-gray-500 font-light mt-1">
-                        Monday – Friday, 9:00 AM – 6:00 PM CET
+                        {t('contactPage.phoneHours')}
                       </p>
                     </div>
                   </div>
@@ -197,10 +201,11 @@ export default function ContactPage() {
                       <MapPin className="w-6 h-6 text-[#2D5A27]" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-1">Headquarters</h3>
+                      <h3 className="text-sm font-medium text-gray-900 mb-1">{t('contactPage.labelHeadquarters')}</h3>
                       <p className="text-sm text-gray-600 font-light">
-                        Germany<br />
-                        Hamburg
+                        {t('contactPage.addressLine1')}
+                        <br />
+                        {t('contactPage.addressLine2')}
                       </p>
                     </div>
                   </div>
@@ -214,26 +219,26 @@ export default function ContactPage() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="pt-6 border-t border-gray-200"
               >
-                <h3 className="text-sm font-medium text-gray-900 mb-4">Quick Links</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-4">{t('contactPage.quickLinks')}</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link href="/help-center" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
-                      Help Center
+                    <Link href={loc('/help-center')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
+                      {t('nav.helpCenter')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/legal" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
-                      Legal Information
+                    <Link href={loc('/legal')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
+                      {t('languagePage.backToLegal')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/growers" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
-                      For Growers
+                    <Link href={loc('/growers')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
+                      {t('nav.forGrowers')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/suppliers" className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
-                      For Suppliers
+                    <Link href={loc('/suppliers')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
+                      {t('nav.forSuppliers')}
                     </Link>
                   </li>
                 </ul>
@@ -250,14 +255,14 @@ export default function ContactPage() {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <MessageSquare className="w-5 h-5 text-[#2D5A27]" />
-                  <h2 className="text-2xl font-light text-gray-900">Send us a Message</h2>
+                  <h2 className="text-2xl font-light text-gray-900">{t('contactPage.formTitle')}</h2>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
-                        Name *
+                        {t('contactPage.nameLabel')}
                       </label>
                       <input
                         type="text"
@@ -267,12 +272,12 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light"
-                        placeholder="Your name"
+                        placeholder={t('contactPage.namePlaceholder')}
                       />
                     </div>
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
-                        Email *
+                        {t('contactPage.emailLabel')}
                       </label>
                       <input
                         type="email"
@@ -282,14 +287,14 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light"
-                        placeholder="your.email@example.com"
+                        placeholder={t('contactPage.emailPlaceholder')}
                       />
                     </div>
                   </div>
 
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-900 mb-2">
-                      Subject *
+                      {t('contactPage.subjectLabel')}
                     </label>
                     <select
                       id="subject"
@@ -299,20 +304,20 @@ export default function ContactPage() {
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light bg-white"
                     >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="grower">Grower Application</option>
-                      <option value="supplier">Supplier Partnership</option>
-                      <option value="logistics">Logistics Partnership</option>
-                      <option value="buyer">Buyer Inquiry</option>
-                      <option value="technical">Technical Support</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('contactPage.subjectSelectPlaceholder')}</option>
+                      <option value="general">{t('contactPage.subjectGeneral')}</option>
+                      <option value="grower">{t('contactPage.subjectGrower')}</option>
+                      <option value="supplier">{t('contactPage.subjectSupplier')}</option>
+                      <option value="logistics">{t('contactPage.subjectLogistics')}</option>
+                      <option value="buyer">{t('contactPage.subjectBuyer')}</option>
+                      <option value="technical">{t('contactPage.subjectTechnical')}</option>
+                      <option value="other">{t('contactPage.subjectOther')}</option>
                     </select>
                   </div>
 
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-2">
-                      Message *
+                      {t('contactPage.messageLabel')}
                     </label>
                     <textarea
                       id="message"
@@ -322,7 +327,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light resize-none"
-                      placeholder="Tell us how we can help you..."
+                      placeholder={t('contactPage.messagePlaceholder')}
                     />
                   </div>
 
@@ -337,11 +342,11 @@ export default function ContactPage() {
                   {submitStatus === 'error' && (
                     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                       <p className="text-sm text-red-800 font-light">
-                        {errorMessage || 'Something went wrong. Please try again or contact us directly via email.'}
+                        {errorMessage || t('contactPage.errorFallback')}
                       </p>
                       {process.env.NODE_ENV === 'development' && (
                         <p className="text-xs text-red-600 mt-2 font-mono">
-                          Check browser console for details.
+                          {t('contactPage.devConsoleHint')}
                         </p>
                       )}
                     </div>
@@ -355,18 +360,19 @@ export default function ContactPage() {
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Sending...
+                        {t('contactPage.sending')}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        Send Message
+                        {t('contactPage.sendMessage')}
                       </>
                     )}
                   </button>
                   <p className="text-center text-sm text-gray-500 mt-4">
-                    If the form does not work, contact us directly at{' '}
-                    <a href="mailto:info@biovera.app" className="text-[#2D5A27] hover:underline">info@biovera.app</a>.
+                    {t('contactPage.formHelpBefore')}{' '}
+                    <a href="mailto:info@biovera.app" className="text-[#2D5A27] hover:underline">info@biovera.app</a>
+                    {t('contactPage.formHelpAfter')}
                   </p>
                 </form>
               </motion.div>
@@ -380,10 +386,10 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
             <div className="flex flex-col">
-              <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
+              <Link href={loc('/')} className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
                 <Image 
                   src="/logo1.png" 
-                  alt="Bio Vera" 
+                  alt={t('footer.logoAlt')} 
                   width={56} 
                   height={20} 
                   className="h-4 w-auto"
@@ -391,38 +397,37 @@ export default function ContactPage() {
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
-                A vertically integrated agricultural network for Bio-Ready certification 
-                and EU market compliance.
+                {t('footer.tagline')}
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnProduct')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
+                <li><Link href={loc('/growers')} className="hover:text-[#2D5A27] transition-colors">{t('nav.forGrowers')}</Link></li>
+                <li><Link href={loc('/suppliers')} className="hover:text-[#2D5A27] transition-colors">{t('nav.forSuppliers')}</Link></li>
+                <li><Link href={loc('/logistics-partner')} className="hover:text-[#2D5A27] transition-colors">{t('nav.forLogistics')}</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnCompany')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
+                <li><Link href={loc('/about')} className="hover:text-[#2D5A27] transition-colors">{t('footer.about')}</Link></li>
+                <li><Link href={loc('/careers')} className="hover:text-[#2D5A27] transition-colors">{t('footer.careers')}</Link></li>
+                <li><Link href={loc('/press')} className="hover:text-[#2D5A27] transition-colors">{t('footer.pressKit')}</Link></li>
+                <li><Link href={loc('/#vision')} className="hover:text-[#2D5A27] transition-colors">{t('footer.vision')}</Link></li>
+                <li><Link href={loc('/#roadmap')} className="hover:text-[#2D5A27] transition-colors">{t('footer.roadmap')}</Link></li>
+                <li><Link href={loc('/contact')} className="hover:text-[#2D5A27] transition-colors">{t('nav.contact')}</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnLegal')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+                <li><Link href={loc('/legal')} className="hover:text-[#2D5A27] transition-colors">{t('footer.legalHub')}</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
+            <p>{t('footer.copyright', { year: 2026 })}</p>
           </div>
         </div>
       </footer>

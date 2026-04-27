@@ -75,7 +75,7 @@ type Essential = {
 };
 
 /**
- * Main items for the farmer: parcels, planting, field diary, allowed / banned list, certificates.
+ * Main items for the farmer: parcels, planting, entry log, allowed / banned list, certificates.
  * Copy comes from i18n (short, plain language).
  */
 export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHandlers }) {

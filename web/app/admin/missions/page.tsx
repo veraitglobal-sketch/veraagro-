@@ -7,6 +7,7 @@ import { missionsAPI } from '@/lib/api';
 import { Activity, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 type Lp = {
   id: string;
@@ -19,6 +20,7 @@ type Lp = {
 };
 
 export default function MissionsManagementPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [missions, setMissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ export default function MissionsManagementPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Missions Management" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.missions')} navItems={adminNavItems}>
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>

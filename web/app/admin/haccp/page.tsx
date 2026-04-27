@@ -10,6 +10,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { haccpAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { Shield, RefreshCw, CheckCircle, Clock, XCircle, Thermometer } from 'lucide-react';
 import Link from 'next/link';
 
@@ -28,6 +29,7 @@ interface HaccpRow {
 }
 
 export default function HaccpMonitoringPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [rows, setRows] = useState<HaccpRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,7 @@ export default function HaccpMonitoringPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="HACCP Monitoring" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.haccp')} navItems={adminNavItems}>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <div>

@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Package, FileText, ExternalLink, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -18,6 +19,7 @@ const DEFAULT_POLYGON = [
 type Step = 'field' | 'entry' | 'result';
 
 export default function FieldBlockchainPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [step, setStep] = useState<Step>('field');
   const [submitting, setSubmitting] = useState(false);
@@ -128,7 +130,7 @@ export default function FieldBlockchainPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN', 'GROWER']}>
-      <SidebarLayout title="Field → Entry → Blockchain" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.fieldBlockchain')} navItems={adminNavItems}>
         <div className="max-w-2xl mx-auto space-y-8">
           <div>
             <h1 className="text-2xl font-light text-gray-900">Field, harvest entry, and blockchain result</h1>

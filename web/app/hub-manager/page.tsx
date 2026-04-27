@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const navItems = [
   { href: '/hub-manager', label: 'Dashboard', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
@@ -12,6 +13,7 @@ const navItems = [
 ];
 
 export default function HubManagerPage() {
+  const { t } = useTranslation();
   const [stats] = useState({
     activeTransfers: 12,
     pendingBatches: 45,
@@ -20,7 +22,7 @@ export default function HubManagerPage() {
   });
 
   return (
-    <SidebarLayout title="Hub Manager" navItems={navItems}>
+    <SidebarLayout title={t('internalShell.titles.hubManager')} navItems={navItems}>
       <div className="space-y-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

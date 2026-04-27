@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { commandControlAPI } from '@/lib/api';
 
@@ -25,6 +26,7 @@ type ViolationRow = {
 };
 
 export default function CommandControlPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [systemStatus, setSystemStatus] = useState({ paused: false });
   const [activeMissions, setActiveMissions] = useState<LiveMission[]>([]);
@@ -101,7 +103,7 @@ export default function CommandControlPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title="Command & Control" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.commandControl')} navItems={adminNavItems}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="inline-block w-8 h-8 border-2 border-[#2D5A27] border-t-transparent rounded-full animate-spin" />
@@ -113,7 +115,7 @@ export default function CommandControlPage() {
   }
 
   return (
-    <SidebarLayout title="Command & Control" navItems={adminNavItems}>
+    <SidebarLayout title={t('adminPages.titles.commandControl')} navItems={adminNavItems}>
       <div className="space-y-6">
         {error && (
           <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg text-sm">

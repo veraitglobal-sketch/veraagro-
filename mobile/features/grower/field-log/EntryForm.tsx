@@ -56,10 +56,22 @@ export default function EntryForm() {
                 letterSpacing: 0.2,
               }}
             >
-              Warning: You are not on your parcel!
+              {t('producer.fieldLogForm.warningNotOnParcel')}
             </Text>
           </View>
         )}
+
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '300',
+            color: theme.colors.text.secondary,
+            lineHeight: 18,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          {t('producer.fieldLogForm.introLead')}
+        </Text>
 
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text

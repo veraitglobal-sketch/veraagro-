@@ -137,7 +137,7 @@ export class FieldEntriesService {
     });
     if (parcelCount === 0) {
       throw new ForbiddenException(
-        'Add at least one parcel under your field, get it approved by an administrator, then you can add field diary entries (planting, spraying, harvest).',
+        'Add at least one parcel under your field, get it approved by an administrator, then you can add entry log entries (planting, spraying, harvest).',
       );
     }
     const approved = await this.prisma.parcels.count({
@@ -145,7 +145,7 @@ export class FieldEntriesService {
     });
     if (approved === 0) {
       throw new ForbiddenException(
-        'Field diary entries (planting, spraying, harvest) are available after an administrator has approved at least one of your parcels.',
+        'Entry log entries (planting, spraying, harvest) are available after an administrator has approved at least one of your parcels.',
       );
     }
   }

@@ -7,6 +7,7 @@ import { securityAlertsAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 interface SecurityAlert {
   id: string;
@@ -29,6 +30,7 @@ interface SecurityAlert {
 }
 
 export default function SecurityAlertsPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,7 +95,7 @@ export default function SecurityAlertsPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN', 'COORDINATOR']}>
-      <SidebarLayout title="Security Alerts" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.security')} navItems={adminNavItems}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex justify-between items-center">

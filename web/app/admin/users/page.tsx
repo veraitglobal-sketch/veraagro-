@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound, Copy } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   id: string;
@@ -43,6 +44,7 @@ interface User {
 }
 
 export default function UsersManagementPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -356,7 +358,7 @@ export default function UsersManagementPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="User Management" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.users')} navItems={adminNavItems}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex justify-between items-center">

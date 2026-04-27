@@ -11,6 +11,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { formatDateEn, formatDateTimeEn } from '@/lib/en-locale-dates';
 import {
   User,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react';
 
 export default function FarmDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const farmerId = params?.id as string;
@@ -48,7 +50,7 @@ export default function FarmDetailPage() {
       const result = await getFarmDetailSplit(farmerId);
       setData(result);
     } catch (err: any) {
-      setError(err.message || 'Failed to load farm detail');
+      setError(err.message || t('adminPages.farmDetail.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -57,9 +59,9 @@ export default function FarmDetailPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-        <SidebarLayout title="Farm Detail" navItems={adminNavItems}>
+        <SidebarLayout title={t('adminPages.titles.farmDetail')} navItems={adminNavItems}>
           <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-gray-500">Loading...</div>
+            <div className="text-gray-500">{t('adminPages.farmDetail.loading')}</div>
           </div>
         </SidebarLayout>
       </AuthGuard>
@@ -69,16 +71,16 @@ export default function FarmDetailPage() {
   if (error || !data) {
     return (
       <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-        <SidebarLayout title="Farm Detail" navItems={adminNavItems}>
+        <SidebarLayout title={t('adminPages.titles.farmDetail')} navItems={adminNavItems}>
           <div className="p-6">
             <button
               onClick={() => router.back()}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
             >
               <ChevronLeft className="w-5 h-5" />
-              Back
+              {t('adminPages.farmDetail.back')}
             </button>
-            <div className="text-red-600">{error || 'Farmer not found'}</div>
+            <div className="text-red-600">{error || t('adminPages.farmDetail.farmerNotFound')}</div>
           </div>
         </SidebarLayout>
       </AuthGuard>
@@ -102,14 +104,14 @@ export default function FarmDetailPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Farm Detail" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.farmDetail')} navItems={adminNavItems}>
         <div className="p-6 max-w-5xl">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
           >
             <ChevronLeft className="w-5 h-5" />
-            Back to users
+            {t('adminPages.farmDetail.backToUsers')}
           </button>
 
           {/* Farmer header */}
@@ -123,7 +125,9 @@ export default function FarmDetailPage() {
                   {farmer.firstName} {farmer.lastName}
                 </h1>
                 {farmer.partnerCode && (
-                  <p className="text-sm text-gray-500 mt-1">Partner code: {farmer.partnerCode}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {t('adminPages.farmDetail.partnerCode')} {farmer.partnerCode}
+                  </p>
                 )}
                 {farmer.email && (
                   <p className="text-sm text-gray-500">{farmer.email}</p>
@@ -136,13 +140,13 @@ export default function FarmDetailPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 mb-6">
               {(
                 [
-                  ['Estates', counts.estates],
-                  ['Parcels', counts.parcels],
-                  ['Batches', counts.batches],
-                  ['Treatments', counts.treatmentLogs],
-                  ['Compliance', counts.complianceLogs],
-                  ['Growth', counts.growthLogs],
-                  ['Missions', counts.missions],
+                  [t('adminPages.farmDetail.counts.estates'), counts.estates],
+                  [t('adminPages.farmDetail.counts.parcels'), counts.parcels],
+                  [t('adminPages.farmDetail.counts.batches'), counts.batches],
+                  [t('adminPages.farmDetail.counts.treatments'), counts.treatmentLogs],
+                  [t('adminPages.farmDetail.counts.compliance'), counts.complianceLogs],
+                  [t('adminPages.farmDetail.counts.growth'), counts.growthLogs],
+                  [t('adminPages.farmDetail.counts.missions'), counts.missions],
                 ] as const
               ).map(([label, n]) => (
                 <div
@@ -162,14 +166,20 @@ export default function FarmDetailPage() {
                 <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <BarChart3 className="w-5 h-5 text-[#2D5A27]" />
-                    <h2 className="font-semibold text-gray-900">Material balance (Bio Vera stock)</h2>
+                    <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.materialBalance')}</h2>
                   </div>
                   <ul className="text-sm text-gray-700 space-y-1.5">
-                    <li>Crates: {materialBalance.crateBalance}</li>
-                    <li>Label rolls: {materialBalance.labelRollBalance}</li>
-                    <li>Film (m): {materialBalance.filmMeterBalance}</li>
+                    <li>
+                      {t('adminPages.farmDetail.crates')} {materialBalance.crateBalance}
+                    </li>
+                    <li>
+                      {t('adminPages.farmDetail.labelRolls')} {materialBalance.labelRollBalance}
+                    </li>
+                    <li>
+                      {t('adminPages.farmDetail.filmM')} {materialBalance.filmMeterBalance}
+                    </li>
                     <li className="text-xs text-gray-500 pt-1">
-                      Updated: {formatDateTimeEn(materialBalance.lastUpdated)}
+                      {t('adminPages.farmDetail.updated')} {formatDateTimeEn(materialBalance.lastUpdated)}
                     </li>
                   </ul>
                 </div>
@@ -178,16 +188,23 @@ export default function FarmDetailPage() {
                 <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <HeartHandshake className="w-5 h-5 text-[#2D5A27]" />
-                    <h2 className="font-semibold text-gray-900">Trust & ratings</h2>
+                    <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.trustTitle')}</h2>
                   </div>
                   <ul className="text-sm text-gray-700 space-y-1.5">
-                    <li>Current score: {trust.currentScore}</li>
-                    <li>Farmer score: {trust.farmerScore ?? '—'}</li>
                     <li>
-                      Avg rating: {trust.averageRating} ({trust.totalRatings} total)
+                      {t('adminPages.farmDetail.currentScore')} {trust.currentScore}
+                    </li>
+                    <li>
+                      {t('adminPages.farmDetail.farmerScore')} {trust.farmerScore ?? '—'}
+                    </li>
+                    <li>
+                      {t('adminPages.farmDetail.avgRating', {
+                        avg: trust.averageRating,
+                        total: trust.totalRatings,
+                      })}
                     </li>
                     <li className="text-xs text-gray-500">
-                      Last updated: {formatDateTimeEn(trust.lastUpdated)}
+                      {t('adminPages.farmDetail.lastUpdated')} {formatDateTimeEn(trust.lastUpdated)}
                     </li>
                   </ul>
                 </div>
@@ -199,16 +216,16 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <Fingerprint className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">KYC documents</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.kycTitle')}</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead>
                     <tr className="text-left text-gray-500 border-b border-gray-100">
-                      <th className="py-2 pr-4">Type</th>
-                      <th className="py-2 pr-4">Status</th>
-                      <th className="py-2 pr-4">Created</th>
-                      <th className="py-2">Verified</th>
+                      <th className="py-2 pr-4">{t('adminPages.farmDetail.colType')}</th>
+                      <th className="py-2 pr-4">{t('adminPages.farmDetail.colStatus')}</th>
+                      <th className="py-2 pr-4">{t('adminPages.farmDetail.colCreated')}</th>
+                      <th className="py-2">{t('adminPages.farmDetail.colVerified')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -246,16 +263,16 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <ClipboardList className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Field diary & scan compliance (recent)</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.complianceLogTitle')}</h2>
               </div>
               <div className="overflow-x-auto max-h-72 overflow-y-auto text-sm">
                 <table className="min-w-full">
                   <thead className="sticky top-0 bg-white z-10">
                     <tr className="text-left text-gray-500 border-b border-gray-100">
-                      <th className="py-2 pr-3">Time</th>
-                      <th className="py-2 pr-3">Type</th>
-                      <th className="py-2 pr-3">Status</th>
-                      <th className="py-2">Compliant</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colTime')}</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colType')}</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colStatus')}</th>
+                      <th className="py-2">{t('adminPages.farmDetail.colCompliant')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -266,7 +283,9 @@ export default function FarmDetailPage() {
                         </td>
                         <td className="py-1.5 pr-3 text-gray-900">{c.entryType}</td>
                         <td className="py-1.5 pr-3">{c.complianceStatus}</td>
-                        <td className="py-1.5">{c.isCompliant ? 'Yes' : 'No'}</td>
+                        <td className="py-1.5">
+                          {c.isCompliant ? t('adminPages.farmDetail.yes') : t('adminPages.farmDetail.no')}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -279,17 +298,17 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Recent batches</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.recentBatches')}</h2>
               </div>
               <div className="overflow-x-auto text-sm">
                 <table className="min-w-full">
                   <thead>
                     <tr className="text-left text-gray-500 border-b border-gray-100">
-                      <th className="py-2 pr-3">Batch ID</th>
-                      <th className="py-2 pr-3">Product</th>
-                      <th className="py-2 pr-3">Quantity</th>
-                      <th className="py-2 pr-3">Harvest</th>
-                      <th className="py-2">Status</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colBatchId')}</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colProduct')}</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colQuantity')}</th>
+                      <th className="py-2 pr-3">{t('adminPages.farmDetail.colHarvest')}</th>
+                      <th className="py-2">{t('adminPages.farmDetail.colStatus')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -318,7 +337,7 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <ImageIcon className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Field photos</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.fieldPhotos')}</h2>
               </div>
               {fieldPhotos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
@@ -332,14 +351,14 @@ export default function FarmDetailPage() {
                     >
                       <img
                         src={p.imageUrl}
-                        alt="Field"
+                        alt={t('adminPages.farmDetail.imgFieldAlt')}
                         className="w-full h-full object-cover"
                       />
                     </a>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No field photos yet</p>
+                <p className="text-sm text-gray-500">{t('adminPages.farmDetail.noFieldPhotos')}</p>
               )}
             </div>
 
@@ -347,7 +366,7 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <FlaskConical className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Lab results</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.labResults')}</h2>
               </div>
               {labResults && labResults.length > 0 ? (
                 <div className="space-y-2">
@@ -360,19 +379,19 @@ export default function FarmDetailPage() {
                           rel="noopener noreferrer"
                           className="text-[#2D5A27] hover:underline flex items-center gap-1"
                         >
-                          {r.labTestDate ? formatDateEn(r.labTestDate) : 'Lab result'}
+                          {r.labTestDate ? formatDateEn(r.labTestDate) : t('adminPages.farmDetail.labResult')}
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
                         <span className="text-gray-500">
-                          {r.labTestDate ? formatDateEn(r.labTestDate) : 'Lab result'}
+                          {r.labTestDate ? formatDateEn(r.labTestDate) : t('adminPages.farmDetail.labResult')}
                         </span>
                       )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No lab results yet</p>
+                <p className="text-sm text-gray-500">{t('adminPages.farmDetail.noLabResults')}</p>
               )}
             </div>
 
@@ -380,7 +399,7 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Shield className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Sedex / audit status</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.sedexTitle')}</h2>
               </div>
               {sedexStatus ? (
                 <div className="space-y-1">
@@ -399,12 +418,12 @@ export default function FarmDetailPage() {
                   </span>
                   {sedexStatus.lastChecked && (
                     <p className="text-sm text-gray-500">
-                      Last checked: {formatDateEn(sedexStatus.lastChecked)}
+                      {t('adminPages.farmDetail.lastChecked')} {formatDateEn(sedexStatus.lastChecked)}
                     </p>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No Sedex / audit data yet</p>
+                <p className="text-sm text-gray-500">{t('adminPages.farmDetail.noSedex')}</p>
               )}
             </div>
 
@@ -412,7 +431,7 @@ export default function FarmDetailPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-5 h-5 text-[#2D5A27]" />
-                <h2 className="font-semibold text-gray-900">Compliance photos</h2>
+                <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.compliancePhotos')}</h2>
               </div>
               {compliancePhotos && compliancePhotos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
@@ -426,14 +445,14 @@ export default function FarmDetailPage() {
                     >
                       <img
                         src={p.photoUrl}
-                        alt={p.photoType || 'Compliance'}
+                        alt={p.photoType || t('grower.compliancePhotos.pageTitle')}
                         className="w-full h-full object-cover"
                       />
                     </a>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No compliance photos yet</p>
+                <p className="text-sm text-gray-500">{t('adminPages.farmDetail.noCompliancePhotos')}</p>
               )}
             </div>
           </div>
@@ -442,7 +461,7 @@ export default function FarmDetailPage() {
           <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-[#2D5A27]" />
-              <h2 className="font-semibold text-gray-900">Estates & parcels</h2>
+              <h2 className="font-semibold text-gray-900">{t('adminPages.farmDetail.estatesParcels')}</h2>
             </div>
             {estates && estates.length > 0 ? (
               <div className="space-y-4">
@@ -460,7 +479,7 @@ export default function FarmDetailPage() {
                             key={p.id}
                             className="px-2 py-1 rounded bg-gray-100 text-sm text-gray-700"
                           >
-                            {p.cropType || 'Parcel'} ({p.calculatedArea ?? '?'} m²)
+                            {p.cropType || t('adminPages.farmDetail.cropParcel')} ({p.calculatedArea ?? '?'} m²)
                           </span>
                         ))}
                       </div>
@@ -469,7 +488,7 @@ export default function FarmDetailPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No estates yet</p>
+              <p className="text-sm text-gray-500">{t('adminPages.farmDetail.noEstates')}</p>
             )}
           </div>
         </div>

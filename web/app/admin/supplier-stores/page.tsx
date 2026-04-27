@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSuppliersAdminAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { Store } from 'lucide-react';
 import Link from 'next/link';
 
@@ -22,6 +23,7 @@ function getApiErrorMessage(e: unknown): string {
  * No public registration; partners are created by admin only.
  */
 export default function AdminSupplierStoresPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -102,7 +104,7 @@ export default function AdminSupplierStoresPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Supplier stores" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.supplierStores')} navItems={adminNavItems}>
         <div className="max-w-2xl mx-auto p-6">
           <div className="flex items-center gap-2 mb-2">
             <Store className="w-6 h-6 text-[#2D5A27]" />

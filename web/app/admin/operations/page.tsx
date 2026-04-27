@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { adminAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { Package, AlertCircle, RefreshCw } from 'lucide-react';
 
 type SupplyRow = {
@@ -27,6 +28,7 @@ type SupplyPayload = {
 };
 
 export default function AdminOperationsSupplyPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [data, setData] = useState<SupplyPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ export default function AdminOperationsSupplyPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Operations — stock vs open orders" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.operations')} navItems={adminNavItems}>
         <div className="max-w-7xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>

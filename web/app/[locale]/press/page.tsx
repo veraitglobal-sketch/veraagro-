@@ -3,7 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Download, FileText, Image as ImageIcon, Mail, Calendar, User } from 'lucide-react';
+import { Download, FileText, Mail, Calendar, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { useMemo } from 'react';
 
 interface PressRelease {
   id: string;
@@ -13,103 +16,108 @@ interface PressRelease {
   link?: string;
 }
 
-const pressReleases: PressRelease[] = [
-  {
-    id: '1',
-    date: 'January 15, 2026',
-    title: 'Bio Vera Launches Vertically Integrated Agricultural Network',
-    summary: 'Bio Vera announces the launch of its agricultural network connecting producers worldwide with markets, with full traceability and compliance built into the operating model.',
-    link: '#',
-  },
-  {
-    id: '2',
-    date: 'February 1, 2026',
-    title: 'Protocol 360: New Quality Assurance System Sets Industry Standard',
-    summary: 'Bio Vera introduces Protocol 360, a three-tier quality control system ensuring product safety, quality, and standardization from field to shelf.',
-    link: '#',
-  },
-];
+interface AssetItem {
+  name: string;
+  description: string;
+  format: string;
+}
 
-const assets = [
-  {
-    category: 'Logos',
-    items: [
-      { name: 'Bio Vera Logo (PNG)', description: 'High-resolution logo in PNG format', format: 'PNG' },
-      { name: 'Bio Vera Logo (SVG)', description: 'Vector logo in SVG format', format: 'SVG' },
-      { name: 'Bio Vera Logo (Dark)', description: 'Dark variant of the logo', format: 'PNG' },
-      { name: 'Bio Vera Logo (Light)', description: 'Light variant of the logo', format: 'PNG' },
-    ],
-  },
-  {
-    category: 'Brand Colors',
-    items: [
-      { name: 'Primary Green', description: '#2D5A27 - Main brand color', format: 'HEX' },
-      { name: 'Secondary Colors', description: 'Complete color palette', format: 'PDF' },
-    ],
-  },
-  {
-    category: 'Images',
-    items: [
-      { name: 'Product Photography', description: 'High-quality product images', format: 'ZIP' },
-      { name: 'Team Photos', description: 'Official team photographs', format: 'ZIP' },
-      { name: 'App & portal screenshots', description: 'Bio Vera app and web portal screenshots', format: 'ZIP' },
-    ],
-  },
-  {
-    category: 'Documents',
-    items: [
-      { name: 'Company Fact Sheet', description: 'One-page company overview', format: 'PDF' },
-      { name: 'Product Overview', description: 'Detailed product information', format: 'PDF' },
-      { name: 'Brand Guidelines', description: 'Complete brand guidelines document', format: 'PDF' },
-    ],
-  },
-];
+interface AssetGroup {
+  category: string;
+  items: AssetItem[];
+}
+
+function isPressReleaseArray(x: unknown): x is PressRelease[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === 'object' &&
+    x[0] !== null &&
+    'id' in x[0] &&
+    'title' in x[0]
+  );
+}
+
+function isAssetGroupArray(x: unknown): x is AssetGroup[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === 'object' &&
+    x[0] !== null &&
+    'category' in x[0] &&
+    'items' in x[0]
+  );
+}
+
+function isStringArray(x: unknown): x is string[] {
+  return Array.isArray(x) && x.every((i) => typeof i === 'string');
+}
 
 export default function PressPage() {
+  const { t } = useTranslation();
+  const loc = useLocalizedHref();
+
+  const pressReleases = useMemo(() => {
+    const raw = t('pressPage.releases', { returnObjects: true });
+    return isPressReleaseArray(raw) ? raw : [];
+  }, [t]);
+
+  const assetGroups = useMemo(() => {
+    const raw = t('pressPage.assetGroups', { returnObjects: true });
+    return isAssetGroupArray(raw) ? raw : [];
+  }, [t]);
+
+  const keyFacts = useMemo(() => {
+    const raw = t('pressPage.keyFacts', { returnObjects: true });
+    return isStringArray(raw) ? raw : [];
+  }, [t]);
+
+  const usageBullets = useMemo(() => {
+    const raw = t('pressPage.usageBullets', { returnObjects: true });
+    return isStringArray(raw) ? raw : [];
+  }, [t]);
+
+  const ctaContactHref = useMemo(
+    () => `${loc('/contact')}?subject=${encodeURIComponent(t('pressPage.ctaQuerySubject'))}`,
+    [loc, t],
+  );
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image 
-                src="/logo1.png" 
-                alt="Bio Vera" 
-                width={56} 
-                height={20} 
+            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo1.png"
+                alt={t('footer.logoAlt')}
+                width={56}
+                height={20}
                 className="h-4 w-auto"
                 priority
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                Home
+              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
+                {t('nav.home')}
               </Link>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="pt-32 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              Press Kit
-            </h1>
-            <p className="text-lg text-gray-600 font-light leading-relaxed">
-              Resources for journalists, bloggers, and media professionals
-            </p>
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">{t('pressPage.title')}</h1>
+            <p className="text-lg text-gray-600 font-light leading-relaxed">{t('pressPage.subtitle')}</p>
           </motion.div>
 
-          {/* Contact Information */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -118,14 +126,14 @@ export default function PressPage() {
               transition={{ duration: 0.6 }}
               className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg p-8"
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">Media Contact</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.mediaContact')}</h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <Mail className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Press Inquiries</h3>
-                    <a 
-                      href="mailto:press@biovera.app" 
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">{t('pressPage.pressInquiries')}</h3>
+                    <a
+                      href="mailto:press@biovera.app"
                       className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors"
                     >
                       press@biovera.app
@@ -135,17 +143,14 @@ export default function PressPage() {
                 <div className="flex items-start gap-4">
                   <User className="w-5 h-5 text-[#2D5A27] flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Media Relations</h3>
-                    <p className="text-sm text-gray-600 font-light">
-                      For interview requests, media partnerships, and press inquiries, please contact our media team.
-                    </p>
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">{t('pressPage.mediaRelations')}</h3>
+                    <p className="text-sm text-gray-600 font-light">{t('pressPage.mediaRelationsText')}</p>
                   </div>
                 </div>
               </div>
             </motion.div>
           </section>
 
-          {/* Press Releases */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -153,9 +158,9 @@ export default function PressPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">Press Releases</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.sectionReleases')}</h2>
               <div className="space-y-4">
-                {pressReleases.map((release, index) => (
+                {pressReleases.map((release) => (
                   <div
                     key={release.id}
                     className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors"
@@ -167,9 +172,7 @@ export default function PressPage() {
                           <span className="text-xs text-gray-500 font-light">{release.date}</span>
                         </div>
                         <h3 className="text-lg font-medium text-gray-900 mb-2">{release.title}</h3>
-                        <p className="text-sm text-gray-600 font-light leading-relaxed">
-                          {release.summary}
-                        </p>
+                        <p className="text-sm text-gray-600 font-light leading-relaxed">{release.summary}</p>
                       </div>
                     </div>
                     {release.link && (
@@ -178,7 +181,7 @@ export default function PressPage() {
                         className="inline-flex items-center gap-2 text-sm text-[#2D5A27] hover:text-[#23471f] transition-colors mt-4"
                       >
                         <FileText className="w-4 h-4" />
-                        Read Full Release
+                        {t('pressPage.readFullRelease')}
                       </Link>
                     )}
                   </div>
@@ -187,7 +190,6 @@ export default function PressPage() {
             </motion.div>
           </section>
 
-          {/* Company Information */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -195,32 +197,24 @@ export default function PressPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">Company Information</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.sectionCompany')}</h2>
               <div className="space-y-4">
                 <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-base font-medium text-gray-900 mb-2">About Bio Vera</h3>
-                  <p className="text-sm text-gray-600 font-light leading-relaxed">
-                    Bio Vera is a vertically integrated agricultural network that connects producers 
-                    with markets under clear standards. We provide traceability, quality assurance, and 
-                    compliance as part of the same operating model, from field to buyer. Founded in 2026, Bio Vera is headquartered 
-                    in Hamburg, Germany, and serves producers and buyers around the world.
-                  </p>
+                  <h3 className="text-base font-medium text-gray-900 mb-2">{t('pressPage.aboutTitle')}</h3>
+                  <p className="text-sm text-gray-600 font-light leading-relaxed">{t('pressPage.aboutText')}</p>
                 </div>
                 <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-base font-medium text-gray-900 mb-2">Key Facts</h3>
+                  <h3 className="text-base font-medium text-gray-900 mb-2">{t('pressPage.keyFactsTitle')}</h3>
                   <ul className="space-y-2 text-sm text-gray-600 font-light">
-                    <li>• Founded: 2026</li>
-                    <li>• Headquarters: Hamburg, Germany</li>
-                    <li>• Market: Worldwide</li>
-                    <li>• Focus: Agricultural traceability and quality assurance</li>
-                    <li>• Technology: Protocol 360 quality control system</li>
+                    {keyFacts.map((line) => (
+                      <li key={line}>• {line}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
             </motion.div>
           </section>
 
-          {/* Media Assets */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -228,15 +222,15 @@ export default function PressPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">Media Assets</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.sectionAssets')}</h2>
               <div className="space-y-8">
-                {assets.map((category, categoryIndex) => (
-                  <div key={categoryIndex}>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">{category.category}</h3>
+                {assetGroups.map((group) => (
+                  <div key={group.category}>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">{group.category}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      {category.items.map((item, itemIndex) => (
+                      {group.items.map((item) => (
                         <div
-                          key={itemIndex}
+                          key={`${group.category}-${item.name}`}
                           className="border border-gray-200 rounded-lg p-4 hover:border-[#2D5A27] transition-colors"
                         >
                           <div className="flex items-start justify-between gap-4 mb-2">
@@ -248,9 +242,12 @@ export default function PressPage() {
                               {item.format}
                             </span>
                           </div>
-                          <button className="mt-3 flex items-center gap-2 text-xs text-[#2D5A27] hover:text-[#23471f] transition-colors">
+                          <button
+                            type="button"
+                            className="mt-3 flex items-center gap-2 text-xs text-[#2D5A27] hover:text-[#23471f] transition-colors"
+                          >
                             <Download className="w-3 h-3" />
-                            Download
+                            {t('pressPage.download')}
                           </button>
                         </div>
                       ))}
@@ -261,7 +258,6 @@ export default function PressPage() {
             </motion.div>
           </section>
 
-          {/* Usage Guidelines */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -270,31 +266,22 @@ export default function PressPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-gray-50 border border-gray-200 rounded-lg p-8"
             >
-              <h2 className="text-xl font-light text-gray-900 mb-4">Usage Guidelines</h2>
+              <h2 className="text-xl font-light text-gray-900 mb-4">{t('pressPage.usageTitle')}</h2>
               <div className="space-y-3 text-sm text-gray-600 font-light">
+                {usageBullets.map((line) => (
+                  <p key={line}>• {line}</p>
+                ))}
                 <p>
-                  • All media assets are provided for editorial and press use only.
-                </p>
-                <p>
-                  • Logos and brand assets must be used in accordance with our brand guidelines.
-                </p>
-                <p>
-                  • Please do not modify, alter, or distort our logos or brand elements.
-                </p>
-                <p>
-                  • When using our assets, please credit Bio Vera appropriately.
-                </p>
-                <p>
-                  • For commercial use or licensing inquiries, please contact{' '}
+                  {t('pressPage.usageCommercialBefore')}{' '}
                   <a href="mailto:press@biovera.app" className="text-[#2D5A27] hover:underline">
                     press@biovera.app
-                  </a>.
+                  </a>
+                  {t('pressPage.usageCommercialAfter')}
                 </p>
               </div>
             </motion.div>
           </section>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -302,75 +289,95 @@ export default function PressPage() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="text-center"
           >
-            <h2 className="text-xl font-light text-gray-900 mb-4">Need Additional Information?</h2>
-            <p className="text-gray-600 font-light leading-relaxed mb-6">
-              For interview requests, additional assets, or specific media inquiries, please contact our press team.
-            </p>
+            <h2 className="text-xl font-light text-gray-900 mb-4">{t('pressPage.ctaTitle')}</h2>
+            <p className="text-gray-600 font-light leading-relaxed mb-6">{t('pressPage.ctaBody')}</p>
             <Link
-              href="/contact?subject=Press Inquiry"
+              href={ctaContactHref}
               className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
-              Contact Press Team
+              {t('pressPage.ctaButton')}
             </Link>
           </motion.div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-12 mb-12 items-start">
+          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
             <div className="flex flex-col">
-              <Link href="/" className="inline-block mb-4 -mt-1">
-                <Image 
-                  src="/logo1.png" 
-                  alt="Bio Vera" 
-                  width={56} 
-                  height={20} 
-                  className="h-4 w-auto"
-                />
+              <Link href={loc('/')} className="inline-block mb-4 -mt-1">
+                <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" />
               </Link>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                A vertically integrated agricultural network for Bio-Ready certification 
-                and EU market compliance.
-              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">{t('footer.tagline')}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnProduct')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
+                <li>
+                  <Link href={loc('/growers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forGrowers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/suppliers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forSuppliers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/logistics-partner')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forLogistics')}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnCompany')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
+                <li>
+                  <Link href={loc('/about')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.about')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/careers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.careers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/press')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.pressKit')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/#vision')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.vision')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/#roadmap')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.roadmap')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/contact')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.contact')}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnLegal')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/faq" className="hover:text-[#2D5A27] transition-colors">FAQ</Link></li>
-                <li><Link href="/help-center" className="hover:text-[#2D5A27] transition-colors">Help Center</Link></li>
-                <li><Link href="/security" className="hover:text-[#2D5A27] transition-colors">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+                <li>
+                  <Link href={loc('/legal')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.legalHub')}
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
+            <p>{t('footer.copyright', { year: 2026 })}</p>
           </div>
         </div>
       </footer>

@@ -6,12 +6,14 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSuppliersAdminAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { MessageCircle, Package, Store, User, ChevronDown, ChevronRight, ExternalLink, RefreshCw } from 'lucide-react';
 
 type Overview = Awaited<ReturnType<typeof b2bSuppliersAdminAPI.getNetworkOverview>>;
 
 export default function AdminSupplierGrowersPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function AdminSupplierGrowersPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Suppliers & growers (B2B)" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.supplierGrowers')} navItems={adminNavItems}>
         <div className="space-y-6 max-w-5xl">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>

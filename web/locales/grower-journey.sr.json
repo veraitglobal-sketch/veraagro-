@@ -14,7 +14,7 @@
     }
   ],
   "intro": {
-    "sidebarBlurb": "Čitajte korake 1–12 redom. Meni levo prati red rada: od tabele, uputstava, parcela i zasada, preko materijala i partija, dnevnika, skeniranja i kvaliteta, do dobavljača i transporta. Neke teme su ovde na karticama podeljene jasnije (npr. odobrenje, rad na polju).",
+    "sidebarBlurb": "Čitajte korake 1–12 redom. Meni levo prati red rada: od tabele, uputstava, parcela i zasada, preko materijala i partija, Dnevnika unosa, skeniranja i kvaliteta, do dobavljača i transporta. Neke teme su ovde na karticama podeljene jasnije (npr. odobrenje, rad na polju).",
     "myFieldsCta": {
       "title": "Moja polja",
       "line": "Otvorite kada budete spremni da mapirate blokove i useve.",
@@ -67,9 +67,9 @@
       ]
     },
     {
-      "title": "Rad na polju — setva, dnevnik, tretmani",
+      "title": "Rad na polju — setva, dnevnik unosa, tretmani",
       "paragraphs": [
-        "Od setve nadalje koristite mobilnu aplikaciju za svakodnevni rad: dnevnik polja, dnevnik rasta, usklađene prskalice/tretmane (sa GPS gde treba). To je sloj traga pre komercijalne partije.",
+        "Od setve nadalje koristite mobilnu aplikaciju za svakodnevni rad: Dnevnik unosa, dnevnik rasta, usklađene prskalice/tretmane (sa GPS gde treba). To je sloj traga pre komercijalne partije.",
         "Kada usev približava berbu, podnesite plan berbe u aplikaciji (očekivane kg, opciono prozor utovara) da operativa i logistika planiraju — to nije maloprodajna porudžbina; služi planiranju i misijama.",
         "Na webu su granice i blokovi ispod Moja polja; unose u redu radite telefonom."
       ],

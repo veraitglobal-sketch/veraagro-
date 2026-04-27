@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { partnerApplicationsAdminAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -34,6 +35,7 @@ type Row = {
 };
 
 export default function AdminPartnerApplicationsPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,7 @@ export default function AdminPartnerApplicationsPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Partner applications" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.partnerApplications')} navItems={adminNavItems}>
         <div className="p-6 max-w-6xl mx-auto">
           <p className="text-sm text-gray-600 mb-4">
             Distributor / supplier partner interest from the website. When ready, create a store account in{' '}

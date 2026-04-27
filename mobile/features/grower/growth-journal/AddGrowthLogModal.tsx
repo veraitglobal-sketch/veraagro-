@@ -194,6 +194,23 @@ export function AddGrowthLogModal({
                 marginBottom: theme.spacing.lg,
               }}
             />
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: `${colors.primary}55`,
+                backgroundColor: `${colors.primary}0c`,
+                borderRadius: theme.borderRadius.md,
+                padding: 12,
+                marginBottom: theme.spacing.md,
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+                {t('producer.growthJournal.photoRequiredLineTitle')}
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginTop: 6 }}>
+                {t('producer.growthJournal.photoRequiredLineBody')}
+              </Text>
+            </View>
             <TouchableOpacity
               onPress={submit}
               disabled={busy}

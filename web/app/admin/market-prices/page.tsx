@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { DollarSign, Plus, Edit2, TrendingUp, TrendingDown, Minus, AlertTriangle, Zap } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 interface MarketPrice {
   id: string;
@@ -23,6 +24,7 @@ interface MarketPrice {
 }
 
 export default function MarketPricesPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [prices, setPrices] = useState<MarketPrice[]>([]);
@@ -191,7 +193,7 @@ export default function MarketPricesPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Market Prices" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.marketPrices')} navItems={adminNavItems}>
         <div className="space-y-6">
           {/* Price Escalation Alerts */}
           {priceEscalations?.hasEscalation && (

@@ -5,9 +5,11 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { parcelsAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { MapPin, CheckCircle, Loader2 } from 'lucide-react';
 
 export default function AdminParcelsPendingPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [parcels, setParcels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +49,7 @@ export default function AdminParcelsPendingPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Parcels pending approval" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.parcelsPending')} navItems={adminNavItems}>
         <div className="p-6 max-w-4xl">
           <h1 className="text-2xl font-light text-gray-900 mb-1">Parcels pending approval</h1>
           <p className="text-sm text-gray-600 mb-6">

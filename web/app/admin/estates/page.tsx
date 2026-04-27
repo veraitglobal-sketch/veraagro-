@@ -6,6 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI } from '@/lib/api';
 import { MapPin, Check, X, Clock, User } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { formatDateEn } from '@/lib/en-locale-dates';
 
 interface PendingEstate {
@@ -32,6 +33,7 @@ interface PendingEstate {
 }
 
 export default function EstatesApprovalPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [estates, setEstates] = useState<PendingEstate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,7 @@ export default function EstatesApprovalPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Estate Approval" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.estates')} navItems={adminNavItems}>
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>

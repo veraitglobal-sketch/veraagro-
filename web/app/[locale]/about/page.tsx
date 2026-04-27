@@ -1,55 +1,90 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Target, Users, Award, Globe, Shield, Leaf } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+
+type Card = { title: string; description: string };
+type Block = { title: string; body: string };
+
+function isCardList(x: unknown): x is Card[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === 'object' &&
+    x[0] !== null &&
+    'title' in x[0] &&
+    'description' in x[0]
+  );
+}
+
+function isBlockList(x: unknown): x is Block[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === 'object' &&
+    x[0] !== null &&
+    'title' in x[0] &&
+    'body' in x[0]
+  );
+}
+
+const VALUE_ICONS = [Shield, Award, Users, Leaf];
 
 export default function AboutPage() {
+  const { t } = useTranslation();
+  const loc = useLocalizedHref();
+
+  const valueCards = useMemo(() => {
+    const raw = t('aboutPage.valueCards', { returnObjects: true });
+    return isCardList(raw) ? raw : [];
+  }, [t]);
+
+  const whatWeDoItems = useMemo(() => {
+    const raw = t('aboutPage.whatWeDoItems', { returnObjects: true });
+    return isBlockList(raw) ? raw : [];
+  }, [t]);
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image 
-                src="/logo1.png" 
-                alt="Bio Vera" 
-                width={56} 
-                height={20} 
+            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo1.png"
+                alt={t('footer.logoAlt')}
+                width={56}
+                height={20}
                 className="h-4 w-auto"
                 priority
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                Home
+              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
+                {t('nav.home')}
               </Link>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="pt-32 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              About Bio Vera
-            </h1>
-            <p className="text-lg text-gray-600 font-light leading-relaxed">
-              Transforming agriculture through technology, transparency, and trust
-            </p>
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">{t('aboutPage.heroTitle')}</h1>
+            <p className="text-lg text-gray-600 font-light leading-relaxed">{t('aboutPage.heroSubtitle')}</p>
           </motion.div>
 
-          {/* Mission Section */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -61,23 +96,14 @@ export default function AboutPage() {
               <div className="flex items-start gap-4 mb-6">
                 <Target className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our Mission</h2>
-                  <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    Bio Vera works to strengthen agricultural supply chains by connecting 
-                    producers worldwide directly with markets, ensuring clear standards, quality assurance, 
-                    and fair compensation at every step.
-                  </p>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    We believe that technology can bridge the gap between traditional farming and modern 
-                    market demands, creating a sustainable ecosystem where farmers thrive, buyers trust, 
-                    and consumers benefit from truly traceable, high-quality products.
-                  </p>
+                  <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.missionTitle')}</h2>
+                  <p className="text-gray-600 font-light leading-relaxed mb-4">{t('aboutPage.missionP1')}</p>
+                  <p className="text-gray-600 font-light leading-relaxed">{t('aboutPage.missionP2')}</p>
                 </div>
               </div>
             </motion.div>
           </section>
 
-          {/* Vision Section */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -88,22 +114,14 @@ export default function AboutPage() {
               <div className="flex items-start gap-4 mb-6">
                 <Globe className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">Our Vision</h2>
-                  <p className="text-gray-600 font-light leading-relaxed mb-4">
-                    To become a leading vertically integrated agricultural network, setting new 
-                    standards for traceability, quality assurance, and sustainable agriculture.
-                  </p>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    We envision a future where every product on the shelf has a complete digital passport, 
-                    where farmers receive fair compensation for their work, and where consumers can trust 
-                    the origin and quality of what they purchase.
-                  </p>
+                  <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.visionTitle')}</h2>
+                  <p className="text-gray-600 font-light leading-relaxed mb-4">{t('aboutPage.visionP1')}</p>
+                  <p className="text-gray-600 font-light leading-relaxed">{t('aboutPage.visionP2')}</p>
                 </div>
               </div>
             </motion.div>
           </section>
 
-          {/* Values Section */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -111,34 +129,13 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-8">Our Values</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-8">{t('aboutPage.valuesTitle')}</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {[
-                  {
-                    icon: Shield,
-                    title: 'Transparency',
-                    description: 'Complete visibility into every step of the supply chain, from field to shelf. No hidden processes, no obscured origins.',
-                  },
-                  {
-                    icon: Award,
-                    title: 'Quality First',
-                    description: 'Rigorous quality standards that exceed industry expectations. Every product verified through our Protocol 360 system.',
-                  },
-                  {
-                    icon: Users,
-                    title: 'Fair Compensation',
-                    description: 'Ensuring farmers receive fair prices for their products while maintaining competitive market rates.',
-                  },
-                  {
-                    icon: Leaf,
-                    title: 'Sustainability',
-                    description: 'Promoting sustainable farming practices and reducing waste through efficient supply chain management.',
-                  },
-                ].map((value, index) => {
-                  const IconComponent = value.icon;
+                {valueCards.map((value, index) => {
+                  const IconComponent = VALUE_ICONS[index] ?? Shield;
                   return (
                     <motion.div
-                      key={index}
+                      key={value.title}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -147,9 +144,7 @@ export default function AboutPage() {
                     >
                       <IconComponent className="w-6 h-6 text-[#2D5A27] mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">{value.title}</h3>
-                      <p className="text-sm text-gray-600 font-light leading-relaxed">
-                        {value.description}
-                      </p>
+                      <p className="text-sm text-gray-600 font-light leading-relaxed">{value.description}</p>
                     </motion.div>
                   );
                 })}
@@ -157,7 +152,6 @@ export default function AboutPage() {
             </motion.div>
           </section>
 
-          {/* What We Do Section */}
           <section className="mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -165,41 +159,18 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">What We Do</h2>
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('aboutPage.whatWeDoTitle')}</h2>
               <div className="space-y-4">
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Complete Traceability</h3>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    Every product gets a digital passport with immutable proof of origin, journey, and quality. 
-                    QR codes on every box connect consumers directly to the farmer who grew their food.
-                  </p>
-                </div>
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Quality Assurance</h3>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    Our Protocol 360 system ensures three-tier quality control: field-level soil analysis, 
-                    biometric scanning at packaging, and cold chain monitoring during transport.
-                  </p>
-                </div>
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Direct Market Access</h3>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    We eliminate intermediaries, connecting producers directly with buyers. This means better 
-                    prices for farmers and guaranteed freshness for consumers.
-                  </p>
-                </div>
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">EU Compliance</h3>
-                  <p className="text-gray-600 font-light leading-relaxed">
-                    Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, 
-                    and complete compliance tracking for seamless access to markets around the world.
-                  </p>
-                </div>
+                {whatWeDoItems.map((item) => (
+                  <div key={item.title} className="border-l-2 border-[#2D5A27] pl-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-gray-600 font-light leading-relaxed">{item.body}</p>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </section>
 
-          {/* CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -207,76 +178,103 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center"
           >
-            <h2 className="text-2xl font-light text-gray-900 mb-4">Join Us on This Journey</h2>
-            <p className="text-gray-600 font-light leading-relaxed mb-6">
-              Whether you are a grower, supplier, logistics partner, or buyer, Bio Vera offers a place in one 
-              agricultural network—with clear processes from field to settlement.
-            </p>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.ctaTitle')}</h2>
+            <p className="text-gray-600 font-light leading-relaxed mb-6">{t('aboutPage.ctaBody')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/growers"
+                href={loc('/growers')}
                 className="px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
-                Become a Producer
+                {t('aboutPage.ctaProducer')}
               </Link>
               <Link
-                href="/contact"
+                href={loc('/contact')}
                 className="px-6 py-3 border border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/10 transition-colors rounded-lg"
               >
-                Contact Us
+                {t('aboutPage.ctaContact')}
               </Link>
             </div>
           </motion.div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
             <div className="flex flex-col">
-              <Link href="/" className="inline-block mb-4 -mt-1">
-                <Image 
-                  src="/logo1.png" 
-                  alt="Bio Vera" 
-                  width={56} 
-                  height={20} 
-                  className="h-4 w-auto"
-                />
+              <Link href={loc('/')} className="inline-block mb-4 -mt-1">
+                <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" />
               </Link>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                A vertically integrated agricultural network for Bio-Ready certification 
-                and EU market compliance.
-              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">{t('footer.tagline')}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnProduct')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/growers" className="hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
-                <li><Link href="/suppliers" className="hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
+                <li>
+                  <Link href={loc('/growers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forGrowers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/suppliers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forSuppliers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.forLogistics')}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnCompany')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/about" className="hover:text-[#2D5A27] transition-colors">About</Link></li>
-                <li><Link href="/careers" className="hover:text-[#2D5A27] transition-colors">Careers</Link></li>
-                <li><Link href="/press" className="hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
-                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
-                <li><Link href="/contact" className="hover:text-[#2D5A27] transition-colors">Contact</Link></li>
+                <li>
+                  <Link href={loc('/about')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.about')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/careers')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.careers')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/press')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.pressKit')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/#vision')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.vision')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/#roadmap')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.roadmap')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={loc('/contact')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('nav.contact')}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnLegal')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/legal" className="hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+                <li>
+                  <Link href={loc('/legal')} className="hover:text-[#2D5A27] transition-colors">
+                    {t('footer.legalHub')}
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
+            <p>{t('footer.copyright', { year: 2026 })}</p>
           </div>
         </div>
       </footer>

@@ -4,18 +4,28 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/lib/auth';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { useGrowerHref } from '@/hooks/useGrowerHref';
 
+
+const CRATE_KEYS = ['crateTop', 'crateMiddle', 'crateBottom'] as const;
+
+const CLOUD_OPTIONS: { value: 'clear' | 'partly_cloudy' | 'cloudy' | 'overcast'; labelKey: string }[] = [
+  { value: 'clear', labelKey: 'cloudClear' },
+  { value: 'partly_cloudy', labelKey: 'cloudPartlyCloudy' },
+  { value: 'cloudy', labelKey: 'cloudCloudy' },
+  { value: 'overcast', labelKey: 'cloudOvercast' },
+];
 
 export default function QualityEntryPage() {
   const { t } = useTranslation();
+  const growerHref = useGrowerHref();
   const navItems = useGrowerNavItems();
-  const { user } = useAuth();
+  const fk = (key: string) => t(`growerPages.qualityEntryForm.${key}`);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
   const [formData, setFormData] = useState({
     weatherTemperature: '',
@@ -85,7 +95,7 @@ export default function QualityEntryPage() {
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('Photo size must be less than 10MB');
+      setError(fk('errPhotoMaxSize'));
       return;
     }
 
@@ -109,19 +119,20 @@ export default function QualityEntryPage() {
 
     // Validation
     if (!selectedBatch) {
-      setError('Please select a batch');
+      setError(fk('errSelectBatch'));
       setSubmitting(false);
       return;
     }
 
     if (!formData.standardConfirmation) {
-      setError('You must confirm that Bio Vera packaging, film, and labels are applied according to the protocol.');
+      setError(fk('errConfirmProtocol'));
       setSubmitting(false);
       return;
     }
 
-    if (formData.visualGradePhotos.length !== 3) {
-      setError('You must upload exactly 3 photos (top, middle, bottom crates)');
+    const photos = formData.visualGradePhotos;
+    if (!photos[0] || !photos[1] || !photos[2]) {
+      setError(fk('errThreePhotos'));
       setSubmitting(false);
       return;
     }
@@ -150,7 +161,7 @@ export default function QualityEntryPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit quality entry');
+        throw new Error(errorData.message || fk('errSubmitFailed'));
       }
 
       setSuccess(true);
@@ -169,7 +180,7 @@ export default function QualityEntryPage() {
         setSuccess(false);
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to submit quality entry');
+      setError(err.message || fk('errSubmitFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -180,7 +191,7 @@ export default function QualityEntryPage() {
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title={t('growerPages.qualityEntry')}
-          description="Complete this form before creating a shipment. All fields in the form below are mandatory."
+          description={fk('pageDescription')}
         />
         {error && (
           <motion.div
@@ -198,9 +209,7 @@ export default function QualityEntryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 bg-green-50 border border-green-200 rounded-lg"
           >
-            <p className="text-sm text-green-800">
-              ✓ Quality entry submitted successfully! Shipment can now be created.
-            </p>
+            <p className="text-sm text-green-800">✓ {fk('successMessage')}</p>
           </motion.div>
         )}
 
@@ -209,23 +218,23 @@ export default function QualityEntryPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Farmer&apos;s Quality Entry</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{fk('formSectionTitle')}</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Batch *
+                {fk('selectBatch')} *
               </label>
               {batchesLoading ? (
-                <p className="text-sm text-gray-500">Loading batches…</p>
+                <p className="text-sm text-gray-500">{fk('loadingBatches')}</p>
               ) : batches.length === 0 ? (
                 <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
-                  No batches yet.{' '}
-                  <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
-                    Create a batch
+                  {fk('noBatchesLead')}{' '}
+                  <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
+                    {fk('createBatchCta')}
                   </Link>{' '}
-                  first.
+                  {fk('noBatchesTail')}
                 </p>
               ) : (
                 <select
@@ -234,7 +243,7 @@ export default function QualityEntryPage() {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <option value="">-- Select Batch --</option>
+                  <option value="">{fk('selectBatchPlaceholder')}</option>
                   {batches.map((batch) => (
                     <option key={batch.id} value={batch.id}>
                       {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit})
@@ -246,11 +255,11 @@ export default function QualityEntryPage() {
 
             {/* Weather at Harvest */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Weather at Harvest</h3>
+              <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('weatherAtHarvest')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Temperature (°C) *
+                    {fk('temperature')} *
                   </label>
                   <input
                     type="number"
@@ -262,12 +271,12 @@ export default function QualityEntryPage() {
                     max="50"
                     step="0.1"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="e.g., 22.5"
+                    placeholder={fk('temperaturePlaceholder')}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Humidity (%) *
+                    {fk('humidity')} *
                   </label>
                   <input
                     type="number"
@@ -279,12 +288,12 @@ export default function QualityEntryPage() {
                     max="100"
                     step="0.1"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="e.g., 65"
+                    placeholder={fk('humidityPlaceholder')}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cloud Cover *
+                    {fk('cloudCover')} *
                   </label>
                   <select
                     name="cloudCover"
@@ -293,10 +302,11 @@ export default function QualityEntryPage() {
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="clear">Clear</option>
-                    <option value="partly_cloudy">Partly Cloudy</option>
-                    <option value="cloudy">Cloudy</option>
-                    <option value="overcast">Overcast</option>
+                    {CLOUD_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {fk(opt.labelKey)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -304,10 +314,10 @@ export default function QualityEntryPage() {
 
             {/* Pre-cooling Start Time */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Pre-cooling Start Time</h3>
+              <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('preCoolingTitle')}</h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Exact Minute Fruit Entered Cold Storage *
+                  {fk('preCoolingLabel')} *
                 </label>
                 <input
                   type="datetime-local"
@@ -322,15 +332,13 @@ export default function QualityEntryPage() {
 
             {/* Visual Grade Photos */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Visual Grade Photos</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Upload 3 high-resolution photos: top crate, middle crate, and bottom crate.
-              </p>
+              <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('visualPhotosTitle')}</h3>
+              <p className="text-sm text-gray-600 mb-4">{fk('visualPhotosIntro')}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['Top Crate', 'Middle Crate', 'Bottom Crate'].map((label, index) => (
-                  <div key={index} className="space-y-2">
+                {CRATE_KEYS.map((crateKey, index) => (
+                  <div key={crateKey} className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      {label} *
+                      {fk(crateKey)} *
                     </label>
                     <div className="relative">
                       <input
@@ -350,10 +358,10 @@ export default function QualityEntryPage() {
                             <svg className="w-8 h-8 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <p className="text-sm text-green-600">Photo uploaded</p>
+                            <p className="text-sm text-green-600">{fk('photoUploaded')}</p>
                             <img
                               src={formData.visualGradePhotos[index]}
-                              alt={label}
+                              alt={fk(crateKey)}
                               className="w-full h-32 object-cover rounded mt-2"
                             />
                           </div>
@@ -362,7 +370,7 @@ export default function QualityEntryPage() {
                             <svg className="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <p className="text-sm text-gray-500">Click to upload</p>
+                            <p className="text-sm text-gray-500">{fk('clickToUpload')}</p>
                           </div>
                         )}
                       </label>
@@ -388,11 +396,9 @@ export default function QualityEntryPage() {
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="standardConfirmation" className="font-medium text-gray-700">
-                    Standard Confirmation *
+                    {fk('standardConfirmationShort')} *
                   </label>
-                  <p className="text-gray-600 mt-1">
-                    I confirm that the Bio Vera packaging, film, and labels are applied according to the protocol.
-                  </p>
+                  <p className="text-gray-600 mt-1">{fk('standardConfirmationBody')}</p>
                 </div>
               </div>
             </div>
@@ -400,7 +406,7 @@ export default function QualityEntryPage() {
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Additional Notes (Optional)
+                {fk('notesLabel')}
               </label>
               <textarea
                 name="notes"
@@ -408,7 +414,7 @@ export default function QualityEntryPage() {
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="Any additional information..."
+                placeholder={fk('notesPlaceholder')}
               />
             </div>
 
@@ -419,7 +425,7 @@ export default function QualityEntryPage() {
                 disabled={submitting}
                 className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {submitting ? 'Submitting...' : 'Submit Quality Entry'}
+                {submitting ? fk('submitting') : fk('submit')}
               </button>
             </div>
           </form>

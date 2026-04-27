@@ -81,7 +81,7 @@ export interface Parcel {
   calculatedArea: number;
   plantingDate?: string;
   status: string;
-  /** Set when an administrator has approved the parcel; required for batches and field diary sync */
+  /** Set when an administrator has approved the parcel; required for batches and entry log sync */
   approvedAt?: string | null;
 }
 

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { TrendingUp, TrendingDown, Minus, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 interface VeraInsight {
   id: string;
@@ -28,6 +29,7 @@ interface VeraInsight {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export default function AdminVeraInsightsPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [insights, setInsights] = useState<VeraInsight[]>([]);
@@ -194,7 +196,7 @@ export default function AdminVeraInsightsPage() {
 
   if (loading) {
     return (
-        <SidebarLayout title="Vera Insights" navItems={adminNavItems}>
+        <SidebarLayout title={t('adminPages.titles.veraInsights')} navItems={adminNavItems}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
         </div>
@@ -203,7 +205,7 @@ export default function AdminVeraInsightsPage() {
   }
 
   return (
-        <SidebarLayout title="Vera Insights" navItems={adminNavItems}>
+        <SidebarLayout title={t('adminPages.titles.veraInsights')} navItems={adminNavItems}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">

@@ -5,10 +5,12 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, estatesAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { Package, ExternalLink, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminTestBatchPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [estates, setEstates] = useState<{ id: string; name?: string }[]>([]);
   const [loadingEstates, setLoadingEstates] = useState(true);
@@ -73,7 +75,7 @@ export default function AdminTestBatchPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Test batch" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.testBatch')} navItems={adminNavItems}>
         <div className="space-y-6">
           <div>
             <h1 className="text-2xl font-light text-gray-900">Create test batch</h1>

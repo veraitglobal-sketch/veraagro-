@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { stripLeadingSiteLocale } from '@/lib/i18n-routing';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
@@ -39,7 +40,12 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isActive = (href: string) => pathname === href || pathname?.startsWith(href);
+  const isActive = (href: string) => {
+    const p = pathname ?? '';
+    const n = stripLeadingSiteLocale(p);
+    const h = stripLeadingSiteLocale(href);
+    return n === h || n.startsWith(`${h}/`);
+  };
 
   const sidebarContent = (
     <>
@@ -121,7 +127,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
       {/* User Info & Logout */}
       <div className="border-t border-gray-200 p-4 flex-shrink-0">
         <div className="mb-3">
-          <p className="text-xs text-gray-500 mb-1">Logged in as</p>
+          <p className="text-xs text-gray-500 mb-1">{t('shell.loggedInAs')}</p>
           <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
           <p className="text-xs text-gray-500">
             {(user?.roles && Array.isArray(user.roles) ? user.roles : []).map(role => role.replace(/_/g, ' ')).join(', ')}

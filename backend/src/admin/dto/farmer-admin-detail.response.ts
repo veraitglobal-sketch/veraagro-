@@ -122,7 +122,7 @@ export interface TreatmentLogRow {
 }
 
 export interface ComplianceLogRow {
-  /** compliance_logs (seed/packaging scans, field diary) */
+  /** compliance_logs (seed/packaging scans, entry log) */
   id: string;
   estateId: string;
   parcelId: string | null;
@@ -217,7 +217,7 @@ export interface FarmerAdminDetailResponse {
    */
   compliancePhotos: { id: string; photoUrl: string; photoType: string; batchId: string }[];
   treatmentLogs: TreatmentLogRow[];
-  /** compliance_logs: seed/packaging scans, offline field diary (farmerId) */
+  /** compliance_logs: seed/packaging scans, offline entry log (farmerId) */
   complianceLogs: ComplianceLogRow[];
   /** Subset of growth_logs for gallery thumbnails */
   fieldPhotos: { id: string; imageUrl: string; imageHash: string; createdAt: string; growthStage?: string }[];

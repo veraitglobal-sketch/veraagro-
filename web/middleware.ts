@@ -39,6 +39,20 @@ export function middleware(request: NextRequest) {
 
   const existingLocale = pathnameStartsWithLocale(pathname);
   if (existingLocale) {
+    /** `/sr/grower/…` and `/en/grower/…` are locale-prefixed URLs for the grower app (same pages as `/grower/…`). */
+    const afterLocale = pathname.slice(`/${existingLocale}`.length) || "/";
+    if (afterLocale === "/grower" || afterLocale.startsWith("/grower/")) {
+      const url = request.nextUrl.clone();
+      url.pathname = afterLocale;
+      const res = NextResponse.rewrite(url);
+      res.cookies.set(LOCALE_COOKIE, existingLocale, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+      });
+      return res;
+    }
+
     const res = NextResponse.next();
     res.cookies.set(LOCALE_COOKIE, existingLocale, {
       path: "/",

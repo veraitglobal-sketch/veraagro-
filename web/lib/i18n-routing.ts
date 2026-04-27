@@ -67,6 +67,14 @@ export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   return null;
 }
 
+/** Strip a leading `/en` or `/sr` so `/sr/grower/x` and `/grower/x` can be compared. */
+export function stripLeadingSiteLocale(pathname: string): string {
+  const loc = pathnameStartsWithLocale(pathname);
+  if (!loc) return pathname;
+  const rest = pathname.slice(`/${loc}`.length) || "/";
+  return rest;
+}
+
 /** Whether middleware should prefix /en or /sr for this path when locale is missing. */
 export function pathNeedsLocaleRedirect(pathname: string): boolean {
   if (pathname === "/" || pathname === "") return true;
@@ -118,6 +126,11 @@ export function getSwitchLocaleTarget(
     return { kind: "navigate", href: replaceLocaleInPathname(pathname, newLocale) };
   }
   if (pathIsLocaleFree(pathname)) {
+    const first = pathname.split("/").filter(Boolean)[0];
+    /** Unprefixed grower app: keep language and URL in sync with `/sr/grower/…` / `/en/grower/…`. */
+    if (first === "grower") {
+      return { kind: "navigate", href: withLocalePrefix(newLocale, pathname) };
+    }
     return { kind: "noop" };
   }
   const seg = pathname.split("/").filter(Boolean)[0];

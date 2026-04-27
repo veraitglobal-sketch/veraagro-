@@ -5,6 +5,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -22,6 +23,7 @@ const navItems = [
 ];
 
 export default function OperationsCenterPage() {
+  const { t } = useTranslation();
   const [distributors] = useState([
     { id: 'DEU-001', name: 'Hamburg Distribution Hub', country: 'Germany', city: 'Hamburg', lat: 53.5511, lng: 9.9937, importDuty: 4500, retailChains: ['Rewe', 'Edeka', 'Lidl'] },
     { id: 'AUT-001', name: 'Vienna Distribution Center', country: 'Austria', city: 'Vienna', lat: 48.2082, lng: 16.3738, importDuty: 3200, retailChains: ['Billa', 'Spar'] },
@@ -59,7 +61,7 @@ export default function OperationsCenterPage() {
   ]);
 
   return (
-    <SidebarLayout title="Global Operations Center" navItems={navItems}>
+    <SidebarLayout title={t('internalShell.titles.globalOperations')} navItems={navItems}>
       <div className="space-y-6">
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

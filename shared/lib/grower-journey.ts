@@ -91,7 +91,7 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
   {
     title: 'Field work — sowing, journal, treatments',
     paragraphs: [
-      'From sowing onward, use the mobile app for day-to-day work: field diary, growth journal, compliant sprays/treatments (with GPS where required). That is the traceability layer before you form a commercial lot.',
+      'From sowing onward, use the mobile app for day-to-day work: entry log, growth journal, compliant sprays/treatments (with GPS where required). That is the traceability layer before you form a commercial lot.',
       'When the crop is nearing harvest, file a harvest plan in the app (expected kg, optional loading window) so operations and logistics can plan — that is not the same as a retail order; it feeds planning and missions.',
       'On web, boundaries and blocks live under My fields; use the phone in the row for entries.',
     ],

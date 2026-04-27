@@ -6,6 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { motion } from 'framer-motion';
 import { MessageCircle, Search, Filter, Download, Mail, Phone, User, Calendar, CheckCircle2, XCircle } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import api from '@/lib/api';
 
 interface Conversation {
@@ -27,6 +28,7 @@ interface Conversation {
 }
 
 export default function AIConversationsPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [contactRequests, setContactRequests] = useState<Conversation[]>([]);
@@ -86,7 +88,7 @@ export default function AIConversationsPage() {
 
   return (
     <AuthGuard requiredRoles={['ADMIN', 'SUPER_ADMIN']}>
-      <SidebarLayout title="AI Conversations" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.aiConversations')} navItems={adminNavItems}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">

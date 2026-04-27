@@ -7,6 +7,7 @@ import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
 import { ShoppingCart, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 
 /** Prisma OrderStatus — must match backend */
 const ORDER_STATUSES = [
@@ -23,6 +24,7 @@ const ORDER_STATUSES = [
 ] as const;
 
 export default function OrdersManagementPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [fulfillmentEstates, setFulfillmentEstates] = useState<
@@ -168,7 +170,7 @@ export default function OrdersManagementPage() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Orders Management" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.orders')} navItems={adminNavItems}>
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>

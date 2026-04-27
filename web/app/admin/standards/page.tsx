@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { useTranslation } from 'react-i18next';
 
 interface BioVeraStandard {
   id: string;
@@ -23,6 +24,7 @@ interface BioVeraStandard {
 }
 
 export default function AdminStandardsPage() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const { user } = useAuth();
   const [standard, setStandard] = useState<BioVeraStandard | null>(null);
@@ -122,7 +124,7 @@ export default function AdminStandardsPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title="Bio Vera Standards" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.standards')} navItems={adminNavItems}>
         <div className="flex items-center justify-center h-64">
           <div className="text-gray-500">Loading...</div>
         </div>
@@ -131,7 +133,7 @@ export default function AdminStandardsPage() {
   }
 
   return (
-    <SidebarLayout title="Bio Vera Standards" navItems={adminNavItems}>
+    <SidebarLayout title={t('adminPages.titles.standards')} navItems={adminNavItems}>
       <div className="space-y-6">
         {error && (
           <motion.div

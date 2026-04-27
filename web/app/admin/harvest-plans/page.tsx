@@ -6,6 +6,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { harvestAnnouncementsAPI } from '@/lib/api';
 import { useAdminNavItems } from '@/lib/admin-nav';
+import { useTranslation } from 'react-i18next';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
 import { CalendarRange, Loader2, CheckCircle, XCircle, Clock, User, MapPin } from 'lucide-react';
 
@@ -28,6 +29,7 @@ type Row = {
 };
 
 function HarvestPlansInner() {
+  const { t } = useTranslation();
   const adminNavItems = useAdminNavItems();
   const searchParams = useSearchParams();
   const highlightId = searchParams.get('id');
@@ -89,7 +91,7 @@ function HarvestPlansInner() {
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
-      <SidebarLayout title="Harvest plans" navItems={adminNavItems}>
+      <SidebarLayout title={t('adminPages.titles.harvestPlans')} navItems={adminNavItems}>
         <div className="p-6 max-w-4xl">
           <h1 className="text-2xl font-light text-gray-900 mb-1">Harvest &amp; planting plans</h1>
           <p className="text-sm text-gray-600 mb-6">
