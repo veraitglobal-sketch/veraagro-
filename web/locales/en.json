@@ -32,7 +32,8 @@
     "copyright": "© {{year}} Bio Vera. All rights reserved.",
     "appApple": "Apple",
     "appAndroid": "Android",
-    "logoAlt": "Bio Vera"
+    "logoAlt": "Bio Vera",
+    "terms": "Terms"
   },
   "languagePage": {
     "eyebrow": "Settings",
@@ -196,22 +197,32 @@
   "grower": {
     "nav": {
       "dashboard": "Dashboard",
-      "steps": "Steps",
-      "myFields": "My fields",
+      "steps": "How it works",
+      "myFields": "My parcels",
+      "myPlantings": "My plantings",
       "materials": "Materials",
       "suppliersAndOrders": "Suppliers & orders",
       "myBatches": "My batches",
-      "qualityEntry": "Quality entry",
-      "compliancePhotos": "Compliance photos",
+      "fieldDiary": "Field diary",
+      "qualityEntry": "Quality",
+      "compliancePhotos": "Compliance (photos)",
       "requestTransport": "Request transport",
-      "missionTracker": "Mission tracker",
+      "missionTracker": "Transport missions",
       "myProfile": "My profile",
       "packageBadges": "Package badges",
       "scanPackageBadges": "Scan badges",
+      "scanPallets": "Scan pallets",
       "printOrderNav": "Print order"
     },
+    "placeholders": {
+      "plantingsTitle": "My plantings",
+      "plantingsBody": "Plantings are tied to each parcel. Full management will live here; until then, define blocks and crops under My parcels, and use the mobile app for day-to-day field records.",
+      "fieldDiaryTitle": "Field diary",
+      "fieldDiaryBody": "Daily work (treatments, material use, notes per parcel) is recorded in the field diary. On the phone, open Field log in the Bio Vera grower app for the full flow; web will follow.",
+      "openParcels": "Go to my parcels"
+    },
     "season": {
-      "pageDescription": "From first setup to transport. The cards below are 12 numbered steps (full story); the green sidebar has 11 links in the same order — a few steps here are split for clarity (e.g. approval, field work). Use the chips to jump.",
+      "pageDescription": "From first setup to transport. The cards below are 12 numbered steps (full story). The left menu uses the same order as your daily workflow — a few steps here are split for clarity (e.g. approval, field work). Use the chips to jump.",
       "errorLoad": "Could not load",
       "glanceTitle": "Your parcels at a glance",
       "glanceApproved": "At least one parcel is approved — you can proceed with work and batches as rules allow.",
@@ -756,5 +767,172 @@
       "startShopping": "Start Shopping"
     },
     "help": "Questions? We’re here to help."
+  },
+  "forBuyersPage": {
+    "title": "For Buyers",
+    "heroLead": "Source fresh produce from the Bio Vera network: certified origin and a traceable batch history, not just a listing. The full catalog and ordering are in your dashboard after you register.",
+    "notShopBody": "We are not a standard online store. We work with a clear, transparent process: you see what we offer, you provide your company and contact details and consent, and we take every request seriously. Read how we operate below and, when ready, express your interest at the bottom of the page so we can get in touch.",
+    "linkHowWeOperate": "How we operate",
+    "linkExpressInterest": "Express your interest",
+    "placeOrder": "Place order",
+    "preOrder2026": "Pre-order 2026",
+    "purchasesTitle": "How purchases work",
+    "purchasesLead": "From registration to delivery: a simple, transparent process.",
+    "purchasesSteps": [
+      {
+        "title": "Register or log in",
+        "body": "Create a buyer account or sign in. Your dashboard gives you access to the full product catalog and ordering tools."
+      },
+      {
+        "title": "Browse and order",
+        "body": "In the dashboard you can browse by category (fruits, vegetables, cereals, other), see origin, harvest info, and pricing. Place direct orders or use Pre-order 2026 for seasonal planning."
+      },
+      {
+        "title": "Confirm and pay",
+        "body": "Orders are confirmed in Bio Vera. Payment and delivery terms are clear; we work with secure, traceable flows from farm to you."
+      },
+      {
+        "title": "Delivery and traceability",
+        "body": "Track your batch via the digital passport. You see where it was harvested, when (harvest period), and how it was handled until delivery."
+      }
+    ],
+    "productsTitle": "Products we offer",
+    "productsLead": "We deliver a wide range of fresh fruit and vegetables (and cereals) to European markets. The full, up-to-date list with varieties, availability, and prices is in your dashboard after registration.",
+    "productCategoryLabels": ["Fruits", "Vegetables", "Cereals", "Other"],
+    "productsNote": "Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.",
+    "harvestCalendarTitle": "Harvest calendar",
+    "packagingTitle": "Packaging",
+    "packagingLead": "We use standardized, traceable packaging that meets food safety and quality requirements.",
+    "packagingList": [
+      "Bio Vera reusable crates with integrated QR codes where applicable.",
+      "Packaging types and options are visible per product in your dashboard.",
+      "Compliance with our packaging standards is verified; work bonus applies for proper use."
+    ],
+    "operateTitle": "How we operate",
+    "operateInformator": "Buyer information (informator)",
+    "operateLead": "We run a vertically integrated chain: from seed and cultivation to packaging, logistics, and delivery to retail.",
+    "operateList": [
+      "Direct link between certified producers and buyers; no unnecessary intermediaries.",
+      "Every batch is documented: harvest date, origin, and handling are recorded and visible.",
+      "Cold chain and logistics are managed to keep produce fresh from field to destination.",
+      "We work with clear pricing and settlement: escrow until release conditions are met, then payout to partners under agreed terms."
+    ],
+    "securityTitle": "Security and safeguards",
+    "securityLead": "We protect quality, payments, and data so you can order with confidence.",
+    "securityCards": [
+      {
+        "title": "Payments",
+        "desc": "Structured flow: the buyer’s payment is held in escrow through Bio Vera until delivery is confirmed, then goes to grower and logistics partners under contract. We operate as the brand and supply side—no hidden fees; terms are agreed directly with Bio Vera, not an abstract marketplace layer."
+      },
+      {
+        "title": "Contracts & compliance",
+        "desc": "Orders and pre-orders are documented. We enforce quality and packaging standards and verify compliance before release."
+      },
+      {
+        "title": "Quality control",
+        "desc": "Field and quality checks, barcode and GPS validation, and approved inputs only. Unauthorized or non-compliant batches are blocked."
+      },
+      {
+        "title": "Traceability",
+        "desc": "Every batch has a unique ID and digital passport. You can verify origin, harvest date, and journey at any time."
+      }
+    ],
+    "valueTitle": "What you get with Bio Vera",
+    "valueLead": "Our fruit and vegetables are fresh-harvested, traceable, and backed by a full digital passport.",
+    "valueBlocks": [
+      {
+        "title": "Our fruit and vegetables",
+        "body": "Sourced from Bio Vera certified producers. We focus on quality, sustainable growing methods, and compliance with our protocol."
+      },
+      {
+        "title": "Fresh harvested",
+        "body": "Harvests are planned and reported; we aim to move produce from field to market without unnecessary delay so you receive fresh product."
+      },
+      {
+        "title": "Product passport",
+        "body": "Each batch has a digital passport with full information: where it was harvested (region, farm), when (harvest date and period), cold chain, compliance, and the full journey from field to delivery."
+      },
+      {
+        "title": "Origin and producer",
+        "body": "You see the farm, region, and producer behind each product. Certifications and quality entries are available in the dashboard when you order."
+      }
+    ],
+    "ctaRepeat": "Ready to order or plan for 2026?",
+    "interestTitle": "Express your interest",
+    "interestLead": "So we can take your request seriously, please leave your company and contact details and confirm that you have read how we operate and agree to be contacted.",
+    "interestThanks": "Thank you.",
+    "interestThanksBody": "We have received your details and will be in touch. If you have not yet registered, you can do so to access the full catalog and place orders once your profile is complete.",
+    "interestRegisterLink": "Register as buyer",
+    "formCompany": "Company name",
+    "formContact": "Contact person",
+    "formEmail": "Email",
+    "formPhone": "Phone",
+    "formPlaceholderCompany": "Your company or trading name",
+    "formPlaceholderName": "Full name",
+    "formPlaceholderEmail": "business@example.com",
+    "formPlaceholderPhone": "+49 ...",
+    "formConsentContact": "I consent to being contacted by Bio Vera by email and/or phone for the purpose of orders, offers, and business communication.",
+    "formConsentInformator": "I have read and accept the buyer information document (informator). I understand how Bio Vera operates and the ordering process.",
+    "formReadHowWeOperate": "Read how we operate",
+    "formSubmit": "Submit",
+    "formSending": "Sending…",
+    "required": "*"
+  },
+  "harvestCalendar": {
+    "productColumn": "Product",
+    "eyebrow": "When harvest is",
+    "intro": "Typical harvest window by product. Our produce travels fresh, without freezing — taste and texture stay as in the field.",
+    "footnote": "Harvest varies by region and year. See actual availability in your buyer dashboard and when placing a pre-order.",
+    "inHarvest": "{{name}} in harvest",
+    "categories": {
+      "fruits": "Fruits",
+      "vegetables": "Vegetables",
+      "cereals": "Cereals"
+    },
+    "monthsShort": ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
+    "monthsFull": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "whyNotShock": {
+      "title": "Why our produce is not in shock",
+      "points": [
+        "No freezing — cold chain for transport only; taste and texture stay as in the field.",
+        "Juiciness and natural firmness without temperature shock; nutritional value preserved."
+      ]
+    },
+    "products": {
+      "raspberry": "Raspberry",
+      "blackberry": "Blackberry",
+      "blueberry": "Blueberry",
+      "strawberry": "Strawberry",
+      "apple": "Apple",
+      "pear": "Pear",
+      "plum": "Plum",
+      "peach": "Peach",
+      "apricot": "Apricot",
+      "cherry": "Cherry",
+      "grape": "Grape",
+      "currant": "Currant",
+      "gooseberry": "Gooseberry",
+      "pepper": "Pepper",
+      "tomato": "Tomato",
+      "cucumber": "Cucumber",
+      "zucchini": "Zucchini",
+      "pumpkin": "Pumpkin",
+      "potato": "Potato",
+      "carrot": "Carrot",
+      "beetroot": "Beetroot",
+      "cabbage": "Cabbage",
+      "onion": "Onion",
+      "leek": "Leek",
+      "asparagus": "Asparagus",
+      "rhubarb": "Rhubarb",
+      "lettuce": "Lettuce",
+      "radish": "Radish",
+      "spinach": "Spinach",
+      "pea": "Pea",
+      "greenBean": "Green bean",
+      "corn": "Corn",
+      "wheat": "Wheat",
+      "barley": "Barley"
+    }
   }
 }

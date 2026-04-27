@@ -14,7 +14,7 @@
     }
   ],
   "intro": {
-    "sidebarBlurb": "Read steps 1–12 in order. The green sidebar lists 11 pages (it combines a few topics these cards split out, e.g. approval and field work). Order: Dashboard → Steps → My fields through Mission tracker, then Profile.",
+    "sidebarBlurb": "Read steps 1–12 in order. The left menu follows the field workflow: dashboard, guide, parcels, plantings, materials, batches, field diary, scan, quality, suppliers, then transport. Some topics are split across cards (e.g. approval vs field work).",
     "myFieldsCta": {
       "title": "My fields",
       "line": "Open when you are ready to map blocks and crops.",
@@ -38,7 +38,7 @@
     {
       "title": "Steps (this page)",
       "paragraphs": [
-        "This grid has 12 numbered cards; the web sidebar has 11 links in the same journey (we split a few topics here for clarity). Order: Dashboard → Steps → My fields … Mission tracker → Profile. On the app, the bottom tab has Home, Steps, Products, and Profile — open Home for fields, materials, transport, and the rest."
+        "This grid has 12 numbered cards; the web sidebar follows the same workflow as the menu (we split a few topics here for clarity). On the app, use Home for fields, materials, transport, and the rest."
       ],
       "links": []
     },
@@ -127,5 +127,5 @@
       "links": [{ "label": "My profile", "href": "/grower/profile" }]
     }
   ],
-  "seasonMetaChip": "12 cards · 11 nav links"
+  "seasonMetaChip": "12 steps · same order as the menu"
 }

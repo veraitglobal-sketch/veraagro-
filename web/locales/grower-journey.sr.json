@@ -14,7 +14,7 @@
     }
   ],
   "intro": {
-    "sidebarBlurb": "Čitajte korake 1–12 redom. Zelena bočna traka ima 11 stranica (neke teme su spojene koje ovde kartice razdvajaju, npr. odobrenje i rad na polju). Redosled: Kontrolna tabla → Koraci → Moja polja … do Praćenja misija, zatim Profil.",
+    "sidebarBlurb": "Čitajte korake 1–12 redom. Meni levo prati red rada: od tabele, uputstava, parcela i zasada, preko materijala i partija, dnevnika, skeniranja i kvaliteta, do dobavljača i transporta. Neke teme su ovde na karticama podeljene jasnije (npr. odobrenje, rad na polju).",
     "myFieldsCta": {
       "title": "Moja polja",
       "line": "Otvorite kada budete spremni da mapirate blokove i useve.",
@@ -38,7 +38,7 @@
     {
       "title": "Koraci (ova stranica)",
       "paragraphs": [
-        "Mreža ima 12 numerisanih kartica; bočna traka na webu ima 11 veza u istom putu (podelili smo neke teme radi jasnoće). Redosled: Kontrolna tabla → Koraci → Moja polja … Praćenje misija → Profil. U aplikaciji donji tab: Početna, Koraci, Proizvodi, Profil — sa Početne idite na polja, materijale, transport i ostalo."
+        "Mreža ima 12 numerisanih kartica; bočna traka prati isti red rada kao meni (neke teme ovde delimo radi jasnoće). U aplikaciji: sa Početne idite na polja, materijale, transport i ostalo."
       ],
       "links": []
     },
@@ -125,5 +125,5 @@
       "links": [{ "label": "Moj profil", "href": "/grower/profile" }]
     }
   ],
-  "seasonMetaChip": "12 kartica · 11 veza u meniju"
+  "seasonMetaChip": "12 koraka · isti red kao u meniju"
 }

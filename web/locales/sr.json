@@ -32,7 +32,8 @@
     "copyright": "© {{year}} Bio Vera. Sva prava zadržana.",
     "appApple": "Apple",
     "appAndroid": "Android",
-    "logoAlt": "Bio Vera"
+    "logoAlt": "Bio Vera",
+    "terms": "Uslovi korišćenja"
   },
   "languagePage": {
     "eyebrow": "Podešavanja",
@@ -196,22 +197,32 @@
   "grower": {
     "nav": {
       "dashboard": "Kontrolna tabla",
-      "steps": "Koraci",
-      "myFields": "Moja polja",
+      "steps": "Uputstva",
+      "myFields": "Moje parcele",
+      "myPlantings": "Moji zasadi",
       "materials": "Materijali",
       "suppliersAndOrders": "Dobavljači i porudžbine",
-      "myBatches": "Moji lotovi",
+      "myBatches": "Moje partije",
+      "fieldDiary": "Poljski dnevnik",
       "qualityEntry": "Kvalitet",
       "compliancePhotos": "Usklađenost (fotografije)",
       "requestTransport": "Zahtev za transport",
       "missionTracker": "Lista transportnih misija",
       "myProfile": "Moj profil",
       "packageBadges": "Bedževi na pakovanju",
-      "scanPackageBadges": "Skeniraj bedževe",
+      "scanPackageBadges": "Skeniraj nalepnice",
+      "scanPallets": "Skeniraj palete",
       "printOrderNav": "Štamparska porudžbina"
     },
+    "placeholders": {
+      "plantingsTitle": "Moji zasadi",
+      "plantingsBody": "Zasadi pripadaju svakoj parceli. Puni uredjivač stiže ovde; do tada unosite blokove i usev u Moje parcele, a dnevne zapise u mobilnoj aplikaciji.",
+      "fieldDiaryTitle": "Poljski dnevnik",
+      "fieldDiaryBody": "Dnevni rad (prskanje, utrošak materijala, napomene po parceli) vodi se kroz poljski dnevnik. U mobilnoj aplikaciji otvorite Poljski dnevnik (field log) za pun tok; veb nadovezujemo.",
+      "openParcels": "Idi na moje parcele"
+    },
     "season": {
-      "pageDescription": "Od prvog podešavanja do transporta. Ispod su kartice sa 12 numerisanih koraka (cela priča); zelena bočna traka ima 11 veza u istom redosledu — neke teme su ovde podeljene radi jasnoće (npr. odobrenje, rad na polju). Koristite čipove da skočite na odeljak.",
+      "pageDescription": "Od prvog podešavanja do transporta. Ispod su kartice sa 12 numerisanih koraka. Levi meni prati red rada (kao u praksi) — neke teme su ovde podeljene radi jasnoće (npr. odobrenje, rad na polju). Koristite čipove da skočite na odeljak.",
       "errorLoad": "Nije moguće učitati",
       "glanceTitle": "Parcele u jednom pogledu",
       "glanceApproved": "Bar jedna parcela je odobrena — možete nastaviti rad i partije gde pravila to dozvoljavaju.",
@@ -756,5 +767,172 @@
       "startShopping": "Započni kupovinu"
     },
     "help": "Pitanja? Tu smo da pomognemo."
+  },
+  "forBuyersPage": {
+    "title": "Za kupce",
+    "heroLead": "Nabavljajte sveže voće i povrće iz mreže Bio Vera: sertifikovano poreklo i tragljiva istorija partije, a ne samo oglas. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
+    "notShopBody": "Nismo klasična internet prodavnica. Radimo jasnim, transparentnim postupkom: vidite šta nudimo, ostavite podatke kompanije i kontakt i saglasnost, a svaki zahtev shvatamo ozbiljno. Pročitajte kako radimo ispod, a kada ste spremni, iskažite interes na dnu stranice kako bismo vam se javili.",
+    "linkHowWeOperate": "Kako radimo",
+    "linkExpressInterest": "Iskažite interes",
+    "placeOrder": "Poruči",
+    "preOrder2026": "Predporudžbina 2026",
+    "purchasesTitle": "Kako funkcioniše kupovina",
+    "purchasesLead": "Od registracije do isporuke: jednostavno i transparentno.",
+    "purchasesSteps": [
+      {
+        "title": "Registracija ili prijava",
+        "body": "Napravite nalog kupca ili se prijavite. Kontrolna tabla vam daje pristup kompletnom katalogu i alatkama za porudžbinu."
+      },
+      {
+        "title": "Pregled i porudžbina",
+        "body": "U kontrolnoj tabli možete birati kategoriju (voće, povrće, žitarice, ostalo), videti poreklo, informacije o berbi i cene. Poručite direktno ili koristite predporudžbinu 2026 za sezonsko planiranje."
+      },
+      {
+        "title": "Potvrda i plaćanje",
+        "body": "Porudžbine se potvrđuju u okviru Bio Vera. Plaćanje i isporuka su jasni; radimo sigurnim, tragljivim tokom od imanja do vas."
+      },
+      {
+        "title": "Isporuka i tragljivost",
+        "body": "Pratite partiju preko digitalnog pasoša. Vidite gde je berba, kada (period berbe) i kako je roba tretirana do isporuke."
+      }
+    ],
+    "productsTitle": "Proizvodi koje nudimo",
+    "productsLead": "Dostavljamo širok asortiman svežeg voća i povrća (i žitarica) evropskom tržištu. Kompletan, ažuriran spisak sa sortama, raspoloživošću i cenama je u kontrolnoj tabli nakon registracije.",
+    "productCategoryLabels": ["Voće", "Povrće", "Žitarice", "Ostalo"],
+    "productsNote": "Prijavite se na kontrolnu tablu kupca da biste videli ceo katalog, poručili ili poslali predporudžbinu za 2026.",
+    "harvestCalendarTitle": "Kalendar berbe",
+    "packagingTitle": "Ambalaža",
+    "packagingLead": "Koristimo standardizovanu, tragljivu ambalažu u skladu sa bezbednošću hrane i kvalitetom.",
+    "packagingList": [
+      "Ponovo upotrebljive gajbe Bio Vera sa ugrađenim QR gde je primenjivo.",
+      "Tipovi ambalaže i opcije vidljivi su po proizvodu u kontrolnoj tabli.",
+      "Usklađenost sa standardima ambalaže se proverava; za pravilno korišćenje važi radni bonus."
+    ],
+    "operateTitle": "Kako radimo",
+    "operateInformator": "Informator za kupce",
+    "operateLead": "Pokrećemo vertikalno povezan lanac: od semena i gajenja, preko ambalaže i logistike, do maloprodaje i isporuke.",
+    "operateList": [
+      "Direktna veza sertifikovanih proizvođača i kupaca; bez nepotrebnih posrednika.",
+      "Svaka partija je zabeležena: datum berbe, poreklo i rukovanje su evidentirani i vidljivi.",
+      "Hladni lanac i logistika vode se tako da roba ostane sveža od polja do odredišta.",
+      "Radimo jasnim cenama i obračunom: depozit do ispunjenja uslova otpuste, zatim isplata partnerima po dogovoru."
+    ],
+    "securityTitle": "Bezbednost i zaštite",
+    "securityLead": "Štitimo kvalitet, plaćanje i podatke kako biste sa poverenjem naručivali.",
+    "securityCards": [
+      {
+        "title": "Plaćanja",
+        "desc": "Jasan tok: uplata kupca drži se u depozitu kod Bio Vera dok se ne potvrdi isporuka, zatim ide proizvođaču i logističkim partnerima po ugovoru. Radimo kao brend i snabdevalac—nema skrivenih provizija; uslovi su direktno sa Bio Vera, a ne apstraktni marketplace."
+      },
+      {
+        "title": "Ugovori i usklađenost",
+        "desc": "Porudžbine i predporudžbine su dokumentovane. Primenujemo standarde kvaliteta i ambalaže i proveravamo pre otpusta."
+      },
+      {
+        "title": "Kontrola kvaliteta",
+        "desc": "Terenske i kvalitativne provere, barkod i GPS provera, samo odobreni inputi. Neovlašćene ili neusklađene partije se blokiraju."
+      },
+      {
+        "title": "Tragljivost",
+        "desc": "Svaka partija ima jedinstveni ID i digitalni pasoš. U svakom trenutku proveravate poreklo, berbu i put."
+      }
+    ],
+    "valueTitle": "Šta dobijate sa Bio Vera",
+    "valueLead": "Naše kulture su sveže od berbe, tragljive i praćene punim digitalnim pasošom.",
+    "valueBlocks": [
+      {
+        "title": "Naše voće i povrće",
+        "body": "Potiče od sertifikovanih proizvođača u mreži Bio Vera. Fokus na kvalitet, održivu proizvodnju i usklađenost s protokolom."
+      },
+      {
+        "title": "Sveža berba",
+        "body": "Berbe se planiraju i prijavljuju; trudimo se da prođe vreme od polja do tržišta bez nepotrebnog kašnjenja kako biste dobili maksimalno svež proizvod."
+      },
+      {
+        "title": "Pasoš proizvoda",
+        "body": "Svaka partija ima digitalni pasoš: gde je berba (region, farm), kada (datum i period), hladni lanac, usklađenost i ceo put do isporuke."
+      },
+      {
+        "title": "Poreklo i proizvođač",
+        "body": "Vidljive su imanje, regija i proizvođač. Sertifikati i kvalitativni unosi u kontrolnoj tabli kada poručite."
+      }
+    ],
+    "ctaRepeat": "Spremni da naručite ili planirate 2026?",
+    "interestTitle": "Iskažite interes",
+    "interestLead": "Da bismo zahtev shvatili ozbiljno, ostavite podatke kompanije i kontakta i potvrdite da ste pročitali kako radimo i saglasni ste da vas kontaktiramo.",
+    "interestThanks": "Hvala vam.",
+    "interestThanksBody": "Primili smo vaše podatke i javićemo se. Ako još niste registrovani, možete to učiniti kako biste pristupili katalogu i porudžbinama kada profil bude spreman.",
+    "interestRegisterLink": "Registruj se kao kupac",
+    "formCompany": "Naziv kompanije",
+    "formContact": "Kontakt osoba",
+    "formEmail": "E-pošta",
+    "formPhone": "Telefon",
+    "formPlaceholderCompany": "Naziv firme ili trgovački naziv",
+    "formPlaceholderName": "Ime i prezime",
+    "formPlaceholderEmail": "kontakt@preduzece.com",
+    "formPlaceholderPhone": "+381 ...",
+    "formConsentContact": "Saglasan/na sam da me Bio Vera kontaktira e-poštom i/ili telefonom u vezi sa porudžbinama, ponudama i poslovnom komunikacijom.",
+    "formConsentInformator": "Pročitao/la sam i prihvatam informator za kupce. Razumem kako Bio Vera radi i kako se poručuje.",
+    "formReadHowWeOperate": "Pročitaj kako radimo",
+    "formSubmit": "Pošalji",
+    "formSending": "Slanje…",
+    "required": "*"
+  },
+  "harvestCalendar": {
+    "productColumn": "Proizvod",
+    "eyebrow": "Kada je berba",
+    "intro": "Tipičan prozor berbe po proizvodu. Roba ide sveža, bez zamrzavanja — ukus i tekstura ostaju kao u polju.",
+    "footnote": "Berba varira regijom i godinom. Stvarno stanje u kontrolnoj tabli kupca i prilikom predporudžbine.",
+    "inHarvest": "{{name}} u berbi",
+    "categories": {
+      "fruits": "Voće",
+      "vegetables": "Povrće",
+      "cereals": "Žitarice"
+    },
+    "monthsShort": ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
+    "monthsFull": ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "avg", "sep", "okt", "nov", "dec"],
+    "whyNotShock": {
+      "title": "Zašto roba nije u šoku",
+      "points": [
+        "Nema zamrzavanja — hladni lanac je za transport; ukus i tekstura ostaju kao u polju.",
+        "Sočnost i prirodna čvrstoća bez termičkog šoka; očuvane nutrijente."
+      ]
+    },
+    "products": {
+      "raspberry": "Malina",
+      "blackberry": "Kupina",
+      "blueberry": "Borovnica",
+      "strawberry": "Jagoda",
+      "apple": "Jabuka",
+      "pear": "Kruška",
+      "plum": "Šljiva",
+      "peach": "Breskva",
+      "apricot": "Kajsija",
+      "cherry": "Trešnja / višnja",
+      "grape": "Grožđe",
+      "currant": "Ribizla",
+      "gooseberry": "Ogrozd",
+      "pepper": "Paprika",
+      "tomato": "Paradajz",
+      "cucumber": "Krastavac",
+      "zucchini": "Tikvica",
+      "pumpkin": "Tikva",
+      "potato": "Krompir",
+      "carrot": "Šargarepa",
+      "beetroot": "Cvekla",
+      "cabbage": "Kupus",
+      "onion": "Luk",
+      "leek": "Praziluk",
+      "asparagus": "Taran",
+      "rhubarb": "Rabarbara",
+      "lettuce": "Zelena salata",
+      "radish": "Rotkvica",
+      "spinach": "Spanać",
+      "pea": "Grašak",
+      "greenBean": "Boranija",
+      "corn": "Kukuruz",
+      "wheat": "Pšenica",
+      "barley": "Jčam"
+    }
   }
 }
