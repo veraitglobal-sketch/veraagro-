@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import i18n from '@/i18n/config';
 import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -14,7 +13,7 @@ type CategoryKey = 'buyers' | 'growers' | 'logistics' | 'suppliers';
 
 type PanelActionDef = { actionKey: string; icon: React.ComponentType<{ className?: string }> };
 
-/** Actions shown per category; labels via `t(actionKey)`. AI query uses English from same keys (`lng: 'en'`). */
+/** Actions shown per category; labels via `t(actionKey)`. AI receives the same translated label + UI locale so replies match the user's language. */
 const CATEGORY_PANEL_DEFS: Record<CategoryKey, { href: string; actions: PanelActionDef[] }> = {
   logistics: {
     href: '/logistics-partner',
@@ -132,13 +131,17 @@ function useTicker() {
 
 type VeraAIChatbotProps = { inline?: boolean; inlineVariant?: 'default' | 'minimal' };
 
-async function sendChatQuery(query: string, sessionId?: string): Promise<{ answer: string; sessionId: string }> {
+async function sendChatQuery(
+  query: string,
+  sessionId?: string,
+  language?: string,
+): Promise<{ answer: string; sessionId: string }> {
   const apiUrl = '/api/ai-assistant/query';
   try {
     const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, sessionId }),
+      body: JSON.stringify({ query, sessionId, language }),
     });
     let data: { answer?: string; sessionId?: string; message?: string };
     try {
@@ -174,7 +177,9 @@ function useIsMobile() {
 }
 
 export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: VeraAIChatbotProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  /** BCP-47 / i18next language tag — backend maps sr→Serbian replies, en→English, etc. */
+  const assistantLanguage = i18n.resolvedLanguage || i18n.language || 'en';
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -230,7 +235,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
     setMessage('');
     setLoading(true);
     try {
-      const { answer, sessionId } = await sendChatQuery(q, sessionIdRef.current);
+      const { answer, sessionId } = await sendChatQuery(q, sessionIdRef.current, assistantLanguage);
       if (sessionId) sessionIdRef.current = sessionId;
       addAssistantReply(answer);
     } catch (err) {
@@ -245,11 +250,10 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
 
   const handlePanelAction = async (actionKey: string) => {
     const displayLabel = t(actionKey);
-    const queryEn = String(i18n.t(actionKey, { lng: 'en' }));
     setMessages((prev) => [...prev, { role: 'user', content: displayLabel }]);
     setLoading(true);
     try {
-      const { answer, sessionId } = await sendChatQuery(queryEn, sessionIdRef.current);
+      const { answer, sessionId } = await sendChatQuery(displayLabel, sessionIdRef.current, assistantLanguage);
       if (sessionId) sessionIdRef.current = sessionId;
       addAssistantReply(answer);
     } catch (err) {

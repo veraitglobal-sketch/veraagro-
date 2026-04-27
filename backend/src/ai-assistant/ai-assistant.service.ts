@@ -729,6 +729,18 @@ The public-chain **passport** usually uses a code/ID (e.g. /passport/[batchId] w
 - Protocol 360: /protocol-360
 - Security & Compliance: /security
 - Legal: /legal
+
+## OFFICIAL PUBLIC WEBSITE — SOURCE OF TRUTH (biovera.app)
+
+If something is missing from this embedded knowledge base—especially **privacy**, **cookies**, **terms of use**, **legal notices**, product explanations, or wording that must match official documents—the **canonical, up-to-date** content is on the public Bio Vera site:
+
+- **Site root:** https://biovera.app (same paths work as on deployment; locale prefix matches UI language)
+- **Privacy Policy:** \`/{locale}/privacy\` e.g. https://biovera.app/en/privacy or https://biovera.app/sr/privacy
+- **Terms of Use / Terms of Service:** \`/{locale}/terms\`
+- **Cookie policy:** \`/{locale}/cookies\`
+- **Legal overview:** \`/{locale}/legal\`
+
+Tell users they can open these pages on **biovera.app** for full text. Do **not** invent legal clauses or pretend to quote binding policy verbatim unless it appears above—summarize alignments with Bio Vera and always offer the relevant official URL for the exact wording.
 `;
   }
 
@@ -807,6 +819,23 @@ We help you find the best insurance options. [Contact us for insurance]`,
     const knowledgeBase = this.getKnowledgeBase();
     const quickResponses = this.getQuickResponses();
 
+    const langNorm = (language || 'en').toLowerCase();
+    const isSerbian = langNorm.startsWith('sr');
+    const isEnglish = langNorm.startsWith('en');
+
+    /** Align assistant reply with UI locale (Bio Vera web is mainly EN/SR). */
+    const localeInstruction = isSerbian
+      ? `
+
+OUTPUT LANGUAGE (binding): The website UI is in Serbian (Latin script). Write your entire reply in Serbian (Latin script). Keep technical paths unchanged (e.g. /grower/portal, /contact); translate all explanations around them into Serbian.`
+      : isEnglish
+        ? `
+
+OUTPUT LANGUAGE: Prefer English unless the user's message is clearly in another language — then reply in that language.`
+        : `
+
+OUTPUT LANGUAGE: Match the user's message language when clear. UI locale hint: ${language}. Prefer that locale for consistent UX when it fits the question.`;
+
     // Get or create conversation
     let conversation = await this.prisma.ai_conversations.findFirst({
       where: { sessionId: currentSessionId },
@@ -816,22 +845,23 @@ We help you find the best insurance options. [Contact us for insurance]`,
     const messages = conversation?.messages as Array<{ role: string; content: string; timestamp: string }> || [];
     const messageCount = messages.length;
 
-    // Check for quick responses first
-    const lowerQuery = query.toLowerCase();
-    for (const [key, response] of Object.entries(quickResponses)) {
-      if (lowerQuery.includes(key)) {
-        // Save conversation
-        await this.saveConversation(currentSessionId, query, response, userInfo, messages);
-        
-        const quickActions = this.generateQuickActions(query);
-        
-        return {
-          answer: response,
-          suggestedActions: this.extractSuggestedActions(response),
-          quickActions,
-          sessionId: currentSessionId,
-          askForContact: messageCount >= 2, // Ask after 2+ messages
-        };
+    // Quick-response shortcuts are English-only — skip when UI locale is Serbian so the model answers in Serbian.
+    if (!isSerbian) {
+      const lowerQuery = query.toLowerCase();
+      for (const [key, response] of Object.entries(quickResponses)) {
+        if (lowerQuery.includes(key)) {
+          await this.saveConversation(currentSessionId, query, response, userInfo, messages);
+
+          const quickActions = this.generateQuickActions(query);
+
+          return {
+            answer: response,
+            suggestedActions: this.extractSuggestedActions(response),
+            quickActions,
+            sessionId: currentSessionId,
+            askForContact: messageCount >= 2,
+          };
+        }
       }
     }
 
@@ -914,6 +944,7 @@ IMPORTANT RULES:
 15. **Never** answer with a generic "I don't have that information" for: grower **where to find suppliers / nearest supplier** (use **/grower/where-to-buy** and explain B2B list), **duplicate harvest**, **quality entry already exists** or **internal error** (use the knowledge base: next steps, refresh, help). Only fall back to /help-center and /contact when the question is **not** covered in the knowledge base or needs account-specific data
 16. When the user says they are a **grower** and ask **where** to find a supplier, **nearest** supplier, or **dobavljač**: direct them to **Suppliers & orders** in the app menu, URL **/grower/where-to-buy**. Explain the platform uses **approved** B2B partners (not a public distance map)
 17. For **"why"** or **"what should I do"** about errors (mission tracker, quality entry, transport blocked): use section **"ČESTA PITANJA I ZAŠTO JE OVAKO"** and **"GROWER WEB DASHBOARD"** in the knowledge base; give 2–3 concrete actions (which menu item, which route)
+18. **biovera.app as authoritative reference:** When the knowledge base lacks detail—or for privacy, cookies, terms, legal obligations, or exact policy wording—direct users to **https://biovera.app** (use locale prefix **/{locale}/…** matching the user's language: privacy, terms, cookies, legal). You cannot browse the live site; rely on this knowledge base plus encourage reading those pages for complete and binding information. Never fabricate legal text.
 
 Calculation Formulas (use these):
 - Truck fill percentage: (Order quantity / 1,980 boxes) × 100
@@ -923,11 +954,13 @@ Calculation Formulas (use these):
 - Cost savings: (Current cost per box - Optimized cost per box) × Order quantity
 
 Knowledge Base:
-${knowledgeBase}`;
+${knowledgeBase}${localeInstruction}`;
 
     if (!this.openai) {
       return {
-        answer: 'AI Assistant is currently unavailable. Please contact our support team at /contact for assistance.',
+        answer: isSerbian
+          ? 'AI asistent trenutno nije dostupan. Kontaktirajte podršku na /contact.'
+          : 'AI Assistant is currently unavailable. Please contact our support team at /contact for assistance.',
         suggestedActions: [{ label: 'Contact Support', url: '/contact' }],
         quickActions: [],
         askForContact: false,
@@ -954,8 +987,10 @@ ${knowledgeBase}`;
 
       let answer = completion.choices[0].message.content;
 
-      // Enhance answer with calculations if logistics-related
-      answer = this.enhanceWithCalculations(query, answer);
+      // Logistics templates below are English-only blocks — skip when answering in Serbian
+      if (!isSerbian) {
+        answer = this.enhanceWithCalculations(query, answer);
+      }
 
       // Extract suggested actions
       const suggestedActions = this.extractSuggestedActions(answer);
