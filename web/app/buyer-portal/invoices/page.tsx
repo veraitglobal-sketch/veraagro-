@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import {
@@ -28,6 +29,7 @@ import {
 } from '@/lib/invoice-payment-status';
 
 export default function InvoicesPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const router = useRouter();
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -186,7 +188,7 @@ export default function InvoicesPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Invoices" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.invoices')} navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
@@ -200,7 +202,7 @@ export default function InvoicesPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Invoices" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.invoices')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-b border-green-200/50 pb-8">

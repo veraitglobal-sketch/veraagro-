@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI } from '@/lib/api';
@@ -8,6 +9,7 @@ import { Clock, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function OrderHistoryPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ export default function OrderHistoryPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Order History" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.history')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
           <div className="border-b border-green-200/50 pb-6">

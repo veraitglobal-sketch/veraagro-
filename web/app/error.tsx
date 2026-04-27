@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation, Trans } from 'react-i18next';
 import { Home, RefreshCw, AlertCircle } from 'lucide-react';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function Error({
   error,
@@ -14,6 +15,7 @@ export default function Error({
   reset: () => void;
 }) {
   const { t } = useTranslation();
+  const loc = useLocalizedHref();
   useEffect(() => {
     // Log error to error reporting service
     if (typeof window !== 'undefined') {
@@ -56,7 +58,7 @@ export default function Error({
             {t('errorPage.tryAgain')}
           </button>
           <Link
-            href="/"
+            href={loc('/')}
             className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
@@ -72,7 +74,7 @@ export default function Error({
                 1: (
                   <Link
                     key="1"
-                    href="/contact"
+                    href={loc('/contact')}
                     className="text-[#2D5A27] hover:text-[#23471f]"
                   />
                 ),

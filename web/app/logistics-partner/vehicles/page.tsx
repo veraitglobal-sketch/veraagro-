@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -30,6 +31,7 @@ const VEHICLE_TYPE_OPTIONS = [
 ];
 
 export default function LogisticsVehiclesPage() {
+  const { t } = useTranslation();
   const logisticsPartnerNavItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -108,7 +110,7 @@ export default function LogisticsVehiclesPage() {
   }
 
   return (
-    <SidebarLayout title="Vehicles" navItems={logisticsPartnerNavItems}>
+    <SidebarLayout title={t('logisticsPartnerNav.vehicles')} navItems={logisticsPartnerNavItems}>
       <div className="max-w-3xl space-y-8">
         <p className="text-sm text-gray-600">
           Register refrigerated vehicles for your fleet.{' '}

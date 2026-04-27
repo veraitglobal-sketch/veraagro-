@@ -1,16 +1,21 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 /**
  * Shared footer – same as main page. Use on all public pages for consistency.
  */
 export default function Footer() {
+  const loc = useLocalizedHref();
+
   return (
     <footer className="border-t border-gray-200 py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-8 md:mb-12">
           <div className="flex flex-col">
-            <Link href="/" className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
+            <Link href={loc('/')} className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
               <Image
                 src="/logo1.png"
                 alt="Bio Vera"
@@ -38,36 +43,36 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center" style={{ minHeight: '1.25rem' }}>Product</h4>
             <ul className="space-y-1 text-sm text-gray-600">
-              <li><Link href="/growers" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
-              <li><Link href="/suppliers" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
+              <li><Link href={loc('/growers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">For Growers</Link></li>
+              <li><Link href={loc('/suppliers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">For Suppliers</Link></li>
               <li><Link href="/logistics-partner" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
             <ul className="space-y-1 text-sm text-gray-600">
-              <li><Link href="/about" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">About</Link></li>
-              <li><Link href="/careers" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Careers</Link></li>
-              <li><Link href="/press" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
-              <li><Link href="/#vision" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Vision</Link></li>
-              <li><Link href="/#roadmap" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
-              <li><Link href="/contact" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Contact</Link></li>
+              <li><Link href={loc('/about')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">About</Link></li>
+              <li><Link href={loc('/careers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Careers</Link></li>
+              <li><Link href={loc('/press')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Press Kit</Link></li>
+              <li><Link href={`${loc('/')}#vision`} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Vision</Link></li>
+              <li><Link href={`${loc('/')}#roadmap`} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
+              <li><Link href={loc('/contact')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Contact</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-4">Support</h4>
             <ul className="space-y-1 text-sm text-gray-600">
-              <li><Link href="/faq" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">FAQ</Link></li>
-              <li><Link href="/help-center" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Help Center</Link></li>
-              <li><Link href="/security" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Security</Link></li>
+              <li><Link href={loc('/faq')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">FAQ</Link></li>
+              <li><Link href={loc('/help-center')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Help Center</Link></li>
+              <li><Link href={loc('/security')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Security</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
             <ul className="space-y-1 text-sm text-gray-600">
-              <li><Link href="/legal" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Legal</Link></li>
-              <li><Link href="/privacy" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
-              <li><Link href="/cookies" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Cookie Policy</Link></li>
+              <li><Link href={loc('/legal')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Legal</Link></li>
+              <li><Link href={loc('/privacy')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
+              <li><Link href={loc('/cookies')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">Cookie Policy</Link></li>
               <li>
                 <button
                   type="button"

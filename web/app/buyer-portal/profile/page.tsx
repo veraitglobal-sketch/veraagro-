@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { MapPin, Plus, X, Building2, Users, Truck, Loader2 } from 'lucide-react';
@@ -52,6 +53,7 @@ function showField(v: string) {
 }
 
 export default function BuyerProfilePage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [isEditing, setIsEditing] = useState(false);
@@ -294,7 +296,7 @@ export default function BuyerProfilePage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-    <SidebarLayout title="Company Profile" navItems={buyerPortalNavItems}>
+    <SidebarLayout title={t('buyerPortalPages.profile')} navItems={buyerPortalNavItems}>
       <div className="space-y-6">
         {loadError && (
           <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-lg text-sm">

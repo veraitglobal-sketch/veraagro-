@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI } from '@/lib/api';
@@ -11,6 +12,7 @@ import GrowerSeasonJourney from '@/components/grower/GrowerSeasonJourney';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function GrowerFieldSeasonPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,10 +52,10 @@ export default function GrowerFieldSeasonPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title="Steps" navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.nav.steps')} navItems={growerNavItems}>
         <GrowerPageShell>
             <GrowerPageHeader
-              title="Steps"
+              title={t('grower.nav.steps')}
               description={
                 <>
                   From first setup to transport. The cards below are <strong>12 numbered steps</strong> (full story); the

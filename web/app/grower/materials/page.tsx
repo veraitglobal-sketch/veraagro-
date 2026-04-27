@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
@@ -42,6 +43,7 @@ interface LabelRollRow {
 }
 
 export default function GrowerMaterialsPage() {
+  const { t } = useTranslation();
   const navItems = useGrowerNavItems();
   const [balance, setBalance] = useState<MaterialBalance | null>(null);
   const [materialTypes, setMaterialTypes] = useState<MaterialType[]>([]);
@@ -220,7 +222,7 @@ export default function GrowerMaterialsPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title="Materials" navItems={navItems}>
+      <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">Loading materials…</div>
         </GrowerPageShell>
@@ -229,10 +231,10 @@ export default function GrowerMaterialsPage() {
   }
 
   return (
-    <SidebarLayout title="Materials" navItems={navItems}>
+    <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Materials"
+          title={t('grower.nav.materials')}
           description="Official crate, label roll, and film balances; purchase below; serials list for compliance photos."
         />
 

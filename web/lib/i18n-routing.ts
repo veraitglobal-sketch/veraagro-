@@ -1,0 +1,130 @@
+import type { SiteLocale } from "@/i18n/config";
+
+/** URL segments for public/marketing pages that live under /[locale]/… */
+export const LOCALIZED_FIRST_SEGMENTS = new Set([
+  "about",
+  "careers",
+  "contact",
+  "cookies",
+  "faq",
+  "for-buyers",
+  "growers",
+  "suppliers",
+  "products",
+  "press",
+  "privacy",
+  "terms",
+  "legal",
+  "investors",
+  "help-center",
+  "security",
+]);
+
+/** Routes that never use /en or /sr prefix (apps, APIs, tools). */
+export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
+  "api",
+  "_next",
+  "admin",
+  "grower",
+  "buyer-portal",
+  "buyer",
+  "fleet-partner",
+  "logistics-partner",
+  "supplier",
+  "producer",
+  "register",
+  "verify",
+  "verify-email",
+  "passport",
+  "track",
+  "batch",
+  "estate",
+  "plot",
+  "farmer",
+  "certificate",
+  "transparency",
+  "missions",
+  "pre-order-2026",
+  "hub-manager",
+  "aeo-dashboard",
+  "operations-center",
+  "protocol-360",
+  "distributor-network",
+  "login",
+  "coordinator",
+]);
+
+export const siteLocales = ["en", "sr"] as const satisfies readonly SiteLocale[];
+
+export function isSiteLocale(v: string): v is SiteLocale {
+  return v === "en" || v === "sr";
+}
+
+export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
+  const seg = pathname.split("/").filter(Boolean)[0];
+  if (seg === "en" || seg === "sr") return seg;
+  return null;
+}
+
+/** Whether middleware should prefix /en or /sr for this path when locale is missing. */
+export function pathNeedsLocaleRedirect(pathname: string): boolean {
+  if (pathname === "/" || pathname === "") return true;
+  const seg = pathname.split("/").filter(Boolean)[0];
+  return LOCALIZED_FIRST_SEGMENTS.has(seg);
+}
+
+export function pathIsLocaleFree(pathname: string): boolean {
+  const seg = pathname.split("/").filter(Boolean)[0];
+  if (!seg) return false;
+  return LOCALE_FREE_FIRST_SEGMENTS.has(seg);
+}
+
+/**
+ * Build a path with locale prefix. `path` should start with / (e.g. `/growers`, `/contact?x=1`).
+ */
+export function withLocalePrefix(locale: SiteLocale, path: string): string {
+  const trimmed = path.startsWith("/") ? path : `/${path}`;
+  const [pathnamePart, queryPart] = trimmed.split("?");
+  const q = queryPart ? `?${queryPart}` : "";
+  if (pathnamePart === "/" || pathnamePart === "") return `/${locale}${q}`;
+  return `/${locale}${pathnamePart}${q}`;
+}
+
+/**
+ * Swap locale in URL when already prefixed (`/en/about` → `/sr/about`).
+ * When path has no locale prefix, prefix whole path with `newLocale`.
+ */
+export function replaceLocaleInPathname(pathname: string, newLocale: SiteLocale): string {
+  const existing = pathnameStartsWithLocale(pathname);
+  if (existing) {
+    const rest = pathname.slice(existing.length + 2) || "/";
+    return withLocalePrefix(newLocale, rest);
+  }
+  return withLocalePrefix(newLocale, pathname === "" ? "/" : pathname);
+}
+
+/**
+ * When switching language from the UI: navigate if URL carries locale or is a localized marketing path;
+ * otherwise only update i18n + cookie (e.g. `/grower`, `/admin`).
+ */
+export function getSwitchLocaleTarget(
+  pathname: string,
+  newLocale: SiteLocale,
+): { kind: "navigate"; href: string } | { kind: "noop" } {
+  const currentFromUrl = pathnameStartsWithLocale(pathname);
+  if (currentFromUrl) {
+    if (currentFromUrl === newLocale) return { kind: "noop" };
+    return { kind: "navigate", href: replaceLocaleInPathname(pathname, newLocale) };
+  }
+  if (pathIsLocaleFree(pathname)) {
+    return { kind: "noop" };
+  }
+  const seg = pathname.split("/").filter(Boolean)[0];
+  if (pathname === "/" || (seg && LOCALIZED_FIRST_SEGMENTS.has(seg))) {
+    return {
+      kind: "navigate",
+      href: withLocalePrefix(newLocale, pathname === "/" ? "/" : pathname),
+    };
+  }
+  return { kind: "noop" };
+}

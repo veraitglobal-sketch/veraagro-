@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
@@ -57,6 +58,7 @@ interface Batch {
 }
 
 export default function GrowerBatchesPage() {
+  const { t } = useTranslation();
   const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [batches, setBatches] = useState<Batch[]>([]);
@@ -215,7 +217,7 @@ export default function GrowerBatchesPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-        <SidebarLayout title="My Batches" navItems={navItems}>
+        <SidebarLayout title={t('grower.nav.myBatches')} navItems={navItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
@@ -229,10 +231,10 @@ export default function GrowerBatchesPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title="My Batches" navItems={navItems}>
+      <SidebarLayout title={t('grower.nav.myBatches')} navItems={navItems}>
         <GrowerPageShell>
           <GrowerPageHeader
-            title="My Batches"
+            title={t('grower.nav.myBatches')}
             description="Track all your harvest batches and their journey to market"
             right={
               <button

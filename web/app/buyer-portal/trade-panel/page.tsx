@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
@@ -43,6 +44,7 @@ import {
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function TradePanelPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [supplyDemand, setSupplyDemand] = useState<any>(null);
   const [prices, setPrices] = useState<any>(null);
@@ -587,11 +589,11 @@ export default function TradePanelPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Trade Panel" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.tradePanel')} navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading trade data...</p>
+              <p className="mt-4 text-gray-600">{t('buyerTrade.loading')}</p>
             </div>
           </div>
         </SidebarLayout>
@@ -601,16 +603,14 @@ export default function TradePanelPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Vera Trade" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.veraTrade')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
           <div className="border-b border-[#2D5A27]/20/50 pb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-light text-gray-900">Vera Trade</h1>
-                <p className="text-sm text-gray-600 mt-2 font-light">
-                  Real-time market intelligence & trading desk
-                </p>
+                <h1 className="text-2xl font-light text-gray-900">{t('buyerPortalPages.veraTrade')}</h1>
+                <p className="text-sm text-gray-600 mt-2 font-light">{t('buyerTrade.tagline')}</p>
               </div>
               <button
                 onClick={loadData}
@@ -618,7 +618,7 @@ export default function TradePanelPage() {
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-light hover:border-[#2D5A27]/50 transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
+                {t('buyerTrade.refresh')}
               </button>
             </div>
           </div>

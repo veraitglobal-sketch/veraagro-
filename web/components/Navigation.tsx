@@ -7,39 +7,46 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+
+function isNavActive(pathname: string | null | undefined, href: string): boolean {
+  if (!pathname) return false;
+  const p = pathname.replace(/\/$/, '') || '/';
+  const h = href.replace(/\/$/, '') || '/';
+  if (h === '/en' || h === '/sr') return p === '/en' || p === '/sr';
+  return p === h || p.startsWith(`${h}/`);
+}
 
 export default function Navigation() {
   const { t } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const loc = useLocalizedHref();
 
-  const isActive = (path: string) => pathname === path || pathname?.startsWith(path);
-
-  // Simplified navigation - only basic links, detailed navigation is in sidebar
   const navLinks = useMemo(() => {
     if (!isAuthenticated || !user) {
       return [
-        { href: '/', label: t('nav.home') },
-        { href: '/for-buyers', label: t('nav.forBuyers') },
-        { href: '/growers', label: t('nav.forGrowers') },
-        { href: '/suppliers', label: t('nav.forSuppliers') },
+        { href: loc('/'), label: t('nav.home') },
+        { href: loc('/for-buyers'), label: t('nav.forBuyers') },
+        { href: loc('/growers'), label: t('nav.forGrowers') },
+        { href: loc('/suppliers'), label: t('nav.forSuppliers') },
         { href: '/logistics-partner', label: t('nav.forLogistics') },
-        { href: '/contact', label: t('nav.contact') },
+        { href: loc('/contact'), label: t('nav.contact') },
       ];
     }
     return [
-      { href: '/', label: t('nav.home') },
-      { href: '/help-center', label: t('nav.helpCenter') },
+      { href: loc('/'), label: t('nav.home') },
+      { href: loc('/help-center'), label: t('nav.helpCenter') },
     ];
-  }, [isAuthenticated, user, t]);
+  }, [isAuthenticated, user, t, loc]);
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo — left */}
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
+          <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
             <Image
               src="/logo1.png"
               alt={t('brand.name')}
@@ -58,7 +65,7 @@ export default function Navigation() {
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-colors flex items-center h-full whitespace-nowrap ${
-                  isActive(link.href)
+                  isNavActive(pathname, link.href)
                     ? 'text-[#2D5A27] border-b-2 border-[#2D5A27]'
                     : 'text-gray-800 hover:text-[#2D5A27]'
                 }`}
@@ -85,7 +92,7 @@ export default function Navigation() {
                     if (userRoles.includes('MATERIAL_SUPPLIER')) return '/supplier/dashboard';
                     if (userRoles.includes('COORDINATOR')) return '/coordinator';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
-                    return '/';
+                    return loc('/');
                   };
                   
                   return (
@@ -146,7 +153,7 @@ export default function Navigation() {
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center min-h-[44px] px-2 text-sm font-medium ${
-                  isActive(link.href) ? 'text-[#2D5A27]' : 'text-gray-800'
+                  isNavActive(pathname, link.href) ? 'text-[#2D5A27]' : 'text-gray-800'
                 }`}
               >
                 {link.label}
@@ -175,7 +182,7 @@ export default function Navigation() {
                     if (userRoles.includes('MATERIAL_SUPPLIER')) return '/supplier/dashboard';
                     if (userRoles.includes('COORDINATOR')) return '/coordinator';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
-                    return '/';
+                    return loc('/');
                   };
                   
                   return (

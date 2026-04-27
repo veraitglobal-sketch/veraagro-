@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation, Trans } from 'react-i18next';
 import { X, Settings, Check, Cookie } from 'lucide-react';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 interface CookiePreferences {
   essential: boolean;
@@ -35,6 +36,7 @@ function DetailList({ block }: { block: CookieBlock }) {
 
 export default function CookieConsent() {
   const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -139,8 +141,8 @@ export default function CookieConsent() {
                       i18nKey="cookieConsent.mainBanner"
                       components={{
                         strong: <strong />,
-                        cookie: <Link href="/cookies" className="text-[#2D5A27] hover:underline font-medium" />,
-                        privacy: <Link href="/privacy" className="text-[#2D5A27] hover:underline font-medium" />,
+                        cookie: <Link href={loc('/cookies')} className="text-[#2D5A27] hover:underline font-medium" />,
+                        privacy: <Link href={loc('/privacy')} className="text-[#2D5A27] hover:underline font-medium" />,
                       }}
                     />
                   </p>
@@ -301,14 +303,14 @@ export default function CookieConsent() {
                   <Trans
                     i18nKey="cookieConsent.fullListFooter"
                     components={{
-                      1: <Link href="/cookies" className="text-[#2D5A27] hover:underline" />,
-                      2: <Link href="/privacy" className="text-xs text-gray-500 font-light text-[#2D5A27] hover:underline" />,
+                      1: <Link href={loc('/cookies')} className="text-[#2D5A27] hover:underline" />,
+                      2: <Link href={loc('/privacy')} className="text-xs text-gray-500 font-light text-[#2D5A27] hover:underline" />,
                     }}
                   />
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
                   <Link
-                    href="/cookies"
+                    href={loc('/cookies')}
                     className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     {t('cookieConsent.fullPolicyLink')}

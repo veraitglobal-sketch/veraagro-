@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
@@ -54,6 +55,7 @@ interface Mission {
 }
 
 export default function LogisticsDashboardPage() {
+  const { t } = useTranslation();
   const navItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -153,7 +155,7 @@ export default function LogisticsDashboardPage() {
   }
 
   return (
-    <SidebarLayout title="Logistics Dashboard" navItems={navItems}>
+    <SidebarLayout title={t('logisticsPages.dashboard')} navItems={navItems}>
       <div className="space-y-6">
         {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} />}
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import { farmerProfileAPI } from '@/lib/api';
 import Image from 'next/image';
@@ -11,6 +12,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function FarmerProfilePage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -151,7 +153,7 @@ export default function FarmerProfilePage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-        <SidebarLayout title="My Profile" navItems={growerNavItems}>
+        <SidebarLayout title={t('grower.nav.myProfile')} navItems={growerNavItems}>
           <GrowerPageShell>
             <div className="flex min-h-[40vh] items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" />
@@ -164,10 +166,10 @@ export default function FarmerProfilePage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title="My Profile" navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.nav.myProfile')} navItems={growerNavItems}>
         <GrowerPageShell>
         <GrowerPageHeader
-          title="My profile"
+          title={t('grower.nav.myProfile')}
           description="Public page, your story, and Bio Vera QR for markets and packaging."
         />
         <div className="grid grid-cols-1 gap-6 items-stretch lg:grid-cols-2 lg:gap-8">

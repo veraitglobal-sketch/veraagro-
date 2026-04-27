@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
@@ -12,6 +13,7 @@ import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPag
 
 
 export default function QualityEntryPage() {
+  const { t } = useTranslation();
   const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [selectedBatch, setSelectedBatch] = useState<string>('');
@@ -174,10 +176,10 @@ export default function QualityEntryPage() {
   };
 
   return (
-    <SidebarLayout title="Quality Entry" navItems={navItems}>
+    <SidebarLayout title={t('growerPages.qualityEntry')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Quality Entry"
+          title={t('growerPages.qualityEntry')}
           description="Complete this form before creating a shipment. All fields in the form below are mandatory."
         />
         {error && (

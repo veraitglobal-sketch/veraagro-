@@ -5,7 +5,10 @@
   "locale": {
     "aria": "Language",
     "enShort": "EN",
-    "srShort": "SR"
+    "srShort": "SR",
+    "pickerAria": "Choose language",
+    "nameEn": "English",
+    "nameSr": "Srpski"
   },
   "metadata": {
     "siteName": "Bio Vera",
@@ -329,6 +332,10 @@
       "batch": "Batch",
       "notAvailable": "N/A",
       "noMissions": "No missions yet."
+    },
+    "missionCreate": {
+      "submitCta": "Request transport",
+      "creating": "Creating..."
     }
   },
   "adminNav": {
@@ -427,5 +434,154 @@
       "defaultStoreName": "Your store",
       "loadError": "Could not load"
     }
+  },
+  "home": {
+    "hero": {
+      "title1": "Vertically Integrated",
+      "title2": "Agricultural Network",
+      "subtitle": "From field to buyer in one system: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.",
+      "browseProducts": "Browse Products",
+      "becomeProducer": "Become a Producer",
+      "preOrder": "Pre-order for 2026 is open",
+      "preOrderAria": "Pre-order info",
+      "preOrderTip1": "Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.",
+      "preOrderTip2": "Pre-order is for planning 2026 quantities only; it is not a binding order."
+    },
+    "statLabels": [
+      "Traceability",
+      "Certified",
+      "Monitoring",
+      "Fraud Cases",
+      "Blockchain Complete"
+    ],
+    "partnersLine": "Trusted every day by leading agricultural organizations",
+    "vision": {
+      "title": "Our Vision",
+      "intro": "We build a trusted path from field to buyer: clear rules, honest records, and fair access to market for growers who meet our standards.",
+      "cards": [
+        {
+          "title": "Transparency",
+          "description": "Complete visibility of the entire process from field to customer. Every step is documented and immutable."
+        },
+        {
+          "title": "Security",
+          "description": "Cryptographically protected data, anti-fraud protection, and immutable digital evidence."
+        },
+        {
+          "title": "EU Access",
+          "description": "Automated generation of EU certificates and digital passports for direct market access."
+        }
+      ]
+    },
+    "features": {
+      "title": "Core Features",
+      "intro": "How the network runs day to day—production, logistics, delivery, and settlement connected in one operating model.",
+      "list": [
+        {
+          "title": "Smart-Lock System",
+          "description": "QR code scanning is the primary key. Immutable proof of production with GPS validation."
+        },
+        {
+          "title": "Batch Tracking",
+          "description": "Every crate tracked with Batch_ID. One-click traceability from field to customer."
+        },
+        {
+          "title": "Escrow Payment",
+          "description": "Buyer funds stay in escrow until delivery is confirmed, then are released to grower and logistics partners under agreed terms. Bio Vera runs the chain as brand and supply operator—strong, fair commercial terms, not a public percentage sheet."
+        },
+        {
+          "title": "Digital Handshake",
+          "description": "Customer scans QR code to confirm delivery. Automatic payment release."
+        },
+        {
+          "title": "Anti-Fraud Protection",
+          "description": "GPS timestamp, device ID tracking, camera-only capture. Impossible to falsify."
+        },
+        {
+          "title": "EU Digital Passport",
+          "description": "Automated generation of EU certificates. Direct market access without intermediaries."
+        },
+        {
+          "title": "Blockchain verification (Polygon)",
+          "description": "Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete."
+        }
+      ]
+    },
+    "blockchain": {
+      "title": "Why We Use Blockchain",
+      "body": "We use a blockchain system so our products stay faithful to you—the customer. Every step of the journey, from harvest to delivery, is recorded in a way that cannot be changed. Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.",
+      "bullets": [
+        "Immutable record",
+        "No one can edit the trail",
+        "You verify the same data we do"
+      ]
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "subtitle": "Where we are now and where we are heading",
+      "statusCompleted": "Completed",
+      "statusInProgress": "In Progress",
+      "statusPlanned": "Planned",
+      "phases": [
+        {
+          "phase": "Q1 2026",
+          "title": "Network go-live",
+          "status": "completed",
+          "items": [
+            "Backend API",
+            "Mobile App",
+            "Web app",
+            "Core features"
+          ]
+        },
+        {
+          "phase": "Q2 2026",
+          "title": "Feature Expansion",
+          "status": "completed",
+          "items": [
+            "AI Analytics — Complete",
+            "Blockchain verification (Polygon) — Complete",
+            "Advanced Dashboard",
+            "Integrations",
+            "EU Certificates"
+          ]
+        },
+        {
+          "phase": "Q3-Q4 2026",
+          "title": "Scaling",
+          "status": "planned",
+          "items": [
+            "Multi-region Support",
+            "API Marketplace",
+            "Partner Integrations",
+            "Enterprise Features"
+          ]
+        },
+        {
+          "phase": "2027",
+          "title": "Global Expansion",
+          "status": "planned",
+          "items": [
+            "Global Markets",
+            "IoT Sensors",
+            "AI Predictions"
+          ]
+        }
+      ]
+    },
+    "products": {
+      "title": "Browse Products",
+      "subtitle": "Organic products with complete traceability",
+      "fruits": "Fruits",
+      "vegetables": "Vegetables",
+      "grains": "Grains"
+    },
+    "cta": {
+      "title": "Partner with the network",
+      "body": "Work with growers, logistics partners, and buyers under one set of standards—clear handovers, traceable batches, and predictable commercial terms.",
+      "becomeProducer": "Become a Producer",
+      "startShopping": "Start Shopping"
+    },
+    "help": "Questions? We’re here to help."
   }
 }

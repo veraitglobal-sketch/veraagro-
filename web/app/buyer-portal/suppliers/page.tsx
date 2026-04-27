@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI } from '@/lib/api';
@@ -20,6 +21,7 @@ import {
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function SuppliersPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [partners, setPartners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +61,7 @@ export default function SuppliersPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Vera Partners" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.suppliers')} navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
@@ -74,7 +76,7 @@ export default function SuppliersPage() {
   if (error) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Vera Partners" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.suppliers')} navItems={buyerPortalNavItems}>
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
           </div>
@@ -85,7 +87,7 @@ export default function SuppliersPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Vera Partners" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.suppliers')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
           <div className="border-b border-green-200/50 pb-6">

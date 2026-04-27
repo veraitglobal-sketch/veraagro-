@@ -1,15 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { 
-  QrCode, 
+import {
+  QrCode,
   PackageSearch,
-  Wallet, 
-  Handshake, 
-  Shield, 
+  Wallet,
+  Handshake,
+  Shield,
   FileCheck,
   Eye,
   Lock,
@@ -20,15 +21,53 @@ import {
   HelpCircle,
   ShoppingBag,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { partners } from '@/lib/partners';
 import dynamic from 'next/dynamic';
 
 const VeraAIChatbotInline = dynamic(() => import('@/components/VeraAIChatbotInline'), { ssr: false });
 import Footer from '@/components/Footer';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+
+type VisionCard = { title: string; description: string };
+type FeatureItem = { title: string; description: string };
+type RoadmapPhase = { phase: string; title: string; status: string; items: string[] };
+
+const STAT_NUMBERS = ['100%', 'EU', '24/7', '0', 'Polygon'] as const;
+
+const VISION_ICONS: LucideIcon[] = [Eye, Lock, Globe];
+const FEATURE_ICONS: LucideIcon[] = [
+  QrCode,
+  PackageSearch,
+  Wallet,
+  Handshake,
+  Shield,
+  FileCheck,
+  Lock,
+];
+
+const PRODUCT_CATS: { id: 'fruits' | 'vegetables' | 'grains'; icon: LucideIcon }[] = [
+  { id: 'fruits', icon: Apple },
+  { id: 'vegetables', icon: Carrot },
+  { id: 'grains', icon: Wheat },
+];
 
 export default function Home() {
+  const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const [showPreOrderInfo, setShowPreOrderInfo] = useState(false);
   const preOrderRef = useRef<HTMLDivElement>(null);
+
+  const statLabels = t('home.statLabels', { returnObjects: true }) as string[];
+  const statRows = useMemo(
+    () => STAT_NUMBERS.map((number, i) => ({ number, label: statLabels[i] ?? '' })),
+    [statLabels],
+  );
+
+  const visionCards = t('home.vision.cards', { returnObjects: true }) as VisionCard[];
+  const featureList = t('home.features.list', { returnObjects: true }) as FeatureItem[];
+  const roadmapPhases = t('home.roadmap.phases', { returnObjects: true }) as RoadmapPhase[];
+  const blockchainBullets = t('home.blockchain.bullets', { returnObjects: true }) as string[];
 
   useEffect(() => {
     if (!showPreOrderInfo) return;
@@ -41,7 +80,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero — min-height to reduce layout shift while loading */}
       <section className="min-h-[50vh] sm:min-h-[55vh] pt-20 sm:pt-28 md:pt-40 pb-16 md:pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
@@ -50,12 +88,12 @@ export default function Home() {
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
-              Vertically Integrated
+              {t('home.hero.title1')}
               <br />
-              <span className="font-normal">Agricultural Network</span>
-          </h1>
+              <span className="font-normal">{t('home.hero.title2')}</span>
+            </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-              From field to buyer in one system: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.
+              {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -63,28 +101,27 @@ export default function Home() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
-                Browse Products
+                {t('home.hero.browseProducts')}
               </Link>
               <Link
-                href="/growers"
+                href={loc('/growers')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
-                Become a Producer
+                {t('home.hero.becomeProducer')}
               </Link>
             </div>
-            {/* Pre-order 2026 — link goes to login; after login user can open pre-order */}
             <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
               <Link
                 href="/login?returnTo=/pre-order-2026"
                 className="text-sm font-light text-gray-500 hover:text-[#2D5A27] transition-colors"
               >
-                Pre-order for 2026 is open
+                {t('home.hero.preOrder')}
               </Link>
               <button
                 type="button"
                 onClick={() => setShowPreOrderInfo((v) => !v)}
                 className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#2D5A27]/30 bg-transparent text-[#2D5A27] transition hover:border-[#2D5A27]/50 hover:bg-[#2D5A27]/5 focus:outline-none focus:ring-1 focus:ring-[#2D5A27]/20"
-                aria-label="Pre-order info"
+                aria-label={t('home.hero.preOrderAria')}
               >
                 <HelpCircle className="h-3 w-3" strokeWidth={2} />
               </button>
@@ -94,11 +131,9 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   className="absolute left-1/2 top-full z-10 mt-2 w-72 -translate-x-1/2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-sm font-light text-gray-600 shadow-sm"
                 >
-                  <p className="leading-relaxed">
-                    Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.
-                  </p>
+                  <p className="leading-relaxed">{t('home.hero.preOrderTip1')}</p>
                   <p className="mt-2 pt-2 border-t border-gray-100 text-gray-500 text-xs leading-relaxed">
-                    Pre-order is for planning 2026 quantities only; it is not a binding order.
+                    {t('home.hero.preOrderTip2')}
                   </p>
                 </motion.div>
               )}
@@ -107,17 +142,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats - Minimal */}
       <section className="pt-16 pb-12 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            {[
-              { number: '100%', label: 'Traceability' },
-              { number: 'EU', label: 'Certified' },
-              { number: '24/7', label: 'Monitoring' },
-              { number: '0', label: 'Fraud Cases' },
-              { number: 'Polygon', label: 'Blockchain Complete' },
-            ].map((stat, index) => (
+            {statRows.map((stat, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -135,7 +163,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Partners Section */}
       <section className="pt-16 pb-20 border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
@@ -144,7 +171,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <p className="text-sm text-gray-500 mb-12">Trusted every day by leading agricultural organizations</p>
+            <p className="text-sm text-gray-500 mb-12">{t('home.partnersLine')}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
               {partners.length > 0 ? (
                 partners.map((partner, index) => (
@@ -185,7 +212,6 @@ export default function Home() {
                   </motion.div>
                 ))
               ) : (
-                // Fallback: Show placeholder if no partners configured
                 Array.from({ length: 5 }).map((_, index) => (
                   <motion.div
                     key={index}
@@ -197,7 +223,7 @@ export default function Home() {
                   >
                     <Image
                       src="/logo1.png"
-                      alt="Bio Vera Partner"
+                      alt={`${t('brand.name')} — ${t('metadata.siteName')}`}
                       width={100}
                       height={50}
                       className="max-w-[100px] max-h-[50px] object-contain opacity-60 grayscale"
@@ -211,35 +237,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Vision Section */}
       <section id="vision" className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5 scroll-mt-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">Our Vision</h2>
-            <p className="text-base text-gray-600 max-w-2xl mx-auto font-light">
-              We build a trusted path from field to buyer: clear rules, honest records, and fair access to market for growers who meet our standards.
-            </p>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('home.vision.title')}</h2>
+            <p className="text-base text-gray-600 max-w-2xl mx-auto font-light">{t('home.vision.intro')}</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Transparency',
-                description: 'Complete visibility of the entire process from field to customer. Every step is documented and immutable.',
-                icon: Eye,
-              },
-              {
-                title: 'Security',
-                description: 'Cryptographically protected data, anti-fraud protection, and immutable digital evidence.',
-                icon: Lock,
-              },
-              {
-                title: 'EU Access',
-                description: 'Automated generation of EU certificates and digital passports for direct market access.',
-                icon: Globe,
-              },
-            ].map((item, index) => {
-              const IconComponent = item.icon;
+            {visionCards.map((item, index) => {
+              const IconComponent = VISION_ICONS[index];
+              if (!IconComponent) return null;
               return (
                 <div key={index} className="border-b border-[#2D5A27]/15 pb-8">
                   <div className="mb-4">
@@ -254,55 +262,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Core Features */}
       <section className="py-20 bg-white px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">Core Features</h2>
-            <p className="text-base text-gray-600 font-light">
-              How the network runs day to day—production, logistics, delivery, and settlement connected in one operating model.
-            </p>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('home.features.title')}</h2>
+            <p className="text-base text-gray-600 font-light">{t('home.features.intro')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Smart-Lock System',
-                description: 'QR code scanning is the primary key. Immutable proof of production with GPS validation.',
-                icon: QrCode,
-              },
-              {
-                title: 'Batch Tracking',
-                description: 'Every crate tracked with Batch_ID. One-click traceability from field to customer.',
-                icon: PackageSearch,
-              },
-              {
-                title: 'Escrow Payment',
-                description: 'Buyer funds stay in escrow until delivery is confirmed, then are released to grower and logistics partners under agreed terms. Bio Vera runs the chain as brand and supply operator—strong, fair commercial terms, not a public percentage sheet.',
-                icon: Wallet,
-              },
-              {
-                title: 'Digital Handshake',
-                description: 'Customer scans QR code to confirm delivery. Automatic payment release.',
-                icon: Handshake,
-              },
-              {
-                title: 'Anti-Fraud Protection',
-                description: 'GPS timestamp, device ID tracking, camera-only capture. Impossible to falsify.',
-                icon: Shield,
-              },
-              {
-                title: 'EU Digital Passport',
-                description: 'Automated generation of EU certificates. Direct market access without intermediaries.',
-                icon: FileCheck,
-              },
-              {
-                title: 'Blockchain verification (Polygon)',
-                description: 'Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete.',
-                icon: Lock,
-              },
-            ].map((feature, index) => {
-              const IconComponent = feature.icon;
+            {featureList.map((feature, index) => {
+              const IconComponent = FEATURE_ICONS[index];
+              if (!IconComponent) return null;
               return (
                 <div key={index} className="border-b border-[#2D5A27]/15 pb-8">
                   <div className="mb-4">
@@ -317,7 +287,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blockchain Trust */}
       <section className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -329,11 +298,9 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#2D5A27]/10 mb-6">
               <Lock className="w-6 h-6 text-[#2D5A27]" strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-light text-gray-900 mb-4">Why We Use Blockchain</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">{t('home.blockchain.title')}</h2>
             <p className="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
-              We use a blockchain system so our products stay <strong className="font-normal text-gray-800">faithful to you</strong>—the customer. 
-              Every step of the journey, from harvest to delivery, is recorded in a way that <strong className="font-normal text-gray-800">cannot be changed</strong>. 
-              Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.
+              {t('home.blockchain.body')}
             </p>
           </motion.div>
           <motion.div
@@ -343,11 +310,7 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="flex flex-wrap justify-center gap-6 text-sm"
           >
-            {[
-              'Immutable record',
-              'No one can edit the trail',
-              'You verify the same data we do',
-            ].map((line, i) => (
+            {blockchainBullets.map((line, i) => (
               <span key={i} className="flex items-center gap-2 text-gray-600 font-light">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27]/60" />
                 {line}
@@ -357,7 +320,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Roadmap Section */}
       <section id="roadmap" className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -366,39 +328,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-4">Roadmap</h2>
-            <p className="text-lg text-gray-600">
-              Where we are now and where we are heading
-            </p>
+            <h2 className="text-3xl font-light text-gray-900 mb-4">{t('home.roadmap.title')}</h2>
+            <p className="text-lg text-gray-600">{t('home.roadmap.subtitle')}</p>
           </motion.div>
 
           <div className="space-y-8">
-            {[
-              {
-                phase: 'Q1 2026',
-                title: 'Network go-live',
-                status: 'completed',
-                items: ['Backend API', 'Mobile App', 'Web app', 'Core features'],
-              },
-              {
-                phase: 'Q2 2026',
-                title: 'Feature Expansion',
-                status: 'completed',
-                items: ['AI Analytics — Complete', 'Blockchain verification (Polygon) — Complete', 'Advanced Dashboard', 'Integrations', 'EU Certificates'],
-              },
-              {
-                phase: 'Q3-Q4 2026',
-                title: 'Scaling',
-                status: 'planned',
-                items: ['Multi-region Support', 'API Marketplace', 'Partner Integrations', 'Enterprise Features'],
-              },
-              {
-                phase: '2027',
-                title: 'Global Expansion',
-                status: 'planned',
-                items: ['Global Markets', 'IoT Sensors', 'AI Predictions'],
-              },
-            ].map((plan, index) => (
+            {roadmapPhases.map((plan, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
@@ -409,28 +344,40 @@ export default function Home() {
               >
                 <div className="flex items-start gap-6">
                   <div className="flex-shrink-0">
-                    <div className={`w-2 h-2 rounded-full mt-2 ${
-                      plan.status === 'completed' ? 'bg-[#2D5A27]' :
-                      plan.status === 'in-progress' ? 'bg-[#2D5A27]/80' :
-                      'bg-gray-300'
-                    }`}></div>
+                    <div
+                      className={`w-2 h-2 rounded-full mt-2 ${
+                        plan.status === 'completed'
+                          ? 'bg-[#2D5A27]'
+                          : plan.status === 'in-progress'
+                            ? 'bg-[#2D5A27]/80'
+                            : 'bg-gray-300'
+                      }`}
+                    />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.phase}</span>
-                      <span className={`text-xs px-2 py-1 border ${
-                        plan.status === 'completed' ? 'border-[#2D5A27] text-[#2D5A27]' :
-                        plan.status === 'in-progress' ? 'border-[#2D5A27]/70 text-[#2D5A27]' :
-                        'border-gray-300 text-gray-400'
-                      }`}>
-                        {plan.status === 'completed' ? 'Completed' : plan.status === 'in-progress' ? 'In Progress' : 'Planned'}
+                      <span
+                        className={`text-xs px-2 py-1 border ${
+                          plan.status === 'completed'
+                            ? 'border-[#2D5A27] text-[#2D5A27]'
+                            : plan.status === 'in-progress'
+                              ? 'border-[#2D5A27]/70 text-[#2D5A27]'
+                              : 'border-gray-300 text-gray-400'
+                        }`}
+                      >
+                        {plan.status === 'completed'
+                          ? t('home.roadmap.statusCompleted')
+                          : plan.status === 'in-progress'
+                            ? t('home.roadmap.statusInProgress')
+                            : t('home.roadmap.statusPlanned')}
                       </span>
                     </div>
                     <h3 className="text-xl font-medium text-gray-900 mb-4">{plan.title}</h3>
                     <ul className="grid md:grid-cols-2 gap-2">
                       {plan.items.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                          <span className="w-1 h-1 bg-gray-400 rounded-full" />
                           {item}
                         </li>
                       ))}
@@ -443,8 +390,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* Products Categories Section */}
       <section className="py-24 px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -453,19 +398,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-4">Browse Products</h2>
-            <p className="text-lg text-gray-600">
-              Organic products with complete traceability
-            </p>
+            <h2 className="text-3xl font-light text-gray-900 mb-4">{t('home.products.title')}</h2>
+            <p className="text-lg text-gray-600">{t('home.products.subtitle')}</p>
           </motion.div>
 
-          {/* Category Filters */}
           <div className="flex gap-4 justify-center overflow-x-auto">
-            {[
-              { id: 'fruits', name: 'Fruits', icon: Apple },
-              { id: 'vegetables', name: 'Vegetables', icon: Carrot },
-              { id: 'grains', name: 'Grains', icon: Wheat },
-            ].map((category) => {
+            {PRODUCT_CATS.map((category) => {
               const Icon = category.icon;
               return (
                 <Link
@@ -473,9 +411,12 @@ export default function Home() {
                   href="/login"
                   className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-lg transition-all group hover:border-[#2D5A27] hover:text-[#2D5A27]"
                 >
-                  <Icon className="w-5 h-5 text-gray-600 group-hover:text-[#2D5A27] group-hover:scale-110 transition-transform" strokeWidth={1.5} />
+                  <Icon
+                    className="w-5 h-5 text-gray-600 group-hover:text-[#2D5A27] group-hover:scale-110 transition-transform"
+                    strokeWidth={1.5}
+                  />
                   <span className="text-sm font-medium transition-colors">
-                    {category.name}
+                    {t(`home.products.${category.id}`)}
                   </span>
                 </Link>
               );
@@ -484,7 +425,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-24 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
@@ -492,32 +432,29 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-light text-gray-900 mb-6">Partner with the network</h2>
-            <p className="text-lg text-gray-600 mb-8">
-              Work with growers, logistics partners, and buyers under one set of standards—clear handovers, traceable batches, and predictable commercial terms.
-            </p>
+            <h2 className="text-3xl font-light text-gray-900 mb-6">{t('home.cta.title')}</h2>
+            <p className="text-lg text-gray-600 mb-8">{t('home.cta.body')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/growers"
+                href={loc('/growers')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
-                Become a Producer
+                {t('home.cta.becomeProducer')}
               </Link>
               <Link
                 href="/login"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
-                Start Shopping
+                {t('home.cta.startShopping')}
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Help + chat CTA row */}
       <section className="border-t border-gray-200 bg-gray-50/50 py-6 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm font-light text-gray-600">Questions? We’re here to help.</p>
+          <p className="text-sm font-light text-gray-600">{t('home.help')}</p>
           <VeraAIChatbotInline />
         </div>
       </section>

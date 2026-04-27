@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
@@ -33,6 +34,7 @@ interface Estate {
 }
 
 export default function GrowerFieldsPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -155,10 +157,10 @@ export default function GrowerFieldsPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title="My Fields" navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.nav.myFields')} navItems={growerNavItems}>
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
-            title="My fields & parcels"
+            title={t('growerPages.fieldsParcels')}
             description={
               <>
                 Add parcels here; admin must approve. Each approved block gets a <strong>store QR</strong> (field story)
@@ -254,7 +256,7 @@ export default function GrowerFieldsPage() {
                                 onClick={() => void openStoreQr(parcel.id)}
                                 disabled={plotQrLoading}
                                 className="inline-flex items-center gap-1 text-sm font-medium text-gray-800 hover:text-[#2D5A27] disabled:opacity-50"
-                                title="QR for shops — links to this block (sadnja) and field history"
+                                title={t('growerPages.fieldQrMapTitle')}
                               >
                                 {plotQrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
                                 Store QR

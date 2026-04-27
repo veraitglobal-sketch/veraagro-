@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
@@ -99,6 +100,7 @@ function siblingsByCity(all: Mission[], m: Mission): Mission[] {
 }
 
 export default function LogisticsMissionsPage() {
+  const { t } = useTranslation();
   const logisticsPartnerNavItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -178,7 +180,7 @@ export default function LogisticsMissionsPage() {
   }
 
   return (
-    <SidebarLayout title="Missions" navItems={logisticsPartnerNavItems}>
+    <SidebarLayout title={t('logisticsPartnerNav.missions')} navItems={logisticsPartnerNavItems}>
       <div className="space-y-6">
         {error && (
           <div className="p-3 bg-red-50 text-red-800 text-sm rounded-lg border border-red-100">

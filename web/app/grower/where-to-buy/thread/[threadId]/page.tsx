@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
@@ -10,6 +11,7 @@ import { growerSupplierB2bAPI } from '@/lib/api';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
 
 export default function GrowerSupplierThreadPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const params = useParams();
   const threadId = typeof params?.threadId === 'string' ? params.threadId : '';
@@ -76,7 +78,7 @@ export default function GrowerSupplierThreadPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
-      <SidebarLayout title="Messages" navItems={growerNavItems}>
+      <SidebarLayout title={t('growerPages.messages')} navItems={growerNavItems}>
         <div className="w-full max-w-4xl">
           <Link
             href="/grower/where-to-buy#my-orders"

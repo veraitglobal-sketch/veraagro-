@@ -52,7 +52,7 @@ export default function GlobalError({
                 {i18n.t('globalError.tryAgain')}
               </button>
               <Link
-                href="/"
+                href="/en"
                 className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />

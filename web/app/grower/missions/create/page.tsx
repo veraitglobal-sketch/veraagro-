@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { missionsAPI, batchesAPI } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -79,6 +80,7 @@ const GEO_OPTIONS: PositionOptions = {
 };
 
 export default function CreateMissionPage() {
+  const { t } = useTranslation();
   const navItems = useGrowerNavItems();
   /** Initial batch list only (do not conflate with GPS) */
   const [batchesLoading, setBatchesLoading] = useState(true);
@@ -356,7 +358,7 @@ export default function CreateMissionPage() {
 
   if (batchesLoading) {
     return (
-      <SidebarLayout title="Request Transport" navItems={navItems}>
+      <SidebarLayout title={t('grower.nav.requestTransport')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-green-600" />
@@ -368,10 +370,10 @@ export default function CreateMissionPage() {
 
   if (success) {
     return (
-      <SidebarLayout title="Request Transport" navItems={navItems}>
+      <SidebarLayout title={t('grower.nav.requestTransport')} navItems={navItems}>
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
-            title="Request transport"
+            title={t('growerPages.requestTransport')}
             description="Your request was sent. You can follow the run in Mission tracker."
           />
           <motion.div
@@ -399,10 +401,10 @@ export default function CreateMissionPage() {
   }
 
   return (
-    <SidebarLayout title="Request Transport" navItems={navItems}>
+    <SidebarLayout title={t('grower.nav.requestTransport')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Request transport"
+          title={t('growerPages.requestTransport')}
           description="Pick a ready batch, pickup location, and delivery. Prerequisites: quality entry and compliance complete for the lot."
         />
         <motion.div
@@ -751,12 +753,12 @@ export default function CreateMissionPage() {
                 {submitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating...
+                    {t('grower.missionCreate.creating')}
                   </>
                 ) : (
                   <>
                     <Package className="w-4 h-4" />
-                    Request Transport
+                    {t('grower.missionCreate.submitCta')}
                   </>
                 )}
               </button>

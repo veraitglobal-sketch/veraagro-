@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -81,6 +82,7 @@ function normalizeCountry(c: string | undefined) {
  * No map: country tabs, optional city, “nearest to me” from coordinates on file + browser location.
  */
 export default function GrowerWhereToBuyPage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -255,10 +257,10 @@ export default function GrowerWhereToBuyPage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
-      <SidebarLayout title="Suppliers & orders" navItems={growerNavItems}>
+      <SidebarLayout title={t('grower.nav.suppliersAndOrders')} navItems={growerNavItems}>
         <GrowerPageShell className="space-y-5">
           <GrowerPageHeader
-            title="Suppliers & orders"
+            title={t('grower.nav.suppliersAndOrders')}
             description={
               <>
                 Find a partner on the <strong>left</strong> (on desktop) or the <strong>Directory</strong> tab; track

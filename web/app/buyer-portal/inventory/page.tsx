@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { inventoryAPI, digitalPassportsAPI } from '@/lib/api';
@@ -9,6 +10,7 @@ import Image from 'next/image';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function InventoryPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,7 @@ export default function InventoryPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Available Products" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.inventory')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
           <div className="border-b border-green-200/50 pb-6">

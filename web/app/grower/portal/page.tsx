@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -105,6 +106,7 @@ interface FinancialStatus {
 }
 
 export default function GrowerPortalPage() {
+  const { t } = useTranslation();
   const navItems = useGrowerNavItems();
   const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
@@ -237,7 +239,7 @@ export default function GrowerPortalPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title="Mission Tracker" navItems={navItems}>
+      <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex h-64 items-center justify-center text-gray-500">Loading…</div>
         </GrowerPageShell>
@@ -246,10 +248,10 @@ export default function GrowerPortalPage() {
   }
 
   return (
-    <SidebarLayout title="Mission Tracker" navItems={navItems}>
+    <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Mission tracker"
+          title={t('grower.nav.missionTracker')}
           description="Follow transport runs, route, and status for batches you have moved from the farm."
         />
         {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} className="mb-0" />}
@@ -311,7 +313,7 @@ export default function GrowerPortalPage() {
                         className={`inline-block px-2 py-1 rounded text-xs font-medium ${missionStatusBadgeClass(
                           mission.status,
                         )}`}
-                        title="Mission status from logistics pipeline"
+                        title={t('growerPages.missionPipelineHint')}
                       >
                         {String(mission.status || '').replace(/_/g, ' ')}
                       </span>

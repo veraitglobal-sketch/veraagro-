@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
@@ -48,6 +49,7 @@ import {
 } from '@/lib/en-locale-dates';
 
 export default function BuyerDashboardPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const router = useRouter();
@@ -118,7 +120,7 @@ export default function BuyerDashboardPage() {
   if (loading) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.dashboard')} navItems={buyerPortalNavItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
@@ -133,7 +135,7 @@ export default function BuyerDashboardPage() {
   if (error) {
     return (
       <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.dashboard')} navItems={buyerPortalNavItems}>
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
           </div>
@@ -150,7 +152,7 @@ export default function BuyerDashboardPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-        <SidebarLayout title="Dashboard" navItems={buyerPortalNavItems}>
+        <SidebarLayout title={t('buyerPortalPages.dashboard')} navItems={buyerPortalNavItems}>
         <div className="space-y-10">
           {/* Welcome + Trust */}
           <div className="border-b border-[#2D5A27]/20/50 pb-6">

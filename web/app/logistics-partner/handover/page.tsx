@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
@@ -34,6 +35,7 @@ interface Mission {
 }
 
 export default function LogisticsHandoverPage() {
+  const { t } = useTranslation();
   const navItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -234,7 +236,7 @@ export default function LogisticsHandoverPage() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <SidebarLayout title="Loading Handover" navItems={navItems}>
+      <SidebarLayout title={t('logisticsPages.loadingHandover')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex min-h-[40vh] items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" aria-hidden />
@@ -245,7 +247,7 @@ export default function LogisticsHandoverPage() {
   }
 
   return (
-    <SidebarLayout title="Loading Handover" navItems={navItems}>
+    <SidebarLayout title={t('logisticsPages.loadingHandover')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title="Loading handover"

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
@@ -12,6 +13,7 @@ import { ArrowLeft, Store, Package, Send, Loader2 } from 'lucide-react';
 type StoreData = Awaited<ReturnType<typeof growerSupplierB2bAPI.getPublicStore>>;
 
 export default function GrowerPartnerStorePage() {
+  const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
   const params = useParams();
   const router = useRouter();
@@ -101,7 +103,7 @@ export default function GrowerPartnerStorePage() {
 
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
-      <SidebarLayout title="Partner store" navItems={growerNavItems}>
+      <SidebarLayout title={t('growerPages.partnerStore')} navItems={growerNavItems}>
         <div className="max-w-3xl">
           <Link
             href="/grower/where-to-buy"

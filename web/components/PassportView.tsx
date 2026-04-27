@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export interface PassportData {
   producedInLabel?: string;
@@ -69,6 +70,7 @@ const vera = {
 };
 
 export default function PassportView({ data }: { data: PassportData }) {
+  const loc = useLocalizedHref();
   const displayName = [data.farmer.firstName, data.farmer.lastName].filter(Boolean).join(' ').trim() || 'Vera partner';
   const photo = data.farmer.photo || data.photos.profile;
   const allGallery = [...data.photos.field, ...data.photos.growth].filter(Boolean);
@@ -333,7 +335,7 @@ export default function PassportView({ data }: { data: PassportData }) {
 
         <footer className="mt-12 pt-8 border-t border-gray-200 text-center">
           <Link
-            href="/"
+            href={loc('/')}
             className="inline-flex text-sm font-medium text-[#2D5A27] hover:text-[#23471f] transition-colors"
           >
             biovera.app

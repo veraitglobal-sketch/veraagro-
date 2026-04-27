@@ -5,7 +5,10 @@
   "locale": {
     "aria": "Jezik",
     "enShort": "EN",
-    "srShort": "SR"
+    "srShort": "SR",
+    "pickerAria": "Izaberite jezik",
+    "nameEn": "English",
+    "nameSr": "Srpski"
   },
   "metadata": {
     "siteName": "Bio Vera",
@@ -330,6 +333,10 @@
       "batch": "Lot",
       "notAvailable": "N/D",
       "noMissions": "Još nema misija."
+    },
+    "missionCreate": {
+      "submitCta": "Zahtevaj transport",
+      "creating": "Kreiranje…"
     }
   },
   "adminNav": {
@@ -428,5 +435,154 @@
       "defaultStoreName": "Vaša prodavnica",
       "loadError": "Učitavanje nije uspelo"
     }
+  },
+  "home": {
+    "hero": {
+      "title1": "Vertikalno povezana",
+      "title2": "poljoprivredna mreža",
+      "subtitle": "Od polja do kupca u jednom sistemu: tragljive partije, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",
+      "browseProducts": "Pregledaj proizvode",
+      "becomeProducer": "Postani proizvođač",
+      "preOrder": "Pretporudžbina za 2026. je otvorena",
+      "preOrderAria": "Informacije o pretporudžbini",
+      "preOrderTip1": "Vera proizvodi se šalju sveži radi isporuke. Pored kontrole kvaliteta, trudimo se da ispunimo očekivanja kupca na svakom koraku.",
+      "preOrderTip2": "Pretporudžbina služi samo za planiranje količina za 2026.; nije obavezna porudžbina."
+    },
+    "statLabels": [
+      "Tragabilnost",
+      "Sertifikovano",
+      "Monitoring",
+      "Slučajevi prevara",
+      "Blokčejn u skladu"
+    ],
+    "partnersLine": "Poverenje vodećih poljoprivrednih organizacija svakodnevno",
+    "vision": {
+      "title": "Naša vizija",
+      "intro": "Gradimo poveren put od polja do kupca: jasna pravila, iskreni zapisi i fer pristup tržištu za proizvođače koji ispunjavaju naše standarde.",
+      "cards": [
+        {
+          "title": "Transparentnost",
+          "description": "Potpuna vidljivost celog procesa od polja do kupca. Svaki korak je dokumentovan i nepromenljiv."
+        },
+        {
+          "title": "Bezbednost",
+          "description": "Kriptografski zaštićeni podaci, zaštita od prevare i nepromenljivi digitalni dokazi."
+        },
+        {
+          "title": "Pristup EU",
+          "description": "Automatsko generisanje EU sertifikata i digitalnih pasoša za direktan pristup tržištu."
+        }
+      ]
+    },
+    "features": {
+      "title": "Ključne funkcije",
+      "intro": "Kako mreža radi svakodnevno—proizvodnja, logistika, isporuka i obračun povezani u jedan operativni model.",
+      "list": [
+        {
+          "title": "Smart-Lock sistem",
+          "description": "Skeniranje QR koda je primarni ključ. Nepromenljiv dokaz o proizvodnji sa GPS proverom."
+        },
+        {
+          "title": "Praćenje partija",
+          "description": "Svaka gajba sa Batch_ID. Jedan klik od polja do kupca."
+        },
+        {
+          "title": "Eskro plaćanje",
+          "description": "Sredstva kupca ostaju u eskrou dok se ne potvrdi isporuka, zatim isplata proizvođaču i logistici po dogovoru. Bio Vera vodi lanac kao brend i operater—jaki, fer uslovi, ne javna „tabela procenta”."
+        },
+        {
+          "title": "Digitalni rukovanje",
+          "description": "Kupac skenira QR i potvrđuje isporuku. Automatsko oslobađanje plaćanja."
+        },
+        {
+          "title": "Zaštita od prevare",
+          "description": "GPS vremenska oznaka, ID uređaja, samo kamera. Teško falsifikovati."
+        },
+        {
+          "title": "EU digitalni pasoš",
+          "description": "Automatsko generisanje EU sertifikata. Direktan pristup tržištu bez posrednika."
+        },
+        {
+          "title": "Blokčejn verifikacija (Polygon)",
+          "description": "Nepromenljiv dokaz o poreklu on-chain. Pasosi proizvoda pokazuju značku i ceo put. Kompletno."
+        }
+      ]
+    },
+    "blockchain": {
+      "title": "Zašto koristimo blokčejn",
+      "body": "Koristimo blokčejn kako bi proizvodi ostali poverljivi vama—kupcima. Svaki korak, od žetve do isporuke, beleži se na način koji se ne menja. Ni od nas, ni od bilo koga u firmi. Niko ne može promeniti trag. Ono što vidite skenirajući proizvod je isti dokaz koji i mi vidimo: transparentno, proverljivo, nepromenljivo.",
+      "bullets": [
+        "Nepromenljiv zapis",
+        "Niko ne može menjati trag",
+        "Vi proveravate iste podatke kao i mi"
+      ]
+    },
+    "roadmap": {
+      "title": "Plan razvoja",
+      "subtitle": "Gde smo sada i gde idemo",
+      "statusCompleted": "Završeno",
+      "statusInProgress": "U toku",
+      "statusPlanned": "Planirano",
+      "phases": [
+        {
+          "phase": "Q1 2026",
+          "title": "Pokretanje mreže",
+          "status": "completed",
+          "items": [
+            "Backend API",
+            "Mobilna aplikacija",
+            "Veb",
+            "Osnovne funkcije"
+          ]
+        },
+        {
+          "phase": "Q2 2026",
+          "title": "Proširenje funkcija",
+          "status": "completed",
+          "items": [
+            "AI analitika — završeno",
+            "Blokčejn verifikacija (Polygon) — završeno",
+            "Napredna kontrolna tabla",
+            "Integracije",
+            "EU sertifikati"
+          ]
+        },
+        {
+          "phase": "Q3–Q4 2026",
+          "title": "Skaliranje",
+          "status": "planned",
+          "items": [
+            "Podrška za više regiona",
+            "API pijaca",
+            "Partnerske integracije",
+            "Enterprise funkcije"
+          ]
+        },
+        {
+          "phase": "2027",
+          "title": "Globalno širenje",
+          "status": "planned",
+          "items": [
+            "Globalna tržišta",
+            "IoT senzori",
+            "AI predikcije"
+          ]
+        }
+      ]
+    },
+    "products": {
+      "title": "Pregledaj proizvode",
+      "subtitle": "Organski proizvodi sa punom tragnošću",
+      "fruits": "Voće",
+      "vegetables": "Povrće",
+      "grains": "Žitarice"
+    },
+    "cta": {
+      "title": "Partnerstvo sa mrežom",
+      "body": "Sarađujte sa proizvođačima, logističkim partnerima i kupcima pod jednim setom standarda—jasna predaja partija, tragljive serije i predvidljivi uslovi.",
+      "becomeProducer": "Postani proizvođač",
+      "startShopping": "Započni kupovinu"
+    },
+    "help": "Pitanja? Tu smo da pomognemo."
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
@@ -50,6 +51,7 @@ function getPos(
 }
 
 export default function LogisticsHandoverReceiverPage() {
+  const { t } = useTranslation();
   const navItems = useLogisticsPartnerNavItems();
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -280,7 +282,7 @@ export default function LogisticsHandoverReceiverPage() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <SidebarLayout title="Receiver proof" navItems={navItems}>
+      <SidebarLayout title={t('logisticsPages.receiverProof')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex min-h-[40vh] items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" aria-hidden />
@@ -291,7 +293,7 @@ export default function LogisticsHandoverReceiverPage() {
   }
 
   return (
-    <SidebarLayout title="Receiver proof" navItems={navItems}>
+    <SidebarLayout title={t('logisticsPages.receiverProof')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title="Receiver at handover"

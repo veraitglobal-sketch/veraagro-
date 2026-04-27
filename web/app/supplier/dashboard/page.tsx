@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthGuard from '@/components/AuthGuard';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { b2bSupplierPortalAPI, usersAPI } from '@/lib/api';
@@ -8,6 +9,7 @@ import type { CommercialAgentPublic } from '@/lib/auth';
 import SupplierStorefrontSection from '../SupplierStorefrontSection';
 
 export default function SupplierDashboardPage() {
+  const { t } = useTranslation();
   const [ordersCount, setOrdersCount] = useState<number | null>(null);
   const [threadsCount, setThreadsCount] = useState<number | null>(null);
   const [catalogCount, setCatalogCount] = useState<number | null>(null);
@@ -58,12 +60,12 @@ export default function SupplierDashboardPage() {
           setAssignedAgent(null);
         }
       } catch (e) {
-        setErr(e instanceof Error ? e.message : 'Could not load');
+        setErr(e instanceof Error ? e.message : t('supplier.dashboard.loadError'));
       }
     })();
-  }, []);
+  }, [t]);
 
-  const name = (profile?.businessName as string) || 'Your store';
+  const name = (profile?.businessName as string) || t('supplier.dashboard.defaultStoreName');
   const city = typeof profile?.city === 'string' ? profile.city : undefined;
   const country = typeof profile?.country === 'string' ? profile.country : undefined;
   const mapApproved = typeof profile?.mapApproved === 'boolean' ? profile.mapApproved : undefined;

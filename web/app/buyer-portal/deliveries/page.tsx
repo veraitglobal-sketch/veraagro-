@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
@@ -8,6 +9,7 @@ import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrC
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function DeliveriesPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -125,7 +127,7 @@ export default function DeliveriesPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="My Deliveries" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.deliveries')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Header */}
           <div className="border-b border-green-200/50 pb-6">

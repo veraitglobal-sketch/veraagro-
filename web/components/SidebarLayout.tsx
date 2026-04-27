@@ -3,6 +3,7 @@
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
@@ -31,6 +32,7 @@ interface SidebarLayoutProps {
 }
 
 export default function SidebarLayout({ children, title, navItems, navGroups }: SidebarLayoutProps) {
+  const loc = useLocalizedHref();
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,7 +43,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
     <>
       {/* Logo */}
       <div className="h-16 border-b border-gray-200 flex items-center px-6 flex-shrink-0">
-        <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+        <Link href={loc('/')} className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
           <Image
             src="/logo1.png"
             alt="Bio Vera"

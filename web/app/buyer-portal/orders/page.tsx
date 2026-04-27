@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
@@ -16,6 +17,7 @@ import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { PaymentInstructionsPanel } from '@/components/PaymentInstructionsPanel';
 
 export default function OrdersPage() {
+  const { t } = useTranslation();
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,7 +126,7 @@ export default function OrdersPage() {
 
   return (
     <AuthGuard requiredRoles={['BUYER']}>
-      <SidebarLayout title="Orders" navItems={buyerPortalNavItems}>
+      <SidebarLayout title={t('buyerPortalPages.orders')} navItems={buyerPortalNavItems}>
         <div className="space-y-8">
           {/* Pre-orders & Direct orders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
