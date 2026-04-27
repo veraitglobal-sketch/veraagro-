@@ -155,7 +155,7 @@ export const offlineStorage = {
     }
   },
 
-  // --- Pending products (Moji proizvodi) ---
+  // --- Pending products (My products) ---
   async getPendingProducts(): Promise<PendingProduct[]> {
     try {
       const data = await AsyncStorage.getItem(PENDING_PRODUCTS_KEY);
@@ -263,7 +263,7 @@ export const offlineStorage = {
     }
   },
 
-  // --- Pending certificate photos (Sertifikacije) ---
+  // --- Pending certificate photos (certifications) ---
   async getPendingCertificatePhotos(): Promise<PendingCertificatePhoto[]> {
     try {
       const data = await AsyncStorage.getItem(PENDING_CERTIFICATE_PHOTOS_KEY);

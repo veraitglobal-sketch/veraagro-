@@ -597,9 +597,12 @@
       "unknownProduct": "Unknown product",
       "quantity": "Quantity",
       "loading": "Loading…",
-      "notFound": "Batch not found"
+      "notFound": "Batch not found",
+      "detailScreenTitle": "Batch details"
     },
     "missions": {
+      "detailScreenTitle": "Mission details",
+      "missionPrefix": "Mission #{{id}}",
       "status": {
         "PENDING": "Pending",
         "ASSIGNED": "Assigned",

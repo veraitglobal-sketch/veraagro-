@@ -49,8 +49,9 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: false,
   });
-  app.use(json({ limit: '20mb' }));
-  app.use(urlencoded({ extended: true, limit: '20mb' }));
+  /** Logistics handover sends multiple base64 images in one JSON body — keep above typical mobile photo totals. */
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
 
   // Enable CORS for mobile app and web
   app.enableCors({

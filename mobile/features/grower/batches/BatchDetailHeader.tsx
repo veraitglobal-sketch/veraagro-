@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 
 export default function BatchDetailHeader() {
-  return <BioVeraSubpageHeader title="Batch Detalji" left="back" />;
+  const { t } = useTranslation();
+  return <BioVeraSubpageHeader title={t('producer.batches.detailScreenTitle')} left="back" />;
 }

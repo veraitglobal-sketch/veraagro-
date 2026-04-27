@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
-import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { logisticsPartnerNavItems as navItems } from '@/lib/logistics-nav';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { Loader2 } from 'lucide-react';
 
 /** Statuses where handover (temp + photos) is not done yet. After handover, mission is READY_FOR_LOADING and leaves this list. */
 const PENDING_HANDOVER_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
@@ -232,67 +233,50 @@ export default function LogisticsHandoverPage() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-500">Loading...</div>
-      </div>
+      <SidebarLayout title="Loading Handover" navItems={navItems}>
+        <GrowerPageShell>
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" aria-hidden />
+          </div>
+        </GrowerPageShell>
+      </SidebarLayout>
     );
   }
 
   return (
     <SidebarLayout title="Loading Handover" navItems={navItems}>
-      <div className="space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg"
-        >
-          <div className="flex items-start">
-            <svg className="w-5 h-5 text-blue-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            <div>
-              <p className="text-sm font-medium text-blue-800">Where this sits in the chain</p>
-              <p className="text-sm text-blue-700 mt-1">
-                The grower completes <strong>quality entry</strong> for the lot first. You document the <strong>truck</strong> here
-                (inside temperature {STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C, pallet load + interior photos). When saved, the
-                mission can advance to <strong>READY FOR LOADING</strong> and physical loading can follow. This is not the retail
-                checkout — it is cold-chain evidence before the goods leave the farm gate.
-              </p>
-            </div>
-          </div>
-        </motion.div>
+      <GrowerPageShell className="space-y-6">
+        <GrowerPageHeader
+          title="Loading handover"
+          description="Document inside truck temperature and photos here—same layout style as grower Quality entry. Required before the run can move to ready for loading."
+        />
+
+        <div className="rounded-lg border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-950">
+          <p className="font-semibold text-amber-950">Where this sits in the chain</p>
+          <p className="mt-1 leading-relaxed">
+            The grower completes <strong>quality entry</strong> for the lot first. You record the <strong>truck</strong> here
+            (inside temperature {STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C, pallet load + interior photos). When saved, the
+            mission can advance to <strong>READY FOR LOADING</strong>. Cold-chain evidence before goods leave the farm gate.
+          </p>
+        </div>
 
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 border border-red-200 rounded-lg"
-          >
-            <p className="text-sm text-red-800">{error}</p>
-          </motion.div>
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="mt-1 text-sm text-red-800">{error}</p>
+          </div>
         )}
 
         {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg"
-          >
-            <p className="text-sm text-[#23471f]">
-              ✓ Evidence saved. Loading can proceed.
-            </p>
-          </motion.div>
+          <div className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 p-4">
+            <p className="text-sm text-[#23471f]">Evidence saved. Loading can proceed.</p>
+          </div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Logistics Handover</h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Enter the temperature and add photos of pallets and the truck interior. The handover is only complete when
-            all three (temperature in range, pallet photos, inside-truck photos) are provided.
+        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">Logistics handover</h2>
+          <p className="mb-6 text-sm text-gray-600">
+            Temperature in range, at least one pallet photo, and at least one inside-truck photo—all three are required.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -364,18 +348,18 @@ export default function LogisticsHandoverPage() {
             </div>
 
             {/* Pallet photos */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Pallet photos *
-              </label>
-              <p className="text-xs text-gray-500 mb-2">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-[#2D5A27]/10 file:text-[#2D5A27]"
-                onChange={(e) => void addPhotoFiles(e.target.files, 'pallet')}
-              />
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="mb-2 text-base font-semibold text-gray-900">Pallet photos *</h3>
+              <p className="mb-3 text-xs text-gray-500">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
+              <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#2D5A27] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#23471f]"
+                  onChange={(e) => void addPhotoFiles(e.target.files, 'pallet')}
+                />
+              </div>
               {palletPhotos.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {palletPhotos.map((src, index) => (
@@ -396,18 +380,18 @@ export default function LogisticsHandoverPage() {
             </div>
 
             {/* Inside truck photos */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Inside the truck *
-              </label>
-              <p className="text-xs text-gray-500 mb-2">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-[#2D5A27]/10 file:text-[#2D5A27]"
-                onChange={(e) => void addPhotoFiles(e.target.files, 'truck')}
-              />
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="mb-2 text-base font-semibold text-gray-900">Inside the truck *</h3>
+              <p className="mb-3 text-xs text-gray-500">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
+              <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#2D5A27] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#23471f]"
+                  onChange={(e) => void addPhotoFiles(e.target.files, 'truck')}
+                />
+              </div>
               {truckInteriorPhotos.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {truckInteriorPhotos.map((src, index) => (
@@ -464,8 +448,8 @@ export default function LogisticsHandoverPage() {
               )}
             </div>
           </form>
-        </motion.div>
-      </div>
+        </div>
+      </GrowerPageShell>
     </SidebarLayout>
   );
 }

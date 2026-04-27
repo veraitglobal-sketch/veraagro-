@@ -34,7 +34,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
             letterSpacing: 0.3,
           }}
         >
-          Misija #{mission.id.slice(0, 8)}
+          {t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

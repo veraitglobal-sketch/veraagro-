@@ -234,7 +234,7 @@ export class QualityEntryService {
         'Quality entry must be completed before loading. Please wait for the grower to complete the quality step.',
       );
     }
-    if (qe.status !== 'COMPLETED') {
+    if (qe.status !== 'COMPLETED' && qe.status !== 'VERIFIED') {
       throw new BadRequestException(
         `Quality entry for this lot is not completed (status: ${qe.status}). The grower must finish the quality step first.`,
       );
@@ -345,8 +345,25 @@ export class QualityEntryService {
           `Could not save handover (${e.code}). If you recently changed vehicle data, refresh missions and try again, or contact support.`,
         );
       }
-      this.logger.error(`logisticsHandover: ${e instanceof Error ? e.message : String(e)}`);
-      throw e;
+      if (e instanceof Prisma.PrismaClientValidationError) {
+        this.logger.error(`logisticsHandover PrismaClientValidationError: ${e.message}`);
+        throw new BadRequestException(
+          'Handover could not be saved. Check temperature and images (data URLs or https links only, max 5MB each). Try fewer photos if the request is large.',
+        );
+      }
+      if (e instanceof Prisma.PrismaClientUnknownRequestError) {
+        this.logger.error(`logisticsHandover PrismaClientUnknownRequestError: ${e.message}`);
+        throw new BadRequestException(
+          'Could not write handover to the database. Try again with smaller or fewer images, or contact support.',
+        );
+      }
+      this.logger.error(
+        `logisticsHandover: ${e instanceof Error ? e.message : String(e)}`,
+        e instanceof Error ? e.stack : undefined,
+      );
+      throw new BadRequestException(
+        'Handover could not be saved. Please try again. If the problem continues, use smaller images (max 5MB each) or fewer files.',
+      );
     }
   }
 
