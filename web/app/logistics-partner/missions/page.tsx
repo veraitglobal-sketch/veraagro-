@@ -31,6 +31,7 @@ interface OptimalRoute {
   duration: string | null;
   waypoints: unknown[];
   estimatedArrival: string | null;
+  destination?: { address: string | null; city: string | null };
 }
 
 interface Mission {
@@ -38,6 +39,9 @@ interface Mission {
   missionNumber: string;
   status: string;
   pickupAddress: string;
+  destinationAddress?: string | null;
+  destinationCity?: string | null;
+  loadInstructions?: string | null;
   batchId?: string | null;
   estimatedPickupTime?: string | null;
   optimalRoute?: OptimalRoute | null;
@@ -50,12 +54,13 @@ function formatUnit(u: string) {
   return u === 'kg' || u === 'KG' ? 'kg' : u;
 }
 
-/** Rough EU-pallet equivalent when weight is in kg (≈500 kg / pallet) — for planning only. */
+/** Planning helper: kg → ~EU pallets; explicit pallet unit → count as entered. */
 function approxPalletCount(quantity: number, unit: string): number | null {
   const u = unit.toLowerCase();
-  if (u !== 'kg' && u !== 'kilogram' && u !== 'kgs') return null;
   if (!Number.isFinite(quantity) || quantity <= 0) return null;
-  return Math.max(1, Math.ceil(quantity / 500));
+  if (u === 'pallet' || u === 'pallets') return Math.max(1, Math.ceil(quantity));
+  if (u === 'kg' || u === 'kilogram' || u === 'kgs') return Math.max(1, Math.ceil(quantity / 500));
+  return null;
 }
 
 function suggestVehicleSize(quantity: number, unit: string): string {
@@ -74,11 +79,23 @@ function suggestVehicleSize(quantity: number, unit: string): string {
 }
 
 function destinationLine(m: Mission): string {
+  if (m.destinationAddress?.trim()) {
+    return m.destinationAddress.trim();
+  }
   const ch = m.harvest_announcement?.marketChannel?.trim();
   if (ch) return `Channel / market: ${ch}`;
   const n = m.harvest_announcement?.notes?.trim();
   if (n) return n.length > 120 ? `Notes: ${n.slice(0, 120)}…` : `Notes: ${n}`;
-  return 'End delivery is agreed outside this screen (hub / buyer) — use batch and grower contact if needed.';
+  if (m.optimalRoute?.destination?.address) return m.optimalRoute.destination.address;
+  return '— delivery address not in system for this run; confirm with grower.';
+}
+
+function siblingsByCity(all: Mission[], m: Mission): Mission[] {
+  const c = m.destinationCity?.trim().toLowerCase();
+  if (!c) return [];
+  return all.filter(
+    (x) => x.id !== m.id && (x.destinationCity?.trim().toLowerCase() ?? '') === c,
+  );
 }
 
 export default function LogisticsMissionsPage() {
@@ -184,7 +201,9 @@ export default function LogisticsMissionsPage() {
           <Link href="/logistics-partner/vehicles" className="text-[#2D5A27] font-medium underline underline-offset-2">
             Vehicles
           </Link>
-          . Claim assigns the next free suitable vehicle in your fleet.
+          . Claim assigns the next free suitable vehicle in your fleet. Growers set <strong>destination city</strong> and{' '}
+          <strong>full delivery address</strong> on each run — use “Same city” below to see loads you may combine on one
+          truck.
         </div>
 
         {/* Active missions */}
@@ -218,21 +237,54 @@ export default function LogisticsMissionsPage() {
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">
-                        <strong>Pickup:</strong> {mission.pickupAddress}
+                        <span className="text-gray-500">From · </span>
+                        {mission.pickupAddress}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">{destinationLine(mission)}</p>
+                      <p className="text-sm text-gray-900 mt-2">
+                        <span className="text-gray-500">To · </span>
+                        <strong>{destinationLine(mission)}</strong>
+                        {mission.destinationCity && (
+                          <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 text-slate-800 px-2 py-0.5 text-xs font-medium">
+                            {mission.destinationCity}
+                          </span>
+                        )}
+                      </p>
+                      {mission.loadInstructions && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          <span className="font-medium">Loading / dock:</span> {mission.loadInstructions}
+                        </p>
+                      )}
                       {mission.batches && (
                         <p className="text-sm text-gray-600 mt-2">
-                          {mission.batches.productName} · {mission.batches.quantity} {formatUnit(mission.batches.unit)}
+                          <span className="font-medium">Load:</span> {mission.batches.productName} · {mission.batches.quantity}{' '}
+                          {formatUnit(mission.batches.unit)}
                           {approxPalletCount(mission.batches.quantity, mission.batches.unit) != null && (
                             <span className="text-gray-500">
                               {' '}
-                              (~{approxPalletCount(mission.batches.quantity, mission.batches.unit)} pallet
-                              {approxPalletCount(mission.batches.quantity, mission.batches.unit)! > 1 ? 's' : ''}{' '}
-                              est.)
+                              (
+                              {['pallet', 'pallets'].includes(mission.batches.unit.toLowerCase())
+                                ? `≈ ${approxPalletCount(mission.batches.quantity, mission.batches.unit)} pallet(s) (batch unit)`
+                                : `≈ ${approxPalletCount(mission.batches.quantity, mission.batches.unit)} EU pallet(s) from weight`}
+                              )
                             </span>
                           )}
                         </p>
+                      )}
+                      {siblingsByCity(missions, mission).length > 0 && (
+                        <div className="mt-3 pt-2 border-t border-dashed border-gray-200 text-xs text-gray-600">
+                          <p className="font-medium text-gray-800">Same city — possible one-truck run</p>
+                          <ul className="list-disc list-inside mt-1 space-y-0.5">
+                            {siblingsByCity(missions, mission).map((o) => (
+                              <li key={o.id}>
+                                {o.missionNumber}
+                                {o.batches
+                                  ? ` · ${o.batches.productName} ${o.batches.quantity} ${o.batches.unit}`
+                                  : ''}{' '}
+                                <span className="text-gray-400">({o.status})</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
@@ -278,9 +330,23 @@ export default function LogisticsMissionsPage() {
                           <span className="text-xs font-medium text-gray-500">Mission #{mission.missionNumber}</span>
                         </div>
                         <p className="text-sm text-gray-800">
-                          <strong>Pickup / collection:</strong> {mission.pickupAddress}
+                          <span className="text-gray-500">From · </span>
+                          {mission.pickupAddress}
                         </p>
-                        <p className="text-sm text-gray-600">{destinationLine(mission)}</p>
+                        <p className="text-sm text-gray-900 mt-1">
+                          <span className="text-gray-500">To · </span>
+                          <strong>{destinationLine(mission)}</strong>
+                          {mission.destinationCity && (
+                            <span className="ml-2 inline-flex rounded-full bg-slate-100 text-slate-800 px-2 py-0.5 text-xs font-medium">
+                              {mission.destinationCity}
+                            </span>
+                          )}
+                        </p>
+                        {mission.loadInstructions && (
+                          <p className="text-sm text-gray-600 mt-1">
+                            <span className="font-medium">Loading / dock:</span> {mission.loadInstructions}
+                          </p>
+                        )}
                         {mission.harvest_announcement?.cropType && (
                           <p className="text-xs text-gray-500">Crop: {mission.harvest_announcement.cropType}</p>
                         )}
@@ -291,8 +357,9 @@ export default function LogisticsMissionsPage() {
                             </li>
                             {pallets != null && (
                               <li>
-                                Approx. pallets (planning): {pallets} (assuming ~500 kg / EU pallet; confirm with
-                                grower)
+                                {batch && ['pallet', 'pallets'].includes(batch.unit.toLowerCase())
+                                  ? `Pallet count (as in batch): ${pallets}`
+                                  : `Approx. EU pallets from weight: ${pallets} (~500 kg each; confirm with grower)`}
                               </li>
                             )}
                             {sizeHint && <li>Suggested size class: {sizeHint}</li>}
@@ -311,6 +378,21 @@ export default function LogisticsMissionsPage() {
                           )}
                           {route?.distance && <p>Route assist (est.): {route.distance}{route.duration ? ` · ${route.duration}` : ''}</p>}
                         </div>
+                        {siblingsByCity(missions, mission).length > 0 && (
+                          <div className="pt-2 border-t border-dashed text-xs text-gray-600">
+                            <p className="font-medium text-gray-800">Same city — you may load one truck for:</p>
+                            <ul className="list-disc list-inside mt-1">
+                              {siblingsByCity(missions, mission).map((o) => (
+                                <li key={o.id}>
+                                  {o.missionNumber}
+                                  {o.batches
+                                    ? ` · ${o.batches.productName} ${o.batches.quantity} ${o.batches.unit}`
+                                    : ''}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <button

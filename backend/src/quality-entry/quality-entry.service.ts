@@ -1,10 +1,12 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateQualityEntryDto, LogisticsHandoverDto } from './dto/quality-entry.dto';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class QualityEntryService {
+  private readonly logger = new Logger(QualityEntryService.name);
   private readonly STANDARD_TRUCK_TEMP_MIN = 2; // °C
   private readonly STANDARD_TRUCK_TEMP_MAX = 8; // °C
   /** Per-image cap for data URLs / long URL strings (bytes as sent in JSON). */
@@ -226,97 +228,126 @@ export class QualityEntryService {
       throw new ForbiddenException('You are not assigned to this mission');
     }
 
-    // Verify quality entry exists
-    if (!mission.batches?.quality_entries) {
-      throw new BadRequestException('Quality entry must be completed before loading. Please wait for farmer to complete quality entry.');
+    const qe = mission.batches?.quality_entries;
+    if (!qe) {
+      throw new BadRequestException(
+        'Quality entry must be completed before loading. Please wait for the grower to complete the quality step.',
+      );
+    }
+    if (qe.status !== 'COMPLETED') {
+      throw new BadRequestException(
+        `Quality entry for this lot is not completed (status: ${qe.status}). The grower must finish the quality step first.`,
+      );
     }
 
     this.assertHandoverPhotos(dto.palletPhotos, 'Pallet photos');
     this.assertHandoverPhotos(dto.truckInteriorPhotos, 'Inside-truck photos');
 
-    // Check truck temperature against standard (2°C - 8°C)
-    const isWithinStandard = 
-      dto.insideTruckTemperature >= this.STANDARD_TRUCK_TEMP_MIN &&
-      dto.insideTruckTemperature <= this.STANDARD_TRUCK_TEMP_MAX;
+    const tempC = Number(dto.insideTruckTemperature);
+    const isWithinStandard =
+      tempC >= this.STANDARD_TRUCK_TEMP_MIN && tempC <= this.STANDARD_TRUCK_TEMP_MAX;
 
     if (!isWithinStandard) {
       throw new BadRequestException(
-        `Truck temperature (${dto.insideTruckTemperature}°C) is outside standard range (${this.STANDARD_TRUCK_TEMP_MIN}°C - ${this.STANDARD_TRUCK_TEMP_MAX}°C). Loading is blocked. Please adjust temperature before proceeding.`
+        `Truck temperature (${tempC}°C) is outside standard range (${this.STANDARD_TRUCK_TEMP_MIN}°C - ${this.STANDARD_TRUCK_TEMP_MAX}°C). Loading is blocked. Please adjust temperature before proceeding.`,
       );
     }
 
-    // Create handover record (evidence: temperature + pallet + inside-truck photos)
-    const handover = await this.prisma.logistics_handovers.create({
-      data: {
-        id: crypto.randomUUID(),
-        missionId: dto.missionId,
-        insideTruckTemperature: dto.insideTruckTemperature,
-        palletPhotos: dto.palletPhotos,
-        truckInteriorPhotos: dto.truckInteriorPhotos,
-        verifiedBy: userId,
-        notes: dto.notes,
-        status: 'APPROVED',
-        timestamp: new Date(),
-      },
-    });
+    // Stale or broken mission.vehicleId would break temperature_logs FK to vehicles
+    let safeVehicleId: string | null = null;
+    if (mission.vehicleId) {
+      const v = await this.prisma.vehicles.findUnique({
+        where: { id: mission.vehicleId },
+        select: { id: true },
+      });
+      if (v) {
+        safeVehicleId = v.id;
+      } else {
+        this.logger.warn(
+          `Mission ${mission.id} has vehicleId ${mission.vehicleId} not found; temperature log will omit vehicle`,
+        );
+      }
+    }
 
-    // Update mission to allow loading
-    await this.prisma.missions.update({
-      where: { id: dto.missionId },
-      data: {
-        status: 'READY_FOR_LOADING',
-      },
-    });
+    const palletJson = JSON.parse(JSON.stringify(dto.palletPhotos)) as Prisma.InputJsonValue;
+    const truckJson = JSON.parse(JSON.stringify(dto.truckInteriorPhotos)) as Prisma.InputJsonValue;
 
-    // Create initial temperature log
-    await this.prisma.temperature_logs.create({
-      data: {
-        id: crypto.randomUUID(),
-        missionId: dto.missionId,
-        vehicleId: mission.vehicleId,
-        batchId: mission.batchId,
-        temperature: dto.insideTruckTemperature,
-        humidity: 60, // Default
-        location: {
-          lat: 0,
-          lng: 0,
-        },
-        reportedByUserId: userId,
-        sensorId: 'MANUAL_ENTRY',
-        deviceId: 'DRIVER_APP',
-        isOutOfRange: false,
-        timestamp: new Date(),
-      },
-    });
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const handover = await tx.logistics_handovers.create({
+          data: {
+            id: crypto.randomUUID(),
+            missionId: dto.missionId,
+            insideTruckTemperature: tempC,
+            palletPhotos: palletJson,
+            truckInteriorPhotos: truckJson,
+            verifiedBy: userId,
+            notes: dto.notes?.trim() || null,
+            status: 'APPROVED',
+            timestamp: new Date(),
+          },
+        });
 
-    // Create audit trail
-    await this.prisma.audit_trails.create({
-      data: {
-        id: crypto.randomUUID(),
-        eventType: 'LOGISTICS_HANDOVER',
-        entityType: 'Mission',
-        entityId: dto.missionId,
-        batchId: mission.batchId,
-        performedByUserId: userId,
-        newValue: {
-          handoverId: handover.id,
-          insideTruckTemperature: dto.insideTruckTemperature,
-          palletPhotoCount: dto.palletPhotos.length,
-          truckInteriorPhotoCount: dto.truckInteriorPhotos.length,
-        },
-        changeReason:
-          'Driver completed loading handover: temperature, pallet photos, and inside-truck photos',
-        isCompliant: true,
-        timestamp: new Date(),
-      } as any,
-    });
+        await tx.missions.update({
+          where: { id: dto.missionId },
+          data: { status: 'READY_FOR_LOADING' },
+        });
 
-    return {
-      success: true,
-      handover,
-      message:
-        'Loading evidence saved (temperature, pallet and inside-truck photos). Mission is ready for loading.',
-    };
+        await tx.temperature_logs.create({
+          data: {
+            id: crypto.randomUUID(),
+            missionId: dto.missionId,
+            vehicleId: safeVehicleId,
+            batchId: mission.batchId,
+            temperature: tempC,
+            humidity: 60,
+            location: { lat: 0, lng: 0 } as Prisma.InputJsonValue,
+            reportedByUserId: userId,
+            sensorId: 'MANUAL_ENTRY',
+            deviceId: 'DRIVER_APP',
+            isOutOfRange: false,
+            timestamp: new Date(),
+          },
+        });
+
+        await tx.audit_trails.create({
+          data: {
+            id: crypto.randomUUID(),
+            eventType: 'LOGISTICS_HANDOVER',
+            entityType: 'Mission',
+            entityId: dto.missionId,
+            batchId: mission.batchId,
+            performedByUserId: userId,
+            newValue: {
+              handoverId: handover.id,
+              insideTruckTemperature: tempC,
+              palletPhotoCount: dto.palletPhotos.length,
+              truckInteriorPhotoCount: dto.truckInteriorPhotos.length,
+            } as Prisma.InputJsonValue,
+            changeReason:
+              'Driver completed loading handover: temperature, pallet photos, and inside-truck photos',
+            isCompliant: true,
+            timestamp: new Date(),
+          },
+        });
+
+        return {
+          success: true,
+          handover,
+          message:
+            'Loading evidence saved (temperature, pallet and inside-truck photos). Mission is ready for loading.',
+        };
+      });
+    } catch (e: unknown) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(`logisticsHandover Prisma ${e.code}: ${e.message} meta=${JSON.stringify(e.meta)}`);
+        throw new BadRequestException(
+          `Could not save handover (${e.code}). If you recently changed vehicle data, refresh missions and try again, or contact support.`,
+        );
+      }
+      this.logger.error(`logisticsHandover: ${e instanceof Error ? e.message : String(e)}`);
+      throw e;
+    }
   }
 
   /**

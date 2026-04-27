@@ -33,6 +33,9 @@ export default function MissionsCreateScreen() {
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
+  const [destinationCity, setDestinationCity] = useState('');
+  const [destinationAddress, setDestinationAddress] = useState('');
+  const [loadInstructions, setLoadInstructions] = useState('');
 
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
@@ -98,6 +101,14 @@ export default function MissionsCreateScreen() {
       Alert.alert('Address required', 'Enter the pickup address.');
       return;
     }
+    if (!destinationCity.trim()) {
+      Alert.alert('Destination', 'Enter destination city (for dispatch; same city can go on one truck).');
+      return;
+    }
+    if (!destinationAddress.trim() || destinationAddress.trim().length < 5) {
+      Alert.alert('Destination', 'Enter the full delivery address (buyer, hub, dock).');
+      return;
+    }
     const lat = parseFloat(pickupLat);
     const lng = parseFloat(pickupLng);
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
@@ -111,6 +122,9 @@ export default function MissionsCreateScreen() {
         batchId,
         pickupLocation: { lat, lng, address: pickupAddress },
         pickupAddress: pickupAddress.trim(),
+        destinationCity: destinationCity.trim(),
+        destinationAddress: destinationAddress.trim(),
+        loadInstructions: loadInstructions.trim() || undefined,
       });
       Alert.alert('Transport requested', 'Your mission was created. You can track it under Missions.', [
         { text: 'OK', onPress: () => router.replace('/(producer)/missions') },
@@ -303,6 +317,69 @@ export default function MissionsCreateScreen() {
             padding: 12,
             fontSize: 15,
             minHeight: 80,
+            textAlignVertical: 'top',
+            marginBottom: theme.spacing.lg,
+            color: theme.colors.text.primary,
+          }}
+        />
+
+        <Text
+          style={{
+            fontSize: 12,
+            color: theme.colors.text.secondary,
+            marginBottom: theme.spacing.sm,
+            lineHeight: 18,
+          }}
+        >
+          Where it goes (logistics and drivers need this). Use the same city name on each run you want to combine on
+          one truck.
+        </Text>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Destination city *</Text>
+        <TextInput
+          value={destinationCity}
+          onChangeText={setDestinationCity}
+          placeholder="e.g. Hamburg"
+          style={{
+            borderWidth: 0.5,
+            borderColor: 'rgba(0,0,0,0.12)',
+            borderRadius: theme.borderRadius.md,
+            padding: 12,
+            fontSize: 15,
+            marginBottom: theme.spacing.md,
+            color: theme.colors.text.primary,
+          }}
+        />
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Full delivery address *</Text>
+        <TextInput
+          value={destinationAddress}
+          onChangeText={setDestinationAddress}
+          placeholder="Hub / buyer, street, city"
+          multiline
+          style={{
+            borderWidth: 0.5,
+            borderColor: 'rgba(0,0,0,0.12)',
+            borderRadius: theme.borderRadius.md,
+            padding: 12,
+            fontSize: 15,
+            minHeight: 72,
+            textAlignVertical: 'top',
+            marginBottom: theme.spacing.md,
+            color: theme.colors.text.primary,
+          }}
+        />
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>Loading notes (optional)</Text>
+        <TextInput
+          value={loadInstructions}
+          onChangeText={setLoadInstructions}
+          placeholder="Pallets, time window, dock"
+          multiline
+          style={{
+            borderWidth: 0.5,
+            borderColor: 'rgba(0,0,0,0.12)',
+            borderRadius: theme.borderRadius.md,
+            padding: 12,
+            fontSize: 15,
+            minHeight: 56,
             textAlignVertical: 'top',
             marginBottom: theme.spacing.lg,
             color: theme.colors.text.primary,

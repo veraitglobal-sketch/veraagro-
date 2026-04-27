@@ -68,6 +68,7 @@ export class LogisticsHandoverDto {
   @IsString()
   missionId: string;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(-10)
   @Max(15)

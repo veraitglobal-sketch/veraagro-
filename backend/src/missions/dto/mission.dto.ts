@@ -4,6 +4,7 @@ import {
   IsOptional,
   ValidateNested,
   IsNumber,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -34,6 +35,22 @@ export class CreateMissionDto {
 
   @IsString()
   pickupAddress: string;
+
+  /** Full drop-off address — required for clear routing and load planning */
+  @IsString()
+  @MaxLength(2000)
+  destinationAddress: string;
+
+  /** City / region for grouping multiple partial loads on one truck when they share a destination */
+  @IsString()
+  @MaxLength(200)
+  destinationCity: string;
+
+  /** Pallets, time window, dock — optional */
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  loadInstructions?: string;
 }
 
 export class AcceptMissionDto {

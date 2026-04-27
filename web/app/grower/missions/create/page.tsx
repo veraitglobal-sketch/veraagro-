@@ -92,6 +92,12 @@ export default function CreateMissionPage() {
     pickupAddress: '',
     pickupLat: '',
     pickupLng: '',
+    /** Used to group partial loads (e.g. 200 kg + 500 kg) on one truck to the same city */
+    destinationCity: '',
+    /** Full drop-off: hub, buyer DC, wholesale market gate, etc. */
+    destinationAddress: '',
+    /** Pallets, time window, dock — optional */
+    loadInstructions: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   /** API message when mission is blocked (materials + compliance) */
@@ -297,6 +303,13 @@ export default function CreateMissionPage() {
       }
     }
 
+    if (!formData.destinationCity.trim()) {
+      newErrors.destinationCity = 'Enter destination city or region (for dispatch to combine loads)';
+    }
+    if (!formData.destinationAddress.trim() || formData.destinationAddress.trim().length < 5) {
+      newErrors.destinationAddress = 'Enter full delivery address (buyer, hub, market, dock)';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -321,6 +334,9 @@ export default function CreateMissionPage() {
           address: formData.pickupAddress,
         },
         pickupAddress: formData.pickupAddress,
+        destinationCity: formData.destinationCity.trim(),
+        destinationAddress: formData.destinationAddress.trim(),
+        loadInstructions: formData.loadInstructions.trim() || undefined,
       };
 
       const mission = await missionsAPI.create(missionData);
@@ -625,6 +641,56 @@ export default function CreateMissionPage() {
                   driver knows where to stop.
                 </p>
               )}
+            </div>
+
+            {/* Delivery / drop-off — required for routing and load planning */}
+            <div className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-900">Where this load is going (delivery)</h3>
+              <p className="text-xs text-gray-600">
+                Operations and drivers need a <strong>clear drop-off</strong>. If several small lots go to the{' '}
+                <strong>same city</strong>, dispatch can put them on one truck — use the same city spelling for each
+                mission.
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Destination city / region *</label>
+                <input
+                  type="text"
+                  value={formData.destinationCity}
+                  onChange={(e) => setFormData({ ...formData, destinationCity: e.target.value })}
+                  placeholder="e.g. Hamburg, Berlin, Munich"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                    errors.destinationCity ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.destinationCity && <p className="text-red-500 text-xs mt-1">{errors.destinationCity}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full delivery address *</label>
+                <textarea
+                  value={formData.destinationAddress}
+                  onChange={(e) => setFormData({ ...formData, destinationAddress: e.target.value })}
+                  placeholder="Company or hub name, street, gate, city, country — as agreed for handover"
+                  rows={3}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                    errors.destinationAddress ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.destinationAddress && (
+                  <p className="text-red-500 text-xs mt-1">{errors.destinationAddress}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Loading / delivery notes (optional)
+                </label>
+                <textarea
+                  value={formData.loadInstructions}
+                  onChange={(e) => setFormData({ ...formData, loadInstructions: e.target.value })}
+                  placeholder="E.g. 2 Euro pallets, delivery 06:00–10:00, cold dock B — anything the loader should know"
+                  rows={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+              </div>
             </div>
 
             {/* Submit Button */}

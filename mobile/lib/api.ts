@@ -776,11 +776,14 @@ export const missionsAPI = {
     const response = await api.get(`/missions/${id}`);
     return response.data;
   },
-  /** Matches backend CreateMissionDto — pickup GPS + address required for transport. */
+  /** Matches backend CreateMissionDto — pickup + destination for routing / load planning. */
   create: async (data: {
     batchId: string;
     pickupLocation: { lat: number; lng: number; address?: string };
     pickupAddress: string;
+    destinationAddress: string;
+    destinationCity: string;
+    loadInstructions?: string;
   }): Promise<Mission> => {
     const response = await api.post('/missions', data);
     return response.data;

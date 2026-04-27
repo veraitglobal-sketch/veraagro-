@@ -189,6 +189,9 @@ export const missionsAPI = {
     batchId?: string;
     pickupLocation: { lat: number; lng: number; address?: string };
     pickupAddress: string;
+    destinationAddress: string;
+    destinationCity: string;
+    loadInstructions?: string;
   }) => {
     const response = await api.post('/missions', data);
     return response.data;

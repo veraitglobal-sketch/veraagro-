@@ -201,8 +201,16 @@ export default function LogisticsHandoverPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to complete handover');
+        let msg = `HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          const m = errorData?.message;
+          msg = Array.isArray(m) ? m.join(' ') : (m || errorData?.error || msg);
+        } catch {
+          const t = await response.text();
+          if (t?.trim()) msg = t.slice(0, 500);
+        }
+        throw new Error(msg);
       }
 
       setSuccess(true);

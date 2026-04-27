@@ -121,8 +121,15 @@ export class MissionsService {
       pickupLocation,
       logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
     );
-    // Prisma JSON: no Date/undefined/NaN in stored objects
+    // Prisma JSON: no Date/undefined/NaN in stored objects; include destination for maps / handover UIs
     const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
+    const routeWithDest = {
+      ...optimalRoute,
+      destination: {
+        address: dto.destinationAddress?.trim() || null,
+        city: dto.destinationCity?.trim() || null,
+      },
+    } as Prisma.InputJsonValue;
 
     // Generate mission number
     const missionNumber = await this.generateMissionNumber();
@@ -138,9 +145,12 @@ export class MissionsService {
           batchId: dto.batchId,
           pickupLocation: pickupLocation as any,
           pickupAddress: (dto.pickupAddress || '').trim() || '—',
+          destinationAddress: dto.destinationAddress?.trim() || null,
+          destinationCity: dto.destinationCity?.trim() || null,
+          loadInstructions: dto.loadInstructions?.trim() || null,
           logisticsPartnerId: logisticsPartner?.id ?? null,
           vehicleId: logisticsPartner?.vehicleId ?? null,
-          optimalRoute: optimalRoute as Prisma.InputJsonValue,
+          optimalRoute: routeWithDest,
           estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
           status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
           assignedAt: logisticsPartner ? new Date() : null,
@@ -524,6 +534,12 @@ export class MissionsService {
       : null;
     const routeCalc = await this.calculateOptimalRoute(pickup, partnerLoc);
     const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
+    const destAddr = ann.notes?.trim() || null;
+    const destCity = ann.marketChannel?.trim() || null;
+    const optimalRouteWithDest = {
+      ...optimalRoute,
+      destination: { address: destAddr, city: destCity },
+    } as Prisma.InputJsonValue;
     const missionNumber = await this.generateMissionNumber();
     const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
     const pickupAddress = `${estate.name} — ${ann.cropType}${qty != null ? ` (~${Number(qty).toFixed(0)} kg)` : ''} · plan berbe`;
@@ -542,9 +558,15 @@ export class MissionsService {
         harvestAnnouncementId: ann.id,
         pickupLocation: pickup as any,
         pickupAddress,
+        destinationAddress: destAddr,
+        destinationCity: destCity,
+        loadInstructions:
+          qty != null
+            ? `Harvest plan: ~${Number(qty).toFixed(0)} kg ${ann.cropType} (confirm dock & time with buyer/hub)`
+            : `Harvest plan: ${ann.cropType} (confirm quantity and drop-off)`,
         logisticsPartnerId: logisticsPartner?.id ?? null,
         vehicleId: logisticsPartner?.vehicleId ?? null,
-        optimalRoute: optimalRoute as any,
+        optimalRoute: optimalRouteWithDest,
         estimatedPickupTime,
         status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
         assignedAt: logisticsPartner ? new Date() : null,

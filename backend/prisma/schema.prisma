@@ -603,6 +603,12 @@ model missions {
   harvestAnnouncementId                    String?              @unique
   pickupLocation                           Json
   pickupAddress                            String
+  /// Full delivery / drop-off address (buyer, hub, DC — as agreed for this run)
+  destinationAddress                      String?
+  /// e.g. "Hamburg" — for dispatch to group loads on the same trip
+  destinationCity                         String?
+  /// Pallets, time windows, dock — operativa + grower
+  loadInstructions                        String?
   logisticsPartnerId                       String?
   vehicleId                                String?
   optimalRoute                             Json?
@@ -630,6 +636,7 @@ model missions {
   @@index([missionNumber])
   @@index([status])
   @@index([harvestAnnouncementId])
+  @@index([destinationCity])
 }
 
 model notification_templates {
