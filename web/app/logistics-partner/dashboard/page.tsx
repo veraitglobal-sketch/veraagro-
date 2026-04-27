@@ -171,6 +171,19 @@ export default function LogisticsDashboardPage() {
           </div>
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-lg border border-gray-200 bg-gray-50/90 p-4 text-sm text-gray-800"
+        >
+          <p className="font-medium text-gray-900">Typical flow</p>
+          <p className="mt-1 leading-relaxed text-gray-700">
+            <strong>Missions</strong> — accept / assign the run → <Link href="/logistics-partner/handover" className="font-semibold text-[#2D5A27] underline">Loading handover</Link> at the farm
+            (after grower quality: truck temp + photos, then <strong>READY FOR LOADING</strong>) → pickup and{' '}
+            <strong>in transit</strong> to hub or buyer. <strong>Vehicles</strong> must stay cold-chain ready.
+          </p>
+        </motion.div>
+
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <motion.div

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { missionsAPI, Mission } from '../../../lib/api';
-import { colors } from '../../../lib/colors';
+import { getMissionStatusColor, getMissionStatusLabelEn } from '../../../lib/mission-status';
 
 export function useMissionDetailData(missionId: string | undefined) {
   const [mission, setMission] = useState<Mission | null>(null);
@@ -52,29 +52,11 @@ export function useMissionDetailData(missionId: string | undefined) {
   };
 }
 
-export function getStatusColor(status: string): string {
-  switch (status) {
-    case 'PENDING':
-      return colors.warning;
-    case 'ASSIGNED':
-      return colors.accent;
-    case 'IN_TRANSIT':
-      return colors.primary;
-    case 'DELIVERED':
-      return colors.success || colors.primary;
-    default:
-      return colors.text.secondary;
-  }
-}
-
-const MISSION_STATUS_KEYS: Record<string, string> = {
-  PENDING: 'statusPending',
-  ASSIGNED: 'statusAssigned',
-  IN_TRANSIT: 'statusInTransit',
-  DELIVERED: 'statusDelivered',
-};
+export { getMissionStatusColor as getStatusColor };
 
 export function getStatusLabel(status: string, t: (key: string) => string): string {
-  const key = MISSION_STATUS_KEYS[status];
-  return key ? t(`producer.orders.${key}`) : status;
+  const k = `producer.missions.status.${status}`;
+  const tr = t(k);
+  if (tr !== k) return tr;
+  return getMissionStatusLabelEn(status);
 }

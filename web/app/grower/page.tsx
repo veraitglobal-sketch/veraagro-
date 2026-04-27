@@ -59,14 +59,22 @@ export default function GrowerDashboardPage() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status?.toUpperCase()) {
+    const s = status?.toUpperCase() || '';
+    switch (s) {
       case 'CERTIFIED':
       case 'COMPLETED':
-      case 'DELIVERED':
         return 'bg-green-50 text-green-700 border-green-200';
+      // Mission pipeline (Prisma MissionStatus) — not order `DELIVERED`
+      case 'ASSIGNED':
+      case 'ACCEPTED':
       case 'IN_PROGRESS':
+      case 'READY_FOR_LOADING':
+        return 'bg-amber-50 text-amber-800 border-amber-200';
+      case 'PICKED_UP':
       case 'IN_TRANSIT':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+        return 'bg-blue-50 text-blue-800 border-blue-200';
+      case 'CANCELLED':
+        return 'bg-gray-200 text-gray-800 border-gray-200';
       case 'PENDING':
       case 'PENDING_VERIFICATION':
         return 'bg-gray-50 text-gray-700 border-gray-200';
@@ -165,7 +173,7 @@ export default function GrowerDashboardPage() {
 
           <div className="bg-[#2D5A27]/5 border border-[#2D5A27]/20 rounded-lg p-5">
             <h2 className="text-base font-medium text-gray-900 mb-1">Steps</h2>
-            <p className="text-sm text-gray-600 font-light mb-3">Parcels, approval, then work.</p>
+            <p className="text-sm text-gray-600 font-light mb-3">Sowing → lot → quality → transport — full chain on one page.</p>
             <Link href="/grower/season" className="text-sm font-medium text-[#2D5A27] hover:underline">
               Open →
             </Link>

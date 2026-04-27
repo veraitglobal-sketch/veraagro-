@@ -25,8 +25,9 @@ export type GrowerNavItem = {
 const nav = en.grower.nav;
 
 /**
- * Full grower sidebar: same on every /grower/* page.
- * Order = season path (1 → end): dashboard, guide, field setup, supply, lots, quality & compliance, transport, tracking, profile.
+ * Full grower sidebar: same on every /grower/* page (11 items).
+ * Matches the “Steps” page order; that page uses 12 numbered cards by splitting a few topics (e.g. approval, field work).
+ * Parity: data from `shared/lib/grower-journey.ts` → mobile `lib/grower-journey-data.ts` (tab bar + stack routes).
  */
 export const growerNavItems: GrowerNavItem[] = [
   { href: '/grower', label: nav.dashboard, icon: <Home className="w-5 h-5" /> },

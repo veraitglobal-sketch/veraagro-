@@ -55,13 +55,15 @@ export default function GrowerFieldSeasonPage() {
               <div className="lg:col-span-8">
                 <h1 className="text-3xl font-light tracking-tight text-gray-900">Steps</h1>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  From first setup to transport — same order as the sidebar. Use the chips under the cards to jump.
+                  From first setup to transport. The cards below are <strong>12 numbered steps</strong> (full story); the green
+                  sidebar has <strong>11 links</strong> in the same order — a few steps here are split for clarity (e.g. approval,
+                  field work). Use the chips to jump.
                 </p>
               </div>
               <div className="lg:col-span-4 flex flex-wrap items-center gap-2 text-xs text-gray-500 lg:justify-end">
                 <span className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 shadow-sm ring-1 ring-gray-200/80">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A27]" />
-                  12 steps
+                  12 cards · 11 nav links
                 </span>
               </div>
             </div>
@@ -94,7 +96,9 @@ export default function GrowerFieldSeasonPage() {
                   >
                     My fields
                   </Link>
-                  <p className="mt-1 text-sm text-gray-600">Read steps 1–12 from the grid — same order as the green sidebar.</p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    The grid has 12 cards; the sidebar skips duplicate headings — same journey, easier navigation.
+                  </p>
                 </div>
               </div>
             )}

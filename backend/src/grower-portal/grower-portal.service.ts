@@ -100,6 +100,7 @@ export class GrowerPortalService {
           },
         },
       },
+      logistics_handovers: { select: { id: true, timestamp: true } },
       users_missions_logisticsPartnerIdTousers: {
         select: {
           id: true,
@@ -316,9 +317,14 @@ export class GrowerPortalService {
     const mission = await this.prisma.missions.findUnique({
       where: { id: missionId },
       include: {
+        logistics_handovers: { select: { id: true, timestamp: true } },
         batches: {
           include: {
             estates: true,
+            distributor_arrivals: {
+              orderBy: { arrivalTime: 'desc' },
+              take: 1,
+            },
           },
         },
         location_logs: {
@@ -372,6 +378,10 @@ export class GrowerPortalService {
       where: { id: internalId },
       include: {
         estates: true,
+        distributor_arrivals: {
+          orderBy: { arrivalTime: 'desc' },
+          take: 1,
+        },
         order_items: {
           include: {
             orders: {
@@ -383,8 +393,13 @@ export class GrowerPortalService {
           },
         },
         missions: {
-          orderBy: { completedAt: 'desc' },
-          take: 1,
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+          select: {
+            id: true,
+            status: true,
+            completedAt: true,
+          },
         },
       },
     });
@@ -397,10 +412,22 @@ export class GrowerPortalService {
       throw new ForbiddenException('You can only view financial status for your own batches');
     }
 
-    // Determine payment status based on delivery status
-    const latestMission = batch.missions[0];
-    const isDelivered = latestMission?.completedAt !== null;
-    const isApproved = (batch as any).distributor_arrivals && (batch as any).distributor_arrivals.length > 0;
+    // Physical delivery: farm leg (mission) and/or last-mile (order.deliveries) and/or hub receipt
+    const missionsList = batch.missions ?? [];
+    const latestMission = missionsList[0];
+    const missionCompleted = missionsList.some((m) => m.completedAt != null);
+    const orderDelivered = (batch.order_items ?? []).some((oi) => {
+      const o = oi.orders;
+      if (!o) return false;
+      if (o.deliveries?.deliveredAt) return true;
+      const s = o.status;
+      return s === 'DELIVERED' || s === 'COMPLETED';
+    });
+    const isDelivered =
+      missionCompleted || orderDelivered || batch.status === 'DELIVERED';
+    const isApproved = Array.isArray((batch as { distributor_arrivals?: unknown[] }).distributor_arrivals)
+      ? (batch as { distributor_arrivals: unknown[] }).distributor_arrivals.length > 0
+      : false;
 
     let paymentStatus = 'PENDING';
     let paymentStatusMessage = 'Awaiting delivery';
@@ -432,7 +459,15 @@ export class GrowerPortalService {
       pendingAmount: totalAmount - paidAmount,
       isDelivered,
       isApproved,
-      deliveredAt: latestMission?.completedAt,
+      deliveredAt: (() => {
+        const fromMission = missionsList.map((m) => m.completedAt).find((d) => d != null);
+        if (fromMission) return fromMission;
+        for (const oi of batch.order_items ?? []) {
+          const d = oi.orders?.deliveries?.deliveredAt;
+          if (d) return d;
+        }
+        return null;
+      })(),
     };
   }
 
@@ -472,27 +507,61 @@ export class GrowerPortalService {
    */
   private buildMilestones(mission: any) {
     const milestones: any[] = [];
+    const st = mission.status as string;
 
-    // Left Farm
+    /** Docs + cold check at farm (logistics handover) — must happen before READY_FOR_LOADING / pickup. */
+    const handoverRecorded = mission.logistics_handovers != null;
+    const handoverComplete =
+      handoverRecorded ||
+      st === 'READY_FOR_LOADING' ||
+      st === 'PICKED_UP' ||
+      st === 'IN_TRANSIT' ||
+      st === 'COMPLETED' ||
+      Boolean(mission.pickedUpAt);
+
+    let handoverStatus: 'completed' | 'in_progress' | 'pending' = 'pending';
+    if (handoverComplete) {
+      handoverStatus = 'completed';
+    } else if (['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'].includes(st)) {
+      handoverStatus = 'in_progress';
+    }
+
+    milestones.push({
+      name: 'Farm: truck & loading handover',
+      status: handoverStatus,
+      timestamp: mission.logistics_handovers?.timestamp ?? null,
+      location: mission.pickupLocation,
+      isCurrent: false,
+    });
+
+    // Leave farm (goods on truck)
     if (mission.pickedUpAt) {
       milestones.push({
-        name: 'Left Farm',
+        name: 'Left farm (departure)',
         status: 'completed',
         timestamp: mission.pickedUpAt,
         location: mission.pickupLocation,
         isCurrent: false,
       });
-    } else if (mission.status === 'IN_PROGRESS' || mission.status === 'ACCEPTED') {
+    } else if (st === 'READY_FOR_LOADING') {
       milestones.push({
-        name: 'Left Farm',
+        name: 'Left farm (departure)',
         status: 'in_progress',
         timestamp: null,
         location: mission.pickupLocation,
-        isCurrent: true,
+        isCurrent: false,
+      });
+    } else if (st === 'IN_PROGRESS' || st === 'ACCEPTED') {
+      milestones.push({
+        name: 'Left farm (departure)',
+        status: 'in_progress',
+        timestamp: null,
+        location: mission.pickupLocation,
+        isCurrent: false,
       });
     } else {
       milestones.push({
-        name: 'Left Farm',
+        name: 'Left farm (departure)',
         status: 'pending',
         timestamp: null,
         location: mission.pickupLocation,
@@ -518,7 +587,7 @@ export class GrowerPortalService {
         status: 'in_progress',
         timestamp: null,
         location: null,
-        isCurrent: true,
+        isCurrent: false,
       });
     } else {
       milestones.push({
@@ -537,7 +606,7 @@ export class GrowerPortalService {
         status: 'in_progress',
         timestamp: mission.border_wait_times[0].borderExitTime,
         location: null,
-        isCurrent: true,
+        isCurrent: false,
       });
     } else if (mission.status === 'COMPLETED') {
       milestones.push({
@@ -575,7 +644,7 @@ export class GrowerPortalService {
         status: 'in_progress',
         timestamp: mission.completedAt,
         location: null,
-        isCurrent: true,
+        isCurrent: false,
       });
     } else {
       milestones.push({
@@ -587,7 +656,28 @@ export class GrowerPortalService {
       });
     }
 
+    this.applyCurrentMilestone(milestones);
     return milestones;
+  }
+
+  /** Exactly one milestone marked current: first in_progress, else first pending, else last. */
+  private applyCurrentMilestone(milestones: { status: string; isCurrent?: boolean }[]) {
+    for (const m of milestones) {
+      m.isCurrent = false;
+    }
+    const inProg = milestones.findIndex((m) => m.status === 'in_progress');
+    if (inProg >= 0) {
+      milestones[inProg].isCurrent = true;
+      return;
+    }
+    const pend = milestones.findIndex((m) => m.status === 'pending');
+    if (pend >= 0) {
+      milestones[pend].isCurrent = true;
+      return;
+    }
+    if (milestones.length > 0) {
+      milestones[milestones.length - 1].isCurrent = true;
+    }
   }
 
   /**

@@ -4,6 +4,7 @@ import { Calendar, User, Truck, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { Mission } from '../../../lib/api';
+import { isMissionCompletedSuccess } from '../../../lib/mission-status';
 
 interface TimelineBlockProps {
   mission: Mission;
@@ -139,7 +140,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
             </View>
           </View>
         )}
-        {mission.status === 'DELIVERED' && (
+        {isMissionCompletedSuccess(mission.status) && (
           <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
             <View
               style={{

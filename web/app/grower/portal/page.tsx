@@ -10,6 +10,7 @@ import { WEB_API_BASE } from '@/lib/api-base';
 import { usersAPI } from '@/lib/api';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { Truck } from 'lucide-react';
+import { missionStatusBadgeClass } from '@/lib/mission-ui';
 import type { CommercialAgentPublic } from '@/lib/auth';
 
 // Dynamically import map components to avoid SSR issues
@@ -302,15 +303,12 @@ export default function GrowerPortalPage() {
                     </div>
                     <div className="text-right">
                       <span
-                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          mission.status === 'COMPLETED'
-                            ? 'bg-green-100 text-green-800'
-                            : mission.status === 'IN_TRANSIT'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                        }`}
+                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${missionStatusBadgeClass(
+                          mission.status,
+                        )}`}
+                        title="Mission status from logistics pipeline"
                       >
-                        {mission.status}
+                        {String(mission.status || '').replace(/_/g, ' ')}
                       </span>
                     </div>
                   </div>

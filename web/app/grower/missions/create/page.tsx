@@ -397,13 +397,24 @@ export default function CreateMissionPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Request transport</h2>
-          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-            Pick a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and a full{' '}
-            <strong>address</strong>. A nearby cold truck may auto-assign the run; otherwise it stays queued. Have{' '}
-            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
-              compliance
+          <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+            <strong>Before this page:</strong> batch in <strong>PACKED</strong> or <strong>QUALITY_VERIFIED</strong> (
+            <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
+              My batches
+            </Link>
+            ) →{' '}
+            <Link href="/grower/quality-entry" className="text-[#2D5A27] font-medium underline">
+              Quality entry
             </Link>{' '}
-            done for this lot (see the line under the batch). Order stock on{' '}
+            if required →{' '}
+            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
+              Compliance photos
+            </Link>{' '}
+            + label roll complete. Then pick the lot below.
+          </p>
+          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+            Choose a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and full <strong>drop-off</strong>{' '}
+            details. A nearby cold truck may auto-assign; otherwise the run stays queued. Order stock on{' '}
             <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
               Materials
             </Link>{' '}

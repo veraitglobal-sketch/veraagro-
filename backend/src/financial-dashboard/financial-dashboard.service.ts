@@ -21,10 +21,10 @@ export class FinancialDashboardService {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-    // Get all completed orders/batches
+    // Batches that actually reached the buyer / end of farm pipeline (`DELIVERED`). `QUALITY_VERIFIED` is pre‑shipment, not revenue-complete.
     const batches = await this.prisma.batches.findMany({
       where: {
-        status: { in: ['DELIVERED', 'QUALITY_VERIFIED'] },
+        status: { in: ['DELIVERED'] },
         ...(userId && {
           estates: {
             ownerId: userId,
@@ -211,7 +211,7 @@ export class FinancialDashboardService {
   private async getMonthlyBreakdown(startDate: Date, userId?: string) {
     const batches = await this.prisma.batches.findMany({
       where: {
-        status: { in: ['DELIVERED', 'QUALITY_VERIFIED'] },
+        status: { in: ['DELIVERED'] },
         createdAt: { gte: startDate },
         ...(userId && {
           estates: {
@@ -234,7 +234,7 @@ export class FinancialDashboardService {
   private async getYearlyBreakdown(startDate: Date, userId?: string) {
     const batches = await this.prisma.batches.findMany({
       where: {
-        status: { in: ['DELIVERED', 'QUALITY_VERIFIED'] },
+        status: { in: ['DELIVERED'] },
         createdAt: { gte: startDate },
         ...(userId && {
           estates: {

@@ -471,6 +471,17 @@
       "notFound": "Batch not found"
     },
     "missions": {
+      "status": {
+        "PENDING": "Pending",
+        "ASSIGNED": "Assigned",
+        "ACCEPTED": "Accepted",
+        "IN_PROGRESS": "In progress",
+        "READY_FOR_LOADING": "Ready for loading",
+        "PICKED_UP": "Picked up",
+        "IN_TRANSIT": "In transit",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
       "loading": "Loading…",
       "notFound": "Mission not found",
       "yourPayout": "Your payout",

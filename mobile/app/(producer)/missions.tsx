@@ -5,6 +5,7 @@ import { ArrowLeft, Truck, Calendar, Clock } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission } from '../../lib/api';
+import { getMissionStatusColor, getMissionStatusLabelEn } from '../../lib/mission-status';
 
 /**
  * Missions Screen
@@ -17,7 +18,7 @@ export default function MissionsScreen() {
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'DELIVERED'>('all');
+  const [filter, setFilter] = useState<'all' | 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'COMPLETED'>('all');
 
   useEffect(() => {
     loadMissions();
@@ -114,7 +115,7 @@ export default function MissionsScreen() {
               { id: 'PENDING' as const, label: 'Pending' },
               { id: 'ASSIGNED' as const, label: 'Assigned' },
               { id: 'IN_TRANSIT' as const, label: 'In Transit' },
-              { id: 'DELIVERED' as const, label: 'Delivered' },
+              { id: 'COMPLETED' as const, label: 'Completed' },
             ].map((f) => (
               <TouchableOpacity
                 key={f.id}

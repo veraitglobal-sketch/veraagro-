@@ -754,10 +754,11 @@ export const qualityEntryAPI = {
 };
 
 // Missions API
+/** Align with Prisma `MissionStatus` (backend). Not `DELIVERED` — use `COMPLETED`. */
 export interface Mission {
   id: string;
   batchId: string;
-  status: 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+  status: string;
   fromHubId?: string;
   toHubId: string;
   driverId?: string;

@@ -3,190 +3,46 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ListOrdered } from 'lucide-react';
+import {
+  GROWER_JOURNEY_CHAIN_SHORT,
+  GROWER_JOURNEY_INTRO,
+  GROWER_JOURNEY_STEP_DEFS,
+  type GrowerJourneyStepDef,
+} from '../../../shared/lib/grower-journey';
 
-/**
- * End-to-end grower path (web): same order as `growerNavItems` after Profile is last.
- */
-const STEPS: { title: string; body: ReactNode }[] = [
-  {
-    title: 'Dashboard',
-    body: (
-      <>
-        <p>
-          Start here for alerts (messages, active batches, transport), farm name, and the next recommended action. Use it every
-          few days, not only once.
-        </p>
-        <p className="mt-2">
-          <Link href="/grower" className="text-[#2D5A27] font-medium hover:underline">
-            Open Dashboard
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Steps (this page)',
-    body: (
-      <p>
-        Keep this “manual” in mind: the sidebar below is ordered 1 → down to match the season — <strong>Dashboard</strong>{' '}
-        first, then <strong>Steps</strong>, then field setup, supply, lots, quality, then transport and tracking.
-      </p>
-    ),
-  },
-  {
-    title: 'My fields — estates & parcels (blocks)',
-    body: (
-      <>
-        <p>
-          Create your <strong>field (estate)</strong> and <strong>parcels</strong> (crop blocks). Draw or adjust the area so the
-          system can compute <strong>surface in m²</strong>. Set crop / variety where the form allows.{' '}
-          <strong>Admin must approve</strong> a parcel before batches, diaries, and sprays are fully unlocked on that block.
-        </p>
-        <p className="mt-2">
-          <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-            My fields
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Approval',
-    body: (
-      <p>
-        Wait until parcels show as approved. Until then, some actions will stay locked — that is normal. If it takes long, use
-        Contact / messages to operations.
-      </p>
-    ),
-  },
-  {
-    title: 'Supply — materials & suppliers',
-    body: (
-      <>
-        <p>
-          <strong>Materials</strong> = in-app catalog: crates, label rolls, film, balances and <strong>serial numbers</strong>{' '}
-          (e.g. label rolls) for compliance. <strong>Suppliers &amp; orders</strong> = directory, B2B order to a partner, messages,
-          and <strong>Received at farm</strong> when goods arrive. Both work together; see the flow box on each page.
-        </p>
+function webLinksForStep(def: GrowerJourneyStepDef): Array<{ label: string; href: string }> {
+  if (def.linksWeb?.length) return def.linksWeb;
+  if (def.links?.length) {
+    return def.links.map((l) => ({ label: l.label, href: l.webHref }));
+  }
+  return [];
+}
+
+function stepBodyFromDef(def: GrowerJourneyStepDef): ReactNode {
+  const linkRows = webLinksForStep(def);
+  return (
+    <>
+      {def.paragraphs.map((p, i) => (
+        <p key={i}>{p}</p>
+      ))}
+      {linkRows.length > 0 ? (
         <p className="mt-2 flex flex-wrap gap-3">
-          <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
-            Materials
-          </Link>
-          <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium hover:underline">
-            Suppliers &amp; orders
-          </Link>
+          {linkRows.map((l) => (
+            <Link key={l.href + l.label} href={l.href} className="text-[#2D5A27] font-medium hover:underline">
+              {l.label}
+            </Link>
+          ))}
         </p>
-      </>
-    ),
-  },
-  {
-    title: 'Field work — journal, growth, treatments',
-    body: (
-      <>
-        <p>
-          On <strong>mobile</strong> you can log the diary (what you did, when, where), growth journal, and compliant
-          sprays/treatments with GPS. On web, the season lives under{' '}
-          <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-            My fields
-          </Link>{' '}
-          and you use the app for day-to-day entries.
-        </p>
-        <p className="mt-1 text-sm text-gray-500">
-          If you are web-only for a day, at least keep parcels and harvest data current; add detailed diary on the phone when you
-          are in the row.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Harvest & forming a lot (batch)',
-    body: (
-      <>
-        <p>
-          When the crop is ready, <strong>report harvest</strong> and form a <strong>batch / lot</strong> for that parcel. That
-          ties quantity and timing to the block you mapped earlier.
-        </p>
-        <p className="mt-2 flex flex-wrap gap-3">
-          <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-            My fields (start batch)
-          </Link>
-          <Link href="/grower/batches" className="text-[#2D5A27] font-medium hover:underline">
-            My batches
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Packing & lot status',
-    body: (
-      <p>
-        Complete packing / trace steps for the lot in <strong>My batches</strong> (status moves toward ready for handover) — use
-        the mobile packing flow when required.
-      </p>
-    ),
-  },
-  {
-    title: 'Quality & compliance photos',
-    body: (
-      <>
-        <p>
-          Enter <strong>quality</strong> for the lot where required, and upload the <strong>compliance photos</strong> (e.g. label
-          roll ID, crates) so the lot can be cleared for the next step.
-        </p>
-        <p className="mt-2 flex flex-wrap gap-3">
-          <Link href="/grower/quality-entry" className="text-[#2D5A27] font-medium hover:underline">
-            Quality entry
-          </Link>
-          <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium hover:underline">
-            Compliance photos
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Request transport',
-    body: (
-      <>
-        <p>
-          When the lot is ready and rules are satisfied, request pickup / transport. You need a valid address and GPS, and the
-          batch should be in the right state.
-        </p>
-        <p className="mt-2">
-          <Link href="/grower/missions/create" className="text-[#2D5A27] font-medium hover:underline">
-            Request transport
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Mission tracker & handover',
-    body: (
-      <>
-        <p>Follow the mission: pickup, hub, delivery states. Use the tracker until the handover is done.</p>
-        <p className="mt-2">
-          <Link href="/grower/portal" className="text-[#2D5A27] font-medium hover:underline">
-            Mission tracker
-          </Link>
-        </p>
-      </>
-    ),
-  },
-  {
-    title: 'Profile & account',
-    body: (
-      <p>
-        Partner code, production country, notifications —{' '}
-        <Link href="/grower/profile" className="text-[#2D5A27] font-medium hover:underline">
-          My profile
-        </Link>
-        .
-      </p>
-    ),
-  },
-];
+      ) : null}
+      {def.footnote ? <p className="mt-2 text-sm text-gray-600">{def.footnote}</p> : null}
+    </>
+  );
+}
+
+const STEPS: { title: string; body: ReactNode }[] = GROWER_JOURNEY_STEP_DEFS.map((def) => ({
+  title: def.title,
+  body: stepBodyFromDef(def),
+}));
 
 type Props = {
   className?: string;
@@ -195,23 +51,33 @@ type Props = {
 export default function GrowerSeasonJourney({ className = '' }: Props) {
   return (
     <div className={className}>
+      <div className="mb-5 rounded-xl border border-[#2D5A27]/25 bg-white p-4 shadow-sm sm:p-5">
+        <p className="text-sm font-semibold text-gray-900">Full chain (short)</p>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed">
+          {GROWER_JOURNEY_CHAIN_SHORT.map((item) => (
+            <li key={item.kicker}>
+              <strong className="text-gray-900">{item.kicker}:</strong> {item.text}
+            </li>
+          ))}
+        </ol>
+      </div>
+
       <div className="mb-5 grid gap-4 lg:grid-cols-12 lg:items-stretch">
         <div className="lg:col-span-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm font-semibold text-gray-900">My fields</p>
+          <p className="text-sm font-semibold text-gray-900">{GROWER_JOURNEY_INTRO.myFieldsCta.title}</p>
           <p className="mt-1 text-sm text-gray-600">
-            <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
-              Open My fields
+            <Link
+              href={GROWER_JOURNEY_INTRO.myFieldsCta.webHref}
+              className="text-[#2D5A27] font-medium hover:underline"
+            >
+              {GROWER_JOURNEY_INTRO.myFieldsCta.linkLabel}
             </Link>{' '}
-            when you are ready to map blocks and crops.
+            {GROWER_JOURNEY_INTRO.myFieldsCta.line}
           </p>
         </div>
         <div className="lg:col-span-7 flex items-start gap-2 rounded-xl border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-800">
           <ListOrdered className="h-5 w-5 shrink-0 text-[#2D5A27] mt-0.5" aria-hidden />
-          <p>
-            <span className="font-semibold text-gray-900">Read from 1 to the end of harvest.</span> The green sidebar uses the
-            same order: <strong>Dashboard</strong> → <strong>Steps</strong> → <strong>My fields</strong> through{' '}
-            <strong>Mission tracker</strong>, then <strong>Profile</strong>.
-          </p>
+          <p>{GROWER_JOURNEY_INTRO.sidebarBlurb}</p>
         </div>
       </div>
 

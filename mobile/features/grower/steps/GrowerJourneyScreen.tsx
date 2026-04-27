@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ListOrdered } from 'lucide-react-native';
 import { estatesAPI, parcelsAPI } from '../../../lib/api';
 import { GROWER_JOURNEY_STEPS } from '../../../lib/grower-journey-data';
+import { GROWER_JOURNEY_STEP_COUNT } from '../../../../shared/lib/grower-journey';
 import { theme } from '../../../lib/theme';
 
 type Props = {
@@ -108,8 +109,9 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
       >
         <ListOrdered size={22} color={theme.colors.primary} style={{ marginTop: 2 }} />
         <Text style={{ flex: 1, fontSize: 14, color: theme.colors.text.primary, lineHeight: 20 }}>
-          Read steps 1 → end. Bottom bar order: <Text style={{ fontWeight: '700' }}>Home</Text> (dashboard), then{' '}
-          <Text style={{ fontWeight: '700' }}>Steps</Text>, then Products, then Profile.
+          {GROWER_JOURNEY_STEP_COUNT} steps below — same copy as the web “Steps” page (shared with the site). The tab
+          bar only has four icons; use the{' '}
+          <Text style={{ fontWeight: '700' }}>Home</Text> dashboard for fields, materials, transport, and the rest.
         </Text>
       </View>
 

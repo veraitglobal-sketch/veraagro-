@@ -251,11 +251,12 @@ export default function LogisticsHandoverPage() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-blue-800">Documentation before &quot;ready for shipment&quot;</p>
+              <p className="text-sm font-medium text-blue-800">Where this sits in the chain</p>
               <p className="text-sm text-blue-700 mt-1">
-                Inside truck temperature ({STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C), at least one photo of loaded pallets, and
-                at least one photo of the truck interior are required. All of this is stored in the system; only then can the
-                mission move to <strong>READY FOR LOADING</strong>.
+                The grower completes <strong>quality entry</strong> for the lot first. You document the <strong>truck</strong> here
+                (inside temperature {STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C, pallet load + interior photos). When saved, the
+                mission can advance to <strong>READY FOR LOADING</strong> and physical loading can follow. This is not the retail
+                checkout — it is cold-chain evidence before the goods leave the farm gate.
               </p>
             </div>
           </div>
