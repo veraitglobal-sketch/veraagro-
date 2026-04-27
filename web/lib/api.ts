@@ -1210,6 +1210,11 @@ export const packageBadgesAPI = {
     const response = await api.post('/package-badges/return-to-supplier', data);
     return response.data;
   },
+  /** Material supplier: physical return from grower — tree becomes yours (RETURNED_TO_SUPPLIER). */
+  supplierReceiveFromGrower: async (data: { rootSerial: string; fromGrowerUserId: string }) => {
+    const response = await api.post('/package-badges/supplier/receive-from-grower', data);
+    return response.data;
+  },
   supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
     const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
     return response.data;

@@ -13,6 +13,7 @@ import {
   CreatePrintOrderDto,
   PreviewPrintOrderDto,
   RegisterPackageBadgesDto,
+  ReceiveReturnFromGrowerDto,
   ReturnBadgesToSupplierDto,
   TransferBadgesToGrowerDto,
 } from './dto/package-badges.dto';
@@ -232,6 +233,14 @@ export class PackageBadgesService {
       select: { id: true },
     });
     return [rootId, ...kids.map((k) => k.id)];
+  }
+
+  /** Material supplier records that a grower returned physical labels; same DB effect as `returnTreeToSupplier` from grower. */
+  async supplierReceiveReturnFromGrower(supplierUserId: string, dto: ReceiveReturnFromGrowerDto) {
+    return this.returnTreeToSupplier(dto.fromGrowerUserId, {
+      rootSerial: dto.rootSerial,
+      supplierUserId,
+    });
   }
 
   async returnTreeToSupplier(growerUserId: string, dto: ReturnBadgesToSupplierDto) {

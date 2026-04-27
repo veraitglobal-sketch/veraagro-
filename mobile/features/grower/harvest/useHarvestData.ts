@@ -8,6 +8,8 @@ import {
   parcelsAPI,
   type CreateHarvestPlanBody,
 } from '../../../lib/api';
+
+export type HarvestPlanMode = 'PLANTING' | 'HARVEST';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
@@ -36,6 +38,7 @@ export function useHarvestData() {
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [planMode, setPlanMode] = useState<HarvestPlanMode>('HARVEST');
 
   useEffect(() => {
     let cancelled = false;
@@ -147,7 +150,7 @@ export function useHarvestData() {
     const run = async () => {
       const payload: CreateHarvestPlanBody = {
         parcelId,
-        announcementType: 'HARVEST',
+        announcementType: planMode,
         cropType: cropType.trim(),
         estimatedDate: estimatedDateIso,
         estimatedQuantity: estQty,
@@ -209,9 +212,12 @@ export function useHarvestData() {
     growerNotes,
     location,
     t,
+    planMode,
   ]);
 
   return {
+    planMode,
+    setPlanMode,
     approvedParcels,
     parcelsLoading,
     parcelId,

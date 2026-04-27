@@ -17,6 +17,7 @@ export default function SupplierHeader() {
         { href: '/supplier/orders', label: t('supplier.nav.orders') },
         { href: '/supplier/messages', label: t('supplier.nav.messages') },
         { href: '/supplier/package-badges', label: t('supplier.nav.badges') },
+        { href: '/supplier/package-badges/print-order', label: t('supplier.nav.printOrder') },
         { href: '/supplier/settings', label: t('supplier.nav.settings') },
       ] as const,
     [t, i18n.language],
@@ -35,17 +36,24 @@ export default function SupplierHeader() {
           <span className="text-xs text-gray-500">{t('supplier.header.badge')}</span>
         </div>
         <nav className="flex flex-wrap gap-1">
-          {nav.map((item) => (
+          {nav.map((item) => {
+            const active =
+              pathname === item.href ||
+              (item.href === '/supplier/package-badges' &&
+                Boolean(pathname?.startsWith('/supplier/package-badges')) &&
+                !pathname?.startsWith('/supplier/package-badges/print-order'));
+            return (
             <Link
               key={item.href}
               href={item.href}
               className={`px-3 py-1.5 text-sm rounded-md ${
-                pathname === item.href ? 'bg-[#2D5A27]/10 text-[#2D5A27] font-medium' : 'text-gray-600 hover:text-[#2D5A27]'
+                active ? 'bg-[#2D5A27]/10 text-[#2D5A27] font-medium' : 'text-gray-600 hover:text-[#2D5A27]'
               }`}
             >
               {item.label}
             </Link>
-          ))}
+          );
+          })}
         </nav>
         <div className="flex items-center gap-3 text-sm text-gray-600">
           {user && (

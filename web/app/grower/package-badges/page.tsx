@@ -166,20 +166,12 @@ export default function GrowerPackageBadgesPage() {
             title={t('grower.packageBadges.pageTitle')}
             description={t('grower.packageBadges.pageDescription')}
             right={
-              <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
-                <Link
-                  href="/grower/package-badges/print-order"
-                  className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
-                >
-                  {t('grower.packageBadges.headerPrintOrder')}
-                </Link>
-                <Link
-                  href="/grower/package-badges/scan"
-                  className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
-                >
-                  {t('grower.packageBadges.headerScan')}
-                </Link>
-              </div>
+              <Link
+                href="/grower/package-badges/scan"
+                className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
+              >
+                {t('grower.packageBadges.headerScan')}
+              </Link>
             }
           />
 

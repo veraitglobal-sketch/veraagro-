@@ -124,6 +124,18 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
             {t('producer.growthJournal.parcelWithType', { type: log.parcel.cropType || '—' })}
           </Text>
         ) : null}
+        {log.plan ? (
+          <Text style={{ fontSize: 11, color: colors.text.secondary, marginTop: 4 }} numberOfLines={2}>
+            {t('producer.growthJournal.logPlanLine', {
+              kind:
+                log.plan.announcementType === 'PLANTING'
+                  ? t('producer.growthJournal.planKindPlanting')
+                  : t('producer.growthJournal.planKindHarvest'),
+              crop: log.plan.cropType,
+              date: String(log.plan.estimatedDate).slice(0, 10),
+            })}
+          </Text>
+        ) : null}
         <Text style={{ fontSize: 10, color: colors.text.tertiary, marginTop: 8 }}>
           {t('producer.growthJournal.tapForDetail')}
         </Text>

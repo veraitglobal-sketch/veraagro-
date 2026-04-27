@@ -18,6 +18,7 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "investors",
   "help-center",
   "security",
+  "language",
 ]);
 
 /** Routes that never use /en or /sr prefix (apps, APIs, tools). */

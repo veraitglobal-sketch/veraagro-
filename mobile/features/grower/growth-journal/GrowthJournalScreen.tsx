@@ -28,6 +28,11 @@ export default function GrowthJournalScreen() {
     setFilterEstate,
     setFilterParcel,
     parcels,
+    parcelPlans,
+    activePlanId,
+    setActivePlanId,
+    plansLoading,
+    canAddLog,
     onRefresh,
     submitAddLog,
     addModalVisible,
@@ -41,6 +46,9 @@ export default function GrowthJournalScreen() {
       ? parcels.find((x) => x.id === filterParcel)?.cropType || filterParcel.slice(0, 8)
       : t('producer.growthJournal.allParcelsContext');
 
+  const planLabel =
+    parcelPlans.find((p) => p.id === activePlanId)?.label || t('producer.growthJournal.planNotSelected');
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <BioVeraSubpageHeader
@@ -49,7 +57,7 @@ export default function GrowthJournalScreen() {
         right={
           <TouchableOpacity
             onPress={() => setAddModalVisible(true)}
-            disabled={estates.length === 0 || uploading}
+            disabled={estates.length === 0 || uploading || !canAddLog}
             style={{
               width: 44,
               height: 44,
@@ -77,6 +85,10 @@ export default function GrowthJournalScreen() {
         filterParcel={filterParcel}
         onEstateChange={setFilterEstate}
         onParcelChange={setFilterParcel}
+        parcelPlans={parcelPlans}
+        activePlanId={activePlanId}
+        onPlanChange={setActivePlanId}
+        plansLoading={plansLoading}
       />
 
       <GrowthJournalList
@@ -94,6 +106,7 @@ export default function GrowthJournalScreen() {
         busy={uploading}
         estateName={selectedEstate?.name}
         parcelLabel={parcelLabel}
+        planLabel={planLabel}
       />
     </View>
   );

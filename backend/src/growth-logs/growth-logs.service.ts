@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AntiFraudService } from '../anti-fraud/anti-fraud.service';
@@ -12,7 +13,8 @@ export class GrowthLogsService {
 
   async create(userId: string, data: {
     estateId: string;
-    parcelId?: string;
+    parcelId: string;
+    harvestAnnouncementId: string;
     imageUrl: string;
     imageHash: string;
     gpsLatitude: number;
@@ -29,6 +31,12 @@ export class GrowthLogsService {
     if (Number.isNaN(deviceTimestamp.getTime())) {
       throw new BadRequestException('Invalid deviceTimestamp');
     }
+    if (!data.parcelId?.trim()) {
+      throw new BadRequestException('Parcel is required (choose a parcel on the field list).');
+    }
+    if (!data.harvestAnnouncementId?.trim()) {
+      throw new BadRequestException('Crop plan is required: register a planting or harvest plan for this parcel first.');
+    }
     // Verify estate ownership
     const estate = await this.prisma.estates.findFirst({
       where: {
@@ -41,30 +49,30 @@ export class GrowthLogsService {
       throw new ForbiddenException('Estate not found or access denied');
     }
 
-    if (data.parcelId) {
-      const parcel = await this.prisma.parcels.findFirst({
-        where: { id: data.parcelId, estateId: data.estateId },
-      });
-      if (!parcel) {
-        throw new ForbiddenException('Parcel not found on this estate');
-      }
-      if (!parcel.approvedAt) {
-        throw new ForbiddenException(
-          'This parcel is not approved yet. Growth journal entries are available after an administrator approves the parcel.',
-        );
-      }
-    } else {
-      const approved = await this.prisma.parcels.count({
-        where: { estateId: data.estateId, approvedAt: { not: null } },
-      });
-      const anyParcel = await this.prisma.parcels.count({
-        where: { estateId: data.estateId },
-      });
-      if (anyParcel > 0 && approved === 0) {
-        throw new ForbiddenException(
-          'Journal entries require at least one administrator-approved parcel on this field.',
-        );
-      }
+    const parcel = await this.prisma.parcels.findFirst({
+      where: { id: data.parcelId, estateId: data.estateId },
+    });
+    if (!parcel) {
+      throw new ForbiddenException('Parcel not found on this estate');
+    }
+    if (!parcel.approvedAt) {
+      throw new ForbiddenException(
+        'This parcel is not approved yet. Journal entries are available after an administrator approves the parcel.',
+      );
+    }
+
+    const plan = await this.prisma.harvest_announcements.findFirst({
+      where: {
+        id: data.harvestAnnouncementId,
+        userId,
+        parcelId: data.parcelId,
+        status: { not: 'CANCELLED' },
+      },
+    });
+    if (!plan) {
+      throw new BadRequestException(
+        'No matching crop plan for this parcel, or the plan is cancelled. Open “New planting” or your harvest plan first.',
+      );
     }
 
     // Anti-fraud validation
@@ -87,11 +95,12 @@ export class GrowthLogsService {
       networkTimestamp,
     );
 
-    // Get previous log hash for chaining
+    // Get previous log hash for chaining (same parcel + same crop plan)
     const previousLog = await this.prisma.growth_logs.findFirst({
       where: {
         estateId: data.estateId,
-        parcelId: data.parcelId || null,
+        parcelId: data.parcelId,
+        harvestAnnouncementId: data.harvestAnnouncementId,
       },
       orderBy: { createdAt: 'desc' },
       select: { dataHash: true },
@@ -101,7 +110,8 @@ export class GrowthLogsService {
     const dataHash = CryptoUtil.hashGrowthLog({
       userId,
       estateId: data.estateId,
-      parcelId: data.parcelId || null,
+      parcelId: data.parcelId,
+      harvestAnnouncementId: data.harvestAnnouncementId,
       imageHash: data.imageHash,
       gpsLatitude: data.gpsLatitude,
       gpsLongitude: data.gpsLongitude,
@@ -123,7 +133,8 @@ export class GrowthLogsService {
         id: crypto.randomUUID(),
         userId,
         estateId: data.estateId,
-        parcelId: data.parcelId || null,
+        parcelId: data.parcelId,
+        harvestAnnouncementId: data.harvestAnnouncementId,
         imageUrl: data.imageUrl,
         imageHash: data.imageHash,
         gpsLatitude: data.gpsLatitude,
@@ -165,6 +176,15 @@ export class GrowthLogsService {
             cropType: true,
           },
         },
+        harvest_announcements: {
+          select: {
+            id: true,
+            cropType: true,
+            announcementType: true,
+            estimatedDate: true,
+            status: true,
+          },
+        },
       },
     });
   }
@@ -191,6 +211,15 @@ export class GrowthLogsService {
           select: {
             id: true,
             cropType: true,
+          },
+        },
+        harvest_announcements: {
+          select: {
+            id: true,
+            cropType: true,
+            announcementType: true,
+            estimatedDate: true,
+            status: true,
           },
         },
       },

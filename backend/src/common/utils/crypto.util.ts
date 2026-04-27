@@ -21,6 +21,7 @@ export class CryptoUtil {
     userId: string;
     estateId: string;
     parcelId: string | null;
+    harvestAnnouncementId?: string | null;
     imageHash: string;
     gpsLatitude: number;
     gpsLongitude: number;
@@ -30,6 +31,7 @@ export class CryptoUtil {
       userId: data.userId,
       estateId: data.estateId,
       parcelId: data.parcelId || '',
+      harvestAnnouncementId: data.harvestAnnouncementId || '',
       imageHash: data.imageHash,
       gpsLatitude: data.gpsLatitude,
       gpsLongitude: data.gpsLongitude,

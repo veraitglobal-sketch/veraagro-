@@ -1,30 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Globe } from "lucide-react";
-import { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
-import { getSwitchLocaleTarget, pathnameStartsWithLocale } from "@/lib/i18n-routing";
-
-function setLocaleCookieClient(locale: SiteLocale) {
-  try {
-    document.cookie = `${LOCALE_STORAGE_KEY}=${locale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
-  } catch {
-    /* ignore */
-  }
-}
+import { useSiteLocale } from "@/hooks/useSiteLocale";
+import type { SiteLocale } from "@/i18n/config";
 
 export default function LanguageSwitcher({ className = "" }: { className?: string }) {
-  const { i18n, t } = useTranslation();
-  const pathname = usePathname() ?? "/";
-  const router = useRouter();
+  const { t } = useTranslation();
+  const { current, applyLocale } = useSiteLocale();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  const fromUrl = pathnameStartsWithLocale(pathname);
-  const current: SiteLocale =
-    fromUrl ?? (i18n.resolvedLanguage?.startsWith("sr") ? "sr" : "en");
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
@@ -34,19 +20,8 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
     return () => document.removeEventListener("click", close);
   }, []);
 
-  const applyLang = (lng: SiteLocale) => {
-    void i18n.changeLanguage(lng);
-    try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, lng);
-    } catch {
-      /* ignore */
-    }
-    setLocaleCookieClient(lng);
-
-    const target = getSwitchLocaleTarget(pathname, lng);
-    if (target.kind === "navigate") {
-      router.replace(target.href);
-    }
+  const onPick = (lng: SiteLocale) => {
+    applyLocale(lng);
     setOpen(false);
   };
 
@@ -72,7 +47,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
             <button
               type="button"
               className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "en" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => applyLang("en")}
+              onClick={() => onPick("en")}
             >
               {t("locale.nameEn")}
             </button>
@@ -81,7 +56,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
             <button
               type="button"
               className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "sr" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => applyLang("sr")}
+              onClick={() => onPick("sr")}
             >
               {t("locale.nameSr")}
             </button>

@@ -5,6 +5,8 @@ import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { Estate, Parcel } from '../../../lib/api';
 
+export type ParcelPlanOption = { id: string; label: string };
+
 interface GrowthJournalFiltersProps {
   estates: Estate[];
   parcels: Parcel[];
@@ -12,6 +14,11 @@ interface GrowthJournalFiltersProps {
   filterParcel: string;
   onEstateChange: (estateId: string) => void;
   onParcelChange: (parcelId: string) => void;
+  /** Plans (zasad / berba) for the selected parcel */
+  parcelPlans?: ParcelPlanOption[];
+  activePlanId?: string;
+  onPlanChange?: (planId: string) => void;
+  plansLoading?: boolean;
 }
 
 export function GrowthJournalFilters({
@@ -21,6 +28,10 @@ export function GrowthJournalFilters({
   filterParcel,
   onEstateChange,
   onParcelChange,
+  parcelPlans = [],
+  activePlanId = '',
+  onPlanChange,
+  plansLoading = false,
 }: GrowthJournalFiltersProps) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
@@ -136,6 +147,52 @@ export function GrowthJournalFilters({
               </TouchableOpacity>
             ))}
           </View>
+        </>
+      )}
+      {parcels.length > 0 && filterParcel !== 'all' && onPlanChange && (
+        <>
+          <Text style={{ ...labelStyle, marginTop: theme.spacing.md }}>
+            {t('producer.growthJournal.planLabel')}{' '}
+            {plansLoading ? `(${t('producer.growthJournal.plansLoading')})` : null}
+          </Text>
+          {parcelPlans.length === 0 && !plansLoading ? (
+            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18 }}>
+              {t('producer.growthJournal.noPlansForParcel')}
+            </Text>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+              {parcelPlans.map((plan) => {
+                const sel = activePlanId === plan.id;
+                return (
+                  <TouchableOpacity
+                    key={plan.id}
+                    onPress={() => onPlanChange(plan.id)}
+                    style={{
+                      paddingHorizontal: theme.spacing.md,
+                      paddingVertical: theme.spacing.sm,
+                      borderRadius: theme.borderRadius.sm,
+                      borderWidth: 0.5,
+                      borderColor: sel ? colors.primary : colors.border,
+                      backgroundColor: sel ? `${colors.primary}10` : 'transparent',
+                      maxWidth: '100%',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: '300',
+                        color: sel ? colors.primary : colors.text.secondary,
+                        letterSpacing: 0.2,
+                      }}
+                      numberOfLines={3}
+                    >
+                      {plan.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </>
       )}
     </View>

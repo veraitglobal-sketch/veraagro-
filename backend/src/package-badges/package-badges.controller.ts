@@ -4,6 +4,7 @@ import {
   CreatePrintOrderDto,
   PreviewPrintOrderDto,
   RegisterPackageBadgesDto,
+  ReceiveReturnFromGrowerDto,
   ReturnBadgesToSupplierDto,
   TransferBadgesToGrowerDto,
 } from './dto/package-badges.dto';
@@ -48,25 +49,25 @@ export class PackageBadgesController {
   }
 
   @Post('print-orders/preview')
-  @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
+  @Roles('FARMER', 'GROWER', 'PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
   async previewPrintOrder(@Body() dto: PreviewPrintOrderDto, @GetUser() user: { id: string }) {
     return this.service.previewPrintOrder(user.id, dto);
   }
 
   @Post('print-orders')
-  @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
+  @Roles('FARMER', 'GROWER', 'PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
   async createPrintOrder(@Body() dto: CreatePrintOrderDto, @GetUser() user: { id: string }) {
     return this.service.createPrintOrder(user.id, dto);
   }
 
   @Get('print-orders/mine')
-  @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
+  @Roles('FARMER', 'GROWER', 'PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
   async listMyPrintOrders(@GetUser() user: { id: string }) {
     return this.service.listMyPrintOrders(user.id);
   }
 
   @Patch('print-orders/:id/sent')
-  @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
+  @Roles('FARMER', 'GROWER', 'PARTNER', 'MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
   async markPrintOrderSent(@Param('id') id: string, @GetUser() user: { id: string }) {
     return this.service.markPrintOrderSent(user.id, id);
   }
@@ -75,6 +76,12 @@ export class PackageBadgesController {
   @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
   async returnToSupplier(@Body() dto: ReturnBadgesToSupplierDto, @GetUser() user: { id: string }) {
     return this.service.returnTreeToSupplier(user.id, dto);
+  }
+
+  @Post('supplier/receive-from-grower')
+  @Roles('MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
+  async receiveFromGrower(@Body() dto: ReceiveReturnFromGrowerDto, @GetUser() user: { id: string }) {
+    return this.service.supplierReceiveReturnFromGrower(user.id, dto);
   }
 
   @Post('supplier/transfer-to-grower')

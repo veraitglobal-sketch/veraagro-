@@ -76,3 +76,12 @@ export class TransferBadgesToGrowerDto {
   @IsUUID()
   newGrowerUserId: string;
 }
+
+/** Supplier confirms they received a badge tree back from a grower (replaces grower calling return-to-supplier in UI). */
+export class ReceiveReturnFromGrowerDto {
+  @IsString()
+  rootSerial: string;
+
+  @IsUUID()
+  fromGrowerUserId: string;
+}

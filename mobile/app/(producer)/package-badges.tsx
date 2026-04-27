@@ -170,14 +170,9 @@ export default function PackageBadgesScreen() {
           <ChevronLeft size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
           <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>{t('common.back')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push('/(producer)/package-badges-print-order')}
-          style={{ marginBottom: 10 }}
-        >
-          <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '600' }}>
-            {t('producer.packageBadges.openPrintOrder')} →
-          </Text>
-        </TouchableOpacity>
+        <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 10, lineHeight: 18 }}>
+          {t('producer.packageBadges.printOrderFooterNote')}
+        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <QrCode size={22} color={theme.colors.primary} strokeWidth={1.75} />
           <Text

@@ -14,7 +14,6 @@ import {
   ShoppingBag,
   QrCode,
   ScanBarcode,
-  Factory,
 } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +26,7 @@ export type GrowerNavItem = {
 };
 
 /**
- * Full grower sidebar: same on every /grower/* page (14 items).
+ * Full grower sidebar: same on every /grower/* page.
  * Parity: mobile grower tab bar + stack routes.
  */
 export function buildGrowerNavItems(t: TFunction): GrowerNavItem[] {
@@ -40,7 +39,6 @@ export function buildGrowerNavItems(t: TFunction): GrowerNavItem[] {
     { href: '/grower/batches', label: t('grower.nav.myBatches'), icon: <Package className="w-5 h-5" /> },
     { href: '/grower/package-badges', label: t('grower.nav.packageBadges'), icon: <QrCode className="w-5 h-5" /> },
     { href: '/grower/package-badges/scan', label: t('grower.nav.scanPackageBadges'), icon: <ScanBarcode className="w-5 h-5" /> },
-    { href: '/grower/package-badges/print-order', label: t('grower.nav.printOrderNav'), icon: <Factory className="w-5 h-5" /> },
     { href: '/grower/quality-entry', label: t('grower.nav.qualityEntry'), icon: <CheckCircle className="w-5 h-5" /> },
     { href: '/grower/compliance-photos', label: t('grower.nav.compliancePhotos'), icon: <Camera className="w-5 h-5" /> },
     { href: '/grower/missions/create', label: t('grower.nav.requestTransport'), icon: <Truck className="w-5 h-5" /> },

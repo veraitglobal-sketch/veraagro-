@@ -406,37 +406,41 @@ model freshness_trackers {
 }
 
 model growth_logs {
-  id               String    @id
-  userId           String
-  estateId         String
-  parcelId         String?
-  imageUrl         String
-  imageHash        String
-  gpsLatitude      Float
-  gpsLongitude     Float
-  gpsAccuracy      Float?
-  deviceId         String
-  deviceModel      String?
-  networkTimestamp DateTime
-  deviceTimestamp  DateTime
-  timeOffset       Int?
-  notes            String?
-  growthStage      String?
-  dataHash         String    @unique
-  previousLogHash  String?
-  labResultUrl     String?
-  labResultHash    String?
-  labTestDate      DateTime?
-  createdAt        DateTime  @default(now())
-  estates          estates   @relation(fields: [estateId], references: [id])
-  parcels          parcels?  @relation(fields: [parcelId], references: [id])
-  users            users     @relation(fields: [userId], references: [id])
+  id                        String                 @id
+  userId                    String
+  estateId                  String
+  parcelId                  String?
+  imageUrl                  String
+  imageHash                 String
+  gpsLatitude               Float
+  gpsLongitude              Float
+  gpsAccuracy               Float?
+  deviceId                  String
+  deviceModel               String?
+  networkTimestamp          DateTime
+  deviceTimestamp           DateTime
+  timeOffset                Int?
+  notes                     String?
+  growthStage               String?
+  dataHash                  String                 @unique
+  previousLogHash           String?
+  labResultUrl              String?
+  labResultHash             String?
+  labTestDate               DateTime?
+  createdAt                 DateTime               @default(now())
+  /// Which crop plan (sadnja/berba) this photo belongs to; required for new app entries
+  harvestAnnouncementId     String?
+  estates                   estates                @relation(fields: [estateId], references: [id])
+  harvest_announcements     harvest_announcements? @relation(fields: [harvestAnnouncementId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  parcels                   parcels?               @relation(fields: [parcelId], references: [id])
+  users                     users                  @relation(fields: [userId], references: [id])
 
   @@index([dataHash])
   @@index([estateId])
   @@index([networkTimestamp])
   @@index([parcelId])
   @@index([userId])
+  @@index([harvestAnnouncementId])
 }
 
 model hubs {
@@ -854,6 +858,7 @@ model harvest_announcements {
   confirmedAt         DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime
+  growth_logs         growth_logs[]
   parcel              parcels   @relation(fields: [parcelId], references: [id])
   user                users     @relation(fields: [userId], references: [id])
   mission             missions?

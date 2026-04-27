@@ -8,6 +8,7 @@ import {
   GrowthLog,
   estatesAPI,
   Estate,
+  harvestAnnouncementsAPI,
 } from '../../../lib/api';
 import { getOrCreateDeviceId } from '../../../lib/device-id';
 import { sha256HexFromImageUri } from '../../../lib/image-hash';
@@ -26,6 +27,9 @@ export function useGrowthJournalData() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [filterEstate, setFilterEstate] = useState<string>('all');
   const [filterParcel, setFilterParcel] = useState<string>('all');
+  const [parcelPlans, setParcelPlans] = useState<{ id: string; label: string }[]>([]);
+  const [activePlanId, setActivePlanId] = useState('');
+  const [plansLoading, setPlansLoading] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -85,17 +89,64 @@ export function useGrowthJournalData() {
     setRefreshing(false);
   }, [loadData, loadLogs]);
 
-  const selectedEstate = estates.find((e) => e.id === filterEstate);
+  const selectedEstate = useMemo(() => estates.find((e) => e.id === filterEstate), [estates, filterEstate]);
   const parcels = useMemo(
     () => (selectedEstate?.parcels || []).filter((p) => p.approvedAt),
     [selectedEstate],
   );
+
+  const loadPlans = useCallback(async () => {
+    if (filterParcel === 'all' || !filterParcel) {
+      setParcelPlans([]);
+      setActivePlanId('');
+      return;
+    }
+    setPlansLoading(true);
+    try {
+      const raw = await harvestAnnouncementsAPI.getMy();
+      const arr = Array.isArray(raw) ? raw : [];
+      const forParcel = arr.filter(
+        (a: { parcelId: string; status: string }) =>
+          a.parcelId === filterParcel && a.status !== 'CANCELLED',
+      );
+      const options = forParcel.map((a: { id: string; announcementType: string; cropType: string; estimatedDate: string }) => {
+        const kind = a.announcementType === 'PLANTING' ? t('producer.growthJournal.planKindPlanting') : t('producer.growthJournal.planKindHarvest');
+        const dateStr = a.estimatedDate ? String(a.estimatedDate).slice(0, 10) : '—';
+        return {
+          id: a.id,
+          label: `${kind} · ${a.cropType} · ${dateStr}`,
+        };
+      });
+      setParcelPlans(options);
+      setActivePlanId((prev) => {
+        if (options.length === 0) return '';
+        return options.some((o) => o.id === prev) ? prev : options[0].id;
+      });
+    } catch {
+      setParcelPlans([]);
+      setActivePlanId('');
+    } finally {
+      setPlansLoading(false);
+    }
+  }, [filterParcel, t]);
+
+  useEffect(() => {
+    void loadPlans();
+  }, [loadPlans]);
 
   const submitAddLog = useCallback(
     async (payload: { notes: string; growthStage: string | undefined }) => {
       if (estates.length === 0) return;
       if (filterEstate === 'all' || !filterEstate) {
         Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
+        return;
+      }
+      if (filterParcel === 'all' || !filterParcel) {
+        Alert.alert(t('producer.growthJournalAlerts.parcelTitle'), t('producer.growthJournalAlerts.parcelBody'));
+        return;
+      }
+      if (!activePlanId) {
+        Alert.alert(t('producer.growthJournalAlerts.planTitle'), t('producer.growthJournalAlerts.planBody'));
         return;
       }
 
@@ -147,11 +198,10 @@ export function useGrowthJournalData() {
         const imageHash = await sha256HexFromImageUri(asset.uri);
         const deviceId = await getOrCreateDeviceId();
         const deviceTimestamp = new Date().toISOString();
-        const parcelId =
-          filterParcel !== 'all' && filterParcel ? filterParcel : undefined;
         await growthLogsAPI.create({
           estateId: filterEstate,
-          parcelId,
+          parcelId: filterParcel,
+          harvestAnnouncementId: activePlanId,
           imageUrl: imageDataUrl,
           imageHash,
           gpsLatitude: location.lat,
@@ -172,12 +222,18 @@ export function useGrowthJournalData() {
         setUploading(false);
       }
     },
-    [estates.length, filterEstate, filterParcel, loadLogs, t],
+    [estates.length, filterEstate, filterParcel, activePlanId, loadLogs, t],
   );
 
   const sortedLogs = [...logs].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  const canAddLog =
+    filterEstate !== 'all' &&
+    filterParcel !== 'all' &&
+    Boolean(activePlanId) &&
+    !plansLoading;
 
   return {
     estates,
@@ -193,6 +249,11 @@ export function useGrowthJournalData() {
     setFilterEstate,
     setFilterParcel,
     parcels,
+    parcelPlans,
+    activePlanId,
+    setActivePlanId,
+    plansLoading,
+    canAddLog,
     onRefresh,
     submitAddLog,
     selectedEstate,

@@ -9,11 +9,14 @@ import {
 
 const LOCALE_COOKIE = "biovera-locale";
 
+/**
+ * First-time visitors: always English. No Accept-Language sniffing — avoids
+ * surprise locales (VPN, shared PCs, “wrong” browser defaults). After the user
+ * picks SR in the UI or opens /sr/…, the cookie (or URL) pins the choice.
+ */
 function preferredLocale(request: NextRequest): SiteLocale {
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
   if (cookie === "sr" || cookie === "en") return cookie;
-  const al = request.headers.get("accept-language")?.toLowerCase() ?? "";
-  if (al.includes("sr")) return "sr";
   return "en";
 }
 

@@ -13,8 +13,40 @@ export default function HarvestForm() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.surface }}>
       <View style={{ padding: 16 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+          <TouchableOpacity
+            onPress={() => h.setPlanMode('PLANTING')}
+            style={{
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              borderRadius: 8,
+              borderWidth: 0.5,
+              backgroundColor: h.planMode === 'PLANTING' ? colors.accent : colors.background,
+              borderColor: h.planMode === 'PLANTING' ? colors.accent : colors.border,
+            }}
+          >
+            <Text style={{ fontSize: 12, color: h.planMode === 'PLANTING' ? colors.background : colors.text.primary }}>
+              {t('producer.harvest.modePlanting')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => h.setPlanMode('HARVEST')}
+            style={{
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              borderRadius: 8,
+              borderWidth: 0.5,
+              backgroundColor: h.planMode === 'HARVEST' ? colors.accent : colors.background,
+              borderColor: h.planMode === 'HARVEST' ? colors.accent : colors.border,
+            }}
+          >
+            <Text style={{ fontSize: 12, color: h.planMode === 'HARVEST' ? colors.background : colors.text.primary }}>
+              {t('producer.harvest.modeHarvest')}
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 16, lineHeight: 18 }}>
-          {t('producer.harvest.planIntro')}
+          {h.planMode === 'PLANTING' ? t('producer.harvest.planIntroPlanting') : t('producer.harvest.planIntroHarvest')}
         </Text>
 
         <View style={{ marginBottom: 16 }}>
@@ -323,7 +355,7 @@ export default function HarvestForm() {
                 letterSpacing: 0.3,
               }}
             >
-              {t('producer.harvest.sendPlan')}
+              {h.planMode === 'PLANTING' ? t('producer.harvest.sendPlanPlanting') : t('producer.harvest.sendPlanHarvest')}
             </Text>
           )}
         </TouchableOpacity>

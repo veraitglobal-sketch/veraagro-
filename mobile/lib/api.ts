@@ -447,6 +447,7 @@ export interface GrowthLog {
   id: string;
   estateId: string;
   parcelId?: string;
+  harvestAnnouncementId?: string | null;
   imageUrl: string;
   gpsLatitude: number;
   gpsLongitude: number;
@@ -458,15 +459,41 @@ export interface GrowthLog {
     id: string;
     cropType: string;
   };
+  plan?: {
+    id: string;
+    cropType: string;
+    announcementType: string;
+    estimatedDate: string;
+    status: string;
+  };
 }
 
 /** Prisma returns `parcels` relation; mobile UI expects `parcel`. */
 function normalizeGrowthLogRow(row: Record<string, unknown>): GrowthLog {
   const parcels = row.parcels as { id: string; cropType: string } | null | undefined;
-  const { parcels: _p, ...rest } = row;
+  const ha = row.harvest_announcements as
+    | {
+        id: string;
+        cropType: string;
+        announcementType: string;
+        estimatedDate: string;
+        status: string;
+      }
+    | null
+    | undefined;
+  const { parcels: _p, harvest_announcements: _ha, ...rest } = row;
   return {
     ...(rest as unknown as GrowthLog),
     parcel: parcels ? { id: parcels.id, cropType: parcels.cropType } : undefined,
+    plan: ha
+      ? {
+          id: ha.id,
+          cropType: ha.cropType,
+          announcementType: ha.announcementType,
+          estimatedDate: ha.estimatedDate,
+          status: ha.status,
+        }
+      : undefined,
   };
 }
 
@@ -503,7 +530,8 @@ export const growthLogsAPI = {
   },
   create: async (data: {
     estateId: string;
-    parcelId?: string;
+    parcelId: string;
+    harvestAnnouncementId: string;
     imageUrl: string;
     imageHash: string;
     gpsLatitude: number;

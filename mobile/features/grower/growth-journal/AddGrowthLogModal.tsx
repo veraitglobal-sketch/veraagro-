@@ -31,6 +31,7 @@ type Props = {
   busy: boolean;
   estateName?: string;
   parcelLabel?: string;
+  planLabel?: string;
 };
 
 /**
@@ -43,6 +44,7 @@ export function AddGrowthLogModal({
   busy,
   estateName,
   parcelLabel,
+  planLabel,
 }: Props) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
@@ -106,6 +108,7 @@ export function AddGrowthLogModal({
               {t('producer.growthJournal.addLogContext', {
                 estate: estateName || '—',
                 parcel: parcelLabel || t('producer.growthJournal.allParcelsContext'),
+                plan: planLabel || '—',
               })}
             </Text>
             <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
