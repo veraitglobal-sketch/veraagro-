@@ -2,7 +2,10 @@
 
 import type { ReactNode } from 'react';
 
-/** Shared grower area: matches Dashboard / My Batches / Steps — gray canvas + centered max width. */
+/**
+ * Shared grower main area — same shell as the original My Batches page:
+ * full width of the content column, `p-6`, gray-50 (not a narrow “boxed” max width).
+ */
 export function GrowerPageShell({
   children,
   className,
@@ -12,11 +15,7 @@ export function GrowerPageShell({
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div
-        className={`mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 ${className ?? ''}`.trim()}
-      >
-        {children}
-      </div>
+      <div className={`w-full p-6 ${className ?? ''}`.trim()}>{children}</div>
     </div>
   );
 }

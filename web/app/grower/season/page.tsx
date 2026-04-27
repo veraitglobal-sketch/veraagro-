@@ -78,7 +78,7 @@ export default function GrowerFieldSeasonPage() {
               </div>
             ) : (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border border-amber-200/80 bg-amber-50/80 p-4 shadow-sm sm:p-5">
+                <div className="rounded-lg border border-amber-200/80 bg-amber-50/80 p-4 shadow-sm sm:p-5">
                   <p className="text-sm font-semibold text-amber-950">Your parcels at a glance</p>
                   <p className="mt-1 text-sm leading-relaxed text-amber-950/90">
                     {hasApprovedParcel
@@ -88,7 +88,7 @@ export default function GrowerFieldSeasonPage() {
                         : 'No parcel yet. Start in My fields: add a parcel and crop block.'}
                   </p>
                 </div>
-                <div className="flex flex-col justify-center rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+                <div className="flex flex-col justify-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Fields &amp; map</p>
                   <Link
                     href="/grower/fields"
@@ -103,7 +103,7 @@ export default function GrowerFieldSeasonPage() {
               </div>
             )}
 
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
               <GrowerSeasonJourney />
             </div>
         </GrowerPageShell>

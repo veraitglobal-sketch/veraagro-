@@ -2,13 +2,12 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
-import { motion } from 'framer-motion';
-import { useAuth } from '@/lib/auth';
 import { growerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { formatDateTimeEn } from '@/lib/en-locale-dates';
 
 const navItems = growerNavItems;
 
@@ -44,7 +43,6 @@ interface LabelRollRow {
 }
 
 export default function GrowerMaterialsPage() {
-  const { user } = useAuth();
   const [balance, setBalance] = useState<MaterialBalance | null>(null);
   const [materialTypes, setMaterialTypes] = useState<MaterialType[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState<string>('');
@@ -235,40 +233,14 @@ export default function GrowerMaterialsPage() {
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title="Materials"
-          description="Order official Bio Vera packaging (crates, label rolls, film). Purchases update balances and create label roll IDs for compliance."
+          description="Official crate, label roll, and film balances; purchase below; serials list for compliance photos."
         />
-
-        <GrowerSupplyFlowCard context="materials" variant="collapsible" />
-
-        <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
-          <span className="text-gray-500">Shortcuts</span>
-          <span className="text-gray-300 hidden sm:inline">·</span>
-          <a href="#supply-flow" className="text-[#2D5A27] font-medium underline">
-            Supply path
-          </a>
-          <span className="text-gray-300">·</span>
-          <a href="#label-roll-ids" className="text-[#2D5A27] font-medium underline">
-            Your label rolls
-          </a>
-          <span className="text-gray-300">·</span>
-          <Link href="/grower/where-to-buy" className="text-[#2D5A27] font-medium underline">
-            Suppliers
-          </Link>
-          <span className="text-gray-300">·</span>
-          <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
-            Compliance
-          </Link>
-          <span className="text-gray-300">·</span>
-          <Link href="/contact" className="text-[#2D5A27] font-medium underline">
-            Help
-          </Link>
-        </p>
 
         {balance &&
           balance.crateBalance === 0 &&
           balance.labelRollBalance === 0 &&
           balance.filmMeterBalance === 0 && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
               <p className="font-medium">Your material balances are 0</p>
               <p className="mt-1">
                 Order using the form below, or if you usually buy through a local distributor, open{' '}
@@ -281,50 +253,133 @@ export default function GrowerMaterialsPage() {
           )}
 
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 border border-red-200 rounded-lg"
-          >
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
             <p className="text-sm text-red-800">{error}</p>
-          </motion.div>
+          </div>
         )}
         {typesError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-amber-50 border border-amber-200 rounded-lg"
-          >
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
             <p className="text-sm text-amber-950">{typesError}</p>
-          </motion.div>
+          </div>
         )}
-
         {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-green-50 border border-green-200 rounded-lg"
-          >
+          <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
             <p className="text-sm text-green-800">{success}</p>
-          </motion.div>
+          </div>
         )}
 
-        <div
-          id="label-roll-ids"
-          className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Your label roll IDs (Sticker Roll ID)</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            These codes are created when you buy <strong>label rolls</strong> below. Use the same value in{' '}
-            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium hover:underline">
+        {/* Same stat strip as My Batches: number on top, label under */}
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-2xl font-medium text-gray-900">{balance?.crateBalance ?? 0}</div>
+            <div className="mt-1 text-sm text-gray-600">Crates (balance)</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-2xl font-medium text-green-600">{balance?.labelRollBalance ?? 0}</div>
+            <div className="mt-1 text-sm text-gray-600">Label rolls (balance)</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
+            <div className="mt-1 text-sm text-gray-600">Film (metres)</div>
+          </div>
+        </div>
+
+        <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
+          <span className="text-gray-500">Shortcuts</span>
+          <span className="text-gray-300 hidden sm:inline">·</span>
+          <a href="#label-roll-ids" className="font-medium text-[#2D5A27] underline">
+            Your label rolls
+          </a>
+          <span className="text-gray-300">·</span>
+          <a href="#supply-flow" className="font-medium text-[#2D5A27] underline">
+            Supply path
+          </a>
+          <span className="text-gray-300">·</span>
+          <Link href="/grower/where-to-buy" className="font-medium text-[#2D5A27] underline">
+            Suppliers
+          </Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/grower/compliance-photos" className="font-medium text-[#2D5A27] underline">
+            Compliance
+          </Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/contact" className="font-medium text-[#2D5A27] underline">
+            Help
+          </Link>
+        </p>
+
+        {/* Primary action — one white card like Quality entry */}
+        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">Purchase official materials</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Pick <strong>crate</strong>, <strong>label roll</strong>, or <strong>film</strong> (metres) — the three balances above update when the order succeeds.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Product to order</label>
+              <select
+                value={selectedMaterial}
+                onChange={(e) => setSelectedMaterial(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              >
+                <option value="">-- Select Material --</option>
+                {materialTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name} - €{type.unitPrice.toFixed(2)} per {type.unit}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Quantity</label>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                min="1"
+                max="200"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                placeholder="1–200 per order"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Max 200 units per order (e.g. 100 label rolls = 100 serial numbers in the system).
+              </p>
+            </div>
+            {selectedMaterial && quantity && (
+              <div className="rounded-lg bg-gray-50 p-4">
+                <p className="text-sm text-gray-600">
+                  Total cost: €
+                  {(
+                    parseFloat(quantity) *
+                    (materialTypes.find((t) => t.id === selectedMaterial)?.unitPrice || 0)
+                  ).toFixed(2)}
+                </p>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handlePurchase}
+              disabled={purchasing || !selectedMaterial || !quantity}
+              className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {purchasing ? 'Processing...' : 'Purchase materials'}
+            </button>
+          </div>
+        </div>
+
+        <div id="label-roll-ids" className="mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">Your label roll IDs (sticker roll ID)</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Created when you buy <strong>label rolls</strong>. Use the same value in{' '}
+            <Link href="/grower/compliance-photos" className="font-medium text-[#2D5A27] hover:underline">
               Compliance photos
             </Link>
             .
           </p>
-          {serialsError && <p className="text-sm text-amber-800 mb-2">{serialsError}</p>}
+          {serialsError && <p className="mb-2 text-sm text-amber-800">{serialsError}</p>}
           {labelRolls.length === 0 && !serialsError ? (
             <p className="text-sm text-gray-500">
-              No label rolls in your account yet — purchase at least one in the form below, then the IDs appear here.
+              No label rolls in your account yet — purchase at least one above, then the IDs appear here.
             </p>
           ) : (
             <div className="space-y-3">
@@ -366,7 +421,7 @@ export default function GrowerMaterialsPage() {
                 </div>
               )}
               <div
-                className="max-h-72 sm:max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-gray-50/50 scroll-pt-1"
+                className="max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-gray-50/50 sm:max-h-80"
                 role="region"
                 aria-label="Label roll serial list"
               >
@@ -374,12 +429,12 @@ export default function GrowerMaterialsPage() {
                   {filteredLabelRolls.map((r) => (
                     <li
                       key={r.serialNumber}
-                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 sm:py-2.5 text-sm"
+                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 text-sm sm:py-2.5"
                     >
-                      <code className="font-mono text-xs sm:text-sm text-gray-900 break-all">{r.serialNumber}</code>
-                      <span className="text-xs text-gray-500 shrink-0">
+                      <code className="break-all font-mono text-xs text-gray-900 sm:text-sm">{r.serialNumber}</code>
+                      <span className="shrink-0 text-xs text-gray-500">
                         {r.status}
-                        {r.soldAt ? ` · ${new Date(r.soldAt).toLocaleString()}` : ''}
+                        {r.soldAt ? ` · ${formatDateTimeEn(r.soldAt)}` : ''}
                       </span>
                     </li>
                   ))}
@@ -392,114 +447,33 @@ export default function GrowerMaterialsPage() {
           )}
         </div>
 
-        {/* Material Balance */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Material Balance</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <p className="text-sm text-gray-600 mb-1">Crates</p>
-              <p className="text-2xl font-bold text-green-600">{balance?.crateBalance || 0}</p>
-            </div>
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-gray-600 mb-1">Label Rolls</p>
-              <p className="text-2xl font-bold text-blue-600">{balance?.labelRollBalance || 0}</p>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <p className="text-sm text-gray-600 mb-1">Film (meters)</p>
-              <p className="text-2xl font-bold text-purple-600">{balance?.filmMeterBalance || 0}</p>
-            </div>
-          </div>
-        </motion.div>
+        <div className="mb-6">
+          <GrowerSupplyFlowCard context="materials" variant="collapsible" />
+        </div>
 
-        {/* Purchase Materials */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Purchase official materials</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Open the list and pick <strong>crate</strong> (increments &quot;Crates&quot;), <strong>label roll</strong>, or{' '}
-            <strong>film</strong> (meters) — matching the three balance cards.
-          </p>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product to order
-              </label>
-              <select
-                value={selectedMaterial}
-                onChange={(e) => setSelectedMaterial(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                <option value="">-- Select Material --</option>
-                {materialTypes.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {type.name} - €{type.unitPrice.toFixed(2)} per {type.unit}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Quantity
-              </label>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                min="1"
-                max="200"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="1–200 per order"
-              />
-              <p className="text-xs text-gray-500 mt-1">Max 200 units per order (e.g. 100 label rolls = 100 serial numbers in the system).</p>
-            </div>
-            {selectedMaterial && quantity && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">
-                  Total Cost: €
-                  {(
-                    parseFloat(quantity) *
-                    (materialTypes.find((t) => t.id === selectedMaterial)?.unitPrice || 0)
-                  ).toFixed(2)}
-                </p>
-              </div>
-            )}
-            <button
-              onClick={handlePurchase}
-              disabled={purchasing || !selectedMaterial || !quantity}
-              className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {purchasing ? 'Processing...' : 'Purchase Materials'}
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Info Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg"
-        >
+        <div className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-4">
           <div className="flex items-start">
-            <svg className="w-5 h-5 text-blue-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            <svg
+              className="mr-3 mt-0.5 h-5 w-5 text-blue-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clipRule="evenodd"
+              />
             </svg>
             <div>
               <p className="text-sm font-medium text-blue-800">Important</p>
-              <p className="text-sm text-blue-700 mt-1">
-                You can only ship batches using official Bio Vera materials. Make sure you have enough materials before reporting a harvest.
+              <p className="mt-1 text-sm text-blue-700">
+                You can only ship batches using official Bio Vera materials. Make sure you have enough materials before
+                reporting a harvest.
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </GrowerPageShell>
     </SidebarLayout>
   );

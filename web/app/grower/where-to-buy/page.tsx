@@ -284,7 +284,7 @@ export default function GrowerWhereToBuyPage() {
 
             {/* Mobile / tablet: switch between the two main jobs without endless scrolling */}
             <div
-              className="flex gap-1 p-1 rounded-xl bg-white border border-gray-200 shadow-sm lg:hidden"
+              className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-sm lg:hidden"
               role="tablist"
               aria-label="Section"
             >
@@ -330,7 +330,7 @@ export default function GrowerWhereToBuyPage() {
             <div
               className={`${
                 mobilePanel === 'directory' ? 'block' : 'hidden'
-              } lg:block bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 min-w-0 flex flex-col min-h-0`}
+              } lg:block flex min-h-0 min-w-0 flex-col rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-6`}
             >
               {loading ? (
                 <p className="text-sm text-gray-500">Loading directory…</p>
@@ -452,7 +452,7 @@ export default function GrowerWhereToBuyPage() {
                 <p className="text-xs text-gray-500 font-light mb-3">
                   <strong>Partner store</strong> = catalog and direct order; retail = hub pickup.
                 </p>
-                <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
+                <ul className="divide-y divide-gray-100 overflow-hidden rounded-lg border border-gray-200 bg-white">
                   {sortedForList.map((loc) => {
                     const inRegion = productionCountry && countriesLikelyMatch(productionCountry, loc.country);
                     const distKm =
