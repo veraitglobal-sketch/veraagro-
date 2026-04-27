@@ -49,7 +49,7 @@ function PaymentDetailsTextBlock() {
           {c.swift}
         </Text>
       ) : null}
-      {c.extraLines.map((line) => (
+      {c.extraLines.map((line: string) => (
         <Text key={line} style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: 2 }}>
           {line}
         </Text>

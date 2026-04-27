@@ -794,6 +794,56 @@ export class MissionsService {
     }
   }
 
+  private static readonly missionDetailInclude = {
+    users_missions_growerIdTousers: true,
+    users_missions_logisticsPartnerIdTousers: true,
+    vehicles: true,
+    batches: true,
+    harvest_announcement: true,
+  } as const;
+
+  /**
+   * One mission for GET /missions/:id (mobile, notifications). Access: grower owner, assigned LP,
+   * any LP for unclaimed PENDING pool, or SUPER_ADMIN/ADMIN.
+   */
+  async getMissionForRequestingUser(requestUserId: string, missionId: string) {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: missionId },
+      include: MissionsService.missionDetailInclude,
+    });
+    if (!mission) {
+      throw new NotFoundException('Mission not found');
+    }
+
+    const user = await this.prisma.users.findUnique({
+      where: { id: requestUserId },
+      select: { roles: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const roles = (user.roles as string[]) || [];
+    if (roles.includes('SUPER_ADMIN') || roles.includes('ADMIN')) {
+      return mission;
+    }
+    if (roles.includes('GROWER') || roles.includes('FARMER')) {
+      if (mission.growerId === requestUserId) {
+        return mission;
+      }
+    }
+    if (roles.includes('LOGISTICS_PARTNER')) {
+      if (mission.logisticsPartnerId === requestUserId) {
+        return mission;
+      }
+      if (mission.status === 'PENDING' && mission.logisticsPartnerId == null) {
+        return mission;
+      }
+    }
+
+    throw new ForbiddenException('You do not have access to this mission');
+  }
+
   /**
    * Partner takes a still-unclaimed transport job (PENDING, no logistics partner). Then use acceptMission.
    */

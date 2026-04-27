@@ -201,7 +201,8 @@ export default function MissionsCreateScreen() {
         >
           <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
             Pick a <Text style={{ fontWeight: '600' }}>packed</Text> lot (status PACKED or quality verified), then pickup GPS and
-            address. The server checks materials balance and compliance photos — if something is missing, the error will say what.
+            full drop-off. Operations assigns a driver when ready (mission stays pending until then). The server checks materials
+            and compliance — if something is missing, the error will say what.
           </Text>
         </View>
 

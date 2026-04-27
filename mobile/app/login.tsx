@@ -36,6 +36,8 @@ export default function LoginScreen() {
         router.replace('/(producer)/(tabs)');
       } else if (userRoles.some((role: string) => ['BUYER', 'CUSTOMER'].includes(role))) {
         router.replace('/(buyer)/shop');
+      } else if (userRoles.includes('LOGISTICS_PARTNER')) {
+        router.replace('/(logistics)' as any);
       } else {
         router.replace('/(buyer)/shop');
       }

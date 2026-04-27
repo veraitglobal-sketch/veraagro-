@@ -106,6 +106,17 @@
     "back": "Back",
     "googleComingSoon": "Google login coming soon"
   },
+  "logistics": {
+    "missionsTitle": "Transport",
+    "missionsSubtitle": "Unclaimed pool and your assigned runs (full admin tools stay on the web).",
+    "signOut": "Sign out",
+    "emptyMissions": "No missions in this list yet.",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterAssigned": "Assigned",
+    "filterInTransit": "In transit",
+    "filterCompleted": "Done"
+  },
   "producer": {
     "tabs": {
       "home": "Home",
@@ -134,10 +145,10 @@
         "addParcelBody": "A parcel is one crop block on that field. The team can approve it after.",
         "addParcelCta": "My fields",
         "missionsTitle": "Transport in progress",
-        "missionsBody": "You have a pickup or delivery task — open tasks for details.",
+        "missionsBody": "You have a run — open the list for status until delivery.",
         "missionsCta": "Open tasks",
         "requestTransportTitle": "Request transport",
-        "requestTransportBody": "A lot is packed and ready — book pickup: GPS, address, and the batch. You need compliance photos and enough crate balance first.",
+        "requestTransportBody": "A lot is packed — send a transport request. Operations assigns a driver when ready (you need compliance + crates first).",
         "requestTransportCta": "Request transport",
         "pendingTitle": "{{count}} waiting for approval",
         "pendingBody": "The team is checking parcels. You can still use the journal where you are already approved.",
@@ -157,6 +168,12 @@
         "blockHint": "Short and clear: where each plot is, what you plant, spray and work, what is allowed, what is not, and certificates.",
         "parcelsTitle": "My fields & parcels",
         "parcelsDesc": "Where each crop is, map, and how to add more.",
+        "logisticsBlockTitle": "Batches, materials & transport",
+        "logisticsBlockHint": "Same path as the website: your lots, stock orders, then request pickup and follow missions.",
+        "logisticsBatches": "My batches",
+        "logisticsMaterials": "Materials",
+        "logisticsTransport": "Request transport",
+        "logisticsMissions": "Mission tracker",
         "plantingTitle": "Planting & steps",
         "plantingDesc": "New crop, wait for OK from the team, then what to do next.",
         "diaryTitle": "Field diary",
@@ -178,7 +195,7 @@
         "alertMissions": "{{count}} transport tasks",
         "alertBatches": "{{count}} batches",
         "alertsOpen": "Open — messages, tasks, batches",
-        "profileMore": "Use the Steps tab (second) for the full season path. Wallet, map, costs, settings — in Profile.",
+        "profileMore": "Home includes “Batches, materials & transport” (same order as the website). The Steps tab is the full season story. Wallet and more — in Profile.",
         "alsoPartnerOrders": "Partner orders (inputs)"
       },
       "partnerOrders": {

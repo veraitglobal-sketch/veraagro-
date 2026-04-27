@@ -757,7 +757,9 @@ export const qualityEntryAPI = {
 /** Align with Prisma `MissionStatus` (backend). Not `DELIVERED` — use `COMPLETED`. */
 export interface Mission {
   id: string;
-  batchId: string;
+  /** Human-readable, e.g. MISSION-2026-0001-AB12 */
+  missionNumber?: string;
+  batchId?: string | null;
   status: string;
   fromHubId?: string;
   toHubId: string;
@@ -769,8 +771,14 @@ export interface Mission {
 }
 
 export const missionsAPI = {
-  getAll: async (): Promise<Mission[]> => {
-    const response = await api.get('/missions/my-missions');
+  /**
+   * When `scope` is set, the backend returns that hat (grower list vs logistics pool + assigned).
+   * Omit to let the server infer from your JWT.
+   */
+  getAll: async (options?: { scope?: 'grower' | 'logistics' }): Promise<Mission[]> => {
+    const response = await api.get('/missions/my-missions', {
+      ...(options?.scope ? { params: { scope: options.scope } } : {}),
+    });
     return response.data || [];
   },
   getOne: async (id: string): Promise<Mission> => {

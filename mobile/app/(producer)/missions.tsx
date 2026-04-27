@@ -27,7 +27,7 @@ export default function MissionsScreen() {
   const loadMissions = async () => {
     try {
       setLoading(true);
-      const data = await missionsAPI.getAll();
+      const data = await missionsAPI.getAll({ scope: 'grower' });
       setMissions(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading missions:', error);

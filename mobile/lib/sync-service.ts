@@ -8,6 +8,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from './api-url';
+import type { Estate } from './api';
 import i18n from '../i18n/config';
 
 // Create API instance for sync
@@ -119,9 +120,11 @@ export const syncService = {
         // Prefer estate recorded at save time so GPS matches the right polygon (not always estates[0]).
         const { estatesAPI } = await import('./api');
         const estates = await estatesAPI.getAll();
-        const list = Array.isArray(estates) ? estates : [];
-        const preferred =
-          entry.estateId && list.find((e: { id: string }) => e.id === entry.estateId);
+        const list: Estate[] = Array.isArray(estates) ? estates : [];
+        // Avoid `estateId && find`: empty string `""` would short-circuit to `""` and poison the union type.
+        const preferred: Estate | undefined = entry.estateId
+          ? list.find((e) => e.id === entry.estateId)
+          : undefined;
         const estateId = preferred?.id ?? list[0]?.id;
 
         if (!estateId) {

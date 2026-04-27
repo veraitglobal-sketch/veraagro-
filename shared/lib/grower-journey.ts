@@ -29,7 +29,7 @@ export const GROWER_JOURNEY_CHAIN_SHORT: Array<{ kicker: string; text: string }>
   },
   {
     kicker: 'Exit farm',
-    text: 'Request transport → logistics accepts → loading handover (truck proof) → cold chain to hub / buyer → Mission tracker follows the run; retail orders are tied in operations (not auto-split from a forecast in the app).',
+    text: 'Request transport (queued for dispatch) → operations assigns a driver → accept / pickup → loading handover (truck proof) → cold chain to hub / buyer → Missions list follows the run; retail orders are matched in operations (not auto-split in the app).',
   },
 ];
 
@@ -135,7 +135,7 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
   {
     title: 'Request transport',
     paragraphs: [
-      'Only when the batch is PACKED or QUALITY_VERIFIED and compliance is complete, open Request transport. You need pickup GPS/address and a full drop-off (buyer, hub, or dock). A cold-chain partner may auto-assign.',
+      'Only when the batch is PACKED or QUALITY_VERIFIED and compliance is complete, open Request transport. You need pickup GPS/address and a full drop-off (buyer, hub, or dock). The request is queued: BioVera operations assigns a cold-chain driver when ready (PENDING until then).',
     ],
     footnote:
       'Retail / wholesale orders from buyers are matched in operations (who supplies which kg). The app does not auto-split a harvest forecast into a buyer order — you align quantity and dates with your coordinator, then reflect the real load in batches and transport.',

@@ -14,6 +14,8 @@ import {
   Image as ImageIcon,
   ClipboardCheck,
   ShoppingBag,
+  Box,
+  Truck,
 } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 
@@ -30,6 +32,11 @@ export type FarmerHomeHandlers = {
   onCompliancePhotos: () => void;
   onQuality: () => void;
   onPartnerOrders: () => void;
+  /** Parity with web grower sidebar: batches → materials → transport → mission tracker */
+  onBatches: () => void;
+  onMaterials: () => void;
+  onRequestTransport: () => void;
+  onMissions: () => void;
 };
 
 const row = {
@@ -168,6 +175,92 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
                   {t(item.descKey)}
                 </Text>
               </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ marginBottom: theme.spacing.lg }}>
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: '600',
+            color: theme.colors.text.primary,
+            marginBottom: 4,
+          }}
+        >
+          {t('producer.dashboard.farmer.logisticsBlockTitle')}
+        </Text>
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: '400',
+            color: theme.colors.text.secondary,
+            lineHeight: 20,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          {t('producer.dashboard.farmer.logisticsBlockHint')}
+        </Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+          {(
+            [
+              {
+                k: 'batches',
+                onPress: handlers.onBatches,
+                icon: <Package size={20} color={theme.colors.primary} strokeWidth={1.75} />,
+                titleKey: 'producer.dashboard.farmer.logisticsBatches',
+              },
+              {
+                k: 'materials',
+                onPress: handlers.onMaterials,
+                icon: <Box size={20} color={theme.colors.primary} strokeWidth={1.75} />,
+                titleKey: 'producer.dashboard.farmer.logisticsMaterials',
+              },
+              {
+                k: 'transport',
+                onPress: handlers.onRequestTransport,
+                icon: <Truck size={20} color={theme.colors.primary} strokeWidth={1.75} />,
+                titleKey: 'producer.dashboard.farmer.logisticsTransport',
+              },
+              {
+                k: 'missions',
+                onPress: handlers.onMissions,
+                icon: <MapPin size={20} color={theme.colors.primary} strokeWidth={1.75} />,
+                titleKey: 'producer.dashboard.farmer.logisticsMissions',
+              },
+            ] as const
+          ).map((item) => (
+            <TouchableOpacity
+              key={item.k}
+              onPress={item.onPress}
+              activeOpacity={0.7}
+              style={{
+                backgroundColor: theme.colors.primaryLight,
+                borderRadius: theme.borderRadius.md,
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                flexDirection: 'row',
+                alignItems: 'center',
+                minWidth: '47%',
+                flexGrow: 1,
+              }}
+            >
+              {item.icon}
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontSize: 13,
+                  fontWeight: '600',
+                  color: theme.colors.text.primary,
+                  flex: 1,
+                }}
+                numberOfLines={2}
+              >
+                {t(item.titleKey)}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>

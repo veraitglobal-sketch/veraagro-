@@ -69,6 +69,10 @@ export default function RootLayout() {
           name="(supplier)"
           options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
         />
+        <Stack.Screen
+          name="(logistics)"
+          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+        />
       </Stack>
     </CartProvider>
     </AuthProvider>

@@ -103,4 +103,10 @@ export class MissionsController {
   ) {
     return this.missionsService.adminAssignLogistics(req.user.id, id, dto);
   }
+
+  /** Mobile + deep links: one mission the caller may view (grower, logistics, or unclaimed pool). */
+  @Get(':id')
+  getMissionById(@Request() req, @Param('id') id: string) {
+    return this.missionsService.getMissionForRequestingUser(req.user.id, id);
+  }
 }

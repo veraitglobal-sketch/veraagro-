@@ -1,7 +1,11 @@
 import {
   GROWER_JOURNEY_STEP_DEFS,
+  GROWER_JOURNEY_STEP_COUNT,
   type GrowerJourneyStepDef,
 } from '../../shared/lib/grower-journey';
+
+/** Re-export for screens — import from here so Metro never resolves `../shared` from deep feature paths. */
+export { GROWER_JOURNEY_STEP_COUNT };
 
 export type JourneyLink = { label: string; path: string };
 

@@ -3,8 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ListOrdered } from 'lucide-react-native';
 import { estatesAPI, parcelsAPI } from '../../../lib/api';
-import { GROWER_JOURNEY_STEPS } from '../../../lib/grower-journey-data';
-import { GROWER_JOURNEY_STEP_COUNT } from '../../../../shared/lib/grower-journey';
+import { GROWER_JOURNEY_STEPS, GROWER_JOURNEY_STEP_COUNT } from '../../../lib/grower-journey-data';
 import { theme } from '../../../lib/theme';
 
 type Props = {
@@ -109,9 +108,9 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
       >
         <ListOrdered size={22} color={theme.colors.primary} style={{ marginTop: 2 }} />
         <Text style={{ flex: 1, fontSize: 14, color: theme.colors.text.primary, lineHeight: 20 }}>
-          {GROWER_JOURNEY_STEP_COUNT} steps below — same copy as the web “Steps” page (shared with the site). The tab
-          bar only has four icons; use the{' '}
-          <Text style={{ fontWeight: '700' }}>Home</Text> dashboard for fields, materials, transport, and the rest.
+          {GROWER_JOURNEY_STEP_COUNT} steps — same as the web Steps page. The bottom bar has four tabs; on{' '}
+          <Text style={{ fontWeight: '700' }}>Home</Text>, use the green “Batches, materials & transport” block for
+          the same order as the website sidebar, then the on-farm checklist below.
         </Text>
       </View>
 

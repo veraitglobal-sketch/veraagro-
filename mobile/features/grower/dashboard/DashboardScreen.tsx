@@ -35,6 +35,10 @@ export default function DashboardScreen() {
     onCompliancePhotos: () => router.push('/(producer)/compliance-photos'),
     onQuality: () => router.push('/(producer)/quality-entry'),
     onPartnerOrders: () => router.push('/(producer)/partner-orders'),
+    onBatches: () => router.push('/(producer)/batches'),
+    onMaterials: () => router.push('/(producer)/materials'),
+    onRequestTransport: () => router.push('/(producer)/missions-create'),
+    onMissions: () => router.push('/(producer)/missions'),
   };
 
   const hasAlerts =

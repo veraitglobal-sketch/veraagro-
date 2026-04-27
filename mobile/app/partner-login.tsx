@@ -46,10 +46,12 @@ export default function PartnerLoginScreen() {
         } else {
           router.replace('/(producer)/(tabs)');
         }
+      } else if (userRoles.includes('LOGISTICS_PARTNER')) {
+        router.replace('/(logistics)' as any);
       } else {
         Alert.alert(
           t('error') || 'Error',
-          t('partnerLogin.notProducer') || 'This account is not authorized for producer or partner store access',
+          t('partnerLogin.notProducer') || 'This account is not authorized for producer, logistics, or partner store access',
         );
         await logout();
       }

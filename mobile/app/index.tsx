@@ -28,6 +28,9 @@ export default function LandingScreen() {
     if (userRoles.includes('BUYER') || userRoles.includes('CUSTOMER')) {
       return '/(buyer)/shop' as const;
     }
+    if (userRoles.includes('LOGISTICS_PARTNER')) {
+      return '/(logistics)' as const;
+    }
     return null;
   }, [user, authLoading]);
 

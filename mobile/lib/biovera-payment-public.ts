@@ -11,7 +11,12 @@ export function getExpoPublicPaymentConfig() {
     bankName: process.env.EXPO_PUBLIC_BIOVERA_BANK_NAME?.trim() || '',
     swift: process.env.EXPO_PUBLIC_BIOVERA_SWIFT?.trim() || '',
     currency: (process.env.EXPO_PUBLIC_BIOVERA_PAYMENT_CURRENCY || 'EUR').trim() || 'EUR',
-    extraLines: notes ? notes.split('|').map((s) => s.trim()).filter(Boolean) : [],
+    extraLines: notes
+      ? notes
+          .split('|')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : [],
   };
 }
 
