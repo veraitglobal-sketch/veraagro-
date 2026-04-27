@@ -261,20 +261,16 @@ export default function GrowerWhereToBuyPage() {
         <GrowerPageShell className="space-y-5">
           <GrowerPageHeader
             title={t('grower.nav.suppliersAndOrders')}
-            description={
-              <>
-                Find a partner on the <strong>left</strong> (on desktop) or the <strong>Directory</strong> tab; track
-                B2B lines on the <strong>right</strong> or <strong>My orders</strong> tab.
-              </>
-            }
+            description={t('growerPages.whereToBuyDescription')}
             right={
               !loading && productionCountry ? (
                 <p className="max-w-sm shrink-0 text-xs text-gray-500 sm:text-right">
-                  Profile: <span className="font-medium text-gray-700">{productionCountry}</span>
+                  {t('growerPages.profileCountry')}{' '}
+                  <span className="font-medium text-gray-700">{productionCountry}</span>
                   {items.some((i) => countriesLikelyMatch(productionCountry, i.country)) ? (
-                    <span> — similar regions first (unless you use “Nearest to me”).</span>
+                    <span>{t('growerPages.profileSimilarRegions')}</span>
                   ) : (
-                    <span> — no directory rows for that country yet.</span>
+                    <span>{t('growerPages.profileNoRows')}</span>
                   )}
                 </p>
               ) : undefined
@@ -302,7 +298,7 @@ export default function GrowerWhereToBuyPage() {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Directory
+                {t('growerPages.directoryTab')}
               </button>
               <button
                 type="button"
@@ -321,13 +317,11 @@ export default function GrowerWhereToBuyPage() {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                My orders &amp; messages
+                {t('growerPages.b2bOrdersTitle')}
               </button>
             </div>
 
-            <p className="text-xs text-gray-500 -mt-1 lg:hidden">
-              Tip: on a large screen both columns are visible; here pick the tab you need.
-            </p>
+            <p className="text-xs text-gray-500 -mt-1 lg:hidden">{t('growerPages.mobileTabHint')}</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             <div
@@ -336,7 +330,7 @@ export default function GrowerWhereToBuyPage() {
               } lg:block flex min-h-0 min-w-0 flex-col rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-6`}
             >
               {loading ? (
-                <p className="text-sm text-gray-500">Loading directory…</p>
+                <p className="text-sm text-gray-500">{t('growerPages.loadingDirectory')}</p>
               ) : items.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-sm text-gray-600 text-center">
                   <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />

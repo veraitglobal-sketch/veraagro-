@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 /**
  * Shared footer – same as main page. Use on all public pages for consistency.
@@ -153,15 +152,8 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-200 pt-6 md:pt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
+        <div className="border-t border-gray-200 pt-6 md:pt-8 text-center text-xs sm:text-sm text-gray-500">
           <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            <span className="text-gray-400 hidden sm:inline" aria-hidden>
-              |
-            </span>
-            <span className="text-gray-500">{t('footer.languageHint')}</span>
-            <LanguageSwitcher />
-          </div>
         </div>
       </div>
     </footer>

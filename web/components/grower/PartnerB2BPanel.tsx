@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { growerSupplierB2bAPI } from '@/lib/api';
 import { Inbox, Loader2, MessageCircle, Package, Store } from 'lucide-react';
 
@@ -44,6 +45,7 @@ type PartnerB2BPanelProps = {
  * Right column on "Suppliers & orders": direct B2B orders + message threads (same card style as Request Transport).
  */
 export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps) {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,25 +100,26 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
       <div>
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1">
           <Inbox className="h-5 w-5 text-[#2D5A27] shrink-0" />
-          My orders &amp; messages
+          {t('growerPages.b2bOrdersTitle')}
         </h2>
-        <p className="text-sm text-gray-600">
-          B2B order status, <strong>Received at farm</strong>, and partner threads. New partner? Pick them in the
-          directory first.
-        </p>
+        <p className="text-sm text-gray-600">{t('growerPages.b2bOrdersLead')}</p>
         <p className="text-xs text-gray-500 mt-1.5">
-          Balances in{' '}
+          {t('growerPages.b2bOrdersMaterialsLineBefore')}{' '}
           <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
-            Materials
+            {t('grower.nav.materials')}
           </Link>
-          . Full process: <a href="#supply-flow" className="text-[#2D5A27] font-medium hover:underline">steps below</a>.
+          {t('growerPages.b2bOrdersMaterialsLineAfter')}{' '}
+          <a href="#supply-flow" className="text-[#2D5A27] font-medium hover:underline">
+            {t('growerPages.b2bOrdersStepsLink')}
+          </a>
+          .
         </p>
       </div>
 
       {loading && (
         <p className="text-sm text-gray-500 flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
-          Loading…
+          {t('growerPages.b2bLoading')}
         </p>
       )}
       {err && (
@@ -160,17 +163,17 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                     </ul>
                     {o.noteFromFarmer && (
                       <p className="text-xs text-gray-600 mb-1">
-                        <span className="text-gray-500">Your note:</span> {o.noteFromFarmer}
+                        <span className="text-gray-500">{t('growerPages.b2bYourNote')}</span> {o.noteFromFarmer}
                       </p>
                     )}
                     {o.noteFromSupplier && (
                       <p className="text-xs text-gray-600">
-                        <span className="text-gray-500">Partner:</span> {o.noteFromSupplier}
+                        <span className="text-gray-500">{t('growerPages.b2bPartnerNote')}</span> {o.noteFromSupplier}
                       </p>
                     )}
                     {o.farmerReceivedAt && (
                       <p className="text-xs font-medium text-emerald-800 mt-2">
-                        Received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+                        {t('growerPages.b2bReceivedAt')} {new Date(o.farmerReceivedAt).toLocaleString()}
                       </p>
                     )}
                     {!o.farmerReceivedAt &&
@@ -181,11 +184,11 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                           onClick={() => void markReceivedAtFarm(o.id)}
                           className="mt-2 inline-flex items-center rounded-lg border border-[#2D5A27] bg-white px-3 py-1.5 text-xs font-medium text-[#23471f] hover:bg-[#2D5A27]/5 disabled:opacity-50"
                         >
-                          {receiving === o.id ? 'Saving…' : 'Received at farm'}
+                          {receiving === o.id ? t('growerPages.b2bSaving') : t('growerPages.b2bMarkReceived')}
                         </button>
                       )}
                     {!o.farmerReceivedAt && o.status === 'PENDING' && (
-                      <p className="text-xs text-amber-800/90 mt-2">Waiting for supplier to confirm the order…</p>
+                      <p className="text-xs text-amber-800/90 mt-2">{t('growerPages.b2bWaitingSupplier')}</p>
                     )}
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Link
@@ -193,7 +196,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                         className="inline-flex items-center gap-1.5 text-xs text-[#2D5A27] font-medium hover:underline"
                       >
                         <Store className="h-3.5 w-3.5" />
-                        Store
+                        {t('growerPages.b2bStore')}
                       </Link>
                       {o.threadId && (
                         <Link
@@ -201,7 +204,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
                           className="inline-flex items-center gap-1.5 text-xs text-[#2D5A27] font-medium hover:underline"
                         >
                           <MessageCircle className="h-3.5 w-3.5" />
-                          Thread
+                          {t('growerPages.b2bThread')}
                         </Link>
                       )}
                     </div>
@@ -214,30 +217,30 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
           <section>
             <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-3">
               <Inbox className="h-4 w-4 text-[#2D5A27]" />
-              Conversations
+              {t('growerPages.b2bConversations')}
             </h3>
             {threads.length === 0 ? (
-              <p className="text-sm text-gray-500 font-light">No threads yet — message a partner from a store page.</p>
+              <p className="text-sm text-gray-500 font-light">{t('growerPages.b2bNoThreads')}</p>
             ) : (
               <ul className="space-y-2 max-h-[min(32vh,22rem)] overflow-y-auto pr-1">
-                {threads.map((t) => (
-                  <li key={t.id}>
+                {threads.map((thread) => (
+                  <li key={thread.id}>
                     <Link
-                      href={`/grower/where-to-buy/thread/${t.id}`}
+                      href={`/grower/where-to-buy/thread/${thread.id}`}
                       className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm hover:border-[#2D5A27]/30 transition-colors"
                     >
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{threadTitle(t)}</p>
-                        {t.supplier?.material_supplier_profile?.city && (
+                        <p className="font-medium text-gray-900 truncate">{threadTitle(thread)}</p>
+                        {thread.supplier?.material_supplier_profile?.city && (
                           <p className="text-xs text-gray-500 font-light truncate">
-                            {[t.supplier.material_supplier_profile.city, t.supplier.material_supplier_profile.country]
+                            {[thread.supplier.material_supplier_profile.city, thread.supplier.material_supplier_profile.country]
                               .filter(Boolean)
                               .join(' · ')}
                           </p>
                         )}
                       </div>
                       <span className="text-xs text-gray-400 whitespace-nowrap shrink-0">
-                        {new Date(t.lastMessageAt).toLocaleDateString()}
+                        {new Date(thread.lastMessageAt).toLocaleDateString()}
                       </span>
                     </Link>
                   </li>

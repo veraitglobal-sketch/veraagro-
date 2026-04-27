@@ -3,6 +3,7 @@
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
@@ -32,6 +33,7 @@ interface SidebarLayoutProps {
 }
 
 export default function SidebarLayout({ children, title, navItems, navGroups }: SidebarLayoutProps) {
+  const { t } = useTranslation();
   const loc = useLocalizedHref();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -130,7 +132,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
           onClick={() => { logout(); setMobileMenuOpen(false); }}
           className="w-full min-h-[44px] px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
         >
-          Logout
+          {t('shell.logout')}
         </button>
       </div>
     </>
@@ -142,7 +144,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
       {mobileMenuOpen && (
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t('shell.closeMenu')}
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
@@ -167,7 +169,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 -ml-1"
-            aria-label="Open menu"
+            aria-label={t('shell.openMenu')}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

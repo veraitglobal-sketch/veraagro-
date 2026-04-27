@@ -8,7 +8,7 @@ import { estatesAPI, parcelsAPI } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import GrowerSeasonJourney from '@/components/grower/GrowerSeasonJourney';
+import GrowerSeasonJourney, { GrowerSeasonMetaChip } from '@/components/grower/GrowerSeasonJourney';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function GrowerFieldSeasonPage() {
@@ -40,11 +40,11 @@ export default function GrowerFieldSeasonPage() {
       setHasApprovedParcel(approved > 0);
       setPendingCount(pending);
     } catch (err: any) {
-      setError(err.message || 'Could not load');
+      setError(err.message || t('grower.season.errorLoad'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     load();
@@ -56,17 +56,11 @@ export default function GrowerFieldSeasonPage() {
         <GrowerPageShell>
             <GrowerPageHeader
               title={t('grower.nav.steps')}
-              description={
-                <>
-                  From first setup to transport. The cards below are <strong>12 numbered steps</strong> (full story); the
-                  green sidebar has <strong>11 links</strong> in the same order — a few steps here are split for clarity (e.g.
-                  approval, field work). Use the chips to jump.
-                </>
-              }
+              description={t('grower.season.pageDescription')}
               right={
                 <span className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 text-xs text-gray-500 shadow-sm ring-1 ring-gray-200/80">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A27]" />
-                  12 cards · 11 nav links
+                  <GrowerSeasonMetaChip />
                 </span>
               }
             />
@@ -82,26 +76,26 @@ export default function GrowerFieldSeasonPage() {
             ) : (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-amber-200/80 bg-amber-50/80 p-4 shadow-sm sm:p-5">
-                  <p className="text-sm font-semibold text-amber-950">Your parcels at a glance</p>
+                  <p className="text-sm font-semibold text-amber-950">{t('grower.season.glanceTitle')}</p>
                   <p className="mt-1 text-sm leading-relaxed text-amber-950/90">
                     {hasApprovedParcel
-                      ? 'At least one parcel is approved — you can proceed with work and batches as rules allow.'
+                      ? t('grower.season.glanceApproved')
                       : hasParcel
-                        ? `${pendingCount} parcel(s) still waiting for administrator approval. Some actions stay locked until a parcel is approved.`
-                        : 'No parcel yet. Start in My fields: add a parcel and crop block.'}
+                        ? t('grower.season.glancePending', { count: pendingCount })
+                        : t('grower.season.glanceNoParcel')}
                   </p>
                 </div>
                 <div className="flex flex-col justify-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Fields &amp; map</p>
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    {t('grower.journey.fieldsMapKicker')}
+                  </p>
                   <Link
                     href="/grower/fields"
                     className="mt-1 text-base font-semibold text-[#23471f] underline decoration-[#2D5A27]/30 underline-offset-2 hover:decoration-[#2D5A27]"
                   >
-                    My fields
+                    {t('grower.season.linkMyFields')}
                   </Link>
-                  <p className="mt-1 text-sm text-gray-600">
-                    The grid has 12 cards; the sidebar skips duplicate headings — same journey, easier navigation.
-                  </p>
+                  <p className="mt-1 text-sm text-gray-600">{t('grower.season.fieldsMapBody')}</p>
                 </div>
               </div>
             )}

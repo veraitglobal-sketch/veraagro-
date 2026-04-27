@@ -221,7 +221,7 @@ export default function GrowerBatchesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading batches...</p>
+              <p className="mt-4 text-gray-600">{t('growerPages.loadingBatches')}</p>
             </div>
           </div>
         </SidebarLayout>
@@ -235,7 +235,7 @@ export default function GrowerBatchesPage() {
         <GrowerPageShell>
           <GrowerPageHeader
             title={t('grower.nav.myBatches')}
-            description="Track all your harvest batches and their journey to market"
+            description={t('growerPages.batchesDescription')}
             right={
               <button
                 type="button"
@@ -243,14 +243,16 @@ export default function GrowerBatchesPage() {
                 className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                {t('growerPages.filters')}
               </button>
             }
           />
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg mb-6">
-              <p className="font-medium">Error: {error}</p>
+              <p className="font-medium">
+                {t('growerPages.error')}: {error}
+              </p>
             </div>
           )}
 
@@ -260,16 +262,14 @@ export default function GrowerBatchesPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Search */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Search
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.search')}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search by batch ID, product, estate..."
+                      placeholder={t('growerPages.searchBatchesPlaceholder')}
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
@@ -277,15 +277,13 @@ export default function GrowerBatchesPage() {
 
                 {/* Status Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.status')}</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="all">All Statuses</option>
+                    <option value="all">{t('growerPages.allStatuses')}</option>
                     {uniqueStatuses.map((status) => (
                       <option key={status} value={status}>
                         {status.replace('_', ' ')}
@@ -296,15 +294,13 @@ export default function GrowerBatchesPage() {
 
                 {/* Product Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Product
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.product')}</label>
                   <select
                     value={productFilter}
                     onChange={(e) => setProductFilter(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="all">All Products</option>
+                    <option value="all">{t('growerPages.allProducts')}</option>
                     {uniqueProducts.map((product) => (
                       <option key={product} value={product}>
                         {product}
@@ -324,7 +320,7 @@ export default function GrowerBatchesPage() {
                   }}
                   className="mt-4 text-sm text-green-600 hover:text-green-700 font-medium"
                 >
-                  Clear all filters
+                  {t('growerPages.clearFilters')}
                 </button>
               )}
             </div>
@@ -334,25 +330,25 @@ export default function GrowerBatchesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-gray-900">{batches.length}</div>
-              <div className="text-sm text-gray-600 mt-1">Total Batches</div>
+              <div className="text-sm text-gray-600 mt-1">{t('growerPages.totalBatches')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-green-600">
                 {batches.filter((b) => b.status === 'HARVESTED').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Harvested</div>
+              <div className="text-sm text-gray-600 mt-1">{t('growerPages.harvested')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-blue-600">
                 {batches.filter((b) => b.status === 'IN_TRANSIT').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">In Transit</div>
+              <div className="text-sm text-gray-600 mt-1">{t('growerPages.inTransit')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-purple-600">
                 {batches.filter((b) => b.status === 'SOLD').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Sold</div>
+              <div className="text-sm text-gray-600 mt-1">{t('growerPages.sold')}</div>
             </div>
           </div>
 
@@ -393,7 +389,7 @@ export default function GrowerBatchesPage() {
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Calendar className="w-4 h-4 text-gray-400" />
                             <span>
-                              Harvested:{' '}
+                              {t('growerPages.harvestedOn')}{' '}
                               {new Date(batch.harvestDate).toLocaleDateString()}
                             </span>
                           </div>
@@ -401,15 +397,15 @@ export default function GrowerBatchesPage() {
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <MapPin className="w-4 h-4 text-gray-400" />
                             <span>
-                              {batch.estates?.name || 'N/A'}
-                              {batch.parcels && ` • ${batch.parcels.name}`}
+                              {batch.estates?.name || t('growerPages.na')}
+                              {batch.parcels?.name ? ` • ${batch.parcels.name}` : ''}
                             </span>
                           </div>
                         </div>
 
                         {batch.hubs && (
                           <div className="mt-2 text-sm text-gray-600">
-                            <span className="font-medium">Current Location:</span>{' '}
+                            <span className="font-medium">{t('growerPages.currentLocation')}</span>{' '}
                             {batch.hubs.name}
                             {batch.hubs.city && `, ${batch.hubs.city}`}
                           </div>
@@ -422,7 +418,7 @@ export default function GrowerBatchesPage() {
                           className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
                         >
                           <Eye className="w-4 h-4 mr-2" />
-                          View Details
+                          {t('growerPages.viewDetails')}
                         </button>
                       </div>
                     </div>
@@ -433,9 +429,7 @@ export default function GrowerBatchesPage() {
               <div className="text-center py-12">
                 <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 font-light">
-                  {batches.length === 0
-                    ? 'No batches yet. Create your first batch after harvest.'
-                    : 'No batches match your filters.'}
+                  {batches.length === 0 ? t('growerPages.noBatches') : t('growerPages.noBatchesFilter')}
                 </p>
               </div>
             )}

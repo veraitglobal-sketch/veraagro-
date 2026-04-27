@@ -73,7 +73,7 @@ export default function GrowerFieldsPage() {
       );
       setEstates(estatesWithParcels);
     } catch (err: any) {
-      setError(err.message || 'Failed to load fields');
+      setError(err.message || t('growerPages.loadFieldsFailed'));
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ export default function GrowerFieldsPage() {
       setNewEstateName('');
       await loadEstates();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to add field');
+      setError(err.response?.data?.message || err.message || t('growerPages.addFieldError'));
     } finally {
       setAddingEstate(false);
     }
@@ -106,7 +106,7 @@ export default function GrowerFieldsPage() {
       setNewParcelCrop('');
       await loadEstates();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to add parcel');
+      setError(err.response?.data?.message || err.message || t('growerPages.addParcelError'));
     } finally {
       setAddingParcel(null);
     }
@@ -126,7 +126,7 @@ export default function GrowerFieldsPage() {
       setPlotQr({ parcelId, ...data });
       await loadEstates();
     } catch (err: any) {
-      setPlotQrErr(err?.response?.data?.message || err?.message || 'Could not create plot QR');
+      setPlotQrErr(err?.response?.data?.message || err?.message || t('growerPages.plotQrError'));
     } finally {
       setPlotQrLoading(false);
     }
@@ -149,7 +149,7 @@ export default function GrowerFieldsPage() {
       setFormBatchParcel(null);
       window.location.href = `/grower/batches`;
     } catch (err: any) {
-      setBatchError(err.response?.data?.message || err.message || 'Failed to create batch');
+      setBatchError(err.response?.data?.message || err.message || t('growerPages.createBatchError'));
     } finally {
       setSubmittingBatch(false);
     }
@@ -161,12 +161,7 @@ export default function GrowerFieldsPage() {
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
             title={t('growerPages.fieldsParcels')}
-            description={
-              <>
-                Add parcels here; admin must approve. Each approved block gets a <strong>store QR</strong> (field story)
-                and you create a <strong>batch</strong> for packed boxes (passport QR per lot on the label).
-              </>
-            }
+            description={t('growerPages.fieldsHeaderDescription')}
           />
 
           {error && (
@@ -179,13 +174,13 @@ export default function GrowerFieldsPage() {
             </div>
           ) : estates.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
-              <p className="text-gray-600 mb-4">You have no fields yet. Add your first one.</p>
+              <p className="text-gray-600 mb-4">{t('growerPages.noFieldsYet')}</p>
               <form onSubmit={handleAddEstate} className="flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
-                  placeholder="Field name"
+                  placeholder={t('growerPages.fieldNamePlaceholder')}
                   className="px-3 py-2 border border-gray-300 rounded-lg w-56 focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
@@ -194,7 +189,7 @@ export default function GrowerFieldsPage() {
                   className="inline-flex items-center gap-1 px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  Add field
+                  {t('growerPages.addField')}
                 </button>
               </form>
             </div>
@@ -205,7 +200,7 @@ export default function GrowerFieldsPage() {
                   type="text"
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
-                  placeholder="New field name"
+                  placeholder={t('growerPages.placeholderNewField')}
                   className="px-3 py-2 border border-gray-300 rounded-lg w-48 text-sm focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
@@ -215,7 +210,7 @@ export default function GrowerFieldsPage() {
                   className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  Add field
+                  {t('growerPages.addField')}
                 </button>
               </div>
               {estates.map((estate) => (
@@ -232,14 +227,16 @@ export default function GrowerFieldsPage() {
                         className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100"
                       >
                         <div>
-                          <span className="font-medium text-gray-900">{parcel.cropType || 'Parcel'}</span>
+                          <span className="font-medium text-gray-900">
+                            {parcel.cropType || t('growerPages.fieldParcel')}
+                          </span>
                           <span className="ml-2 text-xs text-gray-500">({parcel.id.slice(0, 8)}…)</span>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-2">
                           {parcel.approvedAt ? (
                             <>
                               <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
-                                <CheckCircle className="w-3 h-3" /> Approved
+                                <CheckCircle className="w-3 h-3" /> {t('growerPages.statusApproved')}
                               </span>
                               {parcel.publicCode && (
                                 <Link
@@ -248,7 +245,7 @@ export default function GrowerFieldsPage() {
                                   rel="noopener noreferrer"
                                   className="text-xs font-medium text-gray-600 hover:text-[#2D5A27] underline"
                                 >
-                                  Public plot page
+                                  {t('growerPages.publicPlotPage')}
                                 </Link>
                               )}
                               <button
@@ -259,19 +256,19 @@ export default function GrowerFieldsPage() {
                                 title={t('growerPages.fieldQrMapTitle')}
                               >
                                 {plotQrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
-                                Store QR
+                                {t('growerPages.storeQr')}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleFormBatch(estate.id, parcel.id, estate.name, parcel.cropType || undefined)}
                                 className="text-sm font-medium text-[#2D5A27] hover:underline"
                               >
-                                Create batch
+                                {t('growerPages.createBatch')}
                               </button>
                             </>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded">
-                              <Clock className="w-3 h-3" /> Pending approval
+                              <Clock className="w-3 h-3" /> {t('growerPages.statusPending')}
                             </span>
                           )}
                         </div>
@@ -285,7 +282,7 @@ export default function GrowerFieldsPage() {
                       value={addingParcel === estate.id ? newParcelCrop : ''}
                       onChange={(e) => setNewParcelCrop(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddParcel(estate.id)}
-                      placeholder="Crop type (e.g. Raspberry)"
+                      placeholder={t('growerPages.placeholderCrop')}
                       className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-48 focus:ring-2 focus:ring-[#2D5A27]"
                     />
                     <button
@@ -295,7 +292,7 @@ export default function GrowerFieldsPage() {
                       className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                     >
                       {addingParcel === estate.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                      Add parcel
+                      {t('growerPages.addParcel')}
                     </button>
                   </div>
                 </div>
@@ -314,10 +311,8 @@ export default function GrowerFieldsPage() {
               onClick={() => setPlotQr(null)}
             >
               <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">Store / retail plot QR</h3>
-                <p className="text-xs text-gray-500 mb-3">
-                  Shoppers see this block, treatments, and links to each product lot. Put on a stand; boxes still use the batch passport QR.
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">{t('growerPages.fieldQrTitle')}</h3>
+                <p className="text-xs text-gray-500 mb-3">{t('growerPages.fieldQrHint')}</p>
                 <div className="flex justify-center p-2 bg-gray-50 rounded-lg mb-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={plotQr.qrCodeDataUrl} alt="Plot QR" className="w-48 h-48" />
@@ -329,7 +324,7 @@ export default function GrowerFieldsPage() {
                   rel="noopener noreferrer"
                   className="text-sm text-[#2D5A27] font-medium block text-center mb-4 underline"
                 >
-                  Open public page
+                  {t('growerPages.openPublicPage')}
                 </a>
                 <button
                   type="button"
@@ -341,14 +336,14 @@ export default function GrowerFieldsPage() {
                   }}
                   className="w-full py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium hover:bg-[#23471f]"
                 >
-                  Download PNG
+                  {t('growerPages.downloadPng')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setPlotQr(null)}
                   className="w-full mt-2 py-2 text-gray-600 text-sm"
                 >
-                  Close
+                  {t('common.close')}
                 </button>
               </div>
             </div>
@@ -357,13 +352,13 @@ export default function GrowerFieldsPage() {
           {formBatchParcel && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setFormBatchParcel(null)}>
               <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Create batch</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('growerPages.modalCreateBatch')}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Field: {formBatchParcel.estateName}. The parcel is approved; enter harvest details.
+                  {t('growerPages.modalCreateBatchHint', { estateName: formBatchParcel.estateName })}
                 </p>
                 <form onSubmit={handleCreateBatch} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Product *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelProduct')}</label>
                     <input
                       type="text"
                       value={batchForm.productName}
@@ -374,7 +369,7 @@ export default function GrowerFieldsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelQuantity')}</label>
                       <input
                         type="number"
                         min={0.1}
@@ -385,7 +380,7 @@ export default function GrowerFieldsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelUnit')}</label>
                       <input
                         type="text"
                         value={batchForm.unit}
@@ -395,7 +390,7 @@ export default function GrowerFieldsPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Harvest date *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelHarvestDate')}</label>
                     <input
                       type="date"
                       value={batchForm.harvestDate}
@@ -410,14 +405,14 @@ export default function GrowerFieldsPage() {
                       onClick={() => setFormBatchParcel(null)}
                       className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       disabled={submittingBatch}
                       className="flex-1 px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] disabled:opacity-50"
                     >
-                      {submittingBatch ? 'Creating…' : 'Create batch'}
+                      {submittingBatch ? t('growerPages.creating') : t('growerPages.createBatch')}
                     </button>
                   </div>
                 </form>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -166,6 +167,7 @@ function useIsMobile() {
 }
 
 export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: VeraAIChatbotProps) {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -266,12 +268,12 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
         {isMinimalInline ? (
           <>
             <Mail className="h-4 w-4" strokeWidth={1.5} />
-            <span>Get in touch</span>
+            <span>{t('chat.getInTouch')}</span>
           </>
         ) : (
           <>
             <MessageCircle className="h-5 w-5" />
-            <span>Need help?</span>
+            <span>{t('chat.needHelp')}</span>
           </>
         )}
       </motion.button>
