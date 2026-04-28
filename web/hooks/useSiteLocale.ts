@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useCallback, useMemo } from "react";
 import { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
-import { getSwitchLocaleTarget, pathnameStartsWithLocale } from "@/lib/i18n-routing";
+import { getSwitchLocaleTarget, pathnameStartsWithLocale, siteLocaleFromLanguageTag } from "@/lib/i18n-routing";
 
 function setLocaleCookieClient(locale: SiteLocale) {
   try {
@@ -26,7 +26,7 @@ export function useSiteLocale() {
   const current: SiteLocale = useMemo(() => {
     const fromUrl = pathnameStartsWithLocale(pathname);
     if (fromUrl) return fromUrl;
-    return i18n.resolvedLanguage?.startsWith("sr") ? "sr" : "en";
+    return siteLocaleFromLanguageTag(i18n.resolvedLanguage);
   }, [pathname, i18n.resolvedLanguage]);
 
   const applyLocale = useCallback(

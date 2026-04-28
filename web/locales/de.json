@@ -3,12 +3,12 @@
     "name": "Bio Vera"
   },
   "locale": {
-    "aria": "Language",
+    "aria": "Sprache",
     "enShort": "EN",
     "srShort": "SR",
     "deShort": "DE",
-    "pickerAria": "Choose language",
-    "nameEn": "English",
+    "pickerAria": "Sprache wählen",
+    "nameEn": "Englisch",
     "nameSr": "Srpski",
     "nameDe": "Deutsch"
   },
@@ -38,31 +38,31 @@
     "terms": "Terms"
   },
   "languagePage": {
-    "eyebrow": "Settings",
-    "title": "Language & region",
-    "intro": "Choose how Bio Vera speaks to you on this website. We save your choice in the browser (cookie) so the next visit stays consistent. The same options are in the top bar; here you can read what each language is for and switch in one place — same clean Vera look as our legal cards.",
-    "sectionTitle": "Available languages",
-    "sectionSubtitle": "Pick the language you understand best for public pages, help text, and buttons.",
-    "activeBadge": "Active",
-    "useThisLanguage": "Use this language",
-    "alreadyUsing": "Currently active",
-    "futureNote": "We may add further locales as we enter new markets. If you need a specific language for contracts or partner onboarding, tell us — German, English, and Serbian already cover our EU operations and regional growers.",
-    "cardLinkTitle": "Language & region",
-    "cardLinkBody": "Choose English, Serbian, or German for the site. Your choice is remembered for the next visit.",
-    "backToLegal": "Legal information",
-    "backHome": "Home",
+    "eyebrow": "Einstellungen",
+    "title": "Sprache und Region",
+    "intro": "Legen Sie hier fest, in welcher Sprache Bio Vera diese Website zeigt. Ihre Auswahl wird im Browser gespeichert (Cookie), damit der nächste Besuch gleich weitergeht — dieselben Optionen gibt es oben in der Leiste.",
+    "sectionTitle": "Verfügbare Sprachen",
+    "sectionSubtitle": "Wählen Sie die Sprache, die Sie für Hilfetexte und Schaltflächen am besten lesen können.",
+    "activeBadge": "Aktiv",
+    "useThisLanguage": "Diese Sprache nutzen",
+    "alreadyUsing": "Bereits aktiv",
+    "futureNote": "Weitere Sprachen können folgen. Für Verträge oder Partner-Onboarding: melden Sie sich — Deutsch, Englisch und Serbisch decken unser Geschäft in der EU und mit regionalen Produzenten bereits ab.",
+    "cardLinkTitle": "Sprache und Region",
+    "cardLinkBody": "Wählen Sie Englisch, Serbisch oder Deutsch. Ihre Auswahl wird für den nächsten Besuch gespeichert.",
+    "backToLegal": "Rechtliches",
+    "backHome": "Start",
     "locales": {
       "en": {
         "title": "English",
-        "body": "Full interface in English: marketing pages, help, and account screens where English is the primary copy. Best if your team, buyers, or auditors work in English."
+        "body": "Vollständige Oberfläche auf Englisch: Marketing, Hilfe und Konten ohne Übersetzung. Ideal wenn Ihr Team, Einkauf oder Auditor primär auf Englisch arbeitet."
       },
       "sr": {
         "title": "Srpski",
-        "body": "Ceo javni deo i formulari na srpskom, u skladu sa proširenjem na tržište i proizvođače u regionu. Izbor se pamti i na sledećem posetu ostaje isti."
+        "body": "Serbisches Interface für Produzentinnen und Produzenten am Balkan, mit denselben Inhalten wie die übrigen Lokalisierungen. Die Auswahl bleibt beim nächsten Aufruf erhalten."
       },
       "de": {
         "title": "Deutsch",
-        "body": "Full German interface for our Hamburg HQ, audits, procurement, and day-to-day operations in Germany and the EU Single Market. Mirrors how we coordinate buyers, hubs, and compliance on the ground."
+        "body": "Vollständige Oberfläche auf Deutsch für unser Geschäfts- und Kontrollzentrum in Hamburg: Einkauf, audits, operative Koordination in Deutschland und auf dem EU-Binnenmarkt."
       }
     }
   },
@@ -313,7 +313,7 @@
       "Headquarters: Hamburg, Germany."
     ],
     "keyFactsTitle": "Key facts (at a glance)",
-    "keyFactsAccordionLabel": "Key facts",
+    "keyFactsAccordionLabel": "Kernangaben",
     "keyFacts": [
       "Registered agricultural brand with an integrated system from parcel to shelf-ready packs.",
       "One digital dossier aligning production sourcing and onward distribution workflows.",

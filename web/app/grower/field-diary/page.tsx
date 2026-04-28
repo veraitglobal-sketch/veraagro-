@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -112,7 +113,7 @@ export default function GrowerFieldDiaryPage() {
   const formatWhen = useCallback(
     (iso: string) => {
       try {
-        const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+        const tag = dateIntlLocaleFromLanguageTag(i18n.language);
         return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
       } catch {
         return iso;

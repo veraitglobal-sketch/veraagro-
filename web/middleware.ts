@@ -16,7 +16,7 @@ const LOCALE_COOKIE = "biovera-locale";
  */
 function preferredLocale(request: NextRequest): SiteLocale {
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
-  if (cookie === "sr" || cookie === "en") return cookie;
+  if (cookie === "sr" || cookie === "en" || cookie === "de") return cookie;
   return "en";
 }
 

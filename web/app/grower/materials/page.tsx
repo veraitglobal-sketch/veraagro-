@@ -9,6 +9,7 @@ import Link from 'next/link';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 function messageFromApiPayload(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
@@ -78,7 +79,7 @@ export default function GrowerMaterialsPage() {
       if (iso == null) return '—';
       const d = new Date(iso);
       if (Number.isNaN(d.getTime())) return '—';
-      const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+      const tag = dateIntlLocaleFromLanguageTag(i18n.language);
       return d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
     },
     [i18n.language],

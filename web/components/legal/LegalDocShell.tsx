@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Footer from '@/components/Footer';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
+import de from '@/locales/de.json';
 
 type Props = {
   locale: string;
@@ -11,8 +12,10 @@ type Props = {
 
 /** Server shell for legal pages ([locale]/privacy, cookies, terms). */
 export function LegalDocShell({ locale, children }: Props) {
-  const strings = locale === 'sr' ? sr : en;
-  const base = locale === 'sr' || locale.startsWith('sr') ? `/sr` : `/en`;
+  const isSr = locale === 'sr' || locale.startsWith('sr');
+  const isDe = locale === 'de' || locale.startsWith('de');
+  const strings = isSr ? sr : isDe ? de : en;
+  const base = isSr ? `/sr` : isDe ? `/de` : `/en`;
 
   return (
     <div className="min-h-screen bg-white">

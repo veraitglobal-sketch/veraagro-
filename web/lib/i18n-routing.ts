@@ -55,10 +55,35 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "coordinator",
 ]);
 
-export const siteLocales = ["en", "sr"] as const satisfies readonly SiteLocale[];
+export const siteLocales = ["en", "sr", "de"] as const satisfies readonly SiteLocale[];
 
 export function isSiteLocale(v: string): v is SiteLocale {
-  return v === "en" || v === "sr";
+  return v === "en" || v === "sr" || v === "de";
+}
+
+/** Map i18next language tag to canonical site locale (URL prefix + cookie). */
+export function siteLocaleFromLanguageTag(tag: string | undefined): SiteLocale {
+  if (!tag) return "en";
+  const lower = tag.toLowerCase();
+  if (lower.startsWith("sr")) return "sr";
+  if (lower.startsWith("de")) return "de";
+  return "en";
+}
+
+/** `Intl` / `toLocaleDateString` tag for field copy (dates in UI). */
+export function dateIntlLocaleFromLanguageTag(tag: string | undefined): string {
+  const loc = siteLocaleFromLanguageTag(tag);
+  if (loc === "sr") return "sr-Latn";
+  if (loc === "de") return "de-DE";
+  return "en-GB";
+}
+
+/** Locale for number/currency-style formatting (e.g. sr-RS, de-DE). */
+export function numberIntlLocaleFromLanguageTag(tag: string | undefined): string {
+  const loc = siteLocaleFromLanguageTag(tag);
+  if (loc === "sr") return "sr-RS";
+  if (loc === "de") return "de-DE";
+  return "en-US";
 }
 
 /**
@@ -71,7 +96,7 @@ export function pathIsUnderPressPublicAssets(pathname: string): boolean {
 
 export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   const seg = pathname.split("/").filter(Boolean)[0];
-  if (seg === "en" || seg === "sr") return seg;
+  if (seg === "en" || seg === "sr" || seg === "de") return seg;
   return null;
 }
 

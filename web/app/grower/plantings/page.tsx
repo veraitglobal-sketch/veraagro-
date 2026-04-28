@@ -9,6 +9,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '@/lib/api';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import { Leaf, Loader2, Sprout, Wheat } from 'lucide-react';
 
 type EstateRow = { id: string; name: string };
@@ -78,7 +79,7 @@ export default function GrowerPlantingsPage() {
   const formatDate = useCallback(
     (iso: string) => {
       try {
-        const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+        const tag = dateIntlLocaleFromLanguageTag(i18n.language);
         return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
       } catch {
         return iso;

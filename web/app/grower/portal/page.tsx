@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -123,7 +124,7 @@ export default function GrowerPortalPage() {
     if (iso == null) return '';
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '';
-    const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+    const tag = dateIntlLocaleFromLanguageTag(i18n.language);
     return dateOnly
       ? d.toLocaleDateString(tag, { dateStyle: 'medium' })
       : d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });

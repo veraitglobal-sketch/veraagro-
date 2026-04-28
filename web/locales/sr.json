@@ -6,9 +6,11 @@
     "aria": "Jezik",
     "enShort": "EN",
     "srShort": "SR",
+    "deShort": "DE",
     "pickerAria": "Izaberite jezik",
     "nameEn": "English",
-    "nameSr": "Srpski"
+    "nameSr": "Srpski",
+    "nameDe": "Deutsch"
   },
   "footer": {
     "tagline": "Vertikalno povezana poljoprivredna mreža za Bio-Ready sertifikaciju i usklađenost sa EU tržištem.",
@@ -46,7 +48,7 @@
     "alreadyUsing": "Trenutno je izabrano",
     "futureNote": "Ovde će se pojavljivati i drugi jezici kako širimo tržišta. Ako vam treba poseban jezik za ugovor ili partnera, javite nam se — proširenje radimo postepeno.",
     "cardLinkTitle": "Jezik i region",
-    "cardLinkBody": "Izaberite engleski ili srpski za sajt. Izbor se pamti za sledeći dolazak.",
+    "cardLinkBody": "Izaberite engleski, srpski ili nemački za sajt. Izbor se pamti za sledeći dolazak.",
     "backToLegal": "Pravne informacije",
     "backHome": "Početna",
     "locales": {
@@ -57,6 +59,10 @@
       "sr": {
         "title": "Srpski",
         "body": "Javni deo sajta i formulari na srpskom, u skladu sa proizvođačima i tržištem u regionu. Izbor se pamti i pri sledećem posetu ostaje isti."
+      },
+      "de": {
+        "title": "Deutsch",
+        "body": "Kompletan interfejs na nemačkom za Hamburg, revizije, nabavku i svakodnevne operacije u Nemačkoj i EU jedinstvenom tržištu — u skladu sa centrima poslovanja i saradnjom sa kupcima."
       }
     }
   },
@@ -307,6 +313,7 @@
       "Sedište kompanije nalazi se u Hamburgu, Nemačka."
     ],
     "keyFactsTitle": "Ključne činjenice (jednim pogledom)",
+    "keyFactsAccordionLabel": "Ključne činjenice",
     "keyFacts": [
       "Registrovani poljoprivredni brend sa integrisanim sistemom od parcele do proizvoda na polici.",
       "Jedinstven digitalni trag koji povezuje proizvodnju, nabavku i distribuciju.",

@@ -7,11 +7,12 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { partnerApplicationsAPI } from '@/lib/api';
+import { numberIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 function StatusInner() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
-  const numLocale = i18n.language?.startsWith('sr') ? 'sr-RS' : 'en-US';
+  const numLocale = numberIntlLocaleFromLanguageTag(i18n.language);
   const search = useSearchParams();
   const initial = search.get('ref') || '';
   const [code, setCode] = useState(initial);

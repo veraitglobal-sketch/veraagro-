@@ -8,6 +8,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 import { logisticsPartnerAPI, submitApplicationForm } from '@/lib/api';
+import { numberIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 type TitleBody = { title: string; body: string };
 type ResourceRow = { id: string; title: string; description: string; type: string; size: string };
@@ -68,7 +69,7 @@ function isResourceItems(x: unknown): x is ResourceRow[] {
 export default function LogisticsPartnerPage() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
-  const numLocale = i18n.language?.startsWith('sr') ? 'sr-RS' : 'en-US';
+  const numLocale = numberIntlLocaleFromLanguageTag(i18n.language);
 
   const requirementItems = useMemo(() => {
     const raw = t('logisticsPartnerPage.requirementItems', { returnObjects: true });

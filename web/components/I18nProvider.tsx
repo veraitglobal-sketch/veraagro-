@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import i18n, { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
 
 function syncDocumentLang(lng: string) {
-  const short = lng.startsWith("sr") ? "sr" : "en";
+  let htmlLang = "en";
+  if (lng.startsWith("sr")) htmlLang = "sr-Latn";
+  else if (lng.startsWith("de")) htmlLang = "de";
   if (typeof document !== "undefined") {
-    document.documentElement.lang = short === "sr" ? "sr-Latn" : "en";
+    document.documentElement.lang = htmlLang;
   }
 }
 
@@ -15,7 +17,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LOCALE_STORAGE_KEY) as SiteLocale | null;
-      if (stored === "sr" || stored === "en") {
+      if (stored === "sr" || stored === "en" || stored === "de") {
         void i18n.changeLanguage(stored);
       }
     } catch {
