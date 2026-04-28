@@ -7,10 +7,12 @@
     "enShort": "EN",
     "srShort": "SR",
     "deShort": "DE",
+    "roShort": "RO",
     "pickerAria": "Izaberite jezik",
     "nameEn": "English",
     "nameSr": "Srpski",
-    "nameDe": "Deutsch"
+    "nameDe": "Deutsch",
+    "nameRo": "Română"
   },
   "footer": {
     "tagline": "Vertikalno povezana poljoprivredna mreža za Bio-Ready sertifikaciju i usklađenost sa EU tržištem.",
@@ -48,7 +50,7 @@
     "alreadyUsing": "Trenutno je izabrano",
     "futureNote": "Ovde će se pojavljivati i drugi jezici kako širimo tržišta. Ako vam treba poseban jezik za ugovor ili partnera, javite nam se — proširenje radimo postepeno.",
     "cardLinkTitle": "Jezik i region",
-    "cardLinkBody": "Izaberite engleski, srpski ili nemački za sajt. Izbor se pamti za sledeći dolazak.",
+    "cardLinkBody": "Izaberite engleski, srpski, nemački ili rumunski za sajt. Izbor se pamti za sledeći dolazak.",
     "backToLegal": "Pravne informacije",
     "backHome": "Početna",
     "locales": {
@@ -63,6 +65,10 @@
       "de": {
         "title": "Deutsch",
         "body": "Kompletan interfejs na nemačkom za Hamburg, revizije, nabavku i svakodnevne operacije u Nemačkoj i EU jedinstvenom tržištu — u skladu sa centrima poslovanja i saradnjom sa kupcima."
+      },
+      "ro": {
+        "title": "Română",
+        "body": "Kompletan interfejs na rumunskom za proizvođače i partnere koji rade rumunski, kao i za reviziore na tržištima Rumunije šireg EU koridora — ista struktura tragljivosti i Vera raspored kao na drugim jezicima."
       }
     }
   },

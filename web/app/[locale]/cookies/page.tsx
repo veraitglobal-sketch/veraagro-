@@ -1,6 +1,7 @@
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
+import ro from '@/locales/ro.json';
 import { LegalDocShell } from '@/components/legal/LegalDocShell';
 import { LegalMarkdownBody } from '@/components/legal/LegalMarkdownBody';
 import { loadLegalMarkdown } from '@/lib/legal-markdown';
@@ -13,7 +14,9 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
       ? sr.legalDocsMeta
       : locale === 'de' || locale.startsWith('de')
         ? de.legalDocsMeta
-        : en.legalDocsMeta;
+        : locale === 'ro'
+          ? ro.legalDocsMeta
+          : en.legalDocsMeta;
 
   return (
     <LegalDocShell locale={locale}>

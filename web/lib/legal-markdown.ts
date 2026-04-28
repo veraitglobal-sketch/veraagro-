@@ -19,6 +19,7 @@ export async function loadLegalMarkdown(slug: LegalSlug, locale: string): Promis
   const lc = locale.toLowerCase();
   const isSr = lc === 'sr' || lc.startsWith('sr');
   const isDe = lc === 'de' || lc.startsWith('de');
+  const isRo = lc === 'ro' || lc.startsWith('ro-');
 
   if (isSr) {
     const srMd = await readMarkdownFile(`${slug}.sr.md`);
@@ -26,6 +27,9 @@ export async function loadLegalMarkdown(slug: LegalSlug, locale: string): Promis
   } else if (isDe) {
     const deMd = await readMarkdownFile(`${slug}.de.md`);
     if (deMd !== null) return deMd;
+  } else if (isRo) {
+    const roMd = await readMarkdownFile(`${slug}.ro.md`);
+    if (roMd !== null) return roMd;
   }
 
   const enMd = await readMarkdownFile(`${slug}.en.md`);

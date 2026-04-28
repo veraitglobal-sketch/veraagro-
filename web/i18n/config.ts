@@ -3,18 +3,23 @@ import { initReactI18next } from "react-i18next";
 import en from "../locales/en.json";
 import sr from "../locales/sr.json";
 import de from "../locales/de.json";
+import ro from "../locales/ro.json";
 import growerJourneyEn from "../locales/grower-journey.en.json";
 import growerJourneySr from "../locales/grower-journey.sr.json";
 import growerJourneyDe from "../locales/grower-journey.de.json";
+import growerJourneyRo from "../locales/grower-journey.ro.json";
 import suppliersPageEn from "../locales/suppliers-page.en.json";
 import suppliersPageSr from "../locales/suppliers-page.sr.json";
 import suppliersPageDe from "../locales/suppliers-page.de.json";
+import suppliersPageRo from "../locales/suppliers-page.ro.json";
 import buyerRetailEn from "../locales/buyer-retail.en.json";
 import buyerRetailSr from "../locales/buyer-retail.sr.json";
 import buyerRetailDe from "../locales/buyer-retail.de.json";
+import buyerRetailRo from "../locales/buyer-retail.ro.json";
 import passportPublicEn from "../locales/passport-public.en.json";
 import passportPublicSr from "../locales/passport-public.sr.json";
 import passportPublicDe from "../locales/passport-public.de.json";
+import passportPublicRo from "../locales/passport-public.ro.json";
 
 const enWithJourney = {
   ...en,
@@ -46,6 +51,16 @@ const deWithJourney = {
     journey: growerJourneyDe,
   },
 };
+const roWithJourney = {
+  ...ro,
+  suppliersPage: suppliersPageRo,
+  buyerRetail: buyerRetailRo,
+  passportPublic: passportPublicRo,
+  grower: {
+    ...ro.grower,
+    journey: growerJourneyRo,
+  },
+};
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
@@ -54,10 +69,11 @@ if (!i18n.isInitialized) {
       en: { translation: enWithJourney },
       sr: { translation: srWithJourney },
       de: { translation: deWithJourney },
+      ro: { translation: roWithJourney },
     },
     lng: "en",
     fallbackLng: "en",
-    supportedLngs: ["en", "sr", "de"],
+    supportedLngs: ["en", "sr", "de", "ro"],
     interpolation: { escapeValue: true },
   });
 }
@@ -65,4 +81,4 @@ if (!i18n.isInitialized) {
 export default i18n;
 
 export const LOCALE_STORAGE_KEY = "biovera-locale";
-export type SiteLocale = "en" | "sr" | "de";
+export type SiteLocale = "en" | "sr" | "de" | "ro";

@@ -26,7 +26,13 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
   };
 
   const currentLabel =
-    current === "sr" ? t("locale.nameSr") : current === "de" ? t("locale.nameDe") : t("locale.nameEn");
+    current === "sr"
+      ? t("locale.nameSr")
+      : current === "de"
+        ? t("locale.nameDe")
+        : current === "ro"
+          ? t("locale.nameRo")
+          : t("locale.nameEn");
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -39,7 +45,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
         aria-label={t("locale.pickerAria")}
       >
         <Globe className="h-3.5 w-3.5 text-[#2D5A27]" aria-hidden />
-        <span className="tabular-nums">{current === "sr" ? t("locale.nameSr") : t("locale.nameEn")}</span>
+        <span className="tabular-nums">{currentLabel}</span>
       </button>
       {open && (
         <ul
@@ -71,6 +77,15 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
               onClick={() => onPick("de")}
             >
               {t("locale.nameDe")}
+            </button>
+          </li>
+          <li role="option">
+            <button
+              type="button"
+              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "ro" ? "font-semibold text-[#2D5A27]" : ""}`}
+              onClick={() => onPick("ro")}
+            >
+              {t("locale.nameRo")}
             </button>
           </li>
         </ul>

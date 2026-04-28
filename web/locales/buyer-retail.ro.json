@@ -1,0 +1,43 @@
+{
+  "shop": {
+    "navOrders": "My Orders",
+    "cartLabel": "Cart ({{count}})",
+    "welcome": "Welcome, {{name}}!",
+    "guestName": "Customer",
+    "categories": {
+      "fruits": "Fruits",
+      "vegetables": "Vegetables",
+      "grains": "Grains"
+    },
+    "producerBadge": "VERA PRODUCER",
+    "unknownRegion": "Unknown Region",
+    "productFallback": "Bio Vera product",
+    "organicFallback": "Organic product",
+    "priceNa": "N/A",
+    "unitKg": "kg",
+    "addToCart": "Add to cart",
+    "cartTitle": "Cart ({{count}})",
+    "orderCta": "Order ({{total}} EUR)",
+    "orderCreated": "Order created!",
+    "orderFailed": "Error creating order"
+  },
+  "orders": {
+    "navShop": "Shop",
+    "title": "My Orders",
+    "orderPrefix": "Order #",
+    "productFallback": "Product",
+    "total": "Total:",
+    "paymentLabel": "Payment:",
+    "paymentRefLead": "use order reference",
+    "paymentRefTrail": "on your bank transfer. Full IBAN details are in the",
+    "buyerPortalLink": "buyer portal",
+    "paymentTailConfigured": " or see details configured for this site.",
+    "paymentTailContact": " (or contact us for account details).",
+    "invoicePrefix": "Invoice {{number}}",
+    "downloadPdf": "Download PDF",
+    "invoiceHistory": "Invoice history",
+    "invoiceDownloadFail": "Could not download invoice. Open the buyer portal → Invoices.",
+    "empty": "You have no orders yet.",
+    "startShopping": "Start shopping →"
+  }
+}

@@ -7,10 +7,12 @@
     "enShort": "EN",
     "srShort": "SR",
     "deShort": "DE",
+    "roShort": "RO",
     "pickerAria": "Sprache wählen",
     "nameEn": "Englisch",
     "nameSr": "Srpski",
-    "nameDe": "Deutsch"
+    "nameDe": "Deutsch",
+    "nameRo": "Rumänisch"
   },
   "footer": {
     "tagline": "Ein vertikal integriertes landwirtschaftliches Netzwerk für Bio-Ready-Zertifizierung und EU-Marktkonformität.",
@@ -46,9 +48,9 @@
     "activeBadge": "Aktiv",
     "useThisLanguage": "Benutzen Sie diese Sprache",
     "alreadyUsing": "Derzeit aktiv",
-    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Deutsch, Englisch und Serbisch decken bereits unsere EU-Aktivitäten und regionalen Erzeuger ab.",
+    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch und Rumänisch decken unsere EU-Aktivitäten und regionalen Erzeuger in großem Umfang ab.",
     "cardLinkTitle": "Sprache & Region",
-    "cardLinkBody": "Wählen Sie Englisch, Serbisch oder Deutsch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
+    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch oder Rumänisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
     "backToLegal": "Rechtliche Informationen",
     "backHome": "Startseite",
     "locales": {
@@ -63,6 +65,10 @@
       "de": {
         "title": "Deutsch",
         "body": "Vollständige deutsche Schnittstelle für unsere Hamburger Zentrale, Audits, Beschaffung und den täglichen Betrieb in Deutschland und im EU-Binnenmarkt. Spiegelt die Art und Weise wider, wie wir Käufer, Hubs und Compliance vor Ort koordinieren."
+      },
+      "ro": {
+        "title": "Rumänisch",
+        "body": "Vollständige rumänische Oberfläche für Erzeugende und Partner, die rumänisch arbeiten, sowie für Prüfinstanzen auf den Märkten Rumäniens und breiter EU-Korridore — dieselbe Nachverfolgbarkeit und Vera-Struktur wie in Englisch und Serbisch."
       }
     }
   },

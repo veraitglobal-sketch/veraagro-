@@ -11,7 +11,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",
-    "translate:de": "node scripts/translate-en-to-de.mjs"
+    "translate:de": "TRANSLATE_TO=de node scripts/translate-en-locale.mjs",
+    "translate:ro": "TRANSLATE_TO=ro node scripts/translate-en-locale.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
