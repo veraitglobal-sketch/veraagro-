@@ -293,11 +293,19 @@
     "readFullRelease": "Read full release",
     "expandRelease": "Read more",
     "collapseRelease": "Show less",
+    "expandPreviewHint": "Further paragraphs, long quotes and closing notes are available in full on the dedicated release page.",
     "releaseBackToKit": "← Back to Press kit",
     "releaseEyebrow": "Press release",
     "sectionCompany": "About Bio Vera",
     "aboutTitle": "How the company explains its model to editors",
-    "aboutText": "HAMBURG, Germany. When Bio Vera refers to a vertical agricultural network it does not mean another layer that connects growers and shoppers through loosely tied channels. Bio Vera presents itself as one integrated operating model whose steps—from cultivation to the labelled pack on shelf—sit inside a single documented system. Registered as an agricultural brand, the company maintains a contiguous production trace from cultivation rules through to shelf-facing goods so every downstream step—including sourcing—rides the same system: clear, joined-up and transparent. Key inputs—including seed, packaging and anything the approved worksheet names—route through contracted suppliers organised locally or, where economies demand it, at regional hubs. Procurement runs through the Bio Vera application: each purchase connects to crop-cycle records so supply-side entries track field activity. Packing carries a Bio Vera badge bearing a QR shortcut; scanning opens the product passport spanning production cues, farmer identity, lifecycle logs and QA checkpoints reachable to shoppers and supervisory bodies wherever statute requires transparency. Backend systems capture activity digitally; where configuration allows it, batch evidence may optionally publish to public verification networks such as the Polygon ledger per internal Bio Vera operations documents. Headquarters: Hamburg, Germany.",
+    "aboutParagraphs": [
+      "HAMBURG, Germany. When Bio Vera refers to a vertical agricultural network it does not mean another layer that connects growers and shoppers through loosely tied channels. Bio Vera presents itself as one integrated operating model whose steps—from cultivation to the labelled pack on shelf—sit inside a single documented system.",
+      "Registered as an agricultural brand, the company maintains a contiguous production trace from cultivation rules through to shelf-facing goods so every downstream step—including sourcing—rides the same system: clear, joined-up and transparent.",
+      "Key inputs—including seed, packaging and anything the approved worksheet names—route through contracted suppliers organised locally or, where economies demand it, at regional hubs. Procurement runs through the Bio Vera application: each purchase connects to crop-cycle records so supply-side entries track field activity.",
+      "Packing carries a Bio Vera badge bearing a QR shortcut; scanning opens the product passport spanning production cues, farmer identity, lifecycle logs and QA checkpoints reachable to shoppers and supervisory bodies wherever statute requires transparency.",
+      "Backend systems capture activity digitally; where configuration allows it, batch evidence may optionally publish to public verification networks such as the Polygon ledger per internal Bio Vera operations documents.",
+      "Headquarters: Hamburg, Germany."
+    ],
     "keyFactsTitle": "Key facts (at a glance)",
     "keyFacts": [
       "Registered agricultural brand with an integrated system from parcel to shelf-ready packs.",
@@ -473,6 +481,68 @@
         ]
       }
     ]
+  },
+  "protocol360Page": {
+    "documentTitle": "Protocol 360 – Quality, traceability & compliance | Bio Vera",
+    "loading": "Loading Protocol 360…",
+    "suspenseLoading": "Loading…",
+    "batchLabel": "Batch:",
+    "qualityControlStatus": "Quality control status",
+    "loadingStatus": "Loading status…",
+    "threeTierSystem": "Three-tier quality control system",
+    "standardsBeyond": "Standards beyond expectation",
+    "brandingSlogans": "Bio Vera branding slogans",
+    "everyUnit": "Every unit a masterpiece",
+    "checkStatus": "To check Protocol 360 status for a specific batch, add",
+    "toTheUrl": "to the URL.",
+    "backToHome": "Back to Home",
+    "home": "Home",
+    "errorLoading": "Failed to load Protocol 360 status.",
+    "premiumQuality": "Premium quality assurance",
+    "brandingSloganLabel": "Branding slogan:",
+    "location": "Location:",
+    "qualityChecks": "Quality checks:",
+    "level": "Level",
+    "status": {
+      "APPROVED": "APPROVED",
+      "CLASS_B": "CLASS B",
+      "REJECTED": "REJECTED",
+      "PENDING": "PENDING",
+      "PASS": "PASS",
+      "FAIL": "FAIL"
+    },
+    "levels": {
+      "level1": {
+        "name": "Eco-Safe Audit",
+        "location": "Field",
+        "checks": {
+          "heavyMetals": "Heavy metals absence",
+          "nitrates": "Nitrate levels",
+          "phValue": "pH value",
+          "moisture": "Moisture levels (48h before harvest)"
+        }
+      },
+      "level2": {
+        "name": "Biometric & visual scan",
+        "location": "Packaging centre",
+        "checks": {
+          "calibration": "Calibration (size)",
+          "firmness": "Fruit firmness",
+          "filmIntegrity": "Film integrity",
+          "colorDeviation": "Colour deviation (<5%)"
+        }
+      },
+      "level3": {
+        "name": "Logistics Guard",
+        "location": "Transport & storage",
+        "checks": {
+          "temperature": "Temperature range (2–8°C)",
+          "thermalShock": "Thermal shock detection",
+          "coldChain": "Cold chain continuity",
+          "alertSystem": "Automatic alert system"
+        }
+      }
+    }
   },
   "loginPage": {
     "title": "Sign in",

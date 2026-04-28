@@ -5,68 +5,16 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, XCircle, AlertCircle, Clock, Shield, Eye, Truck, Award } from 'lucide-react';
 import { qualityControlLevelsAPI } from '@/lib/api';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
-const translations = {
-    loading: 'Loading Protocol 360...',
-    batchLabel: 'Batch:',
-    qualityControlStatus: 'Quality Control Status',
-    loadingStatus: 'Loading status...',
-    threeTierSystem: 'Three-Tier Quality Control System',
-    standardsBeyond: 'Standards beyond expectation',
-    brandingSlogans: 'Bio Vera Branding Slogans',
-    everyUnit: 'Every unit a masterpiece',
-    checkStatus: 'To check Protocol 360 status for a specific batch, add',
-    toTheUrl: 'to the URL',
-    backToHome: 'Back to Home',
-    home: 'Home',
-    errorLoading: 'Failed to load Protocol 360 status',
-    premiumQuality: 'Premium Quality Assurance',
-    brandingSloganLabel: 'Branding Slogan:',
-    location: 'Location:',
-    qualityChecks: 'Quality Checks:',
-    level: 'Level',
-    status: {
-      APPROVED: 'APPROVED',
-      CLASS_B: 'CLASS B',
-      REJECTED: 'REJECTED',
-      PENDING: 'PENDING',
-      PASS: 'PASS',
-      FAIL: 'FAIL',
-    },
-    levels: {
-      level1: {
-        name: 'Eco-Safe Audit',
-        location: 'Field',
-        checks: {
-          heavyMetals: 'Heavy metals absence',
-          nitrates: 'Nitrate levels',
-          phValue: 'PH value',
-          moisture: 'Moisture levels (48h before harvest)',
-        },
-      },
-      level2: {
-        name: 'Biometric & Visual Scan',
-        location: 'Packaging Center',
-        checks: {
-          calibration: 'Calibration (size)',
-          firmness: 'Fruit firmness',
-          filmIntegrity: 'Film integrity',
-          colorDeviation: 'Color deviation (<5%)',
-        },
-      },
-      level3: {
-        name: 'Logistics Guard',
-        location: 'Transport & Storage',
-        checks: {
-          temperature: 'Temperature range (2-8°C)',
-          thermalShock: 'Thermal shock detection',
-          coldChain: 'Cold chain continuity',
-          alertSystem: 'Automatic alert system',
-        },
-      },
-    },
+/** Index order must match `/quality-control-levels/protocol-360` static level.checks[]. */
+const STATIC_CHECK_KEYS: Record<number, readonly string[]> = {
+  1: ['heavyMetals', 'nitrates', 'phValue', 'moisture'],
+  2: ['calibration', 'firmness', 'filmIntegrity', 'colorDeviation'],
+  3: ['temperature', 'thermalShock', 'coldChain', 'alertSystem'],
 };
 
 interface QualityControlLevel {
@@ -93,12 +41,39 @@ interface Protocol360Status {
 
 function Protocol360Content() {
   const searchParams = useSearchParams();
+  const { t, i18n } = useTranslation();
+  const loc = useLocalizedHref();
   const batchId = searchParams.get('batchId');
   const [protocolInfo, setProtocolInfo] = useState<any>(null);
   const [status, setStatus] = useState<Protocol360Status | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const t = translations;
+
+  const tp = (key: string, options?: Record<string, string | number>) =>
+    t(`protocol360Page.${key}`, options);
+
+  const translateQCStatus = (code: string) => {
+    const k = `protocol360Page.status.${code}`;
+    const out = t(k);
+    return out === k ? code : out;
+  };
+
+  const localizedStaticCheck = (levelNum: number, idx: number, fallback: string) => {
+    const keys = STATIC_CHECK_KEYS[levelNum];
+    const ck = keys?.[idx];
+    if (!ck) return fallback;
+    return t(`protocol360Page.levels.level${levelNum}.checks.${ck}` as const);
+  };
+
+  const localizedLevelName = (levelNum: number, fallback: string) => {
+    if (levelNum < 1 || levelNum > 3) return fallback;
+    return t(`protocol360Page.levels.level${levelNum}.name` as const);
+  };
+
+  const localizedLevelLocation = (levelNum: number, fallback: string) => {
+    if (levelNum < 1 || levelNum > 3) return fallback;
+    return t(`protocol360Page.levels.level${levelNum}.location` as const);
+  };
 
   useEffect(() => {
     loadProtocolInfo();
@@ -108,6 +83,11 @@ function Protocol360Content() {
       setLoading(false);
     }
   }, [batchId]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.title = t('protocol360Page.documentTitle');
+  }, [t, i18n.language]);
 
   const loadProtocolInfo = async () => {
     try {
@@ -126,7 +106,7 @@ function Protocol360Content() {
       setStatus(data);
       setError('');
     } catch (err: any) {
-      setError(err.response?.data?.message || t.errorLoading);
+      setError(err.response?.data?.message || tp('errorLoading'));
       console.error('Error loading status:', err);
     } finally {
       setLoading(false);
@@ -185,7 +165,7 @@ function Protocol360Content() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t.loading}</p>
+          <p className="mt-4 text-gray-600">{tp('loading')}</p>
         </div>
       </div>
     );
@@ -197,10 +177,10 @@ function Protocol360Content() {
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Image
                 src="/logo1.png"
-                alt="Bio Vera"
+                alt={t('footer.logoAlt')}
                 width={56}
                 height={20}
                 className="h-4 w-auto"
@@ -208,8 +188,8 @@ function Protocol360Content() {
               />
             </Link>
             <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                {t.home}
+              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
+                {tp('home')}
               </Link>
             </nav>
           </div>
@@ -240,7 +220,7 @@ function Protocol360Content() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium mb-8 shadow-md"
             >
               <Award className="w-4 h-4" />
-              <span>{t.premiumQuality}</span>
+              <span>{tp('premiumQuality')}</span>
             </motion.div>
 
             {/* Protocol 360 Title */}
@@ -249,7 +229,7 @@ function Protocol360Content() {
             </h1>
             
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-              {t.threeTierSystem}
+              {tp('threeTierSystem')}
             </p>
             
             {status && (
@@ -267,13 +247,13 @@ function Protocol360Content() {
                   <div className="flex items-center gap-2">
                     {getStatusIcon(status.overallStatus)}
                     <span className="font-medium text-sm">
-                      {t.status[status.overallStatus as keyof typeof t.status] || status.overallStatus}
+                      {translateQCStatus(status.overallStatus)}
                     </span>
                   </div>
                 </div>
                 {status.brandingSlogan && (
                   <div className="text-gray-600">
-                    <p className="text-sm font-light">{t.brandingSloganLabel}</p>
+                    <p className="text-sm font-light">{tp('brandingSloganLabel')}</p>
                     <p className="text-base font-medium italic">
                       "{status.brandingSlogan}"
                     </p>
@@ -283,7 +263,7 @@ function Protocol360Content() {
             )}
             {batchId && (
               <p className="text-sm text-gray-500 mt-4 font-mono">
-                {t.batchLabel} {batchId}
+                {tp('batchLabel')} {batchId}
               </p>
             )}
           </motion.div>
@@ -297,7 +277,7 @@ function Protocol360Content() {
             {loading ? (
               <div className="bg-white rounded-lg shadow-sm p-8 text-center border border-gray-200">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D5A27] mx-auto"></div>
-                <p className="mt-4 text-gray-600 font-light">{t.loadingStatus}</p>
+                <p className="mt-4 text-gray-600 font-light">{tp('loadingStatus')}</p>
               </div>
             ) : error ? (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -306,7 +286,7 @@ function Protocol360Content() {
             ) : status ? (
               <div>
                 <h2 className="text-2xl font-light text-gray-900 mb-8 text-center">
-                  {t.qualityControlStatus}
+                  {tp('qualityControlStatus')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {status.levels.map((level) => (
@@ -328,18 +308,18 @@ function Protocol360Content() {
                         <div className="flex items-center gap-3">
                           {getLevelIcon(level.level)}
                           <h3 className="text-lg font-medium text-gray-900">
-                            {t.level} {level.level}
+                            {tp('level')} {level.level}
                           </h3>
                         </div>
                         <div className="flex items-center gap-2">
                           {getStatusIcon(level.status)}
                           <span className={`text-xs font-medium ${getStatusColor(level.status).split(' ')[1]}`}>
-                            {t.status[level.status as keyof typeof t.status] || level.status}
+                            {translateQCStatus(level.status)}
                           </span>
                         </div>
                       </div>
                       <h4 className="text-base font-medium text-gray-700 mb-2">
-                        {level.name}
+                        {localizedLevelName(level.level, level.name)}
                       </h4>
                       <p className="text-xs text-gray-500 mb-4 font-mono bg-gray-50 p-2 rounded">
                         {level.badgeText}
@@ -353,7 +333,7 @@ function Protocol360Content() {
                               </span>
                               <div className="flex-1">
                                 <span className="font-medium text-gray-700">
-                                  {check.name}
+                                  {localizedStaticCheck(level.level, idx, check.name)}
                                 </span>
                                 {check.details && (
                                   <p className="text-xs text-gray-500 mt-1 font-light">
@@ -379,10 +359,10 @@ function Protocol360Content() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">
-              {t.threeTierSystem}
+              {tp('threeTierSystem')}
             </h2>
             <p className="text-base text-gray-600 font-light">
-              {t.standardsBeyond}
+              {tp('standardsBeyond')}
             </p>
           </div>
 
@@ -401,11 +381,11 @@ function Protocol360Content() {
                     {getLevelIcon(level.level)}
                     <div>
                       <h3 className="text-2xl font-light text-gray-900 mb-2">
-                        {t.level} {level.level}: {level.name}
+                        {tp('level')} {level.level}: {localizedLevelName(level.level, level.name)}
                       </h3>
                       <p className="text-sm text-gray-600 font-light">
-                        <span className="font-medium">{t.location}</span>{' '}
-                        {level.location}
+                        <span className="font-medium">{tp('location')}</span>{' '}
+                        {localizedLevelLocation(level.level, level.location)}
                       </p>
                     </div>
                   </div>
@@ -418,23 +398,18 @@ function Protocol360Content() {
 
                 <div className="border-t border-[#2D5A27]/30 pt-6">
                   <h4 className="font-semibold text-gray-900 mb-4 text-sm">
-                    {t.qualityChecks}
+                    {tp('qualityChecks')}
                   </h4>
                   <ul className="space-y-2">
-                    {level.checks.map((check: string, idx: number) => {
-                      // Map backend check names to localized versions
-                      const getLocalizedCheck = (checkName: string) => checkName;
-                      
-                      return (
-                        <li
-                          key={idx}
-                          className="flex items-center gap-3 text-gray-700 font-light"
-                        >
-                          <CheckCircle className="w-4 h-4 text-[#2D5A27] flex-shrink-0" />
-                          <span>{getLocalizedCheck(check)}</span>
-                        </li>
-                      );
-                    })}
+                    {level.checks.map((check: string, idx: number) => (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 text-gray-700 font-light"
+                      >
+                        <CheckCircle className="w-4 h-4 text-[#2D5A27] flex-shrink-0" />
+                        <span>{localizedStaticCheck(level.level, idx, check)}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </motion.div>
@@ -448,10 +423,10 @@ function Protocol360Content() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">
-              {t.brandingSlogans}
+              {tp('brandingSlogans')}
             </h2>
             <p className="text-base text-gray-600 font-light">
-              {t.everyUnit}
+              {tp('everyUnit')}
             </p>
           </div>
           
@@ -481,17 +456,17 @@ function Protocol360Content() {
         <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-gray-600 mb-6 font-light">
-              {t.checkStatus}{' '}
+              {tp('checkStatus')}{' '}
               <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
                 ?batchId=YOUR_BATCH_ID
               </code>{' '}
-              {t.toTheUrl}
+              {tp('toTheUrl')}
             </p>
             <Link
-              href="/"
+              href={loc('/')}
               className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
             >
-              {t.backToHome}
+              {tp('backToHome')}
             </Link>
           </div>
         </section>
@@ -500,16 +475,21 @@ function Protocol360Content() {
   );
 }
 
+function Protocol360SuspenseFallback() {
+  const { t } = useTranslation();
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="inline-block w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+        <p className="mt-4 text-sm text-gray-500">{t('protocol360Page.suspenseLoading')}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Protocol360Page() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
-          <p className="mt-4 text-sm text-gray-500">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<Protocol360SuspenseFallback />}>
       <Protocol360Content />
     </Suspense>
   );

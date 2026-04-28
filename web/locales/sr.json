@@ -293,11 +293,19 @@
     "readFullRelease": "Pročitaj celo saopštenje",
     "expandRelease": "Pročitaj više",
     "collapseRelease": "Suzi",
+    "expandPreviewHint": "Dalji pasusi, dugi citati i završne napomene u celosti su na posebnoj strani sa celim tekstom saopštenja.",
     "releaseBackToKit": "← Nazad na medijski komplet",
     "releaseEyebrow": "Saopštenje za javnost",
     "sectionCompany": "O Bio Veri",
     "aboutTitle": "Kako kompanija objašnjava svoj model uredništvima",
-    "aboutText": "HAMBURG, Nemačka. Kada u Bio Veri govorimo o vertikalnoj poljoprivrednoj mreži, ne mislimo na još jedan sistem koji proizvodnju i tržište povezuje međusobno nepovezanim kanalima. Bio Vera predstavlja integrisani model u kojem je svaki korak — od uzgoja do proizvoda na polici — deo jedinstvenog dokumentovanog sistema. Kompanija funkcioniše kao registrovani poljoprivredni brend koji obezbeđuje kontinuirani trag proizvodnje, od propisa uzgoja pa do artikla koji se nalazi na polici, tako da se svaki korak u procesu — uključujući nabavku — prati kroz isti sistem: jasno, povezano i transparentno. Svi inputi u proizvodnji (seme, ambalaža i drugi odobreni materijali prema tehničkoj listi) dolaze od ugovorenih dobavljača koji su organizovani lokalno, a u određenim slučajevima regionalno, prema operativnom modelu tržišta. Porudžbine se realizuju direktno kroz Bio Vera aplikaciju: svaka nabavna transakcija se beleži i vezuje uz proizvodni ciklus tako da trag nabavke prati trag poljskog rada. Na svakom pakovanju nalazi se Bio Vera bedž sa QR kodom; skeniranjem koda otvara se digitalni pasoš proizvoda sa podacima o proizvodnji, informacijama o proizvođaču, evidencijom procesa i podacima o kontroli kvaliteta — dostupno krajnjem kupcu i nadležnim institucijama tamo gde je to zakonski predviđeno. Bio Vera koristi digitalnu infrastrukturu za praćenje i čuvanje podataka; u zavisnosti od tehničke konfiguracije, podaci o proizvodnji i šaržama mogu biti dodatno osigurani kroz javne mreže za verifikaciju zapisa (npr. blokčejn infrastruktura Polygon, u skladu sa internom operativnom dokumentacijom). Sedište kompanije nalazi se u Hamburgu, Nemačka.",
+    "aboutParagraphs": [
+      "HAMBURG, Nemačka. Kada u Bio Veri govorimo o vertikalnoj poljoprivrednoj mreži, ne mislimo na još jedan sistem koji proizvodnju i tržište povezuje međusobno nepovezanim kanalima. Bio Vera predstavlja integrisani model u kojem je svaki korak — od uzgoja do proizvoda na polici — deo jedinstvenog dokumentovanog sistema.",
+      "Kompanija funkcioniše kao registrovani poljoprivredni brend koji obezbeđuje kontinuirani trag proizvodnje, od propisa uzgoja pa do artikla koji se nalazi na polici, tako da se svaki korak u procesu — uključujući nabavku — prati kroz isti sistem: jasno, povezano i transparentno.",
+      "Svi inputi u proizvodnji (seme, ambalaža i drugi odobreni materijali prema tehničkoj listi) dolaze od ugovorenih dobavljača koji su organizovani lokalno, a u određenim slučajevima regionalno, prema operativnom modelu tržišta. Porudžbine se realizuju direktno kroz Bio Vera aplikaciju: svaka nabavna transakcija se beleži i vezuje uz proizvodni ciklus tako da trag nabavke prati trag poljskog rada.",
+      "Na svakom pakovanju nalazi se Bio Vera bedž sa QR kodom; skeniranjem koda otvara se digitalni pasoš proizvoda sa podacima o proizvodnji, informacijama o proizvođaču, evidencijom procesa i podacima o kontroli kvaliteta — dostupno krajnjem kupcu i nadležnim institucijama tamo gde je to zakonski predviđeno.",
+      "Bio Vera koristi digitalnu infrastrukturu za praćenje i čuvanje podataka; u zavisnosti od tehničke konfiguracije, podaci o proizvodnji i šaržama mogu biti dodatno osigurani kroz javne mreže za verifikaciju zapisa (npr. blokčejn infrastruktura Polygon, u skladu sa internom operativnom dokumentacijom).",
+      "Sedište kompanije nalazi se u Hamburgu, Nemačka."
+    ],
     "keyFactsTitle": "Ključne činjenice (jednim pogledom)",
     "keyFacts": [
       "Registrovani poljoprivredni brend sa integrisanim sistemom od parcele do proizvoda na polici.",
@@ -473,6 +481,68 @@
         ]
       }
     ]
+  },
+  "protocol360Page": {
+    "documentTitle": "Protocol 360 – kvalitet, tragljivost i usklađenost | Bio Vera",
+    "loading": "Učitavanje Protocol 360…",
+    "suspenseLoading": "Učitavanje…",
+    "batchLabel": "Šarža:",
+    "qualityControlStatus": "Status kontrole kvaliteta",
+    "loadingStatus": "Učitavanje statusa…",
+    "threeTierSystem": "Troslojni sistem kontrole kvaliteta",
+    "standardsBeyond": "Standard koji nadilazi uobičajena očekivanja",
+    "brandingSlogans": "Slogani brenda Bio Vera",
+    "everyUnit": "Svaka jedinica je remek-delo",
+    "checkStatus": "Za proveru statusa Protocol 360 za konkretnu šaržu, dodajte",
+    "toTheUrl": "na adresu (URL).",
+    "backToHome": "Nazad na početnu",
+    "home": "Početna",
+    "errorLoading": "Greška pri učitavanju statusa Protocol 360.",
+    "premiumQuality": "Vrhunsko osiguranje kvaliteta",
+    "brandingSloganLabel": "Slogan brenda:",
+    "location": "Lokacija:",
+    "qualityChecks": "Kontrole kvaliteta:",
+    "level": "Nivo",
+    "status": {
+      "APPROVED": "ODOBRENO",
+      "CLASS_B": "KLASA B",
+      "REJECTED": "ODBIJENO",
+      "PENDING": "NA ČEKANJU",
+      "PASS": "ISPRAVNO",
+      "FAIL": "NEISPRAVNO"
+    },
+    "levels": {
+      "level1": {
+        "name": "Eco-Safe audit",
+        "location": "Polje / parcela",
+        "checks": {
+          "heavyMetals": "Prisustvo teških metala",
+          "nitrates": "Nivo nitrata",
+          "phValue": "pH vrednost",
+          "moisture": "Nivo vlage (najmanje 48 č pre berbe)"
+        }
+      },
+      "level2": {
+        "name": "Biometrijsko i vizuelno skeniranje",
+        "location": "Centar za pakovanje",
+        "checks": {
+          "calibration": "Kalibracija (veličina)",
+          "firmness": "Čvrstoća ploda",
+          "filmIntegrity": "Integritet ambalaže / folije",
+          "colorDeviation": "Odstupanje boje (<5%)"
+        }
+      },
+      "level3": {
+        "name": "Logistics Guard",
+        "location": "Transport i skladištenje",
+        "checks": {
+          "temperature": "Temperaturni opseg (2–8 °C)",
+          "thermalShock": "Detekcija temperaturnog šoka",
+          "coldChain": "Kontinuitet hladnog lanca",
+          "alertSystem": "Automatski sistem upozorenja"
+        }
+      }
+    }
   },
   "loginPage": {
     "title": "Prijava",
