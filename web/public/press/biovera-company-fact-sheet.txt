@@ -1,8 +1,8 @@
 Bio Vera — Company fact sheet
 
-Bio Vera is a registered agricultural brand — not a marketplace broker. Growers apply to join and, after vetting, become contracted Bio Vera producers.
+Bio Vera is a registered agricultural brand—not a thin broker between farm and shelf. Producers onboard under one rulebook covering cultivation, authorised input procurement, packing, and traceability through to the buyer.
 
-“Vertical agricultural network”: one system governing the chain from production rules through input sourcing, packing, compliance, logistics and traceability to the buyer. Modern software and blockchain are part of operating infrastructure (provenance and data integrity), not optional add-ons.
+Vertical network: contracted input suppliers by locality (including town-level partners where rollout allows); orders placed in-app beside field records. Packed units carry printed Bio Vera badges with QR codes opening each batch’s digital product passport; auditors and consumers read the same dossier. Where configuration enables it, batch evidence can include public on-chain anchoring (typically Polygon in production, per operations documentation).
 
 Founded: 2026. Headquarters: Hamburg, Germany.
 

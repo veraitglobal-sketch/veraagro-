@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Download, FileText, Mail, Calendar, User } from 'lucide-react';
+import { Download, FileText, Mail, Calendar, User, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface PressRelease {
   id: string;
@@ -66,6 +66,82 @@ function isAssetGroupArray(x: unknown): x is AssetGroup[] {
 
 function isStringArray(x: unknown): x is string[] {
   return Array.isArray(x) && x.every((i) => typeof i === 'string');
+}
+
+function PressReleaseCard({
+  release,
+  loc,
+  expandLabel,
+  collapseLabel,
+  readFullLabel,
+}: {
+  release: PressRelease;
+  loc: (href: string) => string;
+  expandLabel: string;
+  collapseLabel: string;
+  readFullLabel: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const paragraphs = release.paragraphs ?? [];
+  const hasFullBody = paragraphs.length > 0;
+
+  const fullPageHref = loc(`/press/releases/${release.id}`);
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors">
+      <div className="mb-3">
+        <div className="flex items-center gap-3 mb-2">
+          <Calendar className="w-4 h-4 text-gray-400 shrink-0" aria-hidden />
+          <span className="text-xs text-gray-500 font-light">{release.date}</span>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">{release.title}</h3>
+        <p className="text-sm text-gray-600 font-light leading-relaxed">{release.summary}</p>
+      </div>
+
+      {hasFullBody && (
+        <div className="mt-4 flex flex-col gap-3 border-t border-gray-100 pt-4">
+          <div className="flex flex-wrap items-stretch gap-2 sm:gap-3">
+            <button
+              type="button"
+              aria-expanded={expanded}
+              aria-controls={`press-release-body-${release.id}`}
+              onClick={() => setExpanded((open) => !open)}
+              className="inline-flex flex-1 min-w-[9rem] sm:flex-initial justify-center items-center gap-2 rounded-lg border border-[#2D5A27]/40 bg-[#2D5A27]/05 px-4 py-2.5 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/10 transition-colors"
+            >
+              {expanded ? (
+                <>
+                  <ChevronUp className="w-4 h-4 shrink-0" aria-hidden />
+                  {collapseLabel}
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 shrink-0" aria-hidden />
+                  {expandLabel}
+                </>
+              )}
+            </button>
+            <Link
+              href={fullPageHref}
+              className="inline-flex flex-1 min-w-[12rem] sm:flex-initial justify-center items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 hover:border-[#2D5A27] hover:text-[#2D5A27] transition-colors"
+            >
+              <FileText className="w-4 h-4 shrink-0" aria-hidden />
+              {readFullLabel}
+            </Link>
+          </div>
+
+          {expanded && (
+            <div id={`press-release-body-${release.id}`} role="region" aria-label={release.title}>
+              <div className="space-y-3 text-sm text-gray-700 font-light leading-relaxed border border-gray-100 rounded-lg bg-gray-50/80 p-4">
+                {paragraphs.map((p, idx) => (
+                  <p key={idx}>{p}</p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function PressPage() {
@@ -176,30 +252,14 @@ export default function PressPage() {
               <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.sectionReleases')}</h2>
               <div className="space-y-4">
                 {pressReleases.map((release) => (
-                  <div
+                  <PressReleaseCard
                     key={release.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27] transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          <span className="text-xs text-gray-500 font-light">{release.date}</span>
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">{release.title}</h3>
-                        <p className="text-sm text-gray-600 font-light leading-relaxed">{release.summary}</p>
-                      </div>
-                    </div>
-                    {release.paragraphs && release.paragraphs.length > 0 && (
-                      <Link
-                        href={loc(`/press/releases/${release.id}`)}
-                        className="inline-flex items-center gap-2 text-sm text-[#2D5A27] hover:text-[#23471f] transition-colors mt-4"
-                      >
-                        <FileText className="w-4 h-4" aria-hidden />
-                        {t('pressPage.readFullRelease')}
-                      </Link>
-                    )}
-                  </div>
+                    release={release}
+                    loc={loc}
+                    expandLabel={t('pressPage.expandRelease')}
+                    collapseLabel={t('pressPage.collapseRelease')}
+                    readFullLabel={t('pressPage.readFullRelease')}
+                  />
                 ))}
               </div>
             </motion.div>

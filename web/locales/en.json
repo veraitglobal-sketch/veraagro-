@@ -291,16 +291,19 @@
     "mediaRelationsText": "For interview requests, media partnerships, and press inquiries, please contact our media team.",
     "sectionReleases": "Press releases",
     "readFullRelease": "Read full release",
+    "expandRelease": "Read more",
+    "collapseRelease": "Show less",
     "releaseBackToKit": "← Back to Press kit",
     "releaseEyebrow": "Press release",
     "sectionCompany": "About Bio Vera",
-    "aboutTitle": "The brand and the vertical agricultural network",
-    "aboutText": "Bio Vera is not a broker between the farm and the shelf — it is a registered agricultural brand. Growers apply to join; after vetting and standards checks, they become contracted Bio Vera producers inside one of the fastest-growing networks of its kind on the market. By a “vertical agricultural network” we mean one coordinated system that covers and governs the full chain: production under clear rules; sourcing of inputs (seed, fertiliser, supplier relationships); packing and compliance; logistics and traceability through to the buyer — not loosely linked stages stitched together afterward. Contemporary software platforms and blockchain are woven into Bio Vera itself: operational tooling, tamper-evident provenance and data integrity — not marketing slogans but brand infrastructure. Company headquarters: Hamburg.",
-    "keyFactsTitle": "In short",
+    "aboutTitle": "How the company frames it for editors",
+    "aboutText": "HAMBURG. — Bio Vera describes a vertical agricultural network as more than loosely connecting farms and retail in parallel lanes. Legally it is a registered agricultural brand: one documented trace from cultivation rules through to packed goods on shelf, so regulators can follow the same thread from parcel to printed label. Inputs — seeds, packaging and whatever the authorised technical worksheet covers — flow from contracted suppliers organised by locality (town-level distributors where national structures allow). Orders are raised in-app and recorded with the same trail as harvesting. Packed units bear printed Bio Vera badges with QR codes; scanning opens that batch's digital passport, visible to shoppers and supervisory authorities alike where the law applies. Where configuration enables it, a corresponding on-chain footprint for the batch persists on public infrastructure (typically the Polygon network in production, per company operations documentation). Headquarters: Hamburg.",
+    "keyFactsTitle": "Essentials at a glance",
     "keyFacts": [
-      "A brand growers apply to join · vertical chain: grow → procure → pack → logistics → traceability",
-      "Digital platform and blockchain built into quality and provenance",
-      "2026 · Hamburg, Germany · press: press@biovera.app"
+      "Registered agricultural brand; one documented chain from parcel to shelf, not disjointed channels.",
+      "Contracted suppliers by locality including town-tier partners where rollout supports them; procurement in-app tracked alongside harvesting.",
+      "Printed QR badge → full passport; blockchain batch anchoring wherever technical settings switch it on.",
+      "2026 · Hamburg · press@biovera.app"
     ],
     "sectionAssets": "Media assets",
     "download": "Download",
@@ -322,26 +325,27 @@
         "id": "1",
         "date": "January 15, 2026",
         "title": "Bio Vera Launches Vertically Integrated Agricultural Network",
-        "summary": "Bio Vera introduces its agricultural brand and vertically coordinated network: one system from field to buyer, with digital traceability and aligned processes throughout.",
+        "summary": "Bio Vera stresses one operational spine: geographically placed authorised suppliers including town-tier fulfilment where the model permits, procurement recorded in-platform alongside harvesting, QR badges unlocking full passports for each batch, and optional public on-chain hashing when Polygon anchoring is enabled.",
         "paragraphs": [
-          "HAMBURG, Germany — Bio Vera today announced formal positioning as an agricultural brand and vertically coordinated network—not a generic trading layer between farms and supermarkets.",
-          "Growers apply to join Bio Vera after standards review; accepted producers operate under contracted programmes that carry the Bio Vera trademark. That model positions the fastest-growing uptake of authorised producers around a shared rulebook—from cultivation practices and input sourcing to packing layouts and onward logistics.",
-          "By “vertical agricultural network”, Bio Vera means one operating backbone that governs the whole chain under the same identifiers and controls: agronomic rules at origin, inbound materials, packaging and compliance checkpoints, multimodal logistics, then traceability exposed to retailers and inspectors. Responsibility is anchored in the programme, not outsourced as disconnected services.",
-          "Digital tooling and cryptographic trace—including blockchain-linked evidence where warranted—sit inside that backbone so checkpoints and document trails stay consistent batch by batch.",
-          "For press enquiries or interview requests about Bio Vera programmes: press@biovera.app."
+          "HAMBURG, Germany — Bio Vera positions itself as an agricultural brand and vertically aligned operating network—not merely an intermediary linking farms with supermarkets.",
+          "Producers enrol; once standards clearance completes they contract as Bio Vera growers under one rulebook spanning cultivation, procurement, packing and hand-off downstream.",
+          "Authorised distributors sit where geography dictates—including urban partners when national rollout allows—supplying worksheet-approved seeds, packaging and ancillary inputs under programme norms; growers place orders directly in Bio Vera tooling so procurement logs sit beside field timelines.",
+          "Cartons carry printed badges with QR codes leading to each batch passport; buyers and auditors read the same evidence. Where operators enable blockchain proofs, hashed batch traces publish on public Polygon infrastructure as documented for production deployments.",
+          "From parcel planning through replenishment to logistics manifests Bio Vera retains a single dossier supervision teams can reconcile end-to-end.",
+          "Interview requests: press@biovera.app."
         ]
       },
       {
         "id": "2",
         "date": "February 1, 2026",
-        "title": "Protocol 360: New Quality Assurance System Sets Industry Standard",
-        "summary": "Bio Vera introduces Protocol 360, a three-tier quality control system ensuring product safety, quality, and standardization from field to shelf.",
+        "title": "Protocol 360: three control layers from field to shelf",
+        "summary": "Protocol 360 is Bio Vera’s layered quality blueprint: sequential field / pack-house / cold-chain controls tied to batches.",
         "paragraphs": [
           "HAMBURG, Germany — Bio Vera has launched Protocol 360 as the house quality architecture that threads through its vertical agricultural network. The goal is predictable product safety and standardised evidence from first harvest touches through retail hand-offs.",
           "Protocol 360 aligns three sequential control layers mapped to Bio Vera batches: Tier 1 (field & pre-harvest) covers eco-safe checks such as residues, agronomic KPIs and lot sampling before produce is authorised for onward processing.",
           "Tier 2 (pack-house & packaging centres) concentrates visual, sizing and biometric-style verification ahead of labelled units leaving the facility—including film integrity where applicable—to catch defects before downstream logistics.",
           "Tier 3 (transport & storage) safeguards cold-chain posture with temperature bands, alerting and escalation where contractual limits are breached, keeping retail commitments auditable alongside earlier tiers.",
-          "Protocol 360 runs on Bio Vera's shared digital backbone, so auditors, hubs and authorised buyers consume the same status signals. Programme details remain available at biovera.app/protocol-360."
+          "Protocol 360 plugs into Bio Vera’s unified digital backbone, so auditors, logistics hubs and programme partners consume identical batch signals; documentation remains at biovera.app/protocol-360."
         ]
       }
     ],
