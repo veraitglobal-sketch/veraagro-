@@ -15,6 +15,7 @@ interface PressRelease {
   title: string;
   summary: string;
   link?: string;
+  paragraphs?: string[];
 }
 
 interface AssetItem {
@@ -189,12 +190,12 @@ export default function PressPage() {
                         <p className="text-sm text-gray-600 font-light leading-relaxed">{release.summary}</p>
                       </div>
                     </div>
-                    {release.link && (
+                    {release.paragraphs && release.paragraphs.length > 0 && (
                       <Link
-                        href={release.link}
+                        href={loc(`/press/releases/${release.id}`)}
                         className="inline-flex items-center gap-2 text-sm text-[#2D5A27] hover:text-[#23471f] transition-colors mt-4"
                       >
-                        <FileText className="w-4 h-4" />
+                        <FileText className="w-4 h-4" aria-hidden />
                         {t('pressPage.readFullRelease')}
                       </Link>
                     )}

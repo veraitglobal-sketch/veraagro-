@@ -291,6 +291,8 @@
     "mediaRelationsText": "Za intervjue, partnerske medijske projekte i upite za štampu, obratite se našem medijskom timu.",
     "sectionReleases": "Saopštenja za javnost",
     "readFullRelease": "Pročitaj celo saopštenje",
+    "releaseBackToKit": "← Nazad na medijski komplet",
+    "releaseEyebrow": "Saopštenje za javnost",
     "sectionCompany": "O Bio Veri",
     "aboutTitle": "Brend i vertikalna poljoprivredna mreža",
     "aboutText": "Bio Vera nije posrednik između gazdinstva i police — to je registovan poljoprivredni brend. Proizvođači i uzgajivači javljaju se za učešće; po provere i standardima postaju ugovoreni Bio Vera proizvođači unutar mreže jednog od najbrže rastućih ovakvih brendova na tržištu. Pod „vertikalnom poljoprivrednom mrežom“ mislimo jedan usklađeni sistem koji obuhvata i kontroliše ceo životni ciklus: proizvodnju pod jasnim pravilima, nabavku i unos (semena, inputi, dobavljače), pakovanje i bezbednosno-tehničku usaglašenost, logistiku i tragljivost do kupca — ne lutaju nezavisni lanci koji se naknadno »spoje«. Savremeni softveri i blockchain su sastavni deo Bio Vere: digitalna platforma za operacije, dokaze o poreklu i verodostojnost podataka, ne kao reklama već kao infrastruktura brenda. Sedište kompanije: Hamburg.",
@@ -320,13 +322,29 @@
         "id": "1",
         "date": "15. januar 2026.",
         "title": "Bio Vera lansira vertikalno povezanu poljoprivrednu mrežu",
-        "summary": "Bio Vera predstavlja brend i vertikalno usklađenu poljoprivrednu mrežu: jedinstveni sistem od polja do kupca, uz digitalnu tragljivost i usklađenost procesa."
+        "summary": "Bio Vera predstavlja brend i vertikalno usklađenu poljoprivrednu mrežu: jedinstveni sistem od polja do kupca, uz digitalnu tragljivost i usklađenost procesa.",
+        "paragraphs": [
+          "Hamburg, Nemačka — Bio Vera danas objavljuje poslovanje pod poljoprivrednim brendom i vertikalno usaglađenom mrežom, a ne kao generičkog posrednika između gazdinstva i maloprodaje.",
+          "Proizvođači i uzgajivači javljaju se za partnerski ulazak; po provere standarda programa postaju ugovoreni Bio Vera proizvođači. Time se skup najbrže šireće baze ovlašćenih proizvođača okuplja oko zajedničkih pravila — od prakse uzgoja i nabavke inputa preko dizajna ambalaže do dalje logistike.",
+          "Pod „vertikalnom poljoprivrednom mrežom“ Bio Vera podrazumeva jedinstven operativni okvir koji upravlja celim lancom pod istim kontrolnim tačkama i identitetima uzorka: agrotehnička pravila na gajeništu, ulaz robe, pakovanje i tehnička usaglašenost, multimodalna logistika i trag koji se vidi kod kupaca i inspekcija — odgovornost držimo u programu, a ne kao odvojene kratkoročne usluge.",
+          "Digitalni alati i kriptografsko evidentiranje (uključujući blokčejn-podržanu dokumentaciju gde ima smisla) ugrađeni su u taj isti okvir tako da kontrolni zapisi ostaju nedvosmisleni paket po paket.",
+          "Za medijske upite i zahteve za intervju povodom programa Bio Vera: press@biovera.app."
+
+        ]
       },
       {
         "id": "2",
         "date": "1. februar 2026.",
-        "title": "Protocol 360: Novi sistem osiguranja kvaliteta postavlja standard u industriji",
-        "summary": "Bio Vera predstavlja Protocol 360, troslojni sistem kontrole kvaliteta koji obezbeđuje sigurnost proizvoda, kvalitet i standardizaciju od polja do police."
+        "title": "Protocol 360: novi sistem osiguranja kvaliteta postavlja referentnu tračnicu u branši",
+        "summary": "Bio Vera uvodi Protocol 360, troslojni sistem kontrole kvaliteta koji pokriva sigurnost proizvoda, usklađenost i dokumentaciju od polja do predaje.",
+        "paragraphs": [
+          "HAMBURG, Nemačka — Bio Vera predstavila je Protocol 360 kao kućni sistem kvaliteta koji provlazi ceo vertikalni poljoprivredni lanac Bio Vere. Namena je ponovljiva sigurnost proizvoda i standardizovan dokaz prvog dodira sa usevom sve do izdavanja u maloprodaju.",
+          "Protocol 360 spaja tri sekvencijalna kontrolna sloja na nivou partije: sloj I (polje i pred žetvu) pokriva eko‑bezbednosne parametre kao što su tragovi štetnih materija, agronomske indikatore i uzorkovanje pre nego što usev dobije dopuštenje za dalju obradu.",
+          "Sloj II (pakovanje i priprema otpreme) objedinjuje vizuelnu, gabaritsku i biometrijsku proveru pre nego što označene jedinice napuste objekat — uključujući kontrolisani pregled omota gde ima smisla — kako bi se nedostaci uhvatili pre logističkog sloja.",
+          "Sloj III (prevoz i skladištenje) čuva rashladni hod uz unapred podešene opsege uz alarm ako se ugovoreni temperaturni limiti prekorače, tako da obaveze prema prodaji ostanu proverljive uz prethodne slojeve.",
+          "Protocol 360 radi na zajedničkoj digitalnoj osnovici Bio Vere, tako da auditorski timovi i ovlašćeni članovi lanca dobijaju jedinstven pogled po seriji ili pošiljci.",
+          "Detaljna objašnjenja dostupna su na adresi biovera.app/protocol-360."
+        ]
       }
     ],
     "assetGroups": [
