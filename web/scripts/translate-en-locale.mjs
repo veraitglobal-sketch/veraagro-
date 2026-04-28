@@ -66,6 +66,24 @@ function applyInvariantPatches(data) {
   if (data.nav && typeof data.nav === 'object' && data.nav.dashboard !== undefined) {
     data.nav.dashboard = 'Dashboard';
   }
+  /** Google often returns "Bord" for Dashboard in nested nav/tool keys */
+  function patchDashboardBord(node) {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) {
+      for (const item of node) patchDashboardBord(item);
+      return;
+    }
+    for (const k of Object.keys(node)) {
+      if (
+        k === 'dashboard' &&
+        typeof node[k] === 'string' &&
+        /^bord$/i.test(node[k].trim())
+      ) {
+        node[k] = 'Dashboard';
+      } else patchDashboardBord(node[k]);
+    }
+  }
+  patchDashboardBord(data);
 }
 
 const stringCache = new Map();

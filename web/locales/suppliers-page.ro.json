@@ -1,190 +1,190 @@
 {
   "hero": {
-    "title": "For Our Suppliers",
-    "subtitle": "Become a Bio Vera supplier: sell our products and our packaging to growers in your country. You get guaranteed offtake from our producers, and you support them with on-site advice and training.",
-    "downloadPdf": "Download Prospect PDF",
-    "downloadFail": "Failed to download prospect. Please try again."
+    "title": "Pentru furnizorii noștri",
+    "subtitle": "Deveniți furnizor Bio Vera: vindeți produsele și ambalajele noastre cultivatorilor din țara dumneavoastră. Veți primi garantat de la producătorii noștri și îi sprijiniți cu consiliere și instruire la fața locului.",
+    "downloadPdf": "Descărcați Prospect PDF",
+    "downloadFail": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou."
   },
   "whoApply": {
-    "title": "Who should apply",
-    "intro": "Our suppliers sell Bio Vera products and Bio Vera packaging in their country. We prefer partners who already work in agriculture and have a strong presence across the country.",
+    "title": "Cine ar trebui să aplice",
+    "intro": "Furnizorii noștri vând produse Bio Vera și ambalaje Bio Vera în țara lor. Preferăm parteneri care lucrează deja în agricultură și au o prezență puternică în toată țara.",
     "bullets": [
-      "You sell our products (seeds, inputs) to growers",
-      "You sell our packaging to producers",
-      "Ideally you already work in agriculture",
-      "Wide presence in your country is an advantage"
+      "Vindeți produsele noastre (semințe, intrări) cultivatorilor",
+      "Vindeți ambalajele noastre producătorilor",
+      "Ideal este să lucrezi deja în agricultură",
+      "Prezența largă în țara dumneavoastră reprezintă un avantaj"
     ]
   },
   "yourRole": {
-    "title": "Your role",
-    "intro": "As our supplier you advise and train users on the ground. You are the local point of contact for producers and support them with on-site guidance. You also procure packaging for our users – including boxes for packing produce – so they have what they need locally.",
+    "title": "Rolul tău",
+    "intro": "În calitate de furnizor, consiliați și instruiți utilizatorii pe teren. Sunteți punctul local de contact pentru producători și îi sprijiniți cu îndrumări la fața locului. De asemenea, procurați ambalaje pentru utilizatorii noștri – inclusiv cutii pentru ambalarea produselor – astfel încât aceștia să aibă ceea ce au nevoie la nivel local.",
     "bullets": [
-      "On-site advising and training of users",
-      "Procure packaging for our users (e.g. boxes for packing)",
-      "First point of contact for farmers in your region",
-      "Physical verification of received goods"
+      "Consiliere la fața locului și instruire a utilizatorilor",
+      "Achiziționați ambalaje pentru utilizatorii noștri (de exemplu, cutii pentru ambalare)",
+      "Primul punct de contact pentru fermierii din regiunea dumneavoastră",
+      "Verificarea fizică a mărfurilor primite"
     ]
   },
   "benefits": {
-    "title": "What you get",
-    "subtitle": "Benefits of becoming a Bio Vera supplier",
+    "title": "Ce primești",
+    "subtitle": "Beneficiile de a deveni furnizor Bio Vera",
     "cards": [
       {
-        "title": "Guaranteed offtake",
-        "description": "Guaranteed offtake from our producers in your country. Our growers source from approved suppliers – you get stable demand and predictable revenue."
+        "title": "Preluare garantată",
+        "description": "Preluare garantată de la producătorii noștri din țara dumneavoastră. Cultivatorii noștri se aprovizionează de la furnizori aprobați – obțineți o cerere stabilă și venituri previzibile."
       },
       {
-        "title": "Our products & packaging",
-        "description": "You sell Bio Vera products and Bio Vera packaging. One brand, one standard, full traceability via QR and the Vera system."
+        "title": "Produsele și ambalajele noastre",
+        "description": "Vindeți produse Bio Vera și ambalaje Bio Vera. O singură marcă, un standard, trasabilitate completă prin QR și sistemul Vera."
       },
       {
-        "title": "Price stability",
-        "description": "Pre-agreed pricing structure. No price fluctuations or negotiations per transaction. Predictable margins."
+        "title": "Stabilitatea prețurilor",
+        "description": "Structura de prețuri pre-acordată. Fără fluctuații de preț sau negocieri per tranzacție. Marje previzibile."
       },
       {
-        "title": "Integrated logistics",
-        "description": "Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometers, lower costs."
+        "title": "Logistica integrata",
+        "description": "Primiți semințe și îngrășăminte în călătoriile de întoarcere din rețeaua noastră logistică. Mai puțini kilometri goali, costuri mai mici."
       },
       {
-        "title": "National coverage preferred",
-        "description": "We prefer suppliers with strong national presence. Expand your reach and represent Bio Vera across your country."
+        "title": "Acoperire națională preferată",
+        "description": "Preferăm furnizori cu prezență națională puternică. Extindeți-vă acoperirea și reprezentați Bio Vera în întreaga țară."
       },
       {
-        "title": "Exclusive market access",
-        "description": "Direct access to our producer network and to the German market through our vertically integrated chain."
+        "title": "Acces exclusiv pe piață",
+        "description": "Acces direct la rețeaua noastră de producători și la piața germană prin lanțul nostru integrat vertical."
       }
     ]
   },
   "howItWorks": {
-    "title": "How It Works",
-    "subtitle": "Understanding the Bio Vera supply chain",
-    "supplyChainTitle": "Supply Chain Process",
+    "title": "Cum funcționează",
+    "subtitle": "Înțelegerea lanțului de aprovizionare Bio Vera",
+    "supplyChainTitle": "Procesul lanțului de aprovizionare",
     "steps": [
       {
-        "title": "Sourcing from approved partners",
-        "body": "Suppliers procure goods from our approved partners within the country. They also source packaging (e.g. boxes for packing) for our users. Seeds, fertilizers, and packaging meet Bio Vera specifications."
+        "title": "Aprovizionare de la parteneri aprobați",
+        "body": "Furnizorii achiziționează bunuri de la partenerii noștri aprobați din țară. De asemenea, au nevoie de ambalaje (de exemplu, cutii pentru ambalare) pentru utilizatorii noștri. Semințele, îngrășămintele și ambalajele respectă specificațiile Bio Vera."
       },
       {
-        "title": "Agreed Pricing Structure",
-        "body": "All products are sold at pre-agreed prices. This ensures price stability for growers and predictable revenue for suppliers. No price fluctuations or negotiations per transaction."
+        "title": "Structura de prețuri agreată",
+        "body": "Toate produsele sunt vândute la prețuri prestabilite. Acest lucru asigură stabilitatea prețurilor pentru cultivatori și venituri previzibile pentru furnizori. Fără fluctuații de preț sau negocieri per tranzacție."
       },
       {
-        "title": "Distribution to Growers",
-        "body": "Suppliers distribute products to Bio Vera certified growers in their region. Every transaction is tracked through QR codes, ensuring complete traceability from supplier to field."
+        "title": "Distribuție către cultivatori",
+        "body": "Furnizorii distribuie produse cultivatorilor certificați Bio Vera din regiunea lor. Fiecare tranzacție este urmărită prin coduri QR, asigurând trasabilitatea completă de la furnizor la câmp."
       },
       {
-        "title": "Digital Tracking & Compliance",
-        "body": "All inventory movements are recorded in the Vera Admin Dashboard. Suppliers maintain real-time visibility of stock levels, and the system automatically alerts when inventory falls below 20% threshold."
+        "title": "Urmărire digitală și conformitate",
+        "body": "Toate mișcările de inventar sunt înregistrate în Tabloul de bord Vera Admin. Furnizorii mențin vizibilitatea în timp real a nivelurilor stocurilor, iar sistemul alertează automat când stocul scade sub pragul de 20%."
       }
     ],
-    "forSuppliersPanelTitle": "For Suppliers",
-    "forSuppliersPanelIntro": "As a supplier, you purchase from our approved partners and sell to growers at the agreed price. You maintain local inventory, procure packaging (e.g. boxes) for our users, and provide regional support to farmers.",
+    "forSuppliersPanelTitle": "Pentru Furnizori",
+    "forSuppliersPanelIntro": "În calitate de furnizor, cumpărați de la partenerii noștri aprobați și vindeți cultivatorilor la prețul convenit. Mențineți inventarul local, achiziționați ambalaje (de exemplu, cutii) pentru utilizatorii noștri și oferiți sprijin regional fermierilor.",
     "forSuppliersPanelBullets": [
-      "Purchase from approved partners",
-      "Maintain secure storage facilities",
-      "Procure packaging (e.g. boxes for packing) for our users",
-      "Distribute to growers at fixed prices",
-      "Track all transactions via QR codes"
+      "Cumpărare de la parteneri aprobați",
+      "Mențineți facilitățile de depozitare în siguranță",
+      "Achiziționați ambalaje (de exemplu, cutii pentru ambalare) pentru utilizatorii noștri",
+      "Distribuiți producătorilor la prețuri fixe",
+      "Urmăriți toate tranzacțiile prin coduri QR"
     ]
   },
   "requirements": {
-    "title": "Program Requirements",
-    "subtitle": "What we expect from our suppliers",
-    "supplierHeading": "For Suppliers",
+    "title": "Cerințe de program",
+    "subtitle": "Ce așteptăm de la furnizorii noștri",
+    "supplierHeading": "Pentru Furnizori",
     "cards": [
       {
-        "title": "Vera Resources Storage",
-        "description": "Obligation to provide dry and secure storage space for Vera seeds, fertilizers, and packaging materials."
+        "title": "Stocarea resurselor Vera",
+        "description": "Obligația de a oferi spațiu uscat și sigur de depozitare pentru semințe Vera, îngrășăminte și materiale de ambalare."
       },
       {
-        "title": "QR Code Issuance",
-        "description": "Supplier cannot issue goods without scanning the QR code from the farmer's app. This is the only way to track consumption per hectare."
+        "title": "Emiterea codului QR",
+        "description": "Furnizorul nu poate emite mărfuri fără a scana codul QR din aplicația fermierului. Acesta este singurul mod de a urmări consumul la hectar."
       },
       {
-        "title": "Local Support",
-        "description": "Supplier is the first point of contact for farmers in their region. They perform physical verification of received goods and provide on-site advice and training."
+        "title": "Suport local",
+        "description": "Furnizorul este primul punct de contact pentru fermierii din regiunea lor. Ei efectuează verificarea fizică a bunurilor primite și oferă consiliere și instruire la fața locului."
       },
       {
-        "title": "Inventory Reporting",
-        "description": "System must automatically notify headquarters in Hamburg when inventory falls below 20%."
+        "title": "Raportarea inventarului",
+        "description": "Sistemul trebuie să notifice automat sediul central din Hamburg atunci când stocul scade sub 20%."
       }
     ],
-    "commonLabel": "Common Obligation:",
-    "commonBody": "All partners must use the Vera Admin Dashboard to record every entry and exit of goods. No 'paperwork' – everything must be in the digital system."
+    "commonLabel": "Obligație comună:",
+    "commonBody": "Toți partenerii trebuie să folosească Tabloul de bord Vera Admin pentru a înregistra fiecare intrare și ieșire de bunuri. Fără „hârțoage” – totul trebuie să fie în sistemul digital."
   },
   "logistics": {
     "title": "Vera Logistics Advantage",
-    "subtitle": "Smart return logistics system",
-    "noEmptyTitle": "No Empty Return Trips",
+    "subtitle": "Sistem logistic de returnare inteligent",
+    "noEmptyTitle": "Fără călătorii de întoarcere goale",
     "steps": [
       {
-        "title": "Pickup & Delivery",
-        "body": "Driver picks up products from growers and delivers them to the buyer's address."
+        "title": "Ridicare și livrare",
+        "body": "Șoferul ridică produsele de la cultivatori și le livrează la adresa cumpărătorului."
       },
       {
-        "title": "Return Pickup",
-        "body": "On the return trip, the driver picks up our Vera seeds and fertilizers from our partners."
+        "title": "Ridicare retur",
+        "body": "La întoarcere, șoferul preia semințele și îngrășămintele noastre Vera de la partenerii noștri."
       },
       {
-        "title": "Distribution to Suppliers",
-        "body": "The driver delivers Vera seeds and fertilizers directly to our suppliers on the return route, eliminating empty kilometers."
+        "title": "Distributie catre Furnizori",
+        "body": "Șoferul livrează semințele și îngrășămintele Vera direct furnizorilor noștri pe ruta de întoarcere, eliminând kilometrii goali."
       }
     ],
-    "supplierColumnTitle": "For Suppliers",
-    "supplierColumnIntro": "Receive regular deliveries of Vera seeds and fertilizers directly from our partners, delivered by our logistics network on return trips.",
+    "supplierColumnTitle": "Pentru Furnizori",
+    "supplierColumnIntro": "Primiți livrări regulate de semințe și îngrășăminte Vera direct de la partenerii noștri, livrate de rețeaua noastră logistică în călătoriile de întoarcere.",
     "supplierColumnBullets": [
-      "No need to arrange separate transport for incoming goods",
-      "Reduced logistics costs through integrated system",
-      "Regular, predictable delivery schedule"
+      "Nu este nevoie să aranjați transport separat pentru mărfurile care sosesc",
+      "Costuri de logistică reduse prin sistem integrat",
+      "Program de livrare regulat, previzibil"
     ],
-    "systemColumnTitle": "System Benefits",
-    "systemColumnIntro": "Our smart logistics system ensures maximum efficiency by eliminating empty return trips and optimizing every kilometer of transport.",
+    "systemColumnTitle": "Beneficiile sistemului",
+    "systemColumnIntro": "Sistemul nostru de logistică inteligentă asigură eficiență maximă eliminând călătoriile goale dus-întors și optimizând fiecare kilometru de transport.",
     "systemColumnBullets": [
-      "Zero empty kilometers on return trips",
-      "Reduced fuel costs and environmental impact",
-      "Faster delivery times through optimized routes"
+      "Zero kilometri goali la călătoriile dus-întors",
+      "Costuri reduse cu combustibilul și impactul asupra mediului",
+      "Timp de livrare mai rapid prin rute optimizate"
     ]
   },
   "application": {
-    "title": "Supplier Application",
-    "intro": "Apply online (no self-service store login). You receive a reference code to track your application. Our team will contact you to schedule a meeting; when you are approved we create your partner store account.",
-    "linkCheckStatus": "Check status with your reference",
-    "linkPartnerLogin": "Partner store login",
-    "receivedTitle": "Application received",
-    "referencePrefix": "Your reference:",
-    "receivedBody": "We will contact you to schedule a conversation. Save your reference number — you can use it to check your application status anytime.",
-    "ctaCheckStatus": "Check application status",
-    "ctaAnother": "Submit another"
+    "title": "Aplicație furnizor",
+    "intro": "Aplicați online (fără autentificare la magazin cu autoservire). Primiți un cod de referință pentru a vă urmări cererea. Echipa noastră vă va contacta pentru a programa o întâlnire; când ești aprobat, creăm contul tău de magazin partener.",
+    "linkCheckStatus": "Verificați starea cu referința dvs",
+    "linkPartnerLogin": "Conectare la magazinul partener",
+    "receivedTitle": "Cerere primită",
+    "referencePrefix": "Referința dvs.:",
+    "receivedBody": "Vă vom contacta pentru a programa o conversație. Salvați numărul de referință - îl puteți utiliza pentru a vă verifica oricând starea aplicației.",
+    "ctaCheckStatus": "Verificați starea aplicației",
+    "ctaAnother": "Trimiteți altul"
   },
   "form": {
-    "companyNameLabel": "Company Name *",
-    "companyNamePlaceholder": "Enter company name",
-    "vatLabel": "VAT ID / Tax Identification Number *",
-    "vatPlaceholder": "Enter VAT ID",
-    "contactPersonLabel": "Contact Person *",
-    "contactPlaceholder": "Full name",
+    "companyNameLabel": "Numele companiei *",
+    "companyNamePlaceholder": "Introduceți numele companiei",
+    "vatLabel": "ID TVA/Număr de identificare fiscală *",
+    "vatPlaceholder": "Introduceți codul de TVA",
+    "contactPersonLabel": "Persoana de contact *",
+    "contactPlaceholder": "Numele complet",
     "emailLabel": "Email *",
     "emailPlaceholder": "email@example.com",
-    "phoneLabel": "Phone *",
+    "phoneLabel": "Telefon *",
     "phonePlaceholder": "+1234567890",
-    "productTypeLabel": "Product Type *",
-    "productTypePlaceholder": "Select product type",
-    "certificationsLabel": "Certifications *",
-    "certificationsHint": "Select at least one certification",
-    "websiteLabel": "Website (optional)",
+    "productTypeLabel": "Tip produs *",
+    "productTypePlaceholder": "Selectați tipul de produs",
+    "certificationsLabel": "Certificari *",
+    "certificationsHint": "Selectați cel puțin o certificare",
+    "websiteLabel": "Site web (opțional)",
     "websitePlaceholder": "https://www.example.com",
-    "descriptionLabel": "Business Description (optional)",
-    "descriptionPlaceholder": "Brief description of your company and products...",
-    "submitting": "Submitting...",
-    "submit": "Submit Application",
-    "submitErrorFallback": "Failed to submit. Please try again or contact info@biovera.app",
+    "descriptionLabel": "Descrierea afacerii (opțional)",
+    "descriptionPlaceholder": "Scurtă descriere a companiei și a produselor dvs....",
+    "submitting": "Se trimite...",
+    "submit": "Trimiteți cererea",
+    "submitErrorFallback": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app",
     "productTypes": {
-      "seeds": "Seeds",
-      "fertilizers": "Fertilizers",
-      "packaging": "Packaging Materials",
-      "equipment": "Equipment",
-      "other": "Other"
+      "seeds": "Semințe",
+      "fertilizers": "Îngrășăminte",
+      "packaging": "Materiale de ambalare",
+      "equipment": "Echipamente",
+      "other": "Alte"
     }
   },
-  "formspeeNote": "Also stored in Bio Vera system — use this ref in admin Partner applications."
+  "formspeeNote": "De asemenea, stocat în sistemul Bio Vera - utilizați această referință în aplicațiile de administrare pentru parteneri."
 }
