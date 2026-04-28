@@ -291,16 +291,14 @@
     "mediaRelationsText": "Za intervjue, partnerske medijske projekte i upite za štampu, obratite se našem medijskom timu.",
     "sectionReleases": "Saopštenja za javnost",
     "readFullRelease": "Pročitaj celo saopštenje",
-    "sectionCompany": "Informacije o kompaniji",
-    "aboutTitle": "O Bio Veri",
-    "aboutText": "Bio Vera je vertikalno povezana poljoprivredna mreža koja povezuje proizvođače i tržište pod jasnim standardima. Pružamo tragljivost, obezbeđenje kvaliteta i usklađenost u okviru istog operativnog modela, od polja do kupca. Osnovana 2026. godine, sa sedištem u Hamburgu, Nemačka, i služi proizvođače i kupce širom sveta.",
-    "keyFactsTitle": "Ključni podaci",
+    "sectionCompany": "O Bio Veri",
+    "aboutTitle": "Za medije",
+    "aboutText": "Bio Vera povezuje partnorske uzgajivače i maloprodaju uz tragljive voće-povrtne lančeve. Kadrovima koji prate uzgoj, kontrolu kvaliteta i dokumentaciju trudimo se da je asortiman stabilan i jasnog porekla. Sedište u Hamburgu; saradnja sa uzgajivačima i trgovinama pre svega u EU i šire.",
+    "keyFactsTitle": "Kratak pregled",
     "keyFacts": [
-      "Osnivanje: 2026",
-      "Sedište: Hamburg, Nemačka",
-      "Tržište: globalno",
-      "Fokus: tragljivost u poljoprivredi i kvalitet",
-      "Tehnologija: sistem kontrole kvaliteta Protocol 360"
+      "Osnovanje: 2026. · sedište: Hamburg, Nemačka",
+      "Fokus: voće i povrće — pakovanje na veliko i malo",
+      "Kontakt za štampu: press@biovera.app"
     ],
     "sectionAssets": "Medijski resursi",
     "download": "Preuzmi",
@@ -322,48 +320,112 @@
         "id": "1",
         "date": "15. januar 2026.",
         "title": "Bio Vera lansira vertikalno povezanu poljoprivrednu mrežu",
-        "summary": "Bio Vera najavljuje lansiranje mreže koja povezuje proizvođače širom sveta sa tržištima, uz punu tragljivost i usklađenost ugrađenu u operativni model.",
-        "link": "#"
+        "summary": "Bio Vera najavljuje lansiranje mreže koja povezuje proizvođače širom sveta sa tržištima, uz punu tragljivost i usklađenost ugrađenu u operativni model."
       },
       {
         "id": "2",
         "date": "1. februar 2026.",
         "title": "Protocol 360: Novi sistem osiguranja kvaliteta postavlja standard u industriji",
-        "summary": "Bio Vera predstavlja Protocol 360, troslojni sistem kontrole kvaliteta koji obezbeđuje sigurnost proizvoda, kvalitet i standardizaciju od polja do police.",
-        "link": "#"
+        "summary": "Bio Vera predstavlja Protocol 360, troslojni sistem kontrole kvaliteta koji obezbeđuje sigurnost proizvoda, kvalitet i standardizaciju od polja do police."
       }
     ],
     "assetGroups": [
       {
         "category": "Logotipi",
         "items": [
-          { "name": "Bio Vera logo (PNG)", "description": "Visoka rezolucija, PNG format", "format": "PNG" },
-          { "name": "Bio Vera logo (SVG)", "description": "Vektorski logo, SVG format", "format": "SVG" },
-          { "name": "Bio Vera logo (tamna varijanta)", "description": "Tamna varijanta logotipa", "format": "PNG" },
-          { "name": "Bio Vera logo (svetla varijanta)", "description": "Svetla varijanta logotipa", "format": "PNG" }
+          {
+            "name": "Bio Vera logo (PNG)",
+            "description": "Visoka rezolucija, PNG format",
+            "format": "PNG",
+            "file": "/press/biovera-logo.png"
+          },
+          {
+            "name": "Bio Vera logo (SVG)",
+            "description": "Vektorski logo, SVG format",
+            "format": "SVG",
+            "file": "/press/biovera-logo.svg"
+          },
+          {
+            "name": "Bio Vera logo (tamna pozadina)",
+            "description": "Puna boja u PNG-u za upotrebu na kontrastnim pozadinama",
+            "format": "PNG",
+            "file": "/press/biovera-logo-dark-bg.png"
+          },
+          {
+            "name": "Bio Vera logo (svetla pozadina)",
+            "description": "Puna boja u PNG-u za upotrebu na kontrastnim pozadinama",
+            "format": "PNG",
+            "file": "/press/biovera-logo-light-bg.png"
+          }
         ]
       },
       {
         "category": "Brend boje",
         "items": [
-          { "name": "Primarna zelena", "description": "#2D5A27 — glavna boja brenda", "format": "HEX" },
-          { "name": "Sekundarne boje", "description": "Kompletna paleta", "format": "PDF" }
+          {
+            "name": "Primarna zelena",
+            "description": "#2D5A27 — glavna boja brenda (referenca)",
+            "format": "TXT",
+            "file": "/press/biovera-brand-primary.txt"
+          },
+          {
+            "name": "Sekundarne boje",
+            "description": "Isječak prateće palete",
+            "format": "TXT",
+            "file": "/press/biovera-secondary-colors.txt"
+          }
         ]
       },
       {
         "category": "Fotografije",
         "items": [
-          { "name": "Fotografije proizvoda", "description": "Visokokvalitetne slike proizvoda", "format": "ZIP" },
-          { "name": "Fotografije tima", "description": "Zvanične fotografije tima", "format": "ZIP" },
-          { "name": "Snimci ekrana aplikacije i portala", "description": "Snimci Bio Vera aplikacije i veb portala", "format": "ZIP" }
+          {
+            "name": "Jabuke — veliko pakovanje (na veliko)",
+            "description": "Robni prikazi i kutije za trgovinu na veliko i ugostiteljstvo.",
+            "format": "JPG",
+            "file": "/apples-bulk.jpg"
+          },
+          {
+            "name": "Jabuke — maloprodaja (~500 g)",
+            "description": "Potrošačko pakovanje za supermarkete i lokalnu maloprodaju.",
+            "format": "JPG",
+            "file": "/apples-retail-500g.jpg"
+          },
+          {
+            "name": "ZIP: obe fotografije proizvoda",
+            "description": "Skup JPG fajlova (veliko i malo pakovanje) u jednom arhivu.",
+            "format": "ZIP",
+            "file": "/press/biovera-product-photos.zip"
+          },
+          {
+            "name": "Paket aplikacije i portala",
+            "description": "Uputstvo i referentni materijal; komplet snimaka ekrana na zahtev",
+            "format": "ZIP",
+            "file": "/press/biovera-app-screenshots.zip"
+          }
         ]
       },
       {
         "category": "Dokumenti",
         "items": [
-          { "name": "Kratka činjenica o kompaniji", "description": "Pregled na jednoj stranici", "format": "PDF" },
-          { "name": "Pregled proizvoda", "description": "Detaljne informacije o proizvodima", "format": "PDF" },
-          { "name": "Smernice brenda", "description": "Kompletan dokument smernica brenda", "format": "PDF" }
+          {
+            "name": "Kratka činjenica o kompaniji",
+            "description": "Pregled za štampu na jednoj stranici",
+            "format": "TXT",
+            "file": "/press/biovera-company-fact-sheet.txt"
+          },
+          {
+            "name": "Pregled proizvoda",
+            "description": "Rezime proizvoda i programa",
+            "format": "TXT",
+            "file": "/press/biovera-product-overview.txt"
+          },
+          {
+            "name": "Smernice brenda",
+            "description": "Rezime korišćenja brenda",
+            "format": "TXT",
+            "file": "/press/biovera-brand-guidelines.txt"
+          }
         ]
       }
     ]
@@ -381,6 +443,50 @@
     "noAccount": "Nemate nalog?",
     "register": "Registracija",
     "errorFailed": "Prijava nije uspela. Proverite podatke."
+  },
+  "buyerRegister": {
+    "title": "Registracija kupca",
+    "subtitle": "Unesite e-poštu i podatke da napravite nalog. Pregled i porudžbine su mogući nakon što profil odobrimo.",
+    "success": "Registracija je uspešna! Prosleđivanje na prijavu…",
+    "navHome": "Početna",
+    "navSignIn": "Prijava",
+    "email": "E-pošta *",
+    "emailPh": "vas@email.com",
+    "firstName": "Ime *",
+    "firstNamePh": "Ime",
+    "lastName": "Prezime *",
+    "lastNamePh": "Prezime",
+    "businessName": "Firma / poslovni naziv",
+    "businessNamePh": "npr. Zelena Pijaca d.o.o.",
+    "companyPosition": "Uloga u firmi",
+    "companyPositionPh": "npr. Nabavka, Vlasnik",
+    "phone": "Telefon",
+    "phonePh": "Telefon (opciono)",
+    "password": "Lozinka *",
+    "passwordPh": "Najmanje 6 znakova",
+    "confirmPassword": "Potvrdi lozinku *",
+    "confirmPasswordPh": "Ponovi lozinku",
+    "sectionLocation": "Lokacija (opciono)",
+    "sectionLocationLead": "Uneta lokacija može automatski formirati tačku na mapi posle odobrenja administratora.",
+    "useLocation": "📍 Koristi trenutnu lokaciju",
+    "gettingLocation": "Učitavanje lokacije…",
+    "address": "Adresa",
+    "addressPh": "Ulica i broj",
+    "city": "Grad",
+    "cityPh": "Grad",
+    "coords": "Lokacija: {{lat}}, {{lng}}",
+    "submit": "Registruj se",
+    "submitting": "Slanje…",
+    "footerPrompt": "Već imate nalog?",
+    "footerSignIn": "Prijavi se",
+    "errGeoUnsupported": "Pregledač ne podržava geolokaciju",
+    "errGeoDenied": "Nije moguće dobiti lokaciju. Unesite je ručno.",
+    "errRequired": "Popunite obavezna polja (e-pošta, ime, prezime, lozinka)",
+    "errPasswordShort": "Lozinka mora imati najmanje 6 znakova",
+    "errPasswordMismatch": "Lozinke se ne poklapaju",
+    "errLocationNeedsAddress": "Uz lokaciju su obavezni adresa i grad",
+    "errRegistrationFailed": "Registracija nije uspela",
+    "logoAlt": "Bio Vera"
   },
   "authGuard": {
     "loading": "Učitavanje..."
@@ -1181,6 +1287,29 @@
     "materialsShortcutSuppliers": "Dobavljači",
     "materialsShortcutCompliance": "Usklađenost",
     "materialsShortcutHelp": "Pomoć",
+    "materialsWhitelistTitle": "Prijavi proizvod (lista dozvoljenih materijala)",
+    "materialsWhitelistIntro": "Ista lista kao u mobilnoj aplikaciji — prvo dodirnite vrstu (Seme / Đubrivo / Pesticid / Ostalo), pa naziv i barkod. Jasno je šta je seme ili pakovanje, bez mešanja u jedno polje.",
+    "materialsWhitelistPickType": "Koji je materijal?",
+    "materialsWhitelistType_SEED": "Seme",
+    "materialsWhitelistType_FERTILIZER": "Đubrivo",
+    "materialsWhitelistType_PESTICIDE": "Pesticid",
+    "materialsWhitelistType_OTHER": "Ostalo",
+    "materialsWhitelistName": "Naziv proizvoda / materijala",
+    "materialsWhitelistNamePh": "Kratak naziv",
+    "materialsWhitelistNamePh_SEED": "Sorta ili serija — malina, šljiva…",
+    "materialsWhitelistNamePh_FERTILIZER": "npr. organsko NP tečno đubrivo",
+    "materialsWhitelistNamePh_PESTICIDE": "npr. preparat za prskanje",
+    "materialsWhitelistNamePh_OTHER": "Naziv materijala",
+    "materialsWhitelistBarcode": "Barkod",
+    "materialsWhitelistBarcodePh": "Brojevi sa etikete",
+    "materialsWhitelistManufacturer": "Proizvođač (opciono)",
+    "materialsWhitelistManufacturerPh": "Brend na pakovanju",
+    "materialsWhitelistSave": "Sačuvaj na listu dozvoljenih",
+    "materialsWhitelistSaving": "Čuvanje…",
+    "materialsWhitelistSuccess": "Sačuvano. Pojavljuje se u Materijalu u aplikaciji i kod provera barkoda u polju.",
+    "materialsWhitelistErrRequired": "Unesi naziv i barkod (minimalno 3 znaka).",
+    "materialsWhitelistErrAuth": "Morate biti ulogovani.",
+    "materialsWhitelistErrSave": "Čuvanje nije uspelo. Ovaj barkod možda već postoji.",
     "materialsPurchaseTitle": "Kupovina zvaničnog materijala",
     "materialsPurchaseIntro": "Izaberite <0>gajbu</0>, <1>rolnu nalepnica</1> ili <2>foliju</2> (metri) — tri prikazana stanja se ažuriraju kad porudžbina uspe.",
     "materialsProductLabel": "Proizvod za porudžbinu",

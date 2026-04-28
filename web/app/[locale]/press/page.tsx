@@ -21,6 +21,8 @@ interface AssetItem {
   name: string;
   description: string;
   format: string;
+  /** Public path under /public, e.g. /press/asset.zip */
+  file: string;
 }
 
 interface AssetGroup {
@@ -39,15 +41,26 @@ function isPressReleaseArray(x: unknown): x is PressRelease[] {
   );
 }
 
-function isAssetGroupArray(x: unknown): x is AssetGroup[] {
+function isAssetItem(x: unknown): x is AssetItem {
+  if (typeof x !== 'object' || x === null) return false;
+  const o = x as Record<string, unknown>;
   return (
-    Array.isArray(x) &&
-    x.length > 0 &&
-    typeof x[0] === 'object' &&
-    x[0] !== null &&
-    'category' in x[0] &&
-    'items' in x[0]
+    typeof o.name === 'string' &&
+    typeof o.description === 'string' &&
+    typeof o.format === 'string' &&
+    typeof o.file === 'string' &&
+    o.file.length > 0
   );
+}
+
+function isAssetGroupArray(x: unknown): x is AssetGroup[] {
+  if (!Array.isArray(x) || x.length === 0) return false;
+  return x.every((grp) => {
+    if (typeof grp !== 'object' || grp === null) return false;
+    const g = grp as Record<string, unknown>;
+    if (typeof g.category !== 'string' || !Array.isArray(g.items)) return false;
+    return g.items.every(isAssetItem);
+  });
 }
 
 function isStringArray(x: unknown): x is string[] {
@@ -198,17 +211,21 @@ export default function PressPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-2xl font-light text-gray-900 mb-6">{t('pressPage.sectionCompany')}</h2>
-              <div className="space-y-4">
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-base font-medium text-gray-900 mb-2">{t('pressPage.aboutTitle')}</h3>
-                  <p className="text-sm text-gray-600 font-light leading-relaxed">{t('pressPage.aboutText')}</p>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">{t('pressPage.sectionCompany')}</h2>
+              <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-6 space-y-4">
+                <div>
+                  <h3 className="text-xs font-medium uppercase tracking-wide text-[#2D5A27] mb-2">
+                    {t('pressPage.aboutTitle')}
+                  </h3>
+                  <p className="text-sm text-gray-700 font-light leading-relaxed">{t('pressPage.aboutText')}</p>
                 </div>
-                <div className="border-l-2 border-[#2D5A27] pl-6">
-                  <h3 className="text-base font-medium text-gray-900 mb-2">{t('pressPage.keyFactsTitle')}</h3>
+                <div>
+                  <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2">
+                    {t('pressPage.keyFactsTitle')}
+                  </h3>
                   <ul className="space-y-2 text-sm text-gray-600 font-light">
                     {keyFacts.map((line) => (
-                      <li key={line}>• {line}</li>
+                      <li key={line}>{line}</li>
                     ))}
                   </ul>
                 </div>
@@ -243,13 +260,14 @@ export default function PressPage() {
                               {item.format}
                             </span>
                           </div>
-                          <button
-                            type="button"
-                            className="mt-3 flex items-center gap-2 text-xs text-[#2D5A27] hover:text-[#23471f] transition-colors"
+                          <a
+                            href={item.file}
+                            download
+                            className="mt-3 inline-flex items-center gap-2 text-xs text-[#2D5A27] hover:text-[#23471f] transition-colors"
                           >
-                            <Download className="w-3 h-3" />
+                            <Download className="w-3 h-3" aria-hidden />
                             {t('pressPage.download')}
-                          </button>
+                          </a>
                         </div>
                       ))}
                     </div>

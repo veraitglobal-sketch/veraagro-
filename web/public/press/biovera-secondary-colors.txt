@@ -1,0 +1,6 @@
+Bio Vera secondary palette
+
+Primary Green: #2D5A27
+Supporting neutrals: #F6F8F6 (light background), #1a1f1a (dark text).
+
+For typography, spacing and logo clearance, request the full Bio Vera Brand Guidelines from press@biovera.app.

@@ -12,6 +12,9 @@ import type { PendingFieldEntry } from '../../../lib/offline-storage';
 
 export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
 
+/** Barcode validation path — user taps first so we don't infer wrong from vague typing. */
+export type MaterialKindForLog = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+
 /** Maps UI activity to offline storage (English; sync maps to backend enums). */
 const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType']> = {
   PLANTING: 'Planting',
@@ -32,6 +35,7 @@ export function useFieldLogData() {
   const router = useRouter();
   const [activityType, setActivityType] = useState<ActivityType | ''>('');
   const [materialID, setMaterialID] = useState('');
+  const [materialKind, setMaterialKind] = useState<MaterialKindForLog>('SEED');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [gpsWarning, setGpsWarning] = useState(false);
@@ -71,23 +75,33 @@ export function useFieldLogData() {
     requestPermissions();
   }, [loadEstates, requestPermissions]);
 
+  useEffect(() => {
+    if (activityType === 'HARVEST') {
+      setMaterialID('');
+      setMaterialValid(null);
+      return;
+    }
+    if (activityType === 'PLANTING') setMaterialKind('SEED');
+    else if (activityType === 'FERTILIZING') setMaterialKind('FERTILIZER');
+    else if (activityType === 'SPRAYING') setMaterialKind('PESTICIDE');
+  }, [activityType]);
+
   const validateMaterial = useCallback(async () => {
     if (!materialID.trim()) {
       setMaterialValid(null);
       return;
     }
+    if (activityType === 'HARVEST') {
+      setMaterialValid(null);
+      return;
+    }
     try {
-      let type: 'SEED' | 'FERTILIZER' | 'PESTICIDE' | undefined;
-      const upper = materialID.trim().toUpperCase();
-      if (activityType === 'PLANTING' || upper.startsWith('SEED')) type = 'SEED';
-      else if (activityType === 'FERTILIZING') type = 'FERTILIZER';
-      else if (activityType === 'SPRAYING') type = 'PESTICIDE';
-      const result = await materialValidator(materialID, type);
+      const result = await materialValidator(materialID, materialKind);
       setMaterialValid(result.valid);
     } catch {
       setMaterialValid(false);
     }
-  }, [materialID, activityType]);
+  }, [materialID, activityType, materialKind]);
 
   useEffect(() => {
     if (!materialID || materialID.trim().length < 3) {
@@ -179,6 +193,7 @@ export function useFieldLogData() {
       Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveOk'));
       setActivityType('');
       setMaterialID('');
+      setMaterialKind('SEED');
       setPhotoUri(null);
       setLocation(null);
       setGpsWarning(false);
@@ -203,7 +218,7 @@ export function useFieldLogData() {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.locationRequired'));
       return;
     }
-    if (materialID && materialValid === false) {
+    if (activityType !== 'HARVEST' && materialID.trim() && materialValid === false) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.materialInvalid'));
       return;
     }
@@ -223,6 +238,8 @@ export function useFieldLogData() {
     setActivityType,
     materialID,
     setMaterialID,
+    materialKind,
+    setMaterialKind,
     photoUri,
     location,
     gpsWarning,

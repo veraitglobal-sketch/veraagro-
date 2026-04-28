@@ -5,15 +5,19 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { authAPI } from '@/lib/api';
 import Footer from '@/components/Footer';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function BuyerRegisterPage() {
+  const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
@@ -32,12 +36,12 @@ export default function BuyerRegisterPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const getCurrentLocation = async () => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
+      setError(t('buyerRegister.errGeoUnsupported'));
       return;
     }
 
@@ -48,17 +52,16 @@ export default function BuyerRegisterPage() {
       async (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ latitude, longitude });
-        
-        // Reverse geocode to get address
+
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
           );
           const data = await response.json();
           if (data.address) {
-            setFormData(prev => ({
+            setFormData((prev) => ({
               ...prev,
-              address: data.address.road 
+              address: data.address.road
                 ? `${data.address.road}${data.address.house_number ? ' ' + data.address.house_number : ''}`
                 : prev.address,
               city: data.address.city || data.address.town || data.address.village || prev.city,
@@ -67,13 +70,13 @@ export default function BuyerRegisterPage() {
         } catch (err) {
           console.warn('Could not reverse geocode:', err);
         }
-        
+
         setGettingLocation(false);
       },
-      (error) => {
-        setError('Could not get your location. Please enter it manually.');
+      () => {
+        setError(t('buyerRegister.errGeoDenied'));
         setGettingLocation(false);
-      }
+      },
     );
   };
 
@@ -82,32 +85,30 @@ export default function BuyerRegisterPage() {
     setError('');
     setSuccess(false);
 
-    // Validation
     if (!formData.email || !formData.firstName || !formData.lastName || !formData.password) {
-      setError('Please fill in all required fields (email, name, password)');
+      setError(t('buyerRegister.errRequired'));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('buyerRegister.errPasswordShort'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('buyerRegister.errPasswordMismatch'));
       return;
     }
 
-    // If location is provided, address and city are required
     if (location && (!formData.address || !formData.city)) {
-      setError('Address and city are required when location is provided');
+      setError(t('buyerRegister.errLocationNeedsAddress'));
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await authAPI.registerBuyer({
+      await authAPI.registerBuyer({
         email: formData.email,
         phone: formData.phone || undefined,
         firstName: formData.firstName,
@@ -121,14 +122,22 @@ export default function BuyerRegisterPage() {
       });
 
       setSuccess(true);
-      
-      // Redirect to login after 2 seconds
+
       setTimeout(() => {
-        router.push('/login/buyer');
+        router.push(loc('/login/buyer'));
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration error:', err);
-      const message = err.response?.data?.message || err.message || 'Registration failed';
+      const raw =
+        err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { message?: string | string[] } } }).response?.data?.message
+          : undefined;
+      const apiMsg =
+        typeof raw === 'string' ? raw : Array.isArray(raw) ? raw.filter(Boolean).join(' ') : undefined;
+      const message =
+        apiMsg ||
+        (err instanceof Error ? err.message : null) ||
+        t('buyerRegister.errRegistrationFailed');
       setError(message);
     } finally {
       setLoading(false);
@@ -137,62 +146,55 @@ export default function BuyerRegisterPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image 
-                src="/logo1.png" 
-                alt="Bio Vera" 
-                width={56} 
-                height={20} 
-                className="h-4 w-auto"
-                priority
-              />
+      <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+          <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
+            <Image
+              src="/logo1.png"
+              alt={t('buyerRegister.logoAlt')}
+              width={56}
+              height={20}
+              className="h-4 w-auto"
+              priority
+            />
+          </Link>
+          <nav className="flex items-center gap-8">
+            <Link href={loc('/')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
+              {t('buyerRegister.navHome')}
             </Link>
-            <nav className="flex gap-8 items-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                Home
-              </Link>
-              <Link href="/login/buyer" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                Sign In
-              </Link>
-            </nav>
-          </div>
+            <Link href={loc('/login/buyer')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
+              {t('buyerRegister.navSignIn')}
+            </Link>
+          </nav>
         </div>
       </header>
 
-      {/* Registration Section */}
-      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-[#2D5A27]/10 to-white">
-        <div className="max-w-2xl mx-auto">
+      <section className="bg-gradient-to-b from-[#2D5A27]/10 to-white px-6 pb-16 pt-32 lg:px-8">
+        <div className="mx-auto max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white border border-gray-200 rounded-lg shadow-subtle p-8"
+            className="shadow-subtle rounded-lg border border-gray-200 bg-white p-8"
           >
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-light text-gray-900 mb-2">Register as Buyer</h1>
-              <p className="text-sm text-gray-600">
-                Enter your email and details to create your account. You can browse and order once your profile is verified.
-              </p>
+            <div className="mb-8 text-center">
+              <h1 className="mb-2 text-3xl font-light text-gray-900">{t('buyerRegister.title')}</h1>
+              <p className="text-sm text-gray-600">{t('buyerRegister.subtitle')}</p>
             </div>
 
             {success ? (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 text-[#2D5A27] px-4 py-3 rounded-lg text-sm text-center"
+                className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 px-4 py-3 text-center text-sm text-[#2D5A27]"
               >
-                Registration successful! Redirecting to login...
+                {t('buyerRegister.success')}
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email – required for self-registration */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
+                    {t('buyerRegister.email')}
                   </label>
                   <input
                     id="email"
@@ -201,15 +203,15 @@ export default function BuyerRegisterPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                    placeholder="your@email.com"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                    placeholder={t('buyerRegister.emailPh')}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name *
+                    <label htmlFor="firstName" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.firstName')}
                     </label>
                     <input
                       id="firstName"
@@ -218,13 +220,13 @@ export default function BuyerRegisterPage() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="First name"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.firstNamePh')}
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name *
+                    <label htmlFor="lastName" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.lastName')}
                     </label>
                     <input
                       id="lastName"
@@ -233,17 +235,16 @@ export default function BuyerRegisterPage() {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Last name"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.lastNamePh')}
                     />
                   </div>
                 </div>
 
-                {/* Company / business */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Company / business name
+                    <label htmlFor="businessName" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.businessName')}
                     </label>
                     <input
                       id="businessName"
@@ -251,13 +252,13 @@ export default function BuyerRegisterPage() {
                       name="businessName"
                       value={formData.businessName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="e.g. Green Market d.o.o."
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.businessNamePh')}
                     />
                   </div>
                   <div>
-                    <label htmlFor="companyPosition" className="block text-sm font-medium text-gray-700 mb-2">
-                      Position in company
+                    <label htmlFor="companyPosition" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.companyPosition')}
                     </label>
                     <input
                       id="companyPosition"
@@ -265,15 +266,15 @@ export default function BuyerRegisterPage() {
                       name="companyPosition"
                       value={formData.companyPosition}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="e.g. Purchasing Manager, Owner"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.companyPositionPh')}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone
+                  <label htmlFor="phone" className="mb-2 block text-sm font-medium text-gray-700">
+                    {t('buyerRegister.phone')}
                   </label>
                   <input
                     id="phone"
@@ -281,15 +282,15 @@ export default function BuyerRegisterPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                    placeholder="Phone number (optional)"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                    placeholder={t('buyerRegister.phonePh')}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                      Password *
+                    <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.password')}
                     </label>
                     <input
                       id="password"
@@ -299,14 +300,14 @@ export default function BuyerRegisterPage() {
                       onChange={handleInputChange}
                       required
                       minLength={6}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Minimum 6 characters"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.passwordPh')}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm Password *
+                    <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-700">
+                      {t('buyerRegister.confirmPassword')}
                     </label>
                     <input
                       id="confirmPassword"
@@ -315,32 +316,30 @@ export default function BuyerRegisterPage() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                      placeholder="Confirm password"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                      placeholder={t('buyerRegister.confirmPasswordPh')}
                     />
                   </div>
                 </div>
 
                 <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-sm font-medium text-gray-900 mb-4">Location (Optional)</h3>
-                  <p className="text-xs text-gray-600 mb-4">
-                    Adding your location will automatically create a hub on the map after admin approval.
-                  </p>
-                  
+                  <h3 className="mb-4 text-sm font-medium text-gray-900">{t('buyerRegister.sectionLocation')}</h3>
+                  <p className="mb-4 text-xs text-gray-600">{t('buyerRegister.sectionLocationLead')}</p>
+
                   <div className="space-y-4">
                     <button
                       type="button"
                       onClick={getCurrentLocation}
                       disabled={gettingLocation}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {gettingLocation ? 'Getting location...' : '📍 Use Current Location'}
+                      {gettingLocation ? t('buyerRegister.gettingLocation') : t('buyerRegister.useLocation')}
                     </button>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                          Address
+                        <label htmlFor="address" className="mb-2 block text-sm font-medium text-gray-700">
+                          {t('buyerRegister.address')}
                         </label>
                         <input
                           id="address"
@@ -348,14 +347,14 @@ export default function BuyerRegisterPage() {
                           name="address"
                           value={formData.address}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                          placeholder="Street address"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                          placeholder={t('buyerRegister.addressPh')}
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                          City
+                        <label htmlFor="city" className="mb-2 block text-sm font-medium text-gray-700">
+                          {t('buyerRegister.city')}
                         </label>
                         <input
                           id="city"
@@ -363,15 +362,18 @@ export default function BuyerRegisterPage() {
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                          placeholder="City"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                          placeholder={t('buyerRegister.cityPh')}
                         />
                       </div>
                     </div>
 
                     {location && (
                       <p className="text-xs text-gray-500">
-                        Location: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
+                        {t('buyerRegister.coords', {
+                          lat: location.latitude.toFixed(6),
+                          lng: location.longitude.toFixed(6),
+                        })}
                       </p>
                     )}
                   </div>
@@ -381,7 +383,7 @@ export default function BuyerRegisterPage() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+                    className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
                   >
                     {error}
                   </motion.div>
@@ -390,16 +392,19 @@ export default function BuyerRegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#2D5A27] text-white py-3 rounded-lg text-sm font-medium hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full rounded-lg bg-[#2D5A27] py-3 text-sm font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading ? 'Registering...' : 'Register'}
+                  {loading ? t('buyerRegister.submitting') : t('buyerRegister.submit')}
                 </button>
               </form>
             )}
 
-            <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+            <div className="mt-6 border-t border-gray-200 pt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account? <Link href="/login/buyer" className="text-[#2D5A27] hover:text-[#23471f] font-medium">Sign in</Link>
+                {t('buyerRegister.footerPrompt')}{' '}
+                <Link href={loc('/login/buyer')} className="font-medium text-[#2D5A27] hover:text-[#23471f]">
+                  {t('buyerRegister.footerSignIn')}
+                </Link>
               </p>
             </div>
           </motion.div>

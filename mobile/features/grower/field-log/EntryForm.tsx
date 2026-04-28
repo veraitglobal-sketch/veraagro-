@@ -2,13 +2,21 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator 
 import { useTranslation } from 'react-i18next';
 import { Camera, MapPin, Check, X } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
-import { useFieldLogData, ACTIVITY_TYPES, ActivityType } from './useFieldLogData';
+import { useFieldLogData, ACTIVITY_TYPES, ActivityType, MaterialKindForLog } from './useFieldLogData';
 
 const activityLabelKey: Record<ActivityType, string> = {
   PLANTING: 'planting',
   FERTILIZING: 'fertilizing',
   SPRAYING: 'spraying',
   HARVEST: 'harvest',
+};
+
+const MATERIAL_KINDS: MaterialKindForLog[] = ['SEED', 'FERTILIZER', 'PESTICIDE'];
+
+const materialKindLabelKey: Record<MaterialKindForLog, string> = {
+  SEED: 'seed',
+  FERTILIZER: 'fertilizer',
+  PESTICIDE: 'pesticide',
 };
 
 export default function EntryForm() {
@@ -19,6 +27,8 @@ export default function EntryForm() {
     setActivityType,
     materialID,
     setMaterialID,
+    materialKind,
+    setMaterialKind,
     photoUri,
     location,
     gpsWarning,
@@ -118,73 +128,117 @@ export default function EntryForm() {
           </View>
         </View>
 
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '300',
-              color: theme.colors.text.primary,
-              letterSpacing: 0.5,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            {t('producer.fieldLogForm.materialBarcode')}
-          </Text>
-          <View
-            style={{
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.md,
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.05)',
-              paddingHorizontal: theme.spacing.sm,
-              paddingVertical: theme.spacing.sm,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <TextInput
+        {activityType && activityType !== 'HARVEST' ? (
+          <View style={{ marginBottom: theme.spacing.md }}>
+            <Text
               style={{
-                flex: 1,
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: '300',
                 color: theme.colors.text.primary,
-                letterSpacing: 0.2,
-              }}
-              placeholder={t('producer.fieldLogForm.materialPlaceholder')}
-              placeholderTextColor={theme.colors.text.tertiary}
-              value={materialID}
-              onChangeText={setMaterialID}
-            />
-            <TouchableOpacity
-              onPress={() => router.push('/(producer)/scanner')}
-              activeOpacity={0.7}
-              style={{
-                marginLeft: theme.spacing.xs,
-                padding: theme.spacing.xs,
-                borderRadius: theme.borderRadius.sm,
-                backgroundColor: `${theme.colors.primary}15`,
+                letterSpacing: 0.5,
+                marginBottom: theme.spacing.sm,
               }}
             >
-              <Camera size={18} color={theme.colors.primary} strokeWidth={1.5} />
-            </TouchableOpacity>
-            {materialValid !== null &&
-              (materialValid ? (
-                <Check
-                  size={20}
-                  color={theme.colors.success}
-                  strokeWidth={1}
-                  style={{ marginLeft: theme.spacing.xs }}
-                />
-              ) : (
-                <X
-                  size={20}
-                  color={theme.colors.error}
-                  strokeWidth={1}
-                  style={{ marginLeft: theme.spacing.xs }}
-                />
-              ))}
+              {t('producer.fieldLogForm.materialKindPrompt')}
+            </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginBottom: theme.spacing.sm }}>
+              {MATERIAL_KINDS.map((k) => {
+                const isSelected = materialKind === k;
+                return (
+                  <TouchableOpacity
+                    key={k}
+                    onPress={() => setMaterialKind(k)}
+                    activeOpacity={0.7}
+                    style={{
+                      paddingHorizontal: theme.spacing.md,
+                      paddingVertical: theme.spacing.sm,
+                      borderRadius: theme.borderRadius.md,
+                      borderWidth: 0.5,
+                      borderColor: isSelected ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
+                      backgroundColor: isSelected ? theme.colors.primary : theme.colors.surface,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: '400',
+                        color: isSelected ? theme.colors.background : theme.colors.text.primary,
+                        letterSpacing: 0.3,
+                      }}
+                    >
+                      {t(`producer.materials.${materialKindLabelKey[k]}`)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                color: theme.colors.text.primary,
+                letterSpacing: 0.5,
+                marginBottom: theme.spacing.sm,
+              }}
+            >
+              {t('producer.fieldLogForm.materialBarcode')}
+            </Text>
+            <View
+              style={{
+                backgroundColor: theme.colors.surface,
+                borderRadius: theme.borderRadius.md,
+                borderWidth: 0.5,
+                borderColor: 'rgba(0, 0, 0, 0.05)',
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: theme.spacing.sm,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <TextInput
+                style={{
+                  flex: 1,
+                  fontSize: 11,
+                  fontWeight: '300',
+                  color: theme.colors.text.primary,
+                  letterSpacing: 0.2,
+                }}
+                placeholder={t('producer.fieldLogForm.materialPlaceholder')}
+                placeholderTextColor={theme.colors.text.tertiary}
+                value={materialID}
+                onChangeText={setMaterialID}
+              />
+              <TouchableOpacity
+                onPress={() => router.push('/(producer)/scanner')}
+                activeOpacity={0.7}
+                style={{
+                  marginLeft: theme.spacing.xs,
+                  padding: theme.spacing.xs,
+                  borderRadius: theme.borderRadius.sm,
+                  backgroundColor: `${theme.colors.primary}15`,
+                }}
+              >
+                <Camera size={18} color={theme.colors.primary} strokeWidth={1.5} />
+              </TouchableOpacity>
+              {materialValid !== null &&
+                (materialValid ? (
+                  <Check
+                    size={20}
+                    color={theme.colors.success}
+                    strokeWidth={1}
+                    style={{ marginLeft: theme.spacing.xs }}
+                  />
+                ) : (
+                  <X
+                    size={20}
+                    color={theme.colors.error}
+                    strokeWidth={1}
+                    style={{ marginLeft: theme.spacing.xs }}
+                  />
+                ))}
+            </View>
           </View>
-        </View>
+        ) : null}
 
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text

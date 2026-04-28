@@ -174,19 +174,25 @@ export class HarvestAnnouncementsService {
    * Get all announcements for a farmer
    */
   async getFarmerAnnouncements(userId: string) {
-    return this.prisma.harvest_announcements.findMany({
-      where: { userId },
-      include: {
-        parcel: {
-          include: {
-            estates: true,
+    try {
+      return await this.prisma.harvest_announcements.findMany({
+        where: { userId },
+        include: {
+          parcel: {
+            include: {
+              estates: true,
+            },
           },
         },
-      },
-      orderBy: {
-        estimatedDate: 'desc',
-      },
-    });
+        orderBy: {
+          estimatedDate: 'desc',
+        },
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.error(`getFarmerAnnouncements failed for userId=${userId}: ${msg}`);
+      return [];
+    }
   }
 
   /**

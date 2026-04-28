@@ -21,10 +21,11 @@ import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { MaterialFilterType } from './useMaterialsData';
 
+/** Tap order: seed, fertilizer, pesticide, other — user picks before typing name / barcode. */
 const TYPE_VALUES: Array<Exclude<MaterialFilterType, 'all'>> = [
   'SEED',
-  'PESTICIDE',
   'FERTILIZER',
+  'PESTICIDE',
   'OTHER',
 ];
 
@@ -43,7 +44,7 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
   const [name, setName] = useState('');
   const [barcode, setBarcode] = useState('');
   const [manufacturer, setManufacturer] = useState('');
-  const [type, setType] = useState<Exclude<MaterialFilterType, 'all'>>('OTHER');
+  const [type, setType] = useState<Exclude<MaterialFilterType, 'all'>>('SEED');
   const [saving, setSaving] = useState(false);
 
   useFocusEffect(
@@ -66,7 +67,7 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
     setName('');
     setBarcode('');
     setManufacturer('');
-    setType('OTHER');
+    setType('SEED');
   }, []);
 
   const handleClose = () => {
@@ -121,6 +122,9 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
     return t(`producer.materials.${id}`);
   };
 
+  const namePlaceholder = (k: Exclude<MaterialFilterType, 'all'>) =>
+    t(`producer.materials.addForm.namePh_${k}`, { defaultValue: t('producer.materials.addForm.namePh') });
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
       <KeyboardAvoidingView
@@ -134,24 +138,14 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
             <X size={24} color={colors.text.secondary} />
           </TouchableOpacity>
         </View>
-        <Text style={styles.lead}>{t('producer.materials.addForm.lead')}</Text>
+        <Text style={styles.lead}>{t('producer.materials.addForm.leadPickType')}</Text>
 
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollInner}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.label}>{t('producer.materials.addForm.name')}</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder={t('producer.materials.addForm.namePh')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={styles.input}
-            autoCapitalize="words"
-          />
-
-          <Text style={styles.label}>{t('producer.materials.addForm.type')}</Text>
+          <Text style={styles.pickTypeHeading}>{t('producer.materials.addForm.pickTypeFirst')}</Text>
           <View style={styles.typeRow}>
             {TYPE_VALUES.map((k) => {
               const selected = type === k;
@@ -167,6 +161,18 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
               );
             })}
           </View>
+
+          <Text style={styles.subLead}>{t('producer.materials.addForm.thenDetails')}</Text>
+
+          <Text style={styles.label}>{t('producer.materials.addForm.name')}</Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder={namePlaceholder(type)}
+            placeholderTextColor={theme.colors.text.tertiary}
+            style={styles.input}
+            autoCapitalize="words"
+          />
 
           <Text style={styles.label}>{t('producer.materials.addForm.barcode')}</Text>
           <View style={styles.barcodeRow}>
@@ -238,6 +244,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     paddingTop: 12,
     lineHeight: 20,
+  },
+  pickTypeHeading: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: theme.colors.text.primary,
+    marginBottom: 10,
+    letterSpacing: 0.2,
+  },
+  subLead: {
+    fontSize: 13,
+    color: theme.colors.text.secondary,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+    lineHeight: 18,
   },
   scroll: { flex: 1 },
   scrollInner: { padding: theme.spacing.lg, paddingBottom: 40 },

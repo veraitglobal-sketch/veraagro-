@@ -847,7 +847,8 @@ export class GrowersService {
 
         // Try to add product arrangement images (apples and avocado examples)
         const appleImagePaths = [
-          'apples-retail.jpg', 'apples-retail.jpg .jpg', // Handle duplicate extension
+          'apples-retail-500g.jpg',
+          'apples-retail.jpg',
           'apples-box.jpg', 'apples-box.png',
           'apples.jpg', 'jabuke.jpg'
         ];

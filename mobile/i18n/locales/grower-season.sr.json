@@ -1,0 +1,9 @@
+{
+  "pageDescription": "Od prvog podešavanja do transporta. Usklađeno sa web stranicom Uputstva (12 kartica, isti tok). Povuci da osvežiš status odobrenja parcela.",
+  "glanceTitle": "Parcele u jednom pogledu",
+  "glanceApproved": "Bar jedna parcela je odobrena — možete nastaviti rad i partije gde pravila to dozvoljavaju.",
+  "glancePending": "Još {{count}} parcela čeka na odobrenje administratora. Neke radnje ostaju zaključane dok se parcela ne odobri.",
+  "glanceNoParcel": "Još nema parcele. U „Moje parcele” dodajte parcelu i blok useva.",
+  "linkMyFields": "Moje parcele",
+  "introRibbon": "{{count}} koraka — isti put kao „Uputstva” na sajtu. Na Početnoj je numerisan spisak; ispod kratak lanac pa svi koraci."
+}

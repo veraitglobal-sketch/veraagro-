@@ -291,16 +291,14 @@
     "mediaRelationsText": "For interview requests, media partnerships, and press inquiries, please contact our media team.",
     "sectionReleases": "Press releases",
     "readFullRelease": "Read full release",
-    "sectionCompany": "Company information",
-    "aboutTitle": "About Bio Vera",
-    "aboutText": "Bio Vera is a vertically integrated agricultural network that connects producers with markets under clear standards. We provide traceability, quality assurance, and compliance as part of the same operating model, from field to buyer. Founded in 2026, Bio Vera is headquartered in Hamburg, Germany, and serves producers and buyers around the world.",
-    "keyFactsTitle": "Key facts",
+    "sectionCompany": "About Bio Vera",
+    "aboutTitle": "For media",
+    "aboutText": "Bio Vera runs a traceable fresh-produce network from partner growers to retail. We help align growing, quality checks, and documentation so buyers get consistent product and clear origin. Based in Hamburg; active with growers and retail partners in the EU and beyond.",
+    "keyFactsTitle": "At a glance",
     "keyFacts": [
-      "Founded: 2026",
-      "Headquarters: Hamburg, Germany",
-      "Market: worldwide",
-      "Focus: agricultural traceability and quality assurance",
-      "Technology: Protocol 360 quality control system"
+      "Founded: 2026 · HQ: Hamburg, Germany",
+      "Producer-to-retail focus: fruit and vegetables (wholesale and consumer packs)",
+      "Press contact: press@biovera.app"
     ],
     "sectionAssets": "Media assets",
     "download": "Download",
@@ -322,48 +320,112 @@
         "id": "1",
         "date": "January 15, 2026",
         "title": "Bio Vera Launches Vertically Integrated Agricultural Network",
-        "summary": "Bio Vera announces the launch of its agricultural network connecting producers worldwide with markets, with full traceability and compliance built into the operating model.",
-        "link": "#"
+        "summary": "Bio Vera announces the launch of its agricultural network connecting producers worldwide with markets, with full traceability and compliance built into the operating model."
       },
       {
         "id": "2",
         "date": "February 1, 2026",
         "title": "Protocol 360: New Quality Assurance System Sets Industry Standard",
-        "summary": "Bio Vera introduces Protocol 360, a three-tier quality control system ensuring product safety, quality, and standardization from field to shelf.",
-        "link": "#"
+        "summary": "Bio Vera introduces Protocol 360, a three-tier quality control system ensuring product safety, quality, and standardization from field to shelf."
       }
     ],
     "assetGroups": [
       {
         "category": "Logos",
         "items": [
-          { "name": "Bio Vera Logo (PNG)", "description": "High-resolution logo in PNG format", "format": "PNG" },
-          { "name": "Bio Vera Logo (SVG)", "description": "Vector logo in SVG format", "format": "SVG" },
-          { "name": "Bio Vera Logo (Dark)", "description": "Dark variant of the logo", "format": "PNG" },
-          { "name": "Bio Vera Logo (Light)", "description": "Light variant of the logo", "format": "PNG" }
+          {
+            "name": "Bio Vera Logo (PNG)",
+            "description": "High-resolution logo in PNG format",
+            "format": "PNG",
+            "file": "/press/biovera-logo.png"
+          },
+          {
+            "name": "Bio Vera Logo (SVG)",
+            "description": "Vector logo in SVG format",
+            "format": "SVG",
+            "file": "/press/biovera-logo.svg"
+          },
+          {
+            "name": "Bio Vera Logo (Dark)",
+            "description": "Full-colour PNG for flexible use on contrasting backgrounds",
+            "format": "PNG",
+            "file": "/press/biovera-logo-dark-bg.png"
+          },
+          {
+            "name": "Bio Vera Logo (Light)",
+            "description": "Full-colour PNG for flexible use on contrasting backgrounds",
+            "format": "PNG",
+            "file": "/press/biovera-logo-light-bg.png"
+          }
         ]
       },
       {
         "category": "Brand colors",
         "items": [
-          { "name": "Primary Green", "description": "#2D5A27 - Main brand color", "format": "HEX" },
-          { "name": "Secondary Colors", "description": "Complete color palette", "format": "PDF" }
+          {
+            "name": "Primary Green",
+            "description": "#2D5A27 — main brand colour (reference)",
+            "format": "TXT",
+            "file": "/press/biovera-brand-primary.txt"
+          },
+          {
+            "name": "Secondary colours",
+            "description": "Supporting palette excerpt",
+            "format": "TXT",
+            "file": "/press/biovera-secondary-colors.txt"
+          }
         ]
       },
       {
         "category": "Images",
         "items": [
-          { "name": "Product Photography", "description": "High-quality product images", "format": "ZIP" },
-          { "name": "Team Photos", "description": "Official team photographs", "format": "ZIP" },
-          { "name": "App & portal screenshots", "description": "Bio Vera app and web portal screenshots", "format": "ZIP" }
+          {
+            "name": "Apples — wholesale (bulk)",
+            "description": "Large-format trade packaging and bulk cartons — for wholesalers and food-service angles.",
+            "format": "JPG",
+            "file": "/apples-bulk.jpg"
+          },
+          {
+            "name": "Apples — retail packs (approx. 500 g)",
+            "description": "Consumer packs for supermarkets and neighbourhood retail.",
+            "format": "JPG",
+            "file": "/apples-retail-500g.jpg"
+          },
+          {
+            "name": "Apple product photos (ZIP)",
+            "description": "Both wholesale and retail JPEGs in one download.",
+            "format": "ZIP",
+            "file": "/press/biovera-product-photos.zip"
+          },
+          {
+            "name": "App & portal pack",
+            "description": "Readme plus reference asset; full screenshot set on request",
+            "format": "ZIP",
+            "file": "/press/biovera-app-screenshots.zip"
+          }
         ]
       },
       {
         "category": "Documents",
         "items": [
-          { "name": "Company Fact Sheet", "description": "One-page company overview", "format": "PDF" },
-          { "name": "Product Overview", "description": "Detailed product information", "format": "PDF" },
-          { "name": "Brand Guidelines", "description": "Complete brand guidelines document", "format": "PDF" }
+          {
+            "name": "Company fact sheet",
+            "description": "One-page press overview",
+            "format": "TXT",
+            "file": "/press/biovera-company-fact-sheet.txt"
+          },
+          {
+            "name": "Product overview",
+            "description": "Product and programme summary",
+            "format": "TXT",
+            "file": "/press/biovera-product-overview.txt"
+          },
+          {
+            "name": "Brand guidelines",
+            "description": "Brand usage summary",
+            "format": "TXT",
+            "file": "/press/biovera-brand-guidelines.txt"
+          }
         ]
       }
     ]
@@ -381,6 +443,50 @@
     "noAccount": "Don't have an account?",
     "register": "Register",
     "errorFailed": "Login failed. Please check your credentials."
+  },
+  "buyerRegister": {
+    "title": "Register as Buyer",
+    "subtitle": "Enter your email and details to create your account. You can browse and order once your profile is verified.",
+    "success": "Registration successful! Redirecting to login…",
+    "navHome": "Home",
+    "navSignIn": "Sign in",
+    "email": "Email *",
+    "emailPh": "your@email.com",
+    "firstName": "First name *",
+    "firstNamePh": "First name",
+    "lastName": "Last name *",
+    "lastNamePh": "Last name",
+    "businessName": "Company / business name",
+    "businessNamePh": "e.g. Green Market d.o.o.",
+    "companyPosition": "Position in company",
+    "companyPositionPh": "e.g. Purchasing Manager, Owner",
+    "phone": "Phone",
+    "phonePh": "Phone number (optional)",
+    "password": "Password *",
+    "passwordPh": "Minimum 6 characters",
+    "confirmPassword": "Confirm password *",
+    "confirmPasswordPh": "Confirm password",
+    "sectionLocation": "Location (optional)",
+    "sectionLocationLead": "Adding your location will automatically create a hub on the map after admin approval.",
+    "useLocation": "📍 Use current location",
+    "gettingLocation": "Getting location…",
+    "address": "Address",
+    "addressPh": "Street address",
+    "city": "City",
+    "cityPh": "City",
+    "coords": "Location: {{lat}}, {{lng}}",
+    "submit": "Register",
+    "submitting": "Registering…",
+    "footerPrompt": "Already have an account?",
+    "footerSignIn": "Sign in",
+    "errGeoUnsupported": "Geolocation is not supported by your browser",
+    "errGeoDenied": "Could not get your location. Please enter it manually.",
+    "errRequired": "Please fill in all required fields (email, name, password)",
+    "errPasswordShort": "Password must be at least 6 characters",
+    "errPasswordMismatch": "Passwords do not match",
+    "errLocationNeedsAddress": "Address and city are required when location is provided",
+    "errRegistrationFailed": "Registration failed",
+    "logoAlt": "Bio Vera"
   },
   "authGuard": {
     "loading": "Loading..."
@@ -1181,6 +1287,29 @@
     "materialsShortcutSuppliers": "Suppliers",
     "materialsShortcutCompliance": "Compliance",
     "materialsShortcutHelp": "Help",
+    "materialsWhitelistTitle": "Register your product (allowed materials list)",
+    "materialsWhitelistIntro": "Same list as in the mobile app — tap the category first (seed, fertilizer, pesticide, other), then the product name and barcode. Lets you spell out which seed or pack without guessing the type.",
+    "materialsWhitelistPickType": "What is this product?",
+    "materialsWhitelistType_SEED": "Seed",
+    "materialsWhitelistType_FERTILIZER": "Fertilizer",
+    "materialsWhitelistType_PESTICIDE": "Pesticide",
+    "materialsWhitelistType_OTHER": "Other",
+    "materialsWhitelistName": "Product / material name",
+    "materialsWhitelistNamePh": "Short product name",
+    "materialsWhitelistNamePh_SEED": "Variety or lot — raspberry, plum…",
+    "materialsWhitelistNamePh_FERTILIZER": "e.g. organic NP liquid",
+    "materialsWhitelistNamePh_PESTICIDE": "e.g. biocontrol spray name",
+    "materialsWhitelistNamePh_OTHER": "Material name",
+    "materialsWhitelistBarcode": "Barcode",
+    "materialsWhitelistBarcodePh": "Numbers from the label",
+    "materialsWhitelistManufacturer": "Manufacturer (optional)",
+    "materialsWhitelistManufacturerPh": "Brand on pack",
+    "materialsWhitelistSave": "Save to allowed list",
+    "materialsWhitelistSaving": "Saving…",
+    "materialsWhitelistSuccess": "Saved. It appears in Materials in the app and in field barcode checks.",
+    "materialsWhitelistErrRequired": "Enter the product name and a barcode with at least 3 characters.",
+    "materialsWhitelistErrAuth": "You must be signed in.",
+    "materialsWhitelistErrSave": "Could not save. This barcode may already exist.",
     "materialsPurchaseTitle": "Purchase official materials",
     "materialsPurchaseIntro": "Pick <0>crate</0>, <1>label roll</1>, or <2>film</2> (meters) — the three balances above update when the order succeeds.",
     "materialsProductLabel": "Product to order",

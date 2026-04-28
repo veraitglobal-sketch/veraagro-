@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, type FormEvent } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -57,6 +57,21 @@ export default function GrowerMaterialsPage() {
   const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
   const [serialsError, setSerialsError] = useState<string | null>(null);
   const [labelRollFilter, setLabelRollFilter] = useState('');
+
+  const [wlType, setWlType] = useState<'SEED' | 'FERTILIZER' | 'PESTICIDE' | 'OTHER'>('SEED');
+  const [wlName, setWlName] = useState('');
+  const [wlBarcode, setWlBarcode] = useState('');
+  const [wlManufacturer, setWlManufacturer] = useState('');
+  const [wlSaving, setWlSaving] = useState(false);
+  const [wlErr, setWlErr] = useState<string | null>(null);
+  const [wlOk, setWlOk] = useState<string | null>(null);
+
+  const wlNamePlaceholder = useMemo(() => {
+    const k = `growerPages.materialsWhitelistNamePh_${wlType}` as const;
+    const tr = t(k);
+    if (tr !== k) return tr;
+    return t('growerPages.materialsWhitelistNamePh');
+  }, [wlType, t]);
 
   const formatDateTime = useCallback(
     (iso: string | null | undefined) => {
@@ -117,6 +132,54 @@ export default function GrowerMaterialsPage() {
     if (!q) return labelRolls;
     return labelRolls.filter((r) => r.serialNumber.toLowerCase().includes(q));
   }, [labelRolls, labelRollFilter]);
+
+  const submitWhitelistMaterial = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const name = wlName.trim();
+    const barcode = wlBarcode.trim();
+    if (!name || barcode.length < 3) {
+      setWlErr(t('growerPages.materialsWhitelistErrRequired'));
+      setWlOk(null);
+      return;
+    }
+    setWlSaving(true);
+    setWlErr(null);
+    setWlOk(null);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setWlErr(t('growerPages.materialsWhitelistErrAuth'));
+        return;
+      }
+      const res = await fetch(`${WEB_API_BASE}/compliance/white-list/grower`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productName: name,
+          barcode,
+          materialType: wlType,
+          manufacturer: wlManufacturer.trim() || undefined,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setWlErr(messageFromApiPayload(data) || t('growerPages.materialsWhitelistErrSave'));
+        return;
+      }
+      setWlOk(t('growerPages.materialsWhitelistSuccess'));
+      setWlName('');
+      setWlBarcode('');
+      setWlManufacturer('');
+      setWlType('SEED');
+    } catch {
+      setWlErr(t('growerPages.materialsWhitelistErrSave'));
+    } finally {
+      setWlSaving(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -320,6 +383,98 @@ export default function GrowerMaterialsPage() {
             {t('growerPages.materialsShortcutHelp')}
           </Link>
         </p>
+
+        <form
+          className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-white p-6 shadow-sm"
+          onSubmit={submitWhitelistMaterial}
+        >
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsWhitelistTitle')}</h2>
+          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">{t('growerPages.materialsWhitelistIntro')}</p>
+          <p className="mb-3 text-sm font-medium text-gray-800">{t('growerPages.materialsWhitelistPickType')}</p>
+          <div className="mb-6 flex flex-wrap gap-2">
+            {(['SEED', 'FERTILIZER', 'PESTICIDE', 'OTHER'] as const).map((id) => {
+              const on = wlType === id;
+              const lblKey = `growerPages.materialsWhitelistType_${id}` as const;
+              const lbl = t(lblKey);
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setWlType(id);
+                    setWlErr(null);
+                    setWlOk(null);
+                  }}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                    on ? 'bg-[#2D5A27] text-white' : 'border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {lbl !== lblKey ? lbl : id}
+                </button>
+              );
+            })}
+          </div>
+          {wlErr && (
+            <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{wlErr}</p>
+          )}
+          {wlOk && (
+            <p className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">{wlOk}</p>
+          )}
+          <div className="space-y-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-name">
+                {t('growerPages.materialsWhitelistName')}
+              </label>
+              <input
+                id="wl-name"
+                type="text"
+                required
+                value={wlName}
+                onChange={(e) => setWlName(e.target.value)}
+                placeholder={wlNamePlaceholder}
+                autoComplete="off"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-barcode">
+                {t('growerPages.materialsWhitelistBarcode')}
+              </label>
+              <input
+                id="wl-barcode"
+                type="text"
+                required
+                minLength={3}
+                value={wlBarcode}
+                onChange={(e) => setWlBarcode(e.target.value)}
+                placeholder={t('growerPages.materialsWhitelistBarcodePh')}
+                autoComplete="off"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-mfg">
+                {t('growerPages.materialsWhitelistManufacturer')}
+              </label>
+              <input
+                id="wl-mfg"
+                type="text"
+                value={wlManufacturer}
+                onChange={(e) => setWlManufacturer(e.target.value)}
+                placeholder={t('growerPages.materialsWhitelistManufacturerPh')}
+                autoComplete="off"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={wlSaving}
+              className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {wlSaving ? t('growerPages.materialsWhitelistSaving') : t('growerPages.materialsWhitelistSave')}
+            </button>
+          </div>
+        </form>
 
         <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsPurchaseTitle')}</h2>
