@@ -140,18 +140,18 @@
     "cancel": "Cancel"
   },
   "nav": {
-    "home": "Home",
-    "forBuyers": "For Buyers",
-    "forGrowers": "For Growers",
-    "forSuppliers": "For Suppliers",
-    "forLogistics": "For Logistics",
-    "contact": "Contact",
-    "helpCenter": "Help Center",
+    "home": "Startseite",
+    "forBuyers": "Für Einkäufer",
+    "forGrowers": "Für Erzeuger",
+    "forSuppliers": "Für Lieferanten",
+    "forLogistics": "Logistik",
+    "contact": "Kontakt",
+    "helpCenter": "Hilfe",
     "dashboard": "Dashboard",
-    "login": "Login",
-    "logout": "Logout",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "contactPage": {
     "heroTitle": "Get in touch",
@@ -1561,152 +1561,152 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertically Integrated",
-      "title2": "Agricultural Network",
-      "subtitle": "From field to buyer in one system: traceable batches, Bio-Ready certification, and digital proof at every step. Open to producers worldwide.",
-      "browseProducts": "Browse Products",
-      "becomeProducer": "Become a Producer",
-      "preOrder": "Pre-order for 2026 is open",
-      "preOrderAria": "Pre-order info",
-      "preOrderTip1": "Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.",
-      "preOrderTip2": "Pre-order is for planning 2026 quantities only; it is not a binding order."
+      "title1": "Vertikal integriertes",
+      "title2": "Agrarnetzwerk",
+      "subtitle": "Vom Feld bis zum Käufer in einem System: nachverfolgbare Chargen, Bio-Ready-Zertifizierung und digitaler Nachweis bei jedem Schritt. Für Erzeugende weltweit zugänglich.",
+      "browseProducts": "Produkte ansehen",
+      "becomeProducer": "Erzeuger werden",
+      "preOrder": "Pre-Order für 2026 ist offen",
+      "preOrderAria": "Hinweise zum Vororder",
+      "preOrderTip1": "Bio-Vera-Produkte werden frisch zur Auslieferung gebracht. Neben einer strengen Qualitätskontrolle orientieren wir uns an den Erwartungen Ihrer Kundinnen und Kunden entlang der gesamten Kette.",
+      "preOrderTip2": "Pre-Order dient nur der Mengenplanung für 2026 und begründet noch keine rechtskräftige Bestellung."
     },
     "statLabels": [
-      "Traceability",
-      "Certified",
+      "Nachverfolgbarkeit",
+      "Zertifiziert",
       "Monitoring",
-      "Fraud Cases",
-      "Blockchain Complete"
+      "Betrugsfälle",
+      "Blockchain vollständig"
     ],
-    "partnersLine": "Trusted every day by leading agricultural organizations",
+    "partnersLine": "Vertraut von führenden Organisationen aus Landwirtschaft und Lebensmittelkette — jeden Tag.",
     "vision": {
-      "title": "Our Vision",
-      "intro": "We build a trusted path from field to buyer: clear rules, honest records, and fair access to market for growers who meet our standards.",
+      "title": "Unsere Vision",
+      "intro": "Wir verbinden Feld und Absatzpunkt nach klaren Regeln: transparente Daten, faire Marktzugänge für Erzeugende, die unsere Standards erfüllen.",
       "cards": [
         {
-          "title": "Transparency",
-          "description": "Complete visibility of the entire process from field to customer. Every step is documented and immutable."
+          "title": "Transparenz",
+          "description": "Nachvollziehbarkeit des gesamten Wegs vom Feld bis zur Kundschaft — jede Etappe dokumentiert und unverändert dokumentierbar."
         },
         {
-          "title": "Security",
-          "description": "Cryptographically protected data, anti-fraud protection, and immutable digital evidence."
+          "title": "Sicherheit",
+          "description": "Kryptografisch geschützte Daten, Betrugsschutz und unverändert festhaltbare digitale Belege."
         },
         {
-          "title": "EU Access",
-          "description": "Automated generation of EU certificates and digital passports for direct market access."
+          "title": "EU-Zugang",
+          "description": "Automatisierte Erzeugung EU-relevanter Zertifikate und digitaler Pässe für den direkten Marktzugang."
         }
       ]
     },
     "features": {
-      "title": "Core Features",
-      "intro": "How the network runs day to day—production, logistics, delivery, and settlement connected in one operating model.",
+      "title": "Kernfunktionen",
+      "intro": "So läuft das Netz im Alltag: Produktion, Logistik, Lieferung und Abrechnung in einem konsistenten Operating Model.",
       "list": [
         {
-          "title": "Smart-Lock System",
-          "description": "QR code scanning is the primary key. Immutable proof of production with GPS validation."
+          "title": "Smart-Lock-System",
+          "description": "QR-Erfassung ist der Schlüssel: unveränderlicher Produktnachweis mit GPS-Validierung."
         },
         {
-          "title": "Batch Tracking",
-          "description": "Every crate tracked with Batch_ID. One-click traceability from field to customer."
+          "title": "Chargentracking",
+          "description": "Jede Kiste mit Batch-ID geführt — Klickbare Rückverfolgung vom Feld bis zum Absatzpunkt."
         },
         {
-          "title": "Escrow Payment",
-          "description": "Buyer funds stay in escrow until delivery is confirmed, then are released to grower and logistics partners under agreed terms. Bio Vera runs the chain as brand and supply operator—strong, fair commercial terms, not a public percentage sheet."
+          "title": "Treuhändische Zahlung",
+          "description": "Einkaufsgelder verbleiben im Treuhandkonto, bis die Lieferung verbindlich nachgewiesen ist; anschließend Auszahlung an Erzeugende und Logistik nach vereinbarter Teilung."
         },
         {
-          "title": "Digital Handshake",
-          "description": "Customer scans QR code to confirm delivery. Automatic payment release."
+          "title": "Digitaler Handschlag",
+          "description": "Kundin oder Kunde scannt den QR zur Zustellbestätigung — Freigabe der Auszahlung automatisiert."
         },
         {
-          "title": "Anti-Fraud Protection",
-          "description": "GPS timestamp, device ID tracking, camera-only capture. Impossible to falsify."
+          "title": "Betrugsschutz",
+          "description": "GPS-Zeitstempel, Gerätetracking und Kamerapfade — dokumentierte Daten schwerlich zu fälschen."
         },
         {
-          "title": "EU Digital Passport",
-          "description": "Automated generation of EU certificates. Direct market access without intermediaries."
+          "title": "EU-Digitalpass",
+          "description": "Automatisch erzeugte EU-Nachweise. Direktzugänge ohne zusätzliche Schaltstufen."
         },
         {
-          "title": "Blockchain verification (Polygon)",
-          "description": "Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete."
+          "title": "Blockchain-Verifikation (Polygon)",
+          "description": "Fixierbare Herkunftsbelege auf der Chain. Produktpass zeigt Gütesiegel plus vollen Weg."
         }
       ]
     },
     "blockchain": {
-      "title": "Why We Use Blockchain",
-      "body": "We use a blockchain system so our products stay faithful to you—the customer. Every step of the journey, from harvest to delivery, is recorded in a way that cannot be changed. Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.",
+      "title": "Warum Blockchain",
+      "body": "Wir nutzen Blockchain, damit jede Produktreihe konsistent dokumentiert wird: von der Ernte bis zur Übergabe, ohne spätere Änderungen hinter verschlossenen Türen. Was Sie beim Scannen sehen — dieselben Nachweise verwenden wir operativ.",
       "bullets": [
-        "Immutable record",
-        "No one can edit the trail",
-        "You verify the same data we do"
+        "Festgeschriebener Datensatz",
+        "Nachweispfad ohne nachträgliche Änderung",
+        "Sie validieren denselben Satz Daten wie wir intern"
       ]
     },
     "roadmap": {
       "title": "Roadmap",
-      "subtitle": "Where we are now and where we are heading",
-      "statusCompleted": "Completed",
-      "statusInProgress": "In Progress",
-      "statusPlanned": "Planned",
+      "subtitle": "Heute und kommende Ausbaustufen",
+      "statusCompleted": "Umgesetzt",
+      "statusInProgress": "In Arbeit",
+      "statusPlanned": "Geplant",
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Network go-live",
+          "title": "Netzwerk go-live",
           "status": "completed",
           "items": [
             "Backend API",
             "Mobile App",
-            "Web app",
-            "Core features"
+            "Web-App",
+            "Kernfunktionen"
           ]
         },
         {
           "phase": "Q2 2026",
-          "title": "Feature Expansion",
+          "title": "Feature-Ausbau",
           "status": "completed",
           "items": [
-            "AI Analytics — Complete",
-            "Blockchain verification (Polygon) — Complete",
-            "Advanced Dashboard",
-            "Integrations",
-            "EU Certificates"
+            "KI-Analytics — abgeschlossen",
+            "Blockchain-Verifikation (Polygon) — abgeschlossen",
+            "Erweitertes Dashboard",
+            "Integrationen",
+            "EU-Zertifikate"
           ]
         },
         {
-          "phase": "Q3-Q4 2026",
-          "title": "Scaling",
+          "phase": "Q3–Q4 2026",
+          "title": "Skalierung",
           "status": "planned",
           "items": [
-            "Multi-region Support",
+            "Mehrstufiger Rollout nach Region",
             "API Marketplace",
-            "Partner Integrations",
+            "Partner-Integrationen",
             "Enterprise Features"
           ]
         },
         {
           "phase": "2027",
-          "title": "Global Expansion",
+          "title": "Globaler Ausbau",
           "status": "planned",
           "items": [
-            "Global Markets",
-            "IoT Sensors",
-            "AI Predictions"
+            "Globale Märkte",
+            "IoT-Sensoren",
+            "KI-Prognosen"
           ]
         }
       ]
     },
     "products": {
-      "title": "Browse Products",
-      "subtitle": "Organic products with complete traceability",
-      "fruits": "Fruits",
-      "vegetables": "Vegetables",
-      "grains": "Grains"
+      "title": "Produkte durchsuchen",
+      "subtitle": "Bio-Produkte mit lückenloser Rückverfolgbarkeit",
+      "fruits": "Obst",
+      "vegetables": "Gemüse",
+      "grains": "Getreide"
     },
     "cta": {
-      "title": "Partner with the network",
-      "body": "Work with growers, logistics partners, and buyers under one set of standards—clear handovers, traceable batches, and predictable commercial terms.",
-      "becomeProducer": "Become a Producer",
-      "startShopping": "Start Shopping"
+      "title": "Partner im Netzwerk werden",
+      "body": "Gemeinsame Standards für Erzeugende, Logistikpartner und Absatzkanäle — klare Übergaben, nachverfolgbare Chargen, planbare Geschäftsbeziehungen.",
+      "becomeProducer": "Erzeuger werden",
+      "startShopping": "Einkaufen starten"
     },
-    "help": "Questions? We’re here to help."
+    "help": "Fragen? Wir helfen."
   },
   "forBuyersPage": {
     "title": "For Buyers",
@@ -1984,6 +1984,16 @@
     "whoCanApplyLead": "Logistics partners can apply from the same countries where we have growers. Anyone who meets the conditions below can become a Vera logistics partner.",
     "countriesLine": "Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Montenegro, Netherlands, North Macedonia, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Spain, Sweden",
     "whoCanApplyLine2": "We work with <s1>small companies</s1>, <s2>large transport companies</s2>, and <s3>independent drivers</s3>. The only requirement is that you can meet our cold chain and tracking standards below.",
+    "fleetPolicyTitle": "Bio-Vera-Flotte & Zulassung von Fahrzeugen",
+    "fleetPolicyP1": "Mit einer aktuellen Vereinbarung zu unserem Logistikprogramm entwickeln und betreiben Bio Vera eine eigene, marken­geführte Fahrzeugflotte parallel zu qualifizierten Partnern. Fahrzeuge unter Vera-Last müssen diesem Programm sichtbar und technisch entsprechen: einheitliches Erscheinungsbild unterwegs, einheitlicher Kälteketten-Ansatz und nachvollziehbare Telemetrie.",
+    "fleetPolicyP2": "Die Anmeldung weiterer Nutzfahrzeuge für Bio Vera ist nur möglich, wenn die Fahrzeugen vollständig den Bio-Vera-Flottenvorgaben entsprechen—äußeres Erscheinungsbild und LKW-Beklebung wie vorgegeben, Sauberkeit und Dichtigkeit des Laderaums, Kühltechnik sowie von Bio Vera freigegebene Sensoren und GPS-/Übergabeprozesse nach Prospekt und Partnerunterlagen. Fahrzeuge ohne Erfüllung dieser Standards werden nicht zugelassen.",
+    "fleetStandardsBullets": [
+      "Äußeres Erscheinungsbild und Beschriftung gemäß den freigegebenen Bio-Vera-Livery-Vorgaben (siehe Prospekt)",
+      "Temperaturführung: Kühlkarosserie im geforderten Band; Vorabprüfung vor Routenzuteilung",
+      "Telematik: eingesetzt wird das Bio-Vera-Sensor-/GPS-Konzept; keine unkontrollierten Fremdsysteme",
+      "Hygiene und Dichtung des Laderaums nach den für Partner kommunizierten Bio-Kälteschema-Regeln",
+      "Alle weiteren technischen Eckpunkte des Vera-Flottenprogramms bleiben verbindlich"
+    ],
     "conditionsTitle": "Conditions to become a Vera logistics partner",
     "conditionsLead": "You must meet the following. We accept small fleets, large companies, and independent drivers.",
     "needLine": "You need <s1>cooling/refrigeration systems</s1> (cold chain), digital tracking, and reliable delivery. We accept <s2>small companies</s2>, <s3>large companies</s3>, and <s4>independent drivers</s4>.",

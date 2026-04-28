@@ -66,6 +66,10 @@ function isResourceItems(x: unknown): x is ResourceRow[] {
   );
 }
 
+function isStringArray(x: unknown): x is string[] {
+  return Array.isArray(x) && x.every((item) => typeof item === 'string');
+}
+
 export default function LogisticsPartnerPage() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
@@ -84,6 +88,11 @@ export default function LogisticsPartnerPage() {
   const resourceItems = useMemo(() => {
     const raw = t('logisticsPartnerPage.resourceItems', { returnObjects: true });
     return isResourceItems(raw) ? raw : [];
+  }, [t]);
+
+  const fleetStandardsBullets = useMemo(() => {
+    const raw = t('logisticsPartnerPage.fleetStandardsBullets', { returnObjects: true });
+    return isStringArray(raw) ? raw : [];
   }, [t]);
 
   const [formData, setFormData] = useState({
@@ -235,6 +244,26 @@ export default function LogisticsPartnerPage() {
               }}
             />
           </p>
+        </div>
+      </section>
+
+      <section className="py-14 px-6 lg:px-8 border-t border-gray-200 bg-[#f9fbf9]">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-light text-[#23471f] mb-5 text-center">
+            {t('logisticsPartnerPage.fleetPolicyTitle')}
+          </h2>
+          <p className="text-sm text-gray-700 font-light leading-relaxed mb-4">{t('logisticsPartnerPage.fleetPolicyP1')}</p>
+          <p className="text-sm text-gray-700 font-light leading-relaxed">{t('logisticsPartnerPage.fleetPolicyP2')}</p>
+          {fleetStandardsBullets.length > 0 ? (
+            <ul className="mt-6 space-y-2.5 rounded-lg border border-gray-200 bg-white px-5 py-4">
+              {fleetStandardsBullets.map((item) => (
+                <li key={item} className="flex gap-3 text-sm text-gray-700 font-light leading-relaxed">
+                  <span className="mt-[0.35em] h-1 w-1 shrink-0 rounded-full bg-[#2D5A27]" aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 

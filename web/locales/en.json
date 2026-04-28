@@ -1984,6 +1984,16 @@
     "whoCanApplyLead": "Logistics partners can apply from the same countries where we have growers. Anyone who meets the conditions below can become a Vera logistics partner.",
     "countriesLine": "Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Montenegro, Netherlands, North Macedonia, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Spain, Sweden",
     "whoCanApplyLine2": "We work with <s1>small companies</s1>, <s2>large transport companies</s2>, and <s3>independent drivers</s3>. The only requirement is that you can meet our cold chain and tracking standards below.",
+    "fleetPolicyTitle": "Bio Vera fleet standards & registering vehicles",
+    "fleetPolicyP1": "Under a new Bio Vera logistics rule, we are developing and operating our own branded vehicle fleet alongside contracted partners. Vehicles that carry Vera loads must visibly and technically fit that programme—consistent identity on the road, one cold-chain doctrine, auditable telemetry.",
+    "fleetPolicyP2": "Applying to register additional vehicles on Bio Vera logistics is only possible where there is full compliance with Bio Vera fleet requirements: prescribed truck exterior and liveries, cleanliness and sealing of the cargo compartment, refrigeration and Bio Vera-approved sensors, GPS and handover tooling, plus every other mandatory standard communicated in prospectuses and partner manuals. Vehicles that cannot meet these requirements will not be approved.",
+    "fleetStandardsBullets": [
+      "Exterior and graphics: Vera-approved livery, signage and markings (see prospect PDF)",
+      "Temperature control: refrigerated body within the mandated band; verified before route assignment",
+      "Telematics: Bio Vera sensor kit/GPS workflow as documented; no unauthorised substitutes",
+      "Cargo-area hygiene & seals aligned with published organic cold-chain rules for Vera partners",
+      "All other technical checks published for the Vera fleet programme remain binding"
+    ],
     "conditionsTitle": "Conditions to become a Vera logistics partner",
     "conditionsLead": "You must meet the following. We accept small fleets, large companies, and independent drivers.",
     "needLine": "You need <s1>cooling/refrigeration systems</s1> (cold chain), digital tracking, and reliable delivery. We accept <s2>small companies</s2>, <s3>large companies</s3>, and <s4>independent drivers</s4>.",

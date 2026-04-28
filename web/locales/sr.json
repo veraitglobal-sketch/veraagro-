@@ -1984,6 +1984,16 @@
     "whoCanApplyLead": "Logistički partneri mogu da se prijave iz istih zemalja u kojima imamo proizvođače. Svako ko ispunjava uslove ispod može postati Vera logistički partner.",
     "countriesLine": "Austrija, Belgija, Bosna i Hercegovina, Bugarska, Hrvatska, Kipar, Češka, Danska, Estonija, Finska, Francuska, Nemačka, Grčka, Mađarska, Irska, Italija, Letonija, Litvanija, Luksemburg, Malta, Crna Gora, Holandija, Severna Makedonija, Poljska, Portugalija, Rumunija, Srbija, Slovačka, Slovenija, Španija, Švedska",
     "whoCanApplyLine2": "Radimo sa <s1>malim firmama</s1>, <s2>velikim transportnim kompanijama</s2> i <s3>nezavisnim vozačima</s3>. Jedini uslov je da možete ispuniti naše standarde hladnog lanca i praćenja ispod.",
+    "fleetPolicyTitle": "Bio Vera flota i prijava novih vozila",
+    "fleetPolicyP1": "U veljanosti je novo pravilo: Bio Vera gradi i koristi sopstvenu brendiranu flotu vozila uz ugovorne partnere. Vozilo koje vuče Vera teret mora vizuelno i tehnički odgovarati tom programu—jedinstven identitet na putu, isti princip hladnog lanca i proverljiva telemetrija.",
+    "fleetPolicyP2": "Za prijavu ili registraciju novih vozila u logistici Bio Vera neophodna je potpuna usklađenost sa Bio Vera flotom: odobreni izgled kamiona i brendiranje (grafika, oznake), higijena i zaptivanje teretnog prostora, hlađenje i Bio Vera senzorika, GPS i digitalni procesi kao u prospektu i priručniku za partnere. Vozilo koje standard ne može ispuniti neće biti odobreno.",
+    "fleetStandardsBullets": [
+      "Spoljni izgled: Vera-dozvoljena grafika i logo prema dokumentaciji (vide prospekat PDF)",
+      "Temperatura: rashladni prostor unutar dozvoljenog raspona; provera pre dodele relacije",
+      "Telematika: ugradnja i radljiv Bio Vera senzor / GPS proces — bez nedozvoljenih zamena",
+      "Higijena i dihtung u skladu sa pravilima hladnog lanca za organski teret",
+      "Svaki dodatni tehnički zahtev objavljen u programu flote Vera ostaje obavezujući"
+    ],
     "conditionsTitle": "Uslovi da postanete Vera logistički partner",
     "conditionsLead": "Morate ispuniti sledeće. Prihvatamo mala vozna parka, velike kompanije i nezavisne vozače.",
     "needLine": "Potrebni su vam <s1>sistemi hlađenja / rashladna oprema</s1> (hladni lanac), digitalno praćenje i pouzdana isporuka. Prihvatamo <s2>male kompanije</s2>, <s3>velike kompanije</s3> i <s4>nezavisne vozače</s4>.",

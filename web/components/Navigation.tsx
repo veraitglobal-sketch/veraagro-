@@ -9,11 +9,16 @@ import Image from 'next/image';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
+const LOCALE_HOME_PREFIXES = ['/en', '/sr', '/de'] as const;
+
 function isNavActive(pathname: string | null | undefined, href: string): boolean {
   if (!pathname) return false;
   const p = pathname.replace(/\/$/, '') || '/';
   const h = href.replace(/\/$/, '') || '/';
-  if (h === '/en' || h === '/sr') return p === '/en' || p === '/sr';
+  /** Home (`/de`, `/en`, …): match exact path only, not every child under the locale */
+  if (LOCALE_HOME_PREFIXES.includes(h as (typeof LOCALE_HOME_PREFIXES)[number])) {
+    return p === h;
+  }
   return p === h || p.startsWith(`${h}/`);
 }
 
