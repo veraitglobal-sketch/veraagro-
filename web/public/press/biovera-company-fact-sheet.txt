@@ -1,7 +1,9 @@
 Bio Vera — Company fact sheet
 
-Bio Vera runs a traceable fresh-produce network from partner growers to retail (fruit and vegetables, wholesale and consumer packs).
+Bio Vera is a registered agricultural brand — not a marketplace broker. Growers apply to join and, after vetting, become contracted Bio Vera producers.
 
-Headquarters: Hamburg, Germany. Founded: 2026.
+“Vertical agricultural network”: one system governing the chain from production rules through input sourcing, packing, compliance, logistics and traceability to the buyer. Modern software and blockchain are part of operating infrastructure (provenance and data integrity), not optional add-ons.
+
+Founded: 2026. Headquarters: Hamburg, Germany.
 
 Press: press@biovera.app

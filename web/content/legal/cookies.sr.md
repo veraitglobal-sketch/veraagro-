@@ -407,4 +407,4 @@ Vaše dalje korišćenje Usluge nakon bilo kakvih promena ove Politike o kolači
 
               
 
-Ako imate bilo kakvih pitanja, nedoumica ili zahteva u vezi sa ovom Politikom o kolačićima ili našom upotrebom kolačića, kontaktirajte nas na: **Bio Vera** E-pošta: [privaci@biovera.app](mailto:privaci@biovera.app)
+Ako imate bilo kakvih pitanja, nedoumica ili zahteva u vezi sa ovom Politikom o kolačićima ili našom upotrebom kolačića, kontaktirajte nas na: **Bio Vera** E-pošta: [privacy@biovera.app](mailto:privacy@biovera.app)

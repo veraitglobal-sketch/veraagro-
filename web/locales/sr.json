@@ -292,13 +292,13 @@
     "sectionReleases": "Saopštenja za javnost",
     "readFullRelease": "Pročitaj celo saopštenje",
     "sectionCompany": "O Bio Veri",
-    "aboutTitle": "Za medije",
-    "aboutText": "Bio Vera povezuje partnorske uzgajivače i maloprodaju uz tragljive lančeve voća i povrća. Uzgoj, kontrola kvaliteta i dokumentacija usmereni su na stabilan asortiman i jasno poreklo. Sedište u Hamburgu; saradnja sa uzgajivačima i trgovinama pre svega u EU i šire.",
-    "keyFactsTitle": "Kratak pregled",
+    "aboutTitle": "Brend i vertikalna poljoprivredna mreža",
+    "aboutText": "Bio Vera nije posrednik između gazdinstva i police — to je registovan poljoprivredni brend. Proizvođači i uzgajivači javljaju se za učešće; po provere i standardima postaju ugovoreni Bio Vera proizvođači unutar mreže jednog od najbrže rastućih ovakvih brendova na tržištu. Pod „vertikalnom poljoprivrednom mrežom“ mislimo jedan usklađeni sistem koji obuhvata i kontroliše ceo životni ciklus: proizvodnju pod jasnim pravilima, nabavku i unos (semena, inputi, dobavljače), pakovanje i bezbednosno-tehničku usaglašenost, logistiku i tragljivost do kupca — ne lutaju nezavisni lanci koji se naknadno »spoje«. Savremeni softveri i blockchain su sastavni deo Bio Vere: digitalna platforma za operacije, dokaze o poreklu i verodostojnost podataka, ne kao reklama već kao infrastruktura brenda. Sedište kompanije: Hamburg.",
+    "keyFactsTitle": "Ukratko",
     "keyFacts": [
-      "Osnovanje: 2026. · sedište: Hamburg, Nemačka",
-      "Fokus: voće i povrće — pakovanje na veliko i malo",
-      "Kontakt za štampu: press@biovera.app"
+      "Brend kojem se proizvođači prijavljuju · vertikalni lanac: uzgoj → nabavka → pakovanje → logistika → tragljivost",
+      "Digitalna platforma i blockchain ugrađeni u kontrolu kvaliteta i poreklo",
+      "2026. · Hamburg, Nemačka · štampa: press@biovera.app"
     ],
     "sectionAssets": "Medijski resursi",
     "download": "Preuzmi",
@@ -320,7 +320,7 @@
         "id": "1",
         "date": "15. januar 2026.",
         "title": "Bio Vera lansira vertikalno povezanu poljoprivrednu mrežu",
-        "summary": "Bio Vera najavljuje lansiranje mreže koja povezuje proizvođače širom sveta sa tržištima, uz punu tragljivost i usklađenost ugrađenu u operativni model."
+        "summary": "Bio Vera predstavlja brend i vertikalno usklađenu poljoprivrednu mrežu: jedinstveni sistem od polja do kupca, uz digitalnu tragljivost i usklađenost procesa."
       },
       {
         "id": "2",
@@ -377,29 +377,29 @@
         ]
       },
       {
-        "category": "Fotografije",
+        "category": "Fotografije Bio Vera proizvoda",
         "items": [
           {
-            "name": "Jabuke — veliko pakovanje (na veliko)",
-            "description": "Robni prikazi i kutije za trgovinu na veliko i ugostiteljstvo.",
+            "name": "Bio Vera proizvodi — na veliko (uzorak JPG)",
+            "description": "Ilustrativan snimak ambalaže i robnog prikaza za trgovinu na veliko i ugostiteljstvo — služi kao medijski uzorak vizuala brenda, ne kao naznaka jedne namirnice.",
             "format": "JPG",
             "file": "/apples-bulk.jpg"
           },
           {
-            "name": "Jabuke — maloprodaja (~500 g)",
-            "description": "Potrošačko pakovanje za supermarkete i lokalnu maloprodaju.",
+            "name": "Bio Vera proizvodi — maloprodaja (uzorak JPG)",
+            "description": "Ilustrativan snimak potrošačkog pakovanja za policu i lokalnu maloprodaju; Bio Vera program obuhvata pun asortiman koji proizvođači unose u mrežu pod istim standardima.",
             "format": "JPG",
             "file": "/apples-retail-500g.jpg"
           },
           {
-            "name": "ZIP: obe fotografije proizvoda",
-            "description": "Skup JPG fajlova (veliko i malo pakovanje) u jednom arhivu.",
+            "name": "ZIP: više fotografija proizvoda",
+            "description": "Jedna ZIP arhiva u kojoj se mogu naći dva ili više JPG fajlova (sitno i krupno pakovanje, dalje snimci po potrebi). Sadržaj se povremeno proširuje — zamena fajla na serveru ažurira preuzimanje za medije bez promene linka.",
             "format": "ZIP",
             "file": "/press/biovera-product-photos.zip"
           },
           {
             "name": "Paket aplikacije i portala",
-            "description": "Uputstvo i referentni materijal; komplet snimaka ekrana na zahtev",
+            "description": "Tekstualno uputstvo i referentni vizuel; komplet snimaka ekrana aplikacije ili portala dostupan na zahtev preko tima za štampu.",
             "format": "ZIP",
             "file": "/press/biovera-app-screenshots.zip"
           }

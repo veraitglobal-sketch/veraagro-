@@ -105,9 +105,9 @@ export default function PressPage() {
               <Image
                 src="/logo1.png"
                 alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
+                width={180}
+                height={51}
+                className="h-9 w-auto sm:h-10"
                 priority
               />
             </Link>

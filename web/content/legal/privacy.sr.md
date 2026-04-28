@@ -332,7 +332,7 @@ Ako se nalazite u Evropskom ekonomskom prostoru (EEP), Ujedinjenom Kraljevstvu i
 
               
 
-Imate pravo da dobijete potvrdu o tome da li obrađujemo vaše lične podatke i da pristupite vašim ličnim podacima, uključujući kopije podataka koje imamo o vama. Možete zatražiti ove informacije tako što ćete nas kontaktirati na [ privaci@biovera.app](mailto:privaci@biovera.app).
+Imate pravo da dobijete potvrdu o tome da li obrađujemo vaše lične podatke i da pristupite vašim ličnim podacima, uključujući kopije podataka koje imamo o vama. Možete zatražiti ove informacije tako što ćete nas kontaktirati na [ privacy@biovera.app](mailto:privacy@biovera.app).
 
               
 
@@ -394,7 +394,7 @@ Imate pravo da podnesete žalbu nadzornom organu, posebno u državi članici EU 
 
               
 
-Da biste ostvarili bilo koje od ovih prava, kontaktirajte nas na [ privaci@biovera.app](mailto:privaci@biovera.app). Odgovorićemo na vaš zahtev u roku od mesec dana (ili dva meseca za složene zahteve). Možda ćemo zahtevati verifikaciju vašeg identiteta pre obrade vašeg zahteva. U nekim slučajevima, možemo da naplatimo razumnu naknadu ako je vaš zahtev očigledno neosnovan ili preteran.
+Da biste ostvarili bilo koje od ovih prava, kontaktirajte nas na [ privacy@biovera.app](mailto:privacy@biovera.app). Odgovorićemo na vaš zahtev u roku od mesec dana (ili dva meseca za složene zahteve). Možda ćemo zahtevati verifikaciju vašeg identiteta pre obrade vašeg zahteva. U nekim slučajevima, možemo da naplatimo razumnu naknadu ako je vaš zahtev očigledno neosnovan ili preteran.
 
             
 
@@ -442,7 +442,7 @@ Naša usluga nije namenjena deci mlađoj od 18 godina i ne prikupljamo svesno li
 
               
 
-Ako postanemo svesni da smo prikupili lične podatke od deteta mlađeg od 18 godina bez proverljive saglasnosti roditelja, preduzećemo korake da te informacije odmah izbrišemo. Ako verujete da smo prikupili informacije od deteta mlađeg od 18 godina, odmah nas kontaktirajte na [ privaci@biovera.app](mailto:privaci@biovera.app).
+Ako postanemo svesni da smo prikupili lične podatke od deteta mlađeg od 18 godina bez proverljive saglasnosti roditelja, preduzećemo korake da te informacije odmah izbrišemo. Ako verujete da smo prikupili informacije od deteta mlađeg od 18 godina, odmah nas kontaktirajte na [ privacy@biovera.app](mailto:privacy@biovera.app).
 
             
 
@@ -536,7 +536,7 @@ Uz vašu saglasnost, možemo vam slati marketinške poruke o našim proizvodima,
                 
 - Ažuriranje podešavanja komunikacije u podešavanjima naloga
                 
-- Kontaktirajte nas na [privaci@biovera.app](mailto:privaci@biovera.app)
+- Kontaktirajte nas na [privacy@biovera.app](mailto:privacy@biovera.app)
               
 
               
@@ -583,7 +583,7 @@ Ako imate bilo kakvih pitanja, nedoumica ili zahteva u vezi sa ovom politikom pr
 
               
 
-**Bio Vera** E-pošta: [privaci@biovera.app](mailto:privaci@biovera.app) Pravno: [legal@biovera.app](mailto:legal@biovera.app)
+**Bio Vera** E-pošta: [privacy@biovera.app](mailto:privacy@biovera.app) Pravno: [legal@biovera.app](mailto:legal@biovera.app)
 
               
 

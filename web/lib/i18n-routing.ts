@@ -61,6 +61,14 @@ export function isSiteLocale(v: string): v is SiteLocale {
   return v === "en" || v === "sr";
 }
 
+/**
+ * Marketing pages live at `/en/press` and `/sr/press`, but static press assets ship from
+ * `public/press/` (e.g. `/press/biovera-logo.zip`). Those URLs must NOT get a locale redirect.
+ */
+export function pathIsUnderPressPublicAssets(pathname: string): boolean {
+  return /^\/press\/[^/]+\.[a-z0-9]{2,14}$/i.test(pathname);
+}
+
 export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   const seg = pathname.split("/").filter(Boolean)[0];
   if (seg === "en" || seg === "sr") return seg;
@@ -77,6 +85,7 @@ export function stripLeadingSiteLocale(pathname: string): string {
 
 /** Whether middleware should prefix /en or /sr for this path when locale is missing. */
 export function pathNeedsLocaleRedirect(pathname: string): boolean {
+  if (pathIsUnderPressPublicAssets(pathname)) return false;
   if (pathname === "/" || pathname === "") return true;
   const seg = pathname.split("/").filter(Boolean)[0];
   return LOCALIZED_FIRST_SEGMENTS.has(seg);
