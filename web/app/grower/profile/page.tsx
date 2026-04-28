@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import { farmerProfileAPI } from '@/lib/api';
 import Image from 'next/image';
@@ -56,7 +56,7 @@ export default function FarmerProfilePage() {
       }
     } catch (error) {
       console.error('Error loading profile:', error);
-      alert('Failed to load profile');
+      alert(t('grower.profilePage.alertLoadFailed'));
     } finally {
       if (!skip) setLoading(false);
     }
@@ -68,13 +68,13 @@ export default function FarmerProfilePage() {
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Photo size must be less than 5MB');
+      alert(t('grower.profilePage.alertPhotoTooBig'));
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      alert(t('grower.profilePage.alertNotImage'));
       return;
     }
 
@@ -90,10 +90,10 @@ export default function FarmerProfilePage() {
       setUploading(true);
       await farmerProfileAPI.uploadPhoto(file);
       await loadProfile({ skipLoading: true });
-      alert('Photo uploaded successfully!');
+      alert(t('grower.profilePage.alertPhotoOk'));
     } catch (error: any) {
       console.error('Error uploading photo:', error);
-      alert(error.response?.data?.message || 'Failed to upload photo');
+      alert(error.response?.data?.message || t('grower.profilePage.alertPhotoUploadFailed'));
       // Revert preview on error
       setPhotoPreview(profile?.farmer?.photo || null);
     } finally {
@@ -110,7 +110,7 @@ export default function FarmerProfilePage() {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     } catch {
-      alert('Could not copy link');
+      alert(t('grower.profilePage.alertCopyFailed'));
     }
   };
 
@@ -141,10 +141,10 @@ export default function FarmerProfilePage() {
         generation: formData.generation || undefined,
       });
       await loadProfile();
-      alert('Profile updated successfully!');
+      alert(t('grower.profilePage.alertSaveOk'));
     } catch (error: any) {
       console.error('Error saving profile:', error);
-      alert(error.response?.data?.message || 'Failed to save profile');
+      alert(error.response?.data?.message || t('grower.profilePage.alertSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -155,8 +155,9 @@ export default function FarmerProfilePage() {
       <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
         <SidebarLayout title={t('grower.nav.myProfile')} navItems={growerNavItems}>
           <GrowerPageShell>
-            <div className="flex min-h-[40vh] items-center justify-center">
+            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" />
+              <p className="text-sm text-gray-600">{t('grower.profilePage.loading')}</p>
             </div>
           </GrowerPageShell>
         </SidebarLayout>
@@ -168,27 +169,22 @@ export default function FarmerProfilePage() {
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title={t('grower.nav.myProfile')} navItems={growerNavItems}>
         <GrowerPageShell>
-        <GrowerPageHeader
-          title={t('grower.nav.myProfile')}
-          description="Public page, your story, and Bio Vera QR for markets and packaging."
-        />
+        <GrowerPageHeader title={t('grower.nav.myProfile')} description={t('grower.profilePage.headerDescription')} />
         <div className="grid grid-cols-1 gap-6 items-stretch lg:grid-cols-2 lg:gap-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sm:p-7 flex flex-col h-full min-h-0">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">My farmer profile</h2>
-          <p className="text-sm text-gray-500 mb-6">Details shown on your public page when people scan your QR code.</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('grower.profilePage.cardTitle')}</h2>
+          <p className="text-sm text-gray-500 mb-6 font-light">{t('grower.profilePage.cardLead')}</p>
 
           {/* Photo Upload Section */}
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Profile Photo
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">{t('grower.profilePage.photoLabel')}</label>
             <div className="flex items-center gap-6">
               {/* Photo Preview */}
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-green-600 shadow-lg">
                 {photoPreview ? (
                   <Image
                     src={photoPreview}
-                    alt="Profile photo"
+                    alt={t('grower.profilePage.photoProfileAlt')}
                     fill
                     className="object-cover"
                     unoptimized={
@@ -223,16 +219,16 @@ export default function FarmerProfilePage() {
                   {uploading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Uploading...
+                      {t('grower.profilePage.uploading')}
                     </>
                   ) : (
                     <>
                       <Camera className="w-4 h-4" />
-                      {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                      {photoPreview ? t('grower.profilePage.changePhoto') : t('grower.profilePage.uploadPhoto')}
                     </>
                   )}
                 </label>
-                <p className="text-xs text-gray-500 mt-2">Max 5MB, JPEG/PNG/WebP</p>
+                <p className="text-xs text-gray-500 mt-2">{t('grower.profilePage.photoHint')}</p>
               </div>
             </div>
           </div>
@@ -240,7 +236,7 @@ export default function FarmerProfilePage() {
           {/* Bio Section */}
           <div className="mb-6">
             <label htmlFor="farmerBio" className="block text-sm font-medium text-gray-700 mb-2">
-              Bio / Story
+              {t('grower.profilePage.bioLabel')}
             </label>
             <textarea
               id="farmerBio"
@@ -248,17 +244,15 @@ export default function FarmerProfilePage() {
               value={formData.farmerBio}
               onChange={(e) => setFormData({ ...formData, farmerBio: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Tell your story... (e.g., a family farm in a hill region, growing fruit for 40 years)"
+              placeholder={t('grower.profilePage.bioPlaceholder')}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              This will be displayed on your public profile when customers scan your QR code.
-            </p>
+            <p className="text-xs text-gray-500 mt-1 font-light">{t('grower.profilePage.bioHint')}</p>
           </div>
 
           {/* Years of Experience */}
           <div className="mb-6">
             <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-2">
-              Years of Experience
+              {t('grower.profilePage.yearsLabel')}
             </label>
             <input
               type="number"
@@ -267,14 +261,14 @@ export default function FarmerProfilePage() {
               value={formData.yearsOfExperience}
               onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="e.g., 40"
+              placeholder={t('grower.profilePage.yearsPlaceholder')}
             />
           </div>
 
           {/* Generation */}
           <div>
             <label htmlFor="generation" className="block text-sm font-medium text-gray-700 mb-2">
-              Generation
+              {t('grower.profilePage.generationLabel')}
             </label>
             <input
               type="text"
@@ -282,11 +276,9 @@ export default function FarmerProfilePage() {
               value={formData.generation}
               onChange={(e) => setFormData({ ...formData, generation: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="e.g., 3rd, 4th"
+              placeholder={t('grower.profilePage.generationPlaceholder')}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Family generation (e.g., "3rd generation farmer")
-            </p>
+            <p className="text-xs text-gray-500 mt-1 font-light">{t('grower.profilePage.generationHint')}</p>
           </div>
 
           <div className="mt-auto flex justify-end pt-6 border-t border-gray-100">
@@ -302,12 +294,12 @@ export default function FarmerProfilePage() {
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving...
+                  {t('grower.profilePage.saving')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save changes
+                  {t('grower.profilePage.saveChanges')}
                 </>
               )}
             </button>
@@ -323,8 +315,8 @@ export default function FarmerProfilePage() {
                   <QrCode className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Your Bio Vera QR Code</h2>
-                  <p className="text-sm text-white/85">One code links to your public farmer profile — use it everywhere.</p>
+                  <h2 className="text-lg font-semibold text-white">{t('grower.profilePage.qrTitle')}</h2>
+                  <p className="text-sm text-white/85 font-light">{t('grower.profilePage.qrSubtitle')}</p>
                 </div>
               </div>
             </div>
@@ -338,10 +330,12 @@ export default function FarmerProfilePage() {
                         <div className="rounded-2xl border-2 border-gray-200 bg-white p-6 shadow-sm">
                           <img
                             src={qrImageUrl}
-                            alt="Your Bio Vera QR code"
+                            alt={t('grower.profilePage.qrAlt')}
                             className="h-52 w-52 sm:h-64 sm:w-64"
                           />
-                          <p className="mt-3 text-center text-xs font-medium text-gray-500">Scan to open your profile</p>
+                          <p className="mt-3 text-center text-xs font-medium text-gray-500">
+                            {t('grower.profilePage.scanHint')}
+                          </p>
                         </div>
                       ) : (
                         <div className="h-52 w-52 sm:h-64 sm:w-64 rounded-2xl border-2 border-gray-200 bg-white flex items-center justify-center">
@@ -352,7 +346,7 @@ export default function FarmerProfilePage() {
                     <div className="flex-1 w-full min-w-0 space-y-6">
                       {/* Profile link + copy */}
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">Your profile link</p>
+                        <p className="text-sm font-medium text-gray-700 mb-2">{t('grower.profilePage.profileLinkLabel')}</p>
                         <div className="flex flex-wrap gap-2">
                           <input
                             type="text"
@@ -366,7 +360,7 @@ export default function FarmerProfilePage() {
                             className="inline-flex items-center gap-2 rounded-lg border border-[#2D5A27] bg-white px-4 py-2 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
                           >
                             {linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                            {linkCopied ? 'Copied' : 'Copy link'}
+                            {linkCopied ? t('grower.profilePage.copied') : t('grower.profilePage.copyLink')}
                           </button>
                         </div>
                         <a
@@ -376,52 +370,56 @@ export default function FarmerProfilePage() {
                           className="mt-2 inline-flex items-center gap-1.5 text-sm text-[#2D5A27] hover:underline"
                         >
                           <ExternalLink className="h-4 w-4" />
-                          Open public profile in new tab
+                          {t('grower.profilePage.openPublic')}
                         </a>
                       </div>
                       {/* Download */}
                       {qrImageUrl && (
                         <div>
-                          <p className="text-sm font-medium text-gray-700 mb-2">Download QR image</p>
-                          <p className="text-xs text-gray-500 mb-2">Use for print, packaging, or digital sharing. PNG, high contrast.</p>
+                          <p className="text-sm font-medium text-gray-700 mb-2">{t('grower.profilePage.downloadSectionTitle')}</p>
+                          <p className="text-xs text-gray-500 mb-2 font-light">{t('grower.profilePage.downloadSectionHint')}</p>
                           <button
                             type="button"
                             onClick={handleDownloadQr}
                             className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#2D5A27]/90"
                           >
                             <Download className="h-4 w-4" />
-                            Download QR (PNG)
+                            {t('grower.profilePage.downloadPng')}
                           </button>
                         </div>
                       )}
                       {/* Where to use */}
                       <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
-                        <p className="text-sm font-medium text-gray-800 mb-3">Where to use your QR code</p>
-                        <ul className="space-y-2 text-sm text-gray-600">
+                        <p className="text-sm font-medium text-gray-800 mb-3">{t('grower.profilePage.whereUseTitle')}</p>
+                        <ul className="space-y-2 text-sm text-gray-600 font-light">
                           <li className="flex items-center gap-2">
                             <Package className="h-4 w-4 text-[#2D5A27]" />
-                            On product packaging and crates
+                            {t('grower.profilePage.whereUsePackaging')}
                           </li>
                           <li className="flex items-center gap-2">
                             <Smartphone className="h-4 w-4 text-[#2D5A27]" />
-                            At markets, stands, or point of sale
+                            {t('grower.profilePage.whereUseMarkets')}
                           </li>
                           <li className="flex items-center gap-2">
                             <Share2 className="h-4 w-4 text-[#2D5A27]" />
-                            Social media, website, or business card
+                            {t('grower.profilePage.whereUseSocial')}
                           </li>
                         </ul>
                       </div>
                     </div>
                   </div>
-                  <p className="mt-6 text-xs text-gray-500 text-center sm:text-left">
-                    Code: <span className="font-mono">{profile.farmerQrCode}</span> — Keep this link and QR; they always point to your up-to-date profile.
+                  <p className="mt-6 text-xs text-gray-500 text-center sm:text-left font-light">
+                    <Trans
+                      i18nKey="grower.profilePage.codeFootnote"
+                      values={{ code: profile.farmerQrCode }}
+                      components={[<span key="0" className="font-mono text-gray-700" />]}
+                    />
                   </p>
                 </>
               ) : (
                 <div className="py-8 text-center">
                   <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#2D5A27]" />
-                  <p className="mt-4 text-gray-600">Your QR code is being generated. Refresh the page in a moment.</p>
+                  <p className="mt-4 text-gray-600 font-light">{t('grower.profilePage.qrGenerating')}</p>
                 </div>
               )}
             </div>

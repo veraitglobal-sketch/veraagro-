@@ -25,6 +25,7 @@ export default function DashboardScreen() {
   const farmerHandlers = {
     onParcels: () => router.push('/(producer)/estates'),
     onPlantingSteps: () => router.push('/(producer)/(tabs)/steps'),
+    onPlantings: () => router.push('/(producer)/plantings'),
     onFieldDiary: () => router.push('/(producer)/(tabs)/field-log'),
     onAllowedMaterials: () => router.push('/(producer)/materials'),
     onBanned: () => router.push('/(producer)/(tabs)/banned-substances'),

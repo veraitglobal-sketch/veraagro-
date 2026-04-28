@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -16,6 +17,7 @@ type ParcelMini = { id: string; cropType?: string | null };
 type GrowthLogRow = {
   id: string;
   createdAt: string;
+  imageUrl?: string | null;
   notes?: string | null;
   growthStage?: string | null;
   parcelId?: string | null;
@@ -31,7 +33,8 @@ type GrowthLogRow = {
 };
 
 export default function GrowerFieldDiaryPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const loc = useLocalizedHref();
   const nav = useGrowerNavItems();
   const [estates, setEstates] = useState<EstateRow[]>([]);
   const [parcels, setParcels] = useState<ParcelMini[]>([]);
@@ -106,6 +109,28 @@ export default function GrowerFieldDiaryPage() {
     [logs],
   );
 
+  const formatWhen = useCallback(
+    (iso: string) => {
+      try {
+        const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+        return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+      } catch {
+        return iso;
+      }
+    },
+    [i18n.language],
+  );
+
+  const planTypeLabel = useCallback(
+    (announcementType: string) => {
+      const u = (announcementType || '').toUpperCase();
+      if (u === 'PLANTING') return t('growerPages.annTypePLANTING');
+      if (u === 'HARVEST') return t('growerPages.annTypeHARVEST');
+      return announcementType;
+    },
+    [t],
+  );
+
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title={t('grower.nav.fieldDiary')} navItems={nav}>
@@ -115,12 +140,16 @@ export default function GrowerFieldDiaryPage() {
             description={t('growerPages.fieldDiaryPageLead')}
           />
 
-          <div className="rounded-lg border border-amber-100 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-            {t('growerPages.fieldDiaryMobileOnly')}
+          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#2D5A27]/[0.07] px-4 py-3 space-y-2 text-sm text-gray-900">
+            <p className="font-medium text-[#1a3817]">{t('growerPages.fieldDiarySyncedTitle')}</p>
+            <p className="text-gray-700 font-light">{t('growerPages.fieldDiarySyncedBody')}</p>
+            <p className="text-gray-700 font-light border-t border-[#2D5A27]/15 pt-2 mt-2">
+              {t('growerPages.fieldDiaryMobileEntryHint')}
+            </p>
           </div>
 
           <p className="text-sm text-gray-600">
-            <Link href="/grower/fields" className="text-[#2D5A27] font-medium underline">
+            <Link href={loc('/grower/fields')} className="text-[#2D5A27] font-medium underline">
               {t('grower.placeholders.openParcels')}
             </Link>
           </p>
@@ -170,7 +199,7 @@ export default function GrowerFieldDiaryPage() {
           {loading && estateId ? (
             <div className="flex items-center gap-2 text-gray-600">
               <Loader2 className="h-5 w-5 animate-spin text-[#2D5A27]" />
-              {t('growerPages.loadingBatches')}
+              {t('growerPages.loadingFieldDiary')}
             </div>
           ) : (
             <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
@@ -183,7 +212,8 @@ export default function GrowerFieldDiaryPage() {
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wide">
+                      <tr className="border-b border-gray-100 text-left text-xs text-gray-500 tracking-wide">
+                        <th className="px-4 py-2 font-medium w-14">{t('growerPages.fieldDiaryColPhoto')}</th>
                         <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColWhen')}</th>
                         <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColParcel')}</th>
                         <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColPlan')}</th>
@@ -194,15 +224,29 @@ export default function GrowerFieldDiaryPage() {
                     <tbody>
                       {sortedLogs.map((row) => (
                         <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                          <td className="px-4 py-2.5 align-middle">
+                            {row.imageUrl ? (
+                              <img
+                                src={row.imageUrl}
+                                alt=""
+                                className="w-10 h-10 rounded-md object-cover border border-gray-200 bg-gray-50"
+                              />
+                            ) : (
+                              <span
+                                className="inline-flex w-10 h-10 rounded-md bg-gray-100 border border-gray-100"
+                                aria-hidden
+                              />
+                            )}
+                          </td>
                           <td className="px-4 py-2.5 text-gray-700 whitespace-nowrap">
-                            {new Date(row.createdAt).toLocaleString()}
+                            {formatWhen(row.createdAt)}
                           </td>
                           <td className="px-4 py-2.5 text-gray-800">
                             {row.parcels?.cropType || row.parcelId?.slice(0, 8) || '—'}…
                           </td>
                           <td className="px-4 py-2.5 text-gray-700">
                             {row.harvest_announcements
-                              ? `${row.harvest_announcements.cropType} (${row.harvest_announcements.announcementType})`
+                              ? `${row.harvest_announcements.cropType} (${planTypeLabel(row.harvest_announcements.announcementType)})`
                               : '—'}
                           </td>
                           <td className="px-4 py-2.5 text-gray-600">{row.growthStage || '—'}</td>

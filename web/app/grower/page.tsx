@@ -4,16 +4,18 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { estatesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
+import { estatesAPI, growthLogsAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
 export default function GrowerDashboardPage() {
   const { t } = useTranslation();
   const navItems = useGrowerNavItems();
+  const loc = useLocalizedHref();
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [estates, setEstates] = useState<any[]>([]);
@@ -23,6 +25,7 @@ export default function GrowerDashboardPage() {
   const [financialData, setFinancialData] = useState<any>(null);
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
   const [farmerProfileUrl, setFarmerProfileUrl] = useState<string | null>(null);
+  const [journalEntryCount, setJournalEntryCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -44,6 +47,24 @@ export default function GrowerDashboardPage() {
       ]);
       setEstates(estatesData || []);
       setMissions(missionsData || []);
+      let journalTotal = 0;
+      const estatesList = Array.isArray(estatesData) ? estatesData : [];
+      if (estatesList.length > 0) {
+        try {
+          const lists = await Promise.all(
+            estatesList.map((e: { id: string }) =>
+              growthLogsAPI.listByEstate(e.id).catch(() => []),
+            ),
+          );
+          journalTotal = lists.reduce(
+            (sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0),
+            0,
+          );
+        } catch {
+          journalTotal = 0;
+        }
+      }
+      setJournalEntryCount(journalTotal);
       setFinancialData(financialDataResult);
       if (profileData?.farmerQrCode) {
         setFarmerProfileUrl(profileData.farmerProfileUrl || `/farmer/${profileData.farmerQrCode}`);
@@ -170,6 +191,24 @@ export default function GrowerDashboardPage() {
                 </svg>
               </div>
               <p className="text-3xl font-light text-gray-900">{certifiedEstates}</p>
+              </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-medium text-gray-900">{t('grower.dashboard.fieldDiaryCardTitle')}</h2>
+                <p className="text-sm text-gray-600 font-light mt-1">
+                  {journalEntryCount === null ? '—' : t('grower.dashboard.fieldDiaryCardCount', { count: journalEntryCount })}
+                </p>
+                <p className="text-sm text-gray-500 font-light mt-2 max-w-xl">{t('grower.dashboard.fieldDiaryCardHint')}</p>
+              </div>
+              <Link
+                href={loc('/grower/field-diary')}
+                className="shrink-0 px-4 py-2.5 rounded-lg bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#254a21] transition-colors"
+              >
+                {t('grower.dashboard.fieldDiaryCardCta')}
+              </Link>
             </div>
           </div>
 

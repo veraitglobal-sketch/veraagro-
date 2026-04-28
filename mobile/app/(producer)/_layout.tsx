@@ -42,6 +42,7 @@ export default function ProducerLayout() {
         <Stack.Screen name="quality-entry" />
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />
+        <Stack.Screen name="plantings" options={{ headerShown: false }} />
         <Stack.Screen name="dashboard" />
         <Stack.Screen
           name="partner-orders"

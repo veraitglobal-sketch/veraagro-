@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -105,9 +106,28 @@ interface FinancialStatus {
   deliveredAt: string | null;
 }
 
+function missionStatusLabel(t: (k: string) => string, raw: string) {
+  const u = (raw || '').toUpperCase().replace(/\s+/g, '_');
+  const key = `growerPages.missionStatus_${u}`;
+  const tr = t(key);
+  if (tr !== key) return tr;
+  return raw.replace(/_/g, ' ');
+}
+
 export default function GrowerPortalPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const loc = useLocalizedHref();
   const navItems = useGrowerNavItems();
+
+  const formatLocale = (iso: string | null | undefined, dateOnly?: boolean) => {
+    if (iso == null) return '';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+    return dateOnly
+      ? d.toLocaleDateString(tag, { dateStyle: 'medium' })
+      : d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+  };
   const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
@@ -166,7 +186,7 @@ export default function GrowerPortalPage() {
         if (!missionsRes.ok) {
           const msg =
             (missionsData && typeof missionsData.message === 'string' && missionsData.message) ||
-            `Could not load missions (${missionsRes.status})`;
+            t('growerPages.portalCouldNotLoadMissions', { status: String(missionsRes.status) });
           setListError(msg);
           setMissions([]);
         } else {
@@ -184,7 +204,7 @@ export default function GrowerPortalPage() {
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setListError('Network error while loading missions. Check that the API is running and your connection.');
+        setListError(t('growerPages.portalNetworkError'));
         setMissions([]);
       } finally {
         setLoading(false);
@@ -192,7 +212,7 @@ export default function GrowerPortalPage() {
     };
 
     fetchData();
-  }, [selectedBatch]);
+  }, [selectedBatch, t]);
 
   const handleMissionSelect = useCallback(async (missionId: string) => {
     try {
@@ -221,8 +241,8 @@ export default function GrowerPortalPage() {
     if (!missions.some((m) => m.missionId === mid)) return;
     deepLinkApplied.current = true;
     void handleMissionSelect(mid);
-    window.history.replaceState(null, '', '/grower/portal');
-  }, [missions, handleMissionSelect]);
+    window.history.replaceState(null, '', loc('/grower/portal'));
+  }, [missions, handleMissionSelect, loc]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
@@ -241,7 +261,7 @@ export default function GrowerPortalPage() {
     return (
       <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
         <GrowerPageShell>
-          <div className="flex h-64 items-center justify-center text-gray-500">Loading…</div>
+          <div className="flex h-64 items-center justify-center text-gray-500">{t('growerPages.portalLoading')}</div>
         </GrowerPageShell>
       </SidebarLayout>
     );
@@ -250,21 +270,19 @@ export default function GrowerPortalPage() {
   return (
     <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
-        <GrowerPageHeader
-          title={t('grower.nav.missionTracker')}
-          description="Follow transport runs, route, and status for batches you have moved from the farm."
-        />
+        <GrowerPageHeader title={t('grower.nav.missionTracker')} description={t('growerPages.portalPageDescription')} />
         {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} className="mb-0" />}
 
         <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-700">
-          <p className="font-medium text-gray-900">What is this?</p>
-          <p className="mt-1 text-gray-600">
-            A <strong>mission</strong> is a transport run: when you request pickup (from{' '}
-            <Link href="/grower/missions/create" className="text-[#2D5A27] underline font-medium">
-              Request Transport
-            </Link>
-            ), logistics gets a job to collect your batch. Here you follow that job—status, route on the map, and
-            after delivery you can see buyer feedback and payout-related info for the selected batch.
+          <p className="font-medium text-gray-900">{t('growerPages.portalWhatIsTitle')}</p>
+          <p className="mt-1 text-gray-600 font-light leading-relaxed">
+            <Trans
+              i18nKey="growerPages.portalWhatIsBody"
+              components={[
+                <strong key="0" className="font-semibold text-gray-900" />,
+                <Link key="1" href={loc('/grower/missions/create')} className="text-[#2D5A27] underline font-medium" />,
+              ]}
+            />
           </p>
         </div>
 
@@ -274,10 +292,8 @@ export default function GrowerPortalPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900">Your active missions</h2>
-          <p className="text-sm text-gray-500 mt-1 mb-4">
-            Open a mission to load the journey map and (when available) ratings and financial status for that batch.
-          </p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.portalActiveMissionsTitle')}</h2>
+          <p className="text-sm text-gray-500 mt-1 mb-4 font-light">{t('growerPages.portalActiveMissionsLead')}</p>
 
           {listError && (
             <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
@@ -305,7 +321,7 @@ export default function GrowerPortalPage() {
                         {mission.productName} • {mission.quantity} {mission.unit}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Current: {mission.currentMilestone}
+                        {t('growerPages.portalCurrentStep', { milestone: mission.currentMilestone })}
                       </p>
                     </div>
                     <div className="text-right">
@@ -315,7 +331,7 @@ export default function GrowerPortalPage() {
                         )}`}
                         title={t('growerPages.missionPipelineHint')}
                       >
-                        {String(mission.status || '').replace(/_/g, ' ')}
+                        {missionStatusLabel(t, String(mission.status || ''))}
                       </span>
                     </div>
                   </div>
@@ -324,24 +340,21 @@ export default function GrowerPortalPage() {
             ) : !listError ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50/80 px-6 py-10 text-center">
                 <Truck className="h-10 w-10 text-gray-300 mb-3" strokeWidth={1.25} />
-                <p className="text-gray-900 font-medium">No active missions yet</p>
-                <p className="text-sm text-gray-600 mt-2 max-w-md">
-                  When you mark a batch ready and request transport, the pickup job appears here so you can track
-                  driver status and the route.
-                </p>
+                <p className="text-gray-900 font-medium">{t('growerPages.portalNoMissionsTitle')}</p>
+                <p className="text-sm text-gray-600 mt-2 max-w-md font-light">{t('growerPages.portalNoMissionsBody')}</p>
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    href="/grower/missions/create"
+                    href={loc('/grower/missions/create')}
                     className="inline-flex items-center gap-2 rounded-md bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#234a20]"
                   >
                     <Truck className="h-4 w-4" />
-                    Request transport
+                    {t('grower.nav.requestTransport')}
                   </Link>
                   <Link
-                    href="/grower/batches"
+                    href={loc('/grower/batches')}
                     className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
-                    My batches
+                    {t('grower.nav.myBatches')}
                   </Link>
                 </div>
               </div>
@@ -357,7 +370,7 @@ export default function GrowerPortalPage() {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
           >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">The Journey Map</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalJourneyTitle')}</h2>
             
             {/* Milestones */}
             <div className="mb-6">
@@ -386,9 +399,7 @@ export default function GrowerPortalPage() {
                         {milestone.name}
                       </p>
                       {milestone.timestamp && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(milestone.timestamp).toLocaleString()}
-                        </p>
+                        <p className="text-xs text-gray-500 mt-1">{formatLocale(milestone.timestamp)}</p>
                       )}
                     </div>
                     {index < journeyMap.milestones.length - 1 && (
@@ -417,11 +428,9 @@ export default function GrowerPortalPage() {
                     <Marker key={index} position={[point.lat, point.lng]}>
                       <Popup>
                         <div>
-                          <p className="font-medium">Point {index + 1}</p>
-                          <p className="text-sm text-gray-600">{point.address || 'In Transit'}</p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(point.timestamp).toLocaleString()}
-                          </p>
+                          <p className="font-medium">{t('growerPages.portalMapPoint', { n: index + 1 })}</p>
+                          <p className="text-sm text-gray-600">{point.address || t('growerPages.portalInTransit')}</p>
+                          <p className="text-xs text-gray-500">{formatLocale(point.timestamp)}</p>
                         </div>
                       </Popup>
                     </Marker>
@@ -455,7 +464,7 @@ export default function GrowerPortalPage() {
             transition={{ delay: 0.2 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
           >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">How was my fruit?</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalFeedbackTitle')}</h2>
             
             {consumerFeedback.totalRatings > 0 ? (
               <>
@@ -468,7 +477,7 @@ export default function GrowerPortalPage() {
                       {consumerFeedback.averageRating.toFixed(1)}
                     </p>
                     <p className="text-sm text-gray-600">
-                      ({consumerFeedback.totalRatings} {consumerFeedback.totalRatings === 1 ? 'rating' : 'ratings'})
+                      ({t('growerPages.portalRating', { count: consumerFeedback.totalRatings })})
                     </p>
                   </div>
                 </div>
@@ -480,15 +489,13 @@ export default function GrowerPortalPage() {
                         <div className="flex items-center gap-2">
                           {renderStars(rating.score)}
                         </div>
-                        <p className="text-xs text-gray-500">
-                          {new Date(rating.createdAt).toLocaleDateString()}
-                        </p>
+                        <p className="text-xs text-gray-500">{formatLocale(rating.createdAt, true)}</p>
                       </div>
                       {rating.comment && (
                         <p className="text-sm text-gray-700 mt-2">"{rating.comment}"</p>
                       )}
                       <p className="text-xs text-gray-500 mt-2">
-                        Order: {rating.orderNumber}
+                        {t('growerPages.portalOrder', { order: rating.orderNumber })}
                       </p>
                     </div>
                   ))}
@@ -499,11 +506,9 @@ export default function GrowerPortalPage() {
                   <div className="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-green-50 border-2 border-yellow-400 rounded-lg">
                     <div className="text-center">
                       <div className="text-4xl mb-2">🏆</div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">
-                        Bio Vera Certificate of Excellence
-                      </h3>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{t('growerPages.portalCertTitle')}</h3>
                       <p className="text-sm text-gray-600 mb-4">
-                        Your {consumerFeedback.certificate.estateName} batch received a perfect 5-star rating!
+                        {t('growerPages.portalCertBody', { estate: consumerFeedback.certificate.estateName })}
                       </p>
                       <div className="flex items-center justify-center gap-4">
                         <button
@@ -513,18 +518,18 @@ export default function GrowerPortalPage() {
                             const origin = window.location?.origin || '';
                             if (navigator.share) {
                               navigator.share({
-                                title: 'Bio Vera Certificate of Excellence',
+                                title: t('growerPages.portalCertTitle'),
                                 text: consumerFeedback.certificate.socialMediaText,
                                 url: origin + consumerFeedback.certificate.shareableUrl,
                               });
                             } else if (navigator.clipboard) {
                               navigator.clipboard.writeText(consumerFeedback.certificate.socialMediaText);
-                              alert('Certificate text copied to clipboard!');
+                              alert(t('grower.profilePage.alertCertCopied'));
                             }
                           }}
                           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                         >
-                          Share Certificate
+                          {t('growerPages.portalShareCert')}
                         </button>
                         {consumerFeedback.certificate && (
                           <a
@@ -533,7 +538,7 @@ export default function GrowerPortalPage() {
                             rel="noopener noreferrer"
                             className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                           >
-                            View Certificate
+                            {t('growerPages.portalViewCert')}
                           </a>
                         )}
                       </div>
@@ -543,7 +548,7 @@ export default function GrowerPortalPage() {
               </>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500">No feedback yet. Check back after delivery!</p>
+                <p className="text-gray-500 font-light">{t('growerPages.portalNoFeedback')}</p>
               </div>
             )}
           </motion.div>
@@ -557,10 +562,10 @@ export default function GrowerPortalPage() {
             transition={{ delay: 0.3 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
           >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Financial Status</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalFinancialTitle')}</h2>
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Payment Status</p>
+                <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPaymentStatus')}</p>
                 <p className={`text-lg font-bold ${
                   financialStatus.paymentStatus === 'PROCESSING' ? 'text-green-600' :
                   financialStatus.paymentStatus === 'AWAITING_APPROVAL' ? 'text-yellow-600' :
@@ -571,19 +576,19 @@ export default function GrowerPortalPage() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Amount</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalTotalAmount')}</p>
                   <p className="text-lg font-bold text-gray-900">
                     €{financialStatus.totalAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Paid</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPaid')}</p>
                   <p className="text-lg font-bold text-green-600">
                     €{financialStatus.paidAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Pending</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPending')}</p>
                   <p className="text-lg font-bold text-yellow-600">
                     €{financialStatus.pendingAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>

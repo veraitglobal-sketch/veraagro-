@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
   MapPin,
-  Sprout,
+  ListOrdered,
+  Leaf,
   ClipboardList,
   CheckCircle2,
   ShieldAlert,
@@ -23,7 +24,9 @@ import { theme } from '../../../lib/theme';
 export type FarmerHomeHandlers = {
   onParcels: () => void;
   onPlantingSteps: () => void;
+  onPlantings: () => void;
   onFieldDiary: () => void;
+  onMaterials: () => void;
   onAllowedMaterials: () => void;
   onBanned: () => void;
   onCertificates: () => void;
@@ -33,9 +36,8 @@ export type FarmerHomeHandlers = {
   onCompliancePhotos: () => void;
   onQuality: () => void;
   onPartnerOrders: () => void;
-  /** Parity with web grower sidebar: batches → materials → transport → mission tracker */
+  /** Parity with web grower sidebar: batches → transport → missions → badges (materials listed above) */
   onBatches: () => void;
-  onMaterials: () => void;
   onRequestTransport: () => void;
   onMissions: () => void;
   onPackageBadges: () => void;
@@ -75,13 +77,21 @@ type Essential = {
 };
 
 /**
- * Main items for the farmer: parcels, planting, entry log, allowed / banned list, certificates.
+ * Ordered flow: instructions → parcels → plantings → diary → materials → allowed → banned → certificates.
  * Copy comes from i18n (short, plain language).
  */
 export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHandlers }) {
   const { t } = useTranslation();
 
   const essentials: Essential[] = [
+    {
+      key: 'instructions',
+      onPress: handlers.onPlantingSteps,
+      icon: <ListOrdered size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      titleKey: 'producer.dashboard.farmer.instructionsTitle',
+      descKey: 'producer.dashboard.farmer.instructionsDesc',
+      accent: theme.colors.primaryLight,
+    },
     {
       key: 'parcels',
       onPress: handlers.onParcels,
@@ -91,11 +101,11 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
       accent: theme.colors.primaryLight,
     },
     {
-      key: 'planting',
-      onPress: handlers.onPlantingSteps,
-      icon: <Sprout size={24} color={theme.colors.primary} strokeWidth={1.75} />,
-      titleKey: 'producer.dashboard.farmer.plantingTitle',
-      descKey: 'producer.dashboard.farmer.plantingDesc',
+      key: 'plantings',
+      onPress: handlers.onPlantings,
+      icon: <Leaf size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      titleKey: 'producer.dashboard.farmer.plantingsTitle',
+      descKey: 'producer.dashboard.farmer.plantingsDesc',
       accent: theme.colors.primaryLight,
     },
     {
@@ -104,6 +114,14 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
       icon: <ClipboardList size={24} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.diaryTitle',
       descKey: 'producer.dashboard.farmer.diaryDesc',
+      accent: theme.colors.primaryLight,
+    },
+    {
+      key: 'materials',
+      onPress: handlers.onMaterials,
+      icon: <Box size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      titleKey: 'producer.dashboard.farmer.materialsTitle',
+      descKey: 'producer.dashboard.farmer.materialsDesc',
       accent: theme.colors.primaryLight,
     },
     {
@@ -212,12 +230,6 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
                 onPress: handlers.onBatches,
                 icon: <Package size={20} color={theme.colors.primary} strokeWidth={1.75} />,
                 titleKey: 'producer.dashboard.farmer.logisticsBatches',
-              },
-              {
-                k: 'materials',
-                onPress: handlers.onMaterials,
-                icon: <Box size={20} color={theme.colors.primary} strokeWidth={1.75} />,
-                titleKey: 'producer.dashboard.farmer.logisticsMaterials',
               },
               {
                 k: 'transport',
