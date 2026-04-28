@@ -43,6 +43,11 @@ export default function Footer() {
             <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center" style={{ minHeight: '1.25rem' }}>{t('footer.columnProduct')}</h4>
             <ul className="space-y-1 text-sm text-gray-600">
               <li>
+                <Link href={loc('/for-buyers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('nav.forBuyers')}
+                </Link>
+              </li>
+              <li>
                 <Link href={loc('/growers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.forGrowers')}
                 </Link>

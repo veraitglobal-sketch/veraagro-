@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { authAPI } from '@/lib/api';
+import Footer from '@/components/Footer';
 
 export default function BuyerRegisterPage() {
   const router = useRouter();
@@ -405,53 +406,7 @@ export default function BuyerRegisterPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
-            <div className="flex flex-col">
-              <Link href="/" className="inline-block mb-4 -mt-1">
-                <Image 
-                  src="/logo1.png" 
-                  alt="Bio Vera" 
-                  width={56} 
-                  height={20} 
-                  className="h-4 w-auto"
-                />
-              </Link>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                A vertically integrated agricultural network for Bio-Ready certification 
-                and EU market compliance.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/login/buyer" className="hover:text-[#2D5A27] transition-colors">For Buyers</Link></li>
-                <li><Link href="/login/producer" className="hover:text-[#2D5A27] transition-colors">For Producers</Link></li>
-                <li><Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">For Logistics</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/#vision" className="hover:text-[#2D5A27] transition-colors">Vision</Link></li>
-                <li><Link href="/#roadmap" className="hover:text-[#2D5A27] transition-colors">Roadmap</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-[#2D5A27] transition-colors">Privacy</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2026 Bio Vera. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

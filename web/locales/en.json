@@ -1115,6 +1115,60 @@
     "plantingsTableCrop": "Crop",
     "plantingsTableDate": "Planned date",
     "plantingsTableStatus": "Status",
+    "loadingPlantings": "Loading crop plans…",
+    "materialsLoading": "Loading materials…",
+    "materialsPageDescription": "Official crate, label roll, and film balances; purchase below; serial list for compliance photos.",
+    "materialsBalanceZeroTitle": "Your material balances are 0",
+    "materialsBalanceZeroBody": "Order using the form below, or if you usually buy through a local distributor, open <0>Suppliers & orders</0> to message them, then ensure your balance here is updated (via purchase or support).",
+    "materialsStatCrate": "Crates (balance)",
+    "materialsStatRolls": "Label rolls (balance)",
+    "materialsStatFilm": "Film (meters)",
+    "materialsShortcuts": "Shortcuts",
+    "materialsShortcutLabelRolls": "Your label rolls",
+    "materialsShortcutSupplyPath": "Supply path",
+    "materialsShortcutSuppliers": "Suppliers",
+    "materialsShortcutCompliance": "Compliance",
+    "materialsShortcutHelp": "Help",
+    "materialsPurchaseTitle": "Purchase official materials",
+    "materialsPurchaseIntro": "Pick <0>crate</0>, <1>label roll</1>, or <2>film</2> (meters) — the three balances above update when the order succeeds.",
+    "materialsProductLabel": "Product to order",
+    "materialsSelectPlaceholder": "— Select material —",
+    "materialsOptionLine": "{{name}} — €{{price}} per {{unit}}",
+    "materialsQuantityLabel": "Quantity",
+    "materialsQuantityPlaceholder": "1–200 per order",
+    "materialsQuantityHint": "Max 200 units per order (e.g. 100 label rolls = 100 serial numbers in the system).",
+    "materialsTotalCost": "Total cost: €{{amount}}",
+    "materialsPurchasing": "Processing…",
+    "materialsPurchaseCta": "Purchase materials",
+    "materialsErrBalance": "Could not load your material balance. Check that you are logged in.",
+    "materialsErrCatalogEmpty": "No products in the catalog. Contact your approved supplier in Suppliers & orders, or use Help / contact — an admin may need to enable material types.",
+    "materialsErrTypesInvalid": "Invalid response from the server for material types.",
+    "materialsErrTypesLoad": "Could not load the list of materials. Try again, or go to Suppliers & orders and message your material partner if the list stays empty.",
+    "materialsErrFetchFailed": "Failed to load material data",
+    "materialsErrSelectQty": "Please select a material and enter a valid quantity",
+    "materialsErrMaxQty": "Maximum 200 units per order. Lower the quantity and try again.",
+    "materialsErrPurchaseFailed": "Failed to purchase materials",
+    "materialsErrPurchaseHint": "If this keeps happening, open “Suppliers & orders” to contact your material partner, or use Help / contact.",
+    "materialsSerialsLoadFailed": "Could not load label roll numbers",
+    "materialsLabelRollTitle": "Your label roll IDs (sticker roll ID)",
+    "materialsLabelRollIntro": "Created when you buy <0>label rolls</0>. Use the same value in <1>Compliance photos</1>.",
+    "materialsLabelRollEmpty": "No label rolls in your account yet — purchase at least one above, then the IDs appear here.",
+    "materialsSerialOnFile_one": "{{count}} serial on file",
+    "materialsSerialOnFile_other": "{{count}} serials on file",
+    "materialsSerialSold": "{{count}} available (SOLD)",
+    "materialsSerialUsed": "{{count}} used in compliance (USED)",
+    "materialsSerialOther": "{{count}} other",
+    "materialsFindSerialLabel": "Find a serial",
+    "materialsSerialSearchPh": "Type to find a serial…",
+    "materialsSerialMatch_one": "{{count}} match",
+    "materialsSerialMatch_other": "{{count}} matches",
+    "materialsSerialListAria": "Label roll serial list",
+    "materialsSerialNoMatch": "No serials match that text.",
+    "materialsImportantTitle": "Important",
+    "materialsImportantBody": "You can only ship batches using official Bio Vera materials. Make sure you have enough materials before reporting a harvest.",
+    "materialsSuccessSerials": " Serial numbers: {{list}}.",
+    "materialsRollStatus_SOLD": "SOLD",
+    "materialsRollStatus_USED": "USED",
     "annTypePLANTING": "Planting",
     "annTypeHARVEST": "Harvest",
     "fieldsNoParcelsOnEstate": "No parcels on this field yet — add a parcel below.",
@@ -1742,6 +1796,105 @@
       "ONBOARDED": "Partner account active"
     },
     "loading": "Loading…"
+  },
+  "careersPage": {
+    "heroTitle": "Join the Bio Vera Team",
+    "heroSubtitle": "Help us transform agriculture through technology. We're building the future of transparent, sustainable food supply chains.",
+    "whyTitle": "Why Work With Us",
+    "values": [
+      {
+        "title": "Mission-Driven",
+        "description": "We work on meaningful problems that impact agriculture and food security."
+      },
+      {
+        "title": "Collaborative Culture",
+        "description": "We believe in teamwork, open communication, and supporting each other."
+      },
+      {
+        "title": "Innovation",
+        "description": "We encourage creative thinking and experimentation to solve complex challenges."
+      },
+      {
+        "title": "Work-Life Balance",
+        "description": "We value your well-being and offer flexible schedules and remote work options."
+      },
+      {
+        "title": "Global Impact",
+        "description": "Join a team that's transforming agriculture around the world."
+      }
+    ],
+    "openPositions": "Open Positions",
+    "requirements": "Requirements",
+    "benefits": "Benefits",
+    "applyNow": "Apply Now",
+    "employmentFullTime": "Full-time",
+    "ctaTitle": "Don't See a Role That Fits?",
+    "ctaBody": "We're always looking for talented individuals who share our passion for transforming agriculture. Send us your resume and let us know how you'd like to contribute.",
+    "ctaButton": "Send Your Resume",
+    "applySubject": "Job application: {{role}}",
+    "generalApplicationSubject": "General application",
+    "jobs": {
+      "dev": {
+        "title": "Senior Full-Stack Developer",
+        "department": "Engineering",
+        "location": "Remote / Hamburg, Germany",
+        "description": "We are looking for an experienced full-stack developer to join our engineering team. You will work on building and maintaining Bio Vera web and mobile applications, backend services, and APIs.",
+        "requirements": [
+          "5+ years of experience in full-stack development",
+          "Proficiency in TypeScript, Node.js, React, and Next.js",
+          "Experience with PostgreSQL and Prisma ORM",
+          "Knowledge of NestJS and microservices architecture",
+          "Strong problem-solving and communication skills"
+        ],
+        "benefits": [
+          "Competitive salary and equity package",
+          "Remote work flexibility",
+          "Health insurance and wellness programs",
+          "Professional development budget",
+          "Flexible working hours"
+        ]
+      },
+      "agritech": {
+        "title": "Agricultural Technology Specialist",
+        "department": "Product",
+        "location": "Remote (EU / Worldwide)",
+        "description": "Join our product team to help shape the future of agricultural technology. You will work closely with farmers, understand their needs, and translate them into product features.",
+        "requirements": [
+          "Background in agriculture, agri-food technology, or related field",
+          "Understanding of EU agricultural regulations and certifications",
+          "Experience with farm management systems",
+          "Strong analytical and communication skills",
+          "Willingness to travel to farms and partners worldwide"
+        ],
+        "benefits": [
+          "Competitive salary",
+          "Travel opportunities around the world",
+          "Direct impact on agricultural innovation",
+          "Health insurance",
+          "Learning and development opportunities"
+        ]
+      },
+      "bizdev": {
+        "title": "Business Development Manager",
+        "department": "Sales",
+        "location": "Hamburg, Germany",
+        "description": "We are seeking a Business Development Manager to expand our network of growers, suppliers, and buyers worldwide. You will be responsible for building strategic partnerships.",
+        "requirements": [
+          "3+ years of experience in B2B sales or business development",
+          "Experience in agriculture, food, or logistics industries",
+          "Strong networking and relationship-building skills",
+          "Fluent in English and at least one other language",
+          "Results-oriented with a track record of meeting targets"
+        ],
+        "benefits": [
+          "Competitive base salary + commission",
+          "Company car or travel allowance",
+          "Health insurance",
+          "Performance bonuses",
+          "Career growth opportunities"
+        ]
+      }
+    }
   },
   "aboutPage": {
     "heroTitle": "About Bio Vera",

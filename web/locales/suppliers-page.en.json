@@ -186,16 +186,5 @@
       "other": "Other"
     }
   },
-  "footer": {
-    "columnGrowers": "For Growers",
-    "linkBecomeGrower": "Become a Grower",
-    "columnSuppliers": "For Suppliers",
-    "linkBecomeSupplier": "Become a Supplier",
-    "linkLogistics": "Logistics Partnership",
-    "columnContact": "Contact",
-    "linkContactUs": "Contact Us",
-    "emailLabel": "Email:",
-    "phoneLabel": "Phone:"
-  },
   "formspeeNote": "Also stored in Bio Vera system — use this ref in admin Partner applications."
 }

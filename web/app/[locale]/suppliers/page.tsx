@@ -7,6 +7,7 @@ import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, D
 import { useTranslation } from 'react-i18next';
 import { suppliersAPI, partnerApplicationsAPI, submitApplicationForm, getFormspreeEndpoint } from '@/lib/api';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import Footer from '@/components/Footer';
 
 const CERTIFICATION_CODES = ['GlobalG.A.P.', 'IFS', 'BRC', 'ISO 22000', 'HACCP', 'Organic EU', 'Fair Trade'] as const;
 
@@ -591,70 +592,7 @@ export default function SuppliersPage() {
         </div>
       </section>
 
-      <footer className="border-t border-gray-200 bg-white py-12 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
-            <div className="flex flex-col">
-              <Link href={loc('/')} className="inline-block mb-4 -mt-1">
-                <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" />
-              </Link>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">{t('footer.tagline')}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-900 mb-4">{t('suppliersPage.footer.columnGrowers')}</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href={loc('/growers')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
-                    {t('suppliersPage.footer.linkBecomeGrower')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/login/producer" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
-                    {t('nav.login')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-900 mb-4">{t('suppliersPage.footer.columnSuppliers')}</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href={loc('/suppliers')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
-                    {t('suppliersPage.footer.linkBecomeSupplier')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/logistics-partner" className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors font-light">
-                    {t('suppliersPage.footer.linkLogistics')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-900 mb-4">{t('suppliersPage.footer.columnContact')}</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href={loc('/contact')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
-                    {t('suppliersPage.footer.linkContactUs')}
-                  </Link>
-                </li>
-                <li className="text-sm text-gray-600 font-light">
-                  {t('suppliersPage.footer.emailLabel')} info@biovera.app
-                </li>
-                <li className="text-sm text-gray-600 font-light">
-                  {t('suppliersPage.footer.phoneLabel')}{' '}
-                  <a href="tel:+4915563740470" className="hover:text-[#2D5A27] transition-colors">
-                    +49 155 63740470
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 mt-8 pt-8 text-center">
-            <p className="text-sm text-gray-600 font-light">{t('footer.copyright', { year: 2026 })}</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

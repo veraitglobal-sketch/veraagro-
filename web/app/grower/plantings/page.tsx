@@ -8,6 +8,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '@/lib/api';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { Leaf, Loader2, Sprout, Wheat } from 'lucide-react';
 
 type EstateRow = { id: string; name: string };
@@ -27,16 +28,9 @@ type HaRow = {
   } | null;
 };
 
-function formatDate(iso: string) {
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
-
 export default function GrowerPlantingsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const loc = useLocalizedHref();
   const nav = useGrowerNavItems();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -80,6 +74,18 @@ export default function GrowerPlantingsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const formatDate = useCallback(
+    (iso: string) => {
+      try {
+        const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+        return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+      } catch {
+        return iso;
+      }
+    },
+    [i18n.language],
+  );
 
   const plantings = useMemo(
     () => announcements.filter((a) => a.announcementType === 'PLANTING'),
@@ -137,7 +143,7 @@ export default function GrowerPlantingsPage() {
           )}
 
           <p className="text-sm text-gray-600">
-            <Link href="/grower/fields" className="text-[#2D5A27] font-medium underline">
+            <Link href={loc('/grower/fields')} className="text-[#2D5A27] font-medium underline">
               {t('grower.placeholders.openParcels')}
             </Link>
           </p>
@@ -145,7 +151,7 @@ export default function GrowerPlantingsPage() {
           {loading ? (
             <div className="flex items-center gap-2 text-gray-600">
               <Loader2 className="h-5 w-5 animate-spin text-[#2D5A27]" />
-              {t('growerPages.loadingBatches')}
+              {t('growerPages.loadingPlantings')}
             </div>
           ) : (
             <>
@@ -280,7 +286,7 @@ function AnnouncementsTable({
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wide">
+            <tr className="border-b border-gray-100 text-left text-xs text-gray-500 tracking-wide">
               <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableField')}</th>
               <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableParcel')}</th>
               <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableType')}</th>

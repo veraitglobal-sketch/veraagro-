@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
-import { formatDateTimeEn } from '@/lib/en-locale-dates';
-
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 function messageFromApiPayload(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
@@ -43,7 +42,8 @@ interface LabelRollRow {
 }
 
 export default function GrowerMaterialsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const loc = useLocalizedHref();
   const navItems = useGrowerNavItems();
   const [balance, setBalance] = useState<MaterialBalance | null>(null);
   const [materialTypes, setMaterialTypes] = useState<MaterialType[]>([]);
@@ -57,6 +57,28 @@ export default function GrowerMaterialsPage() {
   const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
   const [serialsError, setSerialsError] = useState<string | null>(null);
   const [labelRollFilter, setLabelRollFilter] = useState('');
+
+  const formatDateTime = useCallback(
+    (iso: string | null | undefined) => {
+      if (iso == null) return '—';
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '—';
+      const tag = i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+      return d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+    },
+    [i18n.language],
+  );
+
+  const rollStatusLabel = useCallback(
+    (raw: string) => {
+      const u = (raw || '').toUpperCase();
+      const key = `growerPages.materialsRollStatus_${u}` as const;
+      const tr = t(key);
+      if (tr !== key) return tr;
+      return raw;
+    },
+    [t],
+  );
 
   const loadLabelRolls = async () => {
     try {
@@ -72,7 +94,7 @@ export default function GrowerMaterialsPage() {
       } else {
         setLabelRolls([]);
         const err = await res.json().catch(() => ({}));
-        setSerialsError(messageFromApiPayload(err) || 'Could not load label roll numbers');
+        setSerialsError(messageFromApiPayload(err) || t('growerPages.materialsSerialsLoadFailed'));
       }
     } catch {
       setLabelRolls([]);
@@ -113,46 +135,38 @@ export default function GrowerMaterialsPage() {
           setBalance(balanceData);
         } else {
           const errJson = await balanceRes.json().catch(() => ({}));
-          setError(
-            messageFromApiPayload(errJson) ||
-              'Could not load your material balance. Check that you are logged in.',
-          );
+          setError(messageFromApiPayload(errJson) || t('growerPages.materialsErrBalance'));
         }
 
         if (typesRes.ok) {
           const types = await typesRes.json();
           if (Array.isArray(types)) {
             setMaterialTypes(
-              types.map((t: { id: string; name: string; type: string; unit: string; unitPrice: number; description?: string | null }) => ({
-                id: t.id,
-                name: t.name,
-                type: t.type,
-                unit: t.unit,
-                unitPrice: Number(t.unitPrice) || 0,
-                description: t.description ?? null,
+              types.map((row: { id: string; name: string; type: string; unit: string; unitPrice: number; description?: string | null }) => ({
+                id: row.id,
+                name: row.name,
+                type: row.type,
+                unit: row.unit,
+                unitPrice: Number(row.unitPrice) || 0,
+                description: row.description ?? null,
               })),
             );
             if (types.length === 0) {
-              setTypesError(
-                'No products in the catalog. Contact your approved supplier in Suppliers & orders, or use Help / contact — an admin may need to enable material types.',
-              );
+              setTypesError(t('growerPages.materialsErrCatalogEmpty'));
             } else {
               setTypesError(null);
             }
           } else {
             setMaterialTypes([]);
-            setTypesError('Invalid response from the server for material types.');
+            setTypesError(t('growerPages.materialsErrTypesInvalid'));
           }
         } else {
           const errJson = await typesRes.json().catch(() => ({}));
-          setTypesError(
-            messageFromApiPayload(errJson) ||
-              'Could not load the list of materials. Try again, or go to Suppliers & orders and message your material partner if the list stays empty.',
-          );
+          setTypesError(messageFromApiPayload(errJson) || t('growerPages.materialsErrTypesLoad'));
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load material data');
+        setError(t('growerPages.materialsErrFetchFailed'));
       } finally {
         setLoading(false);
       }
@@ -160,16 +174,16 @@ export default function GrowerMaterialsPage() {
 
     void fetchData();
     void loadLabelRolls();
-  }, []);
+  }, [t]);
 
   const handlePurchase = async () => {
     const n = parseInt(quantity, 10);
     if (!selectedMaterial || !quantity || Number.isNaN(n) || n <= 0) {
-      setError('Please select a material and enter a valid quantity');
+      setError(t('growerPages.materialsErrSelectQty'));
       return;
     }
     if (n > 200) {
-      setError('Maximum 200 units per order. Lower the quantity and try again.');
+      setError(t('growerPages.materialsErrMaxQty'));
       return;
     }
 
@@ -193,10 +207,8 @@ export default function GrowerMaterialsPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const msg = messageFromApiPayload(errorData) || 'Failed to purchase materials';
-        throw new Error(
-          `${msg} If this keeps happening, open "Suppliers & orders" to contact your material partner, or use Help / contact.`,
-        );
+        const msg = messageFromApiPayload(errorData) || t('growerPages.materialsErrPurchaseFailed');
+        throw new Error(`${msg} ${t('growerPages.materialsErrPurchaseHint')}`);
       }
 
       const data = (await response.json()) as {
@@ -207,14 +219,14 @@ export default function GrowerMaterialsPage() {
       setBalance(data.balance);
       const extra =
         Array.isArray(data.newSerials) && data.newSerials.length > 0
-          ? ` Serial numbers: ${data.newSerials.join(', ')}.`
+          ? t('growerPages.materialsSuccessSerials', { list: data.newSerials.join(', ') })
           : '';
       setSuccess(`${data.message}${extra}`);
       setSelectedMaterial('');
       setQuantity('');
       void loadLabelRolls();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : t('growerPages.materialsErrFetchFailed'));
     } finally {
       setPurchasing(false);
     }
@@ -224,7 +236,9 @@ export default function GrowerMaterialsPage() {
     return (
       <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
         <GrowerPageShell>
-          <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">Loading materials…</div>
+          <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">
+            {t('growerPages.materialsLoading')}
+          </div>
         </GrowerPageShell>
       </SidebarLayout>
     );
@@ -233,23 +247,21 @@ export default function GrowerMaterialsPage() {
   return (
     <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
-        <GrowerPageHeader
-          title={t('grower.nav.materials')}
-          description="Official crate, label roll, and film balances; purchase below; serials list for compliance photos."
-        />
+        <GrowerPageHeader title={t('grower.nav.materials')} description={t('growerPages.materialsPageDescription')} />
 
         {balance &&
           balance.crateBalance === 0 &&
           balance.labelRollBalance === 0 &&
           balance.filmMeterBalance === 0 && (
             <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-              <p className="font-medium">Your material balances are 0</p>
-              <p className="mt-1">
-                Order using the form below, or if you usually buy through a local distributor, open{' '}
-                <Link href="/grower/where-to-buy" className="font-semibold text-[#23471f] underline">
-                  Suppliers &amp; orders
-                </Link>{' '}
-                to message them, then ensure your balance here is updated (via purchase or support).
+              <p className="font-medium">{t('growerPages.materialsBalanceZeroTitle')}</p>
+              <p className="mt-1 font-light leading-relaxed">
+                <Trans
+                  i18nKey="growerPages.materialsBalanceZeroBody"
+                  components={[
+                    <Link key="0" href={loc('/grower/where-to-buy')} className="font-semibold text-[#23471f] underline" />,
+                  ]}
+                />
               </p>
             </div>
           )}
@@ -270,70 +282,79 @@ export default function GrowerMaterialsPage() {
           </div>
         )}
 
-        {/* Same stat strip as My Batches: number on top, label under */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-gray-900">{balance?.crateBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">Crates (balance)</div>
+            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatCrate')}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-green-600">{balance?.labelRollBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">Label rolls (balance)</div>
+            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatRolls')}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">Film (meters)</div>
+            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatFilm')}</div>
           </div>
         </div>
 
         <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
-          <span className="text-gray-500">Shortcuts</span>
+          <span className="text-gray-500">{t('growerPages.materialsShortcuts')}</span>
           <span className="text-gray-300 hidden sm:inline">·</span>
           <a href="#label-roll-ids" className="font-medium text-[#2D5A27] underline">
-            Your label rolls
+            {t('growerPages.materialsShortcutLabelRolls')}
           </a>
           <span className="text-gray-300">·</span>
           <a href="#supply-flow" className="font-medium text-[#2D5A27] underline">
-            Supply path
+            {t('growerPages.materialsShortcutSupplyPath')}
           </a>
           <span className="text-gray-300">·</span>
-          <Link href="/grower/where-to-buy" className="font-medium text-[#2D5A27] underline">
-            Suppliers
+          <Link href={loc('/grower/where-to-buy')} className="font-medium text-[#2D5A27] underline">
+            {t('growerPages.materialsShortcutSuppliers')}
           </Link>
           <span className="text-gray-300">·</span>
-          <Link href="/grower/compliance-photos" className="font-medium text-[#2D5A27] underline">
-            Compliance
+          <Link href={loc('/grower/compliance-photos')} className="font-medium text-[#2D5A27] underline">
+            {t('growerPages.materialsShortcutCompliance')}
           </Link>
           <span className="text-gray-300">·</span>
-          <Link href="/contact" className="font-medium text-[#2D5A27] underline">
-            Help
+          <Link href={loc('/contact')} className="font-medium text-[#2D5A27] underline">
+            {t('growerPages.materialsShortcutHelp')}
           </Link>
         </p>
 
-        {/* Primary action — one white card like Quality entry */}
         <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Purchase official materials</h2>
-          <p className="mb-4 text-sm text-gray-500">
-            Pick <strong>crate</strong>, <strong>label roll</strong>, or <strong>film</strong> (meters) — the three balances above update when the order succeeds.
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsPurchaseTitle')}</h2>
+          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">
+            <Trans
+              i18nKey="growerPages.materialsPurchaseIntro"
+              components={[
+                <strong key="0" className="font-semibold text-gray-900" />,
+                <strong key="1" className="font-semibold text-gray-900" />,
+                <strong key="2" className="font-semibold text-gray-900" />,
+              ]}
+            />
           </p>
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Product to order</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">{t('growerPages.materialsProductLabel')}</label>
               <select
                 value={selectedMaterial}
                 onChange={(e) => setSelectedMaterial(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
               >
-                <option value="">-- Select Material --</option>
+                <option value="">{t('growerPages.materialsSelectPlaceholder')}</option>
                 {materialTypes.map((type) => (
                   <option key={type.id} value={type.id}>
-                    {type.name} - €{type.unitPrice.toFixed(2)} per {type.unit}
+                    {t('growerPages.materialsOptionLine', {
+                      name: type.name,
+                      price: type.unitPrice.toFixed(2),
+                      unit: type.unit,
+                    })}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Quantity</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">{t('growerPages.materialsQuantityLabel')}</label>
               <input
                 type="number"
                 value={quantity}
@@ -341,20 +362,19 @@ export default function GrowerMaterialsPage() {
                 min="1"
                 max="200"
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
-                placeholder="1–200 per order"
+                placeholder={t('growerPages.materialsQuantityPlaceholder')}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                Max 200 units per order (e.g. 100 label rolls = 100 serial numbers in the system).
-              </p>
+              <p className="mt-1 text-xs text-gray-500">{t('growerPages.materialsQuantityHint')}</p>
             </div>
             {selectedMaterial && quantity && (
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="text-sm text-gray-600">
-                  Total cost: €
-                  {(
-                    parseFloat(quantity) *
-                    (materialTypes.find((t) => t.id === selectedMaterial)?.unitPrice || 0)
-                  ).toFixed(2)}
+                  {t('growerPages.materialsTotalCost', {
+                    amount: (
+                      parseFloat(quantity) *
+                      (materialTypes.find((mt) => mt.id === selectedMaterial)?.unitPrice || 0)
+                    ).toFixed(2),
+                  })}
                 </p>
               </div>
             )}
@@ -364,40 +384,47 @@ export default function GrowerMaterialsPage() {
               disabled={purchasing || !selectedMaterial || !quantity}
               className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {purchasing ? 'Processing...' : 'Purchase materials'}
+              {purchasing ? t('growerPages.materialsPurchasing') : t('growerPages.materialsPurchaseCta')}
             </button>
           </div>
         </div>
 
         <div id="label-roll-ids" className="mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Your label roll IDs (sticker roll ID)</h2>
-          <p className="mb-4 text-sm text-gray-500">
-            Created when you buy <strong>label rolls</strong>. Use the same value in{' '}
-            <Link href="/grower/compliance-photos" className="font-medium text-[#2D5A27] hover:underline">
-              Compliance photos
-            </Link>
-            .
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsLabelRollTitle')}</h2>
+          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">
+            <Trans
+              i18nKey="growerPages.materialsLabelRollIntro"
+              components={[
+                <strong key="0" className="font-semibold text-gray-900" />,
+                <Link key="1" href={loc('/grower/compliance-photos')} className="font-medium text-[#2D5A27] hover:underline" />,
+              ]}
+            />
           </p>
           {serialsError && <p className="mb-2 text-sm text-amber-800">{serialsError}</p>}
           {labelRolls.length === 0 && !serialsError ? (
-            <p className="text-sm text-gray-500">
-              No label rolls in your account yet — purchase at least one above, then the IDs appear here.
-            </p>
+            <p className="text-sm text-gray-500">{t('growerPages.materialsLabelRollEmpty')}</p>
           ) : (
             <div className="space-y-3">
               <p className="text-sm text-gray-600">
-                <span className="font-medium text-gray-900">{labelRollStats.total}</span> serial
-                {labelRollStats.total === 1 ? '' : 's'} on file
+                <span className="font-medium text-gray-900">
+                  {t('growerPages.materialsSerialOnFile', { count: labelRollStats.total })}
+                </span>
                 {labelRollStats.total > 0 ? (
                   <>
-                    {' '}
-                    — <span className="text-green-800">{labelRollStats.sold} available (SOLD)</span>
+                    {' — '}
+                    <span className="text-green-800">{t('growerPages.materialsSerialSold', { count: labelRollStats.sold })}</span>
                     {labelRollStats.used > 0 ? (
                       <>
-                        , <span className="text-gray-600">{labelRollStats.used} used in compliance (USED)</span>
+                        {', '}
+                        <span className="text-gray-600">{t('growerPages.materialsSerialUsed', { count: labelRollStats.used })}</span>
                       </>
                     ) : null}
-                    {labelRollStats.other > 0 ? <>, {labelRollStats.other} other</> : null}
+                    {labelRollStats.other > 0 ? (
+                      <>
+                        {', '}
+                        {t('growerPages.materialsSerialOther', { count: labelRollStats.other })}
+                      </>
+                    ) : null}
                   </>
                 ) : null}
                 .
@@ -405,19 +432,19 @@ export default function GrowerMaterialsPage() {
               {labelRollStats.total > 0 && (
                 <div>
                   <label htmlFor="label-roll-search" className="sr-only">
-                    Find a serial
+                    {t('growerPages.materialsFindSerialLabel')}
                   </label>
                   <input
                     id="label-roll-search"
                     type="search"
                     value={labelRollFilter}
                     onChange={(e) => setLabelRollFilter(e.target.value)}
-                    placeholder="Type to find a serial…"
+                    placeholder={t('growerPages.materialsSerialSearchPh')}
                     className="w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-1 focus:ring-[#2D5A27]"
                   />
                   {labelRollFilter.trim() && (
                     <p className="mt-1.5 text-xs text-gray-500">
-                      {filteredLabelRolls.length} match{filteredLabelRolls.length === 1 ? '' : 'es'}
+                      {t('growerPages.materialsSerialMatch', { count: filteredLabelRolls.length })}
                     </p>
                   )}
                 </div>
@@ -425,7 +452,7 @@ export default function GrowerMaterialsPage() {
               <div
                 className="max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-gray-50/50 sm:max-h-80"
                 role="region"
-                aria-label="Label roll serial list"
+                aria-label={t('growerPages.materialsSerialListAria')}
               >
                 <ul className="divide-y divide-gray-100">
                   {filteredLabelRolls.map((r) => (
@@ -435,14 +462,14 @@ export default function GrowerMaterialsPage() {
                     >
                       <code className="break-all font-mono text-xs text-gray-900 sm:text-sm">{r.serialNumber}</code>
                       <span className="shrink-0 text-xs text-gray-500">
-                        {r.status}
-                        {r.soldAt ? ` · ${formatDateTimeEn(r.soldAt)}` : ''}
+                        {rollStatusLabel(r.status)}
+                        {r.soldAt ? ` · ${formatDateTime(r.soldAt)}` : ''}
                       </span>
                     </li>
                   ))}
                 </ul>
                 {filteredLabelRolls.length === 0 && labelRollFilter.trim() && (
-                  <p className="p-3 text-sm text-gray-500">No serials match that text.</p>
+                  <p className="p-3 text-sm text-gray-500">{t('growerPages.materialsSerialNoMatch')}</p>
                 )}
               </div>
             </div>
@@ -468,11 +495,8 @@ export default function GrowerMaterialsPage() {
               />
             </svg>
             <div>
-              <p className="text-sm font-medium text-blue-800">Important</p>
-              <p className="mt-1 text-sm text-blue-700">
-                You can only ship batches using official Bio Vera materials. Make sure you have enough materials before
-                reporting a harvest.
-              </p>
+              <p className="text-sm font-medium text-blue-800">{t('growerPages.materialsImportantTitle')}</p>
+              <p className="mt-1 text-sm text-blue-700 font-light leading-relaxed">{t('growerPages.materialsImportantBody')}</p>
             </div>
           </div>
         </div>

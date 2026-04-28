@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Target, Users, Award, Globe, Shield, Leaf } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import Footer from '@/components/Footer';
 
 type Card = { title: string; description: string };
 type Block = { title: string; body: string };
@@ -198,86 +199,7 @@ export default function AboutPage() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 py-16 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12 items-start">
-            <div className="flex flex-col">
-              <Link href={loc('/')} className="inline-block mb-4 -mt-1">
-                <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" />
-              </Link>
-              <p className="text-sm text-gray-600 leading-relaxed">{t('footer.tagline')}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnProduct')}</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>
-                  <Link href={loc('/growers')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('nav.forGrowers')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/suppliers')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('nav.forSuppliers')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/logistics-partner" className="hover:text-[#2D5A27] transition-colors">
-                    {t('nav.forLogistics')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnCompany')}</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>
-                  <Link href={loc('/about')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.about')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/careers')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.careers')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/press')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.pressKit')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/#vision')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.vision')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/#roadmap')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.roadmap')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={loc('/contact')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('nav.contact')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-4">{t('footer.columnLegal')}</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>
-                  <Link href={loc('/legal')} className="hover:text-[#2D5A27] transition-colors">
-                    {t('footer.legalHub')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>{t('footer.copyright', { year: 2026 })}</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

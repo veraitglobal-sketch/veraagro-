@@ -186,16 +186,5 @@
       "other": "Ostalo"
     }
   },
-  "footer": {
-    "columnGrowers": "Za uzgajivače",
-    "linkBecomeGrower": "Postanite uzgajivač",
-    "columnSuppliers": "Za dobavljače",
-    "linkBecomeSupplier": "Postanite dobavljač",
-    "linkLogistics": "Partnerstvo u logistici",
-    "columnContact": "Kontakt",
-    "linkContactUs": "Kontaktirajte nas",
-    "emailLabel": "E-pošta:",
-    "phoneLabel": "Telefon:"
-  },
   "formspeeNote": "Takođe sačuvano u Bio Vera sistemu — koristite ovu ref. u admin Partner prijavama."
 }

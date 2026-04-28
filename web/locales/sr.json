@@ -1115,6 +1115,60 @@
     "plantingsTableCrop": "Usev",
     "plantingsTableDate": "Planirani datum",
     "plantingsTableStatus": "Status",
+    "loadingPlantings": "Učitavanje planova useva…",
+    "materialsLoading": "Učitavanje materijala…",
+    "materialsPageDescription": "Zvanična salda gajbi, rolova nalepnica i folije; kupovina ispod; lista serija za fotografije usklađenosti.",
+    "materialsBalanceZeroTitle": "Stanje materijala je 0",
+    "materialsBalanceZeroBody": "Poručite pomoću obrasca ispod, ili ako obično kupujete kod lokalnog distributera, otvorite <0>Dobavljače i porudžbine</0>, pišite im, pa proverite da se saldo ovde ažurira (kupovina ili podrška).",
+    "materialsStatCrate": "Gajbe (stanje)",
+    "materialsStatRolls": "Rolovi nalepnica (stanje)",
+    "materialsStatFilm": "Folija (metri)",
+    "materialsShortcuts": "Prečice",
+    "materialsShortcutLabelRolls": "Vaši rolosi",
+    "materialsShortcutSupplyPath": "Tok snabdevanja",
+    "materialsShortcutSuppliers": "Dobavljači",
+    "materialsShortcutCompliance": "Usklađenost",
+    "materialsShortcutHelp": "Pomoć",
+    "materialsPurchaseTitle": "Kupovina zvaničnog materijala",
+    "materialsPurchaseIntro": "Izaberite <0>gajbu</0>, <1>rolnu nalepnica</1> ili <2>foliju</2> (metri) — tri prikazana stanja se ažuriraju kad porudžbina uspe.",
+    "materialsProductLabel": "Proizvod za porudžbinu",
+    "materialsSelectPlaceholder": "— Izaberite materijal —",
+    "materialsOptionLine": "{{name}} — €{{price}} po {{unit}}",
+    "materialsQuantityLabel": "Količina",
+    "materialsQuantityPlaceholder": "1–200 po porudžbini",
+    "materialsQuantityHint": "Najviše 200 jedinica po porudžbini (npr. 100 rolnova = 100 serijskih brojeva u sistemu).",
+    "materialsTotalCost": "Ukupno: €{{amount}}",
+    "materialsPurchasing": "Obrada…",
+    "materialsPurchaseCta": "Kupi materijal",
+    "materialsErrBalance": "Nije učitano stanje materijala. Proverite da ste prijavljeni.",
+    "materialsErrCatalogEmpty": "Nema proizvoda u katalogu. Javite odobrenom dobavljaču u Dobavljači i porudžbine, ili Pomoć / kontakt — admin možda mora da uključi tipove materijala.",
+    "materialsErrTypesInvalid": "Nevažeći odgovor servera za tipove materijala.",
+    "materialsErrTypesLoad": "Lista materijala se nije učitala. Pokušajte ponovo, ili u Dobavljači i porudžbine pišite partneru za materijal ako ostane prazno.",
+    "materialsErrFetchFailed": "Učitavanje podataka o materijalu nije uspelo",
+    "materialsErrSelectQty": "Izaberite materijal i unesite ispravnu količinu",
+    "materialsErrMaxQty": "Najviše 200 jedinica po porudžbini. Smanjite količinu i pokušajte ponovo.",
+    "materialsErrPurchaseFailed": "Kupovina materijala nije uspela",
+    "materialsErrPurchaseHint": "Ako se ponavlja, otvorite „Dobavljači i porudžbine“ i kontaktirajte partnera za materijal, ili koristite Pomoć / kontakt.",
+    "materialsSerialsLoadFailed": "Serije rolova nalepnica nisu učitane",
+    "materialsLabelRollTitle": "ID rolnova nalepnica (rolna nalepnica)",
+    "materialsLabelRollIntro": "Nastaju kad kupite <0>rolne nalepnica</0>. Isti broj unesite u <1>Fotografije usklađenosti</1>.",
+    "materialsLabelRollEmpty": "Još nema rolnova na nalogu — kupite bar jedan iznad, pa se ID pojavljuju ovde.",
+    "materialsSerialOnFile_one": "{{count}} serijski broj u evidenciji",
+    "materialsSerialOnFile_other": "{{count}} serijskih brojeva u evidenciji",
+    "materialsSerialSold": "{{count}} dostupno (SOLD)",
+    "materialsSerialUsed": "{{count}} upotrebljeno u usklađenosti (USED)",
+    "materialsSerialOther": "{{count}} ostalo",
+    "materialsFindSerialLabel": "Pronađi seriju",
+    "materialsSerialSearchPh": "Kucajte da filtrirate seriju…",
+    "materialsSerialMatch_one": "{{count}} pogodak",
+    "materialsSerialMatch_other": "{{count}} pogotka",
+    "materialsSerialListAria": "Lista serijskih brojeva rolnova",
+    "materialsSerialNoMatch": "Nijedna serija ne odgovara tom tekstu.",
+    "materialsImportantTitle": "Važno",
+    "materialsImportantBody": "Partije možete slati samo uz zvaničan Bio Vera materijal. Obezbedite dovoljno materijala pre prijave berbe.",
+    "materialsSuccessSerials": " Serijski brojevi: {{list}}.",
+    "materialsRollStatus_SOLD": "SOLD",
+    "materialsRollStatus_USED": "USED",
     "annTypePLANTING": "Sadnja",
     "annTypeHARVEST": "Berba",
     "fieldsNoParcelsOnEstate": "Još nema parcela na ovom polju — dodajte parcelu ispod.",
@@ -1742,6 +1796,105 @@
       "ONBOARDED": "Partnerski nalog aktivan"
     },
     "loading": "Učitavanje…"
+  },
+  "careersPage": {
+    "heroTitle": "Pridružite se timu Bio Vera",
+    "heroSubtitle": "Pomozite nam da poljoprivredu unapredimo tehnologijom. Gradimo budućnost transparentnih, održivih lanaca snabdevanja hranom.",
+    "whyTitle": "Zašto raditi sa nama",
+    "values": [
+      {
+        "title": "Svrha i misija",
+        "description": "Radimo na smislenim izazovima koji utiču na poljoprivredu i bezbednost hrane."
+      },
+      {
+        "title": "Timski duh",
+        "description": "Verujemo u saradnju, otvorenu komunikaciju i međusobnu podršku."
+      },
+      {
+        "title": "Inovacije",
+        "description": "Podstičemo kreativnost i eksperimentisanje da bismo rešili složene probleme."
+      },
+      {
+        "title": "Balans posla i života",
+        "description": "Brinemo o vašem blagostanju i nudimo fleksibilno radno vreme i opcije rada na daljinu."
+      },
+      {
+        "title": "Globalni uticaj",
+        "description": "Pridružite se timu koji menja poljoprivredu širom sveta."
+      }
+    ],
+    "openPositions": "Otvorene pozicije",
+    "requirements": "Zahtevi",
+    "benefits": "Benefiti",
+    "applyNow": "Prijavi se",
+    "employmentFullTime": "Puno radno vreme",
+    "ctaTitle": "Ne vidite poziciju koja vam odgovara?",
+    "ctaBody": "Uvek tražimo talentovane ljude koji dele našu strast za promenom poljoprivrede. Pošaljite biografiju i napišite kako želite da doprinesete.",
+    "ctaButton": "Pošaljite biografiju",
+    "applySubject": "Prijava za posao: {{role}}",
+    "generalApplicationSubject": "Opšta prijava",
+    "jobs": {
+      "dev": {
+        "title": "Senior full-stack programer",
+        "department": "Inženjering",
+        "location": "Na daljinu / Hamburg, Nemačka",
+        "description": "Tražimo iskusnog full-stack programera za inženjerski tim. Radićete na izradi i održavanju Bio Vera web i mobilnih aplikacija, backend servisa i API-ja.",
+        "requirements": [
+          "5+ godina iskustva u full-stack razvoju",
+          "TypeScript, Node.js, React i Next.js",
+          "PostgreSQL i Prisma ORM",
+          "NestJS i arhitektura mikroservisa",
+          "Jake veštine rešavanja problema i komunikacije"
+        ],
+        "benefits": [
+          "Konkurentna plata i učešće u vlasništvu",
+          "Fleksibilnost rada na daljinu",
+          "Zdravstveno osiguranje i programi za dobrobit",
+          "Budžet za stručno usavršavanje",
+          "Fleksibilno radno vreme"
+        ]
+      },
+      "agritech": {
+        "title": "Specijalista za agrar tehnologije",
+        "department": "Proizvod",
+        "location": "Na daljinu (EU / širom sveta)",
+        "description": "Pridružite se produkt timu i oblikujte budućnost agrar tehnologije. Blisko ćete saradivati sa proizvođačima, razumeti njihove potrebe i pretvarati ih u funkcionalnosti proizvoda.",
+        "requirements": [
+          "Pozadina u poljoprivredi, agro-prehrambenoj tehnologiji ili srodnim oblastima",
+          "Razumevanje EU propisa i sertifikacija u poljoprivredi",
+          "Iskustvo sa sistemima za upravljanje gazdinstvom",
+          "Analitičke i komunikacione veštine",
+          "Spremnost na putovanja do farmi i partnera širom sveta"
+        ],
+        "benefits": [
+          "Konkurentna plata",
+          "Mogućnosti putovanja širom sveta",
+          "Direktan uticaj na inovacije u poljoprivredi",
+          "Zdravstveno osiguranje",
+          "Obuka i razvoj"
+        ]
+      },
+      "bizdev": {
+        "title": "Menadžer za poslovni razvoj",
+        "department": "Prodaja",
+        "location": "Hamburg, Nemačka",
+        "description": "Tražimo menadžera za poslovni razvoj koji će širiti mrežu proizvođača, dobavljača i kupaca širom sveta. Odgovorni ste za strateška partnerstva.",
+        "requirements": [
+          "3+ godine u B2B prodaji ili poslovnom razvoju",
+          "Iskustvo u poljoprivredi, prehrani ili logistici",
+          "Jake mrežne veštine i izgradnja odnosa",
+          "Tečan engleski i još jedan jezik",
+          "Orijentisanost na rezultate i ispunjavanje ciljeva"
+        ],
+        "benefits": [
+          "Konkurentna osnovna plata + provizija",
+          "Službeni automobil ili dodatak za putovanja",
+          "Zdravstveno osiguranje",
+          "Bonusi po učinku",
+          "Mogućnosti napredovanja"
+        ]
+      }
+    }
   },
   "aboutPage": {
     "heroTitle": "O Bio Veri",
