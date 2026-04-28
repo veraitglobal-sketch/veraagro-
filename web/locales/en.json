@@ -323,6 +323,29 @@
     "releases": [
       {
         "id": "1",
+        "date": "Hamburg · 2026",
+        "title": "Protocol 360: Bio Vera introduces a three-layer quality control programme from field to shelf",
+        "summary": "Protocol 360 is Bio Vera’s internal, measurable control model: Eco-Safe auditing in the field, biometric and visual checks at packing, and Logistics Guard during transport—on one digital backbone for traceable lots through to retail.",
+        "paragraphs": [
+          "HAMBURG, Germany — 2026. Bio Vera formally announced Protocol 360, an in-house three-tier quality programme spanning the production chain—from parcel line to supermarket shelf.",
+          "The rollout targets a tighter industry stance on combining product-safety controls, technical conformance and exhaustive documentation throughout every processing step.",
+          "It is designed for repeatable measurable assurance versus ad-hoc note-taking: a single dossier follows product from first crop interactions through trucking and eventual shelf positioning.",
+          "As an integration layer, Protocol 360 promises repeatable measurable safety outcomes, harmonised QA practices and exhaustive batch trace.",
+          "Three control strata—single doctrine: Protocol 360 expresses itself through delineated checkpoints.",
+          "Tier 1 — Eco-Safe audit (parcel / pre-harvest): first-line monitoring targets agronomic safety ahead of onward handling. Signals include screening for elevated heavy metals, nitrate burdens, substrate pH and moisture balance (tracked at least forty-eight hours pre-harvest). Only lots clearing this hurdle progress.",
+          "Tier 2 — biometric & visual scan (pack-house): second-line checks capture physical fidelity before containers exit—calibration of calibre, pulp firmness, wrap integrity plus chromatic deltas (normally within about five percent). Goal: surface defects upstream of freight.",
+          "Tier 3 — Logistics Guard (movement & warehousing): third-line stewardship keeps refrigerated lanes honest—typically two to eight degrees Celsius wherever the worksheet prescribes—and raises automated alarms if contractual bands slip, preserving dossier continuity until store delivery.",
+          "Protocol 360 rides Bio Vera’s shared digital spine: auditors and contractual partners ingest synchronised shipment views wherever law permits, retaining transparent custody.",
+          "The initiative frames QA as observable outcomes—not assumed compliance—elevating reassurance for shoppers, clarity for growers and reliability for collaborators.",
+          "“Protocol 360 is Bio Vera’s next evolution—we want each unit routed through measurable, accountable controls—from field handshake to chilled shelf placement.”",
+          "Brand scaffolding highlights Standards Beyond Expectation · Controlled by Science, Grown by Nature · Every Unit a Masterpiece.",
+          "To review a publicly exposed batch dossier assemble the workbook URL pattern biovera.app/protocol-360?batchId=YOUR_BATCH_ID swapping YOUR_BATCH_ID for the worksheet identifier surfaced on each passport slice.",
+          "Bio Vera architects digital stewardship for agrifood traceability bridging growers, logistics and retail storefronts beneath one playbook. Headquarters: Hamburg, Germany.",
+          "Media: press@biovera.app · https://biovera.app"
+        ]
+      },
+      {
+        "id": "2",
         "date": "January 15, 2026",
         "title": "Bio Vera Launches Vertically Integrated Agricultural Network",
         "summary": "Bio Vera stresses one operational spine: geographically placed authorised suppliers including town-tier fulfilment where the model permits, procurement recorded in-platform alongside harvesting, QR badges unlocking full passports for each batch, and optional public on-chain hashing when Polygon anchoring is enabled.",
@@ -336,16 +359,29 @@
         ]
       },
       {
-        "id": "2",
-        "date": "February 1, 2026",
-        "title": "Protocol 360: three control layers from field to shelf",
-        "summary": "Protocol 360 is Bio Vera’s layered quality blueprint: sequential field / pack-house / cold-chain controls tied to batches.",
+        "id": "3",
+        "date": "Berlin · Belgrade · 2026",
+        "title": "Bio Vera launches integrated digital infrastructure for transparent, traceable food production",
+        "summary": "The programme links farm workflows, QA controls and market release: QR-backed digital passports, the Bio Vera Standard, grower assistance and final checks before shipments are cleared—with a roadmap toward further regions including the United States later in the 2020s.",
         "paragraphs": [
-          "HAMBURG, Germany — Bio Vera has launched Protocol 360 as the house quality architecture that threads through its vertical agricultural network. The goal is predictable product safety and standardised evidence from first harvest touches through retail hand-offs.",
-          "Protocol 360 aligns three sequential control layers mapped to Bio Vera batches: Tier 1 (field & pre-harvest) covers eco-safe checks such as residues, agronomic KPIs and lot sampling before produce is authorised for onward processing.",
-          "Tier 2 (pack-house & packaging centres) concentrates visual, sizing and biometric-style verification ahead of labelled units leaving the facility—including film integrity where applicable—to catch defects before downstream logistics.",
-          "Tier 3 (transport & storage) safeguards cold-chain posture with temperature bands, alerting and escalation where contractual limits are breached, keeping retail commitments auditable alongside earlier tiers.",
-          "Protocol 360 plugs into Bio Vera’s unified digital backbone, so auditors, logistics hubs and programme partners consume identical batch signals; documentation remains at biovera.app/protocol-360."
+          "BERLIN / BELGRADE — Bio Vera, an agri-technology venture, launches an integrated digital stack aimed at transparency and traceability from field to shopper.",
+          "Unlike single-purpose apps, Bio Vera is pitched as one operating umbrella that binds cultivation, logistics and retail workflows under identical technical rails.",
+          "Modern tooling logs critical steps so both farms and downstream buyers see auditable dossiers—not isolated PDFs or empty slogans—and supervisory bodies can reconcile the same files where statutes require disclosure.",
+          "The headline consumer touchpoint remains the batch passport unlocked by QR codes pointing to origins, farmer profiles, field activity—including photo evidence when the worksheet mandates it—and timestamps alongside inspection visits.",
+          "Shoppers receive a cohesive storyline for each lot while auditors rely on paired documentation pathways whenever jurisdiction demands it.",
+          "The Bio Vera Standard mandates guided cultivation with mandatory digitised diary entries from the parcel, recurring field audits, conformance scoring tied to contractual growing and dossiers that persist through onward handling worksheets.",
+          "Confidence rests on worksheet-backed telemetry and inspection trails—not unsubstantiated marketing lines.",
+          "Compared with basic buy-side contracts growers receive sharper market linkage, articulated standards across the cycle plus orchestrated distribution corridors once conformance is proven.",
+          "Once harvest closes and documentation proves programme compliance, field obligations end under the ruleset and downstream logistics continue on Bio Vera’s contracted operating plan.",
+          "Additional margin can come from on-farm packing where the standard allows: goods stay traceable closer to the source, trimming redundant handling layers that add no auditable value.",
+          "Final QA aligns Bio Vera’s control tower with agronomy field staff and freight coordination before lots enter European retail programmes as fully documented batches.",
+          "End-to-end the chain behaves as cultivation → supervisory checks → worksheet-bound packing → cold-chain logistics → retail with one journal mirroring custody changes.",
+          "Technically the stack combines digitised field operations, GPS time-stamps, activity ledgers, QR labelling and data-protection guardrails so purchasers see evidence-led readouts—not hero claims alone.",
+          "Expansion beyond the current European focus—including stated goals for the United States between late 2027 and 2028—remains subject to regulatory clearance in each market.",
+          "Leadership frames the vision as stronger buyer trust, contractual safeguards for growers and a more inspectable food supply chain overall.",
+          "“Bio Vera is not just another app—it is the system that connects production, quality control and retail. Our goal is to use technology to deliver transparency and assurance for everyone in the chain.”",
+          "Bio Vera is an agri-technology company building digital trace-infrastructure for food production. Registered office: Hamburg, Germany. Media contact: press@biovera.app · https://biovera.app",
+          "— Bio Vera communications"
         ]
       }
     ],

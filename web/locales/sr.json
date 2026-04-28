@@ -323,6 +323,29 @@
     "releases": [
       {
         "id": "1",
+        "date": "Hamburg · 2026.",
+        "title": "Protocol 360: Bio Vera uvodi troslojni sistem kontrole kvaliteta od polja do police",
+        "summary": "Protocol 360 je interni model merljive kontrole: tri nivoa (Eco-Safe na parceli, biometrijsko/vizuelno u pakovanju, Logistics Guard u transportu) i jedna digitalna osnova za trag partije pošiljke do police.",
+        "paragraphs": [
+          "HAMBURG, Nemačka — 2026. Bio Vera je zvanično predstavila Protocol 360, interni troslojni sistem kontrole kvaliteta koji obuhvata kompletan lanac proizvodnje — od parcele do maloprodaje.",
+          "Ovaj sistem postavlja novi standard u industriji hrane kroz kombinaciju kontrole bezbednosti proizvoda, tehničke usaglađenosti i potpune dokumentacije u svakom koraku procesa.",
+          "Sistem je projektovan tako da obezbedi ponovljivu, merljivu sigurnost i trag: umesto paralelnih evidencija, jedinstven dokumentacioni trag prati robe od prvog dodira sa usevom sve do distribucije i izlaganja na polici.",
+          "Protocol 360 kao integrisan model kombinuje: ponovljivu i merljivu bezbednost proizvoda, standardizovan proces kontrole kvaliteta i potpunu tragljivost svake partije kroz ceo operativni hod.",
+          "Tri kontrolna sloja — jedinstven pristup kvalitetu: Protocol 360 funkcioniše kroz tri jasno definisana nivoa.",
+          "Nivo 1 — Eco-Safe audit (parcela / pre berbe): prvi nivo fokusira bezbednost i osnovne agronomske parametre pre nego što proizvod uđe u dalji proces. Proveravaju se mera teških metala, nivo nitrata, pH vrednost i nivo vlage (najmanje 48 h pre berbe). Samo proizvodi koji prođu ovaj nivo dobijaju odobrenje za dalju obradu.",
+          "Nivo 2 — biometrijsko i vizuelno skeniranje (pakovanje): drugi nivo obuhvata fizičke i vizuelne karakteristike pre izlaska iz objekta — među ostalim kalibraciju veličine, čvrstoću ploda, integritet ambalaže i dopušteno odstupanje boje (ciljno do 5%). Cilj je da se nedostaci identifikuju pre ulaska u logistički proces.",
+          "Nivo 3 — Logistics Guard (transport i skladištenje): treći nivo obezbeđuje kontinuitet kvaliteta tokom transporta i skladištenja — kontrola temperature (ciljni opseg 2–8 °C gde tako predviđa specifikacija), detekcija temperaturnih šokova, kontinuitet hladnog lanca i automatsko upozoravanje ako se ugovarani limit prekorači. Na taj način se dokumentuje stanje robe sve do isporuke.",
+          "Protocol 360 radi na zajedničkoj digitalnoj infrastrukturi Bio Vere: evidencija po partiji ili pošiljci istim putem dostupna partnerima programa i auditorima tamo gdje ugovor i zakon tako predviđaju, radi transparentnog traga kroz ceo operativni lanac.",
+          "Protocol 360 formulise jasnu premisu: kvalitet nije pretpostavka, već rezultat definisanih i merljivih procesa. Time se cilja jača bezbednost za kupce, veća kontrola za proizvođače unutar objavljenog standarda kao i veća pouzdanost za partnere u lancu snabdevanja.",
+          "„Protocol 360 predstavlja sledeći korak u razvoju Bio Vera sistema. Naš cilj je da svaki proizvod prođe kroz jasan, merljiv i transparentan proces kontrole — od polja do police.“",
+          "U komunikaciji oko Protocol 360 ističu se vrednosti: Standards Beyond Expectation · Controlled by Science, Grown by Nature · Every Unit a Masterpiece.",
+          "Za proveru statusa konkretnog lota u javnom profilu programa koristi se dokumentovana adresa u obliku biovera.app/protocol-360?batchId=YOUR_BATCH_ID (umesto YOUR_BATCH_ID unosi se identifikator iz digitalnog pasoša ili radnog naloga programa).",
+          "Bio Vera razvija digitalni sistem za kontrolu, trag i transparentnost u proizvodnji hrane, povezujući proizvođače, logistiku i tržište u jedan operativni model. Sjedište kompanije: Hamburg.",
+          "Kontakt za medije: press@biovera.app · www.biovera.app"
+        ]
+      },
+      {
+        "id": "2",
         "date": "15. januar 2026.",
         "title": "Bio Vera lansira vertikalno povezanu poljoprivrednu mrežu",
         "summary": "Kompanija kao poljoprivredni brend veže uzgoj, nabavku i trag do krajnjeg kupca jednim operativnim nizom; dobavljači raspoređeni po mestima (uz gradsko gde model dozvoljava), porudžbine u aplikaciji zajedno s tragom berbe; QR bedž otvara pun pasoš partije te javni blokčejn trag šarže gde tehnička konfiguracija to uključuje.",
@@ -336,17 +359,29 @@
         ]
       },
       {
-        "id": "2",
-        "date": "1. februar 2026.",
-        "title": "Protocol 360: tri kontrolna sloja od parcele do police",
-        "summary": "Bio Vera uvodi Protocol 360, troslojni sistem kontrole kvaliteta koji pokriva sigurnost proizvoda, usklađenost i dokumentaciju od polja do predaje.",
+        "id": "3",
+        "date": "Berlin · Beograd, 2026.",
+        "title": "Bio Vera pokreće kompletan digitalni sistem za transparentnu i tragljivu proizvodnju hrane",
+        "summary": "Integrisani digitalni sistem povezuje farmu, kontrolu i tržište: digitalni pasoš uz QR, Bio Vera Standard, podrška proizvođačima i završna kontrola pre plasmana; planirano je širenje ka odabranim tržištima uključujući SAD u drugoj polovini 2020-ih.",
         "paragraphs": [
-          "HAMBURG, Nemačka — Bio Vera predstavila je Protocol 360 kao kućni sistem kvaliteta koji provlači ceo vertikalni poljoprivredni lanac Bio Vere. Namena je ponovljiva sigurnost proizvoda i standardizovan dokaz prvog dodira sa usevom sve do izdavanja u maloprodaju.",
-          "Protocol 360 spaja tri sekvencijalna kontrolna sloja na nivou partije: sloj I (polje i pred žetvu) pokriva eko‑bezbednosne parametre kao što su tragovi štetnih materija, agronomske indikatore i uzorkovanje pre nego što usev dobije dopuštenje za dalju obradu.",
-          "Sloj II (pakovanje i priprema otpreme) objedinjuje vizuelnu, gabaritsku i biometrijsku proveru pre nego što označene jedinice napuste objekat — uključujući kontrolisani pregled omota gde ima smisla — kako bi se nedostaci uhvatili pre logističkog sloja.",
-          "Sloj III (prevoz i skladištenje) čuva rashladni hod uz unapred podešene opsege uz alarm ako se ugovoreni temperaturni limiti prekorače, tako da obaveze prema prodaji ostanu proverljive uz prethodne slojeve.",
-          "Protocol 360 radi na zajedničkoj digitalnoj osnovici Bio Vere, tako da auditorski timovi i ugovorni članovi lanca dobijaju jedinstven pogled po seriji ili pošiljci.",
-          "Detaljna objašnjenja dostupna su na adresi biovera.app/protocol-360."
+          "BERLIN / BEOGRAD — Bio Vera, agrotehnološki startup, pokreće integrisani digitalni sistem za transparentnost i trag u proizvodnji hrane — od polja do krajnjeg kupca.",
+          "Za razliku od običnih izolovanih digitalnih alata, Bio Vera ne predstavlja samo „još jednu platformu“, već operativni sistem koji povezuje proizvodnju, logistiku i tržište u jednu funkcionalnu celinu pod istim tehničkim pravilima.",
+          "Preko savremenih tehnologija beleže se ključni procesi kako bi proizvođači i krajnji korisnici imali merljiv trag i jasnu dokumentaciju — ne zamenjujući inspekciju, već je podržavajući istim podacima tamo gde zakon to predviđa.",
+          "Centralni deo je digitalni pasoš proizvoda: jedinstveni QR kod vodi do porekla i lokacije uzgoja, profila proizvođača, evidencije aktivnosti u polju, fotografija sa terena kada ih tehnički list predviđa, datuma ključnih procesa i zapisa o posetama i kontrolama.",
+          "Kupac na taj način vidi doslednu priču o partiji; nadležni nadzor i inspekcija rade sa istim dokumentacionim skupom podataka tamo gde je to zakonom propisano.",
+          "Bio Vera Standard podrazumeva kontrolisanu proizvodnju, obaveznu digitalnu evidenciju aktivnosti, redovne terenske posete, sistem ocenjivanja usaglašenosti i trag proizvoda kroz faze do plasmana.",
+          "Bio Vera ne zasniva poverenje samo na deklaracijama, već na podacima koje program čini proverljivima u odnosu na objavljenu tehničku dokumentaciju.",
+          "Za razliku od čistog modela otkupa, sistem proizvođačima nudi jasniji plasman robe, objavljene standarde, podršku tokom ciklusa i uklapanje u organizovanu distribuciju prema ugovoru.",
+          "Nakon berbe i kada tehnička evidencija potvrdi ispunu standarda, obaveze proizvodnje na parceli se zatvaraju u skladu sa programom, a dalji promet i logistika slede ugovoreni operativni plan Bio Vere.",
+          "Dodatni prihod moguć je kroz pakovanje na farmi tamo gde standard dozvoljava: proizvodi koji prolaze tehnička pravila ostaju tragljivi i blizu izvorne ekonomije gazdinstva, što ubrzava otpremnu spremnost i štedi slojeve bez dodatnog dokaza za trag.",
+          "Završna faza obuhvata Bio Vera kontrolu kvaliteta uz podršku terenskog kadra i logističkog tima zajedno sa sistemskom beleškom. Kada kontrolni protokol potvrdi ispunjenost dokumentacije, proizvod ulazi u ugovoreni evropski plasman kao tragljiva partija.",
+          "Lanac funkcioniše kao niz uzastopnih koraka — proizvodnja, kontrola, pakovanje po listu, logistika, tržište — uz zajedničku radnu belešnicu koja prati svaku ključnu promenu stanja robe.",
+          "Tehnološki sloj koristi digitalno praćenje procesa, GPS i vremenske oznake, evidenciju aktivnosti, QR kod po pakovanju i mere zaštite podataka tako da krajnjem korisniku budu dostupne merljive informacije, ne samo slogan.",
+          "Plan je dalje širenje van fokusa na Evropu, uključujući javno najavljenu orijentaciju ka američkom tržištu u razdoblju od kraja 2027. do 2028. godine, u skladu sa regulatornim uslovima.",
+          "Izvršni tim formulise cilj jačanja poverenja potrošača, zakonskih garancija proizvodnje i preglednosti tržišta kroz dokumentovane tragove i moderniji operativni model u poljoprivredi.",
+          "„Bio Vera nije samo platforma — to je sistem koji povezuje proizvodnju, kontrolu i tržište. Naš cilj je da kroz tehnologiju omogućimo transparentnost i sigurnost za sve učesnike u lancu.“",
+          "Bio Vera je agrotehnološki startup koji razvija digitalni sistem praćenja i kontrole proizvodnje hrane; sjedište kompanije je u Hamburgu. Kontakt za medije: press@biovera.app · www.biovera.app",
+          "Zahvaljujemo se uredništvima na interesovanju. Tim Bio Vere."
         ]
       }
     ],
