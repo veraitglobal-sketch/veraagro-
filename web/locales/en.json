@@ -325,7 +325,7 @@
     "releases": [
       {
         "id": "1",
-        "date": "Hamburg · 2026",
+        "date": "Hamburg · 2026.",
         "title": "Protocol 360: Bio Vera introduces a three-layer quality control programme from field to shelf",
         "summary": "Protocol 360 is Bio Vera’s internal, measurable control model: Eco-Safe auditing in the field, biometric and visual checks at packing, and Logistics Guard during transport—on one digital backbone for traceable lots through to retail.",
         "paragraphs": [
@@ -348,25 +348,11 @@
       },
       {
         "id": "2",
-        "date": "January 15, 2026",
-        "title": "Bio Vera Launches Vertically Integrated Agricultural Network",
-        "summary": "Bio Vera stresses one operational spine: geographically placed authorised suppliers including town-tier fulfilment where the model permits, procurement recorded in-platform alongside harvesting, QR badges unlocking full passports for each batch, and optional public on-chain hashing when Polygon anchoring is enabled.",
-        "paragraphs": [
-          "HAMBURG, Germany — Bio Vera positions itself as an agricultural brand and vertically aligned operating network—not merely an intermediary linking farms with supermarkets.",
-          "Producers enrol; once standards clearance completes they contract as Bio Vera growers under one rulebook spanning cultivation, procurement, packing and hand-off downstream.",
-          "Authorised distributors sit where geography dictates—including urban partners when national rollout allows—supplying worksheet-approved seeds, packaging and ancillary inputs under programme norms; growers place orders directly in Bio Vera tooling so procurement logs sit beside field timelines.",
-          "Cartons carry printed badges with QR codes leading to each batch passport; buyers and auditors read the same evidence. Where operators enable blockchain proofs, hashed batch traces publish on public Polygon infrastructure as documented for production deployments.",
-          "From parcel planning through replenishment to logistics manifests Bio Vera retains a single dossier supervision teams can reconcile end-to-end.",
-          "Interview requests: press@biovera.app."
-        ]
-      },
-      {
-        "id": "3",
-        "date": "Berlin · Belgrade · 2026",
+        "date": "Hamburg · 2026.",
         "title": "Bio Vera launches integrated digital infrastructure for transparent, traceable food production",
         "summary": "The programme links farm workflows, QA controls and market release: QR-backed digital passports, the Bio Vera Standard, grower assistance and final checks before shipments are cleared—with a roadmap toward further regions including the United States later in the 2020s.",
         "paragraphs": [
-          "BERLIN / BELGRADE — Bio Vera, an agri-technology venture, launches an integrated digital stack aimed at transparency and traceability from field to shopper.",
+          "HAMBURG, Germany — Bio Vera launches an integrated digital programme aimed at transparency and traceability throughout food production—from farm to consumer.",
           "Unlike single-purpose apps, Bio Vera is pitched as one operating umbrella that binds cultivation, logistics and retail workflows under identical technical rails.",
           "Modern tooling logs critical steps so both farms and downstream buyers see auditable dossiers—not isolated PDFs or empty slogans—and supervisory bodies can reconcile the same files where statutes require disclosure.",
           "The headline consumer touchpoint remains the batch passport unlocked by QR codes pointing to origins, farmer profiles, field activity—including photo evidence when the worksheet mandates it—and timestamps alongside inspection visits.",

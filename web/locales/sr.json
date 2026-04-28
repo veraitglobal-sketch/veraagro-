@@ -348,25 +348,11 @@
       },
       {
         "id": "2",
-        "date": "15. januar 2026.",
-        "title": "Bio Vera lansira vertikalno povezanu poljoprivrednu mrežu",
-        "summary": "Kompanija kao poljoprivredni brend veže uzgoj, nabavku i trag do krajnjeg kupca jednim operativnim nizom; dobavljači raspoređeni po mestima (uz gradsko gde model dozvoljava), porudžbine u aplikaciji zajedno s tragom berbe; QR bedž otvara pun pasoš partije te javni blokčejn trag šarže gde tehnička konfiguracija to uključuje.",
-        "paragraphs": [
-          "HAMBURG, Nemačka — Bio Vera danas potvrđuje poslovanje kao poljoprivredni brend i vertikalno usaglađenu operativnu mrežu, a ne kao generičkog „spojnika“ između gazdinstva i prodavnice.",
-          "Proizvođači se prijavljuju; posle pregleda standarda zaključuju program kojim ugovorno postaju Bio Vera proizvođači, pod jednim pravilnikom koji važi uzgoju, nabavci, pakovanju i daljoj istovaru.",
-          "Uz polje funkcioniše i nabavna strana programa: raspoređeni odobreni dobavljači po mestima (i po gradovima, ako je tako model zemlje) dobavljaju semena, ambalažu i ostalo što tehnička lista odobrava uz Bio Vera standarde. Proizvođači naručuju direktno u platformi tako da nabava bude beležena u istoj tragovnoj evidenciji kao ostali koraci programa.",
-          "Na kutiji je štampani Bio Vera bedž sa QR kodom koji vodi na ceo digitalni pasoš te partije — istu dokumentaciju vide potrošač i nadležni nadzor. Gde je u podešavanjima aktiviran blokčejn trag šarže, javno ostaje odgovarajući zapis (prema tehničkoj dokumentaciji, tipično na javnoj mreži Polygon u produkcijskom okruženju).",
-          "Ceo put od parcele i nabave do etikete i logistike ostaje jedna tragovna knjiga prikladna i za nadzorna tela.",
-          "Za medijske upite i zahteve za intervju: press@biovera.app."
-        ]
-      },
-      {
-        "id": "3",
-        "date": "Berlin · Beograd, 2026.",
+        "date": "Hamburg · 2026.",
         "title": "Bio Vera pokreće kompletan digitalni sistem za transparentnu i tragljivu proizvodnju hrane",
         "summary": "Integrisani digitalni sistem povezuje farmu, kontrolu i tržište: digitalni pasoš uz QR, Bio Vera Standard, podrška proizvođačima i završna kontrola pre plasmana; planirano je širenje ka odabranim tržištima uključujući SAD u drugoj polovini 2020-ih.",
         "paragraphs": [
-          "BERLIN / BEOGRAD — Bio Vera, agrotehnološki startup, pokreće integrisani digitalni sistem za transparentnost i trag u proizvodnji hrane — od polja do krajnjeg kupca.",
+          "HAMBURG, Nemačka — Bio Vera, kao agrotehnološki startup, pokreće integrisani digitalni sistem za transparentnost i trag u proizvodnji hrane — od polja do krajnjeg kupca.",
           "Za razliku od običnih izolovanih digitalnih alata, Bio Vera ne predstavlja samo „još jednu platformu“, već operativni sistem koji povezuje proizvodnju, logistiku i tržište u jednu funkcionalnu celinu pod istim tehničkim pravilima.",
           "Preko savremenih tehnologija beleže se ključni procesi kako bi proizvođači i krajnji korisnici imali merljiv trag i jasnu dokumentaciju — ne zamenjujući inspekciju, već je podržavajući istim podacima tamo gde zakon to predviđa.",
           "Centralni deo je digitalni pasoš proizvoda: jedinstveni QR kod vodi do porekla i lokacije uzgoja, profila proizvođača, evidencije aktivnosti u polju, fotografija sa terena kada ih tehnički list predviđa, datuma ključnih procesa i zapisa o posetama i kontrolama.",
