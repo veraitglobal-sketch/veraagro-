@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "translate:de": "node scripts/translate-en-to-de.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
