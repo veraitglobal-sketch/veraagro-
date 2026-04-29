@@ -1,190 +1,190 @@
 {
   "hero": {
-    "title": "For Our Suppliers",
-    "subtitle": "Become a Bio Vera supplier: sell our products and our packaging to growers in your country. You get guaranteed offtake from our producers, and you support them with on-site advice and training.",
-    "downloadPdf": "Download Prospect PDF",
-    "downloadFail": "Failed to download prospect. Please try again."
+    "title": "Para nuestros proveedores",
+    "subtitle": "Conviértete en proveedor de Bio Vera: vende nuestros productos y nuestros envases a productores de tu país. Obtendrá un suministro garantizado de nuestros productores y los apoyará con asesoramiento y formación in situ.",
+    "downloadPdf": "Descargar prospecto PDF",
+    "downloadFail": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo."
   },
   "whoApply": {
-    "title": "Who should apply",
-    "intro": "Our suppliers sell Bio Vera products and Bio Vera packaging in their country. We prefer partners who already work in agriculture and have a strong presence across the country.",
+    "title": "¿Quién debería aplicar?",
+    "intro": "Nuestros proveedores comercializan productos Bio Vera y envases Bio Vera en su país. Preferimos socios que ya trabajan en la agricultura y tienen una fuerte presencia en todo el país.",
     "bullets": [
-      "You sell our products (seeds, inputs) to growers",
-      "You sell our packaging to producers",
-      "Ideally you already work in agriculture",
-      "Wide presence in your country is an advantage"
+      "Vendes nuestros productos (semillas, insumos) a los productores.",
+      "Vendes nuestros envases a los productores.",
+      "Lo ideal es que ya trabajes en la agricultura.",
+      "Amplia presencia en su país es una ventaja"
     ]
   },
   "yourRole": {
-    "title": "Your role",
-    "intro": "As our supplier you advise and train users on the ground. You are the local point of contact for producers and support them with on-site guidance. You also procure packaging for our users – including boxes for packing produce – so they have what they need locally.",
+    "title": "Tu papel",
+    "intro": "Como nuestro proveedor, usted asesora y forma a los usuarios sobre el terreno. Usted es el punto de contacto local para los productores y los apoya con orientación in situ. También adquiere embalaje para nuestros usuarios, incluidas cajas para envasar productos, para que tengan lo que necesitan localmente.",
     "bullets": [
-      "On-site advising and training of users",
-      "Procure packaging for our users (e.g. boxes for packing)",
-      "First point of contact for farmers in your region",
-      "Physical verification of received goods"
+      "Asesoramiento y formación in situ de usuarios.",
+      "Adquirir embalajes para nuestros usuarios (por ejemplo, cajas para embalaje)",
+      "Primer punto de contacto para los agricultores de su región",
+      "Verificación física de la mercancía recibida."
     ]
   },
   "benefits": {
-    "title": "What you get",
-    "subtitle": "Benefits of becoming a Bio Vera supplier",
+    "title": "lo que obtienes",
+    "subtitle": "Beneficios de convertirse en proveedor de Bio Vera",
     "cards": [
       {
-        "title": "Guaranteed offtake",
-        "description": "Guaranteed offtake from our producers in your country. Our growers source from approved suppliers – you get stable demand and predictable revenue."
+        "title": "Salida garantizada",
+        "description": "Compra garantizada de nuestros productores en su país. Nuestros productores se abastecen de proveedores aprobados: usted obtiene una demanda estable e ingresos predecibles."
       },
       {
-        "title": "Our products & packaging",
-        "description": "You sell Bio Vera products and Bio Vera packaging. One brand, one standard, full traceability via QR and the Vera system."
+        "title": "Nuestros productos y embalajes",
+        "description": "Vendes productos Bio Vera y envases Bio Vera. Una marca, un estándar, trazabilidad total mediante QR y sistema Vera."
       },
       {
-        "title": "Price stability",
-        "description": "Pre-agreed pricing structure. No price fluctuations or negotiations per transaction. Predictable margins."
+        "title": "Estabilidad de precios",
+        "description": "Estructura de precios previamente acordada. Sin fluctuaciones de precios ni negociaciones por transacción. Márgenes predecibles."
       },
       {
-        "title": "Integrated logistics",
-        "description": "Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometers, lower costs."
+        "title": "Logística integrada",
+        "description": "Reciba semillas y fertilizantes en viajes de regreso desde nuestra red logística. Menos kilómetros en vacío, menores costes."
       },
       {
-        "title": "National coverage preferred",
-        "description": "We prefer suppliers with strong national presence. Expand your reach and represent Bio Vera across your country."
+        "title": "Cobertura nacional preferida",
+        "description": "Preferimos proveedores con fuerte presencia nacional. Amplíe su alcance y represente a Bio Vera en todo su país."
       },
       {
-        "title": "Exclusive market access",
-        "description": "Direct access to our producer network and to the German market through our vertically integrated chain."
+        "title": "Acceso exclusivo al mercado",
+        "description": "Acceso directo a nuestra red de productores y al mercado alemán a través de nuestra cadena integrada verticalmente."
       }
     ]
   },
   "howItWorks": {
-    "title": "How It Works",
-    "subtitle": "Understanding the Bio Vera supply chain",
-    "supplyChainTitle": "Supply Chain Process",
+    "title": "Cómo funciona",
+    "subtitle": "Comprender la cadena de suministro de Bio Vera",
+    "supplyChainTitle": "Proceso de la cadena de suministro",
     "steps": [
       {
-        "title": "Sourcing from approved partners",
-        "body": "Suppliers procure goods from our approved partners within the country. They also source packaging (e.g. boxes for packing) for our users. Seeds, fertilizers, and packaging meet Bio Vera specifications."
+        "title": "Abastecimiento de socios aprobados",
+        "body": "Los proveedores adquieren productos de nuestros socios aprobados dentro del país. También obtienen embalajes (por ejemplo, cajas para embalaje) para nuestros usuarios. Semillas, fertilizantes y envases cumplen con las especificaciones de Bio Vera."
       },
       {
-        "title": "Agreed Pricing Structure",
-        "body": "All products are sold at pre-agreed prices. This ensures price stability for growers and predictable revenue for suppliers. No price fluctuations or negotiations per transaction."
+        "title": "Estructura de precios acordada",
+        "body": "Todos los productos se venden a precios previamente acordados. Esto garantiza la estabilidad de precios para los productores e ingresos predecibles para los proveedores. Sin fluctuaciones de precios ni negociaciones por transacción."
       },
       {
-        "title": "Distribution to Growers",
-        "body": "Suppliers distribute products to Bio Vera certified growers in their region. Every transaction is tracked through QR codes, ensuring complete traceability from supplier to field."
+        "title": "Distribución a los productores",
+        "body": "Los proveedores distribuyen productos a productores certificados por Bio Vera en su región. Cada transacción se rastrea a través de códigos QR, lo que garantiza una trazabilidad completa desde el proveedor hasta el campo."
       },
       {
-        "title": "Digital Tracking & Compliance",
-        "body": "All inventory movements are recorded in the Vera Admin Dashboard. Suppliers maintain real-time visibility of stock levels, and the system automatically alerts when inventory falls below 20% threshold."
+        "title": "Seguimiento y cumplimiento digitales",
+        "body": "Todos los movimientos de inventario se registran en el Panel de administración de Vera. Los proveedores mantienen visibilidad en tiempo real de los niveles de existencias y el sistema alerta automáticamente cuando el inventario cae por debajo del umbral del 20%."
       }
     ],
-    "forSuppliersPanelTitle": "For Suppliers",
-    "forSuppliersPanelIntro": "As a supplier, you purchase from our approved partners and sell to growers at the agreed price. You maintain local inventory, procure packaging (e.g. boxes) for our users, and provide regional support to farmers.",
+    "forSuppliersPanelTitle": "Para proveedores",
+    "forSuppliersPanelIntro": "Como proveedor, usted compra a nuestros socios aprobados y vende a los productores al precio acordado. Usted mantiene el inventario local, adquiere embalajes (por ejemplo, cajas) para nuestros usuarios y brinda apoyo regional a los agricultores.",
     "forSuppliersPanelBullets": [
-      "Purchase from approved partners",
-      "Maintain secure storage facilities",
-      "Procure packaging (e.g. boxes for packing) for our users",
-      "Distribute to growers at fixed prices",
-      "Track all transactions via QR codes"
+      "Compra de socios aprobados",
+      "Mantener instalaciones de almacenamiento seguras",
+      "Adquirir embalajes (por ejemplo, cajas para embalaje) para nuestros usuarios",
+      "Distribuir a los productores a precios fijos.",
+      "Realice un seguimiento de todas las transacciones mediante códigos QR"
     ]
   },
   "requirements": {
-    "title": "Program Requirements",
-    "subtitle": "What we expect from our suppliers",
-    "supplierHeading": "For Suppliers",
+    "title": "Requisitos del programa",
+    "subtitle": "Qué esperamos de nuestros proveedores",
+    "supplierHeading": "Para proveedores",
     "cards": [
       {
-        "title": "Vera Resources Storage",
-        "description": "Obligation to provide dry and secure storage space for Vera seeds, fertilizers, and packaging materials."
+        "title": "Almacenamiento de recursos de Vera",
+        "description": "Obligación de proporcionar un espacio de almacenamiento seco y seguro para semillas, fertilizantes y materiales de embalaje de Vera."
       },
       {
-        "title": "QR Code Issuance",
-        "description": "Supplier cannot issue goods without scanning the QR code from the farmer's app. This is the only way to track consumption per hectare."
+        "title": "Emisión de Código QR",
+        "description": "El proveedor no puede emitir bienes sin escanear el código QR desde la aplicación del agricultor. Ésta es la única manera de realizar un seguimiento del consumo por hectárea."
       },
       {
-        "title": "Local Support",
-        "description": "Supplier is the first point of contact for farmers in their region. They perform physical verification of received goods and provide on-site advice and training."
+        "title": "Soporte local",
+        "description": "El proveedor es el primer punto de contacto para los agricultores de su región. Realizan la verificación física de los bienes recibidos y brindan asesoramiento y capacitación in situ."
       },
       {
-        "title": "Inventory Reporting",
-        "description": "System must automatically notify headquarters in Hamburg when inventory falls below 20%."
+        "title": "Informes de inventario",
+        "description": "El sistema debe notificar automáticamente a la sede central en Hamburgo cuando el inventario cae por debajo del 20%."
       }
     ],
-    "commonLabel": "Common Obligation:",
-    "commonBody": "All partners must use the Vera Admin Dashboard to record every entry and exit of goods. No 'paperwork' – everything must be in the digital system."
+    "commonLabel": "Obligación común:",
+    "commonBody": "Todos los socios deben utilizar el Panel de administración de Vera para registrar cada entrada y salida de mercancías. Sin \"papeleo\": todo debe estar en el sistema digital."
   },
   "logistics": {
-    "title": "Vera Logistics Advantage",
-    "subtitle": "Smart return logistics system",
-    "noEmptyTitle": "No Empty Return Trips",
+    "title": "Ventaja logística de Vera",
+    "subtitle": "Sistema de logística de devolución inteligente",
+    "noEmptyTitle": "No hay viajes de regreso vacíos",
     "steps": [
       {
-        "title": "Pickup & Delivery",
-        "body": "Driver picks up products from growers and delivers them to the buyer's address."
+        "title": "Recogida y entrega",
+        "body": "El conductor recoge los productos de los productores y los entrega en la dirección del comprador."
       },
       {
-        "title": "Return Pickup",
-        "body": "On the return trip, the driver picks up our Vera seeds and fertilizers from our partners."
+        "title": "Recogida de devolución",
+        "body": "En el viaje de regreso, el conductor recoge nuestras semillas de Vera y fertilizantes de nuestros socios."
       },
       {
-        "title": "Distribution to Suppliers",
-        "body": "The driver delivers Vera seeds and fertilizers directly to our suppliers on the return route, eliminating empty kilometers."
+        "title": "Distribución a Proveedores",
+        "body": "El conductor entrega semillas y fertilizantes de Vera directamente a nuestros proveedores en la ruta de regreso, eliminando kilómetros en vacío."
       }
     ],
-    "supplierColumnTitle": "For Suppliers",
-    "supplierColumnIntro": "Receive regular deliveries of Vera seeds and fertilizers directly from our partners, delivered by our logistics network on return trips.",
+    "supplierColumnTitle": "Para proveedores",
+    "supplierColumnIntro": "Reciba entregas periódicas de semillas y fertilizantes de Vera directamente de nuestros socios, entregadas por nuestra red logística en viajes de regreso.",
     "supplierColumnBullets": [
-      "No need to arrange separate transport for incoming goods",
-      "Reduced logistics costs through integrated system",
-      "Regular, predictable delivery schedule"
+      "No es necesario organizar el transporte por separado para las mercancías entrantes.",
+      "Costos logísticos reducidos a través del sistema integrado.",
+      "Calendario de entrega regular y predecible"
     ],
-    "systemColumnTitle": "System Benefits",
-    "systemColumnIntro": "Our smart logistics system ensures maximum efficiency by eliminating empty return trips and optimizing every kilometer of transport.",
+    "systemColumnTitle": "Beneficios del sistema",
+    "systemColumnIntro": "Nuestro sistema de logística inteligente garantiza la máxima eficiencia al eliminar los viajes de regreso vacíos y optimizar cada kilómetro de transporte.",
     "systemColumnBullets": [
-      "Zero empty kilometers on return trips",
-      "Reduced fuel costs and environmental impact",
-      "Faster delivery times through optimized routes"
+      "Cero kilómetros en vacío en los viajes de vuelta",
+      "Reducción de costes de combustible e impacto medioambiental.",
+      "Tiempos de entrega más rápidos a través de rutas optimizadas"
     ]
   },
   "application": {
-    "title": "Supplier Application",
-    "intro": "Apply online (no self-service store login). You receive a reference code to track your application. Our team will contact you to schedule a meeting; when you are approved we create your partner store account.",
-    "linkCheckStatus": "Check status with your reference",
-    "linkPartnerLogin": "Partner store login",
-    "receivedTitle": "Application received",
-    "referencePrefix": "Your reference:",
-    "receivedBody": "We will contact you to schedule a conversation. Save your reference number — you can use it to check your application status anytime.",
-    "ctaCheckStatus": "Check application status",
-    "ctaAnother": "Submit another"
+    "title": "Solicitud de proveedor",
+    "intro": "Solicite en línea (sin iniciar sesión en la tienda de autoservicio). Recibirá un código de referencia para realizar un seguimiento de su solicitud. Nuestro equipo se comunicará con usted para programar una reunión; Cuando sea aprobado, crearemos su cuenta de tienda asociada.",
+    "linkCheckStatus": "Consulta el estado con tu referencia.",
+    "linkPartnerLogin": "Inicio de sesión en la tienda asociada",
+    "receivedTitle": "Solicitud recibida",
+    "referencePrefix": "Tu referencia:",
+    "receivedBody": "Nos comunicaremos con usted para programar una conversación. Guarde su número de referencia; puede usarlo para verificar el estado de su solicitud en cualquier momento.",
+    "ctaCheckStatus": "Verificar el estado de la solicitud",
+    "ctaAnother": "enviar otro"
   },
   "form": {
-    "companyNameLabel": "Company Name *",
-    "companyNamePlaceholder": "Enter company name",
-    "vatLabel": "VAT ID / Tax Identification Number *",
-    "vatPlaceholder": "Enter VAT ID",
-    "contactPersonLabel": "Contact Person *",
-    "contactPlaceholder": "Full name",
-    "emailLabel": "Email *",
-    "emailPlaceholder": "email@example.com",
-    "phoneLabel": "Phone *",
+    "companyNameLabel": "Nombre de empresa *",
+    "companyNamePlaceholder": "Introduzca el nombre de la empresa",
+    "vatLabel": "NIF IVA / Número de Identificación Fiscal *",
+    "vatPlaceholder": "Introduzca el número de IVA",
+    "contactPersonLabel": "Persona de contacto *",
+    "contactPlaceholder": "nombre completo",
+    "emailLabel": "Correo electrónico *",
+    "emailPlaceholder": "correo electrónico@ejemplo.com",
+    "phoneLabel": "Teléfono *",
     "phonePlaceholder": "+1234567890",
-    "productTypeLabel": "Product Type *",
-    "productTypePlaceholder": "Select product type",
-    "certificationsLabel": "Certifications *",
-    "certificationsHint": "Select at least one certification",
-    "websiteLabel": "Website (optional)",
-    "websitePlaceholder": "https://www.example.com",
-    "descriptionLabel": "Business Description (optional)",
-    "descriptionPlaceholder": "Brief description of your company and products...",
-    "submitting": "Submitting...",
-    "submit": "Submit Application",
-    "submitErrorFallback": "Failed to submit. Please try again or contact info@biovera.app",
+    "productTypeLabel": "Tipo de producto *",
+    "productTypePlaceholder": "Seleccione tipo de producto",
+    "certificationsLabel": "Certificaciones *",
+    "certificationsHint": "Seleccione al menos una certificación",
+    "websiteLabel": "Sitio web (opcional)",
+    "websitePlaceholder": "https://www.ejemplo.com",
+    "descriptionLabel": "Descripción del negocio (opcional)",
+    "descriptionPlaceholder": "Breve descripción de su empresa y productos...",
+    "submitting": "Sumisión...",
+    "submit": "Enviar solicitud",
+    "submitErrorFallback": "No se pudo enviar. Por favor inténtalo de nuevo o contacta con info@biovera.app",
     "productTypes": {
-      "seeds": "Seeds",
-      "fertilizers": "Fertilizers",
-      "packaging": "Packaging Materials",
-      "equipment": "Equipment",
-      "other": "Other"
+      "seeds": "Semillas",
+      "fertilizers": "Fertilizantes",
+      "packaging": "Materiales de embalaje",
+      "equipment": "Equipo",
+      "other": "Otro"
     }
   },
-  "formspeeNote": "Also stored in Bio Vera system — use this ref in admin Partner applications."
+  "formspeeNote": "También almacenado en el sistema Bio Vera: utilice esta referencia en las aplicaciones administrativas de los socios."
 }

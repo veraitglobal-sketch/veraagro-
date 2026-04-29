@@ -1,131 +1,182 @@
 {
   "chainShort": [
     {
-      "kicker": "Field & compliance on the ground",
-      "text": "parcels approved → sowing & season work (mobile) → harvest plan when close to picking."
+      "kicker": "Campo y cumplimiento sobre el terreno",
+      "text": "parcelas aprobadas → trabajo de siembra y temporada (móvil) → plan de cosecha cuando se acerca la recolección."
     },
     {
-      "kicker": "Lot & paperwork",
-      "text": "create/update batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll."
+      "kicker": "Lote y trámites",
+      "text": "crear/actualizar lote → empacar en EMBALADO / CALIDAD_VERIFICADA → entrada de calidad → fotos de cumplimiento + rollo de etiquetas."
     },
     {
-      "kicker": "Exit farm",
-      "text": "Request transport (queued for dispatch) → operations assigns a driver → accept / pickup → loading handover (truck proof) → cold chain to hub / buyer → Missions list follows the run; retail orders are matched in operations (not auto-split in the app)."
+      "kicker": "Salir de la granja",
+      "text": "Solicitar transporte (en cola para envío) → operaciones asigna un conductor → aceptar/recoger → entrega de carga (a prueba de camión) → cadena de frío al centro/comprador → La lista de misiones sigue la ejecución; Los pedidos minoristas se igualan en las operaciones (no se dividen automáticamente en la aplicación)."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Read steps 1–12 in order. The left menu follows the field workflow: dashboard, guide, parcels, plantings, materials, batches, entry log, scan, quality, suppliers, then transport. Some topics are split across cards (e.g. approval vs field work).",
+    "sidebarBlurb": "Lea los pasos del 1 al 12 en orden. El menú de la izquierda sigue el flujo de trabajo del campo: panel, guía, paquetes, plantaciones, materiales, lotes, registro de entrada, escaneo, calidad, proveedores y luego transporte. Algunos temas se dividen en tarjetas (por ejemplo, aprobación frente a trabajo de campo).",
     "myFieldsCta": {
-      "title": "My fields",
-      "line": "Open when you are ready to map blocks and crops.",
-      "linkLabel": "Open My fields",
-      "webHref": "/grower/fields"
+      "title": "mis campos",
+      "line": "Ábralo cuando esté listo para mapear bloques y cultivos.",
+      "linkLabel": "Abrir mis campos",
+      "webHref": "/agricultor/campos"
     }
   },
-  "fullChainTitle": "Full chain (short)",
-  "fieldsMapKicker": "Fields & map",
-  "navJumpLabel": "Jump to step",
-  "stepNumber": "Step {{n}}",
-  "stepSrOnly": "Step {{n}}. ",
+  "fullChainTitle": "Cadena completa (corta)",
+  "fieldsMapKicker": "Campos y mapa",
+  "navJumpLabel": "Saltar al paso",
+  "stepNumber": "Paso {{n}}",
+  "stepSrOnly": "Paso {{n}}.",
   "steps": [
     {
-      "title": "Dashboard",
+      "title": "Panel",
       "paragraphs": [
-        "Start here for alerts (messages, active batches, transport), farm name, and the next recommended action. Use it every few days, not only once."
+        "Comience aquí para recibir alertas (mensajes, lotes activos, transporte), nombre de la granja y la siguiente acción recomendada. Úselo cada pocos días, no solo una vez."
       ],
-      "links": [{ "label": "Open Dashboard", "href": "/grower" }]
+      "links": [
+        {
+          "label": "Abrir panel",
+          "href": "/cultivador"
+        }
+      ]
     },
     {
-      "title": "Steps (this page)",
+      "title": "Pasos (esta página)",
       "paragraphs": [
-        "This grid has 12 numbered cards; the web sidebar follows the same workflow as the menu (we split a few topics here for clarity). On the app, use Home for fields, materials, transport, and the rest."
+        "Esta cuadrícula tiene 12 cartas numeradas; la barra lateral web sigue el mismo flujo de trabajo que el menú (aquí dividimos algunos temas para mayor claridad). En la aplicación, use Inicio para campos, materiales, transporte y el resto."
       ],
       "links": []
     },
     {
-      "title": "My fields — estates & parcels (blocks)",
+      "title": "Mis campos - fincas y parcelas (bloques)",
       "paragraphs": [
-        "Create your field (estate) and parcels (crop blocks). Draw or adjust the area so the system can compute surface in m². Set crop / variety where the form allows. An administrator must approve a parcel before batches, diaries, and sprays are fully unlocked on that block."
+        "Crea tu campo (finca) y parcelas (bloques de cultivo). Dibuje o ajuste el área para que el sistema pueda calcular la superficie en m². Establezca cultivo/variedad donde el formulario lo permita. Un administrador debe aprobar un paquete antes de que los lotes, los diarios y los aerosoles se desbloqueen por completo en ese bloque."
       ],
-      "links": [{ "label": "My fields", "href": "/grower/fields" }]
+      "links": [
+        {
+          "label": "mis campos",
+          "href": "/agricultor/campos"
+        }
+      ]
     },
     {
-      "title": "Approval",
+      "title": "Aprobación",
       "paragraphs": [
-        "Wait until parcels show as approved. Until then, some actions will stay locked — that is normal. If it takes long, use Contact / messages to operations."
+        "Espere hasta que los paquetes se muestren como aprobados. Hasta entonces, algunas acciones permanecerán bloqueadas; eso es normal. Si tarda mucho, utilice Contacto/mensajes para operaciones."
       ],
       "links": []
     },
     {
-      "title": "Supply — materials & suppliers",
+      "title": "Suministro: materiales y proveedores",
       "paragraphs": [
-        "Materials = in-app catalog: crates, label rolls, film, balances and serial numbers (e.g. label rolls) for compliance. Suppliers & orders = directory, B2B order to a partner, messages, and Received at farm when goods arrive. On mobile, use Materials and Partner orders; on web, Suppliers & orders."
+        "Materiales = catálogo en la aplicación: cajas, rollos de etiquetas, películas, balanzas y números de serie (por ejemplo, rollos de etiquetas) para cumplimiento. Proveedores y pedidos = directorio, pedido B2B a un socio, mensajes y Recibido en la granja cuando llegan las mercancías. En dispositivos móviles, utilice Materiales y pedidos de socios; en web, Proveedores y pedidos."
       ],
       "links": [
-        { "label": "Materials", "href": "/grower/materials" },
-        { "label": "Suppliers & orders", "href": "/grower/where-to-buy" }
+        {
+          "label": "Materiales",
+          "href": "/cultivador/materiales"
+        },
+        {
+          "label": "Proveedores y pedidos",
+          "href": "/cultivador/dónde-comprar"
+        }
       ]
     },
     {
-      "title": "Field work — sowing, journal, treatments",
+      "title": "Trabajo de campo: siembra, diario, tratamientos.",
       "paragraphs": [
-        "From sowing onward, use the mobile app for day-to-day work: entry log, growth journal, compliant sprays/treatments (with GPS where required). That is the traceability layer before you form a commercial lot.",
-        "When the crop is nearing harvest, file a harvest plan in the app (expected kg, optional loading window) so operations and logistics can plan — that is not the same as a retail order; it feeds planning and missions.",
-        "On web, boundaries and blocks live under My fields; use the phone in the row for entries."
-      ],
-      "links": [{ "label": "My fields", "href": "/grower/fields" }]
-    },
-    {
-      "title": "Harvest & forming a lot (batch)",
-      "paragraphs": [
-        "When the crop is ready, report harvest and form a batch / lot for that parcel. That ties quantity and timing to the block you mapped earlier. Use the mobile harvest flow when you announce a window or kg."
+        "A partir de la siembra, utilice la aplicación móvil para el trabajo diario: registro de entrada, diario de crecimiento, pulverizaciones/tratamientos conformes (con GPS cuando sea necesario). Esa es la capa de trazabilidad antes de formar un lote comercial.",
+        "Cuando la cosecha esté cerca de la cosecha, presente un plan de cosecha en la aplicación (kg esperados, ventana de carga opcional) para que las operaciones y la logística puedan planificar; eso no es lo mismo que un pedido minorista; alimenta la planificación y las misiones.",
+        "En la web, los límites y los bloques se encuentran en Mis campos; use el teléfono en la fila para realizar entradas."
       ],
       "links": [
-        { "label": "My fields (start batch)", "href": "/grower/fields" },
-        { "label": "My batches", "href": "/grower/batches" }
+        {
+          "label": "mis campos",
+          "href": "/agricultor/campos"
+        }
       ]
     },
     {
-      "title": "Packing & lot status",
+      "title": "Cosechar y formar mucho (lote)",
       "paragraphs": [
-        "Complete packing / trace steps for the lot in My batches until status is PACKED or QUALITY_VERIFIED (use the mobile packing flow when required). Transport is blocked until the lot reaches one of those states and compliance is complete (next step)."
-      ],
-      "links": [{ "label": "My batches", "href": "/grower/batches" }]
-    },
-    {
-      "title": "Quality entry & compliance photos",
-      "paragraphs": [
-        "Do these in order for each lot: (1) Quality entry — per-lot checks and units. (2) Compliance photos + label roll ID (three photos + sticker roll on file). The transport form checks compliance; if something is missing, fix it here first."
+        "Cuando la cosecha esté lista, informe la cosecha y forme un lote para esa parcela. Eso vincula la cantidad y el tiempo con el bloque que asignaste anteriormente. Utilice el flujo de cosecha móvil cuando anuncie una ventana o kg."
       ],
       "links": [
-        { "label": "Quality entry", "href": "/grower/quality-entry" },
-        { "label": "Compliance photos", "href": "/grower/compliance-photos" }
+        {
+          "label": "Mis campos (iniciar lote)",
+          "href": "/agricultor/campos"
+        },
+        {
+          "label": "mis lotes",
+          "href": "/cultivador/lotes"
+        }
       ]
     },
     {
-      "title": "Request transport",
+      "title": "Estado del embalaje y del lote",
       "paragraphs": [
-        "Only when the batch is PACKED or QUALITY_VERIFIED and compliance is complete, open Request transport. You need pickup GPS/address and a full drop-off (buyer, hub, or dock). The request is queued: BioVera operations assigns a cold-chain driver when ready (PENDING until then)."
+        "Complete los pasos de embalaje/rastreo para el lote en Mis lotes hasta que el estado sea EMBALADO o CALIDAD_VERIFICADA (use el flujo de embalaje móvil cuando sea necesario). El transporte se bloquea hasta que el lote llegue a uno de esos estados y se complete el cumplimiento (siguiente paso)."
       ],
-      "footnote": "Retail / wholesale orders from buyers are matched in operations (who supplies which kg). The app does not auto-split a harvest forecast into a buyer order — you align quantity and dates with your coordinator, then reflect the real load in batches and transport.",
       "links": [
-        { "label": "Request transport", "href": "/grower/missions/create" }
+        {
+          "label": "mis lotes",
+          "href": "/cultivador/lotes"
+        }
       ]
     },
     {
-      "title": "Mission tracker (farm → market)",
+      "title": "Fotografías de entrada y cumplimiento de calidad",
       "paragraphs": [
-        "Follow the mission from your farm: logistics may complete a loading handover (truck temperature + photos) after your quality step, then the run moves toward pickup and cold-chain transit to hub or buyer. You see status until delivery-style milestones complete. On the app, use the Missions list; on web, Mission tracker is /grower/portal."
+        "Haga lo siguiente en orden para cada lote: (1) Entrada de calidad: controles y unidades por lote. (2) Fotografías de cumplimiento + identificación del rollo de etiquetas (tres fotografías + rollo de calcomanías archivadas). El formulario de transporte verifica el cumplimiento; Si falta algo, corríjalo aquí primero."
       ],
-      "links": [{ "label": "Mission tracker", "href": "/grower/portal" }]
+      "links": [
+        {
+          "label": "Entrada de calidad",
+          "href": "/cultivador/entrada-de-calidad"
+        },
+        {
+          "label": "Fotos de cumplimiento",
+          "href": "/cultivador/fotos-de-cumplimiento"
+        }
+      ]
     },
     {
-      "title": "Profile & account",
+      "title": "Solicitar transporte",
       "paragraphs": [
-        "Partner code, production country, notifications — open My profile. On mobile, wallet, certificates, and more live under the Profile tab and menus."
+        "Solo cuando el lote esté EMBALADO o CALIDAD_VERIFICADA y el cumplimiento sea completo, abra Solicitar transporte. Necesita una dirección/GPS de recogida y una entrega completa (comprador, centro o muelle). La solicitud está en cola: Operaciones de BioVera asigna un controlador de cadena de frío cuando está listo (PENDIENTE hasta entonces)."
       ],
-      "links": [{ "label": "My profile", "href": "/grower/profile" }]
+      "footnote": "Los pedidos minoristas/mayoristas de los compradores se casan en operaciones (quién suministra qué kg). La aplicación no divide automáticamente un pronóstico de cosecha en un pedido del comprador: usted alinea la cantidad y las fechas con su coordinador y luego refleja la carga real en lotes y transporte.",
+      "links": [
+        {
+          "label": "Solicitar transporte",
+          "href": "/cultivador/misiones/crear"
+        }
+      ]
+    },
+    {
+      "title": "Rastreador de misiones (granja → mercado)",
+      "paragraphs": [
+        "Siga la misión desde su granja: la logística puede completar una entrega de carga (temperatura del camión + fotografías) después de su paso de calidad, luego el recorrido avanza hacia la recogida y el tránsito de la cadena de frío hasta el centro o el comprador. Verá el estado hasta que se completen los hitos del estilo de entrega. En la aplicación, usa la lista de Misiones; En la web, el rastreador de Mission es /grower/portal."
+      ],
+      "links": [
+        {
+          "label": "Rastreador de misiones",
+          "href": "/agricultor/portal"
+        }
+      ]
+    },
+    {
+      "title": "Perfil y cuenta",
+      "paragraphs": [
+        "Código de socio, país de producción, notificaciones: abra Mi perfil. En dispositivos móviles, billetera, certificados y más se encuentran en la pestaña y los menús Perfil."
+      ],
+      "links": [
+        {
+          "label": "mi perfil",
+          "href": "/cultivador/perfil"
+        }
+      ]
     }
   ],
-  "seasonMetaChip": "12 steps · same order as the menu"
+  "seasonMetaChip": "12 pasos · mismo orden que el menú"
 }
