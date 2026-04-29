@@ -5,6 +5,7 @@ import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
 import ro from '@/locales/ro.json';
+import bg from '@/locales/bg.json';
 
 type Props = {
   locale: string;
@@ -16,8 +17,9 @@ export function LegalDocShell({ locale, children }: Props) {
   const isSr = locale === 'sr' || locale.startsWith('sr');
   const isDe = locale === 'de' || locale.startsWith('de');
   const isRo = locale === 'ro';
-  const strings = isSr ? sr : isDe ? de : isRo ? ro : en;
-  const base = isSr ? `/sr` : isDe ? `/de` : isRo ? `/ro` : `/en`;
+  const isBg = locale === 'bg';
+  const strings = isSr ? sr : isDe ? de : isRo ? ro : isBg ? bg : en;
+  const base = isSr ? `/sr` : isDe ? `/de` : isRo ? `/ro` : isBg ? `/bg` : `/en`;
 
   return (
     <div className="min-h-screen bg-white">

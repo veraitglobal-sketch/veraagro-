@@ -32,7 +32,9 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
         ? t("locale.nameDe")
         : current === "ro"
           ? t("locale.nameRo")
-          : t("locale.nameEn");
+          : current === "bg"
+            ? t("locale.nameBg")
+            : t("locale.nameEn");
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -86,6 +88,15 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
               onClick={() => onPick("ro")}
             >
               {t("locale.nameRo")}
+            </button>
+          </li>
+          <li role="option">
+            <button
+              type="button"
+              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "bg" ? "font-semibold text-[#2D5A27]" : ""}`}
+              onClick={() => onPick("bg")}
+            >
+              {t("locale.nameBg")}
             </button>
           </li>
         </ul>

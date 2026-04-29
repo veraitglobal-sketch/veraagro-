@@ -55,10 +55,10 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "coordinator",
 ]);
 
-export const siteLocales = ["en", "sr", "de", "ro"] as const satisfies readonly SiteLocale[];
+export const siteLocales = ["en", "sr", "de", "ro", "bg"] as const satisfies readonly SiteLocale[];
 
 export function isSiteLocale(v: string): v is SiteLocale {
-  return v === "en" || v === "sr" || v === "de" || v === "ro";
+  return v === "en" || v === "sr" || v === "de" || v === "ro" || v === "bg";
 }
 
 /** Map i18next language tag to canonical site locale (URL prefix + cookie). */
@@ -68,6 +68,7 @@ export function siteLocaleFromLanguageTag(tag: string | undefined): SiteLocale {
   if (lower.startsWith("sr")) return "sr";
   if (lower.startsWith("de")) return "de";
   if (lower === "ro" || lower.startsWith("ro-")) return "ro";
+  if (lower === "bg" || lower.startsWith("bg-")) return "bg";
   return "en";
 }
 
@@ -77,6 +78,7 @@ export function dateIntlLocaleFromLanguageTag(tag: string | undefined): string {
   if (loc === "sr") return "sr-Latn";
   if (loc === "de") return "de-DE";
   if (loc === "ro") return "ro-RO";
+  if (loc === "bg") return "bg-BG";
   return "en-GB";
 }
 
@@ -86,6 +88,7 @@ export function numberIntlLocaleFromLanguageTag(tag: string | undefined): string
   if (loc === "sr") return "sr-RS";
   if (loc === "de") return "de-DE";
   if (loc === "ro") return "ro-RO";
+  if (loc === "bg") return "bg-BG";
   return "en-US";
 }
 
@@ -99,7 +102,7 @@ export function pathIsUnderPressPublicAssets(pathname: string): boolean {
 
 export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   const seg = pathname.split("/").filter(Boolean)[0];
-  if (seg === "en" || seg === "sr" || seg === "de" || seg === "ro") return seg;
+  if (seg === "en" || seg === "sr" || seg === "de" || seg === "ro" || seg === "bg") return seg;
   return null;
 }
 
