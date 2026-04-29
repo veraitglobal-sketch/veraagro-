@@ -8,11 +8,13 @@
     "srShort": "SR",
     "deShort": "DE",
     "roShort": "RO",
+    "bgShort": "BG",
     "pickerAria": "Alegeți limba",
     "nameEn": "Engleză",
     "nameSr": "Srpski",
     "nameDe": "Germană",
-    "nameRo": "Română"
+    "nameRo": "Română",
+    "nameBg": "Bulgară"
   },
   "footer": {
     "tagline": "O rețea agricolă integrată vertical pentru certificarea Bio-Ready și conformitatea cu piața UE.",
@@ -48,9 +50,9 @@
     "activeBadge": "Activ",
     "useThisLanguage": "Folosește acest limbaj",
     "alreadyUsing": "Momentan activ",
-    "futureNote": "Putem adăuga și alte variante lingvistice pe măsură ce intrăm pe piețe noi. Dacă aveți nevoie de o limbă pentru contracte sau onboarding parteneri, spuneți-ne — engleză, sârbă, germană și română acoperă deja operațiunile UE la scară și producătorii regionali.",
+    "futureNote": "Putem adăuga și alte variante lingvistice pe măsură ce intrăm pe piețe noi. Dacă aveți nevoie de o limbă pentru contracte sau onboarding parteneri, spuneți-ne — engleză, sârbă, germană, română și bulgară acoperă coridoare-cheie UE și producători cu care lucrăm astăzi.",
     "cardLinkTitle": "Limbă și regiune",
-    "cardLinkBody": "Alegeți engleză, sârbă, germană sau română pentru site. Alegerea ta este reținută pentru următoarea vizită.",
+    "cardLinkBody": "Alegeți engleză, sârbă, germană, română sau bulgară pentru site. Alegerea ta este reținută pentru următoarea vizită.",
     "backToLegal": "Informații juridice",
     "backHome": "Acasă",
     "locales": {
@@ -69,6 +71,10 @@
       "ro": {
         "title": "Română",
         "body": "Interfață completă românească pentru cultivatori și parteneri care lucrează în limba română și auditori din România și coridoarele UE mai largi. Aceeași trasabilitate, structură Bio-Ready și aspect Vera ca în engleză și sârbă."
+      },
+      "bg": {
+        "title": "Български",
+        "body": "Interfață completă în bulgară pentru cultivatori și distribuitori din Bulgaria — același model de trasabilitate, dosare Bio-Ready și fluxuri Vera ca în restul extinderii UE, gândit pentru modernizare și canale de export conforme."
       }
     }
   },

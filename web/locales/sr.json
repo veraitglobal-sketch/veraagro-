@@ -8,11 +8,13 @@
     "srShort": "SR",
     "deShort": "DE",
     "roShort": "RO",
+    "bgShort": "BG",
     "pickerAria": "Izaberite jezik",
     "nameEn": "English",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
-    "nameRo": "Română"
+    "nameRo": "Română",
+    "nameBg": "Български"
   },
   "footer": {
     "tagline": "Vertikalno povezana poljoprivredna mreža za Bio-Ready sertifikaciju i usklađenost sa EU tržištem.",
@@ -48,9 +50,9 @@
     "activeBadge": "Aktivno",
     "useThisLanguage": "Koristi ovaj jezik",
     "alreadyUsing": "Trenutno je izabrano",
-    "futureNote": "Ovde će se pojavljivati i drugi jezici kako širimo tržišta. Ako vam treba poseban jezik za ugovor ili partnera, javite nam se — proširenje radimo postepeno.",
+    "futureNote": "Ovde ćemo dodavati i druge jezike kako širimo tržišta. Ako vam treba jezik za ugovor ili onboarding partnera, javite nam se — engleski, srpski, nemački, rumunski i bugarski pokrivaju ključne EU koridore i proizvođače sa kojima danas radimo.",
     "cardLinkTitle": "Jezik i region",
-    "cardLinkBody": "Izaberite engleski, srpski, nemački ili rumunski za sajt. Izbor se pamti za sledeći dolazak.",
+    "cardLinkBody": "Izaberite engleski, srpski, nemački, rumunski ili bugarski za sajt. Izbor se pamti za sledeći dolazak.",
     "backToLegal": "Pravne informacije",
     "backHome": "Početna",
     "locales": {
@@ -69,6 +71,10 @@
       "ro": {
         "title": "Română",
         "body": "Kompletan interfejs na rumunskom za proizvođače i partnere koji rade rumunski, kao i za reviziore na tržištima Rumunije šireg EU koridora — ista struktura tragljivosti i Vera raspored kao na drugim jezicima."
+      },
+      "bg": {
+        "title": "Български",
+        "body": "Kompletan bugarski interfejs za proizvođače i distributere u Bugarskoj — isti model tragljivosti, Bio-Ready dosijei i Vera tokovi kao u ostatku EU uvođenja programa."
       }
     }
   },

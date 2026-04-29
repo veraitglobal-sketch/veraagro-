@@ -8,11 +8,13 @@
     "srShort": "SR",
     "deShort": "DE",
     "roShort": "RO",
+    "bgShort": "BG",
     "pickerAria": "Sprache wählen",
     "nameEn": "Englisch",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
-    "nameRo": "Rumänisch"
+    "nameRo": "Rumänisch",
+    "nameBg": "Bulgarisch"
   },
   "footer": {
     "tagline": "Ein vertikal integriertes landwirtschaftliches Netzwerk für Bio-Ready-Zertifizierung und EU-Marktkonformität.",
@@ -48,9 +50,9 @@
     "activeBadge": "Aktiv",
     "useThisLanguage": "Benutzen Sie diese Sprache",
     "alreadyUsing": "Derzeit aktiv",
-    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch und Rumänisch decken unsere EU-Aktivitäten und regionalen Erzeuger in großem Umfang ab.",
+    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch, Rumänisch und Bulgarisch decken Schlüssel-EU-Korridore und Erzeuger, mit denen wir heute zusammenarbeiten.",
     "cardLinkTitle": "Sprache & Region",
-    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch oder Rumänisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
+    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch, Rumänisch oder Bulgarisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
     "backToLegal": "Rechtliche Informationen",
     "backHome": "Startseite",
     "locales": {
@@ -69,6 +71,10 @@
       "ro": {
         "title": "Rumänisch",
         "body": "Vollständige rumänische Oberfläche für Erzeugende und Partner, die rumänisch arbeiten, sowie für Prüfinstanzen auf den Märkten Rumäniens und breiter EU-Korridore — dieselbe Nachverfolgbarkeit und Vera-Struktur wie in Englisch und Serbisch."
+      },
+      "bg": {
+        "title": "Bulgarisch",
+        "body": "Vollständige bulgarische Oberfläche für Erzeugende und Händler in Bulgarien — dasselbe Rückverfolgungsmodell, Bio-Ready-Dossiers und Vera-Abläufe wie beim EU-Rollout insgesamt, ausgerichtet auf Modernisierung und konforme Exportkorridore."
       }
     }
   },

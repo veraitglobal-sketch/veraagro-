@@ -14,7 +14,7 @@ async function readMarkdownFile(fileName: string): Promise<string | null> {
   }
 }
 
-/** Loads localized legal Markdown; Serbian and German fall back to English if a *.de.md file is absent. */
+/** Loads localized legal Markdown; locale-specific *.md if present; otherwise *.en.md. */
 export async function loadLegalMarkdown(slug: LegalSlug, locale: string): Promise<string> {
   const lc = locale.toLowerCase();
   const isSr = lc === 'sr' || lc.startsWith('sr');

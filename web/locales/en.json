@@ -8,11 +8,13 @@
     "srShort": "SR",
     "deShort": "DE",
     "roShort": "RO",
+    "bgShort": "BG",
     "pickerAria": "Choose language",
     "nameEn": "English",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
-    "nameRo": "Română"
+    "nameRo": "Română",
+    "nameBg": "Български"
   },
   "footer": {
     "tagline": "A vertically integrated agricultural network for Bio-Ready certification and EU market compliance.",
@@ -48,9 +50,9 @@
     "activeBadge": "Active",
     "useThisLanguage": "Use this language",
     "alreadyUsing": "Currently active",
-    "futureNote": "We may add further locales as we enter new markets. If you need a specific language for contracts or partner onboarding, tell us — English, Serbian, German, and Romanian already cover EU operations at scale and regional growers.",
+    "futureNote": "We may add further locales as we enter new markets. If you need a specific language for contracts or partner onboarding, tell us — English, Serbian, German, Romanian, and Bulgarian cover key EU corridors and growers we work with today.",
     "cardLinkTitle": "Language & region",
-    "cardLinkBody": "Choose English, Serbian, German, or Romanian for the site. Your choice is remembered for the next visit.",
+    "cardLinkBody": "Choose English, Serbian, German, Romanian, or Bulgarian for the site. Your choice is remembered for the next visit.",
     "backToLegal": "Legal information",
     "backHome": "Home",
     "locales": {
@@ -69,6 +71,10 @@
       "ro": {
         "title": "Română",
         "body": "Full Romanian interface for growers and partners who work in Romanian and auditors in Romania and wider EU corridors. Same traceability, Bio-Ready structure, and Vera layout as English and Serbian."
+      },
+      "bg": {
+        "title": "Български",
+        "body": "Full Bulgarian interface for growers and distributors in Bulgaria: same traceability model, Bio-Ready dossiers and Vera workflows as elsewhere in our EU rollout—built for modernization and compliant export lanes."
       }
     }
   },

@@ -1,0 +1,43 @@
+{
+  "shop": {
+    "navOrders": "Моите поръчки",
+    "cartLabel": "Количка ({{count}})",
+    "welcome": "Добре дошъл, {{name}}!",
+    "guestName": "Клиент",
+    "categories": {
+      "fruits": "Плодове",
+      "vegetables": "зеленчуци",
+      "grains": "зърна"
+    },
+    "producerBadge": "ВЕРА ПРОДУЦЕНТ",
+    "unknownRegion": "Неизвестен регион",
+    "productFallback": "Био Вера продукт",
+    "organicFallback": "Органичен продукт",
+    "priceNa": "N/A",
+    "unitKg": "кг",
+    "addToCart": "Добавяне в количката",
+    "cartTitle": "Количка ({{count}})",
+    "orderCta": "Поръчка ({{total}} EUR)",
+    "orderCreated": "Поръчката е създадена!",
+    "orderFailed": "Грешка при създаване на поръчка"
+  },
+  "orders": {
+    "navShop": "Магазин",
+    "title": "Моите поръчки",
+    "orderPrefix": "№ на поръчката",
+    "productFallback": "Продукт",
+    "total": "Общо:",
+    "paymentLabel": "Плащане:",
+    "paymentRefLead": "използвайте препратка към поръчката",
+    "paymentRefTrail": "по вашия банков превод. Пълните данни за IBAN са в",
+    "buyerPortalLink": "портал за купувачи",
+    "paymentTailConfigured": "или вижте подробности, конфигурирани за този сайт.",
+    "paymentTailContact": "(или се свържете с нас за подробности за акаунта).",
+    "invoicePrefix": "Фактура {{number}}",
+    "downloadPdf": "Изтеглете PDF",
+    "invoiceHistory": "История на фактурите",
+    "invoiceDownloadFail": "Неуспешно изтегляне на фактура. Отворете портала за купувачи → Фактури.",
+    "empty": "Все още нямате поръчки.",
+    "startShopping": "Започнете да пазарувате →"
+  }
+}

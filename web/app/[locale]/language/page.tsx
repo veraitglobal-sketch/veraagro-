@@ -29,7 +29,7 @@ export default function LanguageSettingsPage() {
             <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-2">{t("languagePage.sectionTitle")}</h2>
             <p className="text-sm text-gray-500 mb-6 font-light">{t("languagePage.sectionSubtitle")}</p>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {siteLocales.map((code) => {
                 const isActive = current === code;
                 return (
