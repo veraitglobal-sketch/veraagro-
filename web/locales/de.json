@@ -9,12 +9,14 @@
     "deShort": "DE",
     "roShort": "RO",
     "bgShort": "BG",
+    "frShort": "FR",
     "pickerAria": "Sprache wählen",
     "nameEn": "Englisch",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
     "nameRo": "Rumänisch",
-    "nameBg": "Bulgarisch"
+    "nameBg": "Bulgarisch",
+    "nameFr": "Französisch"
   },
   "footer": {
     "tagline": "Ein vertikal integriertes landwirtschaftliches Netzwerk für Bio-Ready-Zertifizierung und EU-Marktkonformität.",
@@ -50,9 +52,9 @@
     "activeBadge": "Aktiv",
     "useThisLanguage": "Benutzen Sie diese Sprache",
     "alreadyUsing": "Derzeit aktiv",
-    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch, Rumänisch und Bulgarisch decken Schlüssel-EU-Korridore und Erzeuger, mit denen wir heute zusammenarbeiten.",
+    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch und Französisch decken Schlüssel-EU-Korridore, Retail-Storylines und Grower-Onboarding, die wir heute fahren.",
     "cardLinkTitle": "Sprache & Region",
-    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch, Rumänisch oder Bulgarisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
+    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch oder Französisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
     "backToLegal": "Rechtliche Informationen",
     "backHome": "Startseite",
     "locales": {
@@ -75,6 +77,10 @@
       "bg": {
         "title": "Bulgarisch",
         "body": "Vollständige bulgarische Oberfläche für Erzeugende und Händler in Bulgarien — dasselbe Rückverfolgungsmodell, Bio-Ready-Dossiers und Vera-Abläufe wie beim EU-Rollout insgesamt, ausgerichtet auf Modernisierung und konforme Exportkorridore."
+      },
+      "fr": {
+        "title": "Französisch",
+        "body": "Vollständige französische Oberfläche für Frankreich, Belgien (FR), Luxemburg und frankophone Einkaufsteams — dieselbe Traceability-, Bio-Ready- und Vera-Struktur wie in den anderen Locales dieses Ausrollplans."
       }
     }
   },

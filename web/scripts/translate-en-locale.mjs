@@ -5,7 +5,7 @@
  *   cd web && TRANSLATE_TO=ro node scripts/translate-en-locale.mjs
  *   cd web && TRANSLATE_TO=de node scripts/translate-en-locale.mjs
  *
- * After MT, reapplies invariant UI strings (locale short codes EN/SR/DE/RO/BG, Apple, Bio Vera, nav.dashboard→Dashboard).
+ * After MT, reapplies invariant UI strings (locale short codes EN/SR/DE/RO/BG/FR, Apple, Bio Vera, nav.dashboard→Dashboard).
  *
  * Requires network (npm package `translate`, Google engine default).
  */
@@ -57,6 +57,7 @@ function applyInvariantPatches(data) {
     data.locale.deShort = 'DE';
     data.locale.roShort = 'RO';
     data.locale.bgShort = 'BG';
+    data.locale.frShort = 'FR';
   }
   if (data.brand && typeof data.brand === 'object') {
     data.brand.name = 'Bio Vera';

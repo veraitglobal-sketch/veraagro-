@@ -5,6 +5,16 @@ import { useTranslation } from "react-i18next";
 import { Globe } from "lucide-react";
 import { useSiteLocale } from "@/hooks/useSiteLocale";
 import type { SiteLocale } from "@/i18n/config";
+import { siteLocales } from "@/lib/i18n-routing";
+
+const LOCALE_DISPLAY_KEY: Record<SiteLocale, string> = {
+  en: "locale.nameEn",
+  sr: "locale.nameSr",
+  de: "locale.nameDe",
+  ro: "locale.nameRo",
+  bg: "locale.nameBg",
+  fr: "locale.nameFr",
+};
 
 export default function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { t } = useTranslation();
@@ -25,16 +35,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
     setOpen(false);
   };
 
-  const currentLabel =
-    current === "sr"
-      ? t("locale.nameSr")
-      : current === "de"
-        ? t("locale.nameDe")
-        : current === "ro"
-          ? t("locale.nameRo")
-          : current === "bg"
-            ? t("locale.nameBg")
-            : t("locale.nameEn");
+  const currentLabel = t(LOCALE_DISPLAY_KEY[current]);
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -52,53 +53,19 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 z-[60] mt-1 min-w-[10rem] rounded-lg border border-gray-200 bg-white py-1 text-sm shadow-lg"
+          className="absolute right-0 z-[60] mt-1 min-w-[10rem] max-h-[min(70vh,24rem)] overflow-y-auto rounded-lg border border-gray-200 bg-white py-1 text-sm shadow-lg"
         >
-          <li role="option">
-            <button
-              type="button"
-              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "en" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => onPick("en")}
-            >
-              {t("locale.nameEn")}
-            </button>
-          </li>
-          <li role="option">
-            <button
-              type="button"
-              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "sr" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => onPick("sr")}
-            >
-              {t("locale.nameSr")}
-            </button>
-          </li>
-          <li role="option">
-            <button
-              type="button"
-              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "de" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => onPick("de")}
-            >
-              {t("locale.nameDe")}
-            </button>
-          </li>
-          <li role="option">
-            <button
-              type="button"
-              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "ro" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => onPick("ro")}
-            >
-              {t("locale.nameRo")}
-            </button>
-          </li>
-          <li role="option">
-            <button
-              type="button"
-              className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === "bg" ? "font-semibold text-[#2D5A27]" : ""}`}
-              onClick={() => onPick("bg")}
-            >
-              {t("locale.nameBg")}
-            </button>
-          </li>
+          {siteLocales.map((code) => (
+            <li key={code} role="option">
+              <button
+                type="button"
+                className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === code ? "font-semibold text-[#2D5A27]" : ""}`}
+                onClick={() => onPick(code)}
+              >
+                {t(LOCALE_DISPLAY_KEY[code])}
+              </button>
+            </li>
+          ))}
         </ul>
       )}
     </div>

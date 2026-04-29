@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://biovera.app';
 
-const locales = ['en', 'sr', 'de', 'ro', 'bg'] as const;
+const locales = ['en', 'sr', 'de', 'ro', 'bg', 'fr'] as const;
 
 /** Marketing URLs living under /[locale]/… — mirror lib/i18n-routing LOCALIZED_FIRST_SEGMENTS + home */
 const localizedPaths = [

@@ -9,12 +9,14 @@
     "deShort": "DE",
     "roShort": "RO",
     "bgShort": "BG",
+    "frShort": "FR",
     "pickerAria": "Alegeți limba",
     "nameEn": "Engleză",
     "nameSr": "Srpski",
     "nameDe": "Germană",
     "nameRo": "Română",
-    "nameBg": "Bulgară"
+    "nameBg": "Bulgară",
+    "nameFr": "Français"
   },
   "footer": {
     "tagline": "O rețea agricolă integrată vertical pentru certificarea Bio-Ready și conformitatea cu piața UE.",
@@ -50,9 +52,9 @@
     "activeBadge": "Activ",
     "useThisLanguage": "Folosește acest limbaj",
     "alreadyUsing": "Momentan activ",
-    "futureNote": "Putem adăuga și alte variante lingvistice pe măsură ce intrăm pe piețe noi. Dacă aveți nevoie de o limbă pentru contracte sau onboarding parteneri, spuneți-ne — engleză, sârbă, germană, română și bulgară acoperă coridoare-cheie UE și producători cu care lucrăm astăzi.",
+    "futureNote": "Putem adăuga și alte variante lingvistice pe măsură ce intrăm pe piețe noi. Dacă aveți nevoie de o limbă pentru contracte sau onboarding parteneri, spuneți-ne — engleză, sârbă, germană, română, bulgară și franceză acoperă coridoare-cheie UE și narativul comercial pentru retail.",
     "cardLinkTitle": "Limbă și regiune",
-    "cardLinkBody": "Alegeți engleză, sârbă, germană, română sau bulgară pentru site. Alegerea ta este reținută pentru următoarea vizită.",
+    "cardLinkBody": "Alegeți engleză, sârbă, germană, română, bulgară sau franceză pentru site. Alegerea ta este reținută pentru următoarea vizită.",
     "backToLegal": "Informații juridice",
     "backHome": "Acasă",
     "locales": {
@@ -75,6 +77,10 @@
       "bg": {
         "title": "Български",
         "body": "Interfață completă în bulgară pentru cultivatori și distribuitori din Bulgaria — același model de trasabilitate, dosare Bio-Ready și fluxuri Vera ca în restul extinderii UE, gândit pentru modernizare și canale de export conforme."
+      },
+      "fr": {
+        "title": "Français",
+        "body": "Interfață completă în franceză pentru Franța, Belgia francofonă, Luxemburg și echipe retail — aceeași trasabilitate, structură Bio-Ready și aranjament Vera ca la celelalte limbi ale programului."
       }
     }
   },
