@@ -10,13 +10,15 @@
     "roShort": "RO",
     "bgShort": "BG",
     "frShort": "FR",
+    "esShort": "ES",
     "pickerAria": "Izaberite jezik",
     "nameEn": "English",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
     "nameRo": "Română",
     "nameBg": "Български",
-    "nameFr": "Français"
+    "nameFr": "Français",
+    "nameEs": "Español"
   },
   "footer": {
     "tagline": "Vertikalno povezana poljoprivredna mreža za Bio-Ready sertifikaciju i usklađenost sa EU tržištem.",
@@ -52,9 +54,9 @@
     "activeBadge": "Aktivno",
     "useThisLanguage": "Koristi ovaj jezik",
     "alreadyUsing": "Trenutno je izabrano",
-    "futureNote": "Ovde ćemo dodavati i druge jezike kako širimo tržišta. Ako vam treba jezik za ugovor ili onboarding partnera, javite nam se — engleski, srpski, nemački, rumunski, bugarski i francuski pokrivaju ključne EU koridore, maloprodaju i onboarding proizvođača kojima danas radimo.",
+    "futureNote": "Ovde ćemo dodavati i druge jezike kako širimo tržišta. Ako vam treba jezik za ugovor ili onboarding partnera, javite nam se — engleski, srpski, nemački, rumunski, bugarski, francuski i španski pokrivaju ključne EU koridore, maloprodaju, veze sa Latinskom Amerikom i onboarding proizvođača kojima danas radimo.",
     "cardLinkTitle": "Jezik i region",
-    "cardLinkBody": "Izaberite engleski, srpski, nemački, rumunski, bugarski ili francuski za sajt. Izbor se pamti za sledeći dolazak.",
+    "cardLinkBody": "Izaberite engleski, srpski, nemački, rumunski, bugarski, francuski ili španski za sajt. Izbor se pamti za sledeći dolazak.",
     "backToLegal": "Pravne informacije",
     "backHome": "Početna",
     "locales": {
@@ -81,6 +83,10 @@
       "fr": {
         "title": "Français",
         "body": "Kompletan francuski interfejs za francusko tržište, Belgiju (FR), Luksemburg i kupce — isti trag, Bio-Ready dosije i Vera raspored kao i na drugim jezicima programa."
+      },
+      "es": {
+        "title": "Español",
+        "body": "Kompletan interfejs na španskom za Španiju, kupčke koridore u Latinskoj Americi i timove koji najbolje rade na španskom — isti trag, Bio-Ready strukturu i Vera iskustvo kao ostali jezici kojima raspolažemo."
       }
     }
   },

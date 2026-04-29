@@ -55,10 +55,10 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "coordinator",
 ]);
 
-export const siteLocales = ["en", "sr", "de", "ro", "bg", "fr"] as const satisfies readonly SiteLocale[];
+export const siteLocales = ["en", "sr", "de", "ro", "bg", "fr", "es"] as const satisfies readonly SiteLocale[];
 
 export function isSiteLocale(v: string): v is SiteLocale {
-  return v === "en" || v === "sr" || v === "de" || v === "ro" || v === "bg" || v === "fr";
+  return v === "en" || v === "sr" || v === "de" || v === "ro" || v === "bg" || v === "fr" || v === "es";
 }
 
 /** Map i18next language tag to canonical site locale (URL prefix + cookie). */
@@ -70,6 +70,7 @@ export function siteLocaleFromLanguageTag(tag: string | undefined): SiteLocale {
   if (lower === "ro" || lower.startsWith("ro-")) return "ro";
   if (lower === "bg" || lower.startsWith("bg-")) return "bg";
   if (lower === "fr" || lower.startsWith("fr-")) return "fr";
+  if (lower === "es" || lower.startsWith("es-")) return "es";
   return "en";
 }
 
@@ -81,6 +82,7 @@ export function dateIntlLocaleFromLanguageTag(tag: string | undefined): string {
   if (loc === "ro") return "ro-RO";
   if (loc === "bg") return "bg-BG";
   if (loc === "fr") return "fr-FR";
+  if (loc === "es") return "es-ES";
   return "en-GB";
 }
 
@@ -92,6 +94,7 @@ export function numberIntlLocaleFromLanguageTag(tag: string | undefined): string
   if (loc === "ro") return "ro-RO";
   if (loc === "bg") return "bg-BG";
   if (loc === "fr") return "fr-FR";
+  if (loc === "es") return "es-ES";
   return "en-US";
 }
 
@@ -105,7 +108,16 @@ export function pathIsUnderPressPublicAssets(pathname: string): boolean {
 
 export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   const seg = pathname.split("/").filter(Boolean)[0];
-  if (seg === "en" || seg === "sr" || seg === "de" || seg === "ro" || seg === "bg" || seg === "fr") return seg;
+  if (
+    seg === "en" ||
+    seg === "sr" ||
+    seg === "de" ||
+    seg === "ro" ||
+    seg === "bg" ||
+    seg === "fr" ||
+    seg === "es"
+  )
+    return seg;
   return null;
 }
 

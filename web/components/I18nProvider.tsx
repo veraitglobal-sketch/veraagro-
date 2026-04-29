@@ -11,6 +11,7 @@ function syncDocumentLang(lng: string) {
   else if (lng === "ro" || lng.startsWith("ro-")) htmlLang = "ro";
   else if (lng === "bg" || lng.startsWith("bg-")) htmlLang = "bg";
   else if (lng === "fr" || lng.startsWith("fr-")) htmlLang = "fr";
+  else if (lng === "es" || lng.startsWith("es-")) htmlLang = "es";
   if (typeof document !== "undefined") {
     document.documentElement.lang = htmlLang;
   }
@@ -20,7 +21,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LOCALE_STORAGE_KEY) as SiteLocale | null;
-      if (stored === "sr" || stored === "en" || stored === "de" || stored === "ro" || stored === "bg" || stored === "fr") {
+      if (stored === "sr" || stored === "en" || stored === "de" || stored === "ro" || stored === "bg" || stored === "fr" || stored === "es") {
         void i18n.changeLanguage(stored);
       }
     } catch {

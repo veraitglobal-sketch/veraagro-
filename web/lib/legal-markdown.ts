@@ -22,6 +22,7 @@ export async function loadLegalMarkdown(slug: LegalSlug, locale: string): Promis
   const isRo = lc === 'ro' || lc.startsWith('ro-');
   const isBg = lc === 'bg' || lc.startsWith('bg-');
   const isFr = lc === 'fr' || lc.startsWith('fr-');
+  const isEs = lc === 'es' || lc.startsWith('es-');
 
   if (isSr) {
     const srMd = await readMarkdownFile(`${slug}.sr.md`);
@@ -38,6 +39,9 @@ export async function loadLegalMarkdown(slug: LegalSlug, locale: string): Promis
   } else if (isFr) {
     const frMd = await readMarkdownFile(`${slug}.fr.md`);
     if (frMd !== null) return frMd;
+  } else if (isEs) {
+    const esMd = await readMarkdownFile(`${slug}.es.md`);
+    if (esMd !== null) return esMd;
   }
 
   const enMd = await readMarkdownFile(`${slug}.en.md`);

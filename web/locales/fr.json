@@ -10,13 +10,15 @@
     "roShort": "RO",
     "bgShort": "BG",
     "frShort": "FR",
+    "esShort": "ES",
     "pickerAria": "Choose language",
     "nameEn": "English",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
     "nameRo": "Română",
     "nameBg": "Български",
-    "nameFr": "Français"
+    "nameFr": "Français",
+    "nameEs": "Español"
   },
   "footer": {
     "tagline": "A vertically integrated agricultural network for Bio-Ready certification and EU market compliance.",
@@ -52,9 +54,9 @@
     "activeBadge": "Active",
     "useThisLanguage": "Use this language",
     "alreadyUsing": "Currently active",
-    "futureNote": "We may add further locales as we enter new markets. If you need a specific language for contracts or partner onboarding, tell us — English, Serbian, German, Romanian, Bulgarian, and French cover our main EU corridors, retail narratives, and grower onboarding today.",
+    "futureNote": "D'autres locales peuvent s'ajouter à mesure que nous ouvrons de nouveaux marchés. Si vous avez besoin d'une langue précise pour des contrats ou l'onboarding partenaires, dites-le nous — anglais, serbo-croate, allemand, roumain, bulgare, français et espagnol couvrent les principaux corridors UE, le discours retail, les liens avec l'Amérique latine et l'onboarding des producteurs que nous menons aujourd'hui.",
     "cardLinkTitle": "Language & region",
-    "cardLinkBody": "Choose English, Serbian, German, Romanian, Bulgarian, or French for the site. Your choice is remembered for the next visit.",
+    "cardLinkBody": "Choisissez l'anglais, le serbe, l'allemand, le roumain, le bulgare, le français ou l'espagnol pour le site. Votre choix est mémorisé pour la prochaine visite.",
     "backToLegal": "Legal information",
     "backHome": "Home",
     "locales": {
@@ -81,6 +83,10 @@
       "fr": {
         "title": "Français",
         "body": "Full French interface for France, Belgium (FR), Luxembourg and francophone buyers: tailored retail wording, dossier wording aligned with Bio-Ready storytelling, same Vera layout and QR passport depth as elsewhere in the rollout."
+      },
+      "es": {
+        "title": "Español",
+        "body": "Interface entière en espagnol pour l'Espagne, les corridors d'achat en Amérique latine et les équipes qui travaillent en espagnol — même traçabilité Vera, structure Bio-Ready et passeport que nos autres langues."
       }
     }
   },

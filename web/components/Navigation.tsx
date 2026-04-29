@@ -9,7 +9,7 @@ import Image from 'next/image';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
-const LOCALE_HOME_PREFIXES = ['/en', '/sr', '/de', '/ro', '/bg', '/fr'] as const;
+const LOCALE_HOME_PREFIXES = ['/en', '/sr', '/de', '/ro', '/bg', '/fr', '/es'] as const;
 
 function isNavActive(pathname: string | null | undefined, href: string): boolean {
   if (!pathname) return false;

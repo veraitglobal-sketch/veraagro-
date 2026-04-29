@@ -14,6 +14,7 @@ const LOCALE_DISPLAY_KEY: Record<SiteLocale, string> = {
   ro: "locale.nameRo",
   bg: "locale.nameBg",
   fr: "locale.nameFr",
+  es: "locale.nameEs",
 };
 
 export default function LanguageSwitcher({ className = "" }: { className?: string }) {

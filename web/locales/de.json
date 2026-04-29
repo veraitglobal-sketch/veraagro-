@@ -10,13 +10,15 @@
     "roShort": "RO",
     "bgShort": "BG",
     "frShort": "FR",
+    "esShort": "ES",
     "pickerAria": "Sprache wählen",
     "nameEn": "Englisch",
     "nameSr": "Srpski",
     "nameDe": "Deutsch",
     "nameRo": "Rumänisch",
     "nameBg": "Bulgarisch",
-    "nameFr": "Französisch"
+    "nameFr": "Französisch",
+    "nameEs": "Spanisch"
   },
   "footer": {
     "tagline": "Ein vertikal integriertes landwirtschaftliches Netzwerk für Bio-Ready-Zertifizierung und EU-Marktkonformität.",
@@ -52,9 +54,9 @@
     "activeBadge": "Aktiv",
     "useThisLanguage": "Benutzen Sie diese Sprache",
     "alreadyUsing": "Derzeit aktiv",
-    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch und Französisch decken Schlüssel-EU-Korridore, Retail-Storylines und Grower-Onboarding, die wir heute fahren.",
+    "futureNote": "Wir können weitere Standorte hinzufügen, wenn wir neue Märkte erschließen. Wenn Sie eine bestimmte Sprache für Verträge oder Partner-Onboarding benötigen, teilen Sie uns dies mit – Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch, Französisch und Spanisch decken Schlüssel-EU-Korridore, Retail-Storylines, Bezüge nach Lateinamerika und Grower-Onboarding, die wir heute fahren.",
     "cardLinkTitle": "Sprache & Region",
-    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch oder Französisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
+    "cardLinkBody": "Wählen Sie Englisch, Serbisch, Deutsch, Rumänisch, Bulgarisch, Französisch oder Spanisch für die Website. Ihre Wahl wird für den nächsten Besuch gespeichert.",
     "backToLegal": "Rechtliche Informationen",
     "backHome": "Startseite",
     "locales": {
@@ -81,6 +83,10 @@
       "fr": {
         "title": "Französisch",
         "body": "Vollständige französische Oberfläche für Frankreich, Belgien (FR), Luxemburg und frankophone Einkaufsteams — dieselbe Traceability-, Bio-Ready- und Vera-Struktur wie in den anderen Locales dieses Ausrollplans."
+      },
+      "es": {
+        "title": "Spanisch",
+        "body": "Vollständige spanische Oberfläche für Spanien, lateinamerikanische Einkaufskorridore und Teams, die Spanisch bevorzugen — dieselbe Vera-Rückverfolgbarkeit und Bio-Ready-Struktur wie in den übrigen Sprachen."
       }
     }
   },
