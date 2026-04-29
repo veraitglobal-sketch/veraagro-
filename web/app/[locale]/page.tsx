@@ -53,7 +53,7 @@ const PRODUCT_CATS: { id: 'fruits' | 'vegetables' | 'grains'; icon: LucideIcon }
 ];
 
 export default function Home() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
   const [showPreOrderInfo, setShowPreOrderInfo] = useState(false);
   const preOrderRef = useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ export default function Home() {
   const statLabels = t('home.statLabels', { returnObjects: true }) as string[];
   const statRows = useMemo(
     () => STAT_NUMBERS.map((number, i) => ({ number, label: statLabels[i] ?? '' })),
-    [statLabels],
+    [i18n.language, statLabels],
   );
 
   const visionCards = t('home.vision.cards', { returnObjects: true }) as VisionCard[];

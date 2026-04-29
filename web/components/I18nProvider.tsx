@@ -29,33 +29,43 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    let cancelled = false;
     /** URL prefix (`/fr/...`) wins over localStorage so locale switch + refresh stay consistent. */
-    const fromUrl = pathnameStartsWithLocale(pathname ?? "/");
-    if (fromUrl) {
-      void i18n.changeLanguage(fromUrl);
-      try {
-        localStorage.setItem(LOCALE_STORAGE_KEY, fromUrl);
-      } catch {
-        /* ignore */
-      }
-      syncDocumentLang(fromUrl);
-    } else {
-      try {
-        const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-        if (isStoredLocale(stored)) {
-          void i18n.changeLanguage(stored);
-          syncDocumentLang(stored);
-        } else {
-          syncDocumentLang(i18n.language);
-        }
-      } catch {
-        syncDocumentLang(i18n.language);
-      }
-    }
-
     const handler = (lng: string) => syncDocumentLang(lng);
     i18n.on("languageChanged", handler);
+
+    void (async () => {
+      const fromUrl = pathnameStartsWithLocale(pathname ?? "/");
+      try {
+        if (fromUrl) {
+          await i18n.changeLanguage(fromUrl);
+          if (cancelled) return;
+          try {
+            localStorage.setItem(LOCALE_STORAGE_KEY, fromUrl);
+          } catch {
+            /* ignore */
+          }
+          syncDocumentLang(fromUrl);
+        } else {
+          try {
+            const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+            if (isStoredLocale(stored)) {
+              await i18n.changeLanguage(stored);
+              if (!cancelled) syncDocumentLang(stored);
+            } else if (!cancelled) {
+              syncDocumentLang(i18n.language);
+            }
+          } catch {
+            if (!cancelled) syncDocumentLang(i18n.language);
+          }
+        }
+      } catch {
+        if (!cancelled) syncDocumentLang(i18n.language);
+      }
+    })();
+
     return () => {
+      cancelled = true;
       i18n.off("languageChanged", handler);
     };
   }, [pathname, i18n]);

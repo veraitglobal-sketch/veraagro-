@@ -27,11 +27,11 @@ export function useSiteLocale() {
     const fromUrl = pathnameStartsWithLocale(pathname);
     if (fromUrl) return fromUrl;
     return siteLocaleFromLanguageTag(i18n.resolvedLanguage);
-  }, [pathname, i18n.resolvedLanguage]);
+  }, [pathname, i18n.resolvedLanguage, i18n.language]);
 
   const applyLocale = useCallback(
-    (lng: SiteLocale) => {
-      void i18n.changeLanguage(lng);
+    async (lng: SiteLocale) => {
+      await i18n.changeLanguage(lng);
       try {
         localStorage.setItem(LOCALE_STORAGE_KEY, lng);
       } catch {

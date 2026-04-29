@@ -110,6 +110,9 @@ const esWithJourney = {
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     compatibilityJSON: "v4",
+    react: {
+      useSuspense: false,
+    },
     resources: {
       en: { translation: enWithJourney },
       sr: { translation: srWithJourney },

@@ -31,8 +31,8 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
     return () => document.removeEventListener("click", close);
   }, []);
 
-  const onPick = (lng: SiteLocale) => {
-    applyLocale(lng);
+  const onPick = async (lng: SiteLocale) => {
+    await applyLocale(lng);
     setOpen(false);
   };
 

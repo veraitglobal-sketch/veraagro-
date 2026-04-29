@@ -23,7 +23,7 @@ function isNavActive(pathname: string | null | undefined, href: string): boolean
 }
 
 export default function Navigation() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function Navigation() {
       { href: loc('/'), label: t('nav.home') },
       { href: loc('/help-center'), label: t('nav.helpCenter') },
     ];
-  }, [isAuthenticated, user, t, loc]);
+  }, [isAuthenticated, user, t, loc, i18n.language]);
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">

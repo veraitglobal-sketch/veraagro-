@@ -62,7 +62,7 @@ export default function LanguageSettingsPage() {
                     <button
                       type="button"
                       disabled={isActive}
-                      onClick={() => applyLocale(code)}
+                      onClick={() => void applyLocale(code)}
                       className={`mt-auto inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
                         isActive
                           ? "cursor-default border border-gray-200 bg-white text-gray-400"

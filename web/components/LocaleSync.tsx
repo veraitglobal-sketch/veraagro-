@@ -9,12 +9,19 @@ export function LocaleSync({ locale }: { locale: SiteLocale }) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    void i18n.changeLanguage(locale);
-    try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-    } catch {
-      /* ignore */
-    }
+    let cancelled = false;
+    void (async () => {
+      await i18n.changeLanguage(locale);
+      if (cancelled) return;
+      try {
+        localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [locale, i18n]);
 
   return null;
