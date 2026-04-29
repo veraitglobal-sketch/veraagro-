@@ -2,7 +2,9 @@
 
 import { I18nextProvider } from "react-i18next";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import i18n, { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
+import { pathnameStartsWithLocale } from "@/lib/i18n-routing";
 
 function syncDocumentLang(lng: string) {
   let htmlLang = "en";
@@ -17,23 +19,46 @@ function syncDocumentLang(lng: string) {
   }
 }
 
+const STORED_LOCALES: readonly SiteLocale[] = ["en", "sr", "de", "ro", "bg", "fr", "es"];
+
+function isStoredLocale(v: string | null): v is SiteLocale {
+  return v !== null && (STORED_LOCALES as readonly string[]).includes(v);
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(LOCALE_STORAGE_KEY) as SiteLocale | null;
-      if (stored === "sr" || stored === "en" || stored === "de" || stored === "ro" || stored === "bg" || stored === "fr" || stored === "es") {
-        void i18n.changeLanguage(stored);
+    /** URL prefix (`/fr/...`) wins over localStorage so locale switch + refresh stay consistent. */
+    const fromUrl = pathnameStartsWithLocale(pathname ?? "/");
+    if (fromUrl) {
+      void i18n.changeLanguage(fromUrl);
+      try {
+        localStorage.setItem(LOCALE_STORAGE_KEY, fromUrl);
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
+      syncDocumentLang(fromUrl);
+    } else {
+      try {
+        const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+        if (isStoredLocale(stored)) {
+          void i18n.changeLanguage(stored);
+          syncDocumentLang(stored);
+        } else {
+          syncDocumentLang(i18n.language);
+        }
+      } catch {
+        syncDocumentLang(i18n.language);
+      }
     }
-    syncDocumentLang(i18n.language);
+
     const handler = (lng: string) => syncDocumentLang(lng);
     i18n.on("languageChanged", handler);
     return () => {
       i18n.off("languageChanged", handler);
     };
-  }, []);
+  }, [pathname, i18n]);
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
