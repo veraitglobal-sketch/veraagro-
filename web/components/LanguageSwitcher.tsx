@@ -5,17 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Globe } from "lucide-react";
 import { useSiteLocale } from "@/hooks/useSiteLocale";
 import type { SiteLocale } from "@/i18n/config";
-import { siteLocales } from "@/lib/i18n-routing";
-
-const LOCALE_DISPLAY_KEY: Record<SiteLocale, string> = {
-  en: "locale.nameEn",
-  sr: "locale.nameSr",
-  de: "locale.nameDe",
-  ro: "locale.nameRo",
-  bg: "locale.nameBg",
-  fr: "locale.nameFr",
-  es: "locale.nameEs",
-};
+import { siteLocales, localeNativeDisplayName } from "@/lib/i18n-routing";
 
 export default function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { t } = useTranslation();
@@ -36,7 +26,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
     setOpen(false);
   };
 
-  const currentLabel = t(LOCALE_DISPLAY_KEY[current]);
+  const currentLabel = localeNativeDisplayName[current];
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -61,9 +51,9 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
               <button
                 type="button"
                 className={`flex w-full px-3 py-2 text-left hover:bg-gray-50 ${current === code ? "font-semibold text-[#2D5A27]" : ""}`}
-                onClick={() => onPick(code)}
+                onClick={() => void onPick(code)}
               >
-                {t(LOCALE_DISPLAY_KEY[code])}
+                {localeNativeDisplayName[code]}
               </button>
             </li>
           ))}

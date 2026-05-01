@@ -54,7 +54,7 @@
     "activeBadge": "Aktivno",
     "useThisLanguage": "Koristi ovaj jezik",
     "alreadyUsing": "Trenutno je izabrano",
-    "futureNote": "Ovde ćemo dodavati i druge jezike kako širimo tržišta. Ako vam treba jezik za ugovor ili onboarding partnera, javite nam se — engleski, srpski, nemački, rumunski, bugarski, francuski i španski pokrivaju ključne EU koridore, maloprodaju, veze sa Latinskom Amerikom i onboarding proizvođača kojima danas radimo.",
+    "futureNote": "Ovde ćemo dodavati i druge jezike kako ulazimo na nova tržišta. Ako vam treba određeni jezik za ugovore ili započinjanje saradnje sa partnerima, javite nam se. Engleski, srpski, nemački, rumunski, bugarski, francuski i španski pokrivaju glavne EU koridore, maloprodaju, veze ka Latinskoj Americi i sve što danas radimo sa proizvođačima.",
     "cardLinkTitle": "Jezik i region",
     "cardLinkBody": "Izaberite engleski, srpski, nemački, rumunski, bugarski, francuski ili španski za sajt. Izbor se pamti za sledeći dolazak.",
     "backToLegal": "Pravne informacije",
@@ -62,7 +62,7 @@
     "locales": {
       "en": {
         "title": "English",
-        "body": "Ceo interfejs na engleskom: marketinške stranice, pomoć i nalozi gde je engleski primarni. Pogodno ako tim, kupci ili revizori rade na engleskom."
+        "body": "Kompletan interfejs na engleskom: marketinške stranice, pomoć i nalozi gde je engleski primarni. Pogodno ako tim, kupci ili revizori rade na engleskom."
       },
       "sr": {
         "title": "Srpski",
@@ -74,19 +74,19 @@
       },
       "ro": {
         "title": "Română",
-        "body": "Kompletan interfejs na rumunskom za proizvođače i partnere koji rade rumunski, kao i za reviziore na tržištima Rumunije šireg EU koridora — ista struktura tragljivosti i Vera raspored kao na drugim jezicima."
+        "body": "Kompletan interfejs na rumunskom za proizvođače i partnere koji rade rumunski, kao i za revizore na tržištima Rumunije i šire u EU — ista struktura sledljivosti i Vera raspored kao na drugim jezicima."
       },
       "bg": {
         "title": "Български",
-        "body": "Kompletan bugarski interfejs za proizvođače i distributere u Bugarskoj — isti model tragljivosti, Bio-Ready dosijei i Vera tokovi kao u ostatku EU uvođenja programa."
+        "body": "Kompletan bugarski interfejs za proizvođače i distributere u Bugarskoj — isti model sledljivosti, Bio-Ready dosijei i Vera tokovi kao u ostatku EU uvođenja programa."
       },
       "fr": {
         "title": "Français",
-        "body": "Kompletan francuski interfejs za francusko tržište, Belgiju (FR), Luksemburg i kupce — isti trag, Bio-Ready dosije i Vera raspored kao i na drugim jezicima programa."
+        "body": "Kompletan francuski interfejs za francusko tržište, Belgiju (FR), Luksemburg i kupce — ista sledljivost, Bio-Ready dosije i Vera raspored kao i na drugim jezicima programa."
       },
       "es": {
         "title": "Español",
-        "body": "Kompletan interfejs na španskom za Španiju, kupčke koridore u Latinskoj Americi i timove koji najbolje rade na španskom — isti trag, Bio-Ready strukturu i Vera iskustvo kao ostali jezici kojima raspolažemo."
+        "body": "Kompletan interfejs na španskom za Španiju, kupčke koridore u Latinskoj Americi i timove koji rade na španskom — ista sledljivost, Bio-Ready struktura i Vera iskustvo kao na ostalim jezicima."
       }
     }
   },
@@ -98,7 +98,7 @@
       "Bio Vera",
       "Poljoprivredna mreža",
       "Poljoprivredna tehnologija",
-      "Tragljivost",
+      "Sledljivost",
       "Bio sertifikacija",
       "EU tržište",
       "Od polja do stola",
@@ -136,7 +136,7 @@
       "actionCostAnalysis": "Analiza troškova",
       "actionBrowseProducts": "Pregledaj proizvode",
       "actionPreorder": "Predporudžbina",
-      "actionTraceability": "Tragabilnost",
+      "actionTraceability": "Sledljivost",
       "actionContactSales": "Kontakt prodaje",
       "actionApplyProducer": "Prijava kao proizvođač",
       "actionCertification": "Sertifikacija",
@@ -238,7 +238,7 @@
       {
         "category": "general",
         "q": "Šta je Bio Vera?",
-        "a": "Bio Vera je vertikalno povezana poljoprivredna mreža: povezujemo proizvođače sa tržištem u jednom operativnom modelu—tragljivost, obezbeđenje kvaliteta i usklađenost od polja do kupca, širom sveta."
+        "a": "Bio Vera je vertikalno povezana poljoprivredna mreža: povezujemo proizvođače sa tržištem u jednom operativnom modelu—sledljivost, obezbeđenje kvaliteta i usklađenost od polja do kupca, širom sveta."
       },
       {
         "category": "general",
@@ -278,7 +278,7 @@
       {
         "category": "buyers",
         "q": "Kako proveriti autentičnost proizvoda?",
-        "a": "Svaki proizvod ima QR kod koji vodi do digitalnog pasoša. Skenom vidite potpunu tragljivost: poreklo, podatke o proizvođaču, sertifikate kvaliteta i istoriju transporta."
+        "a": "Svaki proizvod ima QR kod koji vodi do digitalnog pasoša. Skenom vidite potpunu sledljivost: poreklo, podatke o proizvođaču, sertifikate kvaliteta i istoriju transporta."
       },
       {
         "category": "logistics",
@@ -288,7 +288,7 @@
       {
         "category": "logistics",
         "q": "Šta je program „Bio Vera: od voćnjaka do police“?",
-        "a": "Program podrazumeva end-to-end odgovornost partnera: preuzimanje na farmi do krajnje isporuke. Obezbeđujete neprekid hladni lanac, GPS trag i digitalne predaje na svakom koraku."
+        "a": "Program podrazumeva odgovornost partnera od početka do kraja: preuzimanje na farmi do konačne isporuke. Obezbeđujete neprekinut hladni lanac, GPS trag i digitalne zapise na svakom koraku."
       },
       {
         "category": "logistics",
@@ -302,7 +302,7 @@
       },
       {
         "category": "technical",
-        "q": "Kako funkcioniše sistem tragljivosti?",
+        "q": "Kako funkcioniše sistem sledljivosti?",
         "a": "Koristimo neizmenjive digitalne zapise, GPS vremenske oznake, identifikaciju uređaja i QR kodove da bismo obezbedili lanac staranja bez pukotina. Svaki korak od polja do police je zabeležen i proverljiv."
       },
       {
@@ -371,12 +371,12 @@
           "HAMBURG, Nemačka — 2026. Bio Vera je zvanično predstavila Protocol 360, interni troslojni sistem kontrole kvaliteta koji obuhvata kompletan lanac proizvodnje — od parcele do maloprodaje.",
           "Ovaj sistem postavlja novi standard u industriji hrane kroz kombinaciju kontrole bezbednosti proizvoda, tehničke usaglađenosti i potpune dokumentacije u svakom koraku procesa.",
           "Sistem je projektovan tako da obezbedi ponovljivu, merljivu sigurnost i trag: umesto paralelnih evidencija, jedinstven dokumentacioni trag prati robe od prvog dodira sa usevom sve do distribucije i izlaganja na polici.",
-          "Protocol 360 kao integrisan model kombinuje: ponovljivu i merljivu bezbednost proizvoda, standardizovan proces kontrole kvaliteta i potpunu tragljivost svake partije kroz ceo operativni hod.",
+          "Protocol 360 kao integrisan model kombinuje: ponovljivu i merljivu bezbednost proizvoda, standardizovan proces kontrole kvaliteta i potpunu sledljivost svake partije kroz čitav operativni hod.",
           "Tri kontrolna sloja — jedinstven pristup kvalitetu: Protocol 360 funkcioniše kroz tri jasno definisana nivoa.",
           "Nivo 1 — Eco-Safe audit (parcela / pre berbe): prvi nivo fokusira bezbednost i osnovne agronomske parametre pre nego što proizvod uđe u dalji proces. Proveravaju se mera teških metala, nivo nitrata, pH vrednost i nivo vlage (najmanje 48 h pre berbe). Samo proizvodi koji prođu ovaj nivo dobijaju odobrenje za dalju obradu.",
           "Nivo 2 — biometrijsko i vizuelno skeniranje (pakovanje): drugi nivo obuhvata fizičke i vizuelne karakteristike pre izlaska iz objekta — među ostalim kalibraciju veličine, čvrstoću ploda, integritet ambalaže i dopušteno odstupanje boje (ciljno do 5%). Cilj je da se nedostaci identifikuju pre ulaska u logistički proces.",
           "Nivo 3 — Logistics Guard (transport i skladištenje): treći nivo obezbeđuje kontinuitet kvaliteta tokom transporta i skladištenja — kontrola temperature (ciljni opseg 2–8 °C gde tako predviđa specifikacija), detekcija temperaturnih šokova, kontinuitet hladnog lanca i automatsko upozoravanje ako se ugovarani limit prekorači. Na taj način se dokumentuje stanje robe sve do isporuke.",
-          "Protocol 360 radi na zajedničkoj digitalnoj infrastrukturi Bio Vere: evidencija po partiji ili pošiljci istim putem dostupna partnerima programa i auditorima tamo gdje ugovor i zakon tako predviđaju, radi transparentnog traga kroz ceo operativni lanac.",
+          "Protocol 360 radi na zajedničkoj digitalnoj infrastrukturi Bio Vere: evidencija po partiji ili pošiljci istim putem dostupna partnerima programa i auditorima tamo gdje ugovor i zakon tako predviđaju, radi transparentnog traga kroz čitav operativni lanac.",
           "Protocol 360 formulise jasnu premisu: kvalitet nije pretpostavka, već rezultat definisanih i merljivih procesa. Time se cilja jača bezbednost za kupce, veća kontrola za proizvođače unutar objavljenog standarda kao i veća pouzdanost za partnere u lancu snabdevanja.",
           "„Protocol 360 predstavlja sledeći korak u razvoju Bio Vera sistema. Naš cilj je da svaki proizvod prođe kroz jasan, merljiv i transparentan proces kontrole — od polja do police.“",
           "U komunikaciji oko Protocol 360 ističu se vrednosti: Standards Beyond Expectation · Controlled by Science, Grown by Nature · Every Unit a Masterpiece.",
@@ -388,7 +388,7 @@
       {
         "id": "2",
         "date": "Hamburg · 2026.",
-        "title": "Bio Vera pokreće kompletan digitalni sistem za transparentnu i tragljivu proizvodnju hrane",
+        "title": "Bio Vera pokreće kompletan digitalni sistem za transparentnu i sledljivu proizvodnju hrane",
         "summary": "Integrisani digitalni sistem povezuje farmu, kontrolu i tržište: digitalni pasoš uz QR, Bio Vera Standard, podrška proizvođačima i završna kontrola pre plasmana; predviđeno je postepeno širenje (program je još u ranoj fazi), počev od 2026. godine ka dodatnim tržištima, uključujući SAD — u koracima koji zavise od dozvola i operativnog tempa u svakoj zemlji.",
         "paragraphs": [
           "HAMBURG, Nemačka — Bio Vera, kao agrotehnološki startup, pokreće integrisani digitalni sistem za transparentnost i trag u proizvodnji hrane — od polja do krajnjeg kupca.",
@@ -400,8 +400,8 @@
           "Bio Vera ne zasniva poverenje samo na deklaracijama, već na podacima koje program čini proverljivima u odnosu na objavljenu tehničku dokumentaciju.",
           "Za razliku od čistog modela otkupa, sistem proizvođačima nudi jasniji plasman robe, objavljene standarde, podršku tokom ciklusa i uklapanje u organizovanu distribuciju prema ugovoru.",
           "Nakon berbe i kada tehnička evidencija potvrdi ispunu standarda, obaveze proizvodnje na parceli se zatvaraju u skladu sa programom, a dalji promet i logistika slede ugovoreni operativni plan Bio Vere.",
-          "Dodatni prihod moguć je kroz pakovanje na farmi tamo gde standard dozvoljava: proizvodi koji prolaze tehnička pravila ostaju tragljivi i blizu izvorne ekonomije gazdinstva, što ubrzava otpremnu spremnost i štedi slojeve bez dodatnog dokaza za trag.",
-          "Završna faza obuhvata Bio Vera kontrolu kvaliteta uz podršku terenskog kadra i logističkog tima zajedno sa sistemskom beleškom. Kada kontrolni protokol potvrdi ispunjenost dokumentacije, proizvod ulazi u ugovoreni evropski plasman kao tragljiva partija.",
+          "Dodatni prihod moguć je kroz pakovanje na farmi tamo gde standard dozvoljava: proizvodi koji prolaze tehnička pravila ostaju sledljivi i blizu izvorne ekonomije gazdinstva, što ubrzava otpremnu spremnost i štedi slojeve bez dodatnog dokaza za trag.",
+          "Završna faza obuhvata Bio Vera kontrolu kvaliteta uz podršku terenskog kadra i logističkog tima zajedno sa sistemskom beleškom. Kada kontrolni protokol potvrdi ispunjenost dokumentacije, proizvod ulazi u ugovoreni evropski plasman kao sledljiva partija.",
           "Lanac funkcioniše kao niz uzastopnih koraka — proizvodnja, kontrola, pakovanje po listu, logistika, tržište — uz zajedničku radnu belešnicu koja prati svaku ključnu promenu stanja robe.",
           "Tehnološki sloj koristi digitalno praćenje procesa, GPS i vremenske oznake, evidenciju aktivnosti, QR kod po pakovanju i mere zaštite podataka tako da krajnjem korisniku budu dostupne merljive informacije, ne samo slogan.",
           "Plan je dalje širenje van fokusa na Evropu, uključujući javno najavljenu orijentaciju ka američkom tržištu u razdoblju od kraja 2027. do 2028. godine, u skladu sa regulatornim uslovima.",
@@ -514,7 +514,7 @@
     ]
   },
   "protocol360Page": {
-    "documentTitle": "Protocol 360 – kvalitet, tragljivost i usklađenost | Bio Vera",
+    "documentTitle": "Protocol 360 – kvalitet, sledljivost i usklađenost | Bio Vera",
     "loading": "Učitavanje Protocol 360…",
     "suspenseLoading": "Učitavanje…",
     "batchLabel": "Šarža:",
@@ -786,7 +786,7 @@
     },
     "packageBadges": {
       "pageTitle": "Registracija bedževa na pakovanju",
-      "pageDescription": "Povežite glavnu etiketu (paleta ili rola) sa serijskim brojevima kutija. Štampajte QR koje vode na javni URL radi tragljivosti.",
+      "pageDescription": "Povežite glavnu etiketu (paleta ili rola) sa serijskim brojevima kutija. Štampajte QR koje vode na javni URL radi sledljivosti.",
       "parentLabel": "Nadređeni (glavni) serijski broj *",
       "parentHint": "Jedinstveni kod na glavnoj etiketi palete ili role.",
       "typeLabel": "Tip nadređenog *",
@@ -955,7 +955,7 @@
       "totalParcels": "Ukupno parcela",
       "certifiedEstates": "Sertifikovana gazdinstva",
       "stepsBlockTitle": "Koraci",
-      "stepsBlockDescription": "Setva → lot → kvalitet → transport — ceo lanac na jednoj stranici.",
+      "stepsBlockDescription": "Setva → lot → kvalitet → transport — čitav lanac na jednoj stranici.",
       "stepsOpen": "Otvori →",
       "qrAlt": "Vaš Bio Vera QR kod",
       "qrTitle": "Vaš QR kod",
@@ -1301,7 +1301,7 @@
     "b2bOrdersTitle": "Moje porudžbine i poruke",
     "b2bOrdersLead": "Status B2B porudžbina, Primljeno na farmi i konverzacije sa partnerom. Nov partner? Prvo izaberite u imeniku.",
     "b2bOrdersMaterialsLineBefore": "Salda u",
-    "b2bOrdersMaterialsLineAfter": ". Ceo proces:",
+    "b2bOrdersMaterialsLineAfter": ". Kompletan proces:",
     "b2bOrdersStepsLink": "koraci ispod",
     "b2bLoading": "Učitavanje…",
     "b2bDirectOrders": "Direktne porudžbine",
@@ -1380,7 +1380,7 @@
     "sf3t": "3. Zvanično stanje i barkodovi u aplikaciji",
     "sf3": "U <0>Materijalima</0> koristite <1>Kupovinu</1> da sistem ažurira <2>Gajbe</2>, <3>Rolo etikete</3> i <4>Foliju</4>, a (za svaki rolo) čuva <5>serijski broj</5> koji ćete navesti na <6>Fotografije usklađenosti</6>. Ako nabavljate van aplikacije, uskladite salda sa partnerom ili podrškom. Velike porudžbine: ponavljajte ili podelite (npr. max 200 kom po porudžbini u aplikaciji).",
     "sf4t": "4. Berba, partija i pakovanje",
-    "sf4": "Prijavite rad i formirajte partije u <0>Moje partije</0> i alatima na polju; pratite pakovanje i tragljivost u aplikaciji.",
+    "sf4": "Prijavite rad i formirajte partije u <0>Moje partije</0> i alatima na polju; pratite pakovanje i sledljivost u aplikaciji.",
     "sf5t": "5. Pre transporta",
     "sf5": "Potreban je dovoljan zvaničan materijal za isporuku, fotografije usklađenosti i unos kvaliteta. Zatim <0>Zahtev za transport</0> — aplikacija proverava pakovanje i materijal za partiju.",
     "sfCompactOpen": "pokaži 5 koraka",
@@ -1587,7 +1587,7 @@
     "hero": {
       "title1": "Vertikalno povezana",
       "title2": "poljoprivredna mreža",
-      "subtitle": "Od polja do kupca u jednom sistemu: tragljive partije, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",
+      "subtitle": "Od polja do kupca u jednom sistemu: sledljive partije, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postani proizvođač",
       "preOrder": "Pretporudžbina za 2026. je otvorena",
@@ -1596,7 +1596,7 @@
       "preOrderTip2": "Pretporudžbina služi samo za planiranje količina za 2026.; nije obavezna porudžbina."
     },
     "statLabels": [
-      "Tragabilnost",
+      "Sledljivost",
       "Sertifikovano",
       "Monitoring",
       "Slučajevi prevara",
@@ -1651,7 +1651,7 @@
         },
         {
           "title": "Blokčejn verifikacija (Polygon)",
-          "description": "Nepromenljiv dokaz o poreklu on-chain. Pasosi proizvoda pokazuju značku i ceo put. Kompletno."
+          "description": "Nepromenljiv dokaz o poreklu on-chain. Pasosi proizvoda pokazuju značku i čitav put. Kompletno."
         }
       ]
     },
@@ -1719,14 +1719,14 @@
     },
     "products": {
       "title": "Pregledaj proizvode",
-      "subtitle": "Organski proizvodi sa punom tragnošću",
+      "subtitle": "Organski proizvodi sa potpunom sledljivošću",
       "fruits": "Voće",
       "vegetables": "Povrće",
       "grains": "Žitarice"
     },
     "cta": {
       "title": "Partnerstvo sa mrežom",
-      "body": "Sarađujte sa proizvođačima, logističkim partnerima i kupcima pod jednim setom standarda—jasna predaja partija, tragljive serije i predvidljivi uslovi.",
+      "body": "Sarađujte sa proizvođačima, logističkim partnerima i kupcima pod jednim setom standarda—jasna predaja partija, sledljive serije i predvidljivi uslovi.",
       "becomeProducer": "Postani proizvođač",
       "startShopping": "Započni kupovinu"
     },
@@ -1734,7 +1734,7 @@
   },
   "forBuyersPage": {
     "title": "Za kupce",
-    "heroLead": "Nabavljajte sveže voće i povrće iz mreže Bio Vera: sertifikovano poreklo i tragljiva istorija partije, a ne samo oglas. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
+    "heroLead": "Nabavljajte sveže voće i povrće iz mreže Bio Vera: sertifikovano poreklo i sledljiva istorija partije, a ne samo oglas. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
     "notShopBody": "Nismo klasična internet prodavnica. Radimo jasnim, transparentnim postupkom: vidite šta nudimo, ostavite podatke kompanije i kontakt i saglasnost, a svaki zahtev shvatamo ozbiljno. Pročitajte kako radimo ispod, a kada ste spremni, iskažite interes na dnu stranice kako bismo vam se javili.",
     "linkHowWeOperate": "Kako radimo",
     "linkExpressInterest": "Iskažite interes",
@@ -1753,20 +1753,20 @@
       },
       {
         "title": "Potvrda i plaćanje",
-        "body": "Porudžbine se potvrđuju u okviru Bio Vera. Plaćanje i isporuka su jasni; radimo sigurnim, tragljivim tokom od imanja do vas."
+        "body": "Porudžbine se potvrđuju u okviru Bio Vere. Plaćanje i isporuka su jasni; radimo sigurnim, sledljivim tokom od polja do vas."
       },
       {
-        "title": "Isporuka i tragljivost",
+        "title": "Isporuka i sledljivost",
         "body": "Pratite partiju preko digitalnog pasoša. Vidite gde je berba, kada (period berbe) i kako je roba tretirana do isporuke."
       }
     ],
     "productsTitle": "Proizvodi koje nudimo",
     "productsLead": "Dostavljamo širok asortiman svežeg voća i povrća (i žitarica) evropskom tržištu. Kompletan, ažuriran spisak sa sortama, raspoloživošću i cenama je u kontrolnoj tabli nakon registracije.",
     "productCategoryLabels": ["Voće", "Povrće", "Žitarice", "Ostalo"],
-    "productsNote": "Prijavite se na kontrolnu tablu kupca da biste videli ceo katalog, poručili ili poslali predporudžbinu za 2026.",
+    "productsNote": "Prijavite se na kontrolnu tablu kupca da biste videli čitav katalog, poručili ili poslali predporudžbinu za 2026.",
     "harvestCalendarTitle": "Kalendar berbe",
     "packagingTitle": "Ambalaža",
-    "packagingLead": "Koristimo standardizovanu, tragljivu ambalažu u skladu sa bezbednošću hrane i kvalitetom.",
+    "packagingLead": "Koristimo standardizovanu, sledljivu ambalažu u skladu sa bezbednošću hrane i kvalitetom.",
     "packagingList": [
       "Ponovo upotrebljive gajbe Bio Vera sa ugrađenim QR gde je primenjivo.",
       "Tipovi ambalaže i opcije vidljivi su po proizvodu u kontrolnoj tabli.",
@@ -1797,12 +1797,12 @@
         "desc": "Terenske i kvalitativne provere, barkod i GPS provera, samo odobreni inputi. Neovlašćene ili neusklađene partije se blokiraju."
       },
       {
-        "title": "Tragljivost",
+        "title": "Sledljivost",
         "desc": "Svaka partija ima jedinstveni ID i digitalni pasoš. U svakom trenutku proveravate poreklo, berbu i put."
       }
     ],
     "valueTitle": "Šta dobijate sa Bio Vera",
-    "valueLead": "Naše kulture su sveže od berbe, tragljive i praćene punim digitalnim pasošom.",
+    "valueLead": "Naše kulture su sveže od berbe, sledljive i praćene punim digitalnim pasošom.",
     "valueBlocks": [
       {
         "title": "Naše voće i povrće",
@@ -1814,7 +1814,7 @@
       },
       {
         "title": "Pasoš proizvoda",
-        "body": "Svaka partija ima digitalni pasoš: gde je berba (region, farm), kada (datum i period), hladni lanac, usklađenost i ceo put do isporuke."
+        "body": "Svaka partija ima digitalni pasoš: gde je berba (region, farm), kada (datum i period), hladni lanac, usklađenost i čitav put do isporuke."
       },
       {
         "title": "Poreklo i proizvođač",
@@ -2000,7 +2000,7 @@
   },
   "logisticsPartnerPage": {
     "title": "Za logistiku",
-    "heroLead": "Pridružite se proverenoj mreži transportnih partnera Bio Vera. Otvoreno za nezavisne vozače, kombije, srednje kamione i velike transportne kompanije. Dostavljajte organske proizvode uz punu tragljivost i zaradite stabilne, dugoročne ugovore.",
+    "heroLead": "Pridružite se proverenoj mreži transportnih partnera Bio Vera. Otvoreno za nezavisne vozače, kombije, srednje kamione i velike transportne kompanije. Dostavljajte organske proizvode uz punu sledljivost i zaradite stabilne, dugoročne ugovore.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "prospectNote": "PDF prospekt uključuje brendirani dizajn kamiona i kompletan opis programa",
@@ -2024,7 +2024,7 @@
     "requirementItems": [
       {
         "title": "Bio Vera: od voćnjaka do police",
-        "body": "Potpuna odgovornost od preuzimanja na farmi do isporuke u maloprodaju. Garantujete integritet hladnog lanca, GPS trag i digitalni prenos na svakom koraku. Bez delimičnih isporuka — odgovorni ste za ceo put od polja do krajnjeg odredišta."
+        "body": "Potpuna odgovornost od preuzimanja na farmi do isporuke u maloprodaju. Garantujete integritet hladnog lanca, GPS trag i digitalni prenos na svakom koraku. Bez delimičnih isporuka — odgovorni ste za čitav put od polja do krajnjeg odredišta."
       },
       {
         "title": "Sistemi hlađenja (hladni lanac)",
@@ -2276,9 +2276,9 @@
     "heroSubtitle": "Poboljšavamo poljoprivredu kroz tehnologiju, transparentnost i poverenje",
     "missionTitle": "Naša misija",
     "missionP1": "Bio Vera jača poljoprivredne lance snabdevanja povezivanjem proizvođača širom sveta direktno sa tržištima, uz jasne standarde, obezbeđenje kvaliteta i pravičnu nadoknadu na svakom koraku.",
-    "missionP2": "Verujemo da tehnologija može da poveže tradicionalnu proizvodnju i savremene zahteve tržišta, u održivom ekosistemu gde proizvođači napreduju, kupci imaju poverenje, a potrošači imaju tragljiv, kvalitetan proizvod.",
+    "missionP2": "Verujemo da tehnologija može da poveže tradicionalnu proizvodnju i savremene zahteve tržišta, u održivom ekosistemu gde proizvođači napreduju, kupci imaju poverenje, a potrošači imaju sledljiv, kvalitetan proizvod.",
     "visionTitle": "Naša vizija",
-    "visionP1": "Da postanemo vodeća vertikalno povezana poljoprivredna mreža, uz nove standarde tragljivosti, obezbeđenja kvaliteta i održive proizvodnje.",
+    "visionP1": "Da postanemo vodeća vertikalno povezana poljoprivredna mreža, uz nove standarde sledljivosti, obezbeđenja kvaliteta i održive proizvodnje.",
     "visionP2": "Zamisljamo budućnost gde svaki proizvod na polici ima potpun digitalni pasoš, gde proizvođači dobijaju pravičnu nadoknadu, a potrošači mogu verovati u poreklo i kvalitet onoga što kupuju.",
     "valuesTitle": "Naše vrednosti",
     "valueCards": [
@@ -2302,7 +2302,7 @@
     "whatWeDoTitle": "Šta radimo",
     "whatWeDoItems": [
       {
-        "title": "Puna tragljivost",
+        "title": "Puna sledljivost",
         "body": "Svaki proizvod dobija digitalni pasoš sa dokazom porekla, puta i kvaliteta. QR na kutiji povezuje potrošača sa farmom sa koje potiče hrana."
       },
       {
@@ -2346,7 +2346,7 @@
         },
         {
           "title": "Standardizacija i usklađenost",
-          "content": "Svi proizvodi ispunjavaju EU sertifikaciju uz punu tragljivost. Svaka jedinica je proverena kroz Protocol 360."
+          "content": "Svi proizvodi ispunjavaju EU sertifikaciju uz punu sledljivost. Svaka jedinica je proverena kroz Protocol 360."
         },
         {
           "title": "Prednosti za kupce",

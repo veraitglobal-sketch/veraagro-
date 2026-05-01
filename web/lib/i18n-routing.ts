@@ -57,6 +57,17 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
 
 export const siteLocales = ["en", "sr", "de", "ro", "bg", "fr", "es"] as const satisfies readonly SiteLocale[];
 
+/** Endonyms: always show native language name in picker/cards, not translated via i18n. */
+export const localeNativeDisplayName: Record<SiteLocale, string> = {
+  en: "English",
+  sr: "Srpski",
+  de: "Deutsch",
+  ro: "Română",
+  bg: "Български",
+  fr: "Français",
+  es: "Español",
+};
+
 export function isSiteLocale(v: string): v is SiteLocale {
   return v === "en" || v === "sr" || v === "de" || v === "ro" || v === "bg" || v === "fr" || v === "es";
 }

@@ -6,7 +6,7 @@ import { Globe, Check } from "lucide-react";
 import Footer from "@/components/Footer";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import { useSiteLocale } from "@/hooks/useSiteLocale";
-import { siteLocales } from "@/lib/i18n-routing";
+import { siteLocales, localeNativeDisplayName } from "@/lib/i18n-routing";
 export default function LanguageSettingsPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
@@ -47,7 +47,7 @@ export default function LanguageSettingsPage() {
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <h3 className="text-lg font-medium text-gray-900 leading-snug min-w-0">
-                        {t(`languagePage.locales.${code}.title` as const)}
+                        {localeNativeDisplayName[code]}
                       </h3>
                       {isActive && (
                         <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[#2D5A27] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">

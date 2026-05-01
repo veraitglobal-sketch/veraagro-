@@ -10,7 +10,7 @@
     },
     {
       "kicker": "Izlaz sa farme",
-      "text": "Zahtev za transport (na čekanju za dispečere) → operativa dodeli vozača → prihvat / preuzimanje → predaja na utovaru (dokaz za kamion) → hladni lanac do haba / kupca → lista misija prati vožnju; maloprodajne porudžbine se usklađuju u operativi (aplikacija ne deli automatski)."
+      "text": "Zahtev za transport (na čekanju za dispečere) → operativa dodeli vozača → prihvat / preuzimanje → predaja na utovaru (dokaz za kamion) → hladni lanac do huba ili kupca → lista misija prati vožnju; maloprodajne porudžbine se usklađuju u operativi (aplikacija ne deli automatski)."
     }
   ],
   "intro": {
@@ -22,7 +22,7 @@
       "webHref": "/grower/fields"
     }
   },
-  "fullChainTitle": "Ceo lanac (kratko)",
+  "fullChainTitle": "Kompletan lanac (kratko)",
   "fieldsMapKicker": "Polja i mapa",
   "navJumpLabel": "Skoči na korak",
   "stepNumber": "Korak {{n}}",
@@ -59,7 +59,7 @@
     {
       "title": "Snabdevanje — materijali i dobavljači",
       "paragraphs": [
-        "Materijali = katalog u aplikaciji: gajbe, role nalepnica, folija, salda i serijski brojevi (npr. role) radi usklađenosti. Dobavljači i porudžbine = imenik, B2B porudžbina, poruke i „Primeto na farmi” kada roba stigne. U mobilnoj aplikaciji Materijali i Partner porudžbine; na webu Dobavljači i porudžbine."
+        "Materijali = katalog u aplikaciji: gajbe, role nalepnica, folija, salda i serijski brojevi (npr. role) radi usklađenosti. Dobavljači i porudžbine = imenik, B2B porudžbina, poruke i „Prijem robe na farmi” kada roba stigne. U mobilnoj aplikaciji Materijali i Partner porudžbine; na webu Dobavljači i porudžbine."
       ],
       "links": [
         { "label": "Materijali", "href": "/grower/materials" },
@@ -88,7 +88,7 @@
     {
       "title": "Pakovanje i status partije",
       "paragraphs": [
-        "Dovršite korake pakovanja / traga u Mojim lotovima dok status ne bude PACKED ili QUALITY_VERIFIED (po potrebi mobilni tok pakovanja). Transport je blokiran dok partija ne stigne u jedan od tih statusa i dok usklađenost nije kompletna (sledeći korak)."
+        "Dovršite korake pakovanja i dokumentacije sledljivosti u Mojim lotovima dok status ne bude PACKED ili QUALITY_VERIFIED (po potrebi mobilni tok pakovanja). Transport je blokiran dok partija ne stigne u jedan od tih statusa i dok usklađenost nije kompletna (sledeći korak)."
       ],
       "links": [{ "label": "Moji lotovi", "href": "/grower/batches" }]
     },
@@ -105,7 +105,7 @@
     {
       "title": "Zahtev za transport",
       "paragraphs": [
-        "Samo kada je partija PACKED ili QUALITY_VERIFIED i usklađenost završena, otvorite Zahtev za transport. Potrebni su GPS/ adresa preuzimanja i jasno odredište (kupac, hab ili rampa). Zahtev je na čekanju: operativa dodeli hladnjaču kada bude moguće (PENDING do tada)."
+        "Samo kada je partija PACKED ili QUALITY_VERIFIED i usklađenost završena, otvorite Zahtev za transport. Potrebni su GPS/ adresa preuzimanja i jasno odredište (kupac, hub ili rampa). Zahtev je na čekanju: operativa dodeli hladnjaču kada bude moguće (PENDING do tada)."
       ],
       "footnote": "Maloprodajne / veleprodajne porudžbine kupaca usklađuju se u operativi (ko isporučuje koje kg). Aplikacija ne deli prognozu berbe automatski u porudžbinu kupca — količine i datume uskladite sa koordinatorom, zatim odrazite u partijama i transportu.",
       "links": [{ "label": "Zahtev za transport", "href": "/grower/missions/create" }]
@@ -113,7 +113,7 @@
     {
       "title": "Praćenje misije (farma → tržište)",
       "paragraphs": [
-        "Pratite misiju sa farme: logistika može završiti predaju na utovaru (temperatura kamiona + fotografije) nakon kvaliteta, zatim vožnja ka preuzimanju i hladnjački transport do haba ili kupca. Vidite status do koraka isporuke. U aplikaciji lista Misija; na webu stranica /grower/portal."
+        "Pratite misiju sa farme: logistika može završiti predaju na utovaru (temperatura kamiona + fotografije) nakon kvaliteta, zatim vožnja ka preuzimanju i hladnjački transport do huba ili kupca. Vidite status do koraka isporuke. U aplikaciji lista Misija; na webu stranica /grower/portal."
       ],
       "links": [{ "label": "Praćenje misija", "href": "/grower/portal" }]
     },

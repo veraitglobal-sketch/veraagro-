@@ -15,8 +15,8 @@
       "crops": "Usevi"
     },
     "fromField": "Sa njive",
-    "traceTitle": "Tragljivost proizvoda",
-    "traceIntro": "Sveža roba sa tragom. Zapisi o pesticideima i prskanjima i kompletan paket za seriju dostupni su na digitalnom pasošu kada skenirate QR šarže.",
+    "traceTitle": "Sledljivost proizvoda",
+    "traceIntro": "Sveža roba sa jasnim poreklom i zapisima. Zapisi o pesticidima i prskanjima i kompletan dokument za seriju dostupni su na digitalnom pasošu kad skenirate QR šarže.",
     "traceBullets": [
       "Ulazi i tretmani su beleženi po seriji u Bio Vera sistemu.",
       "Primene na njivi vezane su za pasoš serije kad ga otvorite iz proizvoda.",
@@ -27,7 +27,7 @@
     "openPassport": "Otvori pasoš",
     "estatesTitle": "Imanja",
     "footerDomain": "biovera.app",
-    "footerTagline": "Od njive do kupca — sa punom tragljivošću."
+    "footerTagline": "Od njive do kupca — sa punom sledljivošću."
   },
   "batchPage": {
     "loading": "Učitavanje…",
@@ -45,13 +45,11 @@
     "countryValue": "Zemlja: {{name}}",
     "estateFarm": "Imanje / naziv gazdinstva",
     "surface": "Površina",
-    "surface": "Površina",
     "fieldHa": "Njiva:",
     "plotHa": "Parcela:",
     "mapCenterHint": "Približni centar mape (verifikovan poligon)",
-    "mapCenter": "Približni centar mape (verifikovan poligon)",
     "harvestEyebrow": "Berba (ova serija)",
-    "harvestWhereFull": "Gde je obrađeno (ceo red)",
+    "harvestWhereFull": "Mesto berbe (kompletan opis)",
     "estateLabel": "Imanje:",
     "regionLabel": "Oznaka regiona:",
     "whenHarvested": "Kada je obrađeno",
@@ -62,8 +60,8 @@
     "tableActivity": "Aktivnost",
     "tableDetail": "Detalj",
     "treatmentsEyebrow": "Primenjeni ulazi (tretmani)",
-    "treatmentsIntro": "Proizvod, doza, voda, razlog, serversko i uređajsko vreme, GPS tačka gde je zabeleženo prskanje.",
-    "colAppliedServer": "Primeno (server)",
+    "treatmentsIntro": "Proizvod, doza, voda, razlog; vreme evidentirano na serveru i uređaju; GPS tačka gde je zabeleženo prskanje.",
+    "colAppliedServer": "Aplikovano / zapis na serveru",
     "colDeviceTime": "Uređaj (vreme)",
     "colProduct": "Proizvod"
   }
