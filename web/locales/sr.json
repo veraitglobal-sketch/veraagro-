@@ -2009,17 +2009,17 @@
     "countriesLine": "Austrija, Belgija, Bosna i Hercegovina, Bugarska, Hrvatska, Kipar, Češka, Danska, Estonija, Finska, Francuska, Nemačka, Grčka, Mađarska, Irska, Italija, Letonija, Litvanija, Luksemburg, Malta, Crna Gora, Holandija, Severna Makedonija, Poljska, Portugalija, Rumunija, Srbija, Slovačka, Slovenija, Španija, Švedska",
     "whoCanApplyLine2": "Radimo sa <s1>malim firmama</s1>, <s2>velikim transportnim kompanijama</s2> i <s3>nezavisnim vozačima</s3>. Jedini uslov je da možete ispuniti naše standarde hladnog lanca i praćenja ispod.",
     "fleetPolicyTitle": "Bio Vera flota i prijava novih vozila",
-    "fleetPolicyP1": "U veljanosti je novo pravilo: Bio Vera gradi i koristi sopstvenu brendiranu flotu vozila uz ugovorne partnere. Vozilo koje vuče Vera teret mora vizuelno i tehnički odgovarati tom programu—jedinstven identitet na putu, isti princip hladnog lanca i proverljiva telemetrija.",
-    "fleetPolicyP2": "Za prijavu ili registraciju novih vozila u logistici Bio Vera neophodna je potpuna usklađenost sa Bio Vera flotom: odobreni izgled kamiona i brendiranje (grafika, oznake), higijena i zaptivanje teretnog prostora, hlađenje i Bio Vera senzorika, GPS i digitalni procesi kao u prospektu i priručniku za partnere. Vozilo koje standard ne može ispuniti neće biti odobreno.",
+    "fleetPolicyP1": "Novo logističko pravilo Bio Vere: razvijamo i koristimo sopstvenu brendiranu flotu vozila zajedno sa ugovornim partnerima. Vozilo koje prevozi Vera teret mora vizuelno i tehnički da odgovara tom programu—jedinstven identitet na putu, isti princip hladnog lanca i proverljiva telemetrija.",
+    "fleetPolicyP2": "Prijavljivanje ili dodatna registracija vozila u Bio Vera logistici moguća je samo uz potpunu usklađenost sa zahtevima flote Bio Vere: propisan spoljni izgled kamiona i brending (grafika, označavanje), higijena i zaptivanje teretnog prostora, rashladni sistem i senzori koje odobrava Bio Vera, GPS kao i alati i digitalni postupci predaje robe kao u prospektima i priručnicima za partnere, uz sve ostale obavezne standarde koji su tamo navedeni. Vozilo koje ne može ispuniti ove zahteve neće biti odobreno.",
     "fleetStandardsBullets": [
-      "Spoljni izgled: Vera-dozvoljena grafika i logo prema dokumentaciji (vide prospekat PDF)",
-      "Temperatura: rashladni prostor unutar dozvoljenog raspona; provera pre dodele relacije",
-      "Telematika: ugradnja i radljiv Bio Vera senzor / GPS proces — bez nedozvoljenih zamena",
-      "Higijena i dihtung u skladu sa pravilima hladnog lanca za organski teret",
-      "Svaki dodatni tehnički zahtev objavljen u programu flote Vera ostaje obavezujući"
+      "Spoljni izgled i grafika prema dokumentaciji Vere — obeležja, logo i dizajn (pogledajte PDF prospekt)",
+      "Temperatura: rashladni prostor u propisanom rasponu; verifikacija pre dodele rute ili vožnje",
+      "Telematika: ugradnja i ispravan rad Bio Vera kompleta senzora/GPS kao u dokumentaciji — bez nedozvoljenih zamena uređaja",
+      "Higijena i brtve teretnog prostora u skladu sa objavljenim pravilima hladnog lanca za organski teret (Vera partneri)",
+      "Svi ostali tehnički zahtevi objavljeni u programu flote Vere i dalje su obavezujući"
     ],
     "conditionsTitle": "Uslovi da postanete Vera logistički partner",
-    "conditionsLead": "Morate ispuniti sledeće. Prihvatamo mala vozna parka, velike kompanije i nezavisne vozače.",
+    "conditionsLead": "Morate ispuniti sledeće. Prihvatamo male flote, velike kompanije i nezavisne vozače.",
     "needLine": "Potrebni su vam <s1>sistemi hlađenja / rashladna oprema</s1> (hladni lanac), digitalno praćenje i pouzdana isporuka. Prihvatamo <s2>male kompanije</s2>, <s3>velike kompanije</s3> i <s4>nezavisne vozače</s4>.",
     "requirementItems": [
       {
@@ -2036,7 +2036,7 @@
       },
       {
         "title": "Pouzdanost",
-        "body": "Visok trust skor i strogo poštovanje rokova 'u vreme'. Dosledan učinak je osnova za dugoročno partnerstvo."
+        "body": "Visoka ocena pouzdanosti i strogo poštovanje rokova („tačno na vreme“). Dosledan učinak je osnova za dugoročno partnerstvo."
       }
     ],
     "whatYouGetTitle": "Šta dobijate",
@@ -2044,7 +2044,7 @@
     "benefitItems": [
       {
         "title": "Optimizacija ruta",
-        "body": "Naš softver smanjuje prazne kilometre pametnim planiranjem ruta i povećava efikasnost i profit vašeg flota."
+        "body": "Naš softver smanjuje prazne kilometre pametnim planiranjem ruta i povećava efikasnost i profit vaše flote."
       },
       {
         "title": "Brza isplata",
@@ -2055,16 +2055,18 @@
         "body": "Stabilne količine i predvidljiv prihod. Održiv rast uz pouzdane partnere."
       }
     ],
-    "fuelTitle": "Efekat optimizacije ruta",
-    "fuelLead": "Pogledajte kako softver smanjuje troškove goriva",
+    "fuelTitle": "Primer: ušteda na gorivu (ilustracija)",
+    "fuelLead": "Pomerite klizač za pretpostavljen procenat uštede na gorivu. Sivi stub je osnovica pre optimizacije (100%); zeleni proporcionalni preostali račun za gorivo posle optimizacije (100% − ušteda). EUR iznosi ispod polažu od 10 000 EUR mesečnog računa za gorivo danas.",
     "fuelSavingsLabel": "Procenat uštede na gorivu",
+    "fuelDisclaimer": "Samo primer — nije lični predlog ni garancija. Stvarni rezultati zavise od ruta, tereta, stajanja i cene goriva.",
+    "fuelChartCaption": "Ista razmera stubova: siva osnovnica, zeleno „posle“ prema izabranom procentu uštede.",
     "fuelMin": "5%",
     "fuelMax": "30%",
-    "fuelReduction": "Smanjenje goriva",
-    "monthlySavings": "Mesečna ušteda",
-    "yearlySavings": "Godišnja ušteda",
-    "before": "Pre",
-    "after": "Posle",
+    "fuelReduction": "Udela uštede od osnovice",
+    "monthlySavings": "Mesečna ušteda (bazno 10k EUR)",
+    "yearlySavings": "Godišnja projekcija uštede",
+    "before": "Pre (današnji račun)",
+    "after": "Posle optimizacije",
     "resourcesTitle": "Materijali i preuzimanja",
     "resourcesLead": "Osnovni dokumenti i uputstva za logističke partnere",
     "resourceItems": [

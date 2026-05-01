@@ -151,8 +151,13 @@ export default function LogisticsPartnerPage() {
     }
   };
 
+  /** Scenario fuel bill for the illustrative calculator only (EUR/month); not an individual quote. */
+  const FUEL_SCENARIO_MONTHLY_EUR = 10_000;
+  /** Bar heights use the same baseline so “before” stays taller whenever savings % is above zero. */
+  const FUEL_BAR_MAX_PX = 104;
+
   const calculateSavings = (percentage: number) => {
-    const baseCost = 10000;
+    const baseCost = FUEL_SCENARIO_MONTHLY_EUR;
     const savings = (baseCost * percentage) / 100;
     return {
       percentage,
@@ -162,6 +167,10 @@ export default function LogisticsPartnerPage() {
   };
 
   const savings = calculateSavings(fuelSavings);
+  const beforeBarPx = FUEL_BAR_MAX_PX;
+  const afterBarPx = Math.round((FUEL_BAR_MAX_PX * Math.max(0, 100 - fuelSavings)) / 100);
+  /** Keep a visible stub even at max savings slider value */
+  const afterBarClampedPx = Math.max(12, afterBarPx);
 
   const handleDownload = async (resourceId: string) => {
     try {
@@ -316,9 +325,10 @@ export default function LogisticsPartnerPage() {
 
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 max-w-2xl mx-auto">
             <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.fuelTitle')}</h2>
             <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.fuelLead')}</p>
+            <p className="text-sm text-gray-500 font-light mt-3">{t('logisticsPartnerPage.fuelDisclaimer')}</p>
           </div>
 
           <div className="bg-white border border-gray-200 p-8">
@@ -360,14 +370,25 @@ export default function LogisticsPartnerPage() {
             </div>
 
             <div className="mt-8">
-              <div className="flex items-end justify-center gap-2 h-32">
+              <p className="text-xs text-gray-500 text-center mb-3 font-light">{t('logisticsPartnerPage.fuelChartCaption')}</p>
+              <div className="flex items-end justify-center gap-10 sm:gap-14 px-4" aria-hidden>
                 <div className="flex flex-col items-center">
-                  <div className="w-8 bg-gray-300 rounded-t" style={{ height: '60%' }} />
-                  <div className="text-xs text-gray-500 mt-2">{t('logisticsPartnerPage.before')}</div>
+                  <div
+                    className="w-10 sm:w-12 bg-gray-300 rounded-t transition-[height] duration-200 ease-out"
+                    style={{ height: `${beforeBarPx}px` }}
+                  />
+                  <div className="text-xs text-gray-600 mt-2 max-w-[7rem] text-center font-medium">
+                    {t('logisticsPartnerPage.before')}
+                  </div>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="w-8 bg-[#2D5A27] rounded-t" style={{ height: `${100 - fuelSavings}%` }} />
-                  <div className="text-xs text-gray-500 mt-2">{t('logisticsPartnerPage.after')}</div>
+                  <div
+                    className="w-10 sm:w-12 bg-[#2D5A27] rounded-t transition-[height] duration-200 ease-out"
+                    style={{ height: `${afterBarClampedPx}px` }}
+                  />
+                  <div className="text-xs text-gray-600 mt-2 max-w-[7rem] text-center font-medium">
+                    {t('logisticsPartnerPage.after')}
+                  </div>
                 </div>
               </div>
             </div>
