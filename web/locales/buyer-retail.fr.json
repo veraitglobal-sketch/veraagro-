@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Standard Bio Vera",
     "navOrders": "Mes commandes",
     "cartLabel": "Panier ({{count}})",
     "welcome": "Bienvenue, {{name}} !",
@@ -14,12 +15,34 @@
     "productFallback": "Produit Bio Vera",
     "organicFallback": "Produit biologique",
     "priceNa": "N / A",
+    "priceOnRequest": "Prix sur demande",
     "unitKg": "kilos",
+    "qtyIncrease": "Augmenter la quantité",
+    "qtyDecrease": "Diminuer la quantité",
     "addToCart": "Ajouter au panier",
     "cartTitle": "Panier ({{count}})",
     "orderCta": "Commande ({{total}} EUR)",
-    "orderCreated": "Commande créée !",
-    "orderFailed": "Erreur lors de la création de la commande"
+    "orderCreated": "Commande créée !",
+    "orderFailed": "Erreur lors de la création de la commande",
+    "checkout": {
+      "fillRequired": "Veuillez remplir tous les champs obligatoires",
+      "cartEmpty": "Panier vide",
+      "payment": "Paiement",
+      "deliveryAddress": "Adresse de livraison",
+      "street": "Rue et numéro",
+      "city": "Ville",
+      "postalCode": "Code postal",
+      "country": "Pays",
+      "notes": "Notes (facultatif)",
+      "orderSummary": "Récapitulatif",
+      "total": "Total",
+      "proceedToPayment": "Passer au paiement",
+      "confirm": "Confirmer la commande",
+      "creating": "Création de la commande...",
+      "close": "Fermer",
+      "multiOrderHint": "Chaque ligne du panier est envoyée comme commande séparée avec la même adresse de livraison (comme sur l’application mobile).",
+      "ordersCreated": "{{count}} commandes passées avec succès."
+    }
   },
   "orders": {
     "navShop": "Boutique",

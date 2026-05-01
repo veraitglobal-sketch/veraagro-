@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Bio Vera standard",
     "navOrders": "Moje porudžbine",
     "cartLabel": "Korpa ({{count}})",
     "welcome": "Dobrodošli, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Bio Vera proizvod",
     "organicFallback": "Organski proizvod",
     "priceNa": "n/d",
+    "priceOnRequest": "Cena na upit",
     "unitKg": "kg",
+    "qtyIncrease": "Povećaj količinu",
+    "qtyDecrease": "Smanji količinu",
     "addToCart": "U korpu",
     "cartTitle": "Korpa ({{count}})",
     "orderCta": "Poruči ({{total}} EUR)",
     "orderCreated": "Porudžbina je kreirana!",
-    "orderFailed": "Greška pri kreiranju porudžbine"
+    "orderFailed": "Greška pri kreiranju porudžbine",
+    "checkout": {
+      "fillRequired": "Popuni sva obavezna polja",
+      "cartEmpty": "Korpa je prazna",
+      "payment": "Plaćanje",
+      "deliveryAddress": "Adresa isporuke",
+      "street": "Ulica i broj",
+      "city": "Grad",
+      "postalCode": "Poštanski broj",
+      "country": "Zemlja",
+      "notes": "Napomene (opciono)",
+      "orderSummary": "Pregled porudžbine",
+      "total": "Ukupno",
+      "proceedToPayment": "Nastavi ka plaćanju",
+      "confirm": "Potvrdi porudžbinu",
+      "creating": "Kreiranje porudžbine...",
+      "close": "Zatvori",
+      "multiOrderHint": "Svaka stavka u korpi se šalje kao posebna porudžbina uz istu adresu isporuke (isto kao na mobilnoj aplikaciji).",
+      "ordersCreated": "Uspešno poslato {{count}} porudžbina."
+    }
   },
   "orders": {
     "navShop": "Prodavnica",

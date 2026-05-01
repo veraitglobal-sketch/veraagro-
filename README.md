@@ -238,7 +238,7 @@ MAX_TIME_OFFSET=300
 
 ### Producer Routes
 - `/partner-login` - Producer authentication
-- `/(producer)/dashboard` - Producer dashboard
+- `/(producer)/(tabs)` - Producer home (dashboard)
 - `/(producer)/estates` - Estate management
 - `/(producer)/scanner` - QR code scanner
 - `/(producer)/growth-journal` - Growth log

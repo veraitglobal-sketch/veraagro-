@@ -1,5 +1,6 @@
 /**
- * Lets axios 401 handler notify the single AuthContext without a circular import (api → events → context).
+ * Lets axios 401 handling call AuthContext `logout` + navigation without `api.ts` importing the context (circular deps).
+ * If no handler is registered (tests / early boot), fall back to clearing stored credentials.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

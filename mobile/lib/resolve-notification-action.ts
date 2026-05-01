@@ -1,11 +1,52 @@
 import type { Href } from 'expo-router';
 
+import { PRODUCER_ROLES } from './post-login-redirect';
+
+export interface NotificationActionContext {
+  /** From `normalizeUserRoles(user)` — disambiguates shared web paths (`/orders/:id`, `/missions/:id`). */
+  roles?: string[];
+}
+
+function rolesUpperSet(roles: string[] | undefined): Set<string> {
+  return new Set((roles ?? []).map((r) => String(r).trim().toUpperCase()).filter(Boolean));
+}
+
+function isProducerStack(roleSet: Set<string>): boolean {
+  return PRODUCER_ROLES.some((r) => roleSet.has(r));
+}
+
+function isLogisticsStack(roleSet: Set<string>): boolean {
+  return roleSet.has('LOGISTICS_PARTNER') || roleSet.has('DRIVER');
+}
+
+function orderDetailHref(orderId: string, context?: NotificationActionContext): Href {
+  const R = rolesUpperSet(context?.roles);
+  if (!context?.roles?.length || isProducerStack(R)) {
+    return `/(producer)/orders/${encodeURIComponent(orderId)}` as Href;
+  }
+  if (R.has('BUYER') || R.has('CUSTOMER')) {
+    return `/(buyer)/order/${encodeURIComponent(orderId)}` as Href;
+  }
+  return `/(producer)/orders/${encodeURIComponent(orderId)}` as Href;
+}
+
+function missionsListHref(path: string, context?: NotificationActionContext): Href {
+  const R = rolesUpperSet(context?.roles);
+  const webLogisticsFleet =
+    path.includes('logistics-partner') || path.includes('fleet-partner');
+  if (webLogisticsFleet || isLogisticsStack(R)) {
+    return '/(logistics)/' as Href;
+  }
+  return '/(producer)/missions' as Href;
+}
+
 /**
- * Backend stores web-style `actionUrl` values. Map them to in-app (producer) routes.
- * Returns `null` when the app has no dedicated screen.
+ * Backend stores web-style `actionUrl` values. Maps them to in-app routes per role/stack
+ * (`/(producer)`, `/(buyer)`, `/(logistics)`, …). Returns `null` when there is no screen.
  */
 export function resolveNotificationActionHref(
   actionUrl: string | null | undefined,
+  context?: NotificationActionContext,
 ): Href | null {
   if (!actionUrl || typeof actionUrl !== 'string') return null;
   const trimmed = actionUrl.trim();
@@ -14,7 +55,7 @@ export function resolveNotificationActionHref(
   if (/^https?:\/\//i.test(trimmed)) {
     try {
       const u = new URL(trimmed);
-      return resolveNotificationActionHref(`${u.pathname}${u.search}` as string);
+      return resolveNotificationActionHref(`${u.pathname}${u.search}`, context);
     } catch {
       return null;
     }
@@ -25,6 +66,10 @@ export function resolveNotificationActionHref(
   const queryPart = qIndex === -1 ? '' : trimmed.slice(qIndex + 1);
   const path = pathPart.replace(/\/+$/, '') || '/';
 
+  if (/^\/admin(\/|$)/.test(path)) {
+    return null;
+  }
+
   if (path === '/grower/portal' || path.endsWith('/grower/portal')) {
     const params = new URLSearchParams(queryPart);
     const missionId = params.get('missionId');
@@ -34,6 +79,63 @@ export function resolveNotificationActionHref(
     return '/(producer)/missions' as Href;
   }
 
+  /** Web buyer portal (`/buyer-portal/*`) → buyer tabs. */
+  if (path === '/buyer-portal' || path.startsWith('/buyer-portal/')) {
+    const remainder = path === '/buyer-portal' ? '' : path.slice('/buyer-portal/'.length);
+    const segments = remainder.split('/').filter(Boolean);
+    if (segments.length === 0) {
+      return '/(buyer)/dashboard' as Href;
+    }
+    const [a0, a1] = segments;
+    if (a0 === 'orders' && a1 && /^[0-9a-f-]{36}$/i.test(a1)) {
+      return `/(buyer)/order/${encodeURIComponent(a1)}` as Href;
+    }
+    if (a0 === 'orders' || a0 === 'history') {
+      return '/(buyer)/orders' as Href;
+    }
+    if (a0 === 'dashboard') {
+      return '/(buyer)/dashboard' as Href;
+    }
+    if (a0 === 'profile') {
+      return '/(buyer)/profile' as Href;
+    }
+    if (a0 === 'vera-standard') {
+      return '/(buyer)/vera-standard' as Href;
+    }
+    if (['deliveries', 'invoices', 'analytics', 'trade-panel', 'inventory', 'suppliers'].includes(a0 ?? '')) {
+      return '/(buyer)/orders' as Href;
+    }
+    return '/(buyer)/dashboard' as Href;
+  }
+
+  if (path === '/buyer/shop' || path.startsWith('/buyer/shop/')) {
+    return '/(buyer)/shop' as Href;
+  }
+
+  if (path === '/supplier' || path.startsWith('/supplier/')) {
+    const remainder = path === '/supplier' ? '' : path.slice('/supplier/'.length);
+    const seg = remainder.split('/').filter(Boolean)[0];
+    if (seg === 'orders') {
+      return '/(supplier)/orders' as Href;
+    }
+    if (seg === 'messages') {
+      return '/(supplier)/messages' as Href;
+    }
+    return '/(supplier)/dashboard' as Href;
+  }
+
+  /** Web logistics / fleet partner shell. */
+  if (path.includes('fleet-partner') || path.includes('logistics-partner')) {
+    if (path.includes('handover-receiver')) {
+      return '/(logistics)/handover-receiver' as Href;
+    }
+    const lm = path.match(/\/missions\/([^/]+)\/?$/);
+    if (lm?.[1]) {
+      return `/(logistics)/mission/${encodeURIComponent(lm[1])}` as Href;
+    }
+    return '/(logistics)/' as Href;
+  }
+
   const batchMatch = path.match(/^\/batches\/([^/]+)\/?$/);
   if (batchMatch) {
     return `/(producer)/batch/${encodeURIComponent(batchMatch[1])}` as Href;
@@ -41,7 +143,12 @@ export function resolveNotificationActionHref(
 
   const missionPath = path.match(/^\/missions\/([^/]+)\/?$/);
   if (missionPath) {
-    return `/(producer)/mission/${encodeURIComponent(missionPath[1])}` as Href;
+    const id = missionPath[1];
+    const R = rolesUpperSet(context?.roles);
+    if (isLogisticsStack(R)) {
+      return `/(logistics)/mission/${encodeURIComponent(id)}` as Href;
+    }
+    return `/(producer)/mission/${encodeURIComponent(id)}` as Href;
   }
 
   if (
@@ -52,16 +159,54 @@ export function resolveNotificationActionHref(
     path === '/admin/missions' ||
     (path.includes('logistics-partner') && path.includes('mission'))
   ) {
-    return '/(producer)/missions' as Href;
+    return missionsListHref(path, context);
   }
 
   const orderMatch = path.match(/^\/orders\/([^/]+)\/?$/);
   if (orderMatch) {
-    return `/(producer)/orders/${encodeURIComponent(orderMatch[1])}` as Href;
+    return orderDetailHref(orderMatch[1], context);
   }
 
-  if (path === '/orders' || /^\/deliveries\//.test(path)) {
+  const deliveryDetail = path.match(/^\/deliveries\/([^/]+)\/?$/);
+  if (deliveryDetail) {
+    const R = rolesUpperSet(context?.roles);
+    if (isLogisticsStack(R)) {
+      return '/(logistics)/' as Href;
+    }
+    if (R.has('BUYER') || R.has('CUSTOMER')) {
+      return '/(buyer)/orders' as Href;
+    }
     return '/(producer)/orders' as Href;
+  }
+
+  if (path === '/orders') {
+    const R = rolesUpperSet(context?.roles);
+    if (isLogisticsStack(R) && !isProducerStack(R) && !(R.has('BUYER') || R.has('CUSTOMER'))) {
+      return '/(logistics)/' as Href;
+    }
+    if (isProducerStack(R) || !context?.roles?.length) {
+      return '/(producer)/orders' as Href;
+    }
+    if (R.has('BUYER') || R.has('CUSTOMER')) {
+      return '/(buyer)/orders' as Href;
+    }
+    return '/(producer)/orders' as Href;
+  }
+
+  if (/^\/deliveries\//.test(path)) {
+    const R = rolesUpperSet(context?.roles);
+    if (isLogisticsStack(R)) {
+      return '/(logistics)/' as Href;
+    }
+    if (R.has('BUYER') || R.has('CUSTOMER')) {
+      return '/(buyer)/orders' as Href;
+    }
+    return '/(producer)/orders' as Href;
+  }
+
+  const handSimple = path.match(/^\/handover\/[^/]+\/?$/);
+  if (handSimple && isLogisticsStack(rolesUpperSet(context?.roles))) {
+    return '/(logistics)/handover-receiver' as Href;
   }
 
   if (path === '/trust-score' || path.startsWith('/trust-score')) {
@@ -73,7 +218,7 @@ export function resolveNotificationActionHref(
   }
 
   if (path.startsWith('/grower/')) {
-    return '/(producer)/dashboard' as Href;
+    return '/(producer)/(tabs)' as Href;
   }
 
   return null;

@@ -1,3 +1,5 @@
+import { WEB_DEV_API_FALLBACK } from './api-base';
+
 const PROD_API = 'https://api.biovera.app';
 
 /**
@@ -15,5 +17,5 @@ export function getPublicApiBase(): string {
       return PROD_API;
     }
   }
-  return 'http://localhost:3004';
+  return WEB_DEV_API_FALLBACK;
 }

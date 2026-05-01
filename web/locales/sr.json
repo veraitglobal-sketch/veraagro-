@@ -986,7 +986,15 @@
       "fieldDiaryCardTitle": "Dnevnik unosa",
       "fieldDiaryCardCount": "{{count}} sinhronizovanih unosa ukupno (sva gazdinstva)",
       "fieldDiaryCardHint": "Tabela pokazuje iste zapise kao aplikacija čim dođu na server — nove unose radite u mobilnoj aplikaciji uz fotografiju i GPS.",
-      "fieldDiaryCardCta": "Otvori dnevnik"
+      "fieldDiaryCardCta": "Otvori dnevnik",
+      "outboxAria": "Terenski unosi u pregledaču koji čekaju sinhronizaciju",
+      "outboxTitle": "Čeka sinhronizacija",
+      "outboxBody_one": "{{count}} terenski unos u ovom pregledaču još nije na serveru.",
+      "outboxBody_few": "{{count}} terenska unosa u ovom pregledaču još nisu na serveru.",
+      "outboxBody_other": "{{count}} terenskih unosa u ovom pregledaču još uvek nisu na serveru.",
+      "outboxSyncNow": "Pošalji sad",
+      "outboxSending": "Slanje…",
+      "outboxOpenWorkspace": "Otvori terenski unos"
     },
     "missionCreate": {
       "submitCta": "Zahtevaj transport",
@@ -1172,7 +1180,8 @@
     "invoices": "Fakture",
     "deliveries": "Isporuke",
     "analytics": "Analitika",
-    "companyProfile": "Profil kompanije"
+    "companyProfile": "Profil kompanije",
+    "veraStandard": "Bio Vera standard"
   },
   "logisticsPartnerNav": {
     "dashboard": "Kontrolna tabla",
@@ -1192,7 +1201,19 @@
     "veraTrade": "Vera trgovina",
     "suppliers": "Vera partneri",
     "invoices": "Fakture",
-    "analytics": "Analitika i izveštaji"
+    "analytics": "Analitika i izveštaji",
+    "veraStandard": "Bio Vera standard"
+  },
+  "buyerPortalVeraStandard": {
+    "title": "Bio Vera standard",
+    "description": "Naš standard garantuje neosporni digitalni dokaz za svaki proizvod.",
+    "requirements": {
+      "title": "Zahtevi sertifikacije:",
+      "gps": "GPS praćenje granica farme",
+      "images": "Hronološke slike rasta",
+      "lab": "Laboratorijski rezultati",
+      "duration": "3 godine kontinuiranog monitoringa"
+    }
   },
   "buyerTrade": {
     "loading": "Učitavanje trgovinskih podataka…",

@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Bio Vera Standard",
     "navOrders": "My Orders",
     "cartLabel": "Cart ({{count}})",
     "welcome": "Welcome, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Bio Vera product",
     "organicFallback": "Organic product",
     "priceNa": "N/A",
+    "priceOnRequest": "Price on request",
     "unitKg": "kg",
+    "qtyIncrease": "Increase quantity",
+    "qtyDecrease": "Decrease quantity",
     "addToCart": "Add to cart",
     "cartTitle": "Cart ({{count}})",
     "orderCta": "Order ({{total}} EUR)",
     "orderCreated": "Order created!",
-    "orderFailed": "Error creating order"
+    "orderFailed": "Error creating order",
+    "checkout": {
+      "fillRequired": "Please fill all required fields",
+      "cartEmpty": "Cart is empty",
+      "payment": "Payment",
+      "deliveryAddress": "Delivery address",
+      "street": "Street and number",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "notes": "Notes (optional)",
+      "orderSummary": "Order summary",
+      "total": "Total",
+      "proceedToPayment": "Proceed to payment",
+      "confirm": "Confirm order",
+      "creating": "Creating order...",
+      "close": "Close",
+      "multiOrderHint": "Each cart line is submitted as a separate order with the same delivery address (same as the mobile app).",
+      "ordersCreated": "{{count}} orders placed successfully."
+    }
   },
   "orders": {
     "navShop": "Shop",

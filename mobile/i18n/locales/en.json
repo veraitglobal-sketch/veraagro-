@@ -290,7 +290,7 @@
         "pendingBody": "The team is checking parcels. You can still use the journal where you are already approved.",
         "pendingCta": "View steps",
         "syncTitle": "{{count}} to send",
-        "syncBody": "You saved work offline. Go online or pull to refresh to send it.",
+        "syncBody": "You have entries waiting to upload or a send was rejected (for example GPS outside the farm boundary). Open the entry log to see details — you are not necessarily offline.",
         "syncCta": "Open entry log",
         "logWorkTitle": "Log today's work",
         "logWorkBody": "Spray, plant, harvest — when and where — in the entry log.",
@@ -298,6 +298,13 @@
         "defaultTitle": "Three steps",
         "defaultBody": "Parcels, approval, then work and harvest. All in one place.",
         "defaultCta": "View steps"
+      },
+      "syncStrip": {
+        "title": "Waiting to sync",
+        "pendingLine": "{{count}} items waiting to upload (entries, scans, receipts…).",
+        "errorLine": "Last error",
+        "syncNow": "Send now",
+        "openLog": "Open entry log"
       },
       "farmer": {
         "blockTitle": "On the farm — follow this order",
@@ -385,7 +392,13 @@
       "createPlantingHeading": "Create planting",
       "pickCategory": "Category",
       "filterAll": "All",
-      "pickVariety": "Tap a variety",
+      "pickVariety": "Search or pick a crop",
+      "cropSearchPlaceholder": "Type to search…",
+      "parcelLockedHint": "Approved parcel for this planting",
+      "validationParcel": "Choose a parcel above first.",
+      "validationCrop": "Pick a crop from the list or type under Other.",
+      "validationDate": "Set an expected date.",
+      "noCropMatch": "No matches — use Other below.",
       "customCropHint": "Other (type if not in the list)",
       "customCropPlaceholder": "Crop name…",
       "harvestEmpty": "No harvest plans yet.",
@@ -979,7 +992,11 @@
       "locationErrorFallback": "Unable to get location.",
       "openSettings": "Open settings",
       "cameraError": "Unable to open camera",
-      "saveOk": "Entry saved. Will be sent when online.",
+      "saveOk": "Entry saved on this device.",
+      "saveQueuedWhenOnline": "No connection right now — the entry will upload when you’re back online.",
+      "saveSentNow": "Entry sent to the server.",
+      "saveWillRetry": "Saved. Upload will retry shortly; pull to refresh on Home if needed.",
+      "saveSyncFailedTitle": "Could not upload",
       "saveFailed": "Unable to save entry",
       "selectActivity": "Select activity type",
       "photoRequired": "Photo is required",
@@ -1106,8 +1123,13 @@
       "cartEmpty": "Cart is empty",
       "orderCreateFailed": "Could not create order",
       "payment": "Payment",
-      "creating": "Creating order...",
-      "confirm": "Confirm order"
+      "creating": "Creating order…",
+      "confirm": "Confirm order",
+      "proceedToPayment": "Proceed to payment",
+      "orderSummary": "Order summary",
+      "total": "Total",
+      "multiOrderHint": "Each cart line is submitted as a separate order with this delivery address (same as the web shop).",
+      "ordersCreated": "{{count}} orders placed successfully."
     }
   },
   "supplier": {

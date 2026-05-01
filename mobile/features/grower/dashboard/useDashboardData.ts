@@ -43,6 +43,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     approved: number;
   }>({ loaded: false, total: 0, pending: 0, approved: 0 });
   const [offlinePending, setOfflinePending] = useState(0);
+  const [offlineSyncing, setOfflineSyncing] = useState(false);
+  const [offlineSyncLastError, setOfflineSyncLastError] = useState<string | null>(null);
   const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
   const appStateRef = useRef(AppState.currentState);
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,11 +61,15 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         await syncService.startAutoSync();
         const st = await syncService.getSyncStatus();
         setOfflinePending(st.pendingCount || 0);
+        setOfflineSyncing(Boolean(st.syncing));
+        setOfflineSyncLastError(st.lastError ?? null);
       } catch {
         // still try to show queue size
         try {
           const st = await syncService.getSyncStatus();
           setOfflinePending(st.pendingCount || 0);
+          setOfflineSyncing(Boolean(st.syncing));
+          setOfflineSyncLastError(st.lastError ?? null);
         } catch {
           // ignore
         }
@@ -111,8 +117,12 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     try {
       const st = await syncService.getSyncStatus();
       setOfflinePending(st.pendingCount || 0);
+      setOfflineSyncing(Boolean(st.syncing));
+      setOfflineSyncLastError(st.lastError ?? null);
     } catch {
       setOfflinePending(0);
+      setOfflineSyncing(false);
+      setOfflineSyncLastError(null);
     }
   }, []);
 
@@ -278,6 +288,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     financialData,
     parcelSteps,
     offlinePending,
+    offlineSyncing,
+    offlineSyncLastError,
     refreshing,
     onRefresh,
     loadData,

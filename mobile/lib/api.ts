@@ -1,6 +1,20 @@
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './api-url';
+import { notifyAuthUnauthorized } from './auth-events';
+
+/** 401 on these routes is credential/registration UX, not an expired JWT. */
+export function isAuthNegotiationUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  const path = url.split('?')[0].replace(/\\/g, '/');
+  const lower = path.toLowerCase();
+  return (
+    lower.endsWith('/auth/login') ||
+    lower.endsWith('auth/login') ||
+    lower.includes('/auth/register') ||
+    lower.includes('/auth/verify-email')
+  );
+}
 
 export { getApiUrl, API_URL, PRODUCTION_API_URL } from './api-url';
 
@@ -25,10 +39,18 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Error interceptor — do not clear session on 401; only explicit Logout should sign the user out.
+// 401 handling — align with web: clear auth + navigate home (parity with JWT expiry).
+// Exclude /auth/login, /auth/register*, /auth/verify-email so wrong password does not wipe session.
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error: AxiosError) => {
+    const status = error.response?.status;
+    const reqUrl = error.config?.url;
+    if (status === 401 && !isAuthNegotiationUrl(reqUrl)) {
+      notifyAuthUnauthorized();
+    }
+    return Promise.reject(error);
+  },
 );
 
 // Types
@@ -564,7 +586,7 @@ export interface Order {
 
 export const ordersAPI = {
   create: async (data: {
-    estateId: string;
+    estateId?: string;
     productName: string;
     quantity: number;
     unit: string;

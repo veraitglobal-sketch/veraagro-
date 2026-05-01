@@ -9,6 +9,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 function parseChildSerials(raw: string): string[] {
   return [
@@ -22,8 +23,7 @@ function parseChildSerials(raw: string): string[] {
 }
 
 function publicBadgeUrl(serial: string): string {
-  const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004').replace(/\/$/, '');
-  return `${base}/public/badges/${encodeURIComponent(serial)}`;
+  return `${WEB_API_BASE.replace(/\/$/, '')}/public/badges/${encodeURIComponent(serial)}`;
 }
 
 export default function GrowerPackageBadgesPage() {

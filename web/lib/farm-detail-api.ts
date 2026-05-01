@@ -3,7 +3,9 @@
  * GET /admin/farmers/:id (optional ?include=) — fallback GET /admin/farm/:id
  */
 
-const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
+import { WEB_API_BASE } from './api-base';
+
+const base = WEB_API_BASE;
 
 export interface FarmerProfileBlock {
   id: string;

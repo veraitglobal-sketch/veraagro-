@@ -38,9 +38,9 @@
 - **Linija 98**: `Welcome, {user?.firstName || 'Customer'}! 🛒`
 - **Status**: ✅ **POPRAVLJENO** - Promenjeno na engleski
 
-#### C. Producer Dashboard (`web/app/producer/dashboard/page.tsx`) ✅ POPRAVLJENO
-- **Linija 69**: `Welcome, {user?.firstName || 'Producer'}! 🚜`
-- **Status**: ✅ **POPRAVLJENO** - Promenjeno na engleski
+#### C. Grower početni ekran (`web/app/grower/page.tsx`) ✅ POPRAVLJENO
+- **Napomena:** `web/app/producer/dashboard/page.tsx` više ne postoji; `/producer/dashboard` redirectuje na `/grower` (plan pariteta ruta).
+- **Status**: ✅ **POPRAVLJENO** — welcome / početni tekst obrađeni na kanonskoj grower početnoj stranici.
 
 ---
 
@@ -70,7 +70,7 @@
 
 ### Prioritet 2 (VAŽNO): ✅ ZAVRŠENO
 3. ✅ **Buyer Shop** - Lokalizovano "Welcome" poruka
-4. ✅ **Producer Dashboard** - Lokalizovano "Welcome" poruka
+4. ✅ **Grower početna (`/grower`)** — lokalizovana početna / welcome poruka (bivši producer dashboard konsolidovan)
 5. ✅ **Help Center** - Svi tekstovi su lokalizovani (EN, SR, DE)
 
 ### Prioritet 3 (POŽELJNO):
@@ -96,7 +96,7 @@
 
 **Fajlovi**:
 - `web/app/buyer/shop/page.tsx` - Linija 98
-- `web/app/producer/dashboard/page.tsx` - Linija 69
+- `web/app/grower/page.tsx` — početni ekran growera (umesto uklonjenog `producer/dashboard`)
 
 **Akcija**: Dodati lokalizaciju za "Dobrodošli" poruke.
 
@@ -115,7 +115,7 @@
 - [x] Backend email service - promeniti na engleski ✅
 - [x] Protocol 360 - dodati zarez (linija 76) ✅ (već postoji)
 - [x] Buyer Shop - lokalizovati "Dobrodošli" ✅
-- [x] Producer Dashboard - lokalizovati "Dobrodošli" ✅
+- [x] Grower početna (`/grower`) — početni tekst ✅
 - [ ] Help Center - proveriti sve tekstove (srpski tekst u `sr` sekciji je OK)
 - [ ] Layout - dinamički lang attribute (opciono)
 

@@ -11,6 +11,7 @@ import {
   Platform,
   Modal,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Wheat, Plus, X } from 'lucide-react-native';
@@ -75,6 +76,8 @@ export default function PlantingsScreen() {
   const [cropFilter, setCropFilter] = useState<CropCategoryId | 'all'>('all');
   const [formDate, setFormDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [formNotes, setFormNotes] = useState('');
+  const [cropSearch, setCropSearch] = useState('');
+  const [addFormErr, setAddFormErr] = useState<string | null>(null);
 
   /** Detail */
   const [detailHa, setDetailHa] = useState<HaRow | null>(null);
@@ -133,15 +136,21 @@ export default function PlantingsScreen() {
     setSelectedVariety(null);
     setCustomCropOther('');
     setCropFilter('all');
+    setCropSearch('');
+    setAddFormErr(null);
     setFormDate(new Date().toISOString().slice(0, 10));
     setFormNotes('');
   }, []);
 
+  /** When modal opens with exactly one parcel, bind it reliably (avoids stale batching vs resetAddForm). */
+  useEffect(() => {
+    if (!addOpen) return;
+    if (parcelList.length === 1) setFormParcelId(parcelList[0].id);
+  }, [addOpen, parcelList]);
   const openAdd = () => {
     resetAddForm();
     setErr(null);
     setAddOpen(true);
-    if (parcelList.length === 1) setFormParcelId(parcelList[0].id);
   };
 
   const plantingsSorted = useMemo(() => {
@@ -182,8 +191,21 @@ export default function PlantingsScreen() {
   };
 
   const submitPlanting = async () => {
-    const crop = cropLabelChosen();
-    if (!formParcelId.trim() || !crop || !formDate) return;
+    setAddFormErr(null);
+    const crop = cropLabelChosen().trim();
+    if (!formParcelId.trim()) {
+      setAddFormErr(t('producer.plantings.validationParcel'));
+      return;
+    }
+    if (!crop) {
+      setAddFormErr(t('producer.plantings.validationCrop'));
+      return;
+    }
+    if (!formDate.trim()) {
+      setAddFormErr(t('producer.plantings.validationDate'));
+      return;
+    }
+
     setSaving(true);
     setErr(null);
     try {
@@ -200,7 +222,9 @@ export default function PlantingsScreen() {
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
       const text = Array.isArray(msg) ? msg.join(' ') : msg;
-      setErr(text || (e instanceof Error ? e.message : t('producer.plantings.loadError')));
+      const fallback = text || (e instanceof Error ? e.message : t('producer.plantings.loadError'));
+      setAddFormErr(fallback);
+      setErr(fallback);
     } finally {
       setSaving(false);
     }
@@ -240,6 +264,19 @@ export default function PlantingsScreen() {
     const cat = CROP_CATALOG.find((c) => c.id === cropFilter);
     return (cat?.items ?? []).map((row) => ({ cat: cropFilter, row }));
   }, [cropFilter]);
+
+  const filteredVarieties = useMemo(() => {
+    const q = cropSearch.trim().toLowerCase();
+    if (!q) return visibleVarieties;
+    return visibleVarieties.filter(({ row }) => {
+      const sr = row.cropTypeSr.toLowerCase();
+      const en = row.cropTypeEn.toLowerCase();
+      const loc = cropTypeForLocale(row, langSr).toLowerCase();
+      return sr.includes(q) || en.includes(q) || loc.includes(q);
+    });
+  }, [visibleVarieties, cropSearch, langSr]);
+
+  const sheetHeight = Math.round(Dimensions.get('window').height * 0.88);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -438,151 +475,270 @@ export default function PlantingsScreen() {
         </View>
       </Modal>
 
-      {/* Add planting modal */}
+      {/* Add planting modal — fixed footer save, compact crop list + search */}
       <Modal visible={addOpen} animationType="slide" transparent presentationStyle="pageSheet">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' }}>
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={{
+              height: sheetHeight,
               backgroundColor: theme.colors.background,
               borderTopLeftRadius: theme.borderRadius.lg,
               borderTopRightRadius: theme.borderRadius.lg,
-              maxHeight: '92%',
               paddingHorizontal: p.screenPaddingLeft,
-              paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: theme.spacing.sm }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', flex: 1 }}>{t('producer.plantings.formSectionTitle')}</Text>
-              <TouchableOpacity onPress={() => setAddOpen(false)} hitSlop={12}>
-                <X size={24} color={theme.colors.text.secondary} />
-              </TouchableOpacity>
-            </View>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: theme.spacing.sm }}>
+                <Text style={{ fontSize: 18, fontWeight: '700', flex: 1 }}>{t('producer.plantings.formSectionTitle')}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setAddFormErr(null);
+                    setAddOpen(false);
+                  }}
+                  hitSlop={12}
+                >
+                  <X size={24} color={theme.colors.text.secondary} />
+                </TouchableOpacity>
+              </View>
 
-            {parcelList.length === 0 ? (
-              <Text style={{ paddingVertical: theme.spacing.lg, color: theme.colors.warning }}>{t('producer.plantings.approvedOnlyHint')}</Text>
-            ) : (
-              <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                <Text style={{ fontSize: 13, fontWeight: '600', marginBottom: 8, color: theme.colors.text.secondary }}>
-                  {t('producer.plantings.selectParcel')}
-                </Text>
-                <View style={{ gap: theme.spacing.sm, marginBottom: theme.spacing.md }}>
-                  {parcelList.map((par) => {
-                    const sel = formParcelId === par.id;
-                    const aM2 =
-                      typeof par.calculatedArea === 'number' ? `${formatArea(par.calculatedArea, langSr)}` : '—';
-                    return (
-                      <TouchableOpacity
-                        key={par.id}
-                        onPress={() => setFormParcelId(par.id)}
-                        activeOpacity={0.85}
+              {parcelList.length === 0 ? (
+                <Text style={{ paddingVertical: theme.spacing.lg, color: theme.colors.warning }}>{t('producer.plantings.approvedOnlyHint')}</Text>
+              ) : (
+                <>
+                  <ScrollView
+                    style={{ flex: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: theme.spacing.sm }}
+                  >
+                    {parcelList.length === 1 ? (
+                      <View
                         style={{
                           padding: theme.spacing.sm,
+                          marginBottom: theme.spacing.md,
                           borderRadius: theme.borderRadius.md,
-                          borderWidth: 2,
-                          borderColor: sel ? theme.colors.primary : theme.colors.border,
-                          backgroundColor: sel ? theme.colors.primaryLight : theme.colors.surface,
+                          borderWidth: 1,
+                          borderColor: theme.colors.border,
+                          backgroundColor: theme.colors.surfaceElevated,
                         }}
                       >
-                        <Text style={{ fontWeight: '700', color: theme.colors.text.primary }}>{par.estateName}</Text>
+                        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>{t('producer.plantings.parcelLockedHint')}</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.text.primary, marginTop: 6 }}>
+                          {parcelList[0].estateName}
+                        </Text>
                         <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4 }}>
-                          {par.cropType || `${par.id.slice(0, 8)}…`}
+                          {parcelList[0].cropType || '—'}
+                          {typeof parcelList[0].calculatedArea === 'number'
+                            ? ` · ${formatArea(parcelList[0].calculatedArea, langSr)}`
+                            : ''}
                         </Text>
-                        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 4 }}>{aM2}</Text>
+                      </View>
+                    ) : (
+                      <>
+                        <Text style={{ fontSize: 13, fontWeight: '600', marginBottom: 8, color: theme.colors.text.secondary }}>
+                          {t('producer.plantings.selectParcel')}
+                        </Text>
+                        <ScrollView
+                          nestedScrollEnabled
+                          keyboardShouldPersistTaps="handled"
+                          style={{ maxHeight: 128, marginBottom: theme.spacing.md }}
+                          showsVerticalScrollIndicator
+                        >
+                          <View style={{ gap: theme.spacing.xs }}>
+                            {parcelList.map((par) => {
+                              const sel = formParcelId === par.id;
+                              const aM2 =
+                                typeof par.calculatedArea === 'number'
+                                  ? `${formatArea(par.calculatedArea, langSr)}`
+                                  : '—';
+                              return (
+                                <TouchableOpacity
+                                  key={par.id}
+                                  onPress={() => {
+                                    setFormParcelId(par.id);
+                                    setAddFormErr(null);
+                                  }}
+                                  activeOpacity={0.85}
+                                  style={{
+                                    padding: theme.spacing.sm,
+                                    borderRadius: theme.borderRadius.md,
+                                    borderWidth: 2,
+                                    borderColor: sel ? theme.colors.primary : theme.colors.border,
+                                    backgroundColor: sel ? theme.colors.primaryLight : theme.colors.surface,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: '700', color: theme.colors.text.primary }}>{par.estateName}</Text>
+                                  <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
+                                    {par.cropType || `${par.id.slice(0, 8)}…`} · {aM2}
+                                  </Text>
+                                </TouchableOpacity>
+                              );
+                            })}
+                          </View>
+                        </ScrollView>
+                      </>
+                    )}
+
+                    <Text style={{ fontSize: 15, fontWeight: '700', marginBottom: theme.spacing.xs }}>
+                      {t('producer.plantings.createPlantingHeading')}
+                    </Text>
+
+                    <Text style={{ fontSize: 12, marginBottom: 6, color: theme.colors.text.secondary }}>
+                      {t('producer.plantings.pickCategory')}
+                    </Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: theme.spacing.sm }}>
+                      <TouchableOpacity onPress={() => setCropFilter('all')} style={chipStyles(cropFilter === 'all', theme)}>
+                        <Text style={{ fontWeight: '600', fontSize: 13 }}>{t('producer.plantings.filterAll')}</Text>
                       </TouchableOpacity>
-                    );
-                  })}
-                </View>
+                      {CROP_CATALOG.map((c) => (
+                        <TouchableOpacity key={c.id} onPress={() => setCropFilter(c.id)} style={chipStyles(cropFilter === c.id, theme)}>
+                          <Text style={{ fontWeight: '600', fontSize: 13 }}>{langSr ? c.labelSr : c.labelEn}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
 
-                <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: theme.spacing.sm }}>{t('producer.plantings.createPlantingHeading')}</Text>
+                    <Text style={{ fontSize: 12, marginBottom: 6, color: theme.colors.text.secondary }}>
+                      {t('producer.plantings.pickVariety')}
+                    </Text>
+                    <TextInput
+                      style={[inputStyle, { marginBottom: 8, paddingVertical: 10 }]}
+                      value={cropSearch}
+                      onChangeText={setCropSearch}
+                      placeholder={t('producer.plantings.cropSearchPlaceholder')}
+                      placeholderTextColor={theme.colors.text.tertiary}
+                    />
 
-                <Text style={{ fontSize: 13, marginBottom: 8, color: theme.colors.text.secondary }}>{t('producer.plantings.pickCategory')}</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
-                  <TouchableOpacity onPress={() => setCropFilter('all')} style={chipStyles(cropFilter === 'all', theme)}>
-                    <Text style={{ fontWeight: '600', fontSize: 13 }}>{t('producer.plantings.filterAll')}</Text>
-                  </TouchableOpacity>
-                  {CROP_CATALOG.map((c) => (
-                    <TouchableOpacity key={c.id} onPress={() => setCropFilter(c.id)} style={chipStyles(cropFilter === c.id, theme)}>
-                      <Text style={{ fontWeight: '600', fontSize: 13 }}>{langSr ? c.labelSr : c.labelEn}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                    <View
+                      style={{
+                        maxHeight: 168,
+                        marginBottom: theme.spacing.sm,
+                        borderWidth: 1,
+                        borderColor: theme.colors.border,
+                        borderRadius: theme.borderRadius.md,
+                        backgroundColor: theme.colors.surface,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator>
+                        {filteredVarieties.length === 0 ? (
+                          <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, padding: theme.spacing.md }}>
+                            {t('producer.plantings.noCropMatch')}
+                          </Text>
+                        ) : (
+                          filteredVarieties.map(({ row }, idx) => {
+                            const label = cropTypeForLocale(row, langSr);
+                            const picked =
+                              selectedVariety?.cropTypeSr === row.cropTypeSr &&
+                              selectedVariety?.cropTypeEn === row.cropTypeEn;
+                            return (
+                              <TouchableOpacity
+                                key={`${row.cropTypeEn}-${idx}`}
+                                onPress={() => {
+                                  setSelectedVariety(row);
+                                  setCustomCropOther('');
+                                  setAddFormErr(null);
+                                }}
+                                style={{
+                                  paddingVertical: 12,
+                                  paddingHorizontal: theme.spacing.md,
+                                  borderBottomWidth: idx < filteredVarieties.length - 1 ? 1 : 0,
+                                  borderBottomColor: theme.colors.border,
+                                  backgroundColor: picked ? theme.colors.primaryLight : theme.colors.surface,
+                                }}
+                              >
+                                <Text style={{ fontSize: 15, color: theme.colors.text.primary, fontWeight: picked ? '700' : '500' }}>
+                                  {label}
+                                </Text>
+                              </TouchableOpacity>
+                            );
+                          })
+                        )}
+                      </ScrollView>
+                    </View>
 
-                <Text style={{ fontSize: 13, marginBottom: 8, color: theme.colors.text.secondary }}>{t('producer.plantings.pickVariety')}</Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.md }}>
-                  {visibleVarieties.map(({ row }, idx) => {
-                    const label = cropTypeForLocale(row, langSr);
-                    const picked =
-                      selectedVariety?.cropTypeSr === row.cropTypeSr && selectedVariety?.cropTypeEn === row.cropTypeEn;
-                    return (
-                      <TouchableOpacity
-                        key={`${row.cropTypeEn}-${idx}`}
-                        onPress={() => {
-                          setSelectedVariety(row);
-                          setCustomCropOther('');
-                        }}
+                    <Text style={{ fontSize: 12, marginBottom: 4, color: theme.colors.text.secondary }}>
+                      {t('producer.plantings.customCropHint')}
+                    </Text>
+                    <TextInput
+                      style={[inputStyle, { marginBottom: theme.spacing.sm, paddingVertical: 10 }]}
+                      value={customCropOther}
+                      onChangeText={(txt) => {
+                        setCustomCropOther(txt);
+                        if (txt.trim()) {
+                          setSelectedVariety(null);
+                          setAddFormErr(null);
+                        }
+                      }}
+                      placeholder={t('producer.plantings.customCropPlaceholder')}
+                      placeholderTextColor={theme.colors.text.tertiary}
+                    />
+
+                    <Text style={{ fontSize: 12, marginBottom: 4, color: theme.colors.text.secondary }}>
+                      {t('producer.plantings.fieldDate')}
+                    </Text>
+                    <TextInput
+                      style={[inputStyle, { marginBottom: theme.spacing.sm, paddingVertical: 10 }]}
+                      value={formDate}
+                      onChangeText={(v) => {
+                        setFormDate(v);
+                        setAddFormErr(null);
+                      }}
+                    />
+
+                    <Text style={{ fontSize: 12, marginBottom: 4, color: theme.colors.text.secondary }}>
+                      {t('producer.plantings.fieldNotes')}
+                    </Text>
+                    <TextInput
+                      style={[inputStyle, { minHeight: 56, marginBottom: 4, paddingVertical: 10 }]}
+                      value={formNotes}
+                      onChangeText={setFormNotes}
+                      multiline
+                      placeholderTextColor={theme.colors.text.tertiary}
+                    />
+                  </ScrollView>
+
+                  <View
+                    style={{
+                      borderTopWidth: 1,
+                      borderTopColor: theme.colors.border,
+                      paddingTop: theme.spacing.sm,
+                      paddingBottom: Math.max(p.bottomInset, theme.spacing.sm),
+                    }}
+                  >
+                    {addFormErr ? (
+                      <Text
                         style={{
-                          paddingVertical: 10,
-                          paddingHorizontal: 12,
-                          borderRadius: theme.borderRadius.md,
-                          borderWidth: 2,
-                          borderColor: picked ? theme.colors.primary : theme.colors.border,
-                          backgroundColor: picked ? theme.colors.primaryLight : theme.colors.surface,
-                          maxWidth: '48%',
-                          flexGrow: 1,
+                          color: theme.colors.error,
+                          fontSize: 13,
+                          marginBottom: theme.spacing.sm,
+                          lineHeight: 18,
                         }}
                       >
-                        <Text numberOfLines={2} style={{ fontSize: 14, color: theme.colors.text.primary, fontWeight: '500' }}>
-                          {label}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                <Text style={{ fontSize: 13, marginBottom: 4, color: theme.colors.text.secondary }}>{t('producer.plantings.customCropHint')}</Text>
-                <TextInput
-                  style={[inputStyle, { marginBottom: theme.spacing.md }]}
-                  value={customCropOther}
-                  onChangeText={(txt) => {
-                    setCustomCropOther(txt);
-                    if (txt.trim()) setSelectedVariety(null);
-                  }}
-                  placeholder={t('producer.plantings.customCropPlaceholder')}
-                  placeholderTextColor={theme.colors.text.tertiary}
-                />
-
-                <Text style={{ fontSize: 13, marginBottom: 4, color: theme.colors.text.secondary }}>{t('producer.plantings.fieldDate')}</Text>
-                <TextInput style={[inputStyle, { marginBottom: theme.spacing.md }]} value={formDate} onChangeText={setFormDate} />
-
-                <Text style={{ fontSize: 13, marginBottom: 4, color: theme.colors.text.secondary }}>{t('producer.plantings.fieldNotes')}</Text>
-                <TextInput
-                  style={[inputStyle, { minHeight: 72, marginBottom: theme.spacing.md }]}
-                  value={formNotes}
-                  onChangeText={setFormNotes}
-                  multiline
-                  placeholderTextColor={theme.colors.text.tertiary}
-                />
-
-                <TouchableOpacity
-                  onPress={() => void submitPlanting()}
-                  disabled={saving || !formParcelId || !cropLabelChosen()}
-                  style={{
-                    paddingVertical: 14,
-                    borderRadius: theme.borderRadius.md,
-                    alignItems: 'center',
-                    marginBottom: theme.spacing.sm,
-                    backgroundColor: saving || !formParcelId || !cropLabelChosen() ? theme.colors.border : theme.colors.primary,
-                  }}
-                >
-                  {saving ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>{t('producer.plantings.submit')}</Text>
-                  )}
-                </TouchableOpacity>
-              </ScrollView>
-            )}
+                        {addFormErr}
+                      </Text>
+                    ) : null}
+                    <TouchableOpacity
+                      onPress={() => void submitPlanting()}
+                      disabled={saving}
+                      style={{
+                        paddingVertical: 14,
+                        borderRadius: theme.borderRadius.md,
+                        alignItems: 'center',
+                        backgroundColor: saving ? theme.colors.text.tertiary : theme.colors.primary,
+                        opacity: saving ? 0.85 : 1,
+                      }}
+                    >
+                      {saving ? (
+                        <ActivityIndicator color="#fff" />
+                      ) : (
+                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>{t('producer.plantings.submit')}</Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+            </View>
           </KeyboardAvoidingView>
         </View>
       </Modal>

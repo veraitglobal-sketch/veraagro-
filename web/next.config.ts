@@ -33,6 +33,16 @@ const nextConfig: NextConfig = {
         destination: "/admin/field-blockchain",
         permanent: true,
       },
+      {
+        source: "/buyer/orders",
+        destination: "/buyer-portal/orders",
+        permanent: true,
+      },
+      {
+        source: "/producer/dashboard",
+        destination: "/grower",
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -8,6 +8,7 @@ import { MessageCircle, Search, Filter, Download, Mail, Phone, User, Calendar, C
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import api from '@/lib/api';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface Conversation {
   id: string;
@@ -47,7 +48,7 @@ export default function AIConversationsPage() {
       const token = localStorage.getItem('token');
       
       if (activeTab === 'contacts') {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/ai-assistant/contact-requests`, {
+        const response = await fetch(`${WEB_API_BASE}/ai-assistant/contact-requests`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -55,7 +56,7 @@ export default function AIConversationsPage() {
         const data = await response.json();
         setContactRequests(data.conversations || []);
       } else {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/ai-assistant/conversations`, {
+        const response = await fetch(`${WEB_API_BASE}/ai-assistant/conversations`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

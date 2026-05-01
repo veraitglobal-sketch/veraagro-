@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import PassportView, { PassportData } from '@/components/PassportView';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 export default function EstatePassportPage() {
   const params = useParams();
@@ -17,9 +18,7 @@ export default function EstatePassportPage() {
 
   const fetchPassport = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/estate-profile/qr/${qrCode}`
-      );
+      const response = await fetch(`${WEB_API_BASE}/estate-profile/qr/${qrCode}`);
       if (!response.ok) throw new Error('Estate passport not found');
       const passportData = await response.json();
       setData(passportData);

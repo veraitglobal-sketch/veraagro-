@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { TrendingUp, TrendingDown, Minus, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface VeraInsight {
   id: string;
@@ -25,8 +26,6 @@ interface VeraInsight {
   createdAt: string;
   updatedAt: string;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export default function AdminVeraInsightsPage() {
   const { t } = useTranslation();
@@ -54,7 +53,7 @@ export default function AdminVeraInsightsPage() {
   const fetchInsights = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/vera-insights/all`, {
+      const response = await fetch(`${WEB_API_BASE}/vera-insights/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -70,7 +69,7 @@ export default function AdminVeraInsightsPage() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/vera-insights`, {
+      const response = await fetch(`${WEB_API_BASE}/vera-insights`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +98,7 @@ export default function AdminVeraInsightsPage() {
       const insight = insights.find(i => i.id === id);
       if (!insight) return;
 
-      const response = await fetch(`${API_URL}/vera-insights/${id}`, {
+      const response = await fetch(`${WEB_API_BASE}/vera-insights/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +131,7 @@ export default function AdminVeraInsightsPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/vera-insights/${id}`, {
+      const response = await fetch(`${WEB_API_BASE}/vera-insights/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

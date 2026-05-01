@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { router } from 'expo-router';
 import { API_URL } from '../lib/api-url';
+import { setAuthUnauthorizedHandler } from '../lib/auth-events';
 
 interface User {
   id: string;
@@ -55,10 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  useEffect(() => {
-    void loadStoredAuth();
-  }, [loadStoredAuth]);
-
   const logout = useCallback(async () => {
     await AsyncStorage.removeItem('auth_token');
     await AsyncStorage.removeItem('auth_user');
@@ -66,6 +64,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setToken(null);
   }, []);
+
+  useEffect(() => {
+    void loadStoredAuth();
+  }, [loadStoredAuth]);
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      void (async () => {
+        await logout();
+        try {
+          router.replace('/');
+        } catch {
+          // Navigator may not be ready on rare early ticks.
+        }
+      })();
+    };
+    setAuthUnauthorizedHandler(onUnauthorized);
+    return () => setAuthUnauthorizedHandler(null);
+  }, [logout]);
 
   const login = useCallback(
     async (username: string, password: string) => {

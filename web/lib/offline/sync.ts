@@ -3,8 +3,9 @@
 
 import { getUnsyncedEntries, markEntryAsSynced, FieldEntry } from './indexeddb';
 import api from '../api';
+import { WEB_API_BASE } from '../api-base';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = WEB_API_BASE;
 
 // Check if online
 export function isOnline(): boolean {

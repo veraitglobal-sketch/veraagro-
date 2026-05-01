@@ -55,7 +55,9 @@ export const syncService = {
         offlineStorage.getPendingCertificatePhotos(),
         offlineStorage.getPendingHarvestPlans(),
       ]);
-      const pendingEntries = entries.filter((e) => e.status === 'pending').length;
+      const pendingEntries = entries.filter(
+        (e) => e.status === 'pending' || e.status === 'error' || e.status === 'syncing',
+      ).length;
       const pendingProducts = products.filter((p) => p.status === 'pending').length;
       const pendingCosts = costs.filter((c) => c.status === 'pending').length;
       const pendingCertPhotos = certPhotos.filter((c) => c.status === 'pending').length;

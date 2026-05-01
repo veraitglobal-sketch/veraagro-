@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Standard Bio Vera",
     "navOrders": "Ordinele mele",
     "cartLabel": "Coș ({{count}})",
     "welcome": "Bun venit, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Produs Bio Vera",
     "organicFallback": "Produs organic",
     "priceNa": "N / A",
+    "priceOnRequest": "Preț la cerere",
     "unitKg": "kg",
+    "qtyIncrease": "Crește cantitatea",
+    "qtyDecrease": "Scade cantitatea",
     "addToCart": "Adaugă in coş",
     "cartTitle": "Coș ({{count}})",
     "orderCta": "Comanda ({{total}} EUR)",
     "orderCreated": "Comanda creată!",
-    "orderFailed": "Eroare la crearea comenzii"
+    "orderFailed": "Eroare la crearea comenzii",
+    "checkout": {
+      "fillRequired": "Completați toate câmpurile obligatorii",
+      "cartEmpty": "Coșul este gol",
+      "payment": "Plată",
+      "deliveryAddress": "Adresa de livrare",
+      "street": "Stradă și număr",
+      "city": "Oraș",
+      "postalCode": "Cod poștal",
+      "country": "Țara",
+      "notes": "Note (opțional)",
+      "orderSummary": "Rezumat comandă",
+      "total": "Total",
+      "proceedToPayment": "Continuă spre plată",
+      "confirm": "Confirmă comanda",
+      "creating": "Se creează comanda...",
+      "close": "Închide",
+      "multiOrderHint": "Fiecare linie din coș este trimisă ca comandă separată cu aceeași adresă de livrare (ca în aplicația mobilă).",
+      "ordersCreated": "{{count}} comenzi plasate cu succes."
+    }
   },
   "orders": {
     "navShop": "Magazin",

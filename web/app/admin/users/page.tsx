@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound, Copy } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 interface User {
   id: string;
@@ -767,7 +768,7 @@ export default function UsersManagementPage() {
                   {/* QR Code Image */}
                   <div className="bg-white p-4 border-2 border-gray-200 rounded-lg inline-block mb-4">
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/farmer-profile/qr/${createdFarmer.qrCode}/image`}
+                      src={`${WEB_API_BASE}/farmer-profile/qr/${createdFarmer.qrCode}/image`}
                       alt="Farmer QR Code"
                       className="w-48 h-48 mx-auto"
                     />
@@ -793,7 +794,7 @@ export default function UsersManagementPage() {
                   <div className="flex gap-3 justify-center">
                     <button
                       onClick={() => {
-                        const qrImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004'}/farmer-profile/qr/${createdFarmer.qrCode}/image`;
+                        const qrImageUrl = `${WEB_API_BASE}/farmer-profile/qr/${createdFarmer.qrCode}/image`;
                         window.open(qrImageUrl, '_blank');
                       }}
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"

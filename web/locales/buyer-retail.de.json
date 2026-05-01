@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Bio-Vera-Standard",
     "navOrders": "Meine Bestellungen",
     "cartLabel": "Warenkorb ({{count}})",
     "welcome": "Willkommen, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Bio-Vera-Produkt",
     "organicFallback": "Bio-Produkt",
     "priceNa": "N / A",
+    "priceOnRequest": "Preis auf Anfrage",
     "unitKg": "kg",
+    "qtyIncrease": "Menge erhöhen",
+    "qtyDecrease": "Menge verringern",
     "addToCart": "In den Warenkorb legen",
     "cartTitle": "Warenkorb ({{count}})",
     "orderCta": "Bestellung ({{total}} EUR)",
     "orderCreated": "Auftrag erstellt!",
-    "orderFailed": "Fehler beim Erstellen der Bestellung"
+    "orderFailed": "Fehler beim Erstellen der Bestellung",
+    "checkout": {
+      "fillRequired": "Bitte alle Pflichtfelder ausfüllen",
+      "cartEmpty": "Warenkorb ist leer",
+      "payment": "Zahlung",
+      "deliveryAddress": "Lieferadresse",
+      "street": "Straße und Hausnummer",
+      "city": "Stadt",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "notes": "Notizen (optional)",
+      "orderSummary": "Bestellübersicht",
+      "total": "Gesamt",
+      "proceedToPayment": "Zur Zahlung",
+      "confirm": "Bestellung bestätigen",
+      "creating": "Bestellung wird erstellt...",
+      "close": "Schließen",
+      "multiOrderHint": "Jede Warenkorblinie wird als separate Bestellung mit derselben Lieferadresse übermittelt (wie in der App).",
+      "ordersCreated": "{{count}} Bestellungen erfolgreich aufgegeben."
+    }
   },
   "orders": {
     "navShop": "Geschäft",

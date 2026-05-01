@@ -41,44 +41,45 @@ export default function CheckoutScreen() {
     try {
       setLoading(true);
 
-      // Create order for each product (or combine into one order)
-      // For simplicity, we'll create one order with all items
-      const firstItem = items[0];
+      const deliveryAddress = { street: street.trim(), city: city.trim(), postalCode: postalCode.trim(), country: country.trim() };
       const hasReservation = items.some((i) => i.lineKind === 'reservation');
-      const deliveryNotes = [
-        hasReservation
-          ? 'Cart includes reserved lines — treat delivery timing as subject to harvest confirmation.'
-          : null,
-        notes.trim() || null,
-      ]
-        .filter(Boolean)
-        .join('\n\n');
-      const orderData = {
-        estateId: firstItem.product.estate.id,
-        productName: firstItem.product.productName,
-        quantity: items.reduce((sum, item) => sum + item.quantity, 0),
-        unit: firstItem.product.unit,
-        unitPrice: firstItem.product.price || 0,
-        deliveryAddress: {
-          street,
-          city,
-          postalCode,
-          country,
-        },
-        deliveryNotes: deliveryNotes || undefined,
-      };
+      const deliveryNotes =
+        [
+          hasReservation
+            ? 'Cart includes reserved lines — treat delivery timing as subject to harvest confirmation.'
+            : null,
+          notes.trim() || null,
+        ]
+          .filter(Boolean)
+          .join('\n\n') || undefined;
 
-      const order = await ordersAPI.create(orderData);
-      
-      if (!order || !order.id) {
-        throw new Error('Order was created but no ID was returned');
+      const createdIds: string[] = [];
+      for (const line of items) {
+        const p = line.product;
+        const order = await ordersAPI.create({
+          ...(p.estate?.id ? { estateId: p.estate.id } : {}),
+          productName: p.productName,
+          quantity: line.quantity,
+          unit: typeof p.unit === 'string' && p.unit.trim() ? p.unit : 'kg',
+          unitPrice: p.price ?? 0,
+          deliveryAddress,
+          deliveryNotes,
+        });
+        if (!order?.id) {
+          throw new Error('Order was created but no ID was returned');
+        }
+        createdIds.push(order.id);
       }
-      
-      // Clear cart
+
       clearCart();
-      
-      // Navigate to order tracking
-      router.replace(`/(buyer)/order/${order.id}`);
+
+      if (createdIds.length === 1) {
+        router.replace(`/(buyer)/order/${createdIds[0]}`);
+      } else {
+        Alert.alert(t('buyer.orders.title'), t('buyer.checkout.ordersCreated', { count: createdIds.length }), [
+          { text: t('alerts.ok'), onPress: () => router.replace('/(buyer)/orders') },
+        ]);
+      }
     } catch (error: any) {
       console.error('Error creating order:', error);
       const errorMessage = error.response?.data?.message || error.message || t('buyer.checkout.orderCreateFailed');
@@ -303,10 +304,10 @@ export default function CheckoutScreen() {
               marginBottom: theme.spacing.md,
               textTransform: 'uppercase',
             }}>
-              Order summary
+              {t('buyer.checkout.orderSummary')}
             </Text>
             {items.map((item) => (
-              <View key={item.product.id} style={{
+              <View key={`${item.product.id}-${item.lineKind}`} style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginBottom: theme.spacing.xs,
@@ -343,7 +344,7 @@ export default function CheckoutScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                Total
+                {t('buyer.checkout.total')}
               </Text>
               <Text style={{
                 fontSize: 16,
@@ -354,6 +355,20 @@ export default function CheckoutScreen() {
               </Text>
             </View>
           </View>
+
+          {items.length > 1 ? (
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                color: theme.colors.text.secondary,
+                lineHeight: 18,
+                marginBottom: theme.spacing.md,
+              }}
+            >
+              {t('buyer.checkout.multiOrderHint')}
+            </Text>
+          ) : null}
         </View>
       </ScrollView>
 

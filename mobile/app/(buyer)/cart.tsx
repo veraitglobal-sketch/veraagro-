@@ -166,7 +166,7 @@ export default function CartScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            Proceed to payment
+            {t('buyer.checkout.proceedToPayment')}
           </Text>
           <ArrowRight size={18} color={theme.colors.text.inverse} strokeWidth={1.5} />
         </TouchableOpacity>

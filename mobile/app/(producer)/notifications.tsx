@@ -5,7 +5,9 @@ import { ArrowLeft, Bell, AlertCircle, Info, Calendar } from 'lucide-react-nativ
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { notificationsAPI, Notification } from '../../lib/api';
+import { normalizeUserRoles } from '../../lib/post-login-redirect';
 import { resolveNotificationActionHref } from '../../lib/resolve-notification-action';
+import { useAuth } from '../../hooks/useAuth';
 
 /**
  * Notifications Screen
@@ -15,6 +17,8 @@ import { resolveNotificationActionHref } from '../../lib/resolve-notification-ac
 export default function NotificationsScreen() {
   const p = useBioVeraScreenPadding();
   const router = useRouter();
+  const { user } = useAuth();
+  const notifyRoles = normalizeUserRoles(user);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -237,7 +241,9 @@ export default function NotificationsScreen() {
                       if (!notification.read) {
                         markAsRead(notification.id);
                       }
-                      const href = resolveNotificationActionHref(notification.actionUrl);
+                      const href = resolveNotificationActionHref(notification.actionUrl, {
+                        roles: notifyRoles,
+                      });
                       if (href) {
                         router.push(href);
                       }

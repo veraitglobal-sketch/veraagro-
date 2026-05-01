@@ -68,7 +68,7 @@ export default function ScannerPage() {
               🌱 Bio Vera
             </Link>
             <nav className="flex gap-4">
-              <Link href="/producer/dashboard" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
+              <Link href="/grower" className="px-4 py-2 text-gray-700 hover:text-[#2D5A27]">
                 Dashboard
               </Link>
             </nav>

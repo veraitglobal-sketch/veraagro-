@@ -2,8 +2,9 @@
 // Integrates with backend compliance service
 
 import api from '../api';
+import { WEB_API_BASE } from '../api-base';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = WEB_API_BASE;
 
 export interface ComplianceCheckResult {
   compliant: boolean;

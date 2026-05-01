@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { WEB_API_BASE, WEB_DEV_API_FALLBACK } from './api-base';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
+const API_URL = WEB_API_BASE;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -24,11 +25,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 errors - redirect to login
+function isAuthNegotiationUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  const path = url.split('?')[0].replace(/\\/g, '/').toLowerCase();
+  return (
+    path.endsWith('/auth/login') ||
+    path.endsWith('auth/login') ||
+    path.includes('/auth/register') ||
+    path.includes('/auth/verify-email')
+  );
+}
+
+// Handle 401: clear stored session + redirect (same policy as mobile), except credential flows above.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isAuthNegotiationUrl(error.config?.url)) {
       if (typeof window !== 'undefined') {
         const path = window.location.pathname;
         const returnTo = path + (window.location.search || '');
@@ -45,7 +57,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Auth API
@@ -127,9 +139,20 @@ export const inventoryAPI = {
   },
 };
 
+/** Same contract as Nest `OrdersService.create` (buyer POST /orders); aligns with mobile `ordersAPI.create`. */
+export interface BuyerOrderCreatePayload {
+  estateId?: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  deliveryAddress: { street: string; city: string; postalCode: string; country: string };
+  deliveryNotes?: string;
+}
+
 // Orders API
 export const ordersAPI = {
-  create: async (orderData: any) => {
+  create: async (orderData: BuyerOrderCreatePayload) => {
     const response = await api.post('/orders', orderData);
     return response.data;
   },
@@ -1954,7 +1977,7 @@ export const contactAPI = {
     const candidate = raw.startsWith('http') ? raw.replace(/\/$/, '') : '';
     const isLocalhost = candidate.includes('localhost') || candidate.includes('127.0.0.1');
     const baseUrl = isLocal
-      ? (candidate && !isLocalhost ? candidate : 'http://localhost:3004')
+      ? (candidate && !isLocalhost ? candidate : WEB_DEV_API_FALLBACK)
       : (candidate && !isLocalhost ? candidate : CONTACT_API_BASE);
     const url = `${baseUrl}/contact/submit`;
 

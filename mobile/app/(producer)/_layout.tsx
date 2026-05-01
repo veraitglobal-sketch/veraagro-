@@ -4,6 +4,7 @@ import i18n from '../../i18n/config';
 import { AuthGuard } from '../../components/AuthGuard';
 import { NetworkProvider } from '../../contexts/NetworkContext';
 import { ProducerOfflineStrip } from '../../components/ProducerOfflineStrip';
+import { GrowerReconnectAutoSync } from '../../components/GrowerReconnectAutoSync';
 
 /**
  * Producer Layout
@@ -14,6 +15,7 @@ export default function ProducerLayout() {
     <AuthGuard requiredRole={['ADMIN', 'FARMER', 'PARTNER', 'GROWER']}>
       <NetworkProvider>
       <View style={{ flex: 1 }}>
+        <GrowerReconnectAutoSync />
         <ProducerOfflineStrip />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
@@ -25,7 +27,6 @@ export default function ProducerLayout() {
             headerTitle: i18n.t('navigation.scanBarcode'),
           }}
         />
-        <Stack.Screen name="field-season" />
         <Stack.Screen name="estates" />
         <Stack.Screen name="estates/new" />
         <Stack.Screen name="estates/[id]" />
@@ -43,7 +44,6 @@ export default function ProducerLayout() {
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />
         <Stack.Screen name="plantings" options={{ headerShown: false }} />
-        <Stack.Screen name="dashboard" />
         <Stack.Screen
           name="partner-orders"
           options={{

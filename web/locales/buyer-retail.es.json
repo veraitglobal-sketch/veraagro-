@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Estándar Bio Vera",
     "navOrders": "Mis pedidos",
     "cartLabel": "Carrito ({{count}})",
     "welcome": "¡Bienvenido, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Producto Bio Vera",
     "organicFallback": "Producto organico",
     "priceNa": "N / A",
+    "priceOnRequest": "Precio bajo demanda",
     "unitKg": "kilos",
+    "qtyIncrease": "Aumentar cantidad",
+    "qtyDecrease": "Disminuir cantidad",
     "addToCart": "Añadir a la cesta",
     "cartTitle": "Carrito ({{count}})",
     "orderCta": "Pedido ({{total}} EUR)",
     "orderCreated": "¡Pedido creado!",
-    "orderFailed": "Error al crear el pedido"
+    "orderFailed": "Error al crear el pedido",
+    "checkout": {
+      "fillRequired": "Completa todos los campos obligatorios",
+      "cartEmpty": "El carrito está vacío",
+      "payment": "Pago",
+      "deliveryAddress": "Dirección de entrega",
+      "street": "Calle y número",
+      "city": "Ciudad",
+      "postalCode": "Código postal",
+      "country": "País",
+      "notes": "Notas (opcional)",
+      "orderSummary": "Resumen del pedido",
+      "total": "Total",
+      "proceedToPayment": "Continuar al pago",
+      "confirm": "Confirmar pedido",
+      "creating": "Creando pedido...",
+      "close": "Cerrar",
+      "multiOrderHint": "Cada línea del carrito se envía como pedido aparte con la misma dirección (igual que en la app).",
+      "ordersCreated": "Se realizaron {{count}} pedidos correctamente."
+    }
   },
   "orders": {
     "navShop": "Comercio",

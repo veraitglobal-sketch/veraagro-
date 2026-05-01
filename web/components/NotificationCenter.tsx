@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { notificationsAPI } from '@/lib/api';
+import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 
 interface Notification {
   id: string;
@@ -26,27 +27,33 @@ export default function NotificationCenter({ userId }: NotificationCenterProps) 
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      loadNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(loadNotifications, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [userId]);
-
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async (opts?: { silent?: boolean }) => {
     try {
-      setLoading(true);
+      if (!opts?.silent) setLoading(true);
       const data = await notificationsAPI.getAll();
       setNotifications(data);
       setUnreadCount(data.filter((n: Notification) => n.status === 'UNREAD').length);
     } catch (error) {
       console.error('Error loading notifications:', error);
     } finally {
-      setLoading(false);
+      if (!opts?.silent) setLoading(false);
     }
-  };
+  }, []);
+
+  useNotificationSocket(Boolean(userId), () => {
+    void loadNotifications({ silent: true });
+  });
+
+  useEffect(() => {
+    if (userId) {
+      void loadNotifications();
+      // Fallback ako socket nije dostupan — sporiji interval jer push dolazi preko Socket.IO
+      const interval = setInterval(() => {
+        void loadNotifications({ silent: true });
+      }, 90_000);
+      return () => clearInterval(interval);
+    }
+  }, [userId, loadNotifications]);
 
   const markAsRead = async (id: string) => {
     try {

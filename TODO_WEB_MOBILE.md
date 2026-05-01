@@ -364,10 +364,10 @@ Ali ako želite admin panel i na mobilnoj:
 
 2. **Buyer Portal:**
    - ✅ Shop (`/buyer/shop`)
-   - ✅ Orders (`/buyer/orders`)
+   - ✅ Orders (**kanon:** `/buyer-portal/orders`; stari `/buyer/orders` trajno redirectuje na portal)
 
 3. **Producer Portal:**
-   - ✅ Dashboard (`/producer/dashboard`)
+   - ✅ Dashboard (**kanon za grower početak:** `/grower`; stari `/producer/dashboard` redirectuje)
    - ✅ Scanner (`/producer/scanner`)
 
 4. **Grower Portal:**

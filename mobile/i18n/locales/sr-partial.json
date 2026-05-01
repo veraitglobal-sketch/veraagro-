@@ -290,7 +290,7 @@
         "pendingBody": "Tim proverava parcele. Dnevnik i dalje možeš gde si već odobren.",
         "pendingCta": "Pogledaj korake",
         "syncTitle": "{{count}} za slanje",
-        "syncBody": "Sačuvao si rad oflajn. Uključi mrežu ili povuci da osvežiš i pošalješ.",
+        "syncBody": "Ima zapisa na čekanju za slanje ili je server odbio slanje (npr. GPS van granice parcele). Otvori Dnevnik unosa — to ne znači nužno da nemaš WLAN.",
         "syncCta": "Otvori Dnevnik unosa",
         "logWorkTitle": "Unesi današnji rad",
         "logWorkBody": "Prskanje, setva, žetva — kada i gde — u Dnevniku unosa.",
@@ -298,6 +298,13 @@
         "defaultTitle": "Tri koraka",
         "defaultBody": "Parcele, odobrenje, zatim rad i žetva. Sve na jednom mestu.",
         "defaultCta": "Pogledaj korake"
+      },
+      "syncStrip": {
+        "title": "Čeka slanje",
+        "pendingLine": "{{count}} stavki čeka slanje (unosi, skenovi, dokumenti…).",
+        "errorLine": "Poslednja greška",
+        "syncNow": "Pošalji sad",
+        "openLog": "Otvori Dnevnik unosa"
       },
       "farmer": {
         "blockTitle": "Na farmi — redosled",
@@ -385,7 +392,13 @@
       "createPlantingHeading": "Kreiraj zasad",
       "pickCategory": "Grupa useva",
       "filterAll": "Sve",
-      "pickVariety": "Izaberi sortu (dodirni)",
+      "pickVariety": "Pretraži ili izaberi usev",
+      "cropSearchPlaceholder": "Kucaj da pretražiš…",
+      "parcelLockedHint": "Odobrena parcela za ovaj zasad",
+      "validationParcel": "Prvo izaberi parcelu.",
+      "validationCrop": "Izaberi usev iz liste ili upiši pod „Drugo”.",
+      "validationDate": "Unesi očekivani datum.",
+      "noCropMatch": "Nema rezultata — upiši pod „Drugo”.",
       "customCropHint": "Drugo (ukucaj ako nije u listi)",
       "customCropPlaceholder": "Naziv useva…",
       "harvestEmpty": "Još nema planova berbe.",
@@ -979,7 +992,11 @@
       "locationErrorFallback": "Nije moguće dobiti lokaciju.",
       "openSettings": "Otvori podešavanja",
       "cameraError": "Nije moguće otvoriti kameru",
-      "saveOk": "Unos sačuvan. Biće poslat kada budeš onlajn.",
+      "saveOk": "Unos je sačuvan na uređaju.",
+      "saveQueuedWhenOnline": "Nema veze s internetom sada — biće poslat kada se povežeš.",
+      "saveSentNow": "Unos je poslat na server.",
+      "saveWillRetry": "Sačuvano. Slanje će se ponovo pokušati; povuci za osveženje na početnoj ako treba.",
+      "saveSyncFailedTitle": "Slanje nije uspelo",
       "saveFailed": "Nije moguće sačuvati unos",
       "selectActivity": "Izaberi vrstu aktivnosti",
       "photoRequired": "Fotografija je obavezna",
@@ -1106,8 +1123,13 @@
       "cartEmpty": "Korpa je prazna",
       "orderCreateFailed": "Nije moguće kreirati porudžbinu",
       "payment": "Plaćanje",
-      "creating": "Kreiranje porudžbine...",
-      "confirm": "Potvrdi porudžbinu"
+      "creating": "Kreiranje porudžbine…",
+      "confirm": "Potvrdi porudžbinu",
+      "proceedToPayment": "Nastavi ka plaćanju",
+      "orderSummary": "Pregled porudžbine",
+      "total": "Ukupno",
+      "multiOrderHint": "Svaka stavka u korpi se šalje kao posebna porudžbina uz istu adresu (isto kao na web prodavnici).",
+      "ordersCreated": "Uspešno poslato {{count}} porudžbina."
     }
   },
   "supplier": {

@@ -2,8 +2,9 @@
 // Batch processing instead of sequential
 
 import { getUnsyncedEntries, markEntryAsSynced, FieldEntry } from './indexeddb';
+import { WEB_API_BASE } from '../api-base';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = WEB_API_BASE;
 const BATCH_SIZE = 10; // Sync 10 entries at a time
 const MAX_RETRIES = 3;
 

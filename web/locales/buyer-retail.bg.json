@@ -1,5 +1,6 @@
 {
   "shop": {
+    "navStandard": "Bio Vera Standard",
     "navOrders": "Моите поръчки",
     "cartLabel": "Количка ({{count}})",
     "welcome": "Добре дошъл, {{name}}!",
@@ -14,12 +15,34 @@
     "productFallback": "Био Вера продукт",
     "organicFallback": "Органичен продукт",
     "priceNa": "N/A",
+    "priceOnRequest": "Price on request",
     "unitKg": "кг",
+    "qtyIncrease": "Increase quantity",
+    "qtyDecrease": "Decrease quantity",
     "addToCart": "Добавяне в количката",
     "cartTitle": "Количка ({{count}})",
     "orderCta": "Поръчка ({{total}} EUR)",
     "orderCreated": "Поръчката е създадена!",
-    "orderFailed": "Грешка при създаване на поръчка"
+    "orderFailed": "Грешка при създаване на поръчка",
+    "checkout": {
+      "fillRequired": "Please fill all required fields",
+      "cartEmpty": "Cart is empty",
+      "payment": "Payment",
+      "deliveryAddress": "Delivery address",
+      "street": "Street and number",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "notes": "Notes (optional)",
+      "orderSummary": "Order summary",
+      "total": "Total",
+      "proceedToPayment": "Proceed to payment",
+      "confirm": "Confirm order",
+      "creating": "Creating order...",
+      "close": "Close",
+      "multiOrderHint": "Each cart line is submitted as a separate order with the same delivery address (same as the mobile app).",
+      "ordersCreated": "{{count}} orders placed successfully."
+    }
   },
   "orders": {
     "navShop": "Магазин",

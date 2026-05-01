@@ -8,6 +8,7 @@ import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useDashboardData } from './useDashboardData';
 import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
+import SyncQueueStrip from './SyncQueueStrip';
 import FarmerHomeSection from './FarmerHomeSection';
 
 export default function DashboardScreen() {
@@ -103,6 +104,13 @@ export default function DashboardScreen() {
           onRequestTransport={() => router.push('/(producer)/missions-create')}
           onSteps={() => router.push('/(producer)/(tabs)/steps')}
           onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
+        />
+        <SyncQueueStrip
+          pendingCount={data.offlinePending}
+          syncing={data.offlineSyncing}
+          lastError={data.offlineSyncLastError}
+          onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
+          onSyncNow={() => void data.onRefresh()}
         />
         {hasAlerts ? (
           <TouchableOpacity

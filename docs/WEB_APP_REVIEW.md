@@ -38,10 +38,10 @@
 - **Fix:** Add FLEET_PARTNER → `/fleet-partner` in getDashboardLink
 
 ### 7. Producer vs grower routes
-- **`/grower`** – main grower dashboard (with AuthGuard)
-- **`/producer/dashboard`** – producer dashboard
-- **`/producer/scanner`** – scanner
-- **Note:** GROWER and FARMER both go to /grower. Producer routes may be legacy or mobile-oriented. Confirm intended usage.
+- **`/grower`** – glavni grower dashboard (kanon; `AuthGuard`)
+- **`/producer/dashboard`** – trajno redirectuje na **`/grower`** (`next.config.ts`)
+- **`/producer/*`** – preostale alatke (scanner, field-entry, imanja) — nisu dupli „home“ dashboard
+- **Note:** GROWER i FARMER idu na `/grower`. Rute ispod `/producer/` su operativni tokovi, ne drugi ulaz na isti ekran kao `/grower`.
 
 ### 8. Logistics handover API port
 - **Location:** `logistics-partner/handover/page.tsx`

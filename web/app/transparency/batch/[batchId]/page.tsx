@@ -18,6 +18,7 @@ import {
   Sprout,
 } from 'lucide-react';
 import Image from 'next/image';
+import { WEB_API_BASE } from '@/lib/api-base';
 
 export default function DeepDivePage() {
   const params = useParams();
@@ -37,8 +38,7 @@ export default function DeepDivePage() {
     try {
       setLoading(true);
       setError(null);
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${API_URL}/vera-transparency/batch/${batchId}/deep-dive`);
+      const response = await fetch(`${WEB_API_BASE}/vera-transparency/batch/${batchId}/deep-dive`);
       if (!response.ok) {
         throw new Error('Failed to load batch data');
       }

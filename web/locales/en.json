@@ -986,7 +986,14 @@
       "fieldDiaryCardTitle": "Entry log",
       "fieldDiaryCardCount": "{{count}} synced entries across your estates",
       "fieldDiaryCardHint": "The table shows the same records as the app after they reach the server — use the app to add new entries with photo and GPS.",
-      "fieldDiaryCardCta": "Open entry log"
+      "fieldDiaryCardCta": "Open entry log",
+      "outboxAria": "Offline field entries pending sync",
+      "outboxTitle": "Waiting to sync",
+      "outboxBody_one": "{{count}} field entry in this browser is not on the server yet.",
+      "outboxBody_other": "{{count}} field entries in this browser are not on the server yet.",
+      "outboxSyncNow": "Sync now",
+      "outboxSending": "Sending…",
+      "outboxOpenWorkspace": "Open field workspace"
     },
     "missionCreate": {
       "submitCta": "Request transport",
@@ -1172,7 +1179,8 @@
     "invoices": "Invoices",
     "deliveries": "Deliveries",
     "analytics": "Analytics",
-    "companyProfile": "Company profile"
+    "companyProfile": "Company profile",
+    "veraStandard": "Bio Vera Standard"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
@@ -1192,7 +1200,19 @@
     "veraTrade": "Vera trade",
     "suppliers": "Vera partners",
     "invoices": "Invoices",
-    "analytics": "Analytics & reports"
+    "analytics": "Analytics & reports",
+    "veraStandard": "Bio Vera Standard"
+  },
+  "buyerPortalVeraStandard": {
+    "title": "Bio Vera Standard",
+    "description": "Our standard guarantees indisputable digital proof for every product.",
+    "requirements": {
+      "title": "Certification requirements:",
+      "gps": "GPS tracking of farm boundaries",
+      "images": "Chronological growth images",
+      "lab": "Laboratory results",
+      "duration": "3 years of continuous monitoring"
+    }
   },
   "buyerTrade": {
     "loading": "Loading trade data...",

@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingCart, FileText, Building2, Truck, BarChart3 } from 'lucide-react';
+import { ShoppingCart, FileText, Building2, Truck, BarChart3, ShieldCheck } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -15,6 +15,7 @@ export function buildBuyerPortalNavItems(t: TFunction): { href: string; label: s
   return [
     { href: '/buyer-portal/dashboard', label: t('buyerPortalNav.dashboard'), icon: <DashboardIcon /> },
     { href: '/buyer-portal/orders', label: t('buyerPortalNav.orders'), icon: <ShoppingCart className="w-5 h-5" /> },
+    { href: '/buyer-portal/vera-standard', label: t('buyerPortalNav.veraStandard'), icon: <ShieldCheck className="w-5 h-5" /> },
     { href: '/buyer-portal/invoices', label: t('buyerPortalNav.invoices'), icon: <FileText className="w-5 h-5" /> },
     { href: '/buyer-portal/deliveries', label: t('buyerPortalNav.deliveries'), icon: <Truck className="w-5 h-5" /> },
     { href: '/buyer-portal/analytics', label: t('buyerPortalNav.analytics'), icon: <BarChart3 className="w-5 h-5" /> },

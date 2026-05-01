@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBanner';
 
 export default function GrowerDashboardPage() {
   const { t } = useTranslation();
@@ -160,6 +161,8 @@ export default function GrowerDashboardPage() {
               </button>
             }
           />
+
+          <GrowerOfflineOutboxBanner />
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

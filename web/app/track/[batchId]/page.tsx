@@ -8,8 +8,9 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Shield, CheckCircle, Clock, XCircle, Thermometer, Download, Image as ImageIcon } from 'lucide-react';
+import { WEB_API_BASE } from '@/lib/api-base';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004';
+const API_URL = WEB_API_BASE;
 
 interface TrackData {
   batchId: string;

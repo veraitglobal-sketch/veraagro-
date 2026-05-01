@@ -8,6 +8,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPS, materialValidator } from '../../../lib/integrity-guard';
 import { estatesAPI, Estate } from '../../../lib/api';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { syncService } from '../../../lib/sync-service';
 import type { PendingFieldEntry } from '../../../lib/offline-storage';
 
 export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
@@ -183,14 +185,36 @@ export function useFieldLogData() {
   const saveEntry = useCallback(async () => {
     try {
       setLoading(true);
-      await offlineStorage.savePendingEntry({
+      const entryId = await offlineStorage.savePendingEntry({
         activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
         estateId: currentEstate?.id,
         materialID: materialID || undefined,
         photoUri: photoUri!,
         location: location!,
       });
-      Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveOk'));
+
+      const online = await isDeviceOnline();
+      if (!online) {
+        Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveQueuedWhenOnline'));
+      } else {
+        try {
+          await syncService.syncPendingEntries();
+        } catch {
+          /* errors recorded per entry inside sync */
+        }
+        const list = await offlineStorage.getPendingEntries();
+        const mine = list.find((e) => e.id === entryId);
+        if (!mine) {
+          Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveSentNow'));
+        } else if (mine.status === 'error' && mine.error) {
+          Alert.alert(t('producer.fieldLogAlerts.saveSyncFailedTitle'), mine.error);
+        } else if (mine.status === 'pending') {
+          Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveWillRetry'));
+        } else {
+          Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveOk'));
+        }
+      }
+
       setActivityType('');
       setMaterialID('');
       setMaterialKind('SEED');
