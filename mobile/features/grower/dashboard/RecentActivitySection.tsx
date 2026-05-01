@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { FilePlus, Calendar, MapPin } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface Entry {
   id: string;
@@ -13,6 +14,7 @@ interface Entry {
 
 export default function RecentActivitySection({ entries }: { entries: Entry[] }) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   const typeLabel = (type: string) =>
     type === 'SETVA' ? t('producer.recentActivity.planting') : type === 'PRSKANJE' ? t('producer.recentActivity.spraying') : type === 'BERBA' ? t('producer.recentActivity.harvest') : type;
 
@@ -49,13 +51,13 @@ export default function RecentActivitySection({ entries }: { entries: Entry[] })
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
                     <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary, marginLeft: 4 }}>
-                      {new Date(entry.createdAt).toLocaleDateString('en-US')}
+                      {new Date(entry.createdAt).toLocaleDateString(dateLocale)}
                     </Text>
                   </View>
                   {entry.data?.location != null && (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <MapPin size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary, marginLeft: 4 }}>GPS</Text>
+                      <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary, marginLeft: 4 }}>{t('producer.recentActivity.gpsAbbrev')}</Text>
                     </View>
                   )}
                 </View>

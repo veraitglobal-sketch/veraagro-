@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ordersAPI, Order } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useAppLocaleTag } from '../../lib/date-locale';
 import { tBuyerOrderStatus } from '../../lib/buyer-order-status';
 import { ArrowRight, Package } from 'lucide-react-native';
 
@@ -14,6 +15,7 @@ import { ArrowRight, Package } from 'lucide-react-native';
 export default function OrdersScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const priceLocale = useAppLocaleTag();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,7 +51,7 @@ export default function OrdersScreen() {
         {loading ? (
           <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
             <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
-              Loading...
+              {t('buyer.orders.loading')}
             </Text>
           </View>
         ) : orders.length === 0 ? (
@@ -79,7 +81,7 @@ export default function OrdersScreen() {
               textAlign: 'center',
               letterSpacing: 0.3,
             }}>
-              {t('buyer.orders.empty') || 'No orders yet'}
+              {t('buyer.orders.empty')}
             </Text>
           </View>
         ) : (
@@ -133,7 +135,7 @@ export default function OrdersScreen() {
                       fontWeight: '300',
                       color: theme.colors.text.primary,
                     }}>
-                      {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                      {order.totalAmount.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
                     </Text>
                   </View>
                 </View>

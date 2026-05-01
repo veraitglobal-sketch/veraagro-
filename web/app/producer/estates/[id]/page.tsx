@@ -9,7 +9,8 @@ import Link from 'next/link';
 type EstateDetail = Awaited<ReturnType<typeof estatesAPI.getOne>>;
 
 /**
- * /producer/estates/[id] — estate detail (was 404: route did not exist)
+ * Legacy /producer/estates/[id] — prefer /grower/fields?estate= (redirect in next.config).
+ * Simple read-only style detail; full parcel tools live on My fields.
  */
 export default function ProducerEstateDetailPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -66,10 +67,10 @@ export default function ProducerEstateDetailPage() {
             vera
           </Link>
           <Link
-            href="/producer/estates"
+            href="/grower/fields"
             className="text-sm text-gray-600 hover:text-[#2D5A27]"
           >
-            ← All estates
+            ← My fields
           </Link>
         </div>
       </header>
@@ -83,8 +84,8 @@ export default function ProducerEstateDetailPage() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800 text-sm">
             {error || 'Estate not found.'}
             <p className="mt-3">
-              <Link href="/producer/estates" className="underline font-medium">
-                Back to my estates
+              <Link href="/grower/fields" className="underline font-medium">
+                Back to my fields
               </Link>
             </p>
           </div>
@@ -130,10 +131,10 @@ export default function ProducerEstateDetailPage() {
                 Open My fields (parcels & batches)
               </Link>
               <Link
-                href="/producer/estates"
+                href="/grower/fields"
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50"
               >
-                All estates
+                All fields
               </Link>
             </div>
           </>

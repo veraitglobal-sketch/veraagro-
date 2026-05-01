@@ -26,7 +26,7 @@ export default function OrderInfoBlock({ order }: { order: Order }) {
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>Status</Text>
+        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.missions.statusFieldLabel')}</Text>
         <View
           style={{
             paddingHorizontal: theme.spacing.sm,

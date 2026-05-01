@@ -266,7 +266,7 @@ export default function GrowerDashboardPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.myEstates')}</h2>
                 <Link
-                  href="/producer/estates/new"
+                  href="/grower/fields"
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                 >
                   {t('grower.dashboard.addEstate')}
@@ -279,7 +279,7 @@ export default function GrowerDashboardPage() {
                   {estates.map((estate: any) => (
                     <Link
                       key={estate.id}
-                      href={`/producer/estates/${estate.id}`}
+                      href={`/grower/fields?estate=${encodeURIComponent(estate.id)}`}
                       className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
                     >
                       <h3 className="text-base font-medium text-gray-900 mb-2">{estate.name}</h3>
@@ -296,7 +296,7 @@ export default function GrowerDashboardPage() {
                 <div className="text-center py-12">
                   <p className="text-gray-600 font-light mb-4">{t('grower.dashboard.noEstates')}</p>
                   <Link
-                    href="/producer/estates/new"
+                    href="/grower/fields"
                     className="text-green-600 hover:text-green-700 font-medium text-sm"
                   >
                     {t('grower.dashboard.createFirstEstate')}

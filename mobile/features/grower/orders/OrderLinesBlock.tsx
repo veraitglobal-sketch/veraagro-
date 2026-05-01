@@ -2,10 +2,12 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import type { Order } from '../../../lib/api';
 
 export default function OrderLinesBlock({ order }: { order: Order }) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   return (
     <View
       style={{
@@ -29,13 +31,13 @@ export default function OrderLinesBlock({ order }: { order: Order }) {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: theme.spacing.sm, paddingTop: theme.spacing.sm, borderTopWidth: 0.5, borderTopColor: colors.border }}>
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.orders.unitPrice')}</Text>
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-          {order.unitPrice.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+          {order.unitPrice.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: theme.spacing.xs }}>
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary }}>{t('producer.orders.total')}</Text>
         <Text style={{ fontSize: 15, fontWeight: '300', color: colors.primary }}>
-          {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+          {order.totalAmount.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
         </Text>
       </View>
     </View>

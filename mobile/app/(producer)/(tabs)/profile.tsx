@@ -112,7 +112,7 @@ export default function ProfileScreen() {
               letterSpacing: 0.3,
               marginBottom: 2,
             }}>
-              Wallet
+              {t('producer.financial.title')}
             </Text>
             <Text style={{
               fontSize: 9,
@@ -120,7 +120,7 @@ export default function ProfileScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              Transaction and balance overview
+              {t('producer.profileScreen.walletSubtitle')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -142,7 +142,7 @@ export default function ProfileScreen() {
               letterSpacing: 0.5,
               marginBottom: theme.spacing.xs,
             }}>
-              Awaiting Sync
+              {t('producer.dashboard.syncStrip.title')}
             </Text>
             <Text style={{
               fontSize: 11,
@@ -150,7 +150,7 @@ export default function ProfileScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.3,
             }}>
-              {pendingCount} {pendingCount === 1 ? 'entry' : 'entries'} waiting to be sent
+              {t('producer.dashboard.syncStrip.pendingLine', { count: pendingCount })}
             </Text>
           </View>
         )}
@@ -163,8 +163,8 @@ export default function ProfileScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
             marginBottom: theme.spacing.sm,
-          }}>
-            Quick Access
+            }}>
+            {t('producer.profileScreen.quickAccessHeading')}
           </Text>
           <View style={{ gap: theme.spacing.sm }}>
             <TouchableOpacity
@@ -223,7 +223,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Estates
+                  {t('producer.tabs.estates')}
                 </Text>
                 {estates.length > 0 && (
                   <Text style={{
@@ -233,7 +233,10 @@ export default function ProfileScreen() {
                     marginTop: 2,
                     letterSpacing: 0.2,
                   }}>
-                    {estates.length} {estates.length === 1 ? 'estate' : 'estates'}
+                    {t('producer.estates.countWithMyFieldsLabel', {
+                      count: estates.length,
+                      label: t('producer.estates.myFields'),
+                    })}
                   </Text>
                 )}
               </View>
@@ -260,7 +263,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Batches
+                  {t('producer.tabs.batches')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -286,7 +289,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Missions
+                  {t('producer.tabs.missions')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -312,7 +315,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Orders
+                  {t('navigation.orders')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -338,7 +341,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Notifications
+                  {t('notificationsCenter.title')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -364,7 +367,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Compliance Photos
+                  {t('producer.compliance.title')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -390,7 +393,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Quality Entry
+                  {t('producer.qualityEntry.screenTitle')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -416,7 +419,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Material Whitelist
+                  {t('producer.materials.screenTitle')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -442,7 +445,7 @@ export default function ProfileScreen() {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  Growth Journal
+                  {t('producer.profileScreen.growthJournal')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -473,7 +476,7 @@ export default function ProfileScreen() {
               letterSpacing: 0.3,
               marginBottom: 2,
             }}>
-              Settings
+              {t('producer.tabs.settings')}
             </Text>
             <Text style={{
               fontSize: 9,
@@ -481,7 +484,7 @@ export default function ProfileScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              Notifications and options
+              {t('producer.profileScreen.settingsSubtitle')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -508,7 +511,7 @@ export default function ProfileScreen() {
               color: theme.colors.error,
               letterSpacing: 0.3,
             }}>
-              Log Out
+              {t('supplier.logOut')}
             </Text>
           </View>
         </TouchableOpacity>

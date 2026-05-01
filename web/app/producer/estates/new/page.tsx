@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { estatesAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,8 @@ const DEFAULT_POLYGON = [
 ];
 
 /**
- * Simplified new estate for web (full map flow is on the mobile app)
+ * Simplified new estate for web (full map flow is on the mobile app).
+ * After create, user is sent to /grower/fields (canonical); this page is still reachable via direct URL if needed.
  */
 export default function ProducerNewEstatePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -55,9 +56,9 @@ export default function ProducerNewEstatePage() {
         polygonCoordinates: DEFAULT_POLYGON,
       });
       if (created?.id) {
-        router.push(`/producer/estates/${created.id}`);
+        router.push(`/grower/fields?estate=${encodeURIComponent(created.id)}`);
       } else {
-        router.push('/producer/estates');
+        router.push('/grower/fields');
       }
     } catch (e: any) {
       setErr(e?.response?.data?.message || e?.message || 'Failed to create');
@@ -70,7 +71,7 @@ export default function ProducerNewEstatePage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-lg mx-auto px-4 sm:px-6 py-4">
-          <Link href="/producer/estates" className="text-sm text-gray-600 hover:text-[#2D5A27]">
+          <Link href="/grower/fields" className="text-sm text-gray-600 hover:text-[#2D5A27]">
             ← All estates
           </Link>
         </div>

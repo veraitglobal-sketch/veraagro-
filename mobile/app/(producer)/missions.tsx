@@ -1,11 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Truck, Calendar, Clock } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission } from '../../lib/api';
-import { getMissionStatusColor, getMissionStatusLabelEn } from '../../lib/mission-status';
+import {
+  getMissionStatusColor,
+  getMissionStatusLabelLocalized,
+} from '../../lib/mission-status';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 /**
  * Missions Screen
@@ -13,6 +18,7 @@ import { getMissionStatusColor, getMissionStatusLabelEn } from '../../lib/missio
  * Matches buyer dashboard styling
  */
 export default function MissionsScreen() {
+  const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -43,29 +49,10 @@ export default function MissionsScreen() {
     setRefreshing(false);
   };
 
-  const filteredMissions = filter === 'all' 
-    ? missions 
-    : missions.filter(m => m.status === filter);
+  const filteredMissions =
+    filter === 'all' ? missions : missions.filter((m) => m.status === filter);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING': return theme.colors.warning;
-      case 'ASSIGNED': return theme.colors.accent;
-      case 'IN_TRANSIT': return theme.colors.primary;
-      case 'DELIVERED': return theme.colors.success || theme.colors.primary;
-      default: return theme.colors.text.secondary;
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'Pending';
-      case 'ASSIGNED': return 'Assigned';
-      case 'IN_TRANSIT': return 'In Transit';
-      case 'DELIVERED': return 'Delivered';
-      default: return status;
-    }
-  };
+  const dateLocale = useAppLocaleTag();
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -95,7 +82,7 @@ export default function MissionsScreen() {
           letterSpacing: 0.5,
           flex: 1,
         }}>
-          Missions
+          {t('producer.tabs.missions')}
         </Text>
       </View>
 
@@ -110,13 +97,13 @@ export default function MissionsScreen() {
       }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {[
-              { id: 'all' as const, label: 'All' },
-              { id: 'PENDING' as const, label: 'Pending' },
-              { id: 'ASSIGNED' as const, label: 'Assigned' },
-              { id: 'IN_TRANSIT' as const, label: 'In Transit' },
-              { id: 'COMPLETED' as const, label: 'Completed' },
-            ].map((f) => (
+            {([
+              { id: 'all' as const, label: t('logistics.filterAll') },
+              { id: 'PENDING' as const, label: t('logistics.filterPending') },
+              { id: 'ASSIGNED' as const, label: t('logistics.filterAssigned') },
+              { id: 'IN_TRANSIT' as const, label: t('logistics.filterInTransit') },
+              { id: 'COMPLETED' as const, label: t('logistics.filterCompleted') },
+            ]).map((f) => (
               <TouchableOpacity
                 key={f.id}
                 onPress={() => setFilter(f.id)}
@@ -179,7 +166,9 @@ export default function MissionsScreen() {
             }}
           >
             <Truck size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
-            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>Request transport</Text>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>
+              {t('producer.missionsCreate.title')}
+            </Text>
           </TouchableOpacity>
           {loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
@@ -189,7 +178,7 @@ export default function MissionsScreen() {
                 fontWeight: '300',
                 letterSpacing: 0.3,
               }}>
-                Loading...
+                {t('producer.missions.loading')}
               </Text>
             </View>
           ) : filteredMissions.length === 0 ? (
@@ -210,7 +199,7 @@ export default function MissionsScreen() {
                 letterSpacing: 0.3,
                 textAlign: 'center',
               }}>
-                No Missions
+                {t('producer.missions.listEmpty')}
               </Text>
             </View>
           ) : (
@@ -233,12 +222,12 @@ export default function MissionsScreen() {
                       width: 40,
                       height: 40,
                       borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${getStatusColor(mission.status)}15`,
+                      backgroundColor: `${getMissionStatusColor(mission.status)}15`,
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginRight: theme.spacing.sm,
                     }}>
-                      <Truck size={20} color={getStatusColor(mission.status)} strokeWidth={1} />
+                      <Truck size={20} color={getMissionStatusColor(mission.status)} strokeWidth={1} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={{
@@ -248,7 +237,8 @@ export default function MissionsScreen() {
                         marginBottom: theme.spacing.xs,
                         letterSpacing: 0.3,
                       }}>
-                        Mission #{mission.id.slice(0, 8)}
+                        {mission.missionNumber ||
+                          t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
                       </Text>
                       {mission.batch && (
                         <Text style={{
@@ -257,7 +247,7 @@ export default function MissionsScreen() {
                           color: theme.colors.text.secondary,
                           letterSpacing: 0.2,
                         }}>
-                          Batch: {mission.batch.batchId || mission.batchId}
+                          {t('producer.missionsCreate.batchLabel')}: {mission.batch.batchId || mission.batchId}
                         </Text>
                       )}
                     </View>
@@ -265,15 +255,15 @@ export default function MissionsScreen() {
                       paddingHorizontal: theme.spacing.sm,
                       paddingVertical: theme.spacing.xs,
                       borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${getStatusColor(mission.status)}15`,
+                      backgroundColor: `${getMissionStatusColor(mission.status)}15`,
                     }}>
                       <Text style={{
                         fontSize: 9,
                         fontWeight: '300',
-                        color: getStatusColor(mission.status),
+                        color: getMissionStatusColor(mission.status),
                         letterSpacing: 0.3,
                       }}>
-                        {getStatusLabel(mission.status)}
+                        {getMissionStatusLabelLocalized(mission.status, t)}
                       </Text>
                     </View>
                   </View>
@@ -293,7 +283,7 @@ export default function MissionsScreen() {
                         marginLeft: 4,
                         letterSpacing: 0.2,
                       }}>
-                        {new Date(mission.createdAt).toLocaleDateString('en-US')}
+                        {new Date(mission.createdAt).toLocaleDateString(dateLocale)}
                       </Text>
                     </View>
                     {mission.updatedAt && (
@@ -306,7 +296,7 @@ export default function MissionsScreen() {
                           marginLeft: 4,
                           letterSpacing: 0.2,
                         }}>
-                          {new Date(mission.updatedAt).toLocaleDateString('en-US')}
+                          {new Date(mission.updatedAt).toLocaleDateString(dateLocale)}
                         </Text>
                       </View>
                     )}

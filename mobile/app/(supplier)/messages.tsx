@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator,
 import { useTranslation } from 'react-i18next';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 export default function SupplierMessagesScreen() {
   const { t } = useTranslation();
@@ -13,10 +14,15 @@ export default function SupplierMessagesScreen() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
 
+  const dateLocale = useAppLocaleTag();
+
+  const fmt = (iso: string | undefined) =>
+    iso ? new Date(iso).toLocaleString(dateLocale) : '';
+
   const loadThreads = async () => {
     try {
-      const t = await b2bSuppliersAPI.getMyThreads();
-      setThreads(Array.isArray(t) ? t : []);
+      const data = await b2bSuppliersAPI.getMyThreads();
+      setThreads(Array.isArray(data) ? data : []);
     } catch (e) {
       Alert.alert(t('error'), e instanceof Error ? e.message : t('supplier.loadFailed'));
     } finally {
@@ -80,7 +86,9 @@ export default function SupplierMessagesScreen() {
               <Text style={{ fontSize: 12, color: theme.colors.text.primary }} numberOfLines={2}>
                 {thread.farmer
                   ? `${thread.farmer.firstName || ''} ${thread.farmer.lastName || ''}\n${thread.farmer.partnerCode || ''}`
-                  : thread.id}
+                  : t('supplier.threadUntitledShort', {
+                      id: String(thread.id).replace(/-/g, '').slice(0, 8),
+                    })}
               </Text>
             </TouchableOpacity>
           ))}
@@ -95,7 +103,7 @@ export default function SupplierMessagesScreen() {
                   <View key={m.id} style={{ marginBottom: 10 }}>
                     <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{m.body}</Text>
                     <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginTop: 2 }}>
-                      {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}
+                      {fmt(m.createdAt)}
                     </Text>
                   </View>
                 ))}

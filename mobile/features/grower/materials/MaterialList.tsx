@@ -5,6 +5,7 @@ import type { Material } from '../../../lib/api';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import type { MaterialFilterType } from './useMaterialsData';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 export interface MaterialListProps {
   filteredMaterials: Material[];
@@ -30,6 +31,7 @@ export function MaterialList({
   getTypeLabel,
 }: MaterialListProps) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   if (loading) {
     return (
       <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
@@ -80,7 +82,7 @@ export function MaterialList({
             fontWeight: '300',
             color: colors.text.tertiary,
           }}>
-            {t('producer.materials.lastSync')}: {lastSync.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+            {t('producer.materials.lastSync')}: {lastSync.toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}
           </Text>
         )}
       </View>

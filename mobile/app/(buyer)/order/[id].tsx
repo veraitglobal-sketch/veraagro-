@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, CheckCircle, Circle } from 'lucide-react-native';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
@@ -20,32 +20,34 @@ import {
   tBuyerOrderStatus,
 } from '../../../lib/buyer-order-status';
 import { getExpoPublicPaymentConfig, hasExpoPaymentConfig } from '../../../lib/biovera-payment-public';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 function PaymentDetailsTextBlock() {
+  const { t } = useTranslation();
   const c = getExpoPublicPaymentConfig();
   return (
     <View>
       {c.beneficiary ? (
         <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
-          <Text style={{ color: theme.colors.text.secondary }}>Beneficiary: </Text>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.beneficiary')} </Text>
           {c.beneficiary}
         </Text>
       ) : null}
       {c.bankName ? (
         <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
-          <Text style={{ color: theme.colors.text.secondary }}>Bank: </Text>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.bank')} </Text>
           {c.bankName}
         </Text>
       ) : null}
       {c.iban ? (
         <Text selectable style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
-          <Text style={{ color: theme.colors.text.secondary }}>IBAN: </Text>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.iban')} </Text>
           {c.iban}
         </Text>
       ) : null}
       {c.swift ? (
         <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 4 }}>
-          <Text style={{ color: theme.colors.text.secondary }}>SWIFT: </Text>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.swift')} </Text>
           {c.swift}
         </Text>
       ) : null}
@@ -65,33 +67,33 @@ function PaymentDetailsTextBlock() {
 export default function OrderTrackingScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
+  const priceLocale = useAppLocaleTag();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadOrder();
-  }, [id]);
-
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
+    if (!id || typeof id !== 'string') {
+      setOrder(null);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
+      setOrder(null);
       const data = await ordersAPI.getOne(id);
       setOrder(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading order:', error);
-      // If order not found (404), show error but don't crash
-      if (error.response?.status === 404) {
-        // Order might not exist yet or was deleted
-        // Keep loading false so user can see error message
-      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-
+  useEffect(() => {
+    void loadOrder();
+  }, [loadOrder]);
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }}>
@@ -111,7 +113,7 @@ export default function OrderTrackingScreen() {
           letterSpacing: 0.3,
           marginBottom: theme.spacing.md,
         }}>
-          Order not found or still processing
+          {t('buyer.orders.detailMissing')}
         </Text>
         <TouchableOpacity
           onPress={() => router.replace('/(buyer)/orders')}
@@ -129,7 +131,7 @@ export default function OrderTrackingScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 0.5,
           }}>
-            View Orders
+            {t('buyer.profile.viewOrders')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -233,7 +235,7 @@ export default function OrderTrackingScreen() {
             }}>
               {order.quantity} {order.unit}
               {order.unitPrice != null
-                ? ` × ${Number(order.unitPrice).toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}`
+                ? ` × ${Number(order.unitPrice).toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}`
                 : ''}
             </Text>
             <View style={{
@@ -256,7 +258,7 @@ export default function OrderTrackingScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                {order.totalAmount.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>
@@ -281,7 +283,7 @@ export default function OrderTrackingScreen() {
                   marginBottom: theme.spacing.sm,
                 }}
               >
-                {t('buyer.orders.paymentTitle', 'Pay by bank transfer')}
+                {t('buyer.orders.paymentTitle')}
               </Text>
               <Text
                 style={{
@@ -291,11 +293,11 @@ export default function OrderTrackingScreen() {
                   marginBottom: theme.spacing.md,
                 }}
               >
-                {t('buyer.orders.paymentRefHint', 'Use the order number as the payment reference.')}
+                {t('buyer.orders.paymentRefHint')}
               </Text>
               <View style={{ marginBottom: theme.spacing.sm }}>
                 <Text style={{ fontSize: 11, color: theme.colors.text.secondary, fontWeight: '300' }}>
-                  {t('buyer.orders.reference', 'Reference')}
+                  {t('buyer.orders.reference')}
                 </Text>
                 <Text
                   selectable
@@ -308,7 +310,7 @@ export default function OrderTrackingScreen() {
                 <PaymentDetailsTextBlock />
               ) : (
                 <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>
-                  {t('buyer.orders.paymentNotConfigured', 'For IBAN and bank details, check your email or contact')}{' '}
+                  {t('buyer.orders.paymentNotConfigured')}{' '}
                   <Text
                     onPress={() => Linking.openURL('mailto:info@biovera.app')}
                     style={{ textDecorationLine: 'underline', color: theme.colors.primary }}
@@ -332,13 +334,13 @@ export default function OrderTrackingScreen() {
               marginBottom: theme.spacing.lg,
               textTransform: 'uppercase',
             }}>
-              {t('buyer.orders.statusBadge', 'Status')}
+              {t('buyer.orders.statusBadge')}
             </Text>
 
             {timelineInvalid && (
               <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.md, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: theme.borderRadius.md }}>
                 <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
-                  {t('buyer.orders.cancelledOrder', 'This order was cancelled or refunded.')}
+                  {t('buyer.orders.cancelledOrder')}
                 </Text>
               </View>
             )}

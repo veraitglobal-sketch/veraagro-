@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '../../hooks/useCart';
 import { theme } from '../../lib/theme';
+import { useAppLocaleTag } from '../../lib/date-locale';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-native';
 
 /**
@@ -12,6 +13,7 @@ import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-nativ
 export default function CartScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const priceLocale = useAppLocaleTag();
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
 
   const handleCheckout = () => {
@@ -62,7 +64,9 @@ export default function CartScreen() {
                   }}>
                     {item.product.productName}
                     {item.lineKind === 'reservation' && (
-                      <Text style={{ fontSize: 12, color: theme.colors.primary }}> · reservation</Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.primary }}>
+                        {t('buyer.cart.reservationBadge')}
+                      </Text>
                     )}
                   </Text>
                   <Text style={{
@@ -71,9 +75,17 @@ export default function CartScreen() {
                     color: theme.colors.text.secondary,
                     letterSpacing: 0.2,
                   }}>
-                    {item.product.price 
-                      ? item.product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
-                      : 'Price on request'} per {item.product.unit}
+                    {item.product.price != null && item.product.price > 0
+                      ? t('buyer.cart.linePrice', {
+                          price: item.product.price.toLocaleString(priceLocale, {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }),
+                          unit: item.product.unit ?? '',
+                        })
+                      : t('buyer.cart.priceOnRequestWithUnit', {
+                          unit: item.product.unit ?? '—',
+                        })}
                   </Text>
                 </View>
 
@@ -143,7 +155,7 @@ export default function CartScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}>
-            {getTotalPrice().toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+            {getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
           </Text>
         </View>
 

@@ -71,7 +71,7 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
               }}
             >
               <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginBottom: theme.spacing.sm, letterSpacing: 0.3 }}>
-                Napomene
+                {t('producer.orders.deliveryNotesHeading')}
               </Text>
               <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{order.deliveryNotes}</Text>
             </View>

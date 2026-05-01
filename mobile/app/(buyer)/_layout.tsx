@@ -118,6 +118,13 @@ export default function BuyerLayout() {
           tabBarIcon: ({ color }) => <User size={20} color={color} strokeWidth={1.5} />,
         }}
       />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: t('notificationsCenter.title'),
+          href: null,
+        }}
+      />
     </Tabs>
     </View>
   );

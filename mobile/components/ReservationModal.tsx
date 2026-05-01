@@ -6,6 +6,7 @@ import { X, Plus, Minus } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { ordersAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
+import { useAppLocaleTag } from '../lib/date-locale';
 
 const LAST_DELIVERY_KEY = 'buyer_last_delivery';
 
@@ -41,6 +42,7 @@ export default function ReservationModal({
 }: ReservationModalProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const priceLocale = useAppLocaleTag();
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [street, setStreet] = useState('');
@@ -106,7 +108,9 @@ export default function ReservationModal({
           city: city.trim(),
           country: country.trim() || 'Germany',
         },
-        deliveryNotes: `Reservation for batch ${product.batchId || 'N/A'}`,
+        deliveryNotes: product.batchId
+          ? t('reservationModal.deliveryNotesBatch', { batchId: product.batchId })
+          : t('reservationModal.deliveryNotesNoBatch'),
       });
 
       await AsyncStorage.setItem(
@@ -125,8 +129,9 @@ export default function ReservationModal({
       onSuccess();
       onClose();
       setQuantity(1);
-    } catch (error: any) {
-      Alert.alert(t('error'), error.message || t('reservationModal.createFailed'));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+      Alert.alert(t('error'), message || t('reservationModal.createFailed'));
     } finally {
       setLoading(false);
     }
@@ -171,7 +176,7 @@ export default function ReservationModal({
               color: theme.colors.text.primary,
               letterSpacing: 0.5,
             }}>
-              Reserve Crates
+              {t('reservationModal.title')}
             </Text>
             <TouchableOpacity
               onPress={onClose}
@@ -215,7 +220,8 @@ export default function ReservationModal({
                 color: theme.colors.text.secondary,
                 letterSpacing: 0.3,
               }}>
-                {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })} per {unit}
+                {product.price.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}{' '}
+                {t('buyer.productDetail.perUnitShort', { unit })}
               </Text>
             )}
           </View>
@@ -230,7 +236,7 @@ export default function ReservationModal({
               marginBottom: theme.spacing.sm,
               textTransform: 'uppercase',
             }}>
-              Quantity
+              {t('reservationModal.quantitySection')}
             </Text>
             <View style={{
               flexDirection: 'row',
@@ -301,7 +307,7 @@ export default function ReservationModal({
               marginTop: theme.spacing.xs,
               textAlign: 'center',
             }}>
-              {maxQuantity} {unit} available
+              {t('reservationModal.maxAvailable', { max: maxQuantity, unit })}
             </Text>
           </View>
 
@@ -314,12 +320,12 @@ export default function ReservationModal({
               marginBottom: theme.spacing.sm,
               textTransform: 'uppercase',
             }}>
-              Delivery address
+              {t('reservationModal.deliveryAddressHeading')}
             </Text>
             <TextInput
               value={street}
               onChangeText={setStreet}
-              placeholder="Street"
+              placeholder={t('buyer.checkout.fieldStreet')}
               placeholderTextColor={theme.colors.text.tertiary}
               style={{
                 borderWidth: 0.5,
@@ -334,7 +340,7 @@ export default function ReservationModal({
             <TextInput
               value={city}
               onChangeText={setCity}
-              placeholder="City"
+              placeholder={t('buyer.checkout.fieldCity')}
               placeholderTextColor={theme.colors.text.tertiary}
               style={{
                 borderWidth: 0.5,
@@ -349,7 +355,7 @@ export default function ReservationModal({
             <TextInput
               value={country}
               onChangeText={setCountry}
-              placeholder="Country"
+              placeholder={t('buyer.checkout.fieldCountry')}
               placeholderTextColor={theme.colors.text.tertiary}
               style={{
                 borderWidth: 0.5,
@@ -379,7 +385,7 @@ export default function ReservationModal({
                 letterSpacing: 0.5,
                 marginBottom: theme.spacing.xs,
               }}>
-                Total
+                {t('buyer.checkout.total')}
               </Text>
               <Text style={{
                 fontSize: 20,
@@ -387,7 +393,10 @@ export default function ReservationModal({
                 color: theme.colors.primary,
                 letterSpacing: 0.5,
               }}>
-                {(product.price * quantity).toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                {(product.price * quantity).toLocaleString(priceLocale, {
+                  style: 'currency',
+                  currency: 'EUR',
+                })}
               </Text>
             </View>
           )}
@@ -424,7 +433,7 @@ export default function ReservationModal({
               color: theme.colors.text.inverse,
               letterSpacing: 0.5,
             }}>
-              {loading ? 'Processing...' : 'Confirm Reservation'}
+              {loading ? t('reservationModal.processing') : t('reservationModal.confirmReservation')}
             </Text>
           </TouchableOpacity>
         </View>

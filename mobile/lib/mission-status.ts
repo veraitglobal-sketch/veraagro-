@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { colors } from './colors';
 
 /**
@@ -12,7 +13,8 @@ export type MissionStatusCode =
   | 'PICKED_UP'
   | 'IN_TRANSIT'
   | 'COMPLETED'
-  | 'CANCELLED';
+  | 'CANCELLED'
+  | 'DELIVERED';
 
 const EN_LABELS: Record<string, string> = {
   PENDING: 'Pending',
@@ -24,6 +26,7 @@ const EN_LABELS: Record<string, string> = {
   IN_TRANSIT: 'In transit',
   COMPLETED: 'Completed',
   CANCELLED: 'Cancelled',
+  DELIVERED: 'Delivered',
 };
 
 /** Terminal success: run finished (API uses `COMPLETED`, not `DELIVERED`). */
@@ -35,6 +38,14 @@ export function isMissionCompletedSuccess(status: string | undefined | null): bo
 export function getMissionStatusLabelEn(status: string): string {
   if (EN_LABELS[status]) return EN_LABELS[status];
   return status.replace(/_/g, ' ');
+}
+
+/** Prefer `producer.missions.status.<code>`; fallback to EN label / raw code formatting. */
+export function getMissionStatusLabelLocalized(status: string, t: TFunction): string {
+  const key = `producer.missions.status.${status}`;
+  const translated = t(key);
+  if (translated === key) return getMissionStatusLabelEn(status);
+  return translated;
 }
 
 export function getMissionStatusColor(status: string): string {
@@ -50,6 +61,7 @@ export function getMissionStatusColor(status: string): string {
     case 'IN_TRANSIT':
       return colors.primary;
     case 'COMPLETED':
+    case 'DELIVERED':
       return colors.success || colors.primary;
     case 'CANCELLED':
       return colors.text.secondary;

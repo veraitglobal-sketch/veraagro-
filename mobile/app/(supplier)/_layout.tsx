@@ -19,6 +19,7 @@ export default function SupplierLayout() {
           }}
         >
           <Stack.Screen name="dashboard" options={{ title: t('supplier.partnerStore') }} />
+          <Stack.Screen name="notifications" options={{ headerShown: false }} />
           <Stack.Screen name="orders" options={{ title: t('supplier.screenOrders') }} />
           <Stack.Screen name="messages" options={{ title: t('supplier.screenMessages') }} />
         </Stack>

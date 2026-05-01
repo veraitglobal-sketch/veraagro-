@@ -6,6 +6,7 @@ import { useCart } from '../../hooks/useCart';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { ordersAPI } from '../../lib/api';
+import { useAppLocaleTag } from '../../lib/date-locale';
 import { ArrowLeft } from 'lucide-react-native';
 
 /**
@@ -16,6 +17,7 @@ export default function CheckoutScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
+  const priceLocale = useAppLocaleTag();
   const { items, getTotalPrice, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   
@@ -45,9 +47,7 @@ export default function CheckoutScreen() {
       const hasReservation = items.some((i) => i.lineKind === 'reservation');
       const deliveryNotes =
         [
-          hasReservation
-            ? 'Cart includes reserved lines — treat delivery timing as subject to harvest confirmation.'
-            : null,
+          hasReservation ? t('buyer.checkout.reservationDeliveryNote') : null,
           notes.trim() || null,
         ]
           .filter(Boolean)
@@ -66,7 +66,7 @@ export default function CheckoutScreen() {
           deliveryNotes,
         });
         if (!order?.id) {
-          throw new Error('Order was created but no ID was returned');
+          throw new Error(t('buyer.checkout.orderMissingId'));
         }
         createdIds.push(order.id);
       }
@@ -80,10 +80,16 @@ export default function CheckoutScreen() {
           { text: t('alerts.ok'), onPress: () => router.replace('/(buyer)/orders') },
         ]);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating order:', error);
-      const errorMessage = error.response?.data?.message || error.message || t('buyer.checkout.orderCreateFailed');
-      Alert.alert(t('error'), errorMessage);
+      let message = t('buyer.checkout.orderCreateFailed');
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const raw = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+        if (typeof raw === 'string' && raw.trim()) message = raw;
+      } else if (error instanceof Error && error.message.trim()) {
+        message = error.message;
+      }
+      Alert.alert(t('error'), message);
     } finally {
       setLoading(false);
     }
@@ -137,7 +143,7 @@ export default function CheckoutScreen() {
             marginBottom: theme.spacing.lg,
             textTransform: 'uppercase',
           }}>
-            {t('buyer.profile.deliveryAddress', 'Delivery address')}
+            {t('buyer.profile.deliveryAddress')}
           </Text>
 
           {/* Street */}
@@ -150,7 +156,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Street and number
+              {t('buyer.checkout.fieldStreet')}
             </Text>
             <TextInput
               value={street}
@@ -179,7 +185,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              City
+              {t('buyer.checkout.fieldCity')}
             </Text>
             <TextInput
               value={city}
@@ -208,7 +214,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Postal code
+              {t('buyer.checkout.fieldPostal')}
             </Text>
             <TextInput
               value={postalCode}
@@ -238,7 +244,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Country
+              {t('buyer.checkout.fieldCountry')}
             </Text>
             <TextInput
               value={country}
@@ -267,7 +273,7 @@ export default function CheckoutScreen() {
               textTransform: 'uppercase',
               letterSpacing: 1,
             }}>
-              Notes (optional)
+              {t('buyer.checkout.fieldNotes')}
             </Text>
             <TextInput
               value={notes}
@@ -324,9 +330,9 @@ export default function CheckoutScreen() {
                   fontWeight: '300',
                   color: theme.colors.text.primary,
                 }}>
-                  {((item.product.price || 0) * item.quantity).toLocaleString('en-US', { 
-                    style: 'currency', 
-                    currency: 'EUR' 
+                  {((item.product.price || 0) * item.quantity).toLocaleString(priceLocale, {
+                    style: 'currency',
+                    currency: 'EUR',
                   })}
                 </Text>
               </View>
@@ -351,7 +357,7 @@ export default function CheckoutScreen() {
                 fontWeight: '300',
                 color: theme.colors.text.primary,
               }}>
-                {getTotalPrice().toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                {getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>

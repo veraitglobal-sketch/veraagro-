@@ -2,6 +2,7 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Wallet } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface WalletBalanceCardProps {
   availableBalance: number;
@@ -13,6 +14,7 @@ export function WalletBalanceCard({
   pendingBalance,
 }: WalletBalanceCardProps) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   return (
     <View
       style={{
@@ -55,11 +57,11 @@ export function WalletBalanceCard({
         }}
       >
         {availableBalance != null
-          ? availableBalance.toLocaleString('en-US', {
+          ? availableBalance.toLocaleString(dateLocale, {
               style: 'currency',
               currency: 'EUR',
             })
-          : '0,00 €'}
+          : (0).toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
       </Text>
       {pendingBalance > 0 && (
         <Text
@@ -71,7 +73,7 @@ export function WalletBalanceCard({
           }}
         >
           {t('producer.wallet.pending')}:{' '}
-          {pendingBalance.toLocaleString('en-US', {
+          {pendingBalance.toLocaleString(dateLocale, {
             style: 'currency',
             currency: 'EUR',
           })}

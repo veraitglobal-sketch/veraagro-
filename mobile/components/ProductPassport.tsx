@@ -1,6 +1,7 @@
 import { View, Text, Modal, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
 import { X, CheckCircle2, MapPin, Package, Truck, Thermometer } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { ProductPassport as ProductPassportType } from '../lib/api';
@@ -11,11 +12,16 @@ interface ProductPassportProps {
   onClose: () => void;
 }
 
-function formatDateTime(iso: string | Date | undefined | null): string {
-  if (iso == null) return '—';
+function formatDateTime(
+  iso: string | Date | undefined | null,
+  locale: string,
+  dash: string,
+): string {
+  if (iso == null) return dash;
   const d = typeof iso === 'string' ? new Date(iso) : iso;
-  if (Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleString('en-GB', {
+  if (Number.isNaN(d.getTime())) return dash;
+  const loc = locale.toLowerCase().startsWith('sr') ? 'sr-Latn-RS' : 'en-GB';
+  return d.toLocaleString(loc, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -36,20 +42,20 @@ function mapCenter(p: ProductPassportType): { latitude: number; longitude: numbe
  * Digital passport — same data as web /passport (GET /qr/verify).
  */
 export default function ProductPassport({ visible, batchId, onClose }: ProductPassportProps) {
+  const { t, i18n } = useTranslation();
   const [passport, setPassport] = useState<ProductPassportType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (visible && batchId) {
-      loadPassport();
-    } else {
-      setPassport(null);
-      setError(null);
-    }
-  }, [visible, batchId]);
+  const dash = t('buyer.passport.dash');
+  const dateLocale = typeof i18n.language === 'string' ? i18n.language : 'en';
 
-  const loadPassport = async () => {
+  const fmt = useCallback(
+    (iso: string | Date | undefined | null) => formatDateTime(iso, dateLocale, dash),
+    [dash, dateLocale],
+  );
+
+  const loadPassport = useCallback(async () => {
     if (!batchId) return;
     setLoading(true);
     setError(null);
@@ -57,13 +63,23 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
       const { passportAPI } = await import('../lib/api');
       const data = await passportAPI.getByBatchId(batchId);
       setPassport(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load passport');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      setError(message || t('buyer.passport.loadFailed'));
       console.error('Error loading passport:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [batchId, t]);
+
+  useEffect(() => {
+    if (visible && batchId) {
+      void loadPassport();
+    } else {
+      setPassport(null);
+      setError(null);
+    }
+  }, [visible, batchId, loadPassport]);
 
   const center = useMemo(() => (passport ? mapCenter(passport) : null), [passport]);
 
@@ -117,7 +133,7 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                         textTransform: 'uppercase',
                       }}
                     >
-                      Digital passport
+                      {t('buyer.passport.digitalBadge')}
                     </Text>
                   </View>
                 </>
@@ -152,7 +168,7 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                     marginTop: theme.spacing.md,
                   }}
                 >
-                  Loading passport...
+                  {t('buyer.passport.loading')}
                 </Text>
               </View>
             ) : error ? (
@@ -200,39 +216,61 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                 )}
 
                 <View style={{ paddingHorizontal: theme.spacing.md, gap: theme.spacing.sm, marginBottom: theme.spacing.md }}>
-                  <Text style={sectionLabel}>Product</Text>
+                  <Text style={sectionLabel}>{t('buyer.passport.sectionProduct')}</Text>
                   <Text style={bodyText}>
-                    {passport.batch.quantity} {passport.batch.unit} · Batch {passport.batch.batchId}
+                    {t('buyer.passport.batchSummary', {
+                      quantity: String(passport.batch.quantity),
+                      unit: passport.batch.unit,
+                      batchId: passport.batch.batchId,
+                    })}
                   </Text>
                   {passport.batch.status && (
-                    <Text style={mutedText}>Status: {passport.batch.status}</Text>
-                  )}
-                </View>
-
-                <View style={blockPad}>
-                  <Text style={sectionLabel}>Region & origin</Text>
-                  <Text style={titleText}>{passport.origin.regionLabel || passport.origin.harvestRegion || passport.origin.harvestLocation || '—'}</Text>
-                  {passport.origin.productionCountry ? (
-                    <Text style={bodyText}>Country: {passport.origin.productionCountry}</Text>
-                  ) : null}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
-                    <MapPin size={14} color={theme.colors.text.secondary} strokeWidth={1} />
-                    <Text style={bodyText}>{passport.origin.farmName}</Text>
-                  </View>
-                  {(passport.origin.estateCalculatedAreaHa != null || passport.origin.parcelCalculatedAreaHa != null) && (
                     <Text style={mutedText}>
-                      {passport.origin.estateCalculatedAreaHa != null
-                        ? `Field: ${Number(passport.origin.estateCalculatedAreaHa).toFixed(2)} ha`
-                        : ''}
-                      {passport.origin.parcelCalculatedAreaHa != null
-                        ? ` · Plot: ${Number(passport.origin.parcelCalculatedAreaHa).toFixed(2)} ha`
-                        : ''}
+                      {t('buyer.passport.statusLine', { status: passport.batch.status })}
                     </Text>
                   )}
                 </View>
 
                 <View style={blockPad}>
-                  <Text style={sectionLabel}>Farmer</Text>
+                  <Text style={sectionLabel}>{t('buyer.passport.sectionRegionOrigin')}</Text>
+                  <Text style={titleText}>
+                    {passport.origin.regionLabel ||
+                      passport.origin.harvestRegion ||
+                      passport.origin.harvestLocation ||
+                      dash}
+                  </Text>
+                  {passport.origin.productionCountry ? (
+                    <Text style={bodyText}>
+                      {t('buyer.passport.countryLine', { country: passport.origin.productionCountry })}
+                    </Text>
+                  ) : null}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                    <MapPin size={14} color={theme.colors.text.secondary} strokeWidth={1} />
+                    <Text style={bodyText}>{passport.origin.farmName}</Text>
+                  </View>
+                  {(passport.origin.estateCalculatedAreaHa != null ||
+                    passport.origin.parcelCalculatedAreaHa != null) && (
+                    <Text style={mutedText}>
+                      {[
+                        passport.origin.estateCalculatedAreaHa != null
+                          ? t('buyer.passport.fieldHa', {
+                              ha: Number(passport.origin.estateCalculatedAreaHa).toFixed(2),
+                            })
+                          : '',
+                        passport.origin.parcelCalculatedAreaHa != null
+                          ? t('buyer.passport.plotHa', {
+                              ha: Number(passport.origin.parcelCalculatedAreaHa).toFixed(2),
+                            })
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(t('buyer.passport.areaJoin'))}
+                    </Text>
+                  )}
+                </View>
+
+                <View style={blockPad}>
+                  <Text style={sectionLabel}>{t('buyer.passport.sectionFarmer')}</Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Package size={14} color={theme.colors.text.secondary} strokeWidth={1} />
                     <Text style={bodyText}>{passport.farmer.name}</Text>
@@ -240,25 +278,32 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                 </View>
 
                 <View style={blockPad}>
-                  <Text style={sectionLabel}>Journey</Text>
+                  <Text style={sectionLabel}>{t('buyer.passport.sectionJourney')}</Text>
                   {passport.timeline.harvested && (
-                    <JourneyRow label="Harvested" value={formatDateTime(passport.timeline.harvested)} detail={passport.origin.harvestLocation} />
+                    <JourneyRow
+                      label={t('buyer.passport.journeyHarvested')}
+                      value={fmt(passport.timeline.harvested)}
+                      detail={passport.origin.harvestLocation}
+                    />
                   )}
                   {passport.timeline.verified && (
-                    <JourneyRow label="Quality check" value={formatDateTime(passport.timeline.verified)} />
+                    <JourneyRow
+                      label={t('buyer.passport.journeyQualityCheck')}
+                      value={fmt(passport.timeline.verified)}
+                    />
                   )}
                   {passport.timeline.loaded && (
-                    <JourneyRow label="Picked up" value={formatDateTime(passport.timeline.loaded)} />
+                    <JourneyRow label={t('buyer.passport.journeyPickedUp')} value={fmt(passport.timeline.loaded)} />
                   )}
                   {passport.timeline.arrived && (
-                    <JourneyRow label="Arrived" value={formatDateTime(passport.timeline.arrived)} />
+                    <JourneyRow label={t('buyer.passport.journeyArrived')} value={fmt(passport.timeline.arrived)} />
                   )}
                 </View>
 
                 {passport.treatments && passport.treatments.length > 0 && (
                   <View style={blockPad}>
-                    <Text style={sectionLabel}>Spraying & inputs</Text>
-                    {passport.treatments.map((t, i) => (
+                    <Text style={sectionLabel}>{t('buyer.passport.sectionSpraying')}</Text>
+                    {passport.treatments.map((row, i) => (
                       <View
                         key={i}
                         style={{
@@ -267,18 +312,26 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                           borderBottomColor: theme.colors.border,
                         }}
                       >
-                        <Text style={bodyText}>{t.productName}</Text>
+                        <Text style={bodyText}>{row.productName}</Text>
                         <Text style={mutedText}>
-                          {t.dosage}
-                          {t.waterVolume != null ? ` · water ${t.waterVolume} L` : ''}
-                          {t.reason ? ` · ${t.reason}` : ''}
+                          {row.dosage}
+                          {row.waterVolume != null
+                            ? ` · ${t('buyer.passport.waterVol', { vol: String(row.waterVolume) })}`
+                            : ''}
+                          {row.reason ? ` · ${row.reason}` : ''}
                         </Text>
-                        <Text style={mutedText}>Applied: {formatDateTime(t.appliedAt)}</Text>
-                        <Text style={mutedText}>Device time: {formatDateTime(t.deviceTimestamp)}</Text>
-                        {t.gpsLatitude != null && t.gpsLongitude != null && (
+                        <Text style={mutedText}>{t('buyer.passport.applied', { when: fmt(row.appliedAt) })}</Text>
+                        <Text style={mutedText}>
+                          {t('buyer.passport.deviceTime', { when: fmt(row.deviceTimestamp) })}
+                        </Text>
+                        {row.gpsLatitude != null && row.gpsLongitude != null && (
                           <Text style={mutedText}>
-                            GPS: {t.gpsLatitude.toFixed(5)}, {t.gpsLongitude.toFixed(5)}
-                            {t.gpsAccuracyM != null ? ` (±${t.gpsAccuracyM}m)` : ''}
+                            {t('buyer.passport.gpsLine', {
+                              lat: row.gpsLatitude.toFixed(5),
+                              lng: row.gpsLongitude.toFixed(5),
+                              acc:
+                                row.gpsAccuracyM != null ? t('buyer.passport.gpsAccuracyM', { m: row.gpsAccuracyM }) : '',
+                            })}
                           </Text>
                         )}
                       </View>
@@ -288,7 +341,7 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
 
                 {passport.missions && passport.missions.length > 0 && (
                   <View style={blockPad}>
-                    <Text style={sectionLabel}>Transport</Text>
+                    <Text style={sectionLabel}>{t('buyer.passport.sectionTransport')}</Text>
                     {passport.missions.map((m, i) => (
                       <View
                         key={`${m.missionNumber || 'm'}-${i}`}
@@ -304,39 +357,60 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                           <Truck size={16} color={theme.colors.primary} strokeWidth={1.5} />
                           <Text style={bodyText}>
-                            {m.missionNumber || 'Transport'} {m.status ? `· ${m.status}` : ''}
+                            {(m.missionNumber || t('buyer.passport.transportFallback')) +
+                              (m.status ? ` · ${m.status}` : '')}
                           </Text>
                         </View>
-                        {m.logisticsPartner?.name && <Text style={bodyText}>Carrier: {m.logisticsPartner.name}</Text>}
-                        {m.pickupAddress && <Text style={mutedText}>Pickup: {m.pickupAddress}</Text>}
+                        {m.logisticsPartner?.name && (
+                          <Text style={bodyText}>{t('buyer.passport.carrierLine', { name: m.logisticsPartner.name })}</Text>
+                        )}
+                        {m.pickupAddress && (
+                          <Text style={mutedText}>{t('buyer.passport.pickupLine', { address: m.pickupAddress })}</Text>
+                        )}
                         {m.vehicle && (
                           <Text style={mutedText}>
-                            {[m.vehicle.make, m.vehicle.model, m.vehicle.type].filter(Boolean).join(' ')} · {m.vehicle.vehicleNumber} · {m.vehicle.licensePlate}
+                            {[m.vehicle.make, m.vehicle.model, m.vehicle.type].filter(Boolean).join(' ')} ·{' '}
+                            {m.vehicle.vehicleNumber} · {m.vehicle.licensePlate}
                           </Text>
                         )}
-                        {m.assignedAt && <Text style={mutedText}>Assigned: {formatDateTime(m.assignedAt)}</Text>}
-                        {m.pickedUpAt && <Text style={mutedText}>Picked up: {formatDateTime(m.pickedUpAt)}</Text>}
-                        {m.deliveredAt && <Text style={mutedText}>Delivered: {formatDateTime(m.deliveredAt)}</Text>}
+                        {m.assignedAt && (
+                          <Text style={mutedText}>{t('buyer.passport.assignedLine', { when: fmt(m.assignedAt) })}</Text>
+                        )}
+                        {m.pickedUpAt && (
+                          <Text style={mutedText}>{t('buyer.passport.pickedUpLine', { when: fmt(m.pickedUpAt) })}</Text>
+                        )}
+                        {m.deliveredAt && (
+                          <Text style={mutedText}>{t('buyer.passport.deliveredLine', { when: fmt(m.deliveredAt) })}</Text>
+                        )}
                         {m.borderWaits && m.borderWaits.length > 0 && (
                           <View style={{ marginTop: 8 }}>
                             {m.borderWaits.map((b, j) => (
                               <Text key={j} style={mutedText}>
-                                Border {b.borderName || ''}: {formatDateTime(b.borderArrivalTime)} – {formatDateTime(b.borderExitTime)} ({b.waitTimeMinutes} min)
+                                {t('buyer.passport.borderWait', {
+                                  border: b.borderName || dash,
+                                  arrival: fmt(b.borderArrivalTime),
+                                  exit: fmt(b.borderExitTime),
+                                  minutes: String(b.waitTimeMinutes ?? dash),
+                                })}
                               </Text>
                             ))}
                           </View>
                         )}
                         {m.locationLogs && m.locationLogs.length > 0 && (
                           <View style={{ marginTop: 8 }}>
-                            <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 4 }}>GPS log ({m.locationLogs.length})</Text>
+                            <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+                              {t('buyer.passport.gpsLogTitle', { count: m.locationLogs.length })}
+                            </Text>
                             {m.locationLogs.slice(0, 8).map((log, j) => (
                               <Text key={j} style={{ fontSize: 10, color: theme.colors.text.secondary }}>
-                                {formatDateTime(log.timestamp)} · {log.latitude.toFixed(4)}, {log.longitude.toFixed(4)}
+                                {fmt(log.timestamp)} · {log.latitude.toFixed(4)}, {log.longitude.toFixed(4)}
                                 {log.address ? ` · ${log.address}` : ''}
                               </Text>
                             ))}
                             {m.locationLogs.length > 8 && (
-                              <Text style={mutedText}>+{m.locationLogs.length - 8} more points</Text>
+                              <Text style={mutedText}>
+                                {t('buyer.passport.moreGpsPoints', { n: m.locationLogs.length - 8 })}
+                              </Text>
                             )}
                           </View>
                         )}
@@ -349,21 +423,31 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                   <View style={blockPad}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                       <Thermometer size={16} color={theme.colors.primary} strokeWidth={1.5} />
-                      <Text style={sectionLabel}>Cold chain</Text>
+                      <Text style={sectionLabel}>{t('buyer.passport.sectionColdChain')}</Text>
                     </View>
                     {passport.coldChainProof.minTemp != null && (
                       <Text style={mutedText}>
-                        Min {passport.coldChainProof.minTemp}°C · Max {passport.coldChainProof.maxTemp}°C · Avg{' '}
-                        {passport.coldChainProof.avgTemp != null ? Number(passport.coldChainProof.avgTemp).toFixed(1) : '—'}°C
+                        {t('buyer.passport.tempSummary', {
+                          min: String(passport.coldChainProof.minTemp),
+                          max: String(passport.coldChainProof.maxTemp),
+                          avg:
+                            passport.coldChainProof.avgTemp != null
+                              ? Number(passport.coldChainProof.avgTemp).toFixed(1)
+                              : dash,
+                        })}
                       </Text>
                     )}
-                    <Text style={mutedText}>{passport.coldChainProof.temperatureData.length} temperature readings</Text>
+                    <Text style={mutedText}>
+                      {t('buyer.passport.tempReadingsCount', {
+                        count: passport.coldChainProof.temperatureData.length,
+                      })}
+                    </Text>
                   </View>
                 )}
 
                 {passport.protocol360?.levels && passport.protocol360.levels.length > 0 && (
                   <View style={blockPad}>
-                    <Text style={sectionLabel}>Protocol 360</Text>
+                    <Text style={sectionLabel}>{t('buyer.passport.sectionProtocol360')}</Text>
                     {passport.protocol360.overallStatus && <Text style={bodyText}>{passport.protocol360.overallStatus}</Text>}
                     {passport.protocol360.levels.map((lv, j) => (
                       <Text key={j} style={mutedText}>

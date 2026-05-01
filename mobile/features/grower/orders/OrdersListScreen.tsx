@@ -1,22 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import { Package, Calendar, Euro } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useOrdersListData } from './useOrdersListData';
 import type { OrderFilterStatus } from './useOrdersListData';
-
-const FILTER_OPTIONS: { id: OrderFilterStatus; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'PENDING', label: 'Pending' },
-  { id: 'CONFIRMED', label: 'Confirmed' },
-  { id: 'PREPARING', label: 'Preparing' },
-  { id: 'IN_TRANSIT', label: 'In Transit' },
-  { id: 'DELIVERED', label: 'Delivered' },
-  { id: 'CANCELLED', label: 'Cancelled' },
-];
 
 /**
  * Orders list screen (producer): header, filters, list with refresh.
@@ -26,6 +18,20 @@ export function OrdersListScreen() {
   const router = useRouter();
   const data = useOrdersListData();
   const p = useBioVeraScreenPadding();
+  const dateLocale = useAppLocaleTag();
+
+  const filterSpecs = useMemo(
+    (): { id: OrderFilterStatus; labelKey: string }[] => [
+      { id: 'all', labelKey: 'common.all' },
+      { id: 'PENDING', labelKey: 'producer.orders.statusPending' },
+      { id: 'CONFIRMED', labelKey: 'producer.orders.statusConfirmed' },
+      { id: 'PREPARING', labelKey: 'producer.orders.statusPreparing' },
+      { id: 'IN_TRANSIT', labelKey: 'producer.orders.statusInTransit' },
+      { id: 'DELIVERED', labelKey: 'producer.orders.statusDelivered' },
+      { id: 'CANCELLED', labelKey: 'producer.orders.statusCancelled' },
+    ],
+    [],
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -43,7 +49,7 @@ export function OrdersListScreen() {
       >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {FILTER_OPTIONS.map((f) => (
+            {filterSpecs.map((f) => (
               <TouchableOpacity
                 key={f.id}
                 onPress={() => data.setFilter(f.id)}
@@ -62,7 +68,7 @@ export function OrdersListScreen() {
                   color: data.filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
                   letterSpacing: 0.3,
                 }}>
-                  {f.label}
+                  {t(f.labelKey)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -91,7 +97,7 @@ export function OrdersListScreen() {
           {data.loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{ color: theme.colors.text.secondary, fontSize: 11, fontWeight: '300', letterSpacing: 0.3 }}>
-                Loading...
+                {t('producer.orders.loading')}
               </Text>
             </View>
           ) : data.filteredOrders.length === 0 ? (
@@ -105,7 +111,7 @@ export function OrdersListScreen() {
             }}>
               <Package size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
               <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: theme.spacing.sm, letterSpacing: 0.3, textAlign: 'center' }}>
-                No Orders
+                {t('producer.orders.listEmpty')}
               </Text>
             </View>
           ) : (
@@ -169,13 +175,13 @@ export function OrdersListScreen() {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Euro size={14} color={theme.colors.text.secondary} strokeWidth={1} />
                       <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginLeft: 4, letterSpacing: 0.2 }}>
-                        {order.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                        {order.totalAmount.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
                       <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary, marginLeft: 4, letterSpacing: 0.2 }}>
-                        {new Date(order.createdAt).toLocaleDateString('en-US')}
+                        {new Date(order.createdAt).toLocaleDateString(dateLocale)}
                       </Text>
                     </View>
                   </View>

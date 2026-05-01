@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, Edit, Trash2, Package } from 'lucide-react-native';
 import type { Estate } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
@@ -28,6 +29,7 @@ export function EstateList({
   onPressEdit,
   onDelete,
 }: EstateListProps) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
@@ -37,7 +39,7 @@ export function EstateList({
           fontWeight: '300',
           letterSpacing: 0.3,
         }}>
-          Loading...
+          {t('producer.estates.loading')}
         </Text>
       </View>
     );
@@ -63,7 +65,7 @@ export function EstateList({
           letterSpacing: 0.3,
           textAlign: 'center',
         }}>
-          No Estates
+          {t('producer.estates.listEmptyTitle')}
         </Text>
         <Text style={{
           fontSize: 11,
@@ -73,7 +75,7 @@ export function EstateList({
           letterSpacing: 0.2,
           textAlign: 'center',
         }}>
-          Add your first estate to get started
+          {t('producer.estates.listEmptySubtitle')}
         </Text>
         <TouchableOpacity
           onPress={onPressNew}
@@ -91,7 +93,7 @@ export function EstateList({
             fontWeight: '300',
             letterSpacing: 0.3,
           }}>
-            Add Estate
+            {t('producer.estates.newEstate')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -185,7 +187,7 @@ export function EstateList({
                       marginLeft: 4,
                       letterSpacing: 0.2,
                     }}>
-                      {estate.parcels.length} {estate.parcels.length === 1 ? 'parcel' : 'parcels'}
+                      {t('producer.estates.parcelBadge', { count: estate.parcels.length })}
                     </Text>
                   </View>
                 )}
@@ -200,7 +202,7 @@ export function EstateList({
                     marginLeft: 4,
                     letterSpacing: 0.2,
                   }}>
-                    {estate.daysRemaining} days until certification
+                    {t('producer.estates.listCertDaysRemaining', { count: estate.daysRemaining ?? 0 })}
                   </Text>
                 </View>
               )}

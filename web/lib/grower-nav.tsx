@@ -15,6 +15,7 @@ import {
   ScanBarcode,
   Leaf,
   NotebookPen,
+  Smartphone,
 } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
@@ -46,6 +47,8 @@ export function buildGrowerNavItems(t: TFunction, locale: SiteLocale): GrowerNav
     { href: p('/grower/materials'), label: t('grower.nav.materials'), icon: <Box className="w-5 h-5" /> },
     { href: p('/grower/batches'), label: t('grower.nav.myBatches'), icon: <Package className="w-5 h-5" /> },
     { href: p('/grower/field-diary'), label: t('grower.nav.fieldDiary'), icon: <NotebookPen className="w-5 h-5" /> },
+    /** Locale-free; do not use `withLocalePrefix` (see middleware — only /grower is rewritten under /sr). */
+    { href: '/producer/field-entry', label: t('grower.nav.fieldCapture'), icon: <Smartphone className="w-5 h-5" /> },
     { href: p('/grower/package-badges/scan'), label: t('grower.nav.scanPallets'), icon: <ScanBarcode className="w-5 h-5" /> },
     { href: p('/grower/quality-entry'), label: t('grower.nav.qualityEntry'), icon: <CheckCircle className="w-5 h-5" /> },
     { href: p('/grower/compliance-photos'), label: t('grower.nav.compliancePhotos'), icon: <Camera className="w-5 h-5" /> },

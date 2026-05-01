@@ -19,6 +19,10 @@ function isLogisticsStack(roleSet: Set<string>): boolean {
   return roleSet.has('LOGISTICS_PARTNER') || roleSet.has('DRIVER');
 }
 
+function isSupplierOnlyStack(roleSet: Set<string>): boolean {
+  return roleSet.has('MATERIAL_SUPPLIER') && !isProducerStack(roleSet);
+}
+
 function orderDetailHref(orderId: string, context?: NotificationActionContext): Href {
   const R = rolesUpperSet(context?.roles);
   if (!context?.roles?.length || isProducerStack(R)) {
@@ -102,6 +106,9 @@ export function resolveNotificationActionHref(
     if (a0 === 'vera-standard') {
       return '/(buyer)/vera-standard' as Href;
     }
+    if (a0 === 'notifications') {
+      return '/(buyer)/notifications' as Href;
+    }
     if (['deliveries', 'invoices', 'analytics', 'trade-panel', 'inventory', 'suppliers'].includes(a0 ?? '')) {
       return '/(buyer)/orders' as Href;
     }
@@ -121,6 +128,9 @@ export function resolveNotificationActionHref(
     if (seg === 'messages') {
       return '/(supplier)/messages' as Href;
     }
+    if (seg === 'notifications') {
+      return '/(supplier)/notifications' as Href;
+    }
     return '/(supplier)/dashboard' as Href;
   }
 
@@ -128,6 +138,9 @@ export function resolveNotificationActionHref(
   if (path.includes('fleet-partner') || path.includes('logistics-partner')) {
     if (path.includes('handover-receiver')) {
       return '/(logistics)/handover-receiver' as Href;
+    }
+    if (path.includes('notifications')) {
+      return '/(logistics)/notifications' as Href;
     }
     const lm = path.match(/\/missions\/([^/]+)\/?$/);
     if (lm?.[1]) {
@@ -207,6 +220,20 @@ export function resolveNotificationActionHref(
   const handSimple = path.match(/^\/handover\/[^/]+\/?$/);
   if (handSimple && isLogisticsStack(rolesUpperSet(context?.roles))) {
     return '/(logistics)/handover-receiver' as Href;
+  }
+
+  if (path === '/notifications' || path.startsWith('/notifications/')) {
+    const R = rolesUpperSet(context?.roles);
+    if (R.has('BUYER') || R.has('CUSTOMER')) {
+      return '/(buyer)/notifications' as Href;
+    }
+    if (isLogisticsStack(R) && !isProducerStack(R)) {
+      return '/(logistics)/notifications' as Href;
+    }
+    if (isSupplierOnlyStack(R)) {
+      return '/(supplier)/notifications' as Href;
+    }
+    return '/(producer)/notifications' as Href;
   }
 
   if (path === '/trust-score' || path.startsWith('/trust-score')) {

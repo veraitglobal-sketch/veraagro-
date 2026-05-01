@@ -1,11 +1,12 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, MapPin, Plus, Minus, ShoppingCart } from 'lucide-react-native';
 import { inventoryAPI, Product } from '../../lib/api';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
+import { useAppLocaleTag } from '../../lib/date-locale';
 import { useCart } from '../../hooks/useCart';
 
 /**
@@ -22,23 +23,29 @@ export default function ProductDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const isReservationMode = mode === 'reserve';
+  const localeTag = useAppLocaleTag();
 
-  useEffect(() => {
-    loadProduct();
-  }, [id]);
-
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async () => {
+    if (!id) {
+      setProduct(null);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const products = await inventoryAPI.getAvailableProducts();
-      const found = products.find(p => p.id === id);
+      const found = products.find((pRow) => pRow.id === id);
       setProduct(found || null);
     } catch (error) {
       console.error('Error loading product:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadProduct();
+  }, [loadProduct]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -51,52 +58,83 @@ export default function ProductDetailScreen() {
 
   const getProductIcon = () => {
     if (!product) return '🌾';
-    if (product.parcel?.cropType === 'Raspberry' || product.productName.includes('Malina')) return '🫐';
-    if (product.parcel?.cropType === 'Pepper' || product.productName.includes('Paprika')) return '🌶️';
+    if (product.parcel?.cropType === 'Raspberry' || product.productName.includes('Malina'))
+      return '🫐';
+    if (product.parcel?.cropType === 'Pepper' || product.productName.includes('Paprika'))
+      return '🌶️';
     return '🌾';
   };
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.background,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: theme.spacing.lg,
+        }}
+      >
         <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text
+          style={{
+            marginTop: theme.spacing.md,
+            fontSize: 14,
+            fontWeight: '300',
+            color: theme.colors.text.secondary,
+            textAlign: 'center',
+          }}
+        >
+          {t('buyer.shop.loading')}
+        </Text>
       </View>
     );
   }
 
   if (!product) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.background,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: theme.spacing.lg,
+        }}
+      >
         <Text style={{ fontSize: 16, color: theme.colors.text.secondary, textAlign: 'center' }}>
-          Product not found
+          {t('buyer.productDetail.notFound')}
         </Text>
         <TouchableOpacity
           onPress={() => router.back()}
           style={{ marginTop: theme.spacing.md, padding: theme.spacing.md }}
         >
-          <Text style={{ fontSize: 14, color: theme.colors.primary }}>Go back</Text>
+          <Text style={{ fontSize: 14, color: theme.colors.primary }}>{t('common.back')}</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const farmerName = product.estate?.name || 'Bio Vera Farmer';
+  const farmerName = product.estate?.name || t('buyer.productDetail.farmerFallback');
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
-      <View style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 10,
-        paddingTop: p.headerTop,
-        paddingLeft: p.screenPaddingLeft,
-        paddingRight: p.screenPaddingRight,
-        paddingBottom: theme.spacing.md,
-        backgroundColor: 'transparent',
-      }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          paddingTop: p.headerTop,
+          paddingLeft: p.screenPaddingLeft,
+          paddingRight: p.screenPaddingRight,
+          paddingBottom: theme.spacing.md,
+          backgroundColor: 'transparent',
+        }}
+      >
         <TouchableOpacity
           onPress={() => router.back()}
           style={{
@@ -114,90 +152,106 @@ export default function ProductDetailScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Large Product Image */}
-        <View style={{
-          width: '100%',
-          height: 400,
-          backgroundColor: theme.colors.primary + '15',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+        <View
+          style={{
+            width: '100%',
+            height: 400,
+            backgroundColor: theme.colors.primary + '15',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Text style={{ fontSize: 120 }}>{getProductIcon()}</Text>
         </View>
 
         {/* Content */}
         <View style={{ padding: theme.spacing.lg }}>
           {/* Product Title */}
-          <Text style={{
-            fontSize: 16,
-            fontWeight: '300',
-            letterSpacing: 4,
-            color: theme.colors.text.primary,
-            marginBottom: theme.spacing.xl,
-            textTransform: 'uppercase',
-          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '300',
+              letterSpacing: 4,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.xl,
+              textTransform: 'uppercase',
+            }}
+          >
             {product.productName}
           </Text>
 
           {/* Price */}
           <View style={{ marginBottom: theme.spacing.xl }}>
-            <Text style={{
-              fontSize: 32,
-              fontWeight: '300',
-              color: theme.colors.text.primary,
-              letterSpacing: 1,
-            }}>
-              {product.price 
-                ? product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
-                : 'Price on request'}
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: '300',
+                color: theme.colors.text.primary,
+                letterSpacing: 1,
+              }}
+            >
+              {product.price
+                ? product.price.toLocaleString(localeTag, { style: 'currency', currency: 'EUR' })
+                : t('buyer.cart.priceOnRequest')}
             </Text>
-            <Text style={{
-              fontSize: 13,
-              fontWeight: '300',
-              color: theme.colors.text.secondary,
-              marginTop: 4,
-              letterSpacing: 0.5,
-            }}>
-              per {product.unit}
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '300',
+                color: theme.colors.text.secondary,
+                marginTop: 4,
+                letterSpacing: 0.5,
+              }}
+            >
+              {t('buyer.productDetail.perUnitShort', { unit: product.unit })}
             </Text>
           </View>
 
           {/* Origin Story */}
-          <View style={{
-            marginBottom: theme.spacing.xl,
-            paddingBottom: theme.spacing.lg,
-            borderBottomWidth: 0.5,
-            borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
-            <Text style={{
-              fontSize: 11,
-              fontWeight: '500',
-              letterSpacing: 2,
-              color: theme.colors.text.secondary,
-              marginBottom: theme.spacing.md,
-              textTransform: 'uppercase',
-            }}>
-              Poreklo
+          <View
+            style={{
+              marginBottom: theme.spacing.xl,
+              paddingBottom: theme.spacing.lg,
+              borderBottomWidth: 0.5,
+              borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '500',
+                letterSpacing: 2,
+                color: theme.colors.text.secondary,
+                marginBottom: theme.spacing.md,
+                textTransform: 'uppercase',
+              }}
+            >
+              {t('buyer.productDetail.originHeading')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
               <MapPin size={14} color={theme.colors.text.secondary} strokeWidth={1} />
-              <Text style={{
-                fontSize: 13,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                marginLeft: 6,
-                letterSpacing: 0.3,
-              }}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '300',
+                  color: theme.colors.text.primary,
+                  marginLeft: 6,
+                  letterSpacing: 0.3,
+                }}
+              >
                 {farmerName}
               </Text>
             </View>
             {product.estate?.location && (
-              <Text style={{
-                fontSize: 12,
-                fontWeight: '300',
-                color: theme.colors.text.secondary,
-                marginLeft: 20,
-                letterSpacing: 0.3,
-              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '300',
+                  color: theme.colors.text.secondary,
+                  marginLeft: 20,
+                  letterSpacing: 0.3,
+                }}
+              >
                 {product.estate.location}
               </Text>
             )}
@@ -205,15 +259,17 @@ export default function ProductDetailScreen() {
 
           {/* Product Details */}
           <View style={{ marginBottom: theme.spacing.xl }}>
-            <Text style={{
-              fontSize: 11,
-              fontWeight: '500',
-              letterSpacing: 2,
-              color: theme.colors.text.secondary,
-              marginBottom: theme.spacing.md,
-              textTransform: 'uppercase',
-            }}>
-              Details
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '500',
+                letterSpacing: 2,
+                color: theme.colors.text.secondary,
+                marginBottom: theme.spacing.md,
+                textTransform: 'uppercase',
+              }}
+            >
+              {t('buyer.productDetail.detailsHeading')}
             </Text>
             <View style={{ gap: theme.spacing.sm }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -230,14 +286,14 @@ export default function ProductDetailScreen() {
                     {t('producer.batches.harvestLabel')}
                   </Text>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
-                    {new Date(product.harvestDate).toLocaleDateString()}
+                    {new Date(product.harvestDate).toLocaleDateString(localeTag)}
                   </Text>
                 </View>
               )}
-              {product.daysInConversion && (
+              {product.daysInConversion != null && (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
-                    Days in conversion
+                    {t('buyer.productDetail.daysInConversion')}
                   </Text>
                   <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
                     {product.daysInConversion}
@@ -248,20 +304,24 @@ export default function ProductDetailScreen() {
           </View>
 
           {/* Quantity Selector */}
-          <View style={{
-            marginBottom: theme.spacing.xl,
-            paddingBottom: theme.spacing.lg,
-            borderBottomWidth: 0.5,
-            borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
-            <Text style={{
-              fontSize: 11,
-              fontWeight: '500',
-              letterSpacing: 2,
-              color: theme.colors.text.secondary,
-              marginBottom: theme.spacing.md,
-              textTransform: 'uppercase',
-            }}>
+          <View
+            style={{
+              marginBottom: theme.spacing.xl,
+              paddingBottom: theme.spacing.lg,
+              borderBottomWidth: 0.5,
+              borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '500',
+                letterSpacing: 2,
+                color: theme.colors.text.secondary,
+                marginBottom: theme.spacing.md,
+                textTransform: 'uppercase',
+              }}
+            >
               {t('producer.orders.quantity')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}>
@@ -271,14 +331,16 @@ export default function ProductDetailScreen() {
               >
                 <Minus size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
               </TouchableOpacity>
-              <Text style={{
-                fontSize: 18,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                minWidth: 40,
-                textAlign: 'center',
-                letterSpacing: 1,
-              }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '300',
+                  color: theme.colors.text.primary,
+                  minWidth: 40,
+                  textAlign: 'center',
+                  letterSpacing: 1,
+                }}
+              >
                 {quantity}
               </Text>
               <TouchableOpacity
@@ -293,12 +355,14 @@ export default function ProductDetailScreen() {
       </ScrollView>
 
       {/* Add to Cart Button */}
-      <View style={{
-        padding: theme.spacing.lg,
-        backgroundColor: theme.colors.background,
-        borderTopWidth: 0.5,
-        borderTopColor: 'rgba(0, 0, 0, 0.1)',
-      }}>
+      <View
+        style={{
+          padding: theme.spacing.lg,
+          backgroundColor: theme.colors.background,
+          borderTopWidth: 0.5,
+          borderTopColor: 'rgba(0, 0, 0, 0.1)',
+        }}
+      >
         <TouchableOpacity
           onPress={handleAddToCart}
           style={{
@@ -313,13 +377,15 @@ export default function ProductDetailScreen() {
           }}
         >
           <ShoppingCart size={18} color={theme.colors.text.inverse} strokeWidth={1.5} />
-          <Text style={{
-            fontSize: 14,
-            fontWeight: '300',
-            color: theme.colors.text.inverse,
-            letterSpacing: 1,
-          }}>
-            {isReservationMode ? 'Reserve' : t('buyer.shop.addToCart')}
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: '300',
+              color: theme.colors.text.inverse,
+              letterSpacing: 1,
+            }}
+          >
+            {isReservationMode ? t('buyer.productDetail.reserveCta') : t('buyer.shop.addToCart')}
           </Text>
         </TouchableOpacity>
       </View>

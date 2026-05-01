@@ -24,7 +24,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
       }}
     >
       <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginBottom: theme.spacing.md, letterSpacing: 0.3 }}>
-        Traceability
+        {t('producer.batches.traceabilityTitle')}
       </Text>
       {batch.harvestedBy && (
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, paddingBottom: theme.spacing.sm, borderBottomWidth: 0.5, borderBottomColor: colors.border }}>
@@ -41,7 +41,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, paddingBottom: theme.spacing.sm, borderBottomWidth: 0.5, borderBottomColor: colors.border }}>
           <Truck size={14} color={colors.text.secondary} strokeWidth={1} />
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
-            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>Transport</Text>
+            <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>{t('producer.batches.transportCarrierLabel')}</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
               {personLabel(batch.transportedByDriver)}
             </Text>
@@ -54,7 +54,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
             <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>{t('producer.batches.currentLocation')}</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-              {batch.currentHub.name || 'Hub'}
+              {batch.currentHub.name || t('producer.batches.hubNameFallback')}
             </Text>
           </View>
         </View>

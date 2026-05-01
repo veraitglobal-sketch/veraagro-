@@ -66,13 +66,3 @@ export function getBatchStatusColor(status: string): string {
     default: return colors.text.secondary;
   }
 }
-
-export function getBatchStatusLabel(status: string): string {
-  switch (status) {
-    case 'PACKED': return 'Pakovano';
-    case 'IN_HUB': return 'U hubu';
-    case 'IN_TRANSIT': return 'U transportu';
-    case 'DELIVERED': return 'Delivered';
-    default: return status;
-  }
-}

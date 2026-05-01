@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 /**
- * /producer/estates — list (same entry as from grower/producer dashboard “My estates” cards)
+ * Legacy /producer/estates list — prefer /grower/fields (redirect in next.config).
+ * Kept for backwards compatibility; links herein point to canonical routes.
  */
 export default function ProducerEstatesListPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -60,7 +61,7 @@ export default function ProducerEstatesListPage() {
             <Link href="/grower" className="text-gray-600 hover:text-[#2D5A27]">
               Grower
             </Link>
-            <Link href="/producer/estates/new" className="px-3 py-1.5 bg-[#2D5A27] text-white rounded-lg text-sm font-medium">
+            <Link href="/grower/fields" className="px-3 py-1.5 bg-[#2D5A27] text-white rounded-lg text-sm font-medium">
               + Add estate
             </Link>
           </div>
@@ -71,7 +72,7 @@ export default function ProducerEstatesListPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-light text-gray-900">My estates</h1>
           <Link
-            href="/producer/estates/new"
+            href="/grower/fields"
             className="inline-block px-4 py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium hover:opacity-95"
           >
             + Add estate
@@ -87,7 +88,7 @@ export default function ProducerEstatesListPage() {
             {estates.map((estate: any) => (
               <Link
                 key={estate.id}
-                href={`/producer/estates/${estate.id}`}
+                href={`/grower/fields?estate=${encodeURIComponent(estate.id)}`}
                 className="block bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:border-[#2D5A27]/40 transition-colors"
               >
                 <h2 className="text-lg font-medium text-gray-900 mb-1">{estate.name}</h2>
@@ -103,7 +104,7 @@ export default function ProducerEstatesListPage() {
         ) : (
           <div className="bg-white border border-dashed border-gray-200 rounded-lg p-10 text-center">
             <p className="text-gray-600 mb-4">You have no estates yet.</p>
-            <Link href="/producer/estates/new" className="text-[#2D5A27] font-medium hover:underline">
+            <Link href="/grower/fields" className="text-[#2D5A27] font-medium hover:underline">
               Create your first estate →
             </Link>
           </div>

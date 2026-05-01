@@ -139,7 +139,10 @@ export default function HandoverReceiverScreen() {
       setReceiverName('');
       Alert.alert(t('logistics.receiverProof.doneTitle'), t('logistics.receiverProof.doneBody'));
     } catch (e: unknown) {
-      const msg = e && typeof e === 'object' && 'message' in e ? String((e as Error).message) : 'Error';
+      const msg =
+        e && typeof e === 'object' && 'message' in e
+          ? String((e as Error).message)
+          : t('logistics.receiverProof.errorDetailFallback');
       Alert.alert(t('logistics.receiverProof.errTitle'), msg);
     } finally {
       setSubmitting(false);
@@ -163,7 +166,10 @@ export default function HandoverReceiverScreen() {
         Alert.alert('', t('logistics.receiverProof.shareUnavailable'));
       }
     } catch (e: unknown) {
-      const msg = e && typeof e === 'object' && 'message' in e ? String((e as Error).message) : 'Error';
+      const msg =
+        e && typeof e === 'object' && 'message' in e
+          ? String((e as Error).message)
+          : t('logistics.receiverProof.errorDetailFallback');
       Alert.alert(t('logistics.receiverProof.pdfErrTitle'), msg);
     } finally {
       setPdfLoading(false);

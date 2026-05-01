@@ -9,6 +9,7 @@ import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../lib/api';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 /**
  * Estate Details Screen
@@ -47,6 +48,8 @@ export default function EstateDetailsScreen() {
     await loadEstate();
     setRefreshing(false);
   };
+
+  const dateLocale = useAppLocaleTag();
 
   if (loading && !estate) {
     return (
@@ -87,9 +90,9 @@ export default function EstateDetailsScreen() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'CERTIFIED': return 'Certified';
-      case 'ACTIVE': return 'Active';
-      case 'PENDING_SETUP': return 'In progress';
+      case 'CERTIFIED': return t('producer.estates.certStatusCertified');
+      case 'ACTIVE': return t('producer.estates.certStatusActive');
+      case 'PENDING_SETUP': return t('producer.estates.certStatusPendingSetup');
       default: return status;
     }
   };
@@ -142,7 +145,7 @@ export default function EstateDetailsScreen() {
                 fontWeight: '300',
                 color: colors.text.secondary,
               }}>
-                Status
+                {t('producer.missions.statusFieldLabel')}
               </Text>
               <View style={{
                 paddingHorizontal: theme.spacing.sm,
@@ -276,7 +279,7 @@ export default function EstateDetailsScreen() {
                         color: colors.text.secondary,
                         marginTop: 2,
                       }}>
-                        {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString()}
+                        {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString(dateLocale)}
                       </Text>
                     )}
                   </View>
@@ -302,7 +305,7 @@ export default function EstateDetailsScreen() {
                   color: colors.text.primary,
                   marginLeft: theme.spacing.xs,
                 }}>
-                  Certification
+                  {t('producer.estates.certificationSectionHeading')}
                 </Text>
               </View>
               <Text style={{
@@ -310,7 +313,7 @@ export default function EstateDetailsScreen() {
                 fontWeight: '300',
                 color: colors.text.secondary,
               }}>
-                {t('producer.estates.started')}: {new Date(estate.certificationStartDate).toLocaleDateString()}
+                {t('producer.estates.started')}: {new Date(estate.certificationStartDate).toLocaleDateString(dateLocale)}
               </Text>
               {estate.daysRemaining !== undefined && estate.daysRemaining !== null && (
                 <Text style={{

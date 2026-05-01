@@ -3,14 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { getUnsyncedEntries } from '@/lib/offline/indexeddb';
 import { syncAllEntries, onOnlineStatusChange } from '@/lib/offline/sync';
 
 /** Grower dashboard: same „outbox“ idea as producer field-entry / mobile home sync strip. */
 export default function GrowerOfflineOutboxBanner() {
   const { t } = useTranslation();
-  const loc = useLocalizedHref();
   const [pending, setPending] = useState(0);
   const [syncing, setSyncing] = useState(false);
 
@@ -54,7 +52,8 @@ export default function GrowerOfflineOutboxBanner() {
     return null;
   }
 
-  const workspaceHref = loc('/producer/field-entry');
+  /** Locale-free app path — do not use `withLocalePrefix` (would yield `/sr/producer/...` and break). */
+  const workspaceHref = '/producer/field-entry';
 
   return (
     <div

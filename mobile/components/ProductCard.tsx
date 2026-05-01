@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../lib/api';
 import { theme } from '../lib/theme';
+import { useAppLocaleTag } from '../lib/date-locale';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import { CheckCircle, MapPin, Star, Calendar } from 'lucide-react-native';
@@ -16,7 +17,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onPress, showActions = true }: ProductCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
-
+  const priceLocale = useAppLocaleTag();
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -166,7 +167,12 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
                 textAlign: 'center',
                 letterSpacing: 0.5,
               }}>
-                {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {product.price.toLocaleString(priceLocale, {
+                  style: 'currency',
+                  currency: 'EUR',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </Text>
               <Text style={{
                 fontSize: 12,

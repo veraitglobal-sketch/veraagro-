@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
+import { getOrderStatusLabel } from './useOrderDetailData';
 
 export type OrderFilterStatus = 'all' | 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
 
 export function useOrdersListData() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -49,17 +52,7 @@ export function useOrdersListData() {
     }
   }, []);
 
-  const getStatusLabel = useCallback((status: string) => {
-    switch (status) {
-      case 'PENDING': return 'Pending';
-      case 'CONFIRMED': return 'Confirmed';
-      case 'PREPARING': return 'Preparing';
-      case 'IN_TRANSIT': return 'In Transit';
-      case 'DELIVERED': return 'Delivered';
-      case 'CANCELLED': return 'Cancelled';
-      default: return status;
-    }
-  }, []);
+  const getStatusLabel = useCallback((status: string) => getOrderStatusLabel(status, t), [t]);
 
   return {
     orders,

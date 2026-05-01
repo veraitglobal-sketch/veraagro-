@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
+import type { TFunction } from 'i18next';
 import { missionsAPI, Mission } from '../../../lib/api';
-import { getMissionStatusColor, getMissionStatusLabelEn } from '../../../lib/mission-status';
+import {
+  getMissionStatusColor,
+  getMissionStatusLabelLocalized,
+} from '../../../lib/mission-status';
 
 export function useMissionDetailData(missionId: string | undefined) {
   const [mission, setMission] = useState<Mission | null>(null);
@@ -54,9 +58,6 @@ export function useMissionDetailData(missionId: string | undefined) {
 
 export { getMissionStatusColor as getStatusColor };
 
-export function getStatusLabel(status: string, t: (key: string) => string): string {
-  const k = `producer.missions.status.${status}`;
-  const tr = t(k);
-  if (tr !== k) return tr;
-  return getMissionStatusLabelEn(status);
+export function getStatusLabel(status: string, t: TFunction): string {
+  return getMissionStatusLabelLocalized(status, t);
 }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LogOut, MapPin, Package, Building2, Truck, Users, Plus, X } from 'lucide-react-native';
+import { LogOut, MapPin, Package, Building2, Truck, Users, Plus, X, Bell } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { LanguageSettingsBlock } from '../../components/LanguageSettingsBlock';
 
@@ -225,6 +225,31 @@ export default function ProfileScreen() {
 
           <LanguageSettingsBlock />
 
+          <TouchableOpacity
+            onPress={() => router.push('/(buyer)/notifications')}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.md,
+              marginBottom: theme.spacing.lg,
+              borderWidth: 0.5,
+              borderColor: 'rgba(0, 0, 0, 0.08)',
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t('buyer.profile.openNotifications')}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+              <Bell size={20} color={theme.colors.primary} strokeWidth={1.5} />
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary }}>
+                {t('buyer.profile.openNotifications')}
+              </Text>
+            </View>
+            <Text style={{ fontSize: 18, color: theme.colors.text.tertiary }}>›</Text>
+          </TouchableOpacity>
+
           {/* Tabs */}
           <View style={{
             flexDirection: 'row',
@@ -369,7 +394,7 @@ export default function ProfileScreen() {
                     <TextInput
                       value={companyData.taxId}
                       onChangeText={(text) => setCompanyData({ ...companyData, taxId: text })}
-                      placeholder="Tax ID (USt-ID)"
+                      placeholder={t('buyer.profile.placeholderTaxId')}
                       style={{
                         fontSize: 13,
                         fontWeight: '300',
@@ -395,7 +420,7 @@ export default function ProfileScreen() {
                     <TextInput
                       value={companyData.headquarters}
                       onChangeText={(text) => setCompanyData({ ...companyData, headquarters: text })}
-                      placeholder="Headquarters"
+                      placeholder={t('buyer.profile.placeholderHeadquarters')}
                       style={{
                         fontSize: 13,
                         fontWeight: '300',
@@ -426,14 +451,14 @@ export default function ProfileScreen() {
                     marginBottom: theme.spacing.sm,
                     textTransform: 'uppercase',
                   }}>
-                    Management
+                    {t('buyer.profile.management')}
                   </Text>
                   {isEditing ? (
                     <>
                       <TextInput
                         value={companyData.generalDirector}
                         onChangeText={(text) => setCompanyData({ ...companyData, generalDirector: text })}
-                        placeholder="General Director"
+                        placeholder={t('buyer.profile.placeholderGeneralDirector')}
                         style={{
                           fontSize: 13,
                           fontWeight: '300',
@@ -448,7 +473,7 @@ export default function ProfileScreen() {
                       <TextInput
                         value={companyData.financeManager}
                         onChangeText={(text) => setCompanyData({ ...companyData, financeManager: text })}
-                        placeholder="Finance Manager"
+                        placeholder={t('buyer.profile.placeholderFinanceManager')}
                         style={{
                           fontSize: 13,
                           fontWeight: '300',
@@ -468,14 +493,14 @@ export default function ProfileScreen() {
                         color: theme.colors.text.secondary,
                         marginBottom: theme.spacing.xs,
                       }}>
-                        General Director: {companyData.generalDirector}
+                        {t('buyer.profile.managementGeneralDirector')} {companyData.generalDirector}
                       </Text>
                       <Text style={{
                         fontSize: 11,
                         fontWeight: '300',
                         color: theme.colors.text.secondary,
                       }}>
-                        Finance Manager: {companyData.financeManager}
+                        {t('buyer.profile.managementFinanceManager')} {companyData.financeManager}
                       </Text>
                     </>
                   )}
@@ -508,7 +533,7 @@ export default function ProfileScreen() {
                   marginLeft: theme.spacing.sm,
                   letterSpacing: 0.3,
                 }}>
-                  Add New Location
+                  {t('buyer.profile.ctaAddLocation')}
                 </Text>
               </TouchableOpacity>
 
@@ -595,7 +620,7 @@ export default function ProfileScreen() {
                   marginLeft: theme.spacing.sm,
                   letterSpacing: 0.3,
                 }}>
-                  Add Person
+                  {t('buyer.profile.ctaAddStaff')}
                 </Text>
               </TouchableOpacity>
 
@@ -686,7 +711,7 @@ export default function ProfileScreen() {
               color: theme.colors.error,
               letterSpacing: 0.5,
             }}>
-              {t('buyer.profile.logout') || 'Logout'}
+              {t('buyer.profile.logout')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -718,7 +743,7 @@ export default function ProfileScreen() {
                 color: theme.colors.text.primary,
                 letterSpacing: 0.5,
               }}>
-                Add New Location
+                {t('buyer.profile.modalTitleAddLocation')}
               </Text>
               <TouchableOpacity onPress={() => setShowLocationModal(false)}>
                 <X size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
@@ -727,7 +752,7 @@ export default function ProfileScreen() {
 
             <ScrollView>
               <TextInput
-                placeholder="Alias (e.g., Main distribution center)"
+                placeholder={t('buyer.profile.placeholderLocationAlias')}
                 value={newLocation.alias}
                 onChangeText={(text) => setNewLocation({ ...newLocation, alias: text })}
                 style={{
@@ -741,7 +766,7 @@ export default function ProfileScreen() {
                 }}
               />
               <TextInput
-                placeholder="Address"
+                placeholder={t('buyer.checkout.fieldStreet')}
                 value={newLocation.address}
                 onChangeText={(text) => setNewLocation({ ...newLocation, address: text })}
                 style={{
@@ -756,7 +781,7 @@ export default function ProfileScreen() {
               />
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
                 <TextInput
-                  placeholder="City"
+                  placeholder={t('buyer.checkout.fieldCity')}
                   value={newLocation.city}
                   onChangeText={(text) => setNewLocation({ ...newLocation, city: text })}
                   style={{
@@ -771,7 +796,7 @@ export default function ProfileScreen() {
                   }}
                 />
                 <TextInput
-                  placeholder="Postal Code"
+                  placeholder={t('buyer.checkout.fieldPostal')}
                   value={newLocation.postalCode}
                   onChangeText={(text) => setNewLocation({ ...newLocation, postalCode: text })}
                   style={{
@@ -787,7 +812,7 @@ export default function ProfileScreen() {
                 />
               </View>
               <TextInput
-                placeholder="Responsible Person"
+                placeholder={t('buyer.profile.placeholderResponsiblePerson')}
                 value={newLocation.responsiblePerson}
                 onChangeText={(text) => setNewLocation({ ...newLocation, responsiblePerson: text })}
                 style={{
@@ -801,7 +826,7 @@ export default function ProfileScreen() {
                 }}
               />
               <TextInput
-                placeholder="Phone"
+                placeholder={t('buyer.profile.placeholderPhoneShort')}
                 value={newLocation.responsiblePhone}
                 onChangeText={(text) => setNewLocation({ ...newLocation, responsiblePhone: text })}
                 keyboardType="phone-pad"
@@ -816,7 +841,7 @@ export default function ProfileScreen() {
                 }}
               />
               <TextInput
-                placeholder="Operating Hours (e.g., Mon-Fri: 08:00 - 18:00)"
+                placeholder={t('buyer.profile.placeholderOperatingHours')}
                 value={newLocation.operatingHours}
                 onChangeText={(text) => setNewLocation({ ...newLocation, operatingHours: text })}
                 style={{
@@ -847,7 +872,7 @@ export default function ProfileScreen() {
                     fontWeight: '300',
                     color: theme.colors.text.primary,
                   }}>
-                    Cancel
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -865,7 +890,7 @@ export default function ProfileScreen() {
                     fontWeight: '300',
                     color: 'white',
                   }}>
-                    Add Location
+                    {t('buyer.profile.confirmAddLocation')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -899,7 +924,7 @@ export default function ProfileScreen() {
                 color: theme.colors.text.primary,
                 letterSpacing: 0.5,
               }}>
-                Add Authorized Person
+                {t('buyer.profile.modalTitleAddStaff')}
               </Text>
               <TouchableOpacity onPress={() => setShowStaffModal(false)}>
                 <X size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
@@ -907,7 +932,7 @@ export default function ProfileScreen() {
             </View>
 
             <TextInput
-              placeholder="First Name"
+              placeholder={t('buyer.profile.placeholderFirstName')}
               value={newStaff.firstName}
               onChangeText={(text) => setNewStaff({ ...newStaff, firstName: text })}
               style={{
@@ -935,7 +960,7 @@ export default function ProfileScreen() {
               }}
             />
             <TextInput
-              placeholder="Email"
+              placeholder={t('buyer.profile.placeholderEmail')}
               value={newStaff.email}
               onChangeText={(text) => setNewStaff({ ...newStaff, email: text })}
               keyboardType="email-address"
@@ -950,7 +975,7 @@ export default function ProfileScreen() {
               }}
             />
             <TextInput
-              placeholder="Phone"
+              placeholder={t('buyer.profile.placeholderPhoneShort')}
               value={newStaff.phone}
               onChangeText={(text) => setNewStaff({ ...newStaff, phone: text })}
               keyboardType="phone-pad"
@@ -965,7 +990,7 @@ export default function ProfileScreen() {
               }}
             />
             <TextInput
-              placeholder="Role (e.g., Purchasing Manager)"
+              placeholder={t('buyer.profile.placeholderRole')}
               value={newStaff.role}
               onChangeText={(text) => setNewStaff({ ...newStaff, role: text })}
               style={{
@@ -996,7 +1021,7 @@ export default function ProfileScreen() {
                   fontWeight: '300',
                   color: theme.colors.text.primary,
                 }}>
-                  Cancel
+                  {t('common.cancel')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -1014,7 +1039,7 @@ export default function ProfileScreen() {
                   fontWeight: '300',
                   color: 'white',
                 }}>
-                  Add Person
+                  {t('buyer.profile.confirmAddStaff')}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 const STATUSES = ['PENDING', 'CONFIRMED', 'REJECTED', 'FULFILLED', 'CANCELLED'] as const;
 
@@ -21,10 +22,25 @@ function orderLinesFromItems(items: unknown, t: TFunction): string[] {
   });
 }
 
+function b2bOrderStatusLabel(status: string | undefined, t: TFunction): string {
+  if (!status) return '—';
+  const key = `supplier.b2bOrderStatus.${status}`;
+  const tr = t(key);
+  return tr === key ? status : tr;
+}
+
 export default function SupplierOrdersScreen() {
   const { t } = useTranslation();
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const dateLocale = useAppLocaleTag();
+
+  const fmt = useCallback(
+    (iso: string | undefined) =>
+      iso ? new Date(iso).toLocaleString(dateLocale) : '',
+    [dateLocale],
+  );
 
   const linesFor = useCallback((items: unknown) => orderLinesFromItems(items, t), [t]);
 
@@ -66,7 +82,9 @@ export default function SupplierOrdersScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: 16 }}>
       {list.length === 0 ? (
-        <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 24 }}>{t('supplier.noOrdersYet')}</Text>
+        <Text style={{ color: theme.colors.text.secondary, textAlign: 'center', marginTop: 24 }}>
+          {t('supplier.noOrdersYet')}
+        </Text>
       ) : (
         list.map((o) => {
           const lines = linesFor(o.items);
@@ -92,7 +110,8 @@ export default function SupplierOrdersScreen() {
                 : t('supplier.growerFallback')}
             </Text>
             <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 6 }}>
-              {o.createdAt ? new Date(o.createdAt).toLocaleString() : ''} · {o.status}
+              {fmt(o.createdAt)}
+              {o.status ? ` · ${b2bOrderStatusLabel(o.status, t)}` : ''}
             </Text>
             {lines.length > 0 && (
               <View style={{ marginBottom: 8 }}>
@@ -109,7 +128,7 @@ export default function SupplierOrdersScreen() {
             {o.farmerReceivedAt && (
               <Text style={{ fontSize: 11, color: '#166534', marginBottom: 6 }}>
                 {t('supplier.growerReceivedAtFarm', {
-                  when: new Date(o.farmerReceivedAt).toLocaleString(),
+                  when: fmt(o.farmerReceivedAt),
                 })}
               </Text>
             )}
@@ -131,7 +150,7 @@ export default function SupplierOrdersScreen() {
                       color: o.status === s ? '#fff' : theme.colors.text.primary,
                     }}
                   >
-                    {s}
+                    {b2bOrderStatusLabel(s, t)}
                   </Text>
                 </TouchableOpacity>
               ))}

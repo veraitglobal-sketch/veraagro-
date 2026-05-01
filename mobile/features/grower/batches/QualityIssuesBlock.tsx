@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 export default function QualityIssuesBlock({ qualityIssues }: { qualityIssues: any }) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   if (!qualityIssues) return null;
   const text = typeof qualityIssues === 'string' ? qualityIssues : qualityIssues?.issue;
   const timestamp = typeof qualityIssues === 'object' && qualityIssues?.timestamp;
@@ -28,7 +30,7 @@ export default function QualityIssuesBlock({ qualityIssues }: { qualityIssues: a
       {text && <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>{text}</Text>}
       {timestamp && (
         <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginTop: theme.spacing.xs }}>
-          Reported: {new Date(timestamp).toLocaleDateString('en-US')}
+          {`${t('producer.batches.reportedLabel')}: ${new Date(timestamp).toLocaleString(dateLocale, { dateStyle: 'medium', timeStyle: 'short' })}`}
         </Text>
       )}
     </View>

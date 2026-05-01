@@ -160,7 +160,7 @@ export default function VeraStandardScreen() {
             lineHeight: 16,
             textAlign: 'center',
           }}>
-            Every product with Bio Vera Standard is fully traceable from farm to your table.
+            {t('buyer.veraStandard.footerNote')}
           </Text>
         </View>
       </View>

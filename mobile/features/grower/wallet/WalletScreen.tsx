@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useWalletData } from './useWalletData';
 import { WalletBalanceCard } from './WalletBalanceCard';
@@ -20,6 +21,7 @@ import { TransactionItem } from './TransactionItem';
  */
 export default function WalletScreen() {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const { wallet, transactions, loading } = useWalletData();
@@ -72,7 +74,7 @@ export default function WalletScreen() {
               letterSpacing: 0.5,
             }}
           >
-            Wallet
+            {t('producer.tabs.wallet')}
           </Text>
         </View>
       </View>
@@ -127,7 +129,7 @@ export default function WalletScreen() {
                     letterSpacing: 0.3,
                   }}
                 >
-                  {wallet.totalEarned.toLocaleString('en-US', {
+                  {wallet.totalEarned.toLocaleString(dateLocale, {
                     style: 'currency',
                     currency: 'EUR',
                   })}

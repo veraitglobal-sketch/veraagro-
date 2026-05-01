@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Euro } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface FinancialStatusBlockProps {
   financial: {
@@ -14,6 +15,7 @@ interface FinancialStatusBlockProps {
 
 export default function FinancialStatusBlock({ financial }: FinancialStatusBlockProps) {
   const { t } = useTranslation();
+  const priceLocale = useAppLocaleTag();
   if (!financial) return null;
   return (
     <View
@@ -36,7 +38,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
             letterSpacing: 0.3,
           }}
         >
-          Finansijski status
+          {t('producer.missions.financialStatus')}
         </Text>
       </View>
       {financial.totalAmount != null && (
@@ -63,7 +65,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.primary,
             }}
           >
-            {financial.totalAmount.toLocaleString('en-US', {
+            {financial.totalAmount.toLocaleString(priceLocale, {
               style: 'currency',
               currency: 'EUR',
             })}
@@ -94,7 +96,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.primary,
             }}
           >
-            {financial.farmerPayout.toLocaleString('en-US', {
+            {financial.farmerPayout.toLocaleString(priceLocale, {
               style: 'currency',
               currency: 'EUR',
             })}
@@ -116,7 +118,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.secondary,
             }}
           >
-            Status: {financial.status}
+            {t('producer.missions.financialApiStatusLine', { status: financial.status })}
           </Text>
         </View>
       )}

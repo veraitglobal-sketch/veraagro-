@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Wallet, Calendar } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import type { FinancialData } from './useDashboardData';
 
 export default function FinancialSummarySection({
@@ -13,6 +14,7 @@ export default function FinancialSummarySection({
   onViewWallet: () => void;
 }) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   if (!financialData) return null;
   return (
     <View style={{ marginBottom: theme.spacing.lg }}>
@@ -38,19 +40,19 @@ export default function FinancialSummarySection({
             <View>
               <Text style={{ fontSize: 12, fontWeight: '500', color: theme.colors.text.primary, marginBottom: 2 }}>{t('producer.financial.totalEarned')}</Text>
               <Text style={{ fontSize: 11, fontWeight: '400', color: theme.colors.text.secondary }}>
-                {t('producer.financial.available')}: {financialData.availableBalance.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                {t('producer.financial.available')}: {financialData.availableBalance.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>
           <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.primary }}>
-            {financialData.totalEarned.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+            {financialData.totalEarned.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
           </Text>
         </View>
         {financialData.pendingBalance > 0 && (
           <View style={{ paddingTop: theme.spacing.sm, borderTopWidth: 1, borderTopColor: theme.colors.border, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={{ fontSize: 11, fontWeight: '400', color: theme.colors.text.secondary }}>{t('producer.financial.pending')}</Text>
             <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.warning }}>
-              {financialData.pendingBalance.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+              {financialData.pendingBalance.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
             </Text>
           </View>
         )}
@@ -58,7 +60,7 @@ export default function FinancialSummarySection({
           <View style={{ paddingTop: theme.spacing.xs, flexDirection: 'row', alignItems: 'center' }}>
             <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
             <Text style={{ fontSize: 11, fontWeight: '400', color: theme.colors.text.secondary, marginLeft: 4 }}>
-              {t('producer.financial.nextPayout')}: {new Date(financialData.nextPayout).toLocaleDateString('en-US')}
+              {t('producer.financial.nextPayout')}: {new Date(financialData.nextPayout).toLocaleDateString(dateLocale)}
             </Text>
           </View>
         )}

@@ -13,6 +13,7 @@ import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { theme } from '../../lib/theme';
 import { Package, MessageCircle, MapPin, ChevronRight } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 function formatOrderLines(items: unknown): string[] {
   if (!Array.isArray(items)) return [];
@@ -49,20 +50,6 @@ type Thread = {
   };
 };
 
-function orderPartnerLabel(o: Order) {
-  if (!o.supplier) return 'Partner';
-  const n = [o.supplier.firstName, o.supplier.lastName].filter(Boolean).join(' ').trim();
-  if (n) return n;
-  return o.supplier.partnerCode || 'Partner';
-}
-
-function threadTitle(t: Thread) {
-  const b = t.supplier?.material_supplier_profile?.businessName;
-  if (b) return b;
-  const n = [t.supplier?.firstName, t.supplier?.lastName].filter(Boolean).join(' ').trim();
-  return n || t.supplier?.partnerCode || 'Partner';
-}
-
 export default function GrowerPartnerOrdersScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -73,6 +60,25 @@ export default function GrowerPartnerOrdersScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [receivingId, setReceivingId] = useState<string | null>(null);
+
+  const dateLocale = useAppLocaleTag();
+
+  const orderPartnerFallback = () => t('producer.dashboard.partnerOrders.partnerFallback');
+
+  const orderPartnerLabel = (o: Order) => {
+    if (!o.supplier) return orderPartnerFallback();
+    const n = [o.supplier.firstName, o.supplier.lastName].filter(Boolean).join(' ').trim();
+    if (n) return n;
+    return o.supplier.partnerCode || orderPartnerFallback();
+  };
+
+  const resolveThreadTitle = (row: Thread) => {
+    const fb = t('producer.dashboard.partnerOrders.partnerFallback');
+    const b = row.supplier?.material_supplier_profile?.businessName;
+    if (b) return b;
+    const n = [row.supplier?.firstName, row.supplier?.lastName].filter(Boolean).join(' ').trim();
+    return n || row.supplier?.partnerCode || fb;
+  };
 
   const load = useCallback(async () => {
     setErr(null);
@@ -86,13 +92,13 @@ export default function GrowerPartnerOrdersScreen() {
     } catch (e) {
       setErr(
         (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          (e instanceof Error ? e.message : 'Load failed'),
+          (e instanceof Error ? e.message : t('producer.dashboard.partnerOrders.loadFailed')),
       );
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -111,7 +117,9 @@ export default function GrowerPartnerOrdersScreen() {
       await load();
     } catch (e) {
       const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setErr(typeof msg === 'string' ? msg : e instanceof Error ? e.message : 'Failed');
+      setErr(
+        typeof msg === 'string' ? msg : e instanceof Error ? e.message : t('producer.dashboard.partnerOrders.markReceivedFailed'),
+      );
     } finally {
       setReceivingId(null);
     }
@@ -173,11 +181,11 @@ export default function GrowerPartnerOrdersScreen() {
         </TouchableOpacity>
 
         <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary, marginBottom: theme.spacing.sm }}>
-          {t('producer.partnerOrders.directOrders')}
+          {t('producer.dashboard.partnerOrders.directOrders')}
         </Text>
         {orders.length === 0 && !loading ? (
           <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: theme.spacing.lg, lineHeight: 20 }}>
-            {t('producer.partnerOrders.emptyOrders')}
+            {t('producer.dashboard.partnerOrders.emptyOrders')}
           </Text>
         ) : (
           orders.map((o) => (
@@ -204,11 +212,11 @@ export default function GrowerPartnerOrdersScreen() {
                     textTransform: 'capitalize' as const,
                   }}
                 >
-                  {o.status.toLowerCase().replace(/_/g, ' ')}
+                  {t(`supplier.b2bOrderStatus.${o.status}`, { defaultValue: o.status })}
                 </Text>
               </View>
               <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 6 }}>
-                {new Date(o.createdAt).toLocaleString()}
+                {new Date(o.createdAt).toLocaleString(dateLocale)}
               </Text>
               {formatOrderLines(o.items).map((line, i) => (
                 <Text key={i} style={{ fontSize: 13, color: theme.colors.text.primary, lineHeight: 20 }}>
@@ -217,7 +225,9 @@ export default function GrowerPartnerOrdersScreen() {
               ))}
               {o.farmerReceivedAt ? (
                 <Text style={{ fontSize: 12, color: '#166534', marginTop: theme.spacing.sm, fontWeight: '600' }}>
-                  Received at farm: {new Date(o.farmerReceivedAt).toLocaleString()}
+                  {t('producer.dashboard.partnerOrders.receivedAtFarmWithWhen', {
+                    when: new Date(o.farmerReceivedAt).toLocaleString(dateLocale),
+                  })}
                 </Text>
               ) : null}
               {!o.farmerReceivedAt && (o.status === 'CONFIRMED' || o.status === 'FULFILLED') ? (
@@ -236,13 +246,15 @@ export default function GrowerPartnerOrdersScreen() {
                   }}
                 >
                   <Text style={{ fontSize: 13, color: theme.colors.primary, fontWeight: '600' }}>
-                    {receivingId === o.id ? '…' : 'Received at farm'}
+                    {receivingId === o.id
+                      ? t('producer.dashboard.partnerOrders.receivingInProgress')
+                      : t('producer.dashboard.partnerOrders.markReceivedAtFarm')}
                   </Text>
                 </TouchableOpacity>
               ) : null}
               {!o.farmerReceivedAt && o.status === 'PENDING' ? (
                 <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: theme.spacing.sm }}>
-                  Waiting for supplier to confirm…
+                  {t('producer.dashboard.partnerOrders.waitingSupplierConfirm')}
                 </Text>
               ) : null}
               <TouchableOpacity
@@ -251,7 +263,7 @@ export default function GrowerPartnerOrdersScreen() {
               >
                 <MessageCircle size={16} color={theme.colors.primary} />
                 <Text style={{ fontSize: 13, color: theme.colors.primary, fontWeight: '500', marginLeft: 6 }}>
-                  {t('producer.partnerOrders.openPartner')}
+                  {t('producer.dashboard.partnerOrders.openPartner')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -261,12 +273,12 @@ export default function GrowerPartnerOrdersScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: theme.spacing.md, marginBottom: theme.spacing.sm }}>
           <Package size={18} color={theme.colors.primary} strokeWidth={1.75} />
           <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary, marginLeft: 6 }}>
-            {t('producer.partnerOrders.threads')}
+            {t('producer.dashboard.partnerOrders.threads')}
           </Text>
         </View>
         {threads.length === 0 && !loading ? (
           <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20 }}>
-            {t('producer.partnerOrders.emptyThreads')}
+            {t('producer.dashboard.partnerOrders.emptyThreads')}
           </Text>
         ) : (
           threads.map((th) => (
@@ -286,7 +298,7 @@ export default function GrowerPartnerOrdersScreen() {
               }}
             >
               <View style={{ flex: 1, paddingRight: 8 }}>
-                <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>{threadTitle(th)}</Text>
+                <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>{resolveThreadTitle(th)}</Text>
                 {th.supplier?.material_supplier_profile?.city ? (
                   <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
                     {[th.supplier.material_supplier_profile.city, th.supplier.material_supplier_profile.country]
@@ -296,7 +308,7 @@ export default function GrowerPartnerOrdersScreen() {
                 ) : null}
               </View>
               <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>
-                {new Date(th.lastMessageAt).toLocaleDateString()}
+                {new Date(th.lastMessageAt).toLocaleDateString(dateLocale)}
               </Text>
             </TouchableOpacity>
           ))

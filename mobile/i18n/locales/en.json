@@ -5,6 +5,16 @@
     "supplierRegisteredDefault": "Supplier-registered code",
     "notWhitelisted": "Material is not on the whitelist and is not a supplier-registered code. Contact an administrator or the store."
   },
+  "notificationsCenter": {
+    "title": "Notifications",
+    "filterAll": "All",
+    "filterUnread": "Unread",
+    "filterActionRequired": "Action required",
+    "filterReminders": "Reminders",
+    "filterAlerts": "Alerts",
+    "loading": "Loading…",
+    "empty": "No notifications"
+  },
   "marketplace": {
     "about": {
       "intro": "From seed to shelf—complete traceability, quality assurance, and direct market access for European producers."
@@ -145,7 +155,8 @@
       "doneBody": "Receiver proof is stored. You can open or share the PDF if needed.",
       "errTitle": "Could not save",
       "shareUnavailable": "Sharing is not available on this device.",
-      "pdfErrTitle": "Could not get PDF"
+      "pdfErrTitle": "Could not get PDF",
+      "errorDetailFallback": "Something went wrong"
     },
     "handoverInit": {
       "documentFirst": "Before you scan: photograph the sealed load, labels, and any delivery note. Keep proof on your phone; the store will add audit photos in the next step."
@@ -214,7 +225,8 @@
       "batches": "Batches",
       "settings": "Settings",
       "harvest": "Harvest",
-      "wallet": "Wallet"
+      "wallet": "Wallet",
+      "missions": "Transport"
     },
     "offline": {
       "banner": "You're offline. Lists show the last sync; new work is saved and sent when you're back online."
@@ -348,13 +360,20 @@
         "profileMore": "Materials are listed in the numbered block above. Below: batches → transport → missions → badges (web parity). The Instructions tab expands the story. Wallet and more — in Profile.",
         "alsoPartnerOrders": "Partner orders (inputs)"
       },
-      "partnerOrders": {
+        "partnerOrders": {
         "title": "Partner orders",
         "directOrders": "My direct orders",
         "emptyOrders": "No orders yet. Open the suppliers map, pick a partner, and place an order from their store.",
         "openPartner": "Messages & store",
         "threads": "Conversations",
-        "emptyThreads": "No conversations yet. Start from a partner on the map."
+        "emptyThreads": "No conversations yet. Start from a partner on the map.",
+        "loadFailed": "Could not load orders or messages.",
+        "partnerFallback": "Partner",
+        "markReceivedAtFarm": "Received at farm",
+        "receivedAtFarmWithWhen": "Received at farm: {{when}}",
+        "waitingSupplierConfirm": "Waiting for supplier to confirm…",
+        "receivingInProgress": "…",
+        "markReceivedFailed": "Could not mark order as received. Try again."
       },
       "quickActions": "Quick actions",
       "more": "More",
@@ -470,7 +489,8 @@
       "noActivity": "Nothing yet",
       "planting": "Planting",
       "spraying": "Spray",
-      "harvest": "Harvest"
+      "harvest": "Harvest",
+      "gpsAbbrev": "GPS"
     },
     "scanner": {
       "scanBarcode": "Scan",
@@ -534,7 +554,17 @@
       "saveEstate": "Save",
       "myFields": "My fields",
       "parcelsWithCount": "Parcels ({{count}})",
-      "editEstateTitle": "Edit field"
+      "editEstateTitle": "Edit field",
+      "certStatusCertified": "Certified",
+      "certStatusActive": "Active",
+      "certStatusPendingSetup": "In progress",
+      "certificationSectionHeading": "Certification",
+      "countWithMyFieldsLabel": "{{count}} · {{label}}",
+      "listEmptyTitle": "No fields yet",
+      "listEmptySubtitle": "Add your first field to get started.",
+      "parcelBadge_one": "{{count}} parcel",
+      "parcelBadge_other": "{{count}} parcels",
+      "listCertDaysRemaining": "{{count}} days until certification"
     },
     "harvest": {
       "modePlanting": "New crop (sadnja)",
@@ -599,7 +629,10 @@
       "unitPrice": "Unit price",
       "total": "Total",
       "deliveryAddress": "Delivery address",
-      "buyerSection": "Buyer"
+      "buyerSection": "Buyer",
+      "timelineTitle": "Timeline",
+      "deliveryNotesHeading": "Delivery notes",
+      "listEmpty": "No orders yet"
     },
     "wallet": {
       "pending": "Pending",
@@ -753,6 +786,22 @@
       "harvest": "Harvest"
     },
     "batches": {
+      "listScreenTitle": "Batches",
+      "filterPacked": "Packed",
+      "filterInHub": "In hub",
+      "filterInTransit": "In transit",
+      "filterDelivered": "Delivered",
+      "statusPacked": "Packed",
+      "statusInHub": "In hub",
+      "statusInTransit": "In transit",
+      "statusDelivered": "Delivered",
+      "emptyList": "No batches",
+      "traceabilityTitle": "Traceability",
+      "transportCarrierLabel": "Transport",
+      "hubNameFallback": "Hub",
+      "locationHistoryTitle": "Location history",
+      "locationUnknown": "Unknown location",
+      "reportedLabel": "Reported",
       "harvestLabel": "Harvest",
       "product": "Product",
       "unknownProduct": "Unknown product",
@@ -762,6 +811,12 @@
       "detailScreenTitle": "Batch details",
       "currentLocation": "Current location",
       "qualityIssuesHeading": "Quality issues"
+    },
+    "profileScreen": {
+      "walletSubtitle": "Transaction and balance overview",
+      "quickAccessHeading": "Quick access",
+      "settingsSubtitle": "Notifications and options",
+      "growthJournal": "Growth journal"
     },
     "missions": {
       "detailScreenTitle": "Mission details",
@@ -775,9 +830,11 @@
         "PICKED_UP": "Picked up",
         "IN_TRANSIT": "In transit",
         "COMPLETED": "Completed",
-        "CANCELLED": "Cancelled"
+        "CANCELLED": "Cancelled",
+        "DELIVERED": "Delivered"
       },
       "loading": "Loading…",
+      "listEmpty": "No missions in this list yet.",
       "notFound": "Mission not found",
       "yourPayout": "Your payout",
       "assignedToDriver": "Assigned to driver",
@@ -786,6 +843,11 @@
       "statusConfirmed": "Confirmed",
       "statusDelivered": "Delivered",
       "financialStatus": "Financial status",
+      "financialApiStatusLine": "Status: {{status}}",
+      "timelineTitle": "Timeline",
+      "statusFieldLabel": "Status",
+      "journeyMapTitle": "Journey map",
+      "mapPointFallback": "Point {{n}}",
       "total": "Total",
       "created": "Created",
       "inTransit": "In transit",
@@ -1044,6 +1106,35 @@
       "standardTab": "Standard",
       "profile": "Profile"
     },
+    "dashboard": {
+      "marketplaceTitle": "Marketplace",
+      "filterAll": "All",
+      "filterAvailableNow": "Available now",
+      "filterIncoming": "Incoming",
+      "filterReservations": "Reservations",
+      "loadFailed": "Failed to load products",
+      "deliveryPulse": "Delivery {{orderNumber}} is currently in {{location}}",
+      "scannerTitle": "Scan Bio Vera code",
+      "scannerHint": "Position the QR code inside the frame",
+      "unknownGrower": "Unknown",
+      "unitsAvailable": "{{qty}} {{unit}} available",
+      "unitsDefault": "units",
+      "soldOutBadge": "Sold out — next harvest soon",
+      "reserveCrates": "Reserve crates",
+      "demoDeliveryLocation": "Hungary",
+      "demoStoryNames": {
+        "1": "Marko",
+        "2": "Petar",
+        "3": "Jovan",
+        "4": "Milan"
+      },
+      "demoStorySubtitles": {
+        "1": "Harvest · Central region",
+        "2": "Quality check · North plain",
+        "3": "Loading · National",
+        "4": "Harvest · Eastern region"
+      }
+    },
     "shop": {
       "title": "Bio Vera Marketplace",
       "subtitle": "BIO-Ready certified food",
@@ -1053,8 +1144,15 @@
       "noProducts": "Currently no available products",
       "loading": "Loading products..."
     },
+    "cart": {
+      "reservationBadge": " · reservation",
+      "priceOnRequest": "Price on request",
+      "linePrice": "{{price}} per {{unit}}",
+      "priceOnRequestWithUnit": "Price on request · {{unit}}"
+    },
     "orders": {
       "title": "My Orders",
+      "loading": "Loading…",
       "empty": "You have no orders",
       "list": "Order list",
       "statusPending": "Pending",
@@ -1089,7 +1187,14 @@
       "timelinePlaced": "Order placed",
       "timelineConfirmed": "Confirmed & preparing",
       "timelineShipped": "On the way",
-      "timelineDone": "Delivered"
+      "timelineDone": "Delivered",
+      "detailMissing": "This order could not be loaded — it may not exist yet or may still be processing.",
+      "bankFieldLabels": {
+        "beneficiary": "Beneficiary:",
+        "bank": "Bank:",
+        "iban": "IBAN:",
+        "swift": "SWIFT:"
+      }
     },
     "veraStandard": {
       "title": "Bio Vera Standard",
@@ -1100,7 +1205,8 @@
         "images": "Chronological growth images",
         "lab": "Laboratory results",
         "duration": "3 years of continuous monitoring"
-      }
+      },
+      "footerNote": "Every product with Bio Vera Standard is fully traceable from farm to your table."
     },
     "profile": {
       "title": "My Profile",
@@ -1116,7 +1222,29 @@
       "companyCore": "Company core",
       "legalEntity": "Legal entity",
       "save": "Save",
-      "edit": "Edit"
+      "edit": "Edit",
+      "openNotifications": "Notifications",
+      "management": "Management",
+      "managementGeneralDirector": "General Director:",
+      "managementFinanceManager": "Finance Manager:",
+      "ctaAddLocation": "Add new location",
+      "ctaAddStaff": "Add person",
+      "modalTitleAddLocation": "Add new location",
+      "modalTitleAddStaff": "Add authorized person",
+      "confirmAddLocation": "Add location",
+      "confirmAddStaff": "Add person",
+      "placeholderTaxId": "Tax ID (USt-ID)",
+      "placeholderHeadquarters": "Headquarters",
+      "placeholderGeneralDirector": "General director",
+      "placeholderFinanceManager": "Finance manager",
+      "placeholderLocationAlias": "Alias (e.g., main warehouse)",
+      "placeholderResponsiblePerson": "Responsible person",
+      "placeholderOperatingHours": "Operating hours (e.g., Mon–Fri: 08:00–18:00)",
+      "placeholderFirstName": "First name",
+      "placeholderLastName": "Last name",
+      "placeholderEmail": "Email",
+      "placeholderPhoneShort": "Phone",
+      "placeholderRole": "Role (e.g., purchasing manager)"
     },
     "checkout": {
       "fillRequired": "Please fill all required fields",
@@ -1129,7 +1257,63 @@
       "orderSummary": "Order summary",
       "total": "Total",
       "multiOrderHint": "Each cart line is submitted as a separate order with this delivery address (same as the web shop).",
-      "ordersCreated": "{{count}} orders placed successfully."
+      "ordersCreated": "{{count}} orders placed successfully.",
+      "fieldStreet": "Street and number",
+      "fieldCity": "City",
+      "fieldPostal": "Postal code",
+      "fieldCountry": "Country",
+      "fieldNotes": "Notes (optional)",
+      "reservationDeliveryNote": "Cart includes reserved lines — treat delivery timing as subject to harvest confirmation.",
+      "orderMissingId": "Order was created but no ID was returned"
+    },
+    "productDetail": {
+      "notFound": "Product not found",
+      "farmerFallback": "Bio Vera farmer",
+      "originHeading": "Origin",
+      "detailsHeading": "Details",
+      "daysInConversion": "Days in conversion",
+      "perUnitShort": "per {{unit}}",
+      "reserveCta": "Reserve"
+    },
+    "passport": {
+      "dash": "—",
+      "digitalBadge": "Digital passport",
+      "loading": "Loading passport…",
+      "loadFailed": "Failed to load passport",
+      "sectionProduct": "Product",
+      "batchSummary": "{{quantity}} {{unit}} · Batch {{batchId}}",
+      "statusLine": "Status: {{status}}",
+      "sectionRegionOrigin": "Region & origin",
+      "countryLine": "Country: {{country}}",
+      "fieldHa": "Field: {{ha}} ha",
+      "plotHa": "Plot: {{ha}} ha",
+      "areaJoin": " · ",
+      "sectionFarmer": "Farmer",
+      "sectionJourney": "Journey",
+      "journeyHarvested": "Harvested",
+      "journeyQualityCheck": "Quality check",
+      "journeyPickedUp": "Picked up",
+      "journeyArrived": "Arrived",
+      "sectionSpraying": "Spraying & inputs",
+      "waterVol": "water {{vol}} L",
+      "applied": "Applied: {{when}}",
+      "deviceTime": "Device time: {{when}}",
+      "gpsLine": "GPS: {{lat}}, {{lng}}{{acc}}",
+      "gpsAccuracyM": " (±{{m}} m)",
+      "sectionTransport": "Transport",
+      "transportFallback": "Transport",
+      "carrierLine": "Carrier: {{name}}",
+      "pickupLine": "Pickup: {{address}}",
+      "assignedLine": "Assigned: {{when}}",
+      "pickedUpLine": "Picked up: {{when}}",
+      "deliveredLine": "Delivered: {{when}}",
+      "borderWait": "Border {{border}}: {{arrival}} – {{exit}} ({{minutes}} min)",
+      "gpsLogTitle": "GPS log ({{count}})",
+      "moreGpsPoints": "+{{n}} more points",
+      "sectionColdChain": "Cold chain",
+      "tempSummary": "Min {{min}}°C · Max {{max}}°C · Avg {{avg}}°C",
+      "tempReadingsCount": "{{count}} temperature readings",
+      "sectionProtocol360": "Protocol 360"
     }
   },
   "supplier": {
@@ -1149,7 +1333,15 @@
     "orderRef": "Order ref",
     "replyPlaceholder": "Reply…",
     "growerFallback": "Grower",
-    "growerReceivedAtFarm": "Grower received at farm: {{when}}"
+    "growerReceivedAtFarm": "Grower received at farm: {{when}}",
+    "threadUntitledShort": "Thread {{id}}",
+    "b2bOrderStatus": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected",
+      "FULFILLED": "Fulfilled",
+      "CANCELLED": "Cancelled"
+    }
   },
   "error": "Error",
   "info": "Information",
@@ -1325,7 +1517,15 @@
     "priceMissing": "Product price missing",
     "addressRequired": "Please enter street and city for delivery.",
     "success": "Reserved {{quantity}} {{unit}} of {{name}}",
-    "createFailed": "Failed to create reservation"
+    "createFailed": "Failed to create reservation",
+    "title": "Reserve crates",
+    "quantitySection": "Quantity",
+    "deliveryAddressHeading": "Delivery address",
+    "maxAvailable": "{{max}} {{unit}} available",
+    "confirmReservation": "Confirm reservation",
+    "processing": "Processing…",
+    "deliveryNotesBatch": "Reservation for batch {{batchId}}",
+    "deliveryNotesNoBatch": "Reservation"
   },
   "veraBag": {
     "permTitle": "Permission required",

@@ -2,11 +2,13 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-
 import { useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
 import { ArrowLeft, Package, QrCode, Calendar } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 /**
  * Batches Screen
@@ -14,6 +16,7 @@ import { batchesAPI } from '../../lib/api';
  * Matches buyer dashboard styling
  */
 export default function BatchesScreen() {
+  const { t, i18n } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
   const [batches, setBatches] = useState<any[]>([]);
@@ -48,6 +51,8 @@ export default function BatchesScreen() {
     });
   }, [loadBatches]);
 
+  const dateLocale = useAppLocaleTag();
+
   const onRefresh = async () => {
     setRefreshing(true);
     await loadBatches();
@@ -70,10 +75,10 @@ export default function BatchesScreen() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'PACKED': return 'Packed';
-      case 'IN_HUB': return 'In Hub';
-      case 'IN_TRANSIT': return 'In Transit';
-      case 'DELIVERED': return 'Delivered';
+      case 'PACKED': return t('producer.batches.statusPacked');
+      case 'IN_HUB': return t('producer.batches.statusInHub');
+      case 'IN_TRANSIT': return t('producer.batches.statusInTransit');
+      case 'DELIVERED': return t('producer.batches.statusDelivered');
       default: return status;
     }
   };
@@ -106,7 +111,7 @@ export default function BatchesScreen() {
           letterSpacing: 0.5,
           flex: 1,
         }}>
-          Batches
+          {t('producer.batches.listScreenTitle')}
         </Text>
       </View>
 
@@ -121,13 +126,13 @@ export default function BatchesScreen() {
       }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {[
-              { id: 'all' as const, label: 'All' },
-              { id: 'PACKED' as const, label: 'Packed' },
-              { id: 'IN_HUB' as const, label: 'In Hub' },
-              { id: 'IN_TRANSIT' as const, label: 'In Transit' },
-              { id: 'DELIVERED' as const, label: 'Delivered' },
-            ].map((f) => (
+            {([
+              { id: 'all' as const, label: t('common.all') },
+              { id: 'PACKED' as const, label: t('producer.batches.filterPacked') },
+              { id: 'IN_HUB' as const, label: t('producer.batches.filterInHub') },
+              { id: 'IN_TRANSIT' as const, label: t('producer.batches.filterInTransit') },
+              { id: 'DELIVERED' as const, label: t('producer.batches.filterDelivered') },
+            ]).map((f) => (
               <TouchableOpacity
                 key={f.id}
                 onPress={() => setFilter(f.id)}
@@ -182,7 +187,7 @@ export default function BatchesScreen() {
                 fontWeight: '300',
                 letterSpacing: 0.3,
               }}>
-                Loading...
+                {t('producer.batches.loading')}
               </Text>
             </View>
           ) : filteredBatches.length === 0 ? (
@@ -203,7 +208,7 @@ export default function BatchesScreen() {
                 letterSpacing: 0.3,
                 textAlign: 'center',
               }}>
-                No Batches
+                {t('producer.batches.emptyList')}
               </Text>
             </View>
           ) : (
@@ -252,7 +257,7 @@ export default function BatchesScreen() {
                         color: theme.colors.text.secondary,
                         letterSpacing: 0.2,
                       }}>
-                        {batch.productName || 'Product'}
+                        {batch.productName || t('producer.batches.product')}
                       </Text>
                       {batch.quantity && (
                         <Text style={{
@@ -297,7 +302,7 @@ export default function BatchesScreen() {
                         marginLeft: 4,
                         letterSpacing: 0.2,
                       }}>
-                        Harvest: {new Date(batch.harvestDate).toLocaleDateString('en-US')}
+                        {`${t('producer.batches.harvestLabel')}: ${new Date(batch.harvestDate).toLocaleDateString(dateLocale)}`}
                       </Text>
                     </View>
                   )}

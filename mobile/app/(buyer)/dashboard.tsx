@@ -1,15 +1,18 @@
 import { View, Text, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal, StyleSheet } from 'react-native';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'expo-router';
-import { QrCode, Package, X, Truck } from 'lucide-react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { QrCode, Package, X, Truck, Bell } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { inventoryAPI, Product, batchesAPI, BatchAvailability } from '../../lib/api';
+import { inventoryAPI, Product, batchesAPI, BatchAvailability, notificationsAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import ProductPassport from '../../components/ProductPassport';
 import ReservationModal from '../../components/ReservationModal';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 type FilterStatus = 'all' | 'available_now' | 'incoming' | 'reservations';
 
@@ -26,9 +29,7 @@ interface EnhancedProduct extends Omit<Product, 'harvestDate'> {
 interface FieldStory {
   id: string;
   farmerName: string;
-  location: string;
-  activity: string;
-  thumbnail?: string;
+  subtitle: string;
 }
 
 
@@ -38,6 +39,7 @@ interface FieldStory {
  */
 export default function BuyerDashboard() {
   const router = useRouter();
+  const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const [products, setProducts] = useState<EnhancedProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,44 +53,62 @@ export default function BuyerDashboard() {
   const [batchAvailabilities, setBatchAvailabilities] = useState<Record<string, BatchAvailability>>({});
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<EnhancedProduct | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-  // Mock field stories - in production, fetch from backend
-  const fieldStories: FieldStory[] = [
-  { id: '1', farmerName: 'Marko', location: 'Central region', activity: 'Harvest' },
-  { id: '2', farmerName: 'Petar', location: 'North plain', activity: 'Quality Check' },
-  { id: '3', farmerName: 'Jovan', location: 'National', activity: 'Loading' },
-  { id: '4', farmerName: 'Milan', location: 'Eastern region', activity: 'Harvest' },
-  ];
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      void (async () => {
+        try {
+          const data = await notificationsAPI.getAll();
+          const unread = Array.isArray(data) ? data.filter((n) => !n.read).length : 0;
+          if (!cancelled) setUnreadNotifications(unread);
+        } catch {
+          if (!cancelled) setUnreadNotifications(0);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, []),
+  );
 
-  // Mock active delivery
-  const activeDelivery = {
-    orderNumber: '#2104',
-    location: 'Hungary',
-    status: 'In Transit',
-  };
+  const fieldStories = useMemo<FieldStory[]>(
+    () =>
+      (['1', '2', '3', '4'] as const).map((id) => ({
+        id,
+        farmerName: t(`buyer.dashboard.demoStoryNames.${id}`),
+        subtitle: t(`buyer.dashboard.demoStorySubtitles.${id}`),
+      })),
+    [t],
+  );
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  const activeDelivery = useMemo(
+    () => ({
+      orderNumber: '#2104',
+      location: t('buyer.dashboard.demoDeliveryLocation'),
+    }),
+    [t],
+  );
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await inventoryAPI.getAvailableProducts();
-      
+
       // Enhance products with calculated fields
       const enhanced = data.map((product): EnhancedProduct => {
         const harvestDate = product.harvestDate ? new Date(product.harvestDate) : null;
         const now = new Date();
-        const daysUntilHarvest = harvestDate 
+        const daysUntilHarvest = harvestDate
           ? Math.ceil((harvestDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
           : null;
-        
-        const expectedDelivery = harvestDate 
+
+        const expectedDelivery = harvestDate
           ? new Date(harvestDate.getTime() + 3 * 24 * 60 * 60 * 1000)
           : null;
-        
+
         let status: 'available_now' | 'incoming' | 'reservations' = 'available_now';
         if (daysUntilHarvest !== null) {
           if (daysUntilHarvest <= 0) {
@@ -104,9 +124,9 @@ export default function BuyerDashboard() {
           ...product,
           expectedDeliveryDate: expectedDelivery?.toISOString(),
           farmerTrustScore: product.estate?.owner ? 75 : 50,
-          farmerName: product.estate?.owner 
+          farmerName: product.estate?.owner
             ? `${product.estate.owner.firstName} ${product.estate.owner.lastName}`
-            : product.estate?.name || 'Unknown',
+            : product.estate?.name || t('buyer.dashboard.unknownGrower'),
           harvestDate: product.harvestDate,
           availableQuantity: product.quantity,
           totalQuantity: product.quantity,
@@ -115,18 +135,31 @@ export default function BuyerDashboard() {
       });
 
       setProducts(enhanced);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load products');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      setError(message || t('buyer.dashboard.loadFailed'));
       console.error('Error loading products:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    void loadProducts();
+  }, [loadProducts]);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await loadProducts();
     await loadBatchAvailabilities();
+    try {
+      const notifData = await notificationsAPI.getAll();
+      setUnreadNotifications(
+        Array.isArray(notifData) ? notifData.filter((n) => !n.read).length : 0,
+      );
+    } catch {
+      setUnreadNotifications(0);
+    }
     setRefreshing(false);
   };
 
@@ -216,15 +249,48 @@ export default function BuyerDashboard() {
         backgroundColor: theme.colors.background,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}>
         <Text style={{
           fontSize: 18,
           fontWeight: '300',
           color: theme.colors.text.primary,
           letterSpacing: 1,
+          flex: 1,
         }}>
-          Marketplace
+          {t('buyer.dashboard.marketplaceTitle')}
         </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/(buyer)/notifications')}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={t('notificationsCenter.title')}
+          style={{ padding: theme.spacing.xs }}
+        >
+          <View style={{ position: 'relative' }}>
+            <Bell size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
+            {unreadNotifications > 0 ? (
+              <View style={{
+                position: 'absolute',
+                top: -4,
+                right: -6,
+                minWidth: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: theme.colors.error,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 4,
+              }}>
+                <Text style={{ fontSize: 9, fontWeight: '600', color: theme.colors.background }}>
+                  {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Stories Section */}
@@ -242,7 +308,7 @@ export default function BuyerDashboard() {
             <TouchableOpacity
               key={story.id}
               activeOpacity={0.7}
-              style={{ alignItems: 'center', width: 80 }}
+              style={{ alignItems: 'center', width: 88 }}
             >
               <View style={{
                 width: 64,
@@ -267,6 +333,20 @@ export default function BuyerDashboard() {
               }}>
                 {story.farmerName}
               </Text>
+              <Text
+                numberOfLines={2}
+                style={{
+                  fontSize: 9,
+                  fontWeight: '300',
+                  color: theme.colors.text.tertiary,
+                  textAlign: 'center',
+                  letterSpacing: 0.2,
+                  marginTop: 2,
+                  lineHeight: 12,
+                }}
+              >
+                {story.subtitle}
+              </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -284,14 +364,14 @@ export default function BuyerDashboard() {
       }}>
         {(['all', 'available_now', 'incoming', 'reservations'] as FilterStatus[]).map((filter) => {
           const labels: Record<FilterStatus, string> = {
-            all: 'All',
-            available_now: 'Available Now',
-            incoming: 'Incoming',
-            reservations: 'Reservations',
+            all: t('buyer.dashboard.filterAll'),
+            available_now: t('buyer.dashboard.filterAvailableNow'),
+            incoming: t('buyer.dashboard.filterIncoming'),
+            reservations: t('buyer.dashboard.filterReservations'),
           };
-          
+
           const isActive = activeFilter === filter;
-          
+
           return (
             <TouchableOpacity
               key={filter}
@@ -318,7 +398,7 @@ export default function BuyerDashboard() {
 
       {/* Products Grid */}
       {loading ? (
-        <LoadingSpinner message="Loading products..." />
+        <LoadingSpinner message={t('buyer.shop.loading')} />
       ) : error ? (
         <ErrorMessage message={error} onRetry={loadProducts} />
       ) : (
@@ -363,7 +443,7 @@ export default function BuyerDashboard() {
                 fontWeight: '300',
                 color: theme.colors.text.secondary,
               }}>
-                No products found
+                {t('buyer.shop.noProducts')}
               </Text>
             </View>
           }
@@ -415,7 +495,10 @@ export default function BuyerDashboard() {
             color: theme.colors.text.secondary,
             letterSpacing: 0.3,
           }}>
-            Delivery {activeDelivery.orderNumber} is currently in {activeDelivery.location}
+            {t('buyer.dashboard.deliveryPulse', {
+              orderNumber: activeDelivery.orderNumber,
+              location: activeDelivery.location,
+            })}
           </Text>
         </View>
       )}
@@ -458,7 +541,7 @@ export default function BuyerDashboard() {
                   color: theme.colors.text.inverse,
                   letterSpacing: 0.5,
                 }}>
-                  Scan Bio Vera Code
+                  {t('buyer.dashboard.scannerTitle')}
                 </Text>
                 <TouchableOpacity
                   onPress={() => setShowQRScanner(false)}
@@ -504,7 +587,7 @@ export default function BuyerDashboard() {
                   textAlign: 'center',
                   letterSpacing: 0.3,
                 }}>
-                  Position QR code within the frame
+                  {t('buyer.dashboard.scannerHint')}
                 </Text>
               </View>
             </View>
@@ -555,6 +638,8 @@ function ProductCard({
   availability: BatchAvailability | null;
   onReserve: () => void;
 }) {
+  const { t } = useTranslation();
+  const priceLocale = useAppLocaleTag();
   const isSoldOut = availability?.isSoldOut || false;
   const reservedPercentage = availability?.reservedPercentage || 0;
   const availableQuantity = availability?.availableQuantity || product.availableQuantity || 0;
@@ -634,7 +719,10 @@ function ProductCard({
               letterSpacing: 0.2,
               marginTop: 2,
             }}>
-              {availableQuantity} {product.unit || 'units'} available
+              {t('buyer.dashboard.unitsAvailable', {
+                qty: availableQuantity,
+                unit: product.unit || t('buyer.dashboard.unitsDefault'),
+              })}
             </Text>
           </View>
         )}
@@ -658,7 +746,7 @@ function ProductCard({
               letterSpacing: 0.3,
               textTransform: 'uppercase',
             }}>
-              Sold Out - Next Harvest Coming Soon
+              {t('buyer.dashboard.soldOutBadge')}
             </Text>
           </View>
         )}
@@ -672,7 +760,7 @@ function ProductCard({
             letterSpacing: 0.3,
             marginTop: theme.spacing.xs,
           }}>
-            {product.price.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+            {product.price.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
           </Text>
         )}
 
@@ -699,7 +787,7 @@ function ProductCard({
               color: theme.colors.primary,
               letterSpacing: 0.3,
             }}>
-              Reserve crates
+              {t('buyer.dashboard.reserveCrates')}
             </Text>
           </TouchableOpacity>
         )}

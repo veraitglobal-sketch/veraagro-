@@ -4,12 +4,14 @@ import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { Order } from '../../../lib/api';
 import { useTranslation } from 'react-i18next';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import { getOrderStatusColor, getOrderStatusLabel } from './useOrderDetailData';
 
 const dateOpts = { day: '2-digit' as const, month: '2-digit' as const, year: 'numeric' as const, hour: '2-digit' as const, minute: '2-digit' as const };
 
 export default function OrderTimelineBlock({ order }: { order: Order }) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   return (
     <View
       style={{
@@ -21,7 +23,7 @@ export default function OrderTimelineBlock({ order }: { order: Order }) {
       }}
     >
       <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginBottom: theme.spacing.md, letterSpacing: 0.3 }}>
-        Timeline
+        {t('producer.orders.timelineTitle')}
       </Text>
       <View style={{ gap: theme.spacing.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
@@ -31,7 +33,7 @@ export default function OrderTimelineBlock({ order }: { order: Order }) {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
               <Calendar size={11} color={colors.text.secondary} strokeWidth={1} />
               <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginLeft: 4 }}>
-                {new Date(order.createdAt).toLocaleDateString('en-US', dateOpts)}
+                {new Date(order.createdAt).toLocaleString(dateLocale, dateOpts)}
               </Text>
             </View>
           </View>
@@ -44,7 +46,7 @@ export default function OrderTimelineBlock({ order }: { order: Order }) {
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                 <Clock size={11} color={colors.text.secondary} strokeWidth={1} />
                 <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginLeft: 4 }}>
-                  {new Date(order.updatedAt).toLocaleDateString('en-US', dateOpts)}
+                  {new Date(order.updatedAt).toLocaleString(dateLocale, dateOpts)}
                 </Text>
               </View>
             </View>

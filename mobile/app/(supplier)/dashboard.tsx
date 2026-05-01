@@ -1,19 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { Bell } from 'lucide-react-native';
 import { useAuth } from '../../hooks/useAuth';
-import { b2bSuppliersAPI } from '../../lib/api';
+import { b2bSuppliersAPI, notificationsAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 
 export default function SupplierDashboardScreen() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [orders, setOrders] = useState(0);
   const [threads, setThreads] = useState(0);
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      void (async () => {
+        try {
+          const data = await notificationsAPI.getAll();
+          const unread = Array.isArray(data) ? data.filter((n) => !n.read).length : 0;
+          if (!cancelled) setUnreadNotifications(unread);
+        } catch {
+          if (!cancelled) setUnreadNotifications(0);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, []),
+  );
 
   useEffect(() => {
     (async () => {
@@ -39,7 +62,52 @@ export default function SupplierDashboardScreen() {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: 20 }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingTop: p.headerTop,
+          paddingBottom: theme.spacing.sm,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => router.push('/(supplier)/notifications')}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t('notificationsCenter.title')}
+          style={{ padding: theme.spacing.xs }}
+        >
+          <View style={{ position: 'relative' }}>
+            <Bell size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
+            {unreadNotifications > 0 ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -7,
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  backgroundColor: theme.colors.error,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 4,
+                }}
+              >
+                <Text style={{ fontSize: 9, fontWeight: '600', color: theme.colors.background }}>
+                  {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        </TouchableOpacity>
+      </View>
+
       {loading && <ActivityIndicator color={theme.colors.primary} style={{ marginBottom: 12 }} />}
       <Text style={{ fontSize: 22, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 4 }}>
         {name || t('supplier.partnerStore')}

@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -8,6 +9,7 @@ interface JourneyMapBlockProps {
 }
 
 export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
+  const { t } = useTranslation();
   if (!journeyMap?.route?.length) return null;
   const route = journeyMap.route;
   return (
@@ -30,7 +32,7 @@ export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
           letterSpacing: 0.3,
         }}
       >
-        Mapa putovanja
+        {t('producer.missions.journeyMapTitle')}
       </Text>
       <View
         style={{
@@ -54,7 +56,7 @@ export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
             <Marker
               key={index}
               coordinate={{ latitude: point.latitude, longitude: point.longitude }}
-              title={point.name ?? `Point ${index + 1}`}
+              title={point.name ?? t('producer.missions.mapPointFallback', { n: index + 1 })}
             />
           ))}
           {route.length > 1 && (

@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import { ArrowDownLeft, ArrowUpRight, Calendar } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import type { Transaction } from './useWalletData';
 
 interface TransactionItemProps {
@@ -8,6 +9,7 @@ interface TransactionItemProps {
 }
 
 export function TransactionItem({ transaction }: TransactionItemProps) {
+  const dateLocale = useAppLocaleTag();
   const isCredit = transaction.type === 'CREDIT';
 
   return (
@@ -69,7 +71,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
               letterSpacing: 0.2,
             }}
           >
-            {new Date(transaction.createdAt).toLocaleDateString('en-US')}
+            {new Date(transaction.createdAt).toLocaleDateString(dateLocale)}
           </Text>
         </View>
       </View>
@@ -82,7 +84,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
         }}
       >
         {isCredit ? '+' : '-'}
-        {transaction.amount.toLocaleString('en-US', {
+        {transaction.amount.toLocaleString(dateLocale, {
           style: 'currency',
           currency: 'EUR',
         })}

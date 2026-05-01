@@ -45,7 +45,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
             color: colors.text.secondary,
           }}
         >
-          Status
+          {t('producer.missions.statusFieldLabel')}
         </Text>
         <View
           style={{

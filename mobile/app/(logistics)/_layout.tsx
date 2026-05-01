@@ -12,6 +12,7 @@ export default function LogisticsLayout() {
       <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="notifications" />
           <Stack.Screen name="mission/[id]" />
           <Stack.Screen name="handover-receiver" />
         </Stack>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { MapPin, Calendar, ExternalLink, X } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import type { GrowthLog } from '../../../lib/api';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface GrowthLogCardProps {
   log: GrowthLog;
@@ -21,6 +22,18 @@ interface GrowthLogCardProps {
 
 export function GrowthLogCard({ log }: GrowthLogCardProps) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
+  const combinedDateOpts = useMemo(
+    () =>
+      ({
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }) satisfies Intl.DateTimeFormatOptions,
+    [],
+  );
   const [detailOpen, setDetailOpen] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -100,13 +113,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
               marginLeft: 4,
             }}
           >
-            {new Date(log.createdAt).toLocaleDateString('en-US', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {new Date(log.createdAt).toLocaleString(dateLocale, combinedDateOpts)}
           </Text>
         </View>
         {log.growthStage ? (
@@ -197,7 +204,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
                 {log.gpsLatitude.toFixed(6)}, {log.gpsLongitude.toFixed(6)}
               </Text>
               <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 16 }}>
-                {new Date(log.createdAt).toLocaleString()}
+                {new Date(log.createdAt).toLocaleString(dateLocale, combinedDateOpts)}
               </Text>
               {log.growthStage ? (
                 <Text style={{ fontSize: 15, color: colors.text.primary, marginBottom: 8 }}>

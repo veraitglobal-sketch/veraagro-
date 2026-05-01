@@ -10,24 +10,27 @@ Plan usklađivanja tako da web i mobilna aplikacija dele iste komunikacione kana
 
 ## Stanje implementacije (poslednji update u repou)
 
+**Legenda oznaka:** 🟢 završeno · ❌ nije završeno ili delimično (još ima posla).
+
 | Stavka | Status |
 |--------|--------|
-| P0.1 | Urađeno: `web/.env.example` i `mobile/.env.example` — par **NEXT_PUBLIC_API_URL** / **EXPO_PUBLIC_API_URL**. |
-| P0.2 | Urađeno: `WEB_DEV_API_FALLBACK` (`http://localhost:3000`) u `web/lib/api-base.ts`; stranice i offline moduli koriste `WEB_API_BASE` gde ima smisla. |
-| P0.3 | Urađeno: web `socket.io-client` + `hooks/useNotificationSocket.ts`; `NotificationCenter` sluša isti `/notifications` namespace kao mobilni (+ fallback polling 90s). |
-| P0.4 | Urađeno: `NEXT_PUBLIC_BASE_URL` (web) i `EXPO_PUBLIC_SITE_URL` (mobile) u `.env.example` šablonima. |
-| P1.1 | Urađeno: uklonjen `mobile/app/(producer)/dashboard.tsx` redirect; `_layout` bez `dashboard` ekrana; `resolve-notification-action` ide na `/(producer)/(tabs)`; README ažuriran. |
-| P1.2 | Urađeno: uklonjen nekorišćen stack ekran `field-season.tsx` — uputstva isključivo preko `/(producer)/(tabs)/steps` (`GrowerJourneyScreen`). |
-| P1.3 | Delimično: obrisan dupli `app/(auth)/login.tsx` (konflikt sa `app/login.tsx` na ruti `/login`). Ostaje: `login.tsx` (univerzalna), `partner-login`, `buyer-login`. |
-| P1.4 | Urađeno: uklonjen legacy `app/(tabs)/` (stari redirect na producer tabs). |
-| P2.1 | Delimično — nije bilo sadržaja na uklonjenom `field-season`; bez dodatnih CTA. |
-| P2.2 | Urađeno: mobilni **SyncQueueStrip** na Početnoj (čekanje + greška + „Pošalji sad“ + Dnevnik); web **GrowerOfflineOutboxBanner** na `/grower` (IndexedDB neposlati + sync + link na `/producer/field-entry`). |
-| P2.3 | **Delimično** — buyer: `/buyer-portal/vera-standard`, shop korpa + checkout (`POST /orders` po stavci kao mobilni); matrica ispod; logistics/supplier uglavnom po matrici bez dodatnog modula. |
-| P3.1 | **Delimično** — redirect u `web/next.config.ts`: `/buyer/orders` → `/buyer-portal/orders`, `/producer/dashboard` → `/grower`; uklonjeni dupli `page.tsx`; linkovi u `buyer/shop` i `producer/scanner`. |
-| P3.2 | **Urađeno uz P0.3** — `NotificationCenter` + socket + `batch:updated`; `SidebarLayout` strane dele isti bel. |
-| Q4 | Urađeno: **401** na `api` Axios — mobilni briše sesiju + `router.replace('/')` (isti princip kao web logout); **bez** trigera na `/auth/login`, `/auth/register*`, `/auth/verify-email` (kao web — pogrešna lozinka ne briše ostatak sesije na web-u). Backend i dalje nema poseban refresh token. |
-| Q5 | Urađeno (mobilni): `resolveNotificationActionHref(actionUrl, { roles })` mapira web putanje (`/buyer-portal/*`, `/supplier/*`, `logistics-partner` / `fleet-partner`, `/orders/:id` prema producer vs buyer stacku, `/missions/:id` za logistiku vs grower, itd.); `notifications` ekran prosleđuje `normalizeUserRoles(user)`. Web i dalje otvara apsolutni/relativni `actionUrl` u browseru. |
-| Q6 | **Dokumentovano** — „Q6 — Smoke checklist”; root **`parity:typecheck`** / **`parity:backend`**; **CI** (`.github/workflows/ci.yml`): `paths-filter` + **`workflow_dispatch`** za pun prođaj svih jobova. |
+| P0.1 | 🟢 Urađeno: `web/.env.example` i `mobile/.env.example` — par **NEXT_PUBLIC_API_URL** / **EXPO_PUBLIC_API_URL**. |
+| P0.2 | 🟢 Urađeno: `WEB_DEV_API_FALLBACK` (`http://localhost:3000`) u `web/lib/api-base.ts`; stranice i offline moduli koriste `WEB_API_BASE` gde ima smisla. |
+| P0.3 | 🟢 Urađeno: web `socket.io-client` + `hooks/useNotificationSocket.ts`; `NotificationCenter` sluša isti `/notifications` namespace kao mobilni (+ fallback polling 90s). |
+| P0.4 | 🟢 Urađeno: `NEXT_PUBLIC_BASE_URL` (web) i `EXPO_PUBLIC_SITE_URL` (mobile) u `.env.example` šablonima. |
+| P1.1 | 🟢 Urađeno: uklonjen `mobile/app/(producer)/dashboard.tsx` redirect; `_layout` bez `dashboard` ekrana; `resolve-notification-action` ide na `/(producer)/(tabs)`; README ažuriran. |
+| P1.2 | 🟢 Urađeno: uklonjen nekorišćen stack ekran `field-season.tsx` — uputstva isključivo preko `/(producer)/(tabs)/steps` (`GrowerJourneyScreen`). |
+| P1.3 | ❌ Delimično: obrisan dupli `app/(auth)/login.tsx` (konflikt sa `app/login.tsx` na ruti `/login`). Ostaje: `login.tsx` (univerzalna), `partner-login`, `buyer-login`. |
+| P1.4 | 🟢 Urađeno: uklonjen legacy `app/(tabs)/` (stari redirect na producer tabs). |
+| P2.1 | 🟢 Za uklonjeni `field-season` nije bilo jedinstvenog sadržaja; dodatni CTA nisu potrebni — **lista transport zadataka (grower)** sada deli i18n sa logistikom (`producer.missions.status.*`), vidi **Q3**. |
+| P2.2 | 🟢 Urađeno: mobilni **SyncQueueStrip** na Početnoj (čekanje + greška + „Pošalji sad“ + Dnevnik); web **GrowerOfflineOutboxBanner** na `/grower` (IndexedDB neposlati + sync + link na `/producer/field-entry`). |
+| P2.3 | ❌ **Delimično** — buyer + notifikacije; **unapređen** mobilni polish (**logistics** lista, **supplier** porudžbine, **grower misije**); web supplier / dodatni Q1 još u backlogu. |
+| P3.1 | ❌ **Delimično** — redirect u `web/next.config.ts`: `/buyer/orders`, **`/buyer/dashboard`**, **`/buyer/profile`**, **`/buyer/vera-standard`** → odgovarajući **`/buyer-portal/*`**; `/producer/dashboard` → `/grower`; dodatni audit starih linkova po potrebi. |
+| P3.2 | 🟢 **Urađeno uz P0.3** — `NotificationCenter` + socket + `batch:updated`; `SidebarLayout` strane dele isti bel. |
+| Q4 | 🟢 Urađeno: **401** na `api` Axios — mobilni briše sesiju + `router.replace('/')` (isti princip kao web logout); **bez** trigera na `/auth/login`, `/auth/register*`, `/auth/verify-email` (kao web — pogrešna lozinka ne briše ostatak sesije na web-u). Backend i dalje nema poseban refresh token. |
+| Q3 | ❌ **Delimično** — mobilni **buyer** (`buyer.*`, `buyer.passport.*`, EUR `sr-Latn`), **logistics** početna (status/datumi/batch oznake), **supplier B2B porudžbine** (`supplier.b2bOrderStatus.*`), **grower lista misija** i **detalj misije** (mapa/status/timeline/fin.), **lista partija** i **detalj partije** (tragabilnost, istorija lokacija, rizici kvaliteta, sr/en statusi iz `producer.batches.*`), **lista narudžbina farme** (`OrdersListScreen` — filteri, statusi kao detalju, EUR/datumi), **detalj narudžbine** (zaglavlja tajmline/isporuka), **lista njiva** (`EstateList` — empty state, parcele plural, odbrojavanje do sertifikacije), **grower Partner orders** (`producer.dashboard.partnerOrders.*`, B2B statusi, lok. datumi + `markReceivedFailed`; ispravljen prefiks `producer.partnerOrders`→`producer.dashboard.partnerOrders`), **profil → brzi linkovi** (novčanik, parcela/count, materijali, kvalitet, …), **detalj njive** (status konverzije, datumi), **supplier poruke** (sidebar nit bez imena farmera → `supplier.threadUntitledShort`); još paritet van ovih površina i „sirovi“ API tekstovi. |
+| Q5 | 🟢 Urađeno (mobilni): `resolveNotificationActionHref` za buyer / grower / logistiku / **dobavljača** (`/(supplier)/notifications`, `/supplier/notifications`, `/notifications` kada je nalog čisto **MATERIAL_SUPPLIER**); zajednički **`NotificationsListScreen`**. Web: `NotificationCenter`. |
+| Q6 | 🟢 **Dokumentovano i u repou** — „Q6 — Smoke checklist”; root **`parity:typecheck`** / **`parity:backend`**; **CI** (`.github/workflows/ci.yml`): `paths-filter` + **`workflow_dispatch`** za pun prođaj svih jobova. |
 
 ---
 
@@ -40,10 +43,11 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 | Mobilna ruta | Web (kanon) | Napomena |
 |--------------|-------------|----------|
 | `/(buyer)/(tabs)/dashboard` | `/buyer-portal/dashboard` (+ analytics, inventory, …) | Mobilni „lahki“ home; web portal širi. |
-| `/(buyer)/(tabs)/shop` | `/buyer/shop` | Cart/checkout na mobilnom u jednom navigatoru. |
+| `/(buyer)/(tabs)/shop` | `/buyer/shop` | Korpa/desno; **zvonce notifikacije** levo kao na dashboard tabu; kategorije preko `marketplace.categories.*` (sr u `sr-partial`). |
 | `/(buyer)/(tabs)/orders`, `order/[id]` | `/buyer-portal/orders` | Stari `/buyer/orders` sada trajno redirectuje na portal. |
 | `/(buyer)/cart`, `checkout` | `/buyer/shop` (web) + `(buyer)/checkout` | Isti `POST /orders` payload; **jedna porudžbina po stavci korpe** na webu i u app-u; više stavki → mobile ida na listu porudžbina nakon potvrde. |
-| `/(buyer)/(tabs)/profile` | `/buyer-portal/profile` | Polja / adrese. |
+| `/(buyer)/(tabs)/profile` | `/buyer-portal/profile` | Polja / adrese + red **Obaveštenja** na mobilnom → `/(buyer)/notifications`. |
+| Notifikacije | Web: `NotificationCenter` (header) | Mobilni: `/(buyer)/notifications`; zvonce + bedž na **dashboard** i **shop** tabu; profil (red „Obaveštenja”). |
 | `/(buyer)/(tabs)/vera-standard` | `/buyer-portal/vera-standard` | Isti tekst kao mobilni `buyer.veraStandard` (en/sr u `buyerPortalVeraStandard`). |
 
 ### Logistics
@@ -51,6 +55,7 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 | Mobilna | Web |
 |---------|-----|
 | `/(logistics)/index` | `/logistics-partner/dashboard` |
+| `/(logistics)/notifications` | `NotificationCenter` (header) na webu; URL `…/logistics-partner/…` sa `notifications` mapira u app |
 | `/(logistics)/mission/[id]` | `/logistics-partner/missions` |
 | `/(logistics)/handover-receiver` | `/logistics-partner/handover-receiver` |
 
@@ -59,6 +64,7 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 | Mobilna | Web |
 |---------|-----|
 | `/(supplier)/dashboard` | `/supplier/dashboard` (+ `catalog`, storefront komponente) |
+| `/(supplier)/notifications` | `NotificationCenter` (header); `actionUrl` kao `/supplier/notifications` ili generički `/notifications` za nalog samo sa **MATERIAL_SUPPLIER** (bez grower uloge) |
 | `/(supplier)/orders` | `/supplier/orders` |
 | `/(supplier)/messages` | `/supplier/messages` |
 
@@ -84,10 +90,10 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 
 | # | Zadatak | Akcija |
 |---|---------|--------|
-| P1.1 | **`(producer)/dashboard` vs tab Početna** | **Gotovo** — redirect uklonjen; ulaz `/(producer)/(tabs)`; notifikacije mapirane na tabs. |
-| P1.2 | **`field-season` vs tab „Koraci“** | **Gotovo** — dupli stack „Uputstva“ uklonjen; sve preko taba Steps. |
-| P1.3 | **`(auth)/login` vs `partner-login` vs `login`** | Dupli `(auth)/login` uklonjen. Dalje (**opciono**): spojiti `partner-login` u `login` jednim UX-om. |
-| P1.4 | Legacy **`(tabs)/`** | **Gotovo** — obrisan nekorišćen shell. |
+| P1.1 | **`(producer)/dashboard` vs tab Početna** | 🟢 **Gotovo** — redirect uklonjen; ulaz `/(producer)/(tabs)`; notifikacije mapirane na tabs. |
+| P1.2 | **`field-season` vs tab „Koraci“** | 🟢 **Gotovo** — dupli stack „Uputstva“ uklonjen; sve preko taba Steps. |
+| P1.3 | **`(auth)/login` vs `partner-login` vs `login`** | ❌ Dupli `(auth)/login` uklonjen. Dalje (**opciono**): spojiti `partner-login` u `login` jednim UX-om. |
+| P1.4 | Legacy **`(tabs)/`** | 🟢 **Gotovo** — obrisan nekorišćen shell. |
 
 **Nakon P1:** provera repozitorijuma (`grep` po rutama) da nema pokvarenih referenci na obrisane fajlove.
 
@@ -95,16 +101,16 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 
 | # | Zadatak | Napomena |
 |---|---------|----------|
-| P2.1 | **Grower:** sve što je bilo jedinstveno na uklonjenoj ruti prebaciti na ostali tab/stack (empty state, CTA, i18n). | Nema dodatnog sadržaja na uklonjenom `field-season`; i18n bez promene. |
-| P2.2 | **Inbox sinhronizacije** (pending / error field unosi): jedno mesto u UI — uskladiti sa webom. | **Gotovo** — mobilni `SyncQueueStrip` + web `GrowerOfflineOutboxBanner`. |
-| P2.3 | **Buyer / logistics / supplier** na mobilnom: dopuniti postojeće ekrane. | **Matrica** + urađen buyer deo (vera-standard web, shop/checkout paritet); ostatak po Q1. |
+| P2.1 | **Grower:** sve što je bilo jedinstveno na uklonjenoj ruti prebaciti na ostali tab/stack (empty state, CTA, i18n). | 🟢 Nema dodatnog sadržaja na `field-season`; lista **Missions** (grower) sada koristi zajedničke ključeve za statuse/filtere (vidi **Q3**). |
+| P2.2 | **Inbox sinhronizacije** (pending / error field unosi): jedno mesto u UI — uskladiti sa webom. | 🟢 **Gotovo** — mobilni `SyncQueueStrip` + web `GrowerOfflineOutboxBanner`. |
+| P2.3 | **Buyer / logistics / supplier** na mobilnom: dopuniti postojeće ekrane. | ❌ Matrica ostaje; dodat polish: **supplier** narudžbine (lokalizovani statusi), **logistics** datumi/statusi misija, fix **supplier messages** (API odgovor nije sakrivao `t()`). Dalje po **Q1**. |
 
 ## P3 — Web: overlap i moduli
 
 | # | Zadatak | Napomena |
 |---|---------|----------|
-| P3.1 | Audit grower / admin / buyer ruta: spojiti ili redirect. | Redirecti za stare buyer/producer duplicate; dodatni audit po potrebi. |
-| P3.2 | Uskladiti UX notifikacija na webu sa mobilnim. | Socket + lista u headeru (**P0.3**); dalje UX polish po UX feedbacku. |
+| P3.1 | Audit grower / admin / buyer ruta: spojiti ili redirect. | ❌ Redirect proširen (`/buyer/dashboard`, `/buyer/profile`, `/buyer/vera-standard` → portal); dalji audit po potrebi. |
+| P3.2 | Uskladiti UX notifikacija na webu sa mobilnim. | 🟢 Socket + lista u headeru (**P0.3**); dalje UX polish po UX feedbacku. |
 
 ## Redosled rada
 
@@ -126,12 +132,12 @@ Radi se **nakon** što su P0–P3 zategnuti (ili u paraleli tamo gde nema konfli
 
 | Prioritet | Tema | Kratak cilj |
 |-----------|------|-------------|
-| Q1 | **Paritet ekrana po ulozi** | Koristi **„Matrica ruta“** ovde; dopunjavaj backlog po redu. |
-| Q2 | **Offline / sync UX** | Jedan koncept „inboxa“ ili liste pending/error/retry za terenske unose; poruke i statusi bliski web-u gde postoji isti proces. |
-| Q3 | **i18n** | Isti ključevi / jezici (minimum en + sr) na obe platforme; bez UI teksta zaključanog samo na web ili samo na mobilnom bez plana pariteta. |
-| Q4 | **Sesija i istek JWT** | Jednako kao sada za **401** osim na rutama pregovora o kredincijalima (vidi stanje iznad). Poseban refresh token još nije u backlogu kao feature. |
-| Q5 | **Deep linkovi i notifikacije** | Kanonski `actionUrl` ostaje web putanja; mobilni mapper u `mobile/lib/resolve-notification-action.ts` (+ uloge) vodi na odgovarajući Expo `Href`. Dalje: buyer/logistics globalni ekran notifikacija ako treba ista tačka ulaza kao grower. |
-| Q6 | **Smoke / CI** | Checklist ispod; `parity:typecheck` + `parity:backend`; jedan workflow **CI** (`ci.yml`) sa `paths-filter` + **workflow dispatch** za pun prođaj. |
+| Q1 | **Paritet ekrana po ulozi** | ❌ Koristi **„Matrica ruta“** ovde; dopunjavaj backlog po redu. |
+| Q2 | **Offline / sync UX** | ❌ Jedan koncept „inboxa“ ili liste pending/error/retry za terenske unose; poruke i statusi bliski web-u gde postoji isti proces. |
+| Q3 | **i18n** | ❌ Isti ključevi / jezici (minimum en + sr) na obe platforme; mobilni buyer tok značajno pokriven (`buyer.*`, `buyer.passport.*`); još paritet izvan buyer-a i eventualno API/UI stringovi. |
+| Q4 | **Sesija i istek JWT** | 🟢 Jednako kao sada za **401** osim na rutama pregovora o kredincijalima (vidi stanje iznad). Poseban refresh token još nije u backlogu kao feature. |
+| Q5 | **Deep linkovi i notifikacije** | 🟢 Kanonski `actionUrl` ostaje web putanja; mobilni mapper u `mobile/lib/resolve-notification-action.ts` (+ uloge) vodi na odgovarajući Expo `Href`. Buyer: zvonce na **dashboard** i **shop** + profil. |
+| Q6 | **Smoke / CI** | 🟢 Checklist ispod; `parity:typecheck` + `parity:backend`; jedan workflow **CI** (`ci.yml`) sa `paths-filter` + **workflow dispatch** za pun prođaj. |
 
 **Redosled Q stavki:** najčešće Q1 → Q2 → Q3, pa Q4–Q6 prema riziku i release kalendaru.
 
@@ -175,3 +181,4 @@ Radi se **nakon** što su P0–P3 zategnuti (ili u paraleli tamo gde nema konfli
 ## Povezani dokumenti
 
 - Opšti backlog web/mobilni: [`TODO_WEB_MOBILE.md`](../TODO_WEB_MOBILE.md) u korenu repozitorijuma.
+- Unapređenja stranica i povezivanja (rute, CTAs, javni sajt): [`PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md`](PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md).

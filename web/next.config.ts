@@ -39,8 +39,39 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/buyer/dashboard",
+        destination: "/buyer-portal/dashboard",
+        permanent: true,
+      },
+      {
+        source: "/buyer/profile",
+        destination: "/buyer-portal/profile",
+        permanent: true,
+      },
+      {
+        source: "/buyer/vera-standard",
+        destination: "/buyer-portal/vera-standard",
+        permanent: true,
+      },
+      {
         source: "/producer/dashboard",
         destination: "/grower",
+        permanent: true,
+      },
+      /** Canonical grower fields: estate CRUD + parcels live under /grower/fields (not /producer/estates). */
+      {
+        source: "/producer/estates/new",
+        destination: "/grower/fields",
+        permanent: true,
+      },
+      {
+        source: "/producer/estates/:id",
+        destination: "/grower/fields?estate=:id",
+        permanent: true,
+      },
+      {
+        source: "/producer/estates",
+        destination: "/grower/fields",
         permanent: true,
       },
     ];

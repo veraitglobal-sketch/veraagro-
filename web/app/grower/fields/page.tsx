@@ -60,6 +60,19 @@ export default function GrowerFieldsPage() {
     loadEstates();
   }, []);
 
+  /** Deep-link from dashboard / legacy /producer/estates/:id → ?estate= */
+  useEffect(() => {
+    if (loading || typeof window === 'undefined') return;
+    const id = new URLSearchParams(window.location.search).get('estate');
+    if (!id) return;
+    const el = document.getElementById(`grower-estate-${id}`);
+    if (!el) return;
+    const timer = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+    return () => window.clearTimeout(timer);
+  }, [loading, estates]);
+
   const loadEstates = async () => {
     try {
       setLoading(true);
@@ -214,7 +227,11 @@ export default function GrowerFieldsPage() {
                 </button>
               </div>
               {estates.map((estate) => (
-                <div key={estate.id} className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+                <div
+                  key={estate.id}
+                  id={`grower-estate-${estate.id}`}
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 scroll-mt-24"
+                >
                   <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                     <MapPin className="w-5 h-5" />
                     <h2 className="text-lg font-medium">{estate.name}</h2>

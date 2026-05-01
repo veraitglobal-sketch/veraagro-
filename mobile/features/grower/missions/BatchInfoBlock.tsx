@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Package } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
@@ -9,6 +10,7 @@ interface BatchInfoBlockProps {
 }
 
 export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
+  const { t } = useTranslation();
   if (!mission.batch) return null;
   const batch = mission.batch as { batchId?: string; productName?: string };
   return (
@@ -33,7 +35,7 @@ export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
             letterSpacing: 0.3,
           }}
         >
-          Batch
+          {t('producer.missionsCreate.batchLabel')}
         </Text>
       </View>
       <Text

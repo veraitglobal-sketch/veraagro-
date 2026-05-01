@@ -5,6 +5,16 @@
     "supplierRegisteredDefault": "Kod registrovan od strane snabdevača",
     "notWhitelisted": "Materijal nije na beloj listi niti registrovani snabdevački kod. Kontaktirajte administratora ili prodavnicu."
   },
+  "notificationsCenter": {
+    "title": "Obaveštenja",
+    "filterAll": "Sve",
+    "filterUnread": "Nepročitano",
+    "filterActionRequired": "Potrebna akcija",
+    "filterReminders": "Podsetnici",
+    "filterAlerts": "Upozorenja",
+    "loading": "Učitavanje…",
+    "empty": "Nema obaveštenja"
+  },
   "marketplace": {
     "about": {
       "intro": "Od semena do police — puna tragabilnost, obezbeđen kvalitet i direktan pristup tržištu za evropske proizvođače."
@@ -145,7 +155,8 @@
       "doneBody": "Dokaz primaoca je sačuvan. Možeš otvoriti ili podeliti PDF ako treba.",
       "errTitle": "Nije moguće sačuvati",
       "shareUnavailable": "Deljenje nije dostupno na ovom uređaju.",
-      "pdfErrTitle": "Nije moguće dobiti PDF"
+      "pdfErrTitle": "Nije moguće dobiti PDF",
+      "errorDetailFallback": "Došlo je do greške"
     },
     "handoverInit": {
       "documentFirst": "Pre skeniranja: fotografiši zatvoren teret, nalepnice i otpremnicu. Drži dokaz na telefonu; radnja dodaje slike revizije u sledećem koraku."
@@ -214,7 +225,8 @@
       "batches": "Partije",
       "settings": "Podešavanja",
       "harvest": "Žetva",
-      "wallet": "Novčanik"
+      "wallet": "Novčanik",
+      "missions": "Prevoz"
     },
     "offline": {
       "banner": "Niste na mreži. Liste pokazuju poslednji sinhronizovani sadržaj; novi unosi se čuvaju i šalju kada ste ponovo onlajn."
@@ -354,7 +366,14 @@
         "emptyOrders": "Još nema porudžbina. Otvori mapu snabdevača, izaberi partnera i naruči u njihovoj radnji.",
         "openPartner": "Poruke i radnja",
         "threads": "Razgovori",
-        "emptyThreads": "Još nema razgovora. Kreni od partnera na mapi."
+        "emptyThreads": "Još nema razgovora. Kreni od partnera na mapi.",
+        "loadFailed": "Učitavanje porudžbina ili poruka nije uspelo.",
+        "partnerFallback": "Partner",
+        "markReceivedAtFarm": "Primljeno na farmi",
+        "receivedAtFarmWithWhen": "Primljeno na farmi: {{when}}",
+        "waitingSupplierConfirm": "Čeka se potvrda snabdevača…",
+        "receivingInProgress": "…",
+        "markReceivedFailed": "Nije moguće označiti prijem na farmi. Pokušaj ponovo."
       },
       "quickActions": "Brze akcije",
       "more": "Još",
@@ -470,7 +489,8 @@
       "noActivity": "Još ništa",
       "planting": "Setva",
       "spraying": "Prskanje",
-      "harvest": "Žetva"
+      "harvest": "Žetva",
+      "gpsAbbrev": "GPS"
     },
     "scanner": {
       "scanBarcode": "Skeniraj",
@@ -534,7 +554,18 @@
       "saveEstate": "Sačuvaj",
       "myFields": "Moje njive",
       "parcelsWithCount": "Parcele ({{count}})",
-      "editEstateTitle": "Uredi njivu"
+      "editEstateTitle": "Uredi njivu",
+      "certStatusCertified": "Sertifikovan",
+      "certStatusActive": "Aktivan",
+      "certStatusPendingSetup": "U pripremi",
+      "certificationSectionHeading": "Sertifikacija",
+      "countWithMyFieldsLabel": "{{count}} · {{label}}",
+      "listEmptyTitle": "Još nema njiva",
+      "listEmptySubtitle": "Dodaj prvu njivu da počneš.",
+      "parcelBadge_one": "{{count}} parcela",
+      "parcelBadge_few": "{{count}} parcele",
+      "parcelBadge_other": "{{count}} parcela",
+      "listCertDaysRemaining": "{{count}} dana do sertifikacije"
     },
     "harvest": {
       "modePlanting": "Novi zasad (sadnja)",
@@ -599,7 +630,10 @@
       "unitPrice": "Cena po jedinici",
       "total": "Ukupno",
       "deliveryAddress": "Adresa isporuke",
-      "buyerSection": "Kupac"
+      "buyerSection": "Kupac",
+      "timelineTitle": "Hronologija",
+      "deliveryNotesHeading": "Napomene za isporuku",
+      "listEmpty": "Još nema porudžbina"
     },
     "wallet": {
       "pending": "Na čekanju",
@@ -753,6 +787,22 @@
       "harvest": "Žetva"
     },
     "batches": {
+      "listScreenTitle": "Partije",
+      "filterPacked": "Pakovano",
+      "filterInHub": "U hub-u",
+      "filterInTransit": "U prevozu",
+      "filterDelivered": "Isporučeno",
+      "statusPacked": "Pakovano",
+      "statusInHub": "U hub-u",
+      "statusInTransit": "U prevozu",
+      "statusDelivered": "Isporučeno",
+      "emptyList": "Nema partija",
+      "traceabilityTitle": "Pratljivost",
+      "transportCarrierLabel": "Transport",
+      "hubNameFallback": "Hub",
+      "locationHistoryTitle": "Istorija lokacije",
+      "locationUnknown": "Nepoznata lokacija",
+      "reportedLabel": "Prijavljeno",
       "harvestLabel": "Žetva",
       "product": "Proizvod",
       "unknownProduct": "Nepoznat proizvod",
@@ -762,6 +812,12 @@
       "detailScreenTitle": "Detalji partije",
       "currentLocation": "Trenutna lokacija",
       "qualityIssuesHeading": "Problemi kvaliteta"
+    },
+    "profileScreen": {
+      "walletSubtitle": "Stanje plaćanja i transakcija",
+      "quickAccessHeading": "Brzo",
+      "settingsSubtitle": "Obaveštenja i opcije",
+      "growthJournal": "Dnevnik porasta"
     },
     "missions": {
       "detailScreenTitle": "Detalji zadatka",
@@ -775,9 +831,11 @@
         "PICKED_UP": "Preuzeto",
         "IN_TRANSIT": "U transportu",
         "COMPLETED": "Završeno",
-        "CANCELLED": "Otkazano"
+        "CANCELLED": "Otkazano",
+        "DELIVERED": "Isporučeno"
       },
       "loading": "Učitavanje…",
+      "listEmpty": "Još nema zadataka na ovoj listi.",
       "notFound": "Zadatak nije pronađen",
       "yourPayout": "Tvoja isplata",
       "assignedToDriver": "Dodeljeno vozaču",
@@ -786,6 +844,11 @@
       "statusConfirmed": "Potvrđeno",
       "statusDelivered": "Isporučeno",
       "financialStatus": "Finansijski status",
+      "financialApiStatusLine": "Stanje: {{status}}",
+      "timelineTitle": "Hronologija",
+      "statusFieldLabel": "Stanje",
+      "journeyMapTitle": "Mapa putovanja",
+      "mapPointFallback": "Tačka {{n}}",
       "total": "Ukupno",
       "created": "Kreirano",
       "inTransit": "U transportu",
@@ -1044,6 +1107,35 @@
       "standardTab": "Pravila",
       "profile": "Profil"
     },
+    "dashboard": {
+      "marketplaceTitle": "Marketplace",
+      "filterAll": "Sve",
+      "filterAvailableNow": "Dostupno sada",
+      "filterIncoming": "U dolasku",
+      "filterReservations": "Rezervacije",
+      "loadFailed": "Nije moguće učitati proizvode",
+      "deliveryPulse": "Isporuka {{orderNumber}} trenutno je u {{location}}",
+      "scannerTitle": "Skeniraj Bio Vera kod",
+      "scannerHint": "Postavi QR kod u okvir",
+      "unknownGrower": "Nepoznato",
+      "unitsAvailable": "{{qty}} {{unit}} na stanju",
+      "unitsDefault": "jedinica",
+      "soldOutBadge": "Rasprodato — sledeća berba uskoro",
+      "reserveCrates": "Rezerviši kutije",
+      "demoDeliveryLocation": "Mađarska",
+      "demoStoryNames": {
+        "1": "Marko",
+        "2": "Petar",
+        "3": "Jovan",
+        "4": "Milan"
+      },
+      "demoStorySubtitles": {
+        "1": "Berba · centralni region",
+        "2": "Kontrola kvaliteta · severna ravnica",
+        "3": "Utovar · nacionalno",
+        "4": "Berba · istočni region"
+      }
+    },
     "shop": {
       "title": "Bio Vera marketplejs",
       "subtitle": "BIO-Ready sertifikovana hrana",
@@ -1053,8 +1145,15 @@
       "noProducts": "Trenutno nema dostupnih proizvoda",
       "loading": "Učitavanje proizvoda..."
     },
+    "cart": {
+      "reservationBadge": " · rezervacija",
+      "priceOnRequest": "Cena na upit",
+      "linePrice": "{{price}} po {{unit}}",
+      "priceOnRequestWithUnit": "Cena na upit · {{unit}}"
+    },
     "orders": {
       "title": "Moje porudžbine",
+      "loading": "Učitavanje…",
       "empty": "Nemaš porudžbina",
       "list": "Lista porudžbina",
       "statusPending": "Na čekanju",
@@ -1089,7 +1188,14 @@
       "timelinePlaced": "Porudžbina poslata",
       "timelineConfirmed": "Potvrđeno i u pripremi",
       "timelineShipped": "Na putu",
-      "timelineDone": "Isporučeno"
+      "timelineDone": "Isporučeno",
+      "detailMissing": "Porudžbina nije učitana — možda još ne postoji ili se obrađuje.",
+      "bankFieldLabels": {
+        "beneficiary": "Primaoc:",
+        "bank": "Banka:",
+        "iban": "IBAN:",
+        "swift": "SWIFT:"
+      }
     },
     "veraStandard": {
       "title": "Bio Vera standard",
@@ -1100,7 +1206,8 @@
         "images": "Hronološke slike rasta",
         "lab": "Laboratorijski rezultati",
         "duration": "3 godine kontinuiranog monitoringa"
-      }
+      },
+      "footerNote": "Svaki proizvod pod Bio Vera standardom ima potpunu tragabilnost od farme do vašeg stola."
     },
     "profile": {
       "title": "Moj profil",
@@ -1116,7 +1223,29 @@
       "companyCore": "Osnovni podaci firme",
       "legalEntity": "Pravno lice",
       "save": "Sačuvaj",
-      "edit": "Izmeni"
+      "edit": "Izmeni",
+      "openNotifications": "Obaveštenja",
+      "management": "Menadžment",
+      "managementGeneralDirector": "Izvršni direktor:",
+      "managementFinanceManager": "Menadžer finansija:",
+      "ctaAddLocation": "Dodaj novu lokaciju",
+      "ctaAddStaff": "Dodaj osobu",
+      "modalTitleAddLocation": "Nova lokacija",
+      "modalTitleAddStaff": "Novo lice sa ovlašćenjem",
+      "confirmAddLocation": "Dodaj lokaciju",
+      "confirmAddStaff": "Dodaj osobu",
+      "placeholderTaxId": "Poreski ID (PIB / VAT)",
+      "placeholderHeadquarters": "Sjedište",
+      "placeholderGeneralDirector": "Generalni direktor",
+      "placeholderFinanceManager": "Finansije",
+      "placeholderLocationAlias": "Naziv (npr. glavni distribucioni centar)",
+      "placeholderResponsiblePerson": "Odgovorna osoba",
+      "placeholderOperatingHours": "Radno vreme (npr. pon–pet: 08:00–18:00)",
+      "placeholderFirstName": "Ime",
+      "placeholderLastName": "Prezime",
+      "placeholderEmail": "E-pošta",
+      "placeholderPhoneShort": "Telefon",
+      "placeholderRole": "Uloga (npr. nabavni menadžer)"
     },
     "checkout": {
       "fillRequired": "Popuni sva obavezna polja",
@@ -1129,7 +1258,63 @@
       "orderSummary": "Pregled porudžbine",
       "total": "Ukupno",
       "multiOrderHint": "Svaka stavka u korpi se šalje kao posebna porudžbina uz istu adresu (isto kao na web prodavnici).",
-      "ordersCreated": "Uspešno poslato {{count}} porudžbina."
+      "ordersCreated": "Uspešno poslato {{count}} porudžbina.",
+      "fieldStreet": "Ulica i broj",
+      "fieldCity": "Grad",
+      "fieldPostal": "Poštanski broj",
+      "fieldCountry": "Država",
+      "fieldNotes": "Napomene (opciono)",
+      "reservationDeliveryNote": "Korpa sadrži rezervisane stavke — rok isporuke može zavisiti od potvrde berbe.",
+      "orderMissingId": "Porudžbina je kreirana ali sistem nije vratio ID"
+    },
+    "productDetail": {
+      "notFound": "Proizvod nije pronađen",
+      "farmerFallback": "Bio Vera proizvođač",
+      "originHeading": "Poreklo",
+      "detailsHeading": "Detalji",
+      "daysInConversion": "Dani u konverziji",
+      "perUnitShort": "po {{unit}}",
+      "reserveCta": "Rezerviši"
+    },
+    "passport": {
+      "dash": "—",
+      "digitalBadge": "Digitalni pasoš",
+      "loading": "Učitavanje pasoša…",
+      "loadFailed": "Neuspešno učitavanje pasoša",
+      "sectionProduct": "Proizvod",
+      "batchSummary": "{{quantity}} {{unit}} · Serija {{batchId}}",
+      "statusLine": "Status: {{status}}",
+      "sectionRegionOrigin": "Region i poreklo",
+      "countryLine": "Država: {{country}}",
+      "fieldHa": "Njiva: {{ha}} ha",
+      "plotHa": "Parcela: {{ha}} ha",
+      "areaJoin": " · ",
+      "sectionFarmer": "Proizvođač",
+      "sectionJourney": "Tok",
+      "journeyHarvested": "Žetva",
+      "journeyQualityCheck": "Kontrola kvaliteta",
+      "journeyPickedUp": "Preuzeto",
+      "journeyArrived": "Stiglo",
+      "sectionSpraying": "Prskanje i inputi",
+      "waterVol": "voda {{vol}} L",
+      "applied": "Primena: {{when}}",
+      "deviceTime": "Vreme uređaja: {{when}}",
+      "gpsLine": "GPS: {{lat}}, {{lng}}{{acc}}",
+      "gpsAccuracyM": " (±{{m}} m)",
+      "sectionTransport": "Transport",
+      "transportFallback": "Transport",
+      "carrierLine": "Prevoznik: {{name}}",
+      "pickupLine": "Preuzimanje: {{address}}",
+      "assignedLine": "Dodeljeno: {{when}}",
+      "pickedUpLine": "Preuzeto: {{when}}",
+      "deliveredLine": "Isporučeno: {{when}}",
+      "borderWait": "Granica {{border}}: {{arrival}} – {{exit}} ({{minutes}} min)",
+      "gpsLogTitle": "GPS beleška ({{count}})",
+      "moreGpsPoints": "+{{n}} još tačaka",
+      "sectionColdChain": "Hladni lanac",
+      "tempSummary": "Min {{min}}°C · Max {{max}}°C · Prosek {{avg}}°C",
+      "tempReadingsCount": "{{count}} očitavanja temperature",
+      "sectionProtocol360": "Protokol 360"
     }
   },
   "supplier": {
@@ -1149,7 +1334,15 @@
     "orderRef": "Ref. porudžbine",
     "replyPlaceholder": "Odgovor…",
     "growerFallback": "Proizvođač",
-    "growerReceivedAtFarm": "Proizvođač primio na farmi: {{when}}"
+    "growerReceivedAtFarm": "Proizvođač primio na farmi: {{when}}",
+    "threadUntitledShort": "Nit {{id}}",
+    "b2bOrderStatus": {
+      "PENDING": "Na čekanju",
+      "CONFIRMED": "Potvrđeno",
+      "REJECTED": "Odbijeno",
+      "FULFILLED": "Isporučeno",
+      "CANCELLED": "Otkazano"
+    }
   },
   "error": "Greška",
   "info": "Informacija",
@@ -1325,7 +1518,15 @@
     "priceMissing": "Nedostaje cena proizvoda",
     "addressRequired": "Unesi ulicu i grad za isporuku.",
     "success": "Rezervisano {{quantity}} {{unit}} — {{name}}",
-    "createFailed": "Nije moguće kreirati rezervaciju"
+    "createFailed": "Nije moguće kreirati rezervaciju",
+    "title": "Rezerviši kutije",
+    "quantitySection": "Količina",
+    "deliveryAddressHeading": "Adresa isporuke",
+    "maxAvailable": "{{max}} {{unit}} na stanju",
+    "confirmReservation": "Potvrdi rezervaciju",
+    "processing": "Obrada…",
+    "deliveryNotesBatch": "Rezervacija za seriju {{batchId}}",
+    "deliveryNotesNoBatch": "Rezervacija"
   },
   "veraBag": {
     "permTitle": "Dozvola potrebna",

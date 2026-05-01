@@ -5,6 +5,7 @@ import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { Mission } from '../../../lib/api';
 import { isMissionCompletedSuccess } from '../../../lib/mission-status';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface TimelineBlockProps {
   mission: Mission;
@@ -21,6 +22,7 @@ const dateFormat = {
 export default function TimelineBlock({ mission }: TimelineBlockProps) {
   const { t } = useTranslation();
   const driver = mission.driver as { firstName?: string; lastName?: string } | undefined;
+  const dateLocale = useAppLocaleTag();
   return (
     <View
       style={{
@@ -41,7 +43,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
           letterSpacing: 0.3,
         }}
       >
-        Timeline
+        {t('producer.missions.timelineTitle')}
       </Text>
       <View style={{ gap: theme.spacing.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
@@ -69,7 +71,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
                   marginLeft: 4,
                 }}
               >
-                {new Date(mission.createdAt).toLocaleDateString('en-US', dateFormat)}
+                {new Date(mission.createdAt).toLocaleDateString(dateLocale, dateFormat)}
               </Text>
             </View>
           </View>
@@ -167,7 +169,7 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
                       marginLeft: 4,
                     }}
                   >
-                    {new Date(mission.updatedAt).toLocaleDateString('en-US', dateFormat)}
+                    {new Date(mission.updatedAt).toLocaleDateString(dateLocale, dateFormat)}
                   </Text>
                 </View>
               )}

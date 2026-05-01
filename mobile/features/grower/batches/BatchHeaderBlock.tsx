@@ -1,10 +1,15 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { QrCode } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
-import { getBatchStatusColor, getBatchStatusLabel } from './useBatchDetailData';
+import { BATCH_DETAIL_STATUS_KEYS } from './batch-status-i18n';
+import { getBatchStatusColor } from './useBatchDetailData';
 
 export default function BatchHeaderBlock({ batch }: { batch: any }) {
+  const { t } = useTranslation();
+  const statusLabelKey = BATCH_DETAIL_STATUS_KEYS[String(batch.status)] ?? '';
+  const statusLabel = statusLabelKey ? t(statusLabelKey) : batch.status ?? '';
   return (
     <View
       style={{
@@ -23,7 +28,7 @@ export default function BatchHeaderBlock({ batch }: { batch: any }) {
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>Status</Text>
+        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.missions.statusFieldLabel')}</Text>
         <View
           style={{
             paddingHorizontal: theme.spacing.sm,
@@ -33,7 +38,7 @@ export default function BatchHeaderBlock({ batch }: { batch: any }) {
           }}
         >
           <Text style={{ fontSize: 12, fontWeight: '300', color: getBatchStatusColor(batch.status), letterSpacing: 0.3 }}>
-            {getBatchStatusLabel(batch.status)}
+            {statusLabel}
           </Text>
         </View>
       </View>

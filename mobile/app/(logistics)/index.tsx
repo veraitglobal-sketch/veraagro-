@@ -1,13 +1,15 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Truck, Calendar, Clock, FileSignature } from 'lucide-react-native';
+import { Truck, Calendar, Clock, FileSignature, Bell } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
-import { missionsAPI, Mission } from '../../lib/api';
-import { getMissionStatusColor, getMissionStatusLabelEn } from '../../lib/mission-status';
+import { missionsAPI, Mission, notificationsAPI } from '../../lib/api';
+import { getMissionStatusColor, getMissionStatusLabelLocalized } from '../../lib/mission-status';
 import { useAuth } from '../../hooks/useAuth';
+import { useAppLocaleTag } from '../../lib/date-locale';
 
 /**
  * Default screen for (logistics): pool (PENDING) + assigned runs.
@@ -21,6 +23,25 @@ export default function LogisticsHomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<'all' | 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'COMPLETED'>('all');
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      void (async () => {
+        try {
+          const data = await notificationsAPI.getAll();
+          const unread = Array.isArray(data) ? data.filter((n) => !n.read).length : 0;
+          if (!cancelled) setUnreadNotifications(unread);
+        } catch {
+          if (!cancelled) setUnreadNotifications(0);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, []),
+  );
 
   useEffect(() => {
     void loadMissions();
@@ -42,8 +63,18 @@ export default function LogisticsHomeScreen() {
   const onRefresh = async () => {
     setRefreshing(true);
     await loadMissions();
+    try {
+      const notifData = await notificationsAPI.getAll();
+      setUnreadNotifications(
+        Array.isArray(notifData) ? notifData.filter((n) => !n.read).length : 0,
+      );
+    } catch {
+      setUnreadNotifications(0);
+    }
     setRefreshing(false);
   };
+
+  const dateLocale = useAppLocaleTag();
 
   const filteredMissions =
     filter === 'all' ? missions : missions.filter((m) => m.status === filter);
@@ -87,6 +118,37 @@ export default function LogisticsHomeScreen() {
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end', gap: 8 }}>
+            <TouchableOpacity
+              onPress={() => router.push('/(logistics)/notifications')}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={t('notificationsCenter.title')}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+            >
+              <View style={{ position: 'relative' }}>
+                <Bell size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
+                {unreadNotifications > 0 ? (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: -5,
+                      right: -8,
+                      minWidth: 15,
+                      height: 15,
+                      borderRadius: 8,
+                      backgroundColor: theme.colors.error,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingHorizontal: 3,
+                    }}
+                  >
+                    <Text style={{ fontSize: 8, fontWeight: '700', color: theme.colors.background }}>
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push('/(logistics)/handover-receiver')}
               hitSlop={8}
@@ -261,7 +323,8 @@ export default function LogisticsHomeScreen() {
                             letterSpacing: 0.3,
                           }}
                         >
-                          {mission.missionNumber || `Mission #${mission.id.slice(0, 8)}`}
+                          {mission.missionNumber ||
+                            t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
                         </Text>
                         {mission.batch && (
                           <Text
@@ -272,7 +335,7 @@ export default function LogisticsHomeScreen() {
                               letterSpacing: 0.2,
                             }}
                           >
-                            Batch: {mission.batch.batchId || mission.batchId}
+                            {t('producer.missionsCreate.batchLabel')}: {mission.batch.batchId || mission.batchId}
                           </Text>
                         )}
                       </View>
@@ -292,7 +355,7 @@ export default function LogisticsHomeScreen() {
                             letterSpacing: 0.3,
                           }}
                         >
-                          {getMissionStatusLabelEn(mission.status)}
+                          {getMissionStatusLabelLocalized(mission.status, t)}
                         </Text>
                       </View>
                     </View>
@@ -316,7 +379,7 @@ export default function LogisticsHomeScreen() {
                             letterSpacing: 0.2,
                           }}
                         >
-                          {new Date(mission.createdAt).toLocaleDateString('en-US')}
+                          {new Date(mission.createdAt).toLocaleDateString(dateLocale)}
                         </Text>
                       </View>
                       {mission.updatedAt ? (
@@ -331,7 +394,7 @@ export default function LogisticsHomeScreen() {
                               letterSpacing: 0.2,
                             }}
                           >
-                            {new Date(mission.updatedAt).toLocaleDateString('en-US')}
+                            {new Date(mission.updatedAt).toLocaleDateString(dateLocale)}
                           </Text>
                         </View>
                       ) : null}
