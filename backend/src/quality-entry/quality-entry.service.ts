@@ -672,6 +672,11 @@ export class QualityEntryService {
     } catch (e: unknown) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         this.logger.error(`logisticsHandover Prisma ${e.code}: ${e.message} meta=${JSON.stringify(e.meta)}`);
+        if (e.code === 'P2022' || e.code === 'P2021' || e.code === 'P2010') {
+          throw new BadRequestException(
+            `Database schema is out of date: ${e.message}. On the API host run: npx prisma migrate deploy (same DATABASE_URL as production).`,
+          );
+        }
         throw new BadRequestException(
           `Could not save handover (${e.code}). If you recently changed vehicle data, refresh missions and try again, or contact support.`,
         );
@@ -693,7 +698,7 @@ export class QualityEntryService {
           low.includes('unknown field') ||
           low.includes('undefined column');
         const detail = looksSchema
-          ? 'Database schema may be missing columns (e.g. pickup driver / handover fields). Run prisma migrate deploy on this database and check API logs.'
+          ? `Database schema may be missing handover/pickup columns. Run: npx prisma migrate deploy on the API against this database. Detail: ${prismaMsg.slice(0, 400)}`
           : 'Common causes: payload too large for the pooler (set BLOB_READ_WRITE_TOKEN), or DB timeout. Try fewer photos; check API logs for the exact Prisma message.';
         throw new BadRequestException(`Could not write handover to the database. ${detail}`);
       }
