@@ -479,8 +479,8 @@ export class GrowerPortalService {
       throw new ForbiddenException('You can only view your own missions');
     }
 
-    const milestones = this.applyGrowerMilestonePrivacy(this.buildMilestones(mission));
-    const routePoints: ReturnType<GrowerPortalService['buildRoutePoints']> = [];
+    const milestones = this.applyGrowerMilestonePrivacy(this.buildMilestones(mission) as Array<Record<string, unknown>>);
+    const routePoints: any[] = [];
     const eta = this.calculateETAGrower(mission);
 
     return {
@@ -605,7 +605,7 @@ export class GrowerPortalService {
     const milestones = this.buildMilestones(mission);
     const currentMilestone = milestones.find((m) => m.isCurrent) || milestones[0];
 
-    const commerce = this.missionTrackerCommerceFields(mission);
+    const commerce = this.missionTrackerCommerceFieldsForGrower(mission);
     const handover = mission.logistics_handovers;
     const snap = handover?.pickupDriverSnapshot as Record<string, unknown> | null | undefined;
     const assigned = mission.assigned_logistics_driver;
@@ -653,10 +653,6 @@ export class GrowerPortalService {
       productName: commerce.productName,
       quantity: commerce.quantity,
       unit: commerce.unit,
-      orderId: commerce.orderId,
-      orderNumber: commerce.orderNumber,
-      orderStatus: commerce.orderStatus,
-      loadInstructions: commerce.loadInstructions,
       status: mission.status,
       currentMilestone: currentMilestone?.name,
       milestones,
@@ -851,6 +847,40 @@ export class GrowerPortalService {
     if (milestones.length > 0) {
       milestones[milestones.length - 1].isCurrent = true;
     }
+  }
+
+  /**
+   * Strip place names from milestone payloads on the grower journey UI (hub / border / addresses).
+   */
+  private applyGrowerMilestonePrivacy(milestones: Array<Record<string, unknown>>) {
+    return milestones.map((m) => ({
+      ...m,
+      location: null,
+    }));
+  }
+
+  /** ETA text without destination or hub names */
+  private calculateETAGrower(mission: {
+    status?: string;
+    location_logs?: Array<unknown>;
+    batches?: { distributor_arrivals?: Array<{ arrivalTime: Date | string; hubName?: string | null }> } | null;
+  }): string | null {
+    const st = mission.status;
+    const arrivals = mission.batches?.distributor_arrivals;
+    if (!arrivals?.length) {
+      if (st === 'IN_TRANSIT' && mission.location_logs?.length) {
+        return 'Shipment is en route; arrival time is estimated in the coming hours.';
+      }
+      return null;
+    }
+    const arrival = arrivals[0];
+    const now = new Date();
+    const arrivalTime = new Date(arrival.arrivalTime);
+    if (arrivalTime > now) {
+      const hoursRemaining = Math.ceil((arrivalTime.getTime() - now.getTime()) / (1000 * 60 * 60));
+      return `Shipment is expected to reach the destination hub in about ${hoursRemaining} hours.`;
+    }
+    return 'Shipment has reached the destination hub.';
   }
 
   /**

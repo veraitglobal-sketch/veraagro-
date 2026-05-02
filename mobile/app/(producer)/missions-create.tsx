@@ -42,9 +42,6 @@ export default function MissionsCreateScreen() {
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
-  const [destinationCity, setDestinationCity] = useState('');
-  const [destinationAddress, setDestinationAddress] = useState('');
-  const [loadInstructions, setLoadInstructions] = useState('');
 
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
@@ -137,20 +134,6 @@ export default function MissionsCreateScreen() {
       );
       return;
     }
-    if (!destinationCity.trim()) {
-      Alert.alert(
-        t('producer.missionsCreate.alerts.destinationTitle'),
-        t('producer.missionsCreate.alerts.destinationCityBody'),
-      );
-      return;
-    }
-    if (!destinationAddress.trim() || destinationAddress.trim().length < 5) {
-      Alert.alert(
-        t('producer.missionsCreate.alerts.destinationTitle'),
-        t('producer.missionsCreate.alerts.destinationAddressBody'),
-      );
-      return;
-    }
     const lat = parseFloat(pickupLat);
     const lng = parseFloat(pickupLng);
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
@@ -167,9 +150,6 @@ export default function MissionsCreateScreen() {
         batchId,
         pickupLocation: { lat, lng, address: pickupAddress },
         pickupAddress: pickupAddress.trim(),
-        destinationCity: destinationCity.trim(),
-        destinationAddress: destinationAddress.trim(),
-        loadInstructions: loadInstructions.trim() || undefined,
       });
       Alert.alert(t('producer.missionsCreate.successTitle'), t('producer.missionsCreate.successBody'), [
         { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
@@ -438,76 +418,23 @@ export default function MissionsCreateScreen() {
           }}
         />
 
-        <Text
+        <View
           style={{
-            fontSize: 15,
-            color: theme.colors.text.secondary,
-            marginBottom: theme.spacing.sm,
-            lineHeight: 22,
+            marginBottom: theme.spacing.lg,
+            padding: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 1,
+            borderColor: 'rgba(45, 90, 39, 0.25)',
+            backgroundColor: 'rgba(247, 250, 246, 0.95)',
           }}
         >
-          {t('producer.missionsCreate.whereItGoes')}
-        </Text>
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.destinationCity')}
-        </Text>
-        <TextInput
-          value={destinationCity}
-          onChangeText={setDestinationCity}
-          onFocus={scrollToBottomIfNeeded}
-          placeholder={t('producer.missionsCreate.destinationCityPlaceholder')}
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            marginBottom: theme.spacing.md,
-            color: theme.colors.text.primary,
-          }}
-        />
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.fullDelivery')}
-        </Text>
-        <TextInput
-          value={destinationAddress}
-          onChangeText={setDestinationAddress}
-          onFocus={scrollToBottomIfNeeded}
-          placeholder={t('producer.missionsCreate.fullDeliveryPlaceholder')}
-          multiline
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            minHeight: 72,
-            textAlignVertical: 'top',
-            marginBottom: theme.spacing.md,
-            color: theme.colors.text.primary,
-          }}
-        />
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.loadingNotes')}
-        </Text>
-        <TextInput
-          value={loadInstructions}
-          onChangeText={setLoadInstructions}
-          onFocus={scrollToBottomIfNeeded}
-          placeholder={t('producer.missionsCreate.loadingNotesPlaceholder')}
-          multiline
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            minHeight: 56,
-            textAlignVertical: 'top',
-            marginBottom: theme.spacing.lg,
-            color: theme.colors.text.primary,
-          }}
-        />
+          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }}>
+            {t('producer.missionsCreate.opsRouteBoxTitle')}
+          </Text>
+          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 8, lineHeight: 22 }}>
+            {t('producer.missionsCreate.opsRouteBoxBody')}
+          </Text>
+        </View>
 
         <TouchableOpacity
           onPress={submit}

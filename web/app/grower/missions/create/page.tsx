@@ -104,9 +104,6 @@ export default function CreateMissionPage() {
     pickupAddress: '',
     pickupLat: '',
     pickupLng: '',
-    destinationCity: '',
-    destinationAddress: '',
-    loadInstructions: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -302,13 +299,6 @@ export default function CreateMissionPage() {
       }
     }
 
-    if (!formData.destinationCity.trim()) {
-      newErrors.destinationCity = t('grower.missionCreate.valDestinationCity');
-    }
-    if (!formData.destinationAddress.trim() || formData.destinationAddress.trim().length < 5) {
-      newErrors.destinationAddress = t('grower.missionCreate.valDestinationAddress');
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -333,9 +323,6 @@ export default function CreateMissionPage() {
           address: formData.pickupAddress,
         },
         pickupAddress: formData.pickupAddress,
-        destinationCity: formData.destinationCity.trim(),
-        destinationAddress: formData.destinationAddress.trim(),
-        loadInstructions: formData.loadInstructions.trim() || undefined,
       };
 
       await missionsAPI.create(missionData);
@@ -663,49 +650,9 @@ export default function CreateMissionPage() {
               )}
             </div>
 
-            <div className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4 space-y-4">
-              <h3 className="text-base font-semibold text-gray-900">{t('grower.missionCreate.deliverySectionTitle')}</h3>
-              <p className="text-xs text-gray-600">{t('grower.missionCreate.deliverySectionHint')}</p>
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.missionCreate.destinationCityLabel')}</label>
-                <input
-                  type="text"
-                  value={formData.destinationCity}
-                  onChange={(e) => setFormData({ ...formData, destinationCity: e.target.value })}
-                  placeholder={t('grower.missionCreate.destinationCityPlaceholder')}
-                  className={`w-full px-4 py-2 border rounded-lg ${inputFocus} ${
-                    errors.destinationCity ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.destinationCity && <p className="text-red-500 text-xs mt-1">{errors.destinationCity}</p>}
-              </div>
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.missionCreate.destinationAddressLabel')}</label>
-                <textarea
-                  value={formData.destinationAddress}
-                  onChange={(e) => setFormData({ ...formData, destinationAddress: e.target.value })}
-                  placeholder={t('grower.missionCreate.destinationAddressPlaceholder')}
-                  rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg ${inputFocus} ${
-                    errors.destinationAddress ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.destinationAddress && (
-                  <p className="text-red-500 text-xs mt-1">{errors.destinationAddress}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-1">
-                  {t('grower.missionCreate.loadInstructionsLabel')}
-                </label>
-                <textarea
-                  value={formData.loadInstructions}
-                  onChange={(e) => setFormData({ ...formData, loadInstructions: e.target.value })}
-                  placeholder={t('grower.missionCreate.loadInstructionsPlaceholder')}
-                  rows={2}
-                  className={`w-full px-4 py-2 border border-gray-300 rounded-lg ${inputFocus}`}
-                />
-              </div>
+            <div className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4">
+              <h3 className="text-base font-semibold text-gray-900">{t('grower.missionCreate.opsRouteSectionTitle')}</h3>
+              <p className="text-sm text-gray-600 mt-2 leading-relaxed">{t('grower.missionCreate.opsRouteSectionBody')}</p>
             </div>
 
             <div className="flex gap-3 justify-end pt-4 border-t">

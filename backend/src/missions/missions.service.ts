@@ -39,9 +39,84 @@ export class MissionsService {
     private notificationsService: NotificationsService,
   ) {}
 
+  /**
+   * Growers see pickup + cold chain only; destination and buyer-linked routing are admin / logistics.
+   */
+  private static scrubMissionForGrowerView(mission: Record<string, unknown>): Record<string, unknown> {
+    const out = { ...mission };
+    out.destinationAddress = null;
+    out.destinationCity = null;
+    out.loadInstructions = null;
+    out.optimalRoute = null;
+    if (out.batches != null && typeof out.batches === 'object') {
+      out.batches = { ...(out.batches as Record<string, unknown>), distributor_arrivals: [] };
+    }
+    return out;
+  }
+
   /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
   private shouldAutoAssignLogistics(): boolean {
     return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
+  }
+
+  /**
+   * Duplicate `@prisma/client` copies break `instanceof PrismaClientKnownRequestError` and turn real DB errors into 500.
+   * Detect known-request + validation errors by shape/name as well.
+   */
+  private static prismaKnownRequestCode(e: unknown): string | null {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      return e.code;
+    }
+    if (typeof e === 'object' && e !== null) {
+      const c = (e as { code?: unknown }).code;
+      if (typeof c === 'string' && /^P[0-9]{4,5}$/.test(c)) {
+        return c;
+      }
+    }
+    return null;
+  }
+
+  private static prismaErrorMeta(e: unknown): { table?: string; column?: string } | undefined {
+    if (typeof e === 'object' && e !== null && 'meta' in e) {
+      const m = (e as { meta?: unknown }).meta;
+      return m && typeof m === 'object' ? (m as { table?: string; column?: string }) : undefined;
+    }
+    return undefined;
+  }
+
+  private static isPrismaClientValidationError(e: unknown): boolean {
+    if (e instanceof Prisma.PrismaClientValidationError) {
+      return true;
+    }
+    return e instanceof Error && e.name === 'PrismaClientValidationError';
+  }
+
+  /** JSON response for POST /missions: no password hashes; tolerate Decimal/BigInt in nested Json. */
+  private static missionCreateHttpPayload(mission: Record<string, unknown>): Record<string, unknown> {
+    const stripUser = (u: unknown) => {
+      if (!u || typeof u !== 'object') {
+        return u;
+      }
+      const { passwordHash: _ph, ...rest } = u as Record<string, unknown>;
+      return rest;
+    };
+    const { users_missions_growerIdTousers, users_missions_logisticsPartnerIdTousers, ...rest } = mission;
+    const out = {
+      ...rest,
+      users_missions_growerIdTousers: stripUser(users_missions_growerIdTousers),
+      users_missions_logisticsPartnerIdTousers: stripUser(users_missions_logisticsPartnerIdTousers),
+    };
+    return JSON.parse(
+      JSON.stringify(out, (_key, value) => {
+        if (typeof value === 'bigint') {
+          return value.toString();
+        }
+        if (value != null && typeof value === 'object' && typeof (value as { toJSON?: () => unknown }).toJSON === 'function') {
+          return (value as { toJSON: () => unknown }).toJSON();
+        }
+        return value;
+      }),
+    ) as Record<string, unknown>;
   }
 
   private async assertActiveLogisticsDriver(partnerId: string, driverId: string): Promise<void> {
@@ -270,29 +345,29 @@ export class MissionsService {
         },
       });
     } catch (e: unknown) {
+      const code = MissionsService.prismaKnownRequestCode(e);
       this.logger.error(
-        `missions.create failed: ${
-          e instanceof Prisma.PrismaClientKnownRequestError ? e.code : 'non-prisma'
-        } ${e instanceof Error ? e.message : String(e)}`,
+        `missions.create failed: ${code ?? 'non-prisma'} ${e instanceof Error ? e.message : String(e)}`,
         e instanceof Error ? e.stack : undefined,
       );
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === 'P2002') {
+      if (code) {
+        if (code === 'P2002') {
           throw new BadRequestException(
             'Could not assign a unique mission number. Please try again in a few seconds.',
           );
         }
-        if (e.code === 'P2003') {
+        if (code === 'P2003') {
           throw new BadRequestException(
             'Invalid link to batch, vehicle, or user. Check your selection and retry.',
           );
         }
         /** DB behind API deploy — missing table/column vs Prisma schema (e.g. `missions.harvestAnnouncementId`) */
-        if (e.code === 'P2021' || e.code === 'P2022') {
+        if (code === 'P2021' || code === 'P2022') {
+          const msg = e instanceof Error ? e.message : String(e);
+          const meta = MissionsService.prismaErrorMeta(e);
           this.logger.error(
-            `DB schema out of date (${e.code}): ${e.message} meta=${JSON.stringify(e.meta)}`,
+            `DB schema out of date (${code}): ${msg} meta=${JSON.stringify(meta ?? e)}`,
           );
-          const meta = e.meta as { table?: string; column?: string } | undefined;
           const target =
             meta?.column != null
               ? String(meta.column)
@@ -302,16 +377,37 @@ export class MissionsService {
           throw new ServiceUnavailableException(
             'The API database is missing a table or column that the app expects. ' +
               'This is not a problem with the pickup address you typed — the server must run the latest Prisma migrations. ' +
-              `Prisma ${e.code} (${e.code === 'P2022' ? 'missing column' : 'missing table'}: ${target}). ` +
+              `Prisma ${code} (${code === 'P2022' ? 'missing column' : 'missing table'}: ${target}). ` +
               'Administrator: in `backend/`, with production `DATABASE_URL`, run `npx prisma migrate deploy` and restart the API.',
           );
         }
         // Any other Prisma client error: show code for support
         throw new BadRequestException(
-          `Could not save the transport request (database ${e.code}). Try again, or contact support and mention this code.`,
+          `Could not save the transport request (database ${code}). Try again, or contact support and mention this code.`,
         );
       }
-      throw e;
+      if (MissionsService.isPrismaClientValidationError(e)) {
+        const msg = e instanceof Error ? e.message.replace(/\r?\n/g, ' ') : String(e);
+        throw new BadRequestException(
+          `Could not save the transport request (invalid data). ${msg.slice(0, 600)}`,
+        );
+      }
+      {
+        const name = e instanceof Error ? e.name : '';
+        if (
+          e instanceof Prisma.PrismaClientInitializationError ||
+          e instanceof Prisma.PrismaClientRustPanicError ||
+          name === 'PrismaClientInitializationError' ||
+          name === 'PrismaClientRustPanicError'
+        ) {
+          throw new ServiceUnavailableException(
+            'The database is temporarily unavailable. Please try again in a moment.',
+          );
+        }
+      }
+      throw new BadRequestException(
+        'Could not save the transport request. Please try again, or contact support if the problem continues.',
+      );
     }
 
     // If batch exists, create freshness tracker (idempotent; duplicate batchId must not break mission)
@@ -366,7 +462,7 @@ export class MissionsService {
       }
     }
 
-    return mission;
+    return MissionsService.missionCreateHttpPayload(mission as unknown as Record<string, unknown>);
   }
 
   /**
@@ -1027,18 +1123,20 @@ export class MissionsService {
         });
       }
       if (role === 'GROWER') {
-        return this.prisma.missions.findMany({
+        const rows = await this.prisma.missions.findMany({
           where: { growerId: userId },
           include: growerInclude,
           orderBy: { createdAt: 'desc' },
         });
+        return rows.map((m) => MissionsService.scrubMissionForGrowerView(m as Record<string, unknown>));
       }
       if (isGrower) {
-        return this.prisma.missions.findMany({
+        const rows = await this.prisma.missions.findMany({
           where: { growerId: userId },
           include: growerInclude,
           orderBy: { createdAt: 'desc' },
         });
+        return rows.map((m) => MissionsService.scrubMissionForGrowerView(m as Record<string, unknown>));
       }
       if (isLogisticsPartner) {
         return this.prisma.missions.findMany({
@@ -1099,7 +1197,7 @@ export class MissionsService {
     }
     if (roles.includes('GROWER') || roles.includes('FARMER')) {
       if (mission.growerId === requestUserId) {
-        return mission;
+        return MissionsService.scrubMissionForGrowerView(mission as Record<string, unknown>);
       }
     }
     if (roles.includes('LOGISTICS_PARTNER')) {
