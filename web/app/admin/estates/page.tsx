@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { MapPin, Check, X, Clock, User } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
@@ -50,9 +51,9 @@ export default function EstatesApprovalPage() {
       setError(null);
       const data = await estatesAPI.getPendingEstates();
       setEstates(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading pending estates:', err);
-      setError(err.message || 'Failed to load pending estates');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -66,9 +67,9 @@ export default function EstatesApprovalPage() {
       await estatesAPI.approveEstate(estateId);
       await loadPendingEstates();
       alert('Estate approved successfully!');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error approving estate:', err);
-      alert(err.message || 'Failed to approve estate');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setProcessing(null);
     }
@@ -83,9 +84,9 @@ export default function EstatesApprovalPage() {
       await estatesAPI.rejectEstate(estateId, reason);
       await loadPendingEstates();
       alert('Estate rejected.');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error rejecting estate:', err);
-      alert(err.message || 'Failed to reject estate');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setProcessing(null);
     }

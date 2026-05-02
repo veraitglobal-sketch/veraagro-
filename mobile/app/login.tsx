@@ -12,13 +12,17 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Eye, EyeOff, Leaf, ChevronLeft } from 'lucide-react-native';
 import { useAuth } from '../hooks/useAuth';
-import { getPostLoginPath, normalizeUserRoles } from '../lib/post-login-redirect';
+import {
+  getPostLoginPath,
+  normalizeUserRoles,
+  type PartnerEntryRedirect,
+} from '../lib/post-login-redirect';
 import { theme } from '../lib/theme';
 
 /**
@@ -28,7 +32,20 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const rawParams = useLocalSearchParams<{ redirect?: string | string[]; partner?: string | string[] }>();
   const { login, logout } = useAuth();
+
+  const partnerMode = (() => {
+    const p = rawParams.partner;
+    const v = Array.isArray(p) ? p[0] : p;
+    return v === '1' || v === 'true' || v === 'yes';
+  })();
+  const redirectParam = (() => {
+    const r = rawParams.redirect;
+    return Array.isArray(r) ? r[0] : r;
+  })();
+  const partnerEntry: PartnerEntryRedirect =
+    partnerMode && (redirectParam === 'estates/new' || redirectParam === 'estates') ? redirectParam : undefined;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,12 +61,12 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const response = await login(username.trim(), password);
-      const path = getPostLoginPath(normalizeUserRoles(response.user));
+      const path = getPostLoginPath(normalizeUserRoles(response.user), { partnerEntry });
       if (path) {
         router.replace(path as any);
       } else {
         await logout();
-        Alert.alert(t('error'), t('login.noRoleForApp'));
+        Alert.alert(t('error'), partnerMode ? t('partnerLogin.notProducerAccess') : t('login.noRoleForApp'));
         return;
       }
     } catch (error: unknown) {
@@ -58,7 +75,7 @@ export default function LoginScreen() {
     } finally {
       setLoading(false);
     }
-  }, [username, password, login, logout, router, t]);
+  }, [username, password, login, logout, router, t, partnerEntry, partnerMode]);
 
   return (
     <LinearGradient
@@ -105,18 +122,18 @@ export default function LoginScreen() {
             <Text style={styles.brand} accessibilityRole="header">
               Bio Vera
             </Text>
-            <Text style={styles.subtitle}>{t('login.subtitle')}</Text>
+            <Text style={styles.subtitle}>{partnerMode ? t('partnerLogin.subtitle') : t('login.subtitle')}</Text>
           </View>
 
           <View style={styles.card}>
             <View style={styles.cardInner}>
-              <Text style={styles.label}>{t('login.username')}</Text>
-              <Text style={styles.hint}>{t('login.usernameHelper')}</Text>
+              <Text style={[styles.label, partnerMode && { marginBottom: 8 }]}>{partnerMode ? t('partnerLogin.username') : t('login.username')}</Text>
+              {partnerMode ? null : <Text style={styles.hint}>{t('login.usernameHelper')}</Text>}
               <View style={[styles.inputWrap, userFocused && styles.inputWrapFocused]}>
                 <TextInput
                   value={username}
                   onChangeText={setUsername}
-                  placeholder={t('login.usernamePlaceholder')}
+                  placeholder={partnerMode ? t('partnerLogin.usernamePlaceholder') : t('login.usernamePlaceholder')}
                   placeholderTextColor={theme.colors.text.tertiary}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -131,12 +148,12 @@ export default function LoginScreen() {
                 />
               </View>
 
-              <Text style={[styles.label, { marginTop: 18 }]}>{t('login.password')}</Text>
+              <Text style={[styles.label, { marginTop: 18 }]}>{partnerMode ? t('partnerLogin.password') : t('login.password')}</Text>
               <View style={[styles.inputWrap, styles.inputRow, passFocused && styles.inputWrapFocused]}>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
-                  placeholder={t('login.passwordPlaceholder')}
+                  placeholder={partnerMode ? t('partnerLogin.passwordPlaceholder') : t('login.passwordPlaceholder')}
                   placeholderTextColor={theme.colors.text.tertiary}
                   secureTextEntry={!showPassword}
                   returnKeyType="go"
@@ -174,19 +191,27 @@ export default function LoginScreen() {
                 {loading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.buttonText}>{t('login.button')}</Text>
+                  <Text style={styles.buttonText}>
+                    {partnerMode ? t('partnerLogin.button') : t('login.button')}
+                  </Text>
                 )}
               </Pressable>
             </View>
           </View>
 
           <View style={styles.footer}>
-            <TouchableOpacity onPress={() => router.push('/buyer-register')} activeOpacity={0.75} style={styles.footerBtn}>
-              <Text style={styles.linkStrong}>{t('login.registerBuyer')}</Text>
-            </TouchableOpacity>
-            <View style={styles.divider} />
+            {partnerMode ? null : (
+              <>
+                <TouchableOpacity onPress={() => router.push('/buyer-register')} activeOpacity={0.75} style={styles.footerBtn}>
+                  <Text style={styles.linkStrong}>{t('login.registerBuyer')}</Text>
+                </TouchableOpacity>
+                <View style={styles.divider} />
+              </>
+            )}
             <TouchableOpacity onPress={() => router.replace('/')} activeOpacity={0.75} style={styles.footerBtn}>
-              <Text style={styles.linkMuted}>{t('login.backToMarketplace')}</Text>
+              <Text style={partnerMode ? styles.linkStrong : styles.linkMuted}>
+                {partnerMode ? t('partnerLogin.backToMarketplaceFull') : t('login.backToMarketplace')}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

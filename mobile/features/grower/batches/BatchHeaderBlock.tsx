@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { QrCode } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
-import { BATCH_DETAIL_STATUS_KEYS } from './batch-status-i18n';
+import { getBatchStatusLabel } from './batch-status-i18n';
 import { getBatchStatusColor } from './useBatchDetailData';
 
 export default function BatchHeaderBlock({ batch }: { batch: any }) {
   const { t } = useTranslation();
-  const statusLabelKey = BATCH_DETAIL_STATUS_KEYS[String(batch.status)] ?? '';
-  const statusLabel = statusLabelKey ? t(statusLabelKey) : batch.status ?? '';
+  const statusLabel = getBatchStatusLabel(t, batch.status);
   return (
     <View
       style={{

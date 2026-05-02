@@ -7,6 +7,7 @@ import * as Location from 'expo-location';
 import { theme } from '../lib/theme';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import api from '../lib/api';
+import { apiErrorMessage } from '../lib/api-error';
 
 /**
  * Buyer Registration Screen
@@ -131,10 +132,9 @@ export default function BuyerRegisterScreen() {
           },
         ]
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      const message = error.response?.data?.message || error.message || t('buyerRegisterScreen.registrationFailed');
-      Alert.alert(t('error'), message);
+      Alert.alert(t('error'), apiErrorMessage(error, t('buyerRegisterScreen.registrationFailed')));
     } finally {
       setLoading(false);
     }

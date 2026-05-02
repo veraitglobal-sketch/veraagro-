@@ -1859,6 +1859,8 @@ enum WalletTransactionType {
   REFUNDED
   PENALTY
   BONUS
+  /// Platform share from released escrow (treasury wallet user — see PLATFORM_WALLET_USER_ID)
+  PLATFORM_FEE
 }
 
 enum DigitalHandoverStatus {

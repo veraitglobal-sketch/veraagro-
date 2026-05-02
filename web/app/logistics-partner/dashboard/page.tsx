@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import type { CommercialAgentPublic } from '@/lib/auth';
 import { missionsAPI, usersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
@@ -104,9 +105,9 @@ export default function LogisticsDashboardPage() {
           setMissions(Array.isArray(data) ? data : []);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err.response?.data?.message || 'Failed to load missions');
+          setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
           setMissions([]);
         }
       })

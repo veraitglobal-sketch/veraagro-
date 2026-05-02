@@ -3,6 +3,7 @@ import { useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { theme } from '../lib/theme';
+import { partnerSignInHref } from '../lib/post-login-redirect';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -35,7 +36,7 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
       const isBuyerRoute = path[0] === '(buyer)';
 
       if (isProducerRoute || isLogisticsRoute || isSupplierRoute) {
-        router.replace('/partner-login');
+        router.replace(partnerSignInHref() as any);
       } else if (isBuyerRoute) {
         router.replace('/buyer-login');
       } else {
@@ -54,7 +55,7 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
         const isLogisticsRoute2 = path[0] === '(logistics)';
         const isSupplierRoute2 = path[0] === '(supplier)';
         if (isProducerRoute2 || isLogisticsRoute2 || isSupplierRoute2) {
-          router.replace('/partner-login');
+          router.replace(partnerSignInHref() as any);
         } else {
           router.replace('/buyer-login');
         }

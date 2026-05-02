@@ -53,6 +53,52 @@ const nextConfig: NextConfig = {
         destination: "/buyer-portal/vera-standard",
         permanent: true,
       },
+      /** Legacy bookmarks / emails: canonical shell is `/buyer-portal/*` (shop stays `/buyer/shop`). */
+      {
+        source: "/buyer",
+        destination: "/buyer-portal/dashboard",
+        permanent: true,
+      },
+      {
+        source: "/buyer/history",
+        destination: "/buyer-portal/history",
+        permanent: true,
+      },
+      {
+        source: "/buyer/deliveries",
+        destination: "/buyer-portal/deliveries",
+        permanent: true,
+      },
+      {
+        source: "/buyer/invoices",
+        destination: "/buyer-portal/invoices",
+        permanent: true,
+      },
+      {
+        source: "/buyer/analytics",
+        destination: "/buyer-portal/analytics",
+        permanent: true,
+      },
+      {
+        source: "/buyer/trade-panel",
+        destination: "/buyer-portal/trade-panel",
+        permanent: true,
+      },
+      {
+        source: "/buyer/inventory",
+        destination: "/buyer-portal/inventory",
+        permanent: true,
+      },
+      {
+        source: "/buyer/suppliers",
+        destination: "/buyer-portal/suppliers",
+        permanent: true,
+      },
+      {
+        source: "/buyer/notifications",
+        destination: "/buyer-portal/dashboard",
+        permanent: true,
+      },
       {
         source: "/producer/dashboard",
         destination: "/grower",

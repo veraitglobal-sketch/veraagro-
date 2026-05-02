@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { estatesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 const DEFAULT_POLYGON = [
   { lat: 44.7866, lng: 20.4489 },
@@ -18,6 +20,7 @@ const DEFAULT_POLYGON = [
  * After create, user is sent to /grower/fields (canonical); this page is still reachable via direct URL if needed.
  */
 export default function ProducerNewEstatePage() {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [name, setName] = useState('');
@@ -60,8 +63,8 @@ export default function ProducerNewEstatePage() {
       } else {
         router.push('/grower/fields');
       }
-    } catch (e: any) {
-      setErr(e?.response?.data?.message || e?.message || 'Failed to create');
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }

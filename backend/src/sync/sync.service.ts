@@ -226,12 +226,12 @@ export class SyncService {
 
         result.synced++;
         this.logger.log(`Entry synced successfully: ${entry.id || 'unknown'}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         this.logger.error(`Error syncing entry ${entry.id || 'unknown'}:`, error);
         result.failed++;
         result.failedEntries.push({
           id: entry.id || 'unknown',
-          reason: error.message || 'Unknown error',
+          reason: error instanceof Error ? error.message : 'Unknown error',
         });
       }
       }

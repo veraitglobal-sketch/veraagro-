@@ -8,7 +8,13 @@ import { useAppLocaleTag } from '../../../lib/date-locale';
 interface FinancialStatusBlockProps {
   financial: {
     totalAmount?: number;
+    /** @deprecated use paidAmount */
     farmerPayout?: number;
+    paidAmount?: number;
+    pendingAmount?: number;
+    inEscrowAmount?: number;
+    paymentStatus?: string;
+    paymentStatusMessage?: string;
     status?: string;
   } | null;
 }
@@ -17,6 +23,19 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
   const { t } = useTranslation();
   const priceLocale = useAppLocaleTag();
   if (!financial) return null;
+  const released =
+    typeof financial.paidAmount === 'number'
+      ? financial.paidAmount
+      : typeof financial.farmerPayout === 'number'
+        ? financial.farmerPayout
+        : null;
+  const inEscrow = financial.inEscrowAmount ?? 0;
+  const statusLine =
+    financial.paymentStatusMessage ||
+    financial.paymentStatus ||
+    financial.status ||
+    '';
+
   return (
     <View
       style={{
@@ -72,7 +91,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
           </Text>
         </View>
       )}
-      {financial.farmerPayout != null && (
+      {released != null && (
         <View
           style={{
             flexDirection: 'row',
@@ -87,7 +106,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.secondary,
             }}
           >
-            {t('producer.missions.yourPayout')}
+            {t('producer.missions.financialReleased')}
           </Text>
           <Text
             style={{
@@ -96,14 +115,45 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.primary,
             }}
           >
-            {financial.farmerPayout.toLocaleString(priceLocale, {
+            {released.toLocaleString(priceLocale, {
               style: 'currency',
               currency: 'EUR',
             })}
           </Text>
         </View>
       )}
-      {financial.status && (
+      {inEscrow > 0 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: theme.spacing.xs,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '300',
+              color: colors.text.secondary,
+            }}
+          >
+            {t('producer.missions.financialInEscrow')}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '300',
+              color: colors.text.primary,
+            }}
+          >
+            {inEscrow.toLocaleString(priceLocale, {
+              style: 'currency',
+              currency: 'EUR',
+            })}
+          </Text>
+        </View>
+      )}
+      {statusLine !== '' && (
         <View
           style={{
             flexDirection: 'row',
@@ -118,7 +168,7 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
               color: colors.text.secondary,
             }}
           >
-            {t('producer.missions.financialApiStatusLine', { status: financial.status })}
+            {statusLine}
           </Text>
         </View>
       )}

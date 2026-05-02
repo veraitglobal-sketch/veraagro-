@@ -7,6 +7,7 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { logisticsVehiclesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
 type Vehicle = {
@@ -91,11 +92,7 @@ export default function LogisticsVehiclesPage() {
       setModel('');
       load();
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setFormError(
-        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : 'Could not add vehicle',
-      );
+      setFormError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }

@@ -9,6 +9,8 @@ import { MapPin } from 'lucide-react';
 import { formatFarmerIdentity, getFirstName, extractRegion } from '@/lib/farmer-utils';
 import { BlockchainVerification } from '@/components/BlockchainVerification';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 interface VerificationData {
   batch: {
@@ -70,6 +72,7 @@ interface VerificationData {
 }
 
 export default function VerifyPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const batchId = params.batchId as string;
   const [data, setData] = useState<VerificationData | null>(null);
@@ -137,8 +140,8 @@ export default function VerifyPage() {
       };
       
       setData(verificationData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load verification data');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

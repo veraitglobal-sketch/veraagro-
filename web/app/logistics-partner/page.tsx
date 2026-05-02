@@ -8,6 +8,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 import { logisticsPartnerAPI, submitApplicationForm } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { numberIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 type TitleBody = { title: string; body: string };
@@ -144,8 +145,8 @@ export default function LogisticsPartnerPage() {
         acceptDigitalControl: false,
       });
       setTimeout(() => setSubmitted(false), 5000);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : t('logisticsPartnerPage.submitError'));
+    } catch (err: unknown) {
+      setSubmitError(apiErrorOrT(err, t, 'logisticsPartnerPage.submitError'));
     } finally {
       setSubmitting(false);
     }
@@ -181,9 +182,9 @@ export default function LogisticsPartnerPage() {
       } else {
         throw new Error(`Download method not found for: ${resourceId}`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error downloading resource:', error);
-      alert(t('logisticsPartnerPage.downloadFailed'));
+      alert(apiErrorOrT(error, t, 'logisticsPartnerPage.downloadFailed'));
     } finally {
       setDownloadingId(null);
     }
@@ -223,9 +224,9 @@ export default function LogisticsPartnerPage() {
               onClick={async () => {
                 try {
                   await logisticsPartnerAPI.downloadProspect();
-                } catch (error) {
+                } catch (error: unknown) {
                   console.error('Error downloading prospect:', error);
-                  alert(t('logisticsPartnerPage.downloadProspectError'));
+                  alert(apiErrorOrT(error, t, 'logisticsPartnerPage.downloadProspectError'));
                 }
               }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"

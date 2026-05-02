@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
@@ -436,8 +437,8 @@ export default function LogisticsHandoverPage() {
         setSuccess(false);
         refreshMissions();
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || t('logisticsPages.handoverErrComplete'));
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'logisticsPages.handoverErrComplete'));
     } finally {
       setSubmitting(false);
     }

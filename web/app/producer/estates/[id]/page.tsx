@@ -3,8 +3,10 @@
 import { useAuth } from '@/lib/auth';
 import { useCallback, useEffect, useState } from 'react';
 import { estatesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 type EstateDetail = Awaited<ReturnType<typeof estatesAPI.getOne>>;
 
@@ -13,6 +15,7 @@ type EstateDetail = Awaited<ReturnType<typeof estatesAPI.getOne>>;
  * Simple read-only style detail; full parcel tools live on My fields.
  */
 export default function ProducerEstateDetailPage() {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -29,13 +32,13 @@ export default function ProducerEstateDetailPage() {
     try {
       const data = await estatesAPI.getOne(id);
       setEstate(data);
-    } catch (e: any) {
+    } catch (e: unknown) {
       setEstate(null);
-      setError(e?.response?.data?.message || e?.message || 'Not found or access denied');
+      setError(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
 
 const homeIcon = (
@@ -155,8 +156,8 @@ export default function BatchHistoryPage() {
 
         const historyData = await response.json();
         setData(historyData);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       } finally {
         setLoading(false);
       }
@@ -165,7 +166,7 @@ export default function BatchHistoryPage() {
     if (batchId) {
       fetchHistory();
     }
-  }, [batchId]);
+  }, [batchId, t]);
 
   if (loading) {
     return (

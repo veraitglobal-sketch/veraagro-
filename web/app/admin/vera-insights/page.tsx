@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, Minus, Plus, Edit2, Trash2, Save, X } from 'l
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
 
 interface VeraInsight {
   id: string;
@@ -85,8 +86,8 @@ export default function AdminVeraInsightsPage() {
       await fetchInsights();
       setShowAddForm(false);
       resetForm();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.veraInsights.errCreate'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.veraInsights.errCreate'));
     }
   };
 
@@ -119,8 +120,8 @@ export default function AdminVeraInsightsPage() {
       await fetchInsights();
       setEditingId(null);
       resetForm();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.veraInsights.errUpdate'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.veraInsights.errUpdate'));
     }
   };
 
@@ -137,8 +138,8 @@ export default function AdminVeraInsightsPage() {
       if (!response.ok) throw new Error(t('adminPages.veraInsights.errDelete'));
       
       await fetchInsights();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.veraInsights.errDelete'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.veraInsights.errDelete'));
     }
   };
 

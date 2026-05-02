@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
 
 interface BioVeraStandard {
@@ -115,8 +116,8 @@ export default function AdminStandardsPage() {
       const data = await response.json();
       setStandard(data);
       setSuccess('Bio Vera Standard updated successfully! All farmers will see the new requirements immediately.');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }

@@ -17,6 +17,7 @@ import { syncService } from '../../../lib/sync-service';
 import { useSocket } from '../../../hooks/useSocket';
 import { API_URL } from '../../../lib/api-url';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+import { fetchGrowerOrdersFinancial, type OrdersFinancialSnapshot } from './fetchGrowerOrdersFinancial';
 
 export interface FinancialData {
   totalEarned: number;
@@ -36,6 +37,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [unreadCount, setUnreadCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [financialData, setFinancialData] = useState<FinancialData | null>(null);
+  const [ordersFinancial, setOrdersFinancial] = useState<OrdersFinancialSnapshot | null>(null);
   const [parcelSteps, setParcelSteps] = useState<{
     loaded: boolean;
     total: number;
@@ -209,13 +211,28 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }
   }, []);
 
+  const loadOrdersFinancial = useCallback(async () => {
+    try {
+      const snap = await fetchGrowerOrdersFinancial();
+      setOrdersFinancial(snap);
+    } catch {
+      setOrdersFinancial(null);
+    }
+  }, []);
+
   const loadLiveData = useCallback(async () => {
     try {
-      await Promise.all([loadMissions(), loadBatches(), loadNotifications(), loadFinancialData()]);
+      await Promise.all([
+        loadMissions(),
+        loadBatches(),
+        loadNotifications(),
+        loadFinancialData(),
+        loadOrdersFinancial(),
+      ]);
     } catch (e) {
       console.error('Error loading live data:', e);
     }
-  }, [loadMissions, loadBatches, loadNotifications, loadFinancialData]);
+  }, [loadMissions, loadBatches, loadNotifications, loadFinancialData, loadOrdersFinancial]);
 
   const loadData = useCallback(async () => {
     await Promise.all([
@@ -288,6 +305,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     notifications,
     unreadCount,
     financialData,
+    ordersFinancial,
     parcelSteps,
     offlinePending,
     offlineSyncing,

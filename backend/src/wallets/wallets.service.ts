@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { WalletTransactionType, WalletTransactionStatus } from '@prisma/client';
+import { Prisma, WalletTransactionType } from '@prisma/client';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -84,6 +84,59 @@ export class WalletsService {
     });
 
     return transaction;
+  }
+
+  /**
+   * Credit wallet inside an interactive transaction (e.g. escrow release).
+   */
+  async creditWalletTx(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    amount: number,
+    type: WalletTransactionType,
+    orderId?: string,
+    deliveryId?: string,
+    description?: string,
+  ) {
+    let wallet = await tx.wallets.findUnique({
+      where: { userId },
+    });
+
+    if (!wallet) {
+      wallet = await tx.wallets.create({
+        data: {
+          id: crypto.randomUUID(),
+          userId,
+          availableBalance: 0,
+          pendingBalance: 0,
+          totalEarned: 0,
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    await tx.wallet_transactions.create({
+      data: {
+        id: crypto.randomUUID(),
+        walletId: wallet.id,
+        type,
+        amount,
+        status: 'COMPLETED',
+        orderId,
+        deliveryId,
+        description: description || `Payment for ${type}`,
+        completedAt: new Date(),
+      },
+    });
+
+    await tx.wallets.update({
+      where: { id: wallet.id },
+      data: {
+        availableBalance: wallet.availableBalance + amount,
+        totalEarned: wallet.totalEarned + amount,
+        updatedAt: new Date(),
+      },
+    });
   }
 
   /**

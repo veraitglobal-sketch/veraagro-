@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { API_URL } from '../lib/api-url';
+import { axiosLikeMessage } from '../lib/api-error';
 import { setAuthUnauthorizedHandler } from '../lib/auth-events';
 
 interface User {
@@ -91,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         `${API_URL}/auth/login`,
         `${API_URL.replace(/\/$/, '')}/api/auth/login`,
       ];
-      let lastError: any = null;
+      let lastError: unknown = null;
       for (const url of urlsToTry) {
         try {
           const response = await axios.post(url, body);
@@ -105,27 +106,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(u);
           setToken(access_token);
           return { user: u as User, token: access_token };
-        } catch (err: any) {
+        } catch (err: unknown) {
           lastError = err;
-          if (err.response?.status !== 404) break;
+          const status = (err as { response?: { status?: number } })?.response?.status;
+          if (status !== 404) break;
         }
       }
       const err = lastError;
-      if (!err?.response) {
+      const res = err && typeof err === 'object' && 'response' in err ? (err as { response?: { status?: number } }).response : undefined;
+      if (!res) {
+        const code = err && typeof err === 'object' && 'code' in err ? (err as { code?: string }).code : undefined;
         const msg =
-          err?.code === 'ECONNABORTED'
+          code === 'ECONNABORTED'
             ? 'Request timeout. Check your connection.'
             : 'Cannot reach server. Check EXPO_PUBLIC_API_URL and that the backend is running.';
         throw new Error(msg);
       }
-      if (err.response?.status === 404) {
+      if (res.status === 404) {
         throw new Error(
           'Login endpoint not found (404). Set EXPO_PUBLIC_API_URL to your backend URL (e.g. https://api.biovera.app), not the website.',
         );
       }
-      const msg = err.response?.data?.message;
-      const message = Array.isArray(msg) ? msg[0] : msg;
-      throw new Error(message || `Login failed (${err.response?.status})`);
+      const fromApi = axiosLikeMessage(err);
+      throw new Error(fromApi || `Login failed (${res.status})`);
     },
     [],
   );

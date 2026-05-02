@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import PassportView, { PassportData } from '@/components/PassportView';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 export default function EstatePassportPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const qrCode = params.qrCode as string;
   const [data, setData] = useState<PassportData | null>(null);
@@ -22,8 +25,8 @@ export default function EstatePassportPage() {
       if (!response.ok) throw new Error('Estate passport not found');
       const passportData = await response.json();
       setData(passportData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load estate passport');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

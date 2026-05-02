@@ -3,19 +3,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI, usersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { KeyRound, MapPin, Store, User } from 'lucide-react';
-
-function getApiErrorMessage(e: unknown): string {
-  const r = e as { response?: { data?: { message?: unknown; error?: string } } };
-  const m = r?.response?.data?.message;
-  if (Array.isArray(m)) return m.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join(' ');
-  if (typeof m === 'string') return m;
-  if (typeof r?.response?.data?.error === 'string') return r.response.data.error;
-  if (e instanceof Error) return e.message;
-  return 'Request failed';
-}
+import { useTranslation } from 'react-i18next';
 
 export default function SupplierSettingsPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -109,12 +102,12 @@ export default function SupplierSettingsPage() {
         email: p.email != null ? String(p.email) : '',
         phone: p.phone != null ? String(p.phone) : '',
       });
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed to load');
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -187,8 +180,8 @@ export default function SupplierSettingsPage() {
         setOk('Saved. If you changed address or the map pin, the listing will show as pending until Bio Vera verifies it.');
       }
       await load();
-    } catch (e) {
-      setErr(getApiErrorMessage(e));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }
@@ -213,8 +206,8 @@ export default function SupplierSettingsPage() {
       setPwdCurrent('');
       setPwdNew('');
       setPwdNew2('');
-    } catch (err) {
-      setPwdErr(getApiErrorMessage(err));
+    } catch (err: unknown) {
+      setPwdErr(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setPwdSaving(false);
     }

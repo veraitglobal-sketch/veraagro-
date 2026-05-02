@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { harvestAnnouncementsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { formatDateTimeEn } from '@/lib/en-locale-dates';
@@ -51,8 +52,8 @@ function HarvestPlansInner() {
         if (r.adminNotes) notes[r.id] = r.adminNotes;
       });
       setAdminNotes((prev) => ({ ...prev, ...notes }));
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load harvest plans');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       setRows([]);
     } finally {
       setLoading(false);
@@ -69,8 +70,8 @@ function HarvestPlansInner() {
     try {
       await harvestAnnouncementsAPI.updateAdmin(id, { status });
       await load();
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Update failed');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(null);
     }
@@ -82,8 +83,8 @@ function HarvestPlansInner() {
     try {
       await harvestAnnouncementsAPI.updateAdmin(id, { adminNotes: adminNotes[id] || '' });
       await load();
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Save failed');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(null);
     }

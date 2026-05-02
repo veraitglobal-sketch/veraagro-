@@ -26,6 +26,13 @@ export class QualityEntryService {
   /** Decoded image bytes cap before blob upload (matches client “max file” guidance). */
   private readonly MAX_HANDOVER_PHOTO_BYTES = 5 * 1024 * 1024;
 
+  /** E2E: handover only after dispatch to logistics, before truck leaves farm (see docs/E2E_TRANSPORT_MISSION_SMOKE.md). */
+  private static readonly LOGISTICS_HANDOVER_MISSION_STATUSES = new Set([
+    'ASSIGNED',
+    'ACCEPTED',
+    'IN_PROGRESS',
+  ]);
+
   constructor(private prisma: PrismaService) {}
 
   private stripDataUrlBase64(input: string): string {
@@ -473,6 +480,17 @@ export class QualityEntryService {
 
     if (!mission) {
       throw new BadRequestException(`Mission ${dto.missionId} not found`);
+    }
+
+    if (mission.status === 'CANCELLED' || mission.status === 'COMPLETED') {
+      throw new BadRequestException(
+        'Cannot record loading handover on a completed or cancelled mission.',
+      );
+    }
+    if (!QualityEntryService.LOGISTICS_HANDOVER_MISSION_STATUSES.has(mission.status)) {
+      throw new BadRequestException(
+        `Loading handover is only available once logistics is assigned and before departure from the farm. Current status: ${mission.status}`,
+      );
     }
 
     if (mission.logistics_handovers) {

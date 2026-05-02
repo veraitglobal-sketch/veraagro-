@@ -9,6 +9,7 @@ import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission, notificationsAPI } from '../../lib/api';
 import { getMissionStatusColor, getMissionStatusLabelLocalized } from '../../lib/mission-status';
 import { useAuth } from '../../hooks/useAuth';
+import { partnerSignInHref } from '../../lib/post-login-redirect';
 import { useAppLocaleTag } from '../../lib/date-locale';
 
 /**
@@ -162,7 +163,7 @@ export default function LogisticsHomeScreen() {
             <TouchableOpacity
               onPress={async () => {
                 await logout();
-                router.replace('/partner-login');
+                router.replace(partnerSignInHref() as any);
               }}
               hitSlop={12}
             >

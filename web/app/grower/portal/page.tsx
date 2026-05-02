@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
-import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
+import { dateIntlLocaleFromLanguageTag, numberIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -122,17 +123,74 @@ interface FinancialStatus {
   totalAmount: number;
   paidAmount: number;
   pendingAmount: number;
+  inEscrowAmount?: number;
+  pendingOtherAmount?: number;
   isDelivered: boolean;
   isApproved: boolean;
   deliveredAt: string | null;
 }
 
-function missionStatusLabel(t: (k: string) => string, raw: string) {
+/** Backend milestone step labels (English) → grower i18n keys. */
+const PORTAL_MILESTONE_I18N: Record<string, string> = {
+  'Farm: truck & loading handover': 'growerPages.portalMilestone_farmHandover',
+  'Left farm (departure)': 'growerPages.portalMilestone_leftFarm',
+  'At Border': 'growerPages.portalMilestone_atBorder',
+  'In Transit (EU)': 'growerPages.portalMilestone_inTransitEu',
+  'Arrived at Distributor': 'growerPages.portalMilestone_arrivedDistributor',
+};
+
+function missionStatusLabel(t: TFunction, raw: string) {
   const u = (raw || '').toUpperCase().replace(/\s+/g, '_');
+  const adminKey = `adminPages.missions.statuses.${u}`;
+  const adminTr = t(adminKey);
+  if (adminTr !== adminKey) return adminTr;
   const key = `growerPages.missionStatus_${u}`;
   const tr = t(key);
   if (tr !== key) return tr;
   return raw.replace(/_/g, ' ');
+}
+
+function portalMilestoneLabel(t: TFunction, apiName: string) {
+  const trimmed = (apiName || '').trim();
+  if (trimmed === '—' || trimmed === '-' || trimmed === '–') {
+    return t('growerPages.portalMilestoneUnknown');
+  }
+  const i18nKey = PORTAL_MILESTONE_I18N[trimmed];
+  if (i18nKey) {
+    const tr = t(i18nKey);
+    if (tr !== i18nKey) return tr;
+  }
+  return apiName;
+}
+
+function portalLogisticsLine(t: TFunction, value: string) {
+  const v = (value || '').trim();
+  if (v === 'Not assigned') return t('growerPages.portalNotAssigned');
+  return value;
+}
+
+/** Maps API payment rows to i18n; backend sends fixed English `paymentStatusMessage`. */
+function portalFinancialPaymentLabel(t: TFunction, paymentStatus: string, apiMessage: string) {
+  const s = (paymentStatus || '').toUpperCase();
+  const key = `growerPages.portalFinancialMsg_${s}`;
+  const tr = t(key);
+  if (tr !== key) return tr;
+  return apiMessage;
+}
+
+function portalFinancialStatusClass(status: string): string {
+  const s = (status || '').toUpperCase();
+  if (s === 'RELEASED') return 'text-[#2D5A27]';
+  if (
+    s === 'IN_ESCROW' ||
+    s === 'PARTIAL_RELEASE' ||
+    s === 'AWAITING_APPROVAL'
+  ) {
+    return 'text-yellow-600';
+  }
+  if (s === 'PROCESSING') return 'text-[#2D5A27]';
+  if (s === 'DELIVERY_NO_ESCROW') return 'text-amber-600';
+  return 'text-gray-600';
 }
 
 /** User-facing text from JSON error bodies (string or NestJS validation array). */
@@ -166,6 +224,13 @@ export default function GrowerPortalPage() {
       ? d.toLocaleDateString(tag, { dateStyle: 'medium' })
       : d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
   };
+
+  const formatEuro = (amount: number) =>
+    new Intl.NumberFormat(numberIntlLocaleFromLanguageTag(i18n.language), {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+    }).format(amount);
   const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
@@ -176,6 +241,7 @@ export default function GrowerPortalPage() {
   const [financialStatus, setFinancialStatus] = useState<FinancialStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
+  const [journeyMapError, setJourneyMapError] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -254,25 +320,37 @@ export default function GrowerPortalPage() {
     fetchData();
   }, [selectedBatch, t]);
 
-  const handleMissionSelect = useCallback(async (missionId: string) => {
-    setSelectedMissionId(missionId);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${WEB_API_BASE}/grower-portal/journey-map/${missionId}`,
-        {
+  const handleMissionSelect = useCallback(
+    async (missionId: string) => {
+      setSelectedMissionId(missionId);
+      setJourneyMap(null);
+      setJourneyMapError(null);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${WEB_API_BASE}/grower-portal/journey-map/${missionId}`, {
           headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          setJourneyMapError(
+            portalJsonErrorMessage(
+              data,
+              t('growerPages.portalJourneyMapLoadError', { status: String(response.status) }),
+            ),
+          );
+          return;
         }
-      );
-      const data = await response.json();
-      setJourneyMap(data);
-      if (data.batchId) {
-        setSelectedBatch(data.batchId);
+        setJourneyMap(data);
+        if (data && typeof data === 'object' && 'batchId' in data && data.batchId) {
+          setSelectedBatch(String(data.batchId));
+        }
+      } catch (err: unknown) {
+        console.error('Error fetching journey map:', err);
+        setJourneyMapError(growerApiErrorOrT(err, t, 'growerPages.portalNetworkError'));
       }
-    } catch (err) {
-      console.error('Error fetching journey map:', err);
-    }
-  }, []);
+    },
+    [t],
+  );
 
   /** Open the mission from notification: /missions/:id or /grower/portal?missionId= */
   useEffect(() => {
@@ -370,7 +448,9 @@ export default function GrowerPortalPage() {
                           : ''}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {t('growerPages.portalCurrentStep', { milestone: mission.currentMilestone })}
+                        {t('growerPages.portalCurrentStep', {
+                          milestone: portalMilestoneLabel(t, String(mission.currentMilestone || '')),
+                        })}
                       </p>
                     </div>
                     <div className="text-right">
@@ -411,6 +491,12 @@ export default function GrowerPortalPage() {
           </div>
         </motion.div>
 
+        {journeyMapError ? (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-800">
+            {journeyMapError}
+          </div>
+        ) : null}
+
         {selectedMissionId &&
           (() => {
             const sm = missions.find((m) => m.missionId === selectedMissionId);
@@ -435,7 +521,7 @@ export default function GrowerPortalPage() {
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                       {t('growerPages.portalPickupLogisticsCompany')}
                     </p>
-                    <p className="mt-1 text-base text-gray-900">{sm.driver}</p>
+                    <p className="mt-1 text-base text-gray-900">{portalLogisticsLine(t, sm.driver)}</p>
                   </div>
                   <div>
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -563,7 +649,7 @@ export default function GrowerPortalPage() {
                         milestone.status === 'in_progress' ? 'text-blue-600' :
                         'text-gray-500'
                       }`}>
-                        {milestone.name}
+                        {portalMilestoneLabel(t, milestone.name)}
                       </p>
                       {milestone.timestamp && (
                         <p className="text-xs text-gray-500 mt-1">{formatLocale(milestone.timestamp)}</p>
@@ -616,7 +702,7 @@ export default function GrowerPortalPage() {
             {/* ETA */}
             {journeyMap.eta && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-base font-medium text-blue-900">📦 Live ETA</p>
+                <p className="text-base font-medium text-blue-900">{t('growerPages.portalLiveEta')}</p>
                 <p className="text-lg font-bold text-blue-600 mt-1">{journeyMap.eta}</p>
               </div>
             )}
@@ -735,34 +821,41 @@ export default function GrowerPortalPage() {
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaymentStatus')}</p>
-                <p className={`text-lg font-bold ${
-                  financialStatus.paymentStatus === 'PROCESSING' ? 'text-[#2D5A27]' :
-                  financialStatus.paymentStatus === 'AWAITING_APPROVAL' ? 'text-yellow-600' :
-                  'text-gray-600'
-                }`}>
-                  {financialStatus.paymentStatusMessage}
+                <p className={`text-lg font-bold ${portalFinancialStatusClass(financialStatus.paymentStatus)}`}>
+                  {portalFinancialPaymentLabel(
+                    t,
+                    financialStatus.paymentStatus,
+                    financialStatus.paymentStatusMessage,
+                  )}
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 <div>
                   <p className="text-base text-gray-600 mb-1">{t('growerPages.portalTotalAmount')}</p>
                   <p className="text-lg font-bold text-gray-900">
-                    €{financialStatus.totalAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
+                    {formatEuro(financialStatus.totalAmount)}
                   </p>
                 </div>
                 <div>
                   <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaid')}</p>
                   <p className="text-lg font-bold text-[#2D5A27]">
-                    €{financialStatus.paidAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
+                    {formatEuro(financialStatus.paidAmount)}
                   </p>
                 </div>
                 <div>
                   <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPending')}</p>
                   <p className="text-lg font-bold text-yellow-600">
-                    €{financialStatus.pendingAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
+                    {formatEuro(financialStatus.pendingAmount)}
                   </p>
                 </div>
               </div>
+              {(financialStatus.inEscrowAmount ?? 0) > 0 && (
+                <p className="text-sm text-gray-600">
+                  {t('growerPages.portalFinancialInEscrowLine', {
+                    amount: formatEuro(financialStatus.inEscrowAmount ?? 0),
+                  })}
+                </p>
+              )}
             </div>
           </motion.div>
         )}

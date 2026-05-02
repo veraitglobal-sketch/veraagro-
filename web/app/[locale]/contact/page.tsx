@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { contactAPI } from '@/lib/api';
+import { axiosResponseStatus } from '@/lib/api-error';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 
@@ -51,17 +52,14 @@ export default function ContactPage() {
           setErrorMessage('');
         }, 10000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting contact form:', error);
       setSubmitStatus('error');
       let msg = '';
 
-      // More detailed error messages
-      if (error.response) {
-        // Server responded with error status
-        const status = error.response.status;
-        const data = error.response.data;
-        
+      const status = axiosResponseStatus(error);
+      if (status !== undefined) {
+        const data = (error as { response?: { data?: { message?: string } } }).response?.data;
         if (status === 400) {
           msg = data?.message || t('contactPage.errCheckInput');
         } else if (status === 429) {
@@ -72,15 +70,17 @@ export default function ContactPage() {
           msg = data?.message || t('contactPage.errHttp');
         }
       } else if (
-        error.code === 'ECONNABORTED' ||
-        error.message?.includes('timeout') ||
-        error.name === 'TimeoutError' ||
-        error.name === 'AbortError'
+        (error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          (error as { code?: string }).code === 'ECONNABORTED') ||
+        (error instanceof Error && error.message.toLowerCase().includes('timeout')) ||
+        (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError'))
       ) {
         msg = t('contactPage.errTimeout');
-      } else if (error.message === 'Failed to fetch') {
+      } else if (error instanceof Error && error.message === 'Failed to fetch') {
         msg = t('contactPage.errNetwork');
-      } else if (error.request) {
+      } else if (error && typeof error === 'object' && 'request' in error && !('response' in error)) {
         msg = t('contactPage.errNetwork');
       } else {
         msg = t('contactPage.errUnknown');

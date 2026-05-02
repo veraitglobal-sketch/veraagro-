@@ -11,6 +11,7 @@ import { API_URL } from './api-url';
 import type { Estate } from './api';
 import i18n from '../i18n/config';
 import { growerOfflineCache } from './grower-offline-cache';
+import { apiErrorMessage, axiosResponseStatus } from './api-error';
 
 // Create API instance for sync
 const syncApi = axios.create({
@@ -23,17 +24,6 @@ const SYNC_STATUS_KEY = 'sync_status';
 /** Queue items that still need upload (pending, failed retry, or stuck mid-sync after crash). */
 function needsSync(status: string | undefined): boolean {
   return status === 'pending' || status === 'error' || status === 'syncing';
-}
-
-/** NestJS / axios: surface `message` so 403 shows real reason (GPS, whitelist, parcel approval). */
-function getApiErrorMessage(error: unknown, fallback: string): string {
-  if (error && typeof error === 'object' && 'response' in error) {
-    const data = (error as { response?: { data?: { message?: string | string[] } } }).response?.data;
-    if (typeof data?.message === 'string') return data.message;
-    if (Array.isArray(data?.message)) return data.message.join('; ');
-  }
-  if (error instanceof Error) return error.message;
-  return fallback;
 }
 
 export interface SyncStatus {
@@ -176,7 +166,7 @@ export const syncService = {
         await offlineStorage.removeEntry(entry.id);
         success++;
       } catch (error: unknown) {
-        const msg = getApiErrorMessage(error, 'Sync failed');
+        const msg = apiErrorMessage(error, 'Sync failed');
         console.error(`Error syncing entry ${entry.id}:`, msg);
         entry.status = 'error';
         entry.error = msg;
@@ -246,12 +236,13 @@ export const syncService = {
         );
         await offlineStorage.removeProduct(product.id);
         success++;
-      } catch (err: any) {
-        const isNotImplemented = err.response?.status === 404 || err.response?.status === 501;
+      } catch (err: unknown) {
+        const status = axiosResponseStatus(err);
+        const isNotImplemented = status === 404 || status === 501;
         await offlineStorage.updateProductStatus(
           product.id,
           'pending',
-          isNotImplemented ? undefined : err.message
+          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
         );
         if (!isNotImplemented) failed++;
       }
@@ -289,12 +280,13 @@ export const syncService = {
         );
         await offlineStorage.removeCost(cost.id);
         success++;
-      } catch (err: any) {
-        const isNotImplemented = err.response?.status === 404 || err.response?.status === 501;
+      } catch (err: unknown) {
+        const status = axiosResponseStatus(err);
+        const isNotImplemented = status === 404 || status === 501;
         await offlineStorage.updateCostStatus(
           cost.id,
           'pending',
-          isNotImplemented ? undefined : err.message
+          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
         );
         if (!isNotImplemented) failed++;
       }
@@ -323,7 +315,7 @@ export const syncService = {
         await offlineStorage.removeHarvestPlan(h.id);
         success++;
       } catch (err: unknown) {
-        const msg = getApiErrorMessage(err, 'Sync failed');
+        const msg = apiErrorMessage(err, 'Sync failed');
         await offlineStorage.updateHarvestPlanStatus(h.id, 'error', msg);
         failed++;
       }
@@ -356,12 +348,13 @@ export const syncService = {
         );
         await offlineStorage.removeCertificatePhoto(photo.id);
         success++;
-      } catch (err: any) {
-        const isNotImplemented = err.response?.status === 404 || err.response?.status === 501;
+      } catch (err: unknown) {
+        const status = axiosResponseStatus(err);
+        const isNotImplemented = status === 404 || status === 501;
         await offlineStorage.updateCertificatePhotoStatus(
           photo.id,
           'pending',
-          isNotImplemented ? undefined : err.message
+          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
         );
         if (!isNotImplemented) failed++;
       }

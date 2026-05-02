@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, XCircle, AlertCircle, Clock, Shield, Eye, Truck, Award } from 'lucide-react';
 import { qualityControlLevelsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 /** Index order must match `/quality-control-levels/protocol-360` static level.checks[]. */
@@ -93,7 +94,7 @@ function Protocol360Content() {
     try {
       const data = await qualityControlLevelsAPI.getProtocol360Info();
       setProtocolInfo(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading protocol info:', err);
     }
   };
@@ -105,8 +106,8 @@ function Protocol360Content() {
       const data = await qualityControlLevelsAPI.getProtocol360Status(batchId);
       setStatus(data);
       setError('');
-    } catch (err: any) {
-      setError(err.response?.data?.message || tp('errorLoading'));
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'protocol360Page.errorLoading'));
       console.error('Error loading status:', err);
     } finally {
       setLoading(false);

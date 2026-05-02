@@ -10,6 +10,7 @@ import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
 import SyncQueueStrip from './SyncQueueStrip';
 import FarmerHomeSection from './FarmerHomeSection';
+import GrowerOrdersFinancialSection from './GrowerOrdersFinancialSection';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -112,6 +113,7 @@ export default function DashboardScreen() {
           onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
           onSyncNow={() => void data.onRefresh()}
         />
+        <GrowerOrdersFinancialSection data={data.ordersFinancial} />
         {hasAlerts ? (
           <TouchableOpacity
             onPress={() => {

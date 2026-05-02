@@ -73,7 +73,7 @@ export function useVeraInsightsData() {
       setInsights(
         transformedInsights.length > 0 ? transformedInsights : getMockInsights()
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading insights:', error);
       setInsights(getMockInsights());
     } finally {

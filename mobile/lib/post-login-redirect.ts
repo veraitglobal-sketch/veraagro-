@@ -1,5 +1,5 @@
 /**
- * One place for “after JWT login, which home stack?” so index, /login, partner-login, buyer-login stay in sync.
+ * One place for “after JWT login, which home stack?” so index, `/login` (+ `partner=1`), and buyer-login stay in sync.
  * Order: grower app → partner store (material supplier) → buyer → logistics.
  */
 export const PRODUCER_ROLES = ['ADMIN', 'FARMER', 'PARTNER', 'GROWER'] as const;
@@ -16,6 +16,18 @@ function isProducer(roles: string[]): boolean {
 }
 
 export type PartnerEntryRedirect = 'estates/new' | 'estates' | undefined;
+
+/**
+ * Canonical producer/supplier/logistics sign-in: same screen as universal `/login`, with post-login routing for grower deep-links.
+ * Prefer this over the `/partner-login` alias route.
+ */
+export function partnerSignInHref(redirect?: PartnerEntryRedirect): { pathname: '/login'; params: Record<string, string> } {
+  const params: Record<string, string> = { partner: '1' };
+  if (redirect === 'estates/new' || redirect === 'estates') {
+    params.redirect = redirect;
+  }
+  return { pathname: '/login', params };
+}
 
 /**
  * @returns e.g. `/(producer)/(tabs)` or `null` if the account has no known mobile “home” (then caller should show error + logout).

@@ -1,5 +1,6 @@
 import { offlineStorage } from './offline-storage';
 import i18n from '../i18n/config';
+import { apiErrorMessage, isLikelyNetworkError } from './api-error';
 
 export interface FarmBoundary {
   polygonCoordinates: Array<{ lat: number; lng: number }>;
@@ -234,19 +235,17 @@ export async function materialValidator(
         valid: true, 
         message: `Seed validated: ${result.seed?.name || trimmedBarcode}` 
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle network errors gracefully
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
-        return { 
-          valid: false, 
-          message: 'Cannot connect to server. Please check your internet connection.' 
+      if (isLikelyNetworkError(error)) {
+        return {
+          valid: false,
+          message: 'Cannot connect to server. Please check your internet connection.',
         };
       }
-      // Handle API errors
-      const errorMessage = error.response?.data?.message || error.message || 'Seed not found or invalid';
-      return { 
-        valid: false, 
-        message: errorMessage
+      return {
+        valid: false,
+        message: apiErrorMessage(error, 'Seed not found or invalid'),
       };
     }
   }

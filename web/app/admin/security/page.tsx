@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { securityAlertsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
@@ -57,9 +58,9 @@ export default function SecurityAlertsPage() {
       
       const data = await securityAlertsAPI.getAll(filters);
       setAlerts(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading alerts:', err);
-      setError(err.message || 'Failed to load security alerts');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -75,8 +76,8 @@ export default function SecurityAlertsPage() {
       setSelectedAlert(null);
       setResolutionNotes('');
       loadAlerts();
-    } catch (err: any) {
-      alert(err.message || 'Failed to update alert status');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

@@ -19,6 +19,15 @@ export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fmtDate = (iso: string | undefined) =>
+    iso
+      ? new Date(iso).toLocaleDateString(priceLocale, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })
+      : '';
+
   useEffect(() => {
     loadOrders();
   }, []);
@@ -118,6 +127,7 @@ export default function OrdersScreen() {
                     letterSpacing: 0.5,
                   }}>
                     {order.orderNumber}
+                    {order.createdAt ? ` · ${fmtDate(order.createdAt)}` : ''}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: theme.spacing.xs }}>
                     <View style={{

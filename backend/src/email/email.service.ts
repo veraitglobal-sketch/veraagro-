@@ -330,13 +330,30 @@ Reply to: ${data.email}
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Contact inquiry email sent successfully to ${adminEmail} from ${data.email}`);
       return true;
-    } catch (error: any) {
-      const errMsg = error?.message || String(error);
-      const resendErr = error?.response?.body || error?.response?.data;
-      const code = error?.code || error?.response?.status;
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      let resendErr: string | undefined;
+      let code: string | number | undefined;
+      if (error && typeof error === 'object') {
+        const o = error as Record<string, unknown>;
+        const oc = o['code'];
+        if (typeof oc === 'string' || typeof oc === 'number') code = oc;
+        const resp = o['response'];
+        if (resp && typeof resp === 'object') {
+          const r = resp as Record<string, unknown>;
+          const body = r['body'];
+          const data = r['data'];
+          const raw = body ?? data;
+          if (raw !== undefined) {
+            resendErr = typeof raw === 'string' ? raw : JSON.stringify(raw);
+          }
+          const st = r['status'];
+          if (code == null && typeof st === 'number') code = st;
+        }
+      }
       this.logger.error(
-        `Failed to send contact inquiry email: ${errMsg}${code ? ` (code=${code})` : ''}`,
-        resendErr ? JSON.stringify(resendErr) : '',
+        `Failed to send contact inquiry email: ${errMsg}${code != null ? ` (code=${code})` : ''}`,
+        resendErr ?? '',
       );
       return false;
     }
@@ -479,10 +496,9 @@ ${data.extraNotes ? `Notes: ${data.extraNotes}\n` : ''}`,
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`New order notification sent via SMTP to ${toAddr}`);
       return true;
-    } catch (error: any) {
-      this.logger.error(
-        `Failed to send new order notification: ${error?.message || error}`,
-      );
+    } catch (error: unknown) {
+      const detail = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to send new order notification: ${detail}`);
       return false;
     }
   }
@@ -635,8 +651,9 @@ Bio Vera Team
         this.logger.log(`Invoice email sent via SMTP to ${data.to} (${data.invoiceNumber})`);
         return true;
       }
-    } catch (e: any) {
-      this.logger.error(`Failed to send invoice email: ${e?.message || e}`);
+    } catch (e: unknown) {
+      const detail = e instanceof Error ? e.message : String(e);
+      this.logger.error(`Failed to send invoice email: ${detail}`);
       return false;
     }
     return false;

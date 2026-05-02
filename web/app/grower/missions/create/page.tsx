@@ -13,57 +13,16 @@ import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
-/** Shown when POST /missions fails — localized wrapper + technical detail when present */
+/** POST /missions — API message when present; short network hint; localized fallback */
 function formatMissionCreateError(error: unknown, t: TFunction): string {
-  const e = error as {
-    code?: string;
-    message?: string;
-    response?: { status?: number; data?: unknown };
-  };
+  const e = error as { code?: string; message?: string; response?: unknown };
   if (!e?.response) {
-    const code = e?.code;
-    const msg = e?.message || t('grower.missionCreate.errRequestFailed');
-    if (code === 'ERR_NETWORK' || msg === 'Network Error') {
-      return [
-        t('grower.missionCreate.errBrowserCouldNotReachApi'),
-        t('grower.missionCreate.errTriedBaseUrl', { base: WEB_API_BASE }),
-        t('grower.missionCreate.errDetail', { detail: msg }),
-      ].join('\n\n');
-    }
-    return t('grower.missionCreate.errNoResponseFromServer', {
-      codePart: code ? t('grower.missionCreate.errCodePart', { code: String(code) }) : '',
-      msg,
-    });
-  }
-  const status = e.response.status;
-  const data = e.response.data as Record<string, unknown> | string | undefined;
-  const prefix = `HTTP ${status}`;
-
-  let body = '';
-  if (typeof data === 'string' && data.trim().length) {
-    body = data.length > 500 ? `${data.slice(0, 500)}…` : data;
-  } else if (data && typeof data === 'object') {
-    const raw = data.message;
-    const base = Array.isArray(raw) ? raw.join(' ') : (raw as string | undefined);
-    const dbg =
-      data.debug && typeof data.debug === 'object' && data.debug !== null && 'message' in data.debug
-        ? String((data.debug as { message?: string }).message)
-        : '';
-    const joined = [base, dbg].filter((s) => s && String(s).trim().length).join('\n\n');
-    if (joined) {
-      body = joined;
-    } else {
-      try {
-        body = JSON.stringify(data, null, 2);
-      } catch {
-        body = t('grower.missionCreate.errCouldNotReadBody');
-      }
+    const msg = e?.message || '';
+    if (e?.code === 'ERR_NETWORK' || msg === 'Network Error') {
+      return t('grower.missionCreate.errBrowserCouldNotReachApi');
     }
   }
-  if (!body) {
-    body = t('grower.missionCreate.errEmptyBody');
-  }
-  return `${prefix}\n\n${body}`;
+  return growerApiErrorOrT(error, t, 'grower.missionCreate.errSubmitFailed');
 }
 
 interface Batch {

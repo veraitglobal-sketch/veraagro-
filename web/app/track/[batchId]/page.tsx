@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Shield, CheckCircle, Clock, XCircle, Thermometer, Download, Image as ImageIcon } from 'lucide-react';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = WEB_API_BASE;
 
@@ -27,6 +29,7 @@ interface TrackData {
 }
 
 export default function TrackPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const batchId = params?.batchId as string;
   const [data, setData] = useState<TrackData | null>(null);
@@ -42,8 +45,8 @@ export default function TrackPage() {
         const res = await fetch(`${API_URL}/haccp/track/${encodeURIComponent(batchId)}`);
         const json = await res.json();
         setData(json);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load');
+      } catch (err: unknown) {
+        setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       } finally {
         setLoading(false);
       }

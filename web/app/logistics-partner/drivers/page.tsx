@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { logisticsDriversAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import Link from 'next/link';
 
@@ -104,11 +105,7 @@ export default function LogisticsDriversPage() {
       setPhotoFile(null);
       load();
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setFormError(
-        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logisticsPages.driversErrSave'),
-      );
+      setFormError(apiErrorOrT(err, t, 'logisticsPages.driversErrSave'));
     } finally {
       setSaving(false);
     }
@@ -120,9 +117,7 @@ export default function LogisticsDriversPage() {
       await logisticsDriversAPI.update(d.id, { isActive: !d.isActive });
       load();
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setFormError(typeof msg === 'string' ? msg : t('logisticsPages.driversErrUpdate'));
+      setFormError(apiErrorOrT(err, t, 'logisticsPages.driversErrUpdate'));
     }
   };
 

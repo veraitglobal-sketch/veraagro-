@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { authAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminLoginPage() {
+  const { t } = useTranslation();
   const [partnerCode, setPartnerCode] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -44,8 +47,8 @@ export default function AdminLoginPage() {
 
       // Redirect to admin dashboard
       router.push('/admin');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

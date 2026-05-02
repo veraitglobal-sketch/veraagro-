@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
@@ -37,8 +38,8 @@ export default function SupplierOrdersPage() {
     setLoading(true);
     try {
       setList(await b2bSupplierPortalAPI.getIncomingOrders());
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('supplier.ordersPage.errLoad'));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'supplier.ordersPage.errLoad'));
     } finally {
       setLoading(false);
     }
@@ -54,8 +55,8 @@ export default function SupplierOrdersPage() {
     try {
       await b2bSupplierPortalAPI.patchOrderStatus(orderId, { status });
       await load();
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('supplier.ordersPage.errUpdate'));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'supplier.ordersPage.errUpdate'));
     } finally {
       setUpdating(null);
     }
@@ -122,7 +123,8 @@ export default function SupplierOrdersPage() {
               )}
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs text-gray-500">
-                  {t('supplier.ordersPage.statusLabel')}: {o.status}
+                  {t('supplier.ordersPage.statusLabel')}:{' '}
+                  {t(`supplier.orderStatusB2B.${o.status}`, { defaultValue: o.status })}
                 </span>
                 <select
                   className="text-xs border rounded px-2 py-1"

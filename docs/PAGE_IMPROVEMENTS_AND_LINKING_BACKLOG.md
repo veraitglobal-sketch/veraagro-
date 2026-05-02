@@ -1,5 +1,7 @@
 # Unapređenja stranica i povezivanja (novi backlog)
 
+**Povezano:** detaljan prioritetizovan backlog posle finansija/escroua — [`FOLLOWUP_BACKLOG_DETAILED.md`](FOLLOWUP_BACKLOG_DETAILED.md).
+
 **Svrha:** Zasebna lista od [`WEB_MOBILE_CHANNEL_PARITY_PLAN.md`](WEB_MOBILE_CHANNEL_PARITY_PLAN.md) — fokus na tome da svaka stranica ima **smislen tok** (linkovi, CTAs, ista ruta gde treba, prevod gde korisnik očekuje), a ne samo „isti API“.
 
 **Legenda:** 🟢 gotovo u kodu · 🟡 u toku / delimično · 🔴 nije početo · **?** treba provera u browseru
@@ -41,7 +43,7 @@
 
 | # | Problem | Predlog | Status |
 |---|---------|---------|--------|
-| P3.1 | Tab bar: **Home, Steps, Products, Profile** — ostatak toka je na stacku (`orders`, `missions`, `notifications`, …). Proveriti da li **notifications** ruta postoji za sve uloge koje je korisnik tražio i da li se vraća konzistentno nazad. | Mapa „ekran A → back → tab X“ za buyer/logistics/supplier/producer. | 🟡 |
+| P3.1 | Tab bar: **Home, Steps, Products, Profile** — ostatak toka je na stacku. **mob-3:** producer/logistics/supplier neautentifikovani redirect sada ide na **`/login?partner=1`** (isti UI kao univerzalni login); ruta **`/partner-login`** ostaje kao kompatibilni alias. | Mapa „ekran A → back → tab X“ za buyer/logistics/supplier/producer. | 🟡 |
 | P3.2 | **Producer** stack: ekrani kao **`missions-create`**, **`notifications`**, **`growth-journal`** — grep na `toLocale*` bez locale i na JSX sa fiksnim engleskim. | Nastavak Q3 iz parity plana; prioritet ekrani sa najviše korisnika. | 🟡 |
 | P3.3 | **Deep link / notifikacija** otvara pogrešan tab ili 404 ako je korisnik multi-role. | Test matrix: jedan nalog, više uloga; edge cases u `resolveNotificationActionHref`. | ? |
 
@@ -52,8 +54,25 @@
 | # | Problem | Predlog | Status |
 |---|---------|---------|--------|
 | P4.1 | Lista ili detalj učitavaju podatke, ali **prazan state** nema CTA ka sledećem koraku (npr. nema narudžbina → link ka shopu ili partner porudžbinama). | Po jedan primarni CTA po ulozi u glavnim listama. | 🔴 |
-| P4.2 | **API greške** prikazane kao sirovi string sa backenda — korisnik nema „šta dalje“. | Mapiranje kodova + link na pomoć / ponovo učitaj. | 🟡 |
-| P4.3 | **Plot / batch / passport** javne rute — proveriti `@/protocol-360`, `@/plot/[code]`, da li brend linkovi sa field ekrana generišu iste URL-ove kao web marketing. | Jedan dokument „javni URL šabloni“ + test. | ? |
+| P4.2 | **API greške** prikazane kao sirovi string sa backenda — korisnik nema „šta dalje“. | **Grower web (2026-05):** `growerApiErrorOrT` + lokalizovani fallback na ključnim stranicama; misija „create“ više ne ispisuje HTTP+JSON telo; modal detalja partije prikazuje grešku učitavanja. Ostale uloge / kanali — nastaviti po istom obrascu. | 🟡 |
+| P4.3 | **Plot / batch / passport / farmer** — jedan kanon za QR, grower fields i copy. | **Referenca:** § *Javni URL šabloni* ispod; smoke: `/plot/{publicCode}`, `/passport/{batchId}`. | 🟡 |
+
+---
+
+## Javni URL šabloni (web, P4.3)
+
+**Cilj:** Isti path u poljima growera, admin test ekranima, buyer panelu i u QR payloadima; apsolutni link za deljenje: **`NEXT_PUBLIC_BASE_URL`** ili **`NEXT_PUBLIC_SITE_URL`** (web) / **`EXPO_PUBLIC_SITE_URL`** (mob) — vidi **`web/.env.example`** i **`mobile/.env.example`**.
+
+| Namena | Kanon ruta | Parametar | Napomena |
+|--------|------------|-----------|----------|
+| Javni pasoš partije (lot) | `/passport/[batchId]` | Javni `batchId` npr. `BATCH-…` | `web/app/passport/[batchId]/page.tsx` |
+| Javna stranica parcele | `/plot/[code]` | `parcel.publicCode` | `web/app/plot/[code]/page.tsx`; API `GET /parcels/public/plot/:code` |
+| Javni profil proizvođača | `/farmer/[farmerQrCode]` | QR iz profila | `grower/profile`, `grower` dashboard — često `origin + path` |
+| Marketing „Protocol 360“ | `/protocol-360` | — | `web/app/protocol-360/page.tsx`; sitemap ga uključuje |
+
+**Locale:** Grower shell (`/grower/*`) i ove javne rute su u praksi **bez** prefiksa jezika kao ostale app rute; marketing koristi `/[locale]/…` gde postoji — pri generisanju linkova u mejlu koristiti isti obrazac kao na sajtu.
+
+**Kod referenca:** link na plot sa liste parcela — `web/app/grower/fields/page.tsx` (`href={/plot/${publicCode}}`); QR parcela — `web/lib/api.ts` (komentar uz retail PNG).
 
 ---
 
@@ -62,6 +81,8 @@
 1. Kada nešto uradite — promenite status u tabeli i po potrebi dodajte red (kratko, jedna ideja po ćeliji „Problem“).
 2. Kanalni paritet (env, socket, CI) ostaje u **`WEB_MOBILE_CHANNEL_PARITY_PLAN.md`**.
 3. Širi funkcionalni TODO po modulima: **`TODO_WEB_MOBILE.md`** u korenu repozitorijuma.
+
+**Poslednji sync (docs):** grower `/grower/portal` koristi mapirane poruke i milestone ključeve; mobilni grower login ujedinjen preko `/login?partner=1` — vidi taj plan i `partnerSignInHref` u `mobile/lib/post-login-redirect.ts`.
 
 ---
 

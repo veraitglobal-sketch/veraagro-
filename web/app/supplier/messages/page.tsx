@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
@@ -25,8 +26,8 @@ export default function SupplierMessagesPage() {
     setErr(null);
     try {
       setThreads(await b2bSupplierPortalAPI.getMyThreads());
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errThreads'));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'supplier.messagesPage.errThreads'));
     } finally {
       setLoading(false);
     }
@@ -41,8 +42,8 @@ export default function SupplierMessagesPage() {
     setErr(null);
     try {
       setMessages(await b2bSupplierPortalAPI.getThreadMessages(id));
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errOpen'));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'supplier.messagesPage.errOpen'));
     }
   };
 
@@ -55,8 +56,8 @@ export default function SupplierMessagesPage() {
       setText('');
       setMessages(await b2bSupplierPortalAPI.getThreadMessages(activeId));
       await loadThreads();
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errSend'));
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'supplier.messagesPage.errSend'));
     } finally {
       setSending(false);
     }

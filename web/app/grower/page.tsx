@@ -84,7 +84,7 @@ export default function GrowerDashboardPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getMissionStatusColor = (status: string) => {
     const s = status?.toUpperCase() || '';
     switch (s) {
       case 'CERTIFIED':
@@ -104,6 +104,23 @@ export default function GrowerDashboardPage() {
       case 'PENDING':
       case 'PENDING_VERIFICATION':
         return 'bg-gray-50 text-gray-700 border-gray-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
+
+  const getEstateStatusColor = (status: string) => {
+    const s = (status || 'PENDING_SETUP').toUpperCase();
+    switch (s) {
+      case 'CERTIFIED':
+        return 'bg-[#f7faf6] text-[#23471f] border-[#2D5A27]/20';
+      case 'ACTIVE':
+        return 'bg-emerald-50 text-emerald-900 border-emerald-200';
+      case 'PENDING_SETUP':
+        return 'bg-amber-50 text-amber-900 border-amber-200';
+      case 'SUSPENDED':
+      case 'INVALID':
+        return 'bg-red-50 text-red-900 border-red-200';
       default:
         return 'bg-gray-50 text-gray-700 border-gray-200';
     }
@@ -293,8 +310,12 @@ export default function GrowerDashboardPage() {
                       <p className="text-base text-gray-600 font-light mb-3">
                         {t('grower.dashboard.parcelCount', { count: estate.parcels?.length || 0 })}
                       </p>
-                      <span className={`inline-block px-3 py-1.5 rounded text-sm font-medium border ${getStatusColor(estate.status || 'PENDING_SETUP')}`}>
-                        {estate.status || 'PENDING_SETUP'}
+                      <span
+                        className={`inline-block px-3 py-1.5 rounded text-sm font-medium border ${getEstateStatusColor(estate.status || 'PENDING_SETUP')}`}
+                      >
+                        {t(`grower.dashboard.estateStatuses.${estate.status || 'PENDING_SETUP'}`, {
+                          defaultValue: String(estate.status || 'PENDING_SETUP').replace(/_/g, ' '),
+                        })}
                       </span>
                     </Link>
                   ))}
@@ -313,63 +334,140 @@ export default function GrowerDashboardPage() {
             </div>
           </div>
 
-          {/* Financial Dashboard Section */}
-          {financialData && (
-            <div className="bg-white border border-gray-200 rounded-lg">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.financialOverview')}</h2>
-                <p className="text-base text-gray-600 font-light mt-1">{t('grower.dashboard.financialOverviewSub')}</p>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.totalProfit')}</p>
-                    <p className="text-2xl font-light text-[#23471f]">
-                      €{financialData.summary?.totalProfit?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.seedMargin')}</p>
-                    <p className="text-2xl font-light text-blue-700">
-                      €{financialData.summary?.seedMargin?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-1">
-                      {t('grower.dashboard.certificationSavings')}
-                    </p>
-                    <p className="text-2xl font-light text-purple-700">
-                      €{financialData.summary?.groupCertificationSavings?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-1">
-                      {t('grower.dashboard.packagingCommissions')}
-                    </p>
-                    <p className="text-2xl font-light text-yellow-700">
-                      €{financialData.summary?.packagingCommissions?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-2">{t('grower.dashboard.transportMargin')}</p>
-                    <p className="text-xl font-light text-gray-900">
-                      €{financialData.summary?.transportMargin?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-base font-medium text-gray-600 mb-2">
-                      {t('grower.dashboard.insuranceCommissions')}
-                    </p>
-                    <p className="text-xl font-light text-gray-900">
-                      €{financialData.summary?.insuranceCommissions?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Financial Dashboard Section — always visible; empty when API unavailable */}
+          <div className="bg-white border border-gray-200 rounded-lg">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.financialOverview')}</h2>
+              <p className="text-base text-gray-600 font-light mt-1">
+                {financialData?.dashboardRole === 'PLATFORM'
+                  ? t('grower.dashboard.financialOverviewSub')
+                  : t('grower.dashboard.financialOverviewSubGrower')}
+              </p>
             </div>
-          )}
+            <div className="p-6">
+              {financialData ? (
+                financialData.dashboardRole !== 'PLATFORM' ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.farmerShareFromOrders')}
+                        </p>
+                        <p className="text-2xl font-light text-[#23471f]">
+                          €{(financialData.summary?.farmerOrderShareTotal ?? 0).toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.farmerShareReleased')}
+                        </p>
+                        <p className="text-2xl font-light text-emerald-800">
+                          €{(financialData.summary?.farmerShareReleased ?? 0).toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.farmerShareInEscrow')}
+                        </p>
+                        <p className="text-2xl font-light text-amber-900">
+                          €{(financialData.summary?.farmerShareInEscrow ?? 0).toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.farmerSharePending')}
+                        </p>
+                        <p className="text-2xl font-light text-gray-900">
+                          €{(financialData.summary?.farmerSharePending ?? 0).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-[#2D5A27]/15 bg-[#f7faf6]/80 p-4">
+                      <p className="text-base font-medium text-gray-700 mb-1">
+                        {t('grower.dashboard.estimatedVeraBonus')}
+                      </p>
+                      <p className="text-xl font-light text-[#23471f]">
+                        €{(financialData.summary?.estimatedVeraBonusDeliveredLots ?? 0).toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-600 font-light mt-2 leading-relaxed">
+                        {t('grower.dashboard.estimatedVeraBonusFootnote')}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-600 font-light mt-6 leading-relaxed border-t border-gray-100 pt-4">
+                      {t('grower.dashboard.financialExplainShort')}{' '}
+                      <Link
+                        href={loc('/grower/portal')}
+                        className="text-[#2D5A27] underline underline-offset-2 font-medium"
+                      >
+                        {t('grower.dashboard.financialExplainPortalLink')}
+                      </Link>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.totalProfit')}</p>
+                        <p className="text-2xl font-light text-[#23471f]">
+                          €{financialData.summary?.totalProfit?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.seedMargin')}</p>
+                        <p className="text-2xl font-light text-blue-700">
+                          €{financialData.summary?.seedMargin?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.certificationSavings')}
+                        </p>
+                        <p className="text-2xl font-light text-purple-700">
+                          €{financialData.summary?.groupCertificationSavings?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-1">
+                          {t('grower.dashboard.packagingCommissions')}
+                        </p>
+                        <p className="text-2xl font-light text-yellow-700">
+                          €{financialData.summary?.packagingCommissions?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-2">{t('grower.dashboard.transportMargin')}</p>
+                        <p className="text-xl font-light text-gray-900">
+                          €{financialData.summary?.transportMargin?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p className="text-base font-medium text-gray-600 mb-2">
+                          {t('grower.dashboard.insuranceCommissions')}
+                        </p>
+                        <p className="text-xl font-light text-gray-900">
+                          €{financialData.summary?.insuranceCommissions?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )
+              ) : (
+                <div className="text-center py-10 px-4">
+                  <p className="text-base text-gray-600 font-light leading-relaxed max-w-lg mx-auto">
+                    {t('grower.dashboard.financialUnavailableBody')}
+                  </p>
+                  <Link
+                    href={loc('/grower/portal')}
+                    className="inline-flex min-h-[48px] items-center justify-center mt-5 text-base font-medium text-[#2D5A27] hover:text-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded px-2"
+                  >
+                    {t('grower.dashboard.financialUnavailableCtaPortal')}
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Recent Missions Section */}
           <div className="bg-white border border-gray-200 rounded-lg">
@@ -396,7 +494,7 @@ export default function GrowerDashboardPage() {
                         <h3 className="text-base font-medium text-gray-900">
                           {t('grower.dashboard.missionLabel', { id: mission.missionNumber || mission.id })}
                         </h3>
-                        <span className={`px-3 py-1.5 rounded text-sm font-medium border ${getStatusColor(mission.status || 'PENDING')}`}>
+                        <span className={`px-3 py-1.5 rounded text-sm font-medium border ${getMissionStatusColor(mission.status || 'PENDING')}`}>
                           {t(`adminPages.missions.statuses.${mission.status as string}`, {
                             defaultValue: (mission.status || 'PENDING').replace(/_/g, ' '),
                           })}
@@ -411,8 +509,25 @@ export default function GrowerDashboardPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <p className="text-base text-gray-600 font-light">{t('grower.dashboard.noMissions')}</p>
+                <div className="text-center py-12 px-2">
+                  <p className="text-base text-gray-900 font-medium">{t('grower.dashboard.noMissions')}</p>
+                  <p className="text-base text-gray-600 font-light mt-3 leading-relaxed max-w-lg mx-auto">
+                    {t('grower.dashboard.noMissionsHint')}
+                  </p>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                    <Link
+                      href={loc('/grower/batches')}
+                      className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 rounded-lg bg-[#2D5A27] text-white text-base font-medium hover:bg-[#23471f] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 w-full sm:w-auto"
+                    >
+                      {t('grower.dashboard.noMissionsCtaBatches')}
+                    </Link>
+                    <Link
+                      href={loc('/grower/missions/create')}
+                      className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 text-base font-medium hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 w-full sm:w-auto"
+                    >
+                      {t('grower.dashboard.noMissionsCtaRequestTransport')}
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

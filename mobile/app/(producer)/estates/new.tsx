@@ -18,6 +18,7 @@ import MapView, { Polygon, Marker } from 'react-native-maps';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { estatesAPI, parcelsAPI } from '../../../lib/api';
+import { apiErrorMessage } from '../../../lib/api-error';
 import { CROP_HIERARCHY, getCropDisplayLabel } from '../../../lib/crops';
 import { markStepComplete } from '../../../lib/grower-journey';
 
@@ -91,8 +92,8 @@ export default function NewEstateScreen() {
       });
       await markStepComplete(2);
       router.back();
-    } catch (error: any) {
-      Alert.alert(t('error'), error.message || t('producer.estates.createFailed'));
+    } catch (error: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(error, t('producer.estates.createFailed')));
     } finally {
       setLoading(false);
     }

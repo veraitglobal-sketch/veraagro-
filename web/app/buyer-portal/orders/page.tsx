@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import {
   getBuyerOrderStatusLabel,
   getBuyerOrderStatusDescription,
@@ -40,9 +41,9 @@ export default function OrdersPage() {
       setError(null);
       const data = await ordersAPI.getAll();
       setOrders(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading orders:', err);
-      setError(err.message || 'Failed to load orders');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -103,9 +104,9 @@ export default function OrdersPage() {
       } catch {
         setSelectedOrder(order);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading order details:', err);
-      alert('Failed to load order details');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

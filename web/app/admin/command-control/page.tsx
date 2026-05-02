@@ -8,6 +8,7 @@ import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { commandControlAPI, missionsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 
 type LogisticsPartnerRow = {
   id: string;
@@ -73,7 +74,7 @@ export default function CommandControlPage() {
       }
     } catch (e: unknown) {
       console.error('Command control dashboard', e);
-      setError(e instanceof Error ? e.message : t('adminPages.commandControl.loadFailed'));
+      setError(apiErrorOrT(e, t, 'adminPages.commandControl.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -91,9 +92,12 @@ export default function CommandControlPage() {
       setSystemStatus({ paused: true });
       await loadDashboard();
       setActionBanner({ kind: 'success', message: t('adminPages.commandControl.pauseSuccess') });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error pausing system:', error);
-      setActionBanner({ kind: 'error', message: t('adminPages.commandControl.pauseFail') });
+      setActionBanner({
+        kind: 'error',
+        message: apiErrorOrT(error, t, 'adminPages.commandControl.pauseFail'),
+      });
     }
   };
 
@@ -103,9 +107,12 @@ export default function CommandControlPage() {
       setSystemStatus({ paused: false });
       await loadDashboard();
       setActionBanner({ kind: 'success', message: t('adminPages.commandControl.resumeSuccess') });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error resuming system:', error);
-      setActionBanner({ kind: 'error', message: t('adminPages.commandControl.resumeFail') });
+      setActionBanner({
+        kind: 'error',
+        message: apiErrorOrT(error, t, 'adminPages.commandControl.resumeFail'),
+      });
     }
   };
 
@@ -120,9 +127,7 @@ export default function CommandControlPage() {
       const list = (await missionsAPI.getLogisticsPartnersAdmin()) as LogisticsPartnerRow[];
       setPartners(Array.isArray(list) ? list : []);
     } catch (e: unknown) {
-      setReassignError(
-        e instanceof Error ? e.message : t('adminPages.missions.errLoadPartners'),
-      );
+      setReassignError(apiErrorOrT(e, t, 'adminPages.missions.errLoadPartners'));
       setPartners([]);
     } finally {
       setPartnersLoading(false);
@@ -159,12 +164,7 @@ export default function CommandControlPage() {
       await loadDashboard();
     } catch (e: unknown) {
       console.error('Error reassigning mission:', e);
-      const raw = (e as { response?: { data?: { message?: string | string[] } } })?.response?.data
-        ?.message;
-      const msg = Array.isArray(raw) ? raw.join(', ') : raw ? String(raw) : '';
-      setReassignError(
-        msg || (e instanceof Error ? e.message : t('adminPages.commandControl.errReassign')),
-      );
+      setReassignError(apiErrorOrT(e, t, 'adminPages.commandControl.errReassign'));
     } finally {
       setReassignSubmitting(false);
     }

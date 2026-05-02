@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import {
   TrendingUp,
   DollarSign,
@@ -57,9 +58,9 @@ export default function AnalyticsPage() {
         dateRange.endDate || undefined
       );
       setAnalytics(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading analytics:', err);
-      setError(err.message || 'Failed to load analytics');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

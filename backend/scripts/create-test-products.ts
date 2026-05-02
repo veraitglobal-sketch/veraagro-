@@ -103,8 +103,9 @@ async function createTestProducts() {
 
       console.log(`✅ Created ${product.cropType} - Buy: €${product.buyPrice.toFixed(2)}, Sell: €${product.sellPrice.toFixed(2)}`);
       created++;
-    } catch (error: any) {
-      console.error(`❌ Error creating ${product.cropType}:`, error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(`❌ Error creating ${product.cropType}:`, msg);
     }
   }
 

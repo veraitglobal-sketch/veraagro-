@@ -37,9 +37,12 @@ export default function BuyerLoginScreen() {
       }
       await logout();
       Alert.alert(t('error'), t('buyerLogin.notBuyer'));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      Alert.alert(t('error'), error?.message || t('buyerLogin.failed'));
+      Alert.alert(
+        t('error'),
+        error instanceof Error ? error.message : t('buyerLogin.failed'),
+      );
     } finally {
       setLoading(false);
     }

@@ -193,6 +193,9 @@ PAYMENT_FARMER_PERCENTAGE=70
 PAYMENT_DRIVER_PERCENTAGE=20
 PAYMENT_PLATFORM_FEE=10
 
+# Optional: users.id for treasury wallet — platform share on escrow release (PLATFORM_FEE tx)
+# PLATFORM_WALLET_USER_ID=
+
 # Time Validation
 MAX_TIME_OFFSET=300
 ```

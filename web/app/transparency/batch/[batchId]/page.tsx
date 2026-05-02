@@ -19,8 +19,11 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 export default function DeepDivePage() {
+  const { t } = useTranslation();
   const params = useParams();
   const batchId = params.batchId as string;
   const [data, setData] = useState<any>(null);
@@ -44,9 +47,9 @@ export default function DeepDivePage() {
       }
       const result = await response.json();
       setData(result);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading deep dive data:', err);
-      setError(err.message || 'Failed to load batch information');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

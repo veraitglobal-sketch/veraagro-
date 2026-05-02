@@ -11,6 +11,7 @@ import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
 
 const USER_ROLE_KEYS = [
   'FARMER',
@@ -110,9 +111,9 @@ export default function UsersManagementPage() {
       
       const data = await usersAPI.getAll(filters);
       setUsers(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading users:', err);
-      setError(err.message || t('adminPages.userManagement.errLoadUsers'));
+      setError(apiErrorOrT(err, t, 'adminPages.userManagement.errLoadUsers'));
     } finally {
       setLoading(false);
     }
@@ -124,8 +125,8 @@ export default function UsersManagementPage() {
     try {
       await usersAPI.delete(id);
       loadUsers();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.userManagement.errDeleteUser'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.userManagement.errDeleteUser'));
     }
   };
 
@@ -166,9 +167,9 @@ export default function UsersManagementPage() {
       if (newUser.passwordGenerated && newUser.password) {
         successMessage += `\n\n${t('adminPages.userManagement.createGeneratedPassword', { password: newUser.password })}`;
         if (newUser.emailSent) {
-          successMessage += `\n✅ ${t('adminPages.userManagement.createPasswordEmailed')}`;
+          successMessage += `\n\n${t('adminPages.userManagement.createPasswordEmailed')}`;
         } else if (formData.sendEmail) {
-          successMessage += `\n⚠️ ${t('adminPages.userManagement.createEmailNotSent')}`;
+          successMessage += `\n\n${t('adminPages.userManagement.createEmailNotSent')}`;
         }
       }
       
@@ -189,8 +190,8 @@ export default function UsersManagementPage() {
         resetForm();
       }
       loadUsers();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.userManagement.errCreateUser'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.userManagement.errCreateUser'));
     }
   };
 
@@ -203,8 +204,8 @@ export default function UsersManagementPage() {
       });
       loadUsers();
       alert(t('adminPages.userManagement.approveSuccess'));
-    } catch (err: any) {
-      alert(err.message || t('adminPages.userManagement.errApproveVerification'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.userManagement.errApproveVerification'));
     }
   };
 
@@ -257,8 +258,8 @@ export default function UsersManagementPage() {
       setEditingUser(null);
       resetForm();
       loadUsers();
-    } catch (err: any) {
-      alert(err.message || t('adminPages.userManagement.errUpdateUser'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.userManagement.errUpdateUser'));
     }
   };
 
@@ -301,8 +302,8 @@ export default function UsersManagementPage() {
       if (r.email) parts.push(t('adminPages.userManagement.resetAlertEmail', { email: r.email }));
       parts.push('', t('adminPages.userManagement.resetAlertPasswordIntro'), r.temporaryPassword);
       alert(parts.join('\n'));
-    } catch (err: any) {
-      alert(err?.response?.data?.message || err?.message || t('adminPages.userManagement.errResetPassword'));
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'adminPages.userManagement.errResetPassword'));
     } finally {
       setResettingPassword(false);
     }

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { haccpAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { Shield, RefreshCw, CheckCircle, Clock, XCircle, Thermometer } from 'lucide-react';
@@ -41,8 +42,8 @@ export default function HaccpMonitoringPage() {
       setError(null);
       const data = await haccpAPI.getOverview();
       setRows(data ?? []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load HACCP data');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       setRows([]);
     } finally {
       setLoading(false);

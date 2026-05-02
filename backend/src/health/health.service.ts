@@ -90,11 +90,11 @@ export class HealthService {
         status: 'up',
         responseTime,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error('Database health check failed:', error);
       return {
         status: 'down',
-        error: error.message || 'Database connection failed',
+        error: error instanceof Error ? error.message : 'Database connection failed',
       };
     }
   }

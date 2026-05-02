@@ -450,10 +450,10 @@ export class VeraTransparencyService {
           : 'Batches cannot be mixed',
         groups: result.grouped,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         valid: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
       };
     }
   }

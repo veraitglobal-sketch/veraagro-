@@ -93,10 +93,10 @@ export class DiscountQuotaService {
         remaining: Math.round(remaining * 100) / 100,
         requestedQuantity,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error('Error checking discount quota:', error);
       throw new ForbiddenException(
-        error.message || 'Error checking discount quota',
+        error instanceof Error ? error.message : 'Error checking discount quota',
       );
     }
   }

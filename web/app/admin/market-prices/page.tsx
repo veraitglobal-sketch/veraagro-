@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { marketPricesAPI, buyerTradePanelAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { motion } from 'framer-motion';
 import { DollarSign, Plus, Edit2, TrendingUp, TrendingDown, Minus, AlertTriangle, Zap } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
@@ -63,9 +64,9 @@ export default function MarketPricesPage() {
       setError(null);
       const data = await marketPricesAPI.getAllActive();
       setPrices(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading prices:', err);
-      setError(err.message || 'Failed to load market prices');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -77,8 +78,8 @@ export default function MarketPricesPage() {
       setPriceHistory(history);
       setSelectedCropType(cropType);
       setShowHistoryModal(true);
-    } catch (err: any) {
-      alert(err.message || 'Failed to load price history');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -95,10 +96,8 @@ export default function MarketPricesPage() {
       setShowCreateModal(false);
       resetForm();
       loadPrices();
-    } catch (err: any) {
-      const body = err.response?.data?.message;
-      const msg = Array.isArray(body) ? body.join(' ') : body || err.message || 'Failed to create market price';
-      alert(msg);
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -115,8 +114,8 @@ export default function MarketPricesPage() {
       setEditingPrice(null);
       resetForm();
       loadPrices();
-    } catch (err: any) {
-      alert(err.message || 'Failed to update market price');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -126,8 +125,8 @@ export default function MarketPricesPage() {
     try {
       await marketPricesAPI.update(id, { isActive: false });
       loadPrices();
-    } catch (err: any) {
-      alert(err.message || 'Failed to deactivate price');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -159,9 +158,8 @@ export default function MarketPricesPage() {
       );
       setShowSurgeModal(false);
       loadPrices();
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to apply surge pricing';
-      alert(typeof msg === 'string' ? msg : 'Failed to apply surge pricing');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -171,8 +169,8 @@ export default function MarketPricesPage() {
       alert('Critical threshold set successfully');
       setShowThresholdModal(false);
       loadPrices();
-    } catch (err: any) {
-      alert(err.message || 'Failed to set critical threshold');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Package, FileText, ExternalLink, CheckCircle, Loader2 } from 'lucide-react';
@@ -57,8 +58,8 @@ export default function FieldBlockchainPage() {
       });
       setCreatedEstate({ id: estate.id, name: estate.name || fieldForm.name.trim() });
       setStep('entry');
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to create field.');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -74,8 +75,8 @@ export default function FieldBlockchainPage() {
         cropType: parcel.cropType || undefined,
       });
       setCreatedParcel({ id: p.id, cropType: p.cropType || undefined });
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to create parcel.');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -105,8 +106,8 @@ export default function FieldBlockchainPage() {
         blockchainRegisteredAt: batch.blockchainRegisteredAt,
       });
       setStep('result');
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to create batch.');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSubmitting(false);
     }

@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
 import { seedsAPI, seedRegistrationsAPI } from '../lib/api';
+import { apiErrorMessage, axiosResponseStatus } from '../lib/api-error';
 import { markStepComplete } from '../lib/grower-journey';
 import { theme } from '../lib/theme';
 
@@ -54,9 +55,11 @@ export default function SeedRegistrationScreen() {
               { text: t('alerts.ok'), onPress: () => { AsyncStorage.removeItem('last_scanned_qr'); router.back(); } },
             ]
           );
-        } catch (e: any) {
+        } catch (e: unknown) {
           await AsyncStorage.removeItem('last_scanned_qr');
-          if (e?.message?.includes('401') || e?.message?.includes('login')) {
+          const status = axiosResponseStatus(e);
+          const msg = apiErrorMessage(e, '').toLowerCase();
+          if (status === 401 || msg.includes('401') || msg.includes('login') || msg.includes('session expired')) {
             Alert.alert(t('error'), t('growerJourney.step2.loginRequired'));
           }
         }
@@ -134,8 +137,8 @@ export default function SeedRegistrationScreen() {
         t('growerJourney.step2.manualSuccess'),
         [{ text: t('alerts.ok'), onPress: () => router.back() }]
       );
-    } catch (e: any) {
-      Alert.alert(t('error'), e.message || t('growerJourney.step2.saveFailed'));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('growerJourney.step2.saveFailed')));
     } finally {
       setLoading(false);
     }

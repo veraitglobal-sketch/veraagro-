@@ -18,6 +18,8 @@ import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI, missionsAPI } from '../../lib/api';
+import { apiErrorMessage } from '../../lib/api-error';
+import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
 type BatchRow = { id: string; batchId?: string; productName?: string; quantity?: number; unit?: string; status?: string };
 
@@ -154,10 +156,8 @@ export default function MissionsCreateScreen() {
       Alert.alert(t('producer.missionsCreate.successTitle'), t('producer.missionsCreate.successBody'), [
         { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
       ]);
-    } catch (e: any) {
-      const raw = e?.response?.data?.message;
-      const msg =
-        Array.isArray(raw) ? raw.join(' ') : (raw as string) || e?.message || t('producer.missionsCreate.alerts.createErrorFallback');
+    } catch (e: unknown) {
+      const msg = apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
       Alert.alert(t('producer.missionsCreate.alerts.cannotStart'), msg);
     } finally {
       setSubmitting(false);
@@ -322,7 +322,7 @@ export default function MissionsCreateScreen() {
                     {b.productName || t('producer.missionsCreate.productFallback')} — {b.batchId || b.id.slice(0, 8)}…
                   </Text>
                   <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 6 }}>
-                    {b.quantity} {b.unit} · {b.status}
+                    {b.quantity} {b.unit} · {getBatchStatusLabel(t, b.status)}
                   </Text>
                 </TouchableOpacity>
               );

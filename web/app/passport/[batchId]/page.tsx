@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { getFirstName } from '@/lib/farmer-utils';
 import { BlockchainVerification } from '@/components/BlockchainVerification';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
 
 interface Treatment {
   appliedAt: string;
@@ -374,8 +375,8 @@ export default function ProductPassportPage() {
       };
       
       setData(passportData);
-    } catch (err: any) {
-      setError(err.message || t('passportPublic.batchPage.errorGeneric'));
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'passportPublic.batchPage.errorGeneric'));
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { QrCode, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { apiErrorOrT } from '@/lib/api-error';
 
 interface QRScannerProps {
   onScan: (batchId: string) => void;
@@ -10,6 +12,7 @@ interface QRScannerProps {
 }
 
 export default function QRScanner({ onScan, onClose }: QRScannerProps) {
+  const { t } = useTranslation();
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -44,9 +47,9 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
 
       // Use HTML5 QR Code scanning library (you may need to install html5-qrcode)
       // For now, we'll use a simple approach with manual input fallback
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error accessing camera:', err);
-      setError('Cannot access camera. Please allow camera permissions.');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       setScanning(false);
     }
   };

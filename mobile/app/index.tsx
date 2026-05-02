@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Leaf, MapPin, MapPinned, Check, ChevronRight } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { useAuth } from '../hooks/useAuth';
-import { getPostLoginPath, normalizeUserRoles } from '../lib/post-login-redirect';
+import { getPostLoginPath, normalizeUserRoles, partnerSignInHref } from '../lib/post-login-redirect';
 
 export default function LandingScreen() {
   const { t } = useTranslation();
@@ -75,7 +75,7 @@ export default function LandingScreen() {
     if (user) {
       router.push('/(producer)/estates/new');
     } else {
-      router.push('/partner-login?redirect=estates/new');
+      router.push(partnerSignInHref('estates/new') as any);
     }
   };
   const handleStep3 = () => router.push('/supplier-map');
@@ -151,7 +151,7 @@ export default function LandingScreen() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.footerBtnSecondary}
-          onPress={() => router.push('/partner-login')}
+          onPress={() => router.push(partnerSignInHref() as any)}
           activeOpacity={0.7}
         >
           <Text style={styles.footerBtnTextSecondary}>{t('growerJourney.alreadyFarmer')}</Text>

@@ -78,6 +78,7 @@ export default function GrowerBatchesPage() {
   // Selected batch for details
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [batchDetails, setBatchDetails] = useState<any>(null);
+  const [batchDetailsError, setBatchDetailsError] = useState<string | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   
   // Standard Engine - Loading Approval
@@ -138,12 +139,15 @@ export default function GrowerBatchesPage() {
 
   const handleViewDetails = async (batch: Batch) => {
     setSelectedBatch(batch);
+    setBatchDetailsError(null);
     setLoadingDetails(true);
     try {
       const details = await batchesAPI.getOne(batch.batchId);
       setBatchDetails(details);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading batch details:', err);
+      setBatchDetails(null);
+      setBatchDetailsError(growerApiErrorOrT(err, t, 'growerPages.batchDetailsLoadFailed'));
     } finally {
       setLoadingDetails(false);
     }
@@ -484,6 +488,7 @@ export default function GrowerBatchesPage() {
                       onClick={() => {
                         setSelectedBatch(null);
                         setBatchDetails(null);
+                        setBatchDetailsError(null);
                       }}
                       className="min-h-[48px] min-w-[48px] inline-flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 text-xl leading-none"
                       aria-label={t('common.close')}
@@ -497,6 +502,13 @@ export default function GrowerBatchesPage() {
                   {loadingDetails ? (
                     <div className="flex items-center justify-center h-64">
                       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27]"></div>
+                    </div>
+                  ) : batchDetailsError ? (
+                    <div
+                      className="rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-900"
+                      role="alert"
+                    >
+                      {batchDetailsError}
                     </div>
                   ) : (
                     <div className="space-y-6">

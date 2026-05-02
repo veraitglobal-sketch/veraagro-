@@ -2,7 +2,7 @@
 
 **Svrha:** Jedan dokument koji drži fokus na **grower (proizvođač)** površinama: da **web** (`/grower/*`) i **mobilni** (`mobile/app/(producer)/*`) rade **bez grešaka**, da su **funkcionalno skladni** (isti backend kanal, isti tokovi gde ima smisla), i da imamo jasan redosled šta još treba uraditi.
 
-**Povezano:** opšti kanal + CI/sockets — [`WEB_MOBILE_CHANNEL_PARITY_PLAN.md`](WEB_MOBILE_CHANNEL_PARITY_PLAN.md); linkovanje/rute — [`PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md`](PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md).
+**Povezano:** opšti kanal + CI/sockets — [`WEB_MOBILE_CHANNEL_PARITY_PLAN.md`](WEB_MOBILE_CHANNEL_PARITY_PLAN.md); linkovanje/rute — [`PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md`](PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md); **detaljan follow-up backlog (P0–P3, finansije, test matrica)** — [`FOLLOWUP_BACKLOG_DETAILED.md`](FOLLOWUP_BACKLOG_DETAILED.md).
 
 **Legenda:** 🟢 radi / dogovoreno · 🟡 delimično / treba provera · 🔴 nedostaje ili često puca · **[Q]** obavezan smoke u uređaju ili browseru
 
@@ -16,8 +16,8 @@
 - **Faza B (notifikacije + grower URL mapa):** mobilni `webGrowerPathToMobileHref` + `resolve-notification-action` — širi `/grower/*`, `?estate=` → `estates/[id]`, `/grower/portal?missionId=` → `mission/[id]`, `/producer/field-entry` → `scanner`.
 - **Faza B (B2B thread + store deep link):** `b2b-thread/[threadId]` → `b2b-supplier?threadId=`; lista na `partner-orders`; `/grower/where-to-buy/store/:id` → `/b2b-supplier/:id`.
 - **Faza C (UX — početni ekran growera):** mobilni `FarmerHomeSection` — veći redovi (`minHeight` 80), ikone 52×52, naslovi 17px / opisi 14px, logistika i „Još“ čipovi `minHeight` 56; web `GrowerDashboardHomeWorkflow` — `text-lg` / `text-base`, veće kartice, `focus-visible` prsten, tamniji opis (`gray-700`). **`NextStepCard` + `SyncQueueStrip`** — veći CTA (`minHeight` ~48–52), naslovi 16–17px. **Alerts kartica** na Početnoj — `minHeight` 72, tekst 14–15px; web **`GrowerPageHeader`** — opis stranice `text-base text-gray-700` (čitljivije na svim `/grower/*`). **`DashboardHeader`** (mob) — naslov gazdinstva 22px, partner linija 14px; web **`/grower`** — KPI labele `text-base`, kartica dnevnika `text-base` + CTA `min-h-[48px] text-base`.
-
----
+- **Faza E (sinhronizacija 2026):** web **`/grower`** — prazne misije sa CTA (partije, zahtev transporta), finansijski blok uvek prikazan (`financialUnavailable*`), lokalizovani statusi gazdinstva (`estateStatuses`); web **`/grower/portal`** — prevod koraka putovanja (`portalMilestone_*`), finansijskih poruka sa API-ja (`portalFinancialMsg_*`), ETA naslov, greška učitavanja journey map, EUR format po jeziku, status misije preko `adminPages.missions.statuses`; mobilni **`partnerSignInHref()`** / **`/login?partner=1`** (alias `partner-login`); mobilni **missions-create** + **batches** — `getBatchStatusLabel` / `batch-status-i18n` uključujući `QUALITY_VERIFIED`; web **supplier** — `supplier.messagesPage` / `ordersPage` / `orderStatusB2B` za `de`/`fr`/`ro`/`bg`/`es`.
+- **Faza F (finansije / escrow):** **`GET /financial-dashboard`** za ne-admin korisnika sada vraća **`dashboardRole: GROWER`** i zbir **`payments.farmerAmount`** po porudžbinama gde je `getFarmerOwnerUserId` = taj grower (released / IN_ESCROW / ostalo), umesto platform procena (seed/insurance marže) na grower dashboardu; **`releaseEscrowPayment`** ispravljen da ažurira **`splitDetails.driver`** (ranije pogrešno `users`). Admin i dalje dobija platformsku procenu (`dashboardRole: PLATFORM`). **Faza G (escrow release):** `releaseEscrowPayment` učitava **`missions` + `temperature_logs`** i **`digital_handovers`**; terminalni statusi isporuke **DELIVERED / CONFIRMED / COMPLETED**; hladni lanac ili buyer QR potvrda; idempotentan odgovor za **`RELEASED`**; validacija zbira procenata pri kreiranju eskroua; ispravni **`creditWallet`** argumenti; **`prisma.$transaction`** sa **`updateMany`** (uslov `IN_ESCROW`) + **`creditWalletTx`** (+ opcioni **`PLATFORM_FEE`** na trezor korisniku). **Mobilni:** Početna i Wallet učitavaju isti endpoint kao web `/grower` (sekcija **Financial overview**); admin JWT na mobilnom dobija kratko upozorenje (**`PLATFORM`** view).
 
 ## 1. Šta znači „isti kanal“ za growera
 
@@ -55,8 +55,8 @@
 | P0 | `/grower/partner-orders` (+ thread) | `/(producer)/partner-orders`, `b2b-supplier` + `threadId` | Thread URL + `b2b-thread`. 🟢 |
 | P0 | `/grower/missions/create` | `/(producer)/missions-create` | 🟢 |
 | P0 | `/grower/portal` | `/(producer)/missions` + `mission/[id]` | 🟢 |
-| P1 | — | `/(producer)/(tabs)/harvest` | **Mob-first tab;** web nema istu rutu — žetva / planovi kroz **Zasadi** (`/grower/plantings`), **Dnevnik**, **Uputstva** (GrowerJourney). Namerno nije P0 paritet. |
-| P1 | — | `/(producer)/(tabs)/wallet` | **Samo mobilno** (nema grower wallet stranice na webu). Delimično: finansijski blok na web `/grower` + misije/portal. |
+| P1 | — | `/(producer)/(tabs)/harvest` | **Mob-first tab** — namerno **bez obaveznog web pariteta**; na webu sličan sadržaj kroz **Zasadi** (`/grower/plantings`), **Dnevnik polja**, **Uputstva** (GrowerJourney). |
+| P1 | — | `/(producer)/(tabs)/wallet` | **Mob-first** — nema dedicirane grower wallet stranice na webu; pregled transakcija je prioritet na telefonu, uz finansijski blok na `/grower` i misije u portalu. |
 | P1 | — | `growth-journal`, `vera-insights`, … | **Mob-first** ili delimično na web sidebaru (npr. materijali, partije); nije obećan pun P0 paritet — vidi redom grower meni na web vs stack na mob. |
 | P0 | `/grower/profile` | `/(producer)/(tabs)/profile`, `settings` | 🟢 |
 
@@ -139,11 +139,12 @@ rg "<Text[^>]*>\\s*[A-Z]" mobile/features/grower --glob '*.tsx' | head -40
 | L3 | **Growth journal / Vera insights** | 🔴 mob stack, web bez pandana | Inventar ekrana u `mobile/app/(producer)` → odluka po modulu: web stranica u sidebaru, embed u postojeću (npr. plantings), ili dokumentovati izuzetak. |
 | L4 | **Offline / outbox UX** | 🟡 | Q2: **Urađeno (batch 2):** `GrowerOfflineOutboxBanner` — rasklopiva lista do 5 pending stavki + „+ još N“, povratna poruka posle „Sync now“ (`outboxSyncDone` / `outboxSyncPartial`), i18n za `outbox*` u `de`/`fr`/`ro`/`bg`/`es`. **Ostaje:** isti nivo na mobilnom / detaljnija istorija grešaka po zapisu. |
 | L5 | **i18n — svi jezici** | 🟡 | **Urađeno (batch 1):** `fieldEntry*`, `smartLock*`, `fieldEntryOffline*`, `apiErrorGeneric` u `de`/`fr`/`ro`/`bg`/`es` + `en`/`sr`. Ostaje: ostali `growerPages` ključevi koji još padaju na fallback; grep hardkod EN po `/grower/*`. |
-| L6 | **„Sirovi“ API tekstovi** | 🟡 | **Urađeno (batch 1):** `web/lib/grower-api-error.ts` (`growerApiErrorOrT`); `useOfflineEntry` koristi `i18n.t` za sve korisničke greške; `/producer/scanner` koristi helper. Dalje: ostali grower catch blokovi po stranicama. |
+| L6 | **„Sirovi“ API tekstovi** | 🟡 | **Urađeno:** helper `growerApiErrorOrT`; glavne grower stranice; **batch 2:** misija create — kratka poruka (API `message` ako postoji, bez HTTP+JSON), profil učitavanje, materijali fetch, modal „Detalji partije“ pri grešci `GET` jedne partije; i18n `errSubmitFailed`, `batchDetailsLoadFailed`. Dalje: admin/buyer/logistics web po istom obrascu. |
 | L7 | **Producer legacy rute** | 🟡 | `/producer/estates`, `/producer/scanner` — vizuelni i jezički paritet sa grower shellom (card tokens iz `.cursorrules`); razmotriti redirect ka `/grower/fields` gde nema razloga za poseban UI. |
 | L8 | **Deep link / notifikacije** | 🟢 osnova | Periodično: novi `actionUrl` obrasci → `resolve-notification-action` + `webGrowerPathToMobileHref`; regresija iz [WEB_MOBILE_CHANNEL_PARITY_PLAN.md](WEB_MOBILE_CHANNEL_PARITY_PLAN.md) smoke § „Notifikacije“. |
 | L9 | **Integrity guard paritet** | 🟡 proveriti | Barkod + GPS + whitelist đubriva: ista pravila i poruke web `OfflineEntryForm` / sync vs mobilni terenski tok; dokumentovati ograničenja PWA (npr. kamera). |
 | L10 | **Admin / misije copy zajednički** | 🟢 delom | Gde grower vidi statuse misija, držati jedan skup ključeva (`adminPages.missions.statuses` ili zajednički `grower.missions.*`) da web i mob ne divergiraju. |
+| L11 | **Javni URL-ovi (plot / passport / farmer)** | 🟡 | Kanon tabele + env napomena: [`PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md`](PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md) § *Javni URL šabloni*; grower **`/grower/fields`** već linkuje `/plot/{publicCode}`. |
 
 ### Predloženi redosled (sprint)
 
@@ -187,14 +188,14 @@ Cilj: ista BioVera pravila (`.cursorrules`) — `#2D5A27`, `rounded-xl`, i18n na
 
 | Ruta | Status (kratko) |
 |------|-----------------|
-| `/grower` (dashboard) | i18n header; outbox banner; proveriti još CTA tokene |
+| `/grower` (dashboard) | i18n header; outbox banner; prazne misije → CTA partije + zahtev transporta; finansijski blok uvek vidljiv sa porukom ako API nije dostupan; status gazdinstva preveden (`estateStatuses`) |
 | `/grower/plantings` | load/save kroz `growerApiErrorOrT` |
 | `/grower/field-diary`, `/grower/fields`, `/grower/season` | headeri preko `t()` |
 | `/grower/batches` | EN `alert`-i (P0) |
 | `/grower/quality-entry` | `fk()` + zeleni token |
 | `/grower/compliance-photos` | i18n; plavi sekundarni dugmići |
 | `/grower/missions/create` | kritično EN (P0) |
-| `/grower/portal` | i18n; mapa / fetch — periodično proveriti poruke |
+| `/grower/portal` | i18n; mapa; koraci putovanja i finansijska poruka mapirani sa API (EN) na `growerPages.portalMilestone_*` / `portalFinancialMsg_*`; status misije i admin paritet; EUR format po jeziku; greška učitavanja journey map |
 | `/grower/materials` | OK opis; input tokeni |
 | `/grower/package-badges` (+ scan, print-order) | i18n u headerima |
 | `/grower/profile` | `alert` obrasci (P2) |

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
@@ -11,9 +16,13 @@ import { getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
  */
 @Injectable()
 export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
+
   private readonly farmerPercentage: number;
   private readonly driverPercentage: number;
   private readonly platformFeePercentage: number;
+  /** When set, escrow release credits this user's wallet with `platformFee` (PLATFORM_FEE tx). */
+  private readonly platformWalletUserId: string | undefined;
 
   constructor(
     private prisma: PrismaService,
@@ -30,6 +39,8 @@ export class PaymentsService {
     this.platformFeePercentage = parseFloat(
       this.configService.get<string>('PAYMENT_PLATFORM_FEE', '10'),
     );
+    const pw = this.configService.get<string>('PLATFORM_WALLET_USER_ID')?.trim();
+    this.platformWalletUserId = pw || undefined;
   }
 
   /**
@@ -44,6 +55,14 @@ export class PaymentsService {
       transactionId?: string;
     },
   ) {
+    const splitSum =
+      this.farmerPercentage + this.driverPercentage + this.platformFeePercentage;
+    if (Math.abs(splitSum - 100) > 0.02) {
+      throw new BadRequestException(
+        `PAYMENT_FARMER_PERCENTAGE + PAYMENT_DRIVER_PERCENTAGE + PAYMENT_PLATFORM_FEE must equal 100 (currently ${splitSum})`,
+      );
+    }
+
     const order = await this.prisma.orders.findUnique({
       where: { id: orderId },
       include: { 
@@ -58,6 +77,9 @@ export class PaymentsService {
     }
 
     const farmerUserId = getFarmerOwnerUserId(order);
+    if (!farmerUserId) {
+      throw new BadRequestException('Cannot resolve farmer user to credit for this order');
+    }
 
     // Calculate split amounts
     const farmerAmount = (totalAmount * this.farmerPercentage) / 100;
@@ -117,13 +139,14 @@ export class PaymentsService {
         deliveries: {
           include: {
             users: true,
-            // mission: { // Not in schema
-            //   include: {
-            //     digitalSignatures: true,
-            //     temperatureLogs: true,
-            //   },
-            // },
+            digital_handovers: true,
           },
+        },
+        missions: {
+          include: {
+            temperature_logs: { orderBy: { timestamp: 'asc' } },
+          },
+          orderBy: { createdAt: 'desc' },
         },
         estates: {
           include: {
@@ -136,105 +159,202 @@ export class PaymentsService {
 
     const payment = order?.payments ?? null;
     const delivery = order?.deliveries ?? null;
-    
+
     if (!order || !payment) {
       throw new NotFoundException('Order or payment not found');
     }
 
+    if (payment.status === 'RELEASED') {
+      return {
+        message: 'Payment already released',
+        farmerAmount: payment.farmerAmount,
+        driverAmount: payment.driverAmount,
+        platformFee: payment.platformFee,
+      };
+    }
+
     if (payment.status !== 'IN_ESCROW') {
-      throw new BadRequestException('Payment is not in escrow');
+      throw new BadRequestException(
+        `Payment cannot be released from status ${payment.status}`,
+      );
     }
 
-    if (delivery?.status !== 'CONFIRMED') {
-      throw new BadRequestException('Delivery must be confirmed before releasing payment');
+    if (!delivery) {
+      throw new BadRequestException('Delivery is required before releasing payment');
     }
 
-    const deliveryRel = delivery as any;
-
-    // Financial Escrow Control: Check Store Manager signature
-    const storeManagerSignature = deliveryRel?.mission?.digitalSignatures?.find(
-      (s: any) => s.signatureType === 'STORE_MANAGER',
-    );
-    if (!storeManagerSignature) {
-      throw new BadRequestException('Store Manager digital signature required before payment release');
+    const terminalDeliveryStatuses = ['CONFIRMED', 'COMPLETED', 'DELIVERED'] as const;
+    if (!terminalDeliveryStatuses.includes(delivery.status as (typeof terminalDeliveryStatuses)[number])) {
+      throw new BadRequestException(
+        `Delivery must be CONFIRMED, COMPLETED, or DELIVERED before releasing payment (currently ${delivery.status})`,
+      );
     }
 
-    // Financial Escrow Control: Check temperature log verification
-    const temperatureLogs = deliveryRel?.mission?.temperature_logs || [];
-    if (temperatureLogs.length === 0) {
-      throw new BadRequestException('Temperature log must be uploaded and verified before payment release');
+    const dh = delivery.digital_handovers;
+    if (delivery.status === 'DELIVERED') {
+      const handoverOk =
+        dh?.status === 'COMPLETED' && !!(dh.signature?.trim() || dh.completedBy);
+      if (!handoverOk) {
+        throw new BadRequestException(
+          'Completed digital handover with store signature (or completedBy) is required before payment release',
+        );
+      }
     }
 
-    // Verify temperature log is complete (covers entire trip)
-    const mission = deliveryRel?.mission;
-    if (mission && mission.pickedUpAt && (mission as any).deliveredAt) {
-      const tripDuration = (mission as any).deliveredAt.getTime() - mission.pickedUpAt.getTime();
-      const logDuration = temperatureLogs.length > 0
-        ? temperatureLogs[temperatureLogs.length - 1].timestamp.getTime() - temperatureLogs[0].timestamp.getTime()
-        : 0;
-      
-      // Log should cover at least 80% of trip duration
-      if (logDuration < tripDuration * 0.8) {
-        throw new BadRequestException('Temperature log does not cover entire trip. Verification failed.');
+    const missions = order.missions ?? [];
+    const missionForColdChain =
+      missions.find((m) => (m.temperature_logs?.length ?? 0) > 0) ?? missions[0];
+    const temperatureLogs = missionForColdChain?.temperature_logs ?? [];
+
+    const buyerQrConfirmed =
+      (delivery.status === 'CONFIRMED' || delivery.status === 'COMPLETED') &&
+      !!(delivery.deliverySignature?.trim() || delivery.confirmedAt);
+
+    const hasColdChain =
+      temperatureLogs.length > 0 ||
+      (dh?.status === 'COMPLETED' &&
+        dh.temperature != null &&
+        Number.isFinite(dh.temperature));
+
+    if (!hasColdChain && !buyerQrConfirmed) {
+      throw new BadRequestException(
+        'Temperature monitoring is required: add mission temperature logs or complete handover with a temperature reading — unless the buyer has confirmed delivery (QR scan)',
+      );
+    }
+
+    if (
+      hasColdChain &&
+      temperatureLogs.length >= 2 &&
+      missionForColdChain?.pickedUpAt &&
+      missionForColdChain?.completedAt
+    ) {
+      const tripDuration =
+        missionForColdChain.completedAt.getTime() -
+        missionForColdChain.pickedUpAt.getTime();
+      if (tripDuration > 0) {
+        const logDuration =
+          temperatureLogs[temperatureLogs.length - 1].timestamp.getTime() -
+          temperatureLogs[0].timestamp.getTime();
+        if (logDuration < tripDuration * 0.8) {
+          throw new BadRequestException(
+            'Temperature log does not cover entire trip. Verification failed.',
+          );
+        }
       }
     }
 
     const now = new Date();
-    const splitDetails = payment.splitDetails as any;
+    const splitDetails = payment.splitDetails as {
+      farmer?: { releasedAt?: string | null };
+      driver?: { releasedAt?: string | null; userId?: string | null };
+      /** @deprecated legacy key — same shape as driver */
+      users?: { releasedAt?: string | null; userId?: string | null };
+      platform?: { releasedAt?: string | null };
+    };
 
-    // Update split details with release times
-    splitDetails.farmer.releasedAt = now.toISOString();
-    splitDetails.users.releasedAt = now.toISOString();
-    splitDetails.users.userId = delivery?.driverId;
-    splitDetails.platform.releasedAt = now.toISOString();
-
-    // Update payment status
-    await this.prisma.payments.update({
-      where: { id: payment.id },
-      data: {
-        status: 'RELEASED',
-        splitDetails,
-        releasedAt: now,
-        escrowReleaseDate: now,
-      },
-    });
-
-    // Credit wallets
-    const farmerOwnerId = getFarmerOwnerUserId(order);
-    await this.walletsService.creditWallet(
-      farmerOwnerId,
-      payment.farmerAmount,
-      'EARNED',
-      orderId,
-      `Payment from order ${order.orderNumber}`,
-    );
-
-    // Driver wallet
-    if (delivery?.driverId) {
-      await this.walletsService.creditWallet(
-        delivery.driverId,
-        payment.driverAmount,
-        'EARNED',
-        orderId,
-        `Delivery payment from order ${order.orderNumber}`,
-      );
+    if (splitDetails.farmer) {
+      splitDetails.farmer.releasedAt = now.toISOString();
+    }
+    const driverSlot = splitDetails.driver ?? splitDetails.users;
+    if (driverSlot) {
+      driverSlot.releasedAt = now.toISOString();
+      driverSlot.userId = delivery.driverId ?? null;
+    }
+    if (splitDetails.platform) {
+      splitDetails.platform.releasedAt = now.toISOString();
     }
 
-    // Update order status
-    await this.prisma.orders.update({
-      where: { id: orderId },
-      data: {
-        status: 'COMPLETED',
-        completedAt: now,
-      },
-    });
+    const farmerOwnerId = getFarmerOwnerUserId(order);
+    if (!farmerOwnerId) {
+      throw new BadRequestException('Cannot resolve farmer user for wallet credit');
+    }
 
-    return {
-      message: 'Payment released and distributed',
-      farmerAmount: payment.farmerAmount,
-      driverAmount: payment.driverAmount,
-      platformFee: payment.platformFee,
-    };
+    return this.prisma.$transaction(async (tx) => {
+      const updateResult = await tx.payments.updateMany({
+        where: { id: payment.id, status: 'IN_ESCROW' },
+        data: {
+          status: 'RELEASED',
+          splitDetails,
+          releasedAt: now,
+          escrowReleaseDate: now,
+        },
+      });
+
+      if (updateResult.count === 0) {
+        const fresh = await tx.payments.findUnique({
+          where: { id: payment.id },
+        });
+        if (fresh?.status === 'RELEASED') {
+          return {
+            message: 'Payment already released',
+            farmerAmount: fresh.farmerAmount,
+            driverAmount: fresh.driverAmount,
+            platformFee: fresh.platformFee,
+          };
+        }
+        throw new BadRequestException(
+          `Payment cannot be released from status ${fresh?.status ?? 'unknown'}`,
+        );
+      }
+
+      await this.walletsService.creditWalletTx(
+        tx,
+        farmerOwnerId,
+        payment.farmerAmount,
+        'EARNED',
+        orderId,
+        delivery.id,
+        `Payment from order ${order.orderNumber}`,
+      );
+
+      if (delivery.driverId) {
+        await this.walletsService.creditWalletTx(
+          tx,
+          delivery.driverId,
+          payment.driverAmount,
+          'EARNED',
+          orderId,
+          delivery.id,
+          `Delivery payment from order ${order.orderNumber}`,
+        );
+      }
+
+      if (
+        payment.platformFee > 0 &&
+        this.platformWalletUserId &&
+        Number.isFinite(payment.platformFee)
+      ) {
+        await this.walletsService.creditWalletTx(
+          tx,
+          this.platformWalletUserId,
+          payment.platformFee,
+          'PLATFORM_FEE',
+          orderId,
+          delivery.id,
+          `Platform fee from order ${order.orderNumber}`,
+        );
+      } else if (payment.platformFee > 0 && !this.platformWalletUserId) {
+        this.logger.warn(
+          `PLATFORM_WALLET_USER_ID is unset: platformFee ${payment.platformFee} EUR for order ${order.orderNumber} was not wallet-credited (farmer/driver still credited).`,
+        );
+      }
+
+      await tx.orders.update({
+        where: { id: orderId },
+        data: {
+          status: 'COMPLETED',
+          completedAt: now,
+          updatedAt: now,
+        },
+      });
+
+      return {
+        message: 'Payment released and distributed',
+        farmerAmount: payment.farmerAmount,
+        driverAmount: payment.driverAmount,
+        platformFee: payment.platformFee,
+      };
+    });
   }
 
   /**

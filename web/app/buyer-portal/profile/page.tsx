@@ -7,6 +7,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { MapPin, Plus, X, Building2, Users, Truck, Loader2 } from 'lucide-react';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { buyersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 
 interface DeliveryLocation {
   id: string;
@@ -40,13 +41,6 @@ interface AuthorizedPerson {
 }
 
 type TabType = 'general' | 'locations' | 'staff';
-
-function getApiErrorMessage(e: any): string {
-  const m = e?.response?.data?.message;
-  if (Array.isArray(m)) return m.join(' ');
-  if (typeof m === 'string') return m;
-  return e?.message || 'Request failed. Please try again.';
-}
 
 function showField(v: string) {
   return v?.trim() ? v : '—';
@@ -102,8 +96,8 @@ export default function BuyerProfilePage() {
     try {
       await persist();
       setIsEditing(false);
-    } catch (e) {
-      const msg = getApiErrorMessage(e);
+    } catch (e: unknown) {
+      const msg = apiErrorOrT(e, t, 'common.apiErrorGeneric');
       setSaveError(msg);
       alert(msg);
     }
@@ -120,13 +114,9 @@ export default function BuyerProfilePage() {
         setCompanyData(data.company);
         setDeliveryLocations((data.deliveryLocations || []) as DeliveryLocation[]);
         setAuthorizedPersonnel((data.authorizedPersonnel || []) as AuthorizedPerson[]);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!cancelled) {
-          const m = e.response?.data?.message;
-          const msg = Array.isArray(m) ? m.join(' ') : m;
-          setLoadError(
-            msg || 'Could not load company profile. Please try again.',
-          );
+          setLoadError(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -220,8 +210,8 @@ export default function BuyerProfilePage() {
           deliveryLocations: next,
           authorizedPersonnel,
         });
-      } catch (e) {
-        const msg = getApiErrorMessage(e);
+      } catch (e: unknown) {
+        const msg = apiErrorOrT(e, t, 'common.apiErrorGeneric');
         setSaveError(msg);
         alert(msg);
       }
@@ -254,8 +244,8 @@ export default function BuyerProfilePage() {
           deliveryLocations,
           authorizedPersonnel: next,
         });
-      } catch (e) {
-        const msg = getApiErrorMessage(e);
+      } catch (e: unknown) {
+        const msg = apiErrorOrT(e, t, 'common.apiErrorGeneric');
         setSaveError(msg);
         alert(msg);
       }
@@ -271,8 +261,8 @@ export default function BuyerProfilePage() {
         deliveryLocations: next,
         authorizedPersonnel,
       });
-    } catch (e) {
-      const msg = getApiErrorMessage(e);
+    } catch (e: unknown) {
+      const msg = apiErrorOrT(e, t, 'common.apiErrorGeneric');
       setSaveError(msg);
       alert(msg);
     }
@@ -287,8 +277,8 @@ export default function BuyerProfilePage() {
         deliveryLocations,
         authorizedPersonnel: next,
       });
-    } catch (e) {
-      const msg = getApiErrorMessage(e);
+    } catch (e: unknown) {
+      const msg = apiErrorOrT(e, t, 'common.apiErrorGeneric');
       setSaveError(msg);
       alert(msg);
     }

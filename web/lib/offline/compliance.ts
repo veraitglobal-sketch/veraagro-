@@ -49,7 +49,7 @@ export async function checkCompliance(
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Compliance check error:', error);
     throw error;
   }
@@ -79,7 +79,7 @@ export async function calculatePartnerDiscount(standardPrice: number): Promise<P
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Discount calculation error:', error);
     throw error;
   }

@@ -209,7 +209,6 @@ export default function GrowerPartnerOrdersScreen() {
                     fontSize: 11,
                     fontWeight: '600',
                     color: theme.colors.text.secondary,
-                    textTransform: 'capitalize' as const,
                   }}
                 >
                   {t(`supplier.b2bOrderStatus.${o.status}`, { defaultValue: o.status })}

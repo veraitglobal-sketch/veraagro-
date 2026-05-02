@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { partnerSignInHref } from '../../lib/post-login-redirect';
 import { useAuth } from '../../hooks/useAuth';
 
 function paramId(raw: string | string[] | undefined): string {
@@ -30,7 +31,7 @@ export default function B2bThreadDeepLinkScreen() {
       return;
     }
     if (!token) {
-      router.replace('/partner-login');
+      router.replace(partnerSignInHref() as any);
       return;
     }
 

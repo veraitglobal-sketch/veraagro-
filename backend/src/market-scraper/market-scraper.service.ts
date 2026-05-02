@@ -203,8 +203,13 @@ export class MarketScraperService {
       }
 
       this.logger.log(`Saved ${prices.length} scraped prices to database`);
-    } catch (error: any) {
-      if (error.code === 'P2001' || error.message?.includes('model') || error.message?.includes('does not exist')) {
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      const prismaCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : '';
+      if (prismaCode === 'P2001' || msg.includes('model') || msg.includes('does not exist')) {
         this.logger.warn('ScrapedPrice model not found. Add it to schema.prisma and run migration.');
         throw error;
       }
@@ -279,9 +284,13 @@ export class MarketScraperService {
           message: alert.message,
         },
       });
-    } catch (error: any) {
-      // If model doesn't exist, log warning but continue
-      if (error.code === 'P2001' || error.message?.includes('model')) {
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      const prismaCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : '';
+      if (prismaCode === 'P2001' || msg.includes('model')) {
         this.logger.warn('PriceAlert model not found. Alert sent but not persisted.');
       } else {
         throw error;

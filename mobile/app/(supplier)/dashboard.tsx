@@ -7,6 +7,7 @@ import { Bell } from 'lucide-react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { b2bSuppliersAPI, notificationsAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
+import { partnerSignInHref } from '../../lib/post-login-redirect';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 
 export default function SupplierDashboardScreen() {
@@ -149,7 +150,7 @@ export default function SupplierDashboardScreen() {
       <TouchableOpacity
         onPress={async () => {
           await logout();
-          router.replace('/partner-login');
+          router.replace(partnerSignInHref() as any);
         }}
         style={{ padding: 12 }}
       >

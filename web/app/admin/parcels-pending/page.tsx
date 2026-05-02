@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { parcelsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { MapPin, CheckCircle, Loader2 } from 'lucide-react';
@@ -26,8 +27,8 @@ export default function AdminParcelsPendingPage() {
       setError(null);
       const data = await parcelsAPI.getPending();
       setParcels(Array.isArray(data) ? data : []);
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load pending parcels');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       setParcels([]);
     } finally {
       setLoading(false);
@@ -40,8 +41,8 @@ export default function AdminParcelsPendingPage() {
     try {
       await parcelsAPI.approve(parcelId);
       await loadPending();
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to approve parcel');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setApprovingId(null);
     }

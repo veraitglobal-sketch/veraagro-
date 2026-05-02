@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { ShoppingCart, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
@@ -63,9 +64,9 @@ export default function OrdersManagementPage() {
       ]);
       setOrders(data);
       setFulfillmentEstates(Array.isArray(est) ? est : []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading orders:', err);
-      setError(err.message || t('adminPages.orderManagement.errLoad'));
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errLoad'));
     } finally {
       setLoading(false);
     }
@@ -79,9 +80,9 @@ export default function OrdersManagementPage() {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('updateStatus', err);
-      setError(err.response?.data?.message || err.message || t('adminPages.orderManagement.errUpdateStatus'));
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errUpdateStatus'));
     } finally {
       setSavingId(null);
     }
@@ -95,9 +96,9 @@ export default function OrdersManagementPage() {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o)),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('approveOrder', err);
-      setError(err.response?.data?.message || err.message || t('adminPages.orderManagement.errApprove'));
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errApprove'));
     } finally {
       setSavingId(null);
     }
@@ -117,11 +118,9 @@ export default function OrdersManagementPage() {
       );
       setBankModal(null);
       setBankTxId('');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('confirmBankPayment', err);
-      setError(
-        err.response?.data?.message || err.message || t('adminPages.orderManagement.errBank'),
-      );
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errBank'));
     } finally {
       setSavingId(null);
     }
@@ -143,10 +142,9 @@ export default function OrdersManagementPage() {
       setMissionOpsNotes('');
       setMissionChannel('');
       setMissionTargetKg('');
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message || err.message || t('adminPages.orderManagement.errMission'),
-      );
+      await loadOrders();
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errMission'));
     } finally {
       setMissionSaving(false);
     }
@@ -160,11 +158,9 @@ export default function OrdersManagementPage() {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o)),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('updateFulfillment', err);
-      setError(
-        err.response?.data?.message || err.message || t('adminPages.orderManagement.errFulfillment'),
-      );
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errFulfillment'));
     } finally {
       setSavingId(null);
     }
@@ -216,6 +212,7 @@ export default function OrdersManagementPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colAmount')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colFulfillingFarm')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colGrowerMission')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colLinkedMissions')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colStatus')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colChangeStatus')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colCreated')}</th>
@@ -278,6 +275,28 @@ export default function OrdersManagementPage() {
                         </button>
                         {!order.fulfillingEstateId && (
                           <p className="text-[10px] text-amber-700 mt-1">{t('adminPages.orderManagement.setFarmFirst')}</p>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 align-top max-w-[10rem]">
+                        {Array.isArray(order.missions) && order.missions.length > 0 ? (
+                          <ul className="space-y-1 text-xs">
+                            {order.missions.map((m: { id: string; missionNumber: string; status: string }) => (
+                              <li key={m.id}>
+                                <span className="font-mono text-gray-800">{m.missionNumber}</span>
+                                <span className="text-gray-400 mx-1">·</span>
+                                <a
+                                  href={`/grower/portal?missionId=${encodeURIComponent(m.id)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[#2D5A27] font-medium underline"
+                                >
+                                  {t('adminPages.orderManagement.portalMissionLink')}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <span className="text-xs text-gray-400">{t('common.emDash')}</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

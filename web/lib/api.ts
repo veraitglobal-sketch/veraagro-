@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { WEB_API_BASE, WEB_DEV_API_FALLBACK } from './api-base';
+import { axiosResponseStatus, isLikelyNetworkError } from './api-error';
 
 const API_URL = WEB_API_BASE;
 
@@ -118,23 +119,21 @@ export const inventoryAPI = {
       if (lng) params.lng = lng.toString();
       const response = await api.get('/inventory/available', { params });
       return response.data;
-    } catch (error: any) {
-      // Silently handle network errors - don't throw, just return empty array
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
-        // Only log in development mode
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
         if (process.env.NODE_ENV === 'development') {
           console.warn(`Backend not available at ${API_URL}. Products will not be displayed.`);
         }
-        return []; // Return empty array instead of throwing
-      } else if (error.response) {
-        // Server responded with error status - return empty array
-        console.warn('API Error:', error.response.status, error.response.data?.message);
-        return [];
-      } else {
-        // Other errors - return empty array
-        console.warn('Error loading products:', error.message);
         return [];
       }
+      const status = axiosResponseStatus(error);
+      if (status !== undefined) {
+        const data = (error as { response?: { data?: { message?: unknown } } }).response?.data;
+        console.warn('API Error:', status, data?.message);
+        return [];
+      }
+      console.warn('Error loading products:', error instanceof Error ? error.message : error);
+      return [];
     }
   },
 };
@@ -1504,7 +1503,7 @@ export const suppliersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading prospect:', error);
       throw error;
     }
@@ -1544,7 +1543,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading prospect:', error);
       throw error;
     }
@@ -1569,7 +1568,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading packaging guidelines:', error);
       throw error;
     }
@@ -1594,7 +1593,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading field management guide:', error);
       throw error;
     }
@@ -1619,7 +1618,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading protocol:', error);
       throw error;
     }
@@ -1644,7 +1643,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading certification requirements:', error);
       throw error;
     }
@@ -1669,7 +1668,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading mobile app guide:', error);
       throw error;
     }
@@ -1694,7 +1693,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading payment process guide:', error);
       throw error;
     }
@@ -1719,7 +1718,7 @@ export const growersAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading quality standards:', error);
       throw error;
     }
@@ -1748,7 +1747,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading prospect:', error);
       throw error;
     }
@@ -1773,7 +1772,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading transport operations guide:', error);
       throw error;
     }
@@ -1798,7 +1797,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading cold chain protocol:', error);
       throw error;
     }
@@ -1823,7 +1822,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading mobile app guide:', error);
       throw error;
     }
@@ -1848,7 +1847,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading payment process guide:', error);
       throw error;
     }
@@ -1873,7 +1872,7 @@ export const logisticsPartnerAPI = {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading GPS tracking standards:', error);
       throw error;
     }

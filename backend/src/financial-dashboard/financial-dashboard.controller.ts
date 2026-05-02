@@ -16,9 +16,10 @@ export class FinancialDashboardController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getFinancialDashboard(@Request() req: any) {
-    const userId = req.user.roles?.includes('ADMIN')
-      ? undefined
-      : req.user.id;
+    const isPlatformViewer =
+      Array.isArray(req.user.roles) &&
+      (req.user.roles.includes('ADMIN') || req.user.roles.includes('SUPER_ADMIN'));
+    const userId = isPlatformViewer ? undefined : req.user.id;
     return this.financialDashboardService.getFinancialDashboard(userId);
   }
 }

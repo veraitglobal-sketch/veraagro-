@@ -10,6 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { formatDateEn, formatDateTimeEn } from '@/lib/en-locale-dates';
@@ -49,8 +50,8 @@ export default function FarmDetailPage() {
       setError(null);
       const result = await getFarmDetailSplit(farmerId);
       setData(result);
-    } catch (err: any) {
-      setError(err.message || t('adminPages.farmDetail.loadFailed'));
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'adminPages.farmDetail.loadFailed'));
     } finally {
       setLoading(false);
     }

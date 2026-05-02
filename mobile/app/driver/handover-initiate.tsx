@@ -6,6 +6,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../lib/colors';
 import { digitalHandoverAPI } from '../../lib/api';
+import { apiErrorMessage } from '../../lib/api-error';
 import StepIndicator from '../../components/StepIndicator';
 
 /**
@@ -46,8 +47,8 @@ export default function HandoverInitiateScreen() {
       Alert.alert(t('handover.initSuccessTitle'), t('handover.initSuccessBody'), [
         { text: t('common.ok'), onPress: () => router.back() },
       ]);
-    } catch (error: any) {
-      Alert.alert(t('error'), error.response?.data?.message || t('handover.errInit'));
+    } catch (error: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(error, t('handover.errInit')));
     } finally {
       setLoading(false);
     }

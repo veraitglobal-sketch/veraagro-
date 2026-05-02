@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
 import { estatesAPI, Estate, parcelsAPI, Parcel } from '../../../lib/api';
+import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
 import type { PendingFieldEntry } from '../../../lib/offline-storage';
@@ -165,10 +166,10 @@ export function useFieldLogData() {
         ...parcelsForGps.map((p) => p.polygonCoordinates),
       ]);
       setGpsWarning(!isValid);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         t('producer.fieldLogAlerts.locationError'),
-        error.message || t('producer.fieldLogAlerts.locationErrorFallback'),
+        apiErrorMessage(error, t('producer.fieldLogAlerts.locationErrorFallback')),
       );
     } finally {
       setLoading(false);

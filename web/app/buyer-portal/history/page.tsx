@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { Clock, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
@@ -30,9 +31,9 @@ export default function OrderHistoryPage() {
         order.status === 'COMPLETED' || order.status === 'CANCELLED' || order.status === 'DELIVERED'
       );
       setOrders(historyOrders);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading order history:', err);
-      setError(err.message || 'Failed to load order history');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

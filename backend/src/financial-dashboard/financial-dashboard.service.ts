@@ -1,5 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { bio_vera_standards, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
+
+type PlatformStandardsSlice = Pick<
+  bio_vera_standards,
+  'qualityPremiumAmount' | 'crateCostPerUnit' | 'labelCostPerUnit'
+>;
+
+type BatchForPlatformMetrics = Prisma.batchesGetPayload<{
+  include: {
+    estates: true;
+    inventory: true;
+    order_items: {
+      include: {
+        orders: { include: { payments: true } };
+      };
+    };
+  };
+}>;
 
 /**
  * Financial Dashboard Service
@@ -8,28 +27,17 @@ import { PrismaService } from '../prisma/prisma.service';
  * - Cumulative margin profit (seed margin, transport margin)
  * - Group certification savings
  * - Packaging commissions
+ * - Where the schema supports it, lines use DB-backed values (Bio Vera standards,
+ *   inventory vs order lines, payments.platformFee, orders.totalAmount).
  */
 @Injectable()
 export class FinancialDashboardService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Get comprehensive financial dashboard data
-   */
-  async getFinancialDashboard(userId?: string) {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-
-    // Batches that actually reached the buyer / end of farm pipeline (`DELIVERED`). `QUALITY_VERIFIED` is pre‑shipment, not revenue-complete.
-    const batches = await this.prisma.batches.findMany({
+  private async loadDeliveredBatchesForPlatform() {
+    return this.prisma.batches.findMany({
       where: {
         status: { in: ['DELIVERED'] },
-        ...(userId && {
-          estates: {
-            ownerId: userId,
-          },
-        }),
       },
       include: {
         estates: {
@@ -37,6 +45,7 @@ export class FinancialDashboardService {
             users: true,
           },
         },
+        inventory: true,
         order_items: {
           include: {
             orders: {
@@ -48,6 +57,28 @@ export class FinancialDashboardService {
         },
       },
     });
+  }
+
+  /**
+   * Get comprehensive financial dashboard data
+   */
+  async getFinancialDashboard(userId?: string) {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    if (userId) {
+      return this.getGrowerFinancialDashboard(userId, startOfMonth, startOfYear);
+    }
+
+    const [batches, standardsRow] = await Promise.all([
+      this.loadDeliveredBatchesForPlatform(),
+      this.prisma.bio_vera_standards.findFirst({
+        where: { isActive: true },
+        orderBy: { updatedAt: 'desc' },
+      }),
+    ]);
+    const standards = standardsRow ?? this.defaultStandardsFallback();
 
     // Calculate metrics
     const metrics = {
@@ -62,38 +93,33 @@ export class FinancialDashboardService {
 
     // Process each batch
     for (const batch of batches) {
-      // Seed margin calculation
-      const seedMargin = await this.calculateSeedMargin(batch);
+      const seedMargin = this.calculateSeedMargin(batch);
       metrics.seedMargin += seedMargin;
 
-      // Transport margin
-      const transportMargin = await this.calculateTransportMargin(batch);
+      const transportMargin = this.calculateTransportMargin(batch);
       metrics.transportMargin += transportMargin;
 
-      // Packaging commissions
-      const packagingCommission = await this.calculatePackagingCommission(
+      const packagingCommission = this.calculatePackagingCommission(
         batch,
+        standards,
       );
       metrics.packagingCommissions += packagingCommission;
 
-      // Group certification savings
-      const certificationSavings = await this.calculateCertificationSavings(
-        batch,
-      );
+      const certificationSavings = this.calculateCertificationSavings(batch);
       metrics.groupCertificationSavings += certificationSavings;
 
-      // Insurance commissions
-      const insuranceCommission = await this.calculateInsuranceCommission(
-        batch,
-      );
+      const insuranceCommission = this.calculateInsuranceCommission(batch);
       metrics.insuranceCommissions += insuranceCommission;
 
-      // Vera bonus (paid to farmers, cost to platform)
-      const veraBonus = await this.calculateVeraBonus(batch);
+      const veraBonus = this.calculateVeraBonus(batch, standards);
       metrics.veraBonus += veraBonus;
     }
 
-    // Total profit = all margins - vera bonus
+    const platformFeeBookedTotal =
+      this.sumBookedPlatformFeesFromBatches(batches);
+
+    // Total profit = model margins (incl. packaging/Vera from standards) - vera bonus.
+    // `platformFeeBookedTotal` is reported separately — booked escrow share, not double-counted here.
     metrics.totalProfit =
       metrics.seedMargin +
       metrics.transportMargin +
@@ -105,14 +131,15 @@ export class FinancialDashboardService {
     // Get monthly and yearly breakdowns
     const monthlyBreakdown = await this.getMonthlyBreakdown(
       startOfMonth,
-      userId,
+      undefined,
     );
     const yearlyBreakdown = await this.getYearlyBreakdown(
       startOfYear,
-      userId,
+      undefined,
     );
 
     return {
+      dashboardRole: 'PLATFORM' as const,
       summary: {
         totalProfit: metrics.totalProfit,
         seedMargin: metrics.seedMargin,
@@ -122,6 +149,7 @@ export class FinancialDashboardService {
         insuranceCommissions: metrics.insuranceCommissions,
         veraBonusPaid: metrics.veraBonus,
         netProfit: metrics.totalProfit,
+        platformFeeBookedTotal,
       },
       monthly: monthlyBreakdown,
       yearly: yearlyBreakdown,
@@ -132,6 +160,7 @@ export class FinancialDashboardService {
           packagingCommissions: metrics.packagingCommissions,
           certificationSavings: metrics.groupCertificationSavings,
           insuranceCommissions: metrics.insuranceCommissions,
+          platformFeeBookedTotal,
         },
         byPeriod: {
           thisMonth: monthlyBreakdown,
@@ -142,67 +171,223 @@ export class FinancialDashboardService {
   }
 
   /**
+   * Grower-facing dashboard: sums `payments.farmerAmount` for orders where this user is the credited farmer
+   * (see `getFarmerOwnerUserId`). Does not show platform seed/insurance margins — those are admin/platform metrics.
+   */
+  private async getGrowerFinancialDashboard(
+    userId: string,
+    startOfMonth: Date,
+    startOfYear: Date,
+  ) {
+    const paymentRollup = await this.aggregateGrowerOrderPayments(userId);
+    const batches = await this.prisma.batches.findMany({
+      where: {
+        status: { in: ['DELIVERED'] },
+        estates: { ownerId: userId },
+      },
+    });
+    const standardsRow = await this.prisma.bio_vera_standards.findFirst({
+      where: { isActive: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    const standards = standardsRow ?? this.defaultStandardsFallback();
+
+    let veraBonusEstimate = 0;
+    for (const batch of batches) {
+      veraBonusEstimate += this.calculateVeraBonus(batch, standards);
+    }
+    const monthlyBreakdown = await this.getMonthlyBreakdown(
+      startOfMonth,
+      userId,
+    );
+    const yearlyBreakdown = await this.getYearlyBreakdown(startOfYear, userId);
+
+    return {
+      dashboardRole: 'GROWER' as const,
+      summary: {
+        farmerOrderShareTotal: paymentRollup.totalFarmerAmount,
+        farmerShareReleased: paymentRollup.released,
+        farmerShareInEscrow: paymentRollup.inEscrow,
+        farmerSharePending: paymentRollup.pendingOrOther,
+        estimatedVeraBonusDeliveredLots: veraBonusEstimate,
+        veraBonusPaid: veraBonusEstimate,
+        totalProfit: paymentRollup.released,
+        seedMargin: 0,
+        transportMargin: 0,
+        packagingCommissions: 0,
+        groupCertificationSavings: 0,
+        insuranceCommissions: 0,
+        netProfit: paymentRollup.released,
+      },
+      monthly: monthlyBreakdown,
+      yearly: yearlyBreakdown,
+      breakdown: {
+        bySource: {
+          farmerOrderShareTotal: paymentRollup.totalFarmerAmount,
+          farmerShareReleased: paymentRollup.released,
+          farmerShareInEscrow: paymentRollup.inEscrow,
+          farmerSharePending: paymentRollup.pendingOrOther,
+          estimatedVeraBonusDeliveredLots: veraBonusEstimate,
+        },
+        byPeriod: {
+          thisMonth: monthlyBreakdown,
+          thisYear: yearlyBreakdown,
+        },
+      },
+    };
+  }
+
+  private async aggregateGrowerOrderPayments(userId: string) {
+    const orders = await this.prisma.orders.findMany({
+      where: {
+        payments: { isNot: null },
+        OR: [
+          { fulfilling_estate: { ownerId: userId } },
+          { estates: { ownerId: userId } },
+        ],
+      },
+      include: {
+        payments: true,
+        fulfilling_estate: true,
+        estates: true,
+      },
+    });
+
+    let totalFarmerAmount = 0;
+    let released = 0;
+    let inEscrow = 0;
+    let pendingOrOther = 0;
+
+    for (const order of orders) {
+      if (getFarmerOwnerUserId(order) !== userId) {
+        continue;
+      }
+      const p = order.payments;
+      if (!p) {
+        continue;
+      }
+      totalFarmerAmount += p.farmerAmount;
+      if (p.status === 'RELEASED') {
+        released += p.farmerAmount;
+      } else if (p.status === 'IN_ESCROW') {
+        inEscrow += p.farmerAmount;
+      } else {
+        pendingOrOther += p.farmerAmount;
+      }
+    }
+
+    return { totalFarmerAmount, released, inEscrow, pendingOrOther };
+  }
+
+  private sumBookedPlatformFeesFromBatches(
+    batches: BatchForPlatformMetrics[],
+  ): number {
+    const seen = new Set<string>();
+    let sum = 0;
+    for (const batch of batches) {
+      for (const oi of batch.order_items ?? []) {
+        const o = oi.orders;
+        const p = o?.payments;
+        if (!o?.id || !p || seen.has(o.id)) {
+          continue;
+        }
+        seen.add(o.id);
+        sum += p.platformFee;
+      }
+    }
+    return sum;
+  }
+
+  private defaultStandardsFallback(): PlatformStandardsSlice {
+    return {
+      qualityPremiumAmount: 0.05,
+      crateCostPerUnit: 0.5,
+      labelCostPerUnit: 0.1,
+    };
+  }
+
+  /**
    * Calculate seed margin (difference between partner and standard price)
    */
-  private async calculateSeedMargin(batch: any): Promise<number> {
-    // In production, this would check seed_batches table
-    // For now, estimate based on typical margin
-    const estimatedMarginPerKg = 0.15; // €0.15 per kg
+  private calculateSeedMargin(batch: BatchForPlatformMetrics): number {
+    const inv = batch.inventory;
+    const items = batch.order_items ?? [];
+    if (inv && items.length > 0) {
+      let lineRevenue = 0;
+      for (const oi of items) {
+        lineRevenue += oi.unitPrice * oi.quantity;
+      }
+      const costBasis = inv.unitPrice * batch.quantity;
+      return Math.max(0, lineRevenue - costBasis);
+    }
+    const estimatedMarginPerKg = 0.15;
     return batch.quantity * estimatedMarginPerKg;
   }
 
   /**
    * Calculate transport margin
    */
-  private async calculateTransportMargin(batch: any): Promise<number> {
-    // Transport margin is difference between what buyer pays and actual cost
-    const estimatedMarginPerKg = 0.05; // €0.05 per kg
+  private calculateTransportMargin(batch: BatchForPlatformMetrics): number {
+    const estimatedMarginPerKg = 0.05;
     return batch.quantity * estimatedMarginPerKg;
   }
 
   /**
-   * Calculate packaging commissions
+   * Packaging commissions — from active Bio Vera standards (crate/label list).
    */
-  private async calculatePackagingCommission(batch: any): Promise<number> {
-    // Commission from selling Bio Vera packaging materials
-    const cratesUsed = Math.ceil(batch.quantity / 10); // 10kg per crate
-    const commissionPerCrate = 0.10; // €0.10 commission per crate
-    return cratesUsed * commissionPerCrate;
+  private calculatePackagingCommission(
+    batch: BatchForPlatformMetrics,
+    standards: PlatformStandardsSlice,
+  ): number {
+    const cratesUsed = Math.ceil(batch.quantity / 10);
+    const materialSpend =
+      cratesUsed * standards.crateCostPerUnit +
+      cratesUsed * standards.labelCostPerUnit;
+    return materialSpend * 0.15;
   }
 
   /**
    * Calculate group certification savings
    */
-  private async calculateCertificationSavings(batch: any): Promise<number> {
-      // Savings from group certification vs individual certification
-      const estate = batch.estates;
-      if (estate?.status === 'CERTIFIED') {
-      // Individual certification would cost ~€500 per estate
-      // Group certification costs ~€100 per estate (shared cost)
-      // Savings = €400 per certified estate
+  private calculateCertificationSavings(
+    batch: BatchForPlatformMetrics,
+  ): number {
+    const estate = batch.estates;
+    if (estate?.status === 'CERTIFIED') {
       return 400;
     }
     return 0;
   }
 
   /**
-   * Calculate insurance commissions
+   * Insurance commission proxy — 2% of linked order totals when present.
    */
-  private async calculateInsuranceCommission(batch: any): Promise<number> {
-    // Commission from insurance policies
-    const estimatedCommission = 0.02; // 2% of batch value
-    const estimatedBatchValue = batch.quantity * 8.5; // €8.50 per kg
-    return estimatedBatchValue * estimatedCommission;
+  private calculateInsuranceCommission(batch: BatchForPlatformMetrics): number {
+    const RATE = 0.02;
+    const seen = new Set<string>();
+    let fromOrders = 0;
+    for (const oi of batch.order_items ?? []) {
+      const o = oi.orders;
+      if (!o?.id || seen.has(o.id)) {
+        continue;
+      }
+      seen.add(o.id);
+      fromOrders += o.totalAmount * RATE;
+    }
+    if (fromOrders > 0) {
+      return fromOrders;
+    }
+    return batch.quantity * 8.5 * RATE;
   }
 
   /**
-   * Calculate Vera bonus (cost to platform, benefit to farmer)
+   * Calculate Vera bonus (cost to platform) from standards quality premium × kg.
    */
-  private async calculateVeraBonus(batch: any): Promise<number> {
-    // Vera bonus is paid to farmers for compliance
-    // This is a cost to the platform
-    const estimatedBonus = 0.05; // €0.05 per kg
-    return batch.quantity * estimatedBonus;
+  private calculateVeraBonus(
+    batch: { quantity: number },
+    standards: PlatformStandardsSlice,
+  ): number {
+    return batch.quantity * standards.qualityPremiumAmount;
   }
 
   /**

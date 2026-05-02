@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
 const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
@@ -213,9 +214,7 @@ export default function LogisticsMissionsPage() {
       );
       await reloadMissions();
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setError(typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : 'Could not claim mission');
+      setError(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setClaiming(null);
     }
@@ -233,11 +232,7 @@ export default function LogisticsMissionsPage() {
       setDriverFeedback(t('logisticsPages.missionsAssignDriverUpdated'));
       await reloadMissions();
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setError(
-        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logisticsPages.missionsAssignDriverErr'),
-      );
+      setError(apiErrorOrT(e, t, 'logisticsPages.missionsAssignDriverErr'));
     } finally {
       setSavingDriverForMission(null);
     }
@@ -256,11 +251,7 @@ export default function LogisticsMissionsPage() {
       setDriverFeedback(t('logisticsPages.missionsLifecycleOk'));
       await reloadMissions();
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setError(
-        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logisticsPages.missionsLifecycleErr'),
-      );
+      setError(apiErrorOrT(e, t, 'logisticsPages.missionsLifecycleErr'));
     } finally {
       setLifecycleBusy(null);
     }

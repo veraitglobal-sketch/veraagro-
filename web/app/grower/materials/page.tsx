@@ -229,9 +229,9 @@ export default function GrowerMaterialsPage() {
           const errJson = await typesRes.json().catch(() => ({}));
           setTypesError(messageFromApiPayload(errJson) || t('growerPages.materialsErrTypesLoad'));
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error fetching data:', err);
-        setError(t('growerPages.materialsErrFetchFailed'));
+        setError(growerApiErrorOrT(err, t, 'growerPages.materialsErrFetchFailed'));
       } finally {
         setLoading(false);
       }

@@ -14,6 +14,7 @@ import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
+import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
 
 export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce', 'Other'];
 
@@ -174,12 +175,8 @@ export function useHarvestData() {
         await harvestAnnouncementsAPI.create(payload);
         Alert.alert(t('alerts.success'), t('producer.harvest.planSent'));
         resetAfterSuccess();
-      } catch (e: any) {
-        const net =
-          e?.code === 'ERR_NETWORK' ||
-          e?.code === 'ECONNREFUSED' ||
-          (typeof e?.message === 'string' && e.message.includes('Network Error'));
-        if (net) {
+      } catch (e: unknown) {
+        if (isLikelyNetworkError(e)) {
           try {
             await offlineStorage.savePendingHarvestPlan({ payload });
             void syncService.getSyncStatus();
@@ -190,9 +187,7 @@ export function useHarvestData() {
             // fall through
           }
         }
-        const raw = e?.response?.data?.message || e?.message || t('producer.harvest.saveFailed');
-        const msg = Array.isArray(raw) ? raw.join(' ') : String(raw);
-        Alert.alert(t('error'), msg);
+        Alert.alert(t('error'), apiErrorMessage(e, t('producer.harvest.saveFailed')));
       } finally {
         setLoading(false);
       }

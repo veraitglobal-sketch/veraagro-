@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
@@ -196,7 +197,7 @@ export default function LogisticsHandoverReceiverPage() {
         URL.revokeObjectURL(url);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('logisticsPages.receiverErrPdf'));
+      setError(apiErrorOrT(err, t, 'logisticsPages.receiverErrPdf'));
     } finally {
       setPdfOpening(false);
     }
@@ -274,7 +275,7 @@ export default function LogisticsHandoverReceiverPage() {
         refreshMissions();
       }, 4000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('logisticsPages.receiverErrSave'));
+      setError(apiErrorOrT(err, t, 'logisticsPages.receiverErrSave'));
     } finally {
       setSubmitting(false);
     }

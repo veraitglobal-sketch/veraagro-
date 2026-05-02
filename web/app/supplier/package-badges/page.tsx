@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { packageBadgesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 /**
  * MATERIAL_SUPPLIER: when a grower returns a printed badge tree, assign it to another grower (same serials, no re-print).
  * Grower user id = target account UUID (from admin or grower profile).
  */
 export default function SupplierPackageBadgesPage() {
+  const { t } = useTranslation();
   const [rootSerial, setRootSerial] = useState('');
   const [newGrowerUserId, setNewGrowerUserId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,8 +36,7 @@ export default function SupplierPackageBadgesPage() {
       setRootSerial('');
       setNewGrowerUserId('');
     } catch (e: unknown) {
-      const raw = (e as { response?: { data?: { message?: unknown } } })?.response?.data?.message;
-      setErr(Array.isArray(raw) ? raw.join(' ') : typeof raw === 'string' ? raw : 'Transfer failed');
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

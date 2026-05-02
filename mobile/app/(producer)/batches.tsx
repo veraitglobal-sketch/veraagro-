@@ -9,6 +9,7 @@ import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
 import { useAppLocaleTag } from '../../lib/date-locale';
+import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
 /**
  * Batches Screen
@@ -65,23 +66,19 @@ export default function BatchesScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PACKED': return theme.colors.accent;
+      case 'PACKED':
+      case 'QUALITY_VERIFIED':
+        return theme.colors.accent;
       case 'IN_HUB': return theme.colors.warning;
       case 'IN_TRANSIT': return theme.colors.primary;
       case 'DELIVERED': return theme.colors.success || theme.colors.primary;
+      case 'RETURNED': return theme.colors.warning;
+      case 'EXPIRED': return theme.colors.text.secondary;
       default: return theme.colors.text.secondary;
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'PACKED': return t('producer.batches.statusPacked');
-      case 'IN_HUB': return t('producer.batches.statusInHub');
-      case 'IN_TRANSIT': return t('producer.batches.statusInTransit');
-      case 'DELIVERED': return t('producer.batches.statusDelivered');
-      default: return status;
-    }
-  };
+  const getStatusLabel = (status: string) => getBatchStatusLabel(t, status);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>

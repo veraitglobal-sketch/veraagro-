@@ -9,6 +9,7 @@ import {
   type LabelRollRow,
 } from '../../../lib/api';
 import { assertDataUrlWithinSize, imageUriToJpegDataUrl } from '../../../lib/image-data-url';
+import { apiErrorMessage } from '../../../lib/api-error';
 
 export const COMPLIANCE_PHOTO_TYPES = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
 export type CompliancePhotoType = (typeof COMPLIANCE_PHOTO_TYPES)[number];
@@ -198,10 +199,8 @@ export function useMaterialCompliance() {
         stickerRollId: stickerRollId.trim(),
       });
       Alert.alert(t('alerts.success'), t('producer.compliance.batchForm.stickerVerified'));
-    } catch (e: any) {
-      const msg = e?.response?.data?.message;
-      const text = Array.isArray(msg) ? msg.join(' ') : msg || t('producer.compliance.batchForm.errors.verifyFailed');
-      Alert.alert(t('error'), String(text));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('producer.compliance.batchForm.errors.verifyFailed')));
     } finally {
       setVerifying(false);
     }
@@ -244,10 +243,8 @@ export function useMaterialCompliance() {
       setPhotos({});
       setShowReplaceForm(false);
       await fetchStatus(selectedBatchId);
-    } catch (e: any) {
-      const msg = e?.response?.data?.message;
-      const text = Array.isArray(msg) ? msg.join(' ') : msg || t('producer.compliance.batchForm.errors.saveFailed');
-      Alert.alert(t('error'), String(text));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('producer.compliance.batchForm.errors.saveFailed')));
     } finally {
       setSaving(false);
     }

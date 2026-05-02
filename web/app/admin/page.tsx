@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { adminAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -77,9 +78,9 @@ export default function AdminDashboard() {
       ]);
       setStatistics(stats);
       setRecentActivities(activities);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading dashboard data:', err);
-      setError(err.message || t('adminPages.dashboard.loadFailed'));
+      setError(apiErrorOrT(err, t, 'adminPages.dashboard.loadFailed'));
     } finally {
       setLoading(false);
     }

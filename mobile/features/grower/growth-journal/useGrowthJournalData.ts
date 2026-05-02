@@ -13,6 +13,7 @@ import {
 import { getOrCreateDeviceId } from '../../../lib/device-id';
 import { sha256HexFromImageUri } from '../../../lib/image-hash';
 import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from '../../../lib/image-data-url';
+import { apiErrorMessage } from '../../../lib/api-error';
 
 const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
 /** Match server default PLANTING_PROGRESS_NOTES_MIN_LEN */
@@ -235,9 +236,9 @@ export function useGrowthJournalData() {
         setAddModalVisible(false);
         await loadLogs();
         Alert.alert(t('producer.growthJournalAlerts.savedTitle'), t('producer.growthJournalAlerts.savedBody'));
-      } catch (e: any) {
-        const msg = e?.response?.data?.message || e?.message || t('producer.growthJournalAlerts.saveFailed');
-        Alert.alert(t('error'), String(msg));
+      } catch (e: unknown) {
+        const msg = apiErrorMessage(e, t('producer.growthJournalAlerts.saveFailed'));
+        Alert.alert(t('error'), msg);
         console.error('Growth log submit:', e);
       } finally {
         setUploading(false);

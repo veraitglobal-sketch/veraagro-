@@ -14,6 +14,7 @@ import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useWalletData } from './useWalletData';
 import { WalletBalanceCard } from './WalletBalanceCard';
 import { TransactionItem } from './TransactionItem';
+import GrowerOrdersFinancialSection from '../dashboard/GrowerOrdersFinancialSection';
 
 /**
  * Wallet – prikaz stanja i transakcija (growers).
@@ -24,7 +25,7 @@ export default function WalletScreen() {
   const dateLocale = useAppLocaleTag();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
-  const { wallet, transactions, loading } = useWalletData();
+  const { wallet, transactions, ordersFinancial, loading } = useWalletData();
 
   if (loading) {
     return (
@@ -92,6 +93,8 @@ export default function WalletScreen() {
             availableBalance={wallet?.availableBalance ?? 0}
             pendingBalance={wallet?.pendingBalance ?? 0}
           />
+
+          <GrowerOrdersFinancialSection data={ordersFinancial} />
 
           {wallet && (
             <View

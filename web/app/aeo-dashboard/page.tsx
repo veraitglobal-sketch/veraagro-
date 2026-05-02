@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 interface VehicleData {
   vehicle: {
@@ -74,6 +76,7 @@ interface VehicleData {
 }
 
 export default function AeoDashboardPage() {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const [vehicleId, setVehicleId] = useState('');
   const [data, setData] = useState<VehicleData | null>(null);
@@ -109,8 +112,8 @@ export default function AeoDashboardPage() {
 
       const vehicleData = await response.json();
       setData(vehicleData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load vehicle data');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

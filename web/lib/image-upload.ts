@@ -50,7 +50,7 @@ export async function uploadImage(
     });
 
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error uploading image:', error);
     throw error;
   }

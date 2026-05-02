@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { colors } from '../../lib/colors';
 import { theme } from '../../lib/theme';
 import { digitalHandoverAPI } from '../../lib/api';
+import { apiErrorMessage } from '../../lib/api-error';
 import StepIndicator from '../../components/StepIndicator';
 
 const PHOTO_COUNT = 4;
@@ -91,8 +92,8 @@ export default function HandoverCompleteScreen() {
         visualCheck === 'DAMAGED' ? t('handover.doneDamaged') : t('handover.doneOk'),
         [{ text: t('common.ok'), onPress: () => router.back() }],
       );
-    } catch (error: any) {
-      Alert.alert(t('error'), error?.response?.data?.message || t('handover.errGeneric'));
+    } catch (error: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(error, t('handover.errGeneric')));
     } finally {
       setLoading(false);
     }

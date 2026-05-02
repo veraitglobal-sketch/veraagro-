@@ -245,6 +245,16 @@ export class OrdersService {
             },
           },
         },
+        missions: {
+          select: {
+            id: true,
+            missionNumber: true,
+            status: true,
+            growerId: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -286,10 +296,9 @@ export class OrdersService {
     });
     try {
       await this.invoicesService.generateInvoice(orderId);
-    } catch (e: any) {
-      this.logger.error(
-        `generateInvoice after bank payment failed for ${orderId}: ${e?.message || e}`,
-      );
+    } catch (e: unknown) {
+      const detail = e instanceof Error ? e.message : String(e);
+      this.logger.error(`generateInvoice after bank payment failed for ${orderId}: ${detail}`);
     }
     const withRelations = await this.prisma.orders.findUnique({
       where: { id: orderId },
@@ -434,10 +443,9 @@ export class OrdersService {
 
     try {
       await this.invoicesService.generateInvoice(orderId);
-    } catch (e: any) {
-      this.logger.error(
-        `generateInvoice after buyer payment failed for ${orderId}: ${e?.message || e}`,
-      );
+    } catch (e: unknown) {
+      const detail = e instanceof Error ? e.message : String(e);
+      this.logger.error(`generateInvoice after buyer payment failed for ${orderId}: ${detail}`);
     }
 
     return payment;

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyerTradePanelAPI, inventoryAPI, marketPricesAPI, digitalPassportsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import PriceMatrixTable from '@/components/PriceMatrixTable';
 import {
   X,
@@ -134,7 +135,7 @@ export default function TradePanelPage() {
         console.warn('Forecast API error (optional):', err);
         setForecast(null);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading trade panel data:', err);
     } finally {
       setLoading(false);
@@ -153,8 +154,8 @@ export default function TradePanelPage() {
         requestedDeliveryDate: '',
         lockPrice: false,
       });
-    } catch (err: any) {
-      alert(err.message || 'Failed to create pre-order');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -451,10 +452,8 @@ export default function TradePanelPage() {
 
       alert(result.message || 'Order created successfully!');
       loadData(); // Refresh data
-    } catch (err: any) {
-      const body = err.response?.data?.message;
-      const msg = Array.isArray(body) ? body.join(' ') : body || err.message || 'Failed to create order';
-      alert(msg);
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -509,7 +508,7 @@ export default function TradePanelPage() {
           console.warn('Could not load passport:', err);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading product details:', err);
     }
   };
@@ -541,8 +540,8 @@ export default function TradePanelPage() {
         alert(`New price set: €${newPrice.toFixed(2)}`);
         loadData(); // Refresh data
       }
-    } catch (err: any) {
-      alert(err.message || 'Failed to update price');
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

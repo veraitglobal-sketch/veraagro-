@@ -23,6 +23,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { invoicesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import {
   getBuyerInvoiceDisplayStatus,
   getOrderPayment,
@@ -74,9 +75,9 @@ export default function InvoicesPage() {
       }));
       
       setInvoices(transformed);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading invoices:', err);
-      setError(err.message || 'Failed to load invoices');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -116,9 +117,9 @@ export default function InvoicesPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error downloading invoice:', err);
-      alert('Failed to download invoice');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -128,9 +129,9 @@ export default function InvoicesPage() {
       await invoicesAPI.sendEmail(invoice.id, email || undefined);
       alert(`Invoice ${invoice.invoiceNumber} sent successfully`);
       loadInvoices(); // Refresh to update sent status
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending invoice:', err);
-      alert('Failed to send invoice');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -145,9 +146,9 @@ export default function InvoicesPage() {
         amount: order?.totalAmount,
         status: getBuyerInvoiceDisplayStatus(order),
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading invoice details:', err);
-      alert('Failed to load invoice details');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

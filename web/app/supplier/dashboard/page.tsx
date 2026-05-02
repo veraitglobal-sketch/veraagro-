@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import AuthGuard from '@/components/AuthGuard';
 import AssignedAgentCard from '@/components/AssignedAgentCard';
 import { b2bSupplierPortalAPI, usersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import type { CommercialAgentPublic } from '@/lib/auth';
 import SupplierStorefrontSection from '../SupplierStorefrontSection';
 
@@ -59,8 +60,8 @@ export default function SupplierDashboardPage() {
         } else {
           setAssignedAgent(null);
         }
-      } catch (e) {
-        setErr(e instanceof Error ? e.message : t('supplier.dashboard.loadError'));
+      } catch (e: unknown) {
+        setErr(apiErrorOrT(e, t, 'supplier.dashboard.loadError'));
       }
     })();
   }, [t]);

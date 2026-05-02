@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { useState, useEffect } from 'react';
 import { estatesAPI, Estate } from '../../../lib/api';
+import { partnerSignInHref } from '../../../lib/post-login-redirect';
 
 /**
  * Profile / Settings Screen
@@ -43,7 +44,7 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     await logout();
     // Root `replace('/')` resolves to `index` and fails from nested (tabs) navigator — go to root login screen
-    router.replace('/partner-login');
+    router.replace(partnerSignInHref() as any);
   };
 
   return (

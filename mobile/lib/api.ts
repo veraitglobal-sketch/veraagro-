@@ -2,6 +2,7 @@ import axios, { type AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './api-url';
 import { notifyAuthUnauthorized } from './auth-events';
+import { apiErrorMessage, axiosResponseStatus, isLikelyNetworkError } from './api-error';
 
 /** 401 on these routes is credential/registration UX, not an expired JWT. */
 export function isAuthNegotiationUrl(url: string | undefined): boolean {
@@ -177,19 +178,19 @@ export const inventoryAPI = {
       const response = await api.get('/inventory/available', { params });
       // Return empty array if no data instead of throwing error
       return Array.isArray(response.data) ? response.data : [];
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If it's a network error, return empty array silently (backend not available)
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty products list');
         return [];
       }
       // If it's a 404, endpoint doesn't exist yet
-      if (error.response?.status === 404) {
+      if (axiosResponseStatus(error) === 404) {
         console.warn('Endpoint not found, returning empty products list');
         return [];
       }
       // For other errors, log but still return empty array to prevent UI errors
-      console.warn('Error fetching products:', error.message || error);
+      console.warn('Error fetching products:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -202,19 +203,19 @@ export const estatesAPI = {
     try {
       const response = await api.get('/estates/public/all');
       return response.data || [];
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If it's a network error, return empty array silently (backend not available)
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty estates list');
         return [];
       }
       // If it's a 404, endpoint doesn't exist yet
-      if (error.response?.status === 404) {
+      if (axiosResponseStatus(error) === 404) {
         console.warn('Endpoint not found, returning empty estates list');
         return [];
       }
       // For other errors, log but still return empty array to prevent UI errors
-      console.warn('Error fetching estates:', error.message || error);
+      console.warn('Error fetching estates:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -329,19 +330,19 @@ export const retailLocationsAPI = {
       if (country) params.country = country;
       const response = await api.get('/distributors/public/map', { params });
       return response.data || [];
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If it's a network error, return empty array silently (backend not available)
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty retail locations list');
         return [];
       }
       // If it's a 404, endpoint doesn't exist yet
-      if (error.response?.status === 404) {
+      if (axiosResponseStatus(error) === 404) {
         console.warn('Endpoint not found, returning empty retail locations list');
         return [];
       }
       // For other errors, log but still return empty array to prevent UI errors
-      console.warn('Error fetching retail locations:', error.message || error);
+      console.warn('Error fetching retail locations:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -454,12 +455,12 @@ export const fieldEntriesAPI = {
       const params = farmId ? { farmId } : {};
       const response = await api.get('/field-entries', { params });
       return response.data || [];
-    } catch (error: any) {
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty field entries list');
         return [];
       }
-      console.warn('Error fetching field entries:', error.message || error);
+      console.warn('Error fetching field entries:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -527,12 +528,12 @@ export const growthLogsAPI = {
       const raw = response.data;
       if (!Array.isArray(raw)) return [];
       return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
-    } catch (error: any) {
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty growth logs list');
         return [];
       }
-      console.warn('Error fetching growth logs:', error.message || error);
+      console.warn('Error fetching growth logs:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -542,12 +543,12 @@ export const growthLogsAPI = {
       const raw = response.data;
       if (!Array.isArray(raw)) return [];
       return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
-    } catch (error: any) {
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty growth logs list');
         return [];
       }
-      console.warn('Error fetching growth logs:', error.message || error);
+      console.warn('Error fetching growth logs:', error instanceof Error ? error.message : error);
       return [];
     }
   },
@@ -710,8 +711,8 @@ export const passportAPI = {
       const id = encodeURIComponent(batchId);
       const response = await axios.get(`${API_URL}/qr/verify/${id}`);
       return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
         throw new Error('Batch not found. Invalid QR code.');
       }
       throw error;
@@ -737,8 +738,8 @@ export const batchesAPI = {
       // Public endpoint - no auth token needed
       const response = await axios.get(`${API_URL}/batches/${batchId}/availability`);
       return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
         throw new Error('Batch not found.');
       }
       throw error;
@@ -807,8 +808,8 @@ export const qualityEntryAPI = {
     try {
       const response = await api.get(`/quality-entry/batch/${batchId}`);
       return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
         return null;
       }
       throw error;
@@ -962,6 +963,31 @@ export const missionsAPI = {
     step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
   ): Promise<Mission> => {
     const response = await api.patch(`/missions/${encodeURIComponent(missionId)}/lifecycle`, { step });
+    return response.data;
+  },
+};
+
+/** Same contract as web `GET /financial-dashboard` (grower vs platform by JWT roles). */
+export interface FinancialDashboardApiResponse {
+  dashboardRole?: 'PLATFORM' | 'GROWER';
+  summary?: {
+    farmerOrderShareTotal?: number;
+    farmerShareReleased?: number;
+    farmerShareInEscrow?: number;
+    farmerSharePending?: number;
+    estimatedVeraBonusDeliveredLots?: number;
+    veraBonusPaid?: number;
+    totalProfit?: number;
+    seedMargin?: number;
+    [key: string]: unknown;
+  };
+  monthly?: { totalBatches?: number; totalQuantity?: number; period?: string };
+  yearly?: { totalBatches?: number; totalQuantity?: number; period?: string };
+}
+
+export const financialDashboardAPI = {
+  getDashboard: async (): Promise<FinancialDashboardApiResponse> => {
+    const response = await api.get('/financial-dashboard');
     return response.data;
   },
 };
@@ -1186,9 +1212,9 @@ export const materialsAPI = {
         phiDays: row.phiDays != null ? Number(row.phiDays) : undefined,
         mrlLimit: row.mrlLimit != null ? Number(row.mrlLimit) : undefined,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If backend not available, return empty array
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+      if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty whitelist');
         return [];
       }
@@ -1216,26 +1242,24 @@ export const seedsAPI = {
     try {
       const response = await api.get(`/seeds/validate/${encodeURIComponent(serialNumber)}`);
       return response.data;
-    } catch (error: any) {
-      // Handle network errors
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
         throw new Error('Cannot connect to server. Please check your internet connection.');
       }
-      // Handle API errors
-      if (error.response?.status === 404) {
+      const status = axiosResponseStatus(error);
+      if (status === 404) {
         throw new Error('Seed not found. Please check the serial number.');
       }
-      if (error.response?.status === 400) {
-        throw new Error(error.response.data?.message || 'Seed is already used or expired');
+      if (status === 400) {
+        throw new Error(apiErrorMessage(error, 'Seed is already used or expired'));
       }
-      if (error.response?.status === 403) {
-        throw new Error(error.response.data?.message || 'This seed is not assigned to you');
+      if (status === 403) {
+        throw new Error(apiErrorMessage(error, 'This seed is not assigned to you'));
       }
-      if (error.response?.status === 401) {
+      if (status === 401) {
         throw new Error('Session expired. Please login again.');
       }
-      // Generic error
-      throw new Error(error.response?.data?.message || error.message || 'Validation failed');
+      throw new Error(apiErrorMessage(error, 'Validation failed'));
     }
   },
   getAvailable: async () => {

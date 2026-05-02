@@ -60,7 +60,7 @@ export default function FarmerProfilePage() {
       }
     } catch (loadErr: unknown) {
       console.error('Error loading profile:', loadErr);
-      showError(t('grower.profilePage.alertLoadFailed'));
+      showError(growerApiErrorOrT(loadErr, t, 'grower.profilePage.alertLoadFailed'));
     } finally {
       if (!skip) setLoading(false);
     }

@@ -327,6 +327,17 @@
         "syncNow": "Send now",
         "openLog": "Open entry log"
       },
+      "financialOrders": {
+        "title": "Financial overview",
+        "subtitle": "Your share from buyer orders (escrow). Lot timing in Mission tracker.",
+        "shareTotal": "Your share (all orders)",
+        "released": "Released to you",
+        "inEscrow": "In escrow",
+        "pending": "Pending / other",
+        "estimatedVeraBonus": "Estimated Vera bonus (delivered lots)",
+        "veraFootnote": "Model from delivered batch weight — actual payout follows compliance rules.",
+        "platformAdminHint": "This account has an admin role, so the API returned the platform dashboard. Use a grower-only login to see your order share here, or use the web admin finance screen."
+      },
       "farmer": {
         "blockTitle": "On the farm — follow this order",
         "blockHint": "1–3: steps, parcels, plantings · 4 Field log · 5 Materials · 6–8: allowed, banned, certificates.",
@@ -821,6 +832,9 @@
       "statusInHub": "In hub",
       "statusInTransit": "In transit",
       "statusDelivered": "Delivered",
+      "statusReturned": "Returned",
+      "statusExpired": "Expired",
+      "statusQualityVerified": "Quality verified",
       "emptyList": "No batches",
       "traceabilityTitle": "Traceability",
       "transportCarrierLabel": "Transport",
@@ -869,6 +883,8 @@
       "statusConfirmed": "Confirmed",
       "statusDelivered": "Delivered",
       "financialStatus": "Financial status",
+      "financialReleased": "Released (wallet)",
+      "financialInEscrow": "In escrow",
       "financialApiStatusLine": "Status: {{status}}",
       "timelineTitle": "Timeline",
       "statusFieldLabel": "Status",

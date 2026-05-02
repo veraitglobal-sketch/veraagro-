@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown } from 'lucide-react';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
@@ -35,14 +36,20 @@ export default function DeliveriesPage() {
       setError(null);
       const data = await deliveriesAPI.getBuyerDeliveries(statusFilter !== 'all' ? statusFilter : undefined);
       setDeliveries(Array.isArray(data) ? data : []);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const e = err as {
+        code?: string;
+        message?: string;
+        isAxiosError?: boolean;
+        response?: unknown;
+      };
       const isNetworkError =
-        err?.code === 'ERR_NETWORK' ||
-        err?.message === 'Network Error' ||
-        (err?.isAxiosError && !err?.response);
+        e?.code === 'ERR_NETWORK' ||
+        e?.message === 'Network Error' ||
+        (Boolean(e?.isAxiosError) && !e?.response);
       const message = isNetworkError
         ? 'Cannot reach server. Check your connection and that the backend is running (e.g. NEXT_PUBLIC_API_URL).'
-        : err?.response?.data?.message || err?.message || 'Failed to load deliveries';
+        : apiErrorOrT(err, t, 'common.apiErrorGeneric');
       setError(message);
       setDeliveries([]);
     } finally {
@@ -104,9 +111,9 @@ export default function DeliveriesPage() {
       await deliveriesAPI.confirmDelivery(qrCode);
       alert('Delivery confirmed successfully! Payment has been released.');
       loadDeliveries();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error confirming delivery:', err);
-      alert(err.message || 'Failed to confirm delivery');
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -119,9 +126,8 @@ export default function DeliveriesPage() {
       a.download = `waybill-${waybillNumber || waybillId}.pdf`;
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to download waybill';
-      alert(msg);
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     }
   };
 

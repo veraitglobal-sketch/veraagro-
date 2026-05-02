@@ -15,6 +15,7 @@ import {
   Sprout,
 } from 'lucide-react-native';
 import { inventoryAPI, Product } from '../lib/api';
+import { apiErrorMessage } from '../lib/api-error';
 import { theme } from '../lib/theme';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import ProductCard from '../components/ProductCard';
@@ -55,8 +56,8 @@ export default function ProductsPage() {
       setError(null);
       const data = await inventoryAPI.getAvailableProducts();
       setProducts(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load products');
+    } catch (err: unknown) {
+      setError(apiErrorMessage(err, t('marketplace.errors.loadFailed')));
       console.error('Error loading products:', err);
     } finally {
       setLoading(false);

@@ -328,6 +328,17 @@
         "syncNow": "Pošalji sad",
         "openLog": "Otvori Dnevnik unosa"
       },
+      "financialOrders": {
+        "title": "Finansijski pregled",
+        "subtitle": "Vaš deo od kupaca (eskrou). Vremena po partiji — u Praćenju zadataka.",
+        "shareTotal": "Vaš deo (sve porudžbine)",
+        "released": "Isplaćeno vama",
+        "inEscrow": "U eskrouu",
+        "pending": "Na čekanju / ostalo",
+        "estimatedVeraBonus": "Procenjeni Vera bonus (isporučeni lotovi)",
+        "veraFootnote": "Model po kg isporučene partije — stvarna isplata po pravilima usklađenosti.",
+        "platformAdminHint": "Ovaj nalog ima admin ulogu — API je vratio operatorski pregled. Za udio iz porudžbina koristite nalog samo kao proizvođač ili admin finansije na webu."
+      },
       "farmer": {
         "blockTitle": "Na farmi — redosled",
         "blockHint": "1–3: koraci, parcele, zasadi · 4 Dnevnik · 5 Materijali · 6–8: dozvoljeno, zabranjeno, sertifikati.",
@@ -823,6 +834,9 @@
       "statusInHub": "U hub-u",
       "statusInTransit": "U prevozu",
       "statusDelivered": "Isporučeno",
+      "statusReturned": "Vraćeno",
+      "statusExpired": "Isteklo",
+      "statusQualityVerified": "Kvalitet potvrđen",
       "emptyList": "Nema partija",
       "traceabilityTitle": "Pratljivost",
       "transportCarrierLabel": "Transport",
@@ -871,6 +885,8 @@
       "statusConfirmed": "Potvrđeno",
       "statusDelivered": "Isporučeno",
       "financialStatus": "Finansijski status",
+      "financialReleased": "Isplaćeno (novčanik)",
+      "financialInEscrow": "U eskrouu",
       "financialApiStatusLine": "Stanje: {{status}}",
       "timelineTitle": "Hronologija",
       "statusFieldLabel": "Stanje",

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException,
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { QrService } from '../qr/qr.service';
+import { getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
 import {
   IngestMobileCertificatePhotoDto,
   IngestMobileCostDto,
@@ -515,6 +516,8 @@ export class GrowerPortalService {
               include: {
                 payments: true,
                 deliveries: true,
+                fulfilling_estate: true,
+                estates: true,
               },
             },
           },
@@ -556,26 +559,93 @@ export class GrowerPortalService {
       ? (batch as { distributor_arrivals: unknown[] }).distributor_arrivals.length > 0
       : false;
 
-    let paymentStatus = 'PENDING';
-    let paymentStatusMessage = 'Awaiting delivery';
-
-    if (isDelivered && isApproved) {
-      paymentStatus = 'PROCESSING';
-      paymentStatusMessage = 'Delivered & Approved - Payment Processing';
-    } else if (isDelivered) {
-      paymentStatus = 'AWAITING_APPROVAL';
-      paymentStatusMessage = 'Delivered - Awaiting Distributor Approval';
+    const orderById = new Map<
+      string,
+      (typeof batch.order_items)[number]['orders']
+    >();
+    for (const oi of batch.order_items ?? []) {
+      const o = oi.orders;
+      if (o) {
+        orderById.set(o.id, o);
+      }
     }
 
-    // Get payment details from orders
-    const payments = batch.order_items
-      .map((item) => item.orders.payments)
-      .filter((p) => p !== null);
+    let totalAmount = 0;
+    let paidAmount = 0;
+    let inEscrowAmount = 0;
+    let pendingOtherAmount = 0;
+    let releasedCount = 0;
+    let escrowCount = 0;
+    let otherPaymentCount = 0;
+    let paymentsConsidered = 0;
 
-    const totalAmount = payments.reduce((sum, p) => sum + (p?.farmerAmount || 0), 0);
-    const paidAmount = payments
-      .filter((p) => p?.status === 'RELEASED')
-      .reduce((sum, p) => sum + (p?.farmerAmount || 0), 0);
+    for (const order of orderById.values()) {
+      if (getFarmerOwnerUserId(order) !== growerId) {
+        continue;
+      }
+      const p = order.payments;
+      if (!p) {
+        continue;
+      }
+      paymentsConsidered += 1;
+      const fa = p.farmerAmount;
+      totalAmount += fa;
+      if (p.status === 'RELEASED') {
+        paidAmount += fa;
+        releasedCount += 1;
+      } else if (p.status === 'IN_ESCROW') {
+        inEscrowAmount += fa;
+        escrowCount += 1;
+      } else {
+        pendingOtherAmount += fa;
+        otherPaymentCount += 1;
+      }
+    }
+
+    const pendingAmount = Math.max(0, totalAmount - paidAmount);
+
+    let paymentStatus: string;
+    let paymentStatusMessage: string;
+
+    if (paymentsConsidered === 0 || totalAmount <= 0) {
+      paymentStatus = 'NO_ESCROW';
+      paymentStatusMessage =
+        'No escrow payment recorded for this batch yet (same basis as dashboard order totals)';
+      if (isDelivered && isApproved) {
+        paymentStatus = 'DELIVERY_NO_ESCROW';
+        paymentStatusMessage =
+          'Marked delivered — waiting for buyer payment / escrow to appear for your share';
+      } else if (isDelivered) {
+        paymentStatus = 'DELIVERY_NO_ESCROW';
+        paymentStatusMessage =
+          'Delivery in progress — escrow will show your share when the order is funded';
+      }
+    } else if (
+      releasedCount > 0 &&
+      escrowCount === 0 &&
+      otherPaymentCount === 0
+    ) {
+      paymentStatus = 'RELEASED';
+      paymentStatusMessage = 'Payment released — funds should appear in your wallet';
+    } else if (
+      escrowCount > 0 &&
+      releasedCount === 0 &&
+      otherPaymentCount === 0
+    ) {
+      paymentStatus = 'IN_ESCROW';
+      paymentStatusMessage =
+        'Your share is in escrow until delivery checks complete and payment is released';
+    } else if (releasedCount > 0 && (escrowCount > 0 || otherPaymentCount > 0)) {
+      paymentStatus = 'PARTIAL_RELEASE';
+      paymentStatusMessage =
+        'Part of your payout has been released; the rest is still pending or in escrow';
+    } else if (otherPaymentCount > 0) {
+      paymentStatus = 'PENDING';
+      paymentStatusMessage = 'Payment is being set up or not yet in escrow';
+    } else {
+      paymentStatus = 'PENDING';
+      paymentStatusMessage = 'Awaiting payment status update';
+    }
 
     return {
       batchId: batch.batchId,
@@ -583,7 +653,9 @@ export class GrowerPortalService {
       paymentStatusMessage,
       totalAmount,
       paidAmount,
-      pendingAmount: totalAmount - paidAmount,
+      inEscrowAmount,
+      pendingOtherAmount,
+      pendingAmount,
       isDelivered,
       isApproved,
       deliveredAt: (() => {

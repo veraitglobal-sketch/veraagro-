@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import {
   Users,
   Package,
@@ -39,9 +40,9 @@ export default function SuppliersPage() {
       setError(null);
       const data = await buyersAPI.getSuppliers();
       setPartners(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading partners:', err);
-      setError(err.message || 'Failed to load Vera Partners');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

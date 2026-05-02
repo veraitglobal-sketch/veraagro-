@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { getBuyerInvoiceDisplayStatus } from '@/lib/invoice-payment-status';
 import {
   ShoppingCart,
@@ -94,9 +95,9 @@ export default function BuyerDashboardPage() {
         status: getBuyerInvoiceDisplayStatus(inv.orders),
       }));
       setLatestInvoices(transformed.sort((a: any, b: any) => b.date.getTime() - a.date.getTime()).slice(0, 5));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading dashboard data:', err);
-      setError(err.message || 'Failed to load dashboard data');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
       setRefreshing(false);

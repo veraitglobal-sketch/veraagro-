@@ -272,16 +272,16 @@ export class MissionsService {
         await this.materialControlService.validateBatchForShipment(dto.batchId, growerId, {
           requireCrateBalance: false,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (error instanceof ForbiddenException || error instanceof NotFoundException) {
           throw error;
         }
         if (error instanceof BadRequestException) {
           throw error;
         }
-        throw new BadRequestException(
-          error?.message || 'Batch validation failed. Cannot create shipment.',
-        );
+        const msg =
+          error instanceof Error ? error.message : 'Batch validation failed. Cannot create shipment.';
+        throw new BadRequestException(msg);
       }
     }
 
@@ -1607,7 +1607,7 @@ export class MissionsService {
         title: 'Action required: buyer order and prep',
         message: `Order ${order.orderNumber} — ${order.productName} (${order.quantity} ${order.unit}). ` +
           `Open Missions for prep and channel instructions. When your lot is ready, operations will assign transport (or an open run).`,
-        actionUrl: '/grower/portal',
+        actionUrl: `/grower/portal?missionId=${encodeURIComponent(mission.id)}`,
       });
     } catch (e) {
       this.logger.warn(`adminCreateMissionFromOrder notify grower: ${e instanceof Error ? e.message : String(e)}`);

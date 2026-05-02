@@ -10,6 +10,7 @@ import { theme } from '../../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../../lib/api';
+import { apiErrorMessage } from '../../../../lib/api-error';
 
 /**
  * Edit Estate Screen
@@ -91,8 +92,8 @@ export default function EditEstateScreen() {
         polygonCoordinates: polygonCoordinates.length > 0 ? polygonCoordinates : undefined,
       });
       router.back();
-    } catch (error: any) {
-      Alert.alert(t('error'), error.message || t('producer.estates.updateFailed'));
+    } catch (error: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(error, t('producer.estates.updateFailed')));
       console.error('Error updating estate:', error);
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { inventoryAPI, digitalPassportsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { Package, MapPin, Search, Camera, FileText, Leaf, Mountain, QrCode, Eye, X } from 'lucide-react';
 import Image from 'next/image';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
@@ -30,9 +31,9 @@ export default function InventoryPage() {
       setError(null);
       const data = await inventoryAPI.getAvailableProducts();
       setProducts(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading products:', err);
-      setError(err.message || 'Failed to load products');
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -43,7 +44,7 @@ export default function InventoryPage() {
       setLoadingPassport(true);
       const data = await digitalPassportsAPI.getByBatch(batchId);
       setPassportData(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading passport:', err);
       setPassportData(null);
     } finally {

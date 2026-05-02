@@ -106,9 +106,14 @@ export class InventoryService {
           },
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Table doesn't exist or no data - try fallback to Batch table
-      if (error.message?.includes('does not exist') || error.code === 'P2021') {
+      const msg = error instanceof Error ? error.message : '';
+      const prismaCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : '';
+      if (msg.includes('does not exist') || prismaCode === 'P2021') {
         // Fallback: Use Batch table for available products
         try {
           const batches = await this.prisma.batches.findMany({

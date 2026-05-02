@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { missionsAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
+import Link from 'next/link';
 import { Activity, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
@@ -15,9 +17,11 @@ const MISSION_FILTER_STATUSES = [
   'ASSIGNED',
   'ACCEPTED',
   'IN_PROGRESS',
+  'READY_FOR_LOADING',
   'PICKED_UP',
   'IN_TRANSIT',
   'COMPLETED',
+  'CANCELLED',
 ] as const;
 
 type Lp = {
@@ -59,9 +63,9 @@ export default function MissionsManagementPage() {
       if (statusFilter) filters.status = statusFilter;
       const data = await missionsAPI.getAllAdmin(filters);
       setMissions(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading missions:', err);
-      setError(err.message || t('adminPages.missions.errLoadMissions'));
+      setError(apiErrorOrT(err, t, 'adminPages.missions.errLoadMissions'));
     } finally {
       setLoading(false);
     }
@@ -77,8 +81,8 @@ export default function MissionsManagementPage() {
       try {
         const list = (await missionsAPI.getLogisticsPartnersAdmin()) as Lp[];
         setPartners(Array.isArray(list) ? list : []);
-      } catch (e: any) {
-        setAssignError(e?.message || t('adminPages.missions.errLoadPartners'));
+      } catch (e: unknown) {
+        setAssignError(apiErrorOrT(e, t, 'adminPages.missions.errLoadPartners'));
         setPartners([]);
       } finally {
         setPartnersLoading(false);
@@ -102,10 +106,8 @@ export default function MissionsManagementPage() {
       });
       setAssignMission(null);
       await loadMissions();
-    } catch (e: any) {
-      setAssignError(
-        e?.response?.data?.message || e?.message || t('adminPages.missions.errAssign'),
-      );
+    } catch (e: unknown) {
+      setAssignError(apiErrorOrT(e, t, 'adminPages.missions.errAssign'));
     } finally {
       setAssignSubmitting(false);
     }
@@ -180,6 +182,7 @@ export default function MissionsManagementPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colMission')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colLinks')}</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colGrower')}</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colDestination')}</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colBuyerOrder')}</th>
@@ -199,6 +202,32 @@ export default function MissionsManagementPage() {
                       <tr key={mission.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
                           {mission.missionNumber}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-gray-600 align-top max-w-[9rem]">
+                          <div className="flex flex-col gap-1.5">
+                            {mission.users_missions_growerIdTousers?.id && (
+                              <Link
+                                href={`/admin/farm/${mission.users_missions_growerIdTousers.id}`}
+                                className="text-[#2D5A27] font-medium hover:underline"
+                              >
+                                {t('adminPages.missions.linkFarmerAdmin')}
+                              </Link>
+                            )}
+                            <a
+                              href={`/grower/portal?missionId=${encodeURIComponent(mission.id)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#2D5A27] font-medium hover:underline"
+                              title={t('adminPages.missions.linkGrowerPortalTitle')}
+                            >
+                              {t('adminPages.missions.linkGrowerPortal')}
+                            </a>
+                            {mission.batches?.batchId ? (
+                              <span className="font-mono text-[11px] text-gray-500 break-all" title={t('adminPages.missions.batchPublicIdTitle')}>
+                                {mission.batches.batchId}
+                              </span>
+                            ) : null}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {mission.users_missions_growerIdTousers?.firstName}{' '}
@@ -237,7 +266,11 @@ export default function MissionsManagementPage() {
                                   ? 'bg-blue-100 text-blue-800'
                                   : mission.status === 'PENDING'
                                     ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-gray-100 text-gray-800'
+                                    : mission.status === 'READY_FOR_LOADING'
+                                      ? 'bg-cyan-100 text-cyan-900'
+                                      : mission.status === 'CANCELLED'
+                                        ? 'bg-red-100 text-red-800'
+                                        : 'bg-gray-100 text-gray-800'
                             }`}
                           >
                             {t(`adminPages.missions.statuses.${mission.status as string}`, {

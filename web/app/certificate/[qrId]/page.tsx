@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 
 interface CertificateData {
   qrId: string;
@@ -52,6 +54,7 @@ interface CertificateData {
 }
 
 export default function CertificatePage() {
+  const { t } = useTranslation();
   const params = useParams();
   const qrId = params.qrId as string;
   const [data, setData] = useState<CertificateData | null>(null);
@@ -70,8 +73,8 @@ export default function CertificatePage() {
       }
       const certificateData = await response.json();
       setData(certificateData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load certificate');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }

@@ -13,8 +13,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { b2bSuppliersAPI } from '../../lib/api';
-import { useAuth } from '../../hooks/useAuth';
+import { apiErrorMessage } from '../../lib/api-error';
+import { partnerSignInHref } from '../../lib/post-login-redirect';
 import { theme } from '../../lib/theme';
+import { useAuth } from '../../hooks/useAuth';
 import { ArrowLeft, MessageCircle, Package } from 'lucide-react-native';
 
 type Msg = { id: string; body: string; createdAt: string; sender: { firstName: string; lastName: string } };
@@ -60,8 +62,8 @@ export default function B2bSupplierScreen() {
         const msgs = await b2bSuppliersAPI.getMessages(tid);
         setMessages(msgs);
       }
-    } catch (e: any) {
-      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.loadFailed'));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('b2bSupplier.loadFailed')));
     } finally {
       setLoading(false);
     }
@@ -79,8 +81,8 @@ export default function B2bSupplierScreen() {
       setText('');
       const msgs = await b2bSuppliersAPI.getMessages(threadId);
       setMessages(msgs);
-    } catch (e: any) {
-      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.sendFailed'));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('b2bSupplier.sendFailed')));
     } finally {
       setSending(false);
     }
@@ -102,8 +104,8 @@ export default function B2bSupplierScreen() {
         threadId: threadId || undefined,
       });
       Alert.alert(t('b2bSupplier.sentTitle'), t('b2bSupplier.sentBody'));
-    } catch (e: any) {
-      Alert.alert(t('error'), e?.response?.data?.message || e?.message || t('b2bSupplier.orderFailed'));
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('b2bSupplier.orderFailed')));
     }
   };
 
@@ -172,7 +174,7 @@ export default function B2bSupplierScreen() {
             <Text style={{ color: '#92400E', fontSize: 13 }}>
               Sign in with your grower account to message and place orders.
             </Text>
-            <TouchableOpacity onPress={() => router.push('/partner-login')} style={{ marginTop: 8 }}>
+            <TouchableOpacity onPress={() => router.push(partnerSignInHref() as any)} style={{ marginTop: 8 }}>
               <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>Sign in</Text>
             </TouchableOpacity>
           </View>

@@ -8,15 +8,7 @@ import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { Store } from 'lucide-react';
 import Link from 'next/link';
-
-function getApiErrorMessage(e: unknown): string {
-  const r = e as { response?: { data?: { message?: unknown } } };
-  const m = r?.response?.data?.message;
-  if (Array.isArray(m)) return m.join(' ');
-  if (typeof m === 'string') return m;
-  if (e instanceof Error) return e.message;
-  return 'Request failed. Please try again.';
-}
+import { apiErrorOrT } from '@/lib/api-error';
 
 /**
  * Onboard a partner agri store (Material supplier) with login + map profile in one step.
@@ -96,7 +88,7 @@ export default function AdminSupplierStoresPage() {
       );
       if (res.password) setLastPassword(res.password);
     } catch (err: unknown) {
-      setSubmitError(getApiErrorMessage(err));
+      setSubmitError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }

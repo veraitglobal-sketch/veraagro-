@@ -16,12 +16,13 @@ async function bootstrap() {
         env: process.env,
       });
       console.log('Migrations completed successfully');
-    } catch (migrateError: any) {
+    } catch (migrateError: unknown) {
+      const msg = migrateError instanceof Error ? migrateError.message : String(migrateError);
       if (process.env.NODE_ENV === 'production') {
-        console.error('Migration deploy failed in production:', migrateError?.message);
+        console.error('Migration deploy failed in production:', msg);
         process.exit(1);
       }
-      console.warn('Migration deploy failed, but continuing in dev:', migrateError?.message);
+      console.warn('Migration deploy failed, but continuing in dev:', msg);
     }
 
     // Create test users if database is empty (only in production for initial setup)

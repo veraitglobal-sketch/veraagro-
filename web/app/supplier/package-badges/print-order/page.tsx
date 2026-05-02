@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import AuthGuard from '@/components/AuthGuard';
 import { packageBadgesAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2 } from 'lucide-react';
 
@@ -26,13 +27,6 @@ type PrintOrderRow = {
   sentAt?: string | null;
   planJson?: Plan;
 };
-
-function errMsg(e: unknown, fallback: string): string {
-  const raw = (e as { response?: { data?: { message?: unknown } } })?.response?.data?.message;
-  if (Array.isArray(raw)) return raw.join(' ') || fallback;
-  if (typeof raw === 'string' && raw.trim()) return raw;
-  return fallback;
-}
 
 /**
  * Material supplier: plan factory serials, save print orders, mark sent, and record when a grower returns labels to stock.
@@ -79,7 +73,7 @@ export default function SupplierPackageBadgesPrintOrderPage() {
       });
       setPreview(data as Plan);
     } catch (e: unknown) {
-      setError(errMsg(e, t('grower.packageBadges.errPreviewFailed')));
+      setError(apiErrorOrT(e, t, 'grower.packageBadges.errPreviewFailed'));
     } finally {
       setLoadingPreview(false);
     }
@@ -99,7 +93,7 @@ export default function SupplierPackageBadgesPrintOrderPage() {
       setReturnOk(null);
       loadOrders();
     } catch (e: unknown) {
-      setError(errMsg(e, t('grower.packageBadges.errCouldNotSave')));
+      setError(apiErrorOrT(e, t, 'grower.packageBadges.errCouldNotSave'));
     } finally {
       setLoadingSave(false);
     }
@@ -127,7 +121,7 @@ export default function SupplierPackageBadgesPrintOrderPage() {
       setReturnRoot('');
       setFromGrowerId('');
     } catch (e: unknown) {
-      setError(errMsg(e, t('grower.packageBadges.errReturnFailed')));
+      setError(apiErrorOrT(e, t, 'grower.packageBadges.errReturnFailed'));
     } finally {
       setReturnLoading(false);
     }
@@ -276,8 +270,8 @@ export default function SupplierPackageBadgesPrintOrderPage() {
                         try {
                           await packageBadgesAPI.markPrintOrderSent(o.id);
                           loadOrders();
-                        } catch (e) {
-                          setError(errMsg(e, t('grower.packageBadges.errUpdateFailed')));
+                        } catch (e: unknown) {
+                          setError(apiErrorOrT(e, t, 'grower.packageBadges.errUpdateFailed'));
                         }
                       }}
                       className="mt-2 text-sm text-[#2D5A27] font-medium hover:underline"

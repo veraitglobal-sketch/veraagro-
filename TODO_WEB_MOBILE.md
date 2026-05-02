@@ -12,9 +12,9 @@
 - ✅ Token storage u localStorage
 
 #### Mobilna Aplikacija:
-- ✅ Universal login: `app/login.tsx`
+- ✅ Universal login: `app/login.tsx` (opciono `?partner=1` + `redirect` za grower deep link; helper `partnerSignInHref()`)
 - ✅ Buyer login: `app/buyer-login.tsx`
-- ✅ Producer login: `app/partner-login.tsx`
+- ✅ Producer / logistics / supplier sign-in: isti UI kao universal login — `partner=1`; `app/partner-login.tsx` je **alias** (redirect na `/login`)
 - ✅ Auth hook: `hooks/useAuth.ts`
 - ✅ Token storage u AsyncStorage
 - ✅ Automatski redirect na odgovarajući dashboard

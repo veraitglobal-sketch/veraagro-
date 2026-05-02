@@ -17,6 +17,7 @@ import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { markStepComplete } from '../lib/grower-journey';
 import { authAPI } from '../lib/api';
+import { apiErrorMessage } from '../lib/api-error';
 
 /**
  * Grower registration – Faza 1 of Grower Journey
@@ -63,9 +64,8 @@ export default function RegisterScreen() {
         t('register.checkEmailMessage'),
         [{ text: 'OK', onPress: () => router.back() }]
       );
-    } catch (e: any) {
-      const msg = e?.response?.data?.message || e?.message || t('register.failed');
-      Alert.alert(t('error'), msg);
+    } catch (e: unknown) {
+      Alert.alert(t('error'), apiErrorMessage(e, t('register.failed')));
     } finally {
       setLoading(false);
     }

@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
+import { apiErrorOrT } from '@/lib/api-error';
+import { useTranslation } from 'react-i18next';
 import { ImageUp, Plus, Pencil, Trash2, X, Barcode, Package } from 'lucide-react';
 
 type Item = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyCatalog>>[number];
 type BarcodeRow = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyMaterialBarcodes>>[number];
 
 export default function SupplierCatalogPage() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<Item[]>([]);
   const [barcodes, setBarcodes] = useState<BarcodeRow[]>([]);
   const [barSaving, setBarSaving] = useState(false);
@@ -37,8 +40,8 @@ export default function SupplierCatalogPage() {
       ]);
       setItems(c);
       setBarcodes(Array.isArray(b) ? b : []);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed to load catalog');
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -106,8 +109,8 @@ export default function SupplierCatalogPage() {
       }
       resetForm();
       await load();
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Save failed');
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setSaving(false);
     }
@@ -135,8 +138,8 @@ export default function SupplierCatalogPage() {
       try {
         await b2bSupplierPortalAPI.uploadCatalogItemImage(editingId, f);
         await load();
-      } catch (err) {
-        setErr(err instanceof Error ? err.message : 'Image upload failed');
+      } catch (err: unknown) {
+        setErr(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       } finally {
         setSaving(false);
       }
@@ -152,8 +155,8 @@ export default function SupplierCatalogPage() {
       try {
         await b2bSupplierPortalAPI.deleteCatalogItemImage(editingId);
         await load();
-      } catch (err) {
-        setErr(err instanceof Error ? err.message : 'Remove failed');
+      } catch (err: unknown) {
+        setErr(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
       } finally {
         setSaving(false);
       }
@@ -169,8 +172,8 @@ export default function SupplierCatalogPage() {
       await b2bSupplierPortalAPI.deleteCatalogItem(id);
       if (editingId === id) resetForm();
       await load();
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Delete failed');
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     }
   };
 
@@ -188,11 +191,8 @@ export default function SupplierCatalogPage() {
       });
       setBarForm({ barcode: '', catalogItemId: '', lotNumber: '', note: '' });
       await load();
-    } catch (e) {
-      setErr(
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          (e instanceof Error ? e.message : 'Failed to register barcode'),
-      );
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setBarSaving(false);
     }
@@ -205,11 +205,8 @@ export default function SupplierCatalogPage() {
     try {
       await b2bSupplierPortalAPI.updateMaterialBarcode(id, { status: 'SOLD' });
       await load();
-    } catch (e) {
-      setErr(
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          (e instanceof Error ? e.message : 'Update failed'),
-      );
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setBarSaving(false);
     }
@@ -222,11 +219,8 @@ export default function SupplierCatalogPage() {
     try {
       await b2bSupplierPortalAPI.updateMaterialBarcode(id, { status: 'VOID' });
       await load();
-    } catch (e) {
-      setErr(
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          (e instanceof Error ? e.message : 'Update failed'),
-      );
+    } catch (e: unknown) {
+      setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
       setBarSaving(false);
     }

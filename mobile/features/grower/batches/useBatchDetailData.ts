@@ -59,10 +59,14 @@ export function useBatchDetailData(batchId: string | undefined) {
 
 export function getBatchStatusColor(status: string): string {
   switch (status) {
-    case 'PACKED': return colors.accent;
+    case 'PACKED':
+    case 'QUALITY_VERIFIED':
+      return colors.accent;
     case 'IN_HUB': return colors.warning;
     case 'IN_TRANSIT': return colors.primary;
     case 'DELIVERED': return colors.success || colors.primary;
+    case 'RETURNED': return colors.warning;
+    case 'EXPIRED': return colors.text.secondary;
     default: return colors.text.secondary;
   }
 }
