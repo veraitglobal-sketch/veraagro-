@@ -90,6 +90,18 @@ export class LogisticsHandoverDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  /** Must be an active logistics_drivers row for the assigned company */
+  @IsString()
+  pickupDriverId: string;
+
+  /** Photo of partner / driver ID badge at pickup (data URL or https) */
+  @IsString()
+  pickupBadgePhoto: string;
+
+  /** Driver signature at farm pickup (data URL or https) */
+  @IsString()
+  pickupDriverSignatureDataUrl: string;
 }
 
 /** After loading: receiver name + optional signature image (data URL) for paper trail */

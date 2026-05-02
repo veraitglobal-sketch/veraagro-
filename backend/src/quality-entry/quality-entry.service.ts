@@ -109,6 +109,58 @@ export class QualityEntryService {
     return out;
   }
 
+  private assertHandoverSingleAsset(s: string, label: string, maxStringLen: number) {
+    if (typeof s !== 'string' || s.length < 20) {
+      throw new BadRequestException(`${label}: invalid image data`);
+    }
+    if (s.length > maxStringLen) {
+      throw new BadRequestException(`${label}: file too large`);
+    }
+    if (!s.startsWith('data:image/') && !s.startsWith('http://') && !s.startsWith('https://')) {
+      throw new BadRequestException(`${label}: must be image data URL or http(s) link`);
+    }
+  }
+
+  /** One image (badge or signature) → blob URL when token set */
+  private async handoverAssetToStoredUrl(
+    dataUrlOrUrl: string,
+    missionId: string,
+    part: string,
+  ): Promise<string> {
+    const t = dataUrlOrUrl.trim();
+    if (t.startsWith('https://') || t.startsWith('http://')) return t;
+    if (!t.startsWith('data:image/')) {
+      throw new BadRequestException(`${part}: expected data:image URL or https link`);
+    }
+    const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
+    if (!token) {
+      if (t.length > this.MAX_PHOTO_STRING_LENGTH) {
+        throw new BadRequestException(
+          `${part}: image too large for inline storage; configure BLOB_READ_WRITE_TOKEN`,
+        );
+      }
+      return t;
+    }
+    const raw = this.stripDataUrlBase64(t);
+    const buf = Buffer.from(raw, 'base64');
+    if (buf.length === 0) throw new BadRequestException(`${part}: invalid image data`);
+    if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
+      throw new BadRequestException(`${part}: image too large`);
+    }
+    const ext = QualityEntryService.guessHandoverImageExt(buf);
+    const safePart = part.replace(/\s+/g, '-').slice(0, 40);
+    const key = `logistics-handover/${missionId}/${safePart}-${crypto.randomUUID()}.${ext}`;
+    try {
+      const { put } = await import('@vercel/blob');
+      const uploaded = await put(key, buf, { access: 'public', token });
+      return uploaded.url;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Handover blob upload failed (${part}): ${msg}`);
+      throw new BadRequestException('Could not upload handover image to storage. Try a smaller image.');
+    }
+  }
+
   private assertHandoverPhotos(photos: string[], label: string) {
     for (const p of photos) {
       if (typeof p !== 'string' || p.length < 20) {
@@ -337,6 +389,32 @@ export class QualityEntryService {
 
     this.assertHandoverPhotos(dto.palletPhotos, 'Pallet photos');
     this.assertHandoverPhotos(dto.truckInteriorPhotos, 'Inside-truck photos');
+    this.assertHandoverSingleAsset(dto.pickupBadgePhoto, 'Partner ID badge photo', this.MAX_PHOTO_STRING_LENGTH);
+    this.assertHandoverSingleAsset(
+      dto.pickupDriverSignatureDataUrl,
+      'Driver signature',
+      Math.min(this.MAX_PHOTO_STRING_LENGTH, 2 * 1024 * 1024),
+    );
+
+    const pickupDriver = await this.prisma.logistics_drivers.findFirst({
+      where: {
+        id: dto.pickupDriverId.trim(),
+        logisticsPartnerId: userId,
+        isActive: true,
+      },
+    });
+    if (!pickupDriver) {
+      throw new BadRequestException('Pickup driver not found or not active for your company');
+    }
+
+    const pickupDriverSnapshot = {
+      driverId: pickupDriver.id,
+      firstName: pickupDriver.firstName,
+      lastName: pickupDriver.lastName,
+      email: pickupDriver.email,
+      phone: pickupDriver.phone,
+      photoUrl: pickupDriver.photoUrl,
+    };
 
     const tempC = Number(dto.insideTruckTemperature);
     const isWithinStandard =
@@ -376,6 +454,17 @@ export class QualityEntryService {
     );
     const palletJson = JSON.parse(JSON.stringify(palletStored)) as Prisma.InputJsonValue;
     const truckJson = JSON.parse(JSON.stringify(truckStored)) as Prisma.InputJsonValue;
+
+    const badgeUrl = await this.handoverAssetToStoredUrl(
+      dto.pickupBadgePhoto,
+      dto.missionId,
+      'pickup-badge',
+    );
+    const signatureUrl = await this.handoverAssetToStoredUrl(
+      dto.pickupDriverSignatureDataUrl,
+      dto.missionId,
+      'pickup-driver-signature',
+    );
 
     try {
       return await this.prisma.$transaction(async (tx) => {

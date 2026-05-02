@@ -16,6 +16,7 @@ import {
   AdminAssignMissionDto,
   AdminCreateMissionFromOrderDto,
 } from './dto/mission.dto';
+import { UpdateMissionLogisticsDriverDto } from '../logistics-partner/dto/update-mission-driver.dto';
 import { FreshnessService } from '../freshness/freshness.service';
 import { MaterialControlService } from '../material-control/material-control.service';
 import * as crypto from 'crypto';
@@ -852,8 +853,9 @@ export class MissionsService {
     if (mission.status === 'COMPLETED' || mission.status === 'CANCELLED') {
       throw new BadRequestException('Cannot change pickup driver on a finished mission');
     }
-    const raw = logisticsDriverId?.trim() ?? '';
-    const nextId = raw.length > 0 ? raw : null;
+    const v = dto.logisticsDriverId;
+    const nextId =
+      v == null || (typeof v === 'string' && v.trim() === '') ? null : String(v).trim();
     if (nextId) {
       await this.assertActiveLogisticsDriver(logisticsPartnerId, nextId);
     }
@@ -892,12 +894,32 @@ export class MissionsService {
 
       const growerInclude = {
         users_missions_logisticsPartnerIdTousers: true,
+        assigned_logistics_driver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            photoUrl: true,
+          },
+        },
         vehicles: true,
         batches: true,
         harvest_announcement: true,
       };
       const logisticsInclude = {
         users_missions_growerIdTousers: true,
+        assigned_logistics_driver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            photoUrl: true,
+          },
+        },
         vehicles: true,
         batches: true,
         harvest_announcement: true,
@@ -949,6 +971,16 @@ export class MissionsService {
   private static readonly missionDetailInclude = {
     users_missions_growerIdTousers: true,
     users_missions_logisticsPartnerIdTousers: true,
+    assigned_logistics_driver: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        photoUrl: true,
+      },
+    },
     vehicles: true,
     batches: true,
     harvest_announcement: true,

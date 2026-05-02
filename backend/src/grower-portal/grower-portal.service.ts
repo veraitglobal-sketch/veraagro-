@@ -100,13 +100,31 @@ export class GrowerPortalService {
           },
         },
       },
-      logistics_handovers: { select: { id: true, timestamp: true } },
+      logistics_handovers: {
+        select: {
+          id: true,
+          timestamp: true,
+          pickupDriverSnapshot: true,
+          pickupBadgePhotoUrl: true,
+          pickupDriverSignatureUrl: true,
+        },
+      },
       users_missions_logisticsPartnerIdTousers: {
         select: {
           id: true,
           firstName: true,
           lastName: true,
           phone: true,
+        },
+      },
+      assigned_logistics_driver: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          photoUrl: true,
         },
       },
       vehicles: { select: { vehicleNumber: true } },
@@ -144,6 +162,15 @@ export class GrowerPortalService {
                 firstName: true,
                 lastName: true,
                 phone: true,
+              },
+            },
+            assigned_logistics_driver: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+                photoUrl: true,
               },
             },
             vehicles: { select: { vehicleNumber: true } },
