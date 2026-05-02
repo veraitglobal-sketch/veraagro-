@@ -168,6 +168,21 @@ Buyer Payment → Platform Escrow → Split:
 
 ---
 
+## 🔍 Debugging, logging, and schema/migrations (mandatory)
+
+**Goal:** Do not burn time “fixing” the wrong layer. Establish facts first.
+
+1. **When the root cause is unclear (runtime / production):** Add **detailed server-side logging** before large refactors — full error text, stack, Prisma `code` and `meta`, request-scoped context (user/role, mission/batch id, operation name). Logs are for operators; user-facing messages stay short. Do not rely on truncated UI error bubbles alone to infer DB type mismatches.
+
+2. **When the error smells like DB / Prisma / enums / missing columns:** **Stop and verify ground truth before editing `schema.prisma` or writing migrations.**
+   - Read the **existing migration chain** (especially squash baseline and any “ensure” SQL) for the real table/column/enum names and PostgreSQL types.
+   - Reconcile **deployed DB** vs **repo**: e.g. `information_schema.columns` / `udt_name` for the column, `_prisma_migrations` history, and what the running API’s generated client expects.
+   - Only then choose **one** alignment path (change Prisma to match production, or migration to match intended model) — not guess-and-retry.
+
+3. **Migrations:** Prefer **idempotent** SQL when production may have diverged (conditional blocks checking column type or existence). Avoid assuming every environment matches a fresh `migrate reset`.
+
+---
+
 ## 📋 Module Integration Rules
 
 ### When creating new modules:

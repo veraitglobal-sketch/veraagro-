@@ -346,7 +346,9 @@ export default function LogisticsHandoverReceiverPage() {
                     {t('logisticsPages.receiverMissionOption', {
                       missionNumber: mission.missionNumber,
                       batchId: mission.batches?.batchId || mission.batchId || t('common.emDash'),
-                      status: mission.status,
+                      status: t(`admin.missions.statuses.${mission.status}`, {
+                        defaultValue: mission.status.replace(/_/g, ' '),
+                      }),
                     })}
                   </option>
                 ))}
