@@ -21,6 +21,7 @@ const localizedPaths = [
   'legal',
   'terms',
   'privacy',
+  'data-consent-declaration',
   'cookies',
   'investors',
   'investor-deck',

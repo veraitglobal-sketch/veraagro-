@@ -13,6 +13,7 @@ export const TECHNICAL_PROPOSAL_OPENING: readonly TechnicalProposalChapter[] = [
       "If you are an EU evaluator or institutional funder, start with the next section (Executive pitch), then skim Part B from Market through Finances for numbers and competition, and use the budget lines in the pitch beside your portal tables. Treat the Implementation atlas and the later architecture chapters as optional proof the product is buildable—skip them unless you want engineering depth.",
       "If you are a buyer or corridor partner, read the Executive pitch and Part B from Problem through How it works for packaging, suppliers, cold chain and agents.",
       "If you are an engineer or auditor of the codebase, use the Implementation atlas and the architecture, offline and security chapters; they point to modules, routes and data the running system actually uses.",
+      "For a short standalone Data and Consent Declaration you can print or save as PDF, open /data-consent-declaration after your language prefix (for example …/en/data-consent-declaration).",
     ],
   },
   {
