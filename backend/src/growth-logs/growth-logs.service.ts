@@ -3,6 +3,9 @@ import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/com
 import { PrismaService } from '../prisma/prisma.service';
 import { AntiFraudService } from '../anti-fraud/anti-fraud.service';
 import { CryptoUtil } from '../common/utils/crypto.util';
+import {
+  getPlantingProgressNotesMinLength,
+} from '../harvest-announcements/planting-progress.util';
 
 @Injectable()
 export class GrowthLogsService {
@@ -73,6 +76,21 @@ export class GrowthLogsService {
       throw new BadRequestException(
         'No matching crop plan for this parcel, or the plan is cancelled. Open “New planting” or your harvest plan first.',
       );
+    }
+
+    if (plan.announcementType === 'PLANTING') {
+      const minNotes = getPlantingProgressNotesMinLength();
+      const notesLen = data.notes?.trim().length ?? 0;
+      if (notesLen < minNotes) {
+        throw new BadRequestException(
+          `For planting plans, describe progress and any changes in Notes (at least ${minNotes} characters).`,
+        );
+      }
+      if (!data.growthStage?.trim()) {
+        throw new BadRequestException(
+          'For planting plans, choose or enter a growth stage (required with the progress photo).',
+        );
+      }
     }
 
     // Anti-fraud validation

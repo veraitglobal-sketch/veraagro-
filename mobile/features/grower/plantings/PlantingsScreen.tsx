@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Wheat, Plus, X } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '../../../lib/api';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -47,6 +48,13 @@ type HaRow = {
   notes?: string | null;
   createdAt?: string;
   estimatedQuantity?: number | null;
+  plantingProgress?: {
+    intervalDays: number;
+    lastGrowthLogAt: string | null;
+    nextDueAt: string;
+    isOverdue: boolean;
+    daysOverdue: number;
+  } | null;
   parcel?: {
     id: string;
     cropType?: string | null;
@@ -57,6 +65,7 @@ type HaRow = {
 
 export default function PlantingsScreen() {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const p = useBioVeraScreenPadding();
   const langSr = !!i18n.language?.startsWith('sr');
 
@@ -176,6 +185,18 @@ export default function PlantingsScreen() {
       try {
         const tag = langSr ? 'sr-Latn' : 'en-GB';
         return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+      } catch {
+        return iso;
+      }
+    },
+    [langSr],
+  );
+
+  const formatDateShort = useCallback(
+    (iso: string) => {
+      try {
+        const tag = langSr ? 'sr-Latn' : 'en-GB';
+        return new Date(iso).toLocaleDateString(tag, { dateStyle: 'medium' });
       } catch {
         return iso;
       }
@@ -309,8 +330,11 @@ export default function PlantingsScreen() {
           paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
         }}
       >
-        <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
+        <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.sm }}>
           {t('producer.plantings.introShort')}
+        </Text>
+        <Text style={{ fontSize: 13, color: theme.colors.primary, lineHeight: 20, marginBottom: theme.spacing.md }}>
+          {t('producer.plantings.progressRuleShort', { days: 18 })}
         </Text>
 
         {err ? (
@@ -386,6 +410,28 @@ export default function PlantingsScreen() {
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 8 }}>
                       {formatWhen(a.estimatedDate)} · {t(`producer.plantings.ha_${a.status}`, { defaultValue: a.status })}
                     </Text>
+                    {a.plantingProgress ? (
+                      <View style={{ marginTop: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: a.plantingProgress.isOverdue ? theme.colors.error : theme.colors.text.secondary,
+                            lineHeight: 18,
+                          }}
+                        >
+                          {a.plantingProgress.isOverdue
+                            ? t('producer.plantings.progressOverdue', { days: a.plantingProgress.daysOverdue })
+                            : t('producer.plantings.progressOk', {
+                                date: formatDateShort(a.plantingProgress.nextDueAt),
+                              })}
+                        </Text>
+                        <TouchableOpacity onPress={() => router.push('/(producer)/growth-journal')} hitSlop={{ top: 8, bottom: 8 }}>
+                          <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '600', marginTop: 4 }}>
+                            {t('producer.plantings.progressOpenJournal')} →
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    ) : null}
                   </Pressable>
                 );
               })
@@ -468,7 +514,15 @@ export default function PlantingsScreen() {
             </View>
             {detailHa ? (
               <ScrollView style={{ flexGrow: 0 }} keyboardShouldPersistTaps="handled">
-                <DetailBody ha={detailHa} pr={resolvedParcelFor(detailHa)} langSr={langSr} t={t} formatWhen={formatWhen} formatAreaFn={formatArea} />
+                <DetailBody
+                  ha={detailHa}
+                  pr={resolvedParcelFor(detailHa)}
+                  langSr={langSr}
+                  t={t}
+                  formatWhen={formatWhen}
+                  formatDateShort={formatDateShort}
+                  formatAreaFn={formatArea}
+                />
               </ScrollView>
             ) : null}
           </View>
@@ -765,6 +819,7 @@ function DetailBody({
   langSr,
   t,
   formatWhen,
+  formatDateShort,
   formatAreaFn,
 }: {
   ha: HaRow;
@@ -772,6 +827,7 @@ function DetailBody({
   langSr: boolean;
   t: (k: string, o?: Record<string, unknown>) => string;
   formatWhen: (iso: string) => string;
+  formatDateShort: (iso: string) => string;
   formatAreaFn: (m2: number, lng: boolean) => string;
 }) {
   const areaM2 =
@@ -819,6 +875,43 @@ function DetailBody({
 
       <Text style={{ fontSize: 14, fontWeight: '700', marginTop: theme.spacing.md }}>{t('producer.plantings.detailStatus')}</Text>
       <Text style={{ marginTop: 4, color: theme.colors.text.secondary }}>{t(`producer.plantings.ha_${ha.status}`, { defaultValue: ha.status })}</Text>
+
+      {ha.announcementType === 'PLANTING' && ha.plantingProgress ? (
+        <View
+          style={{
+            marginTop: theme.spacing.md,
+            padding: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 1,
+            borderColor: ha.plantingProgress.isOverdue ? theme.colors.errorLight : theme.colors.border,
+            backgroundColor: ha.plantingProgress.isOverdue ? theme.colors.errorLight : theme.colors.surfaceElevated,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.text.primary }}>
+            {t('producer.plantings.detailProgressTitle')}
+          </Text>
+          <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 8, lineHeight: 20 }}>
+            {t('producer.plantings.detailProgressInterval', {
+              days: ha.plantingProgress.intervalDays,
+              last: ha.plantingProgress.lastGrowthLogAt
+                ? formatDateShort(ha.plantingProgress.lastGrowthLogAt)
+                : '—',
+            })}
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '600',
+              marginTop: 6,
+              color: ha.plantingProgress.isOverdue ? theme.colors.error : theme.colors.primary,
+            }}
+          >
+            {ha.plantingProgress.isOverdue
+              ? t('producer.plantings.detailProgressOverdue', { days: ha.plantingProgress.daysOverdue })
+              : t('producer.plantings.detailProgressNext', { date: formatDateShort(ha.plantingProgress.nextDueAt) })}
+          </Text>
+        </View>
+      ) : null}
 
       {ha.notes ? (
         <>

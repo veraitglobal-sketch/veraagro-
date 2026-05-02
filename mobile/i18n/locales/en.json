@@ -448,7 +448,16 @@
       "typeHarvest": "Harvest",
       "ha_PENDING": "Pending",
       "ha_APPROVED": "Approved",
-      "ha_REJECTED": "Rejected"
+      "ha_REJECTED": "Rejected",
+      "progressRuleShort": "Required: in Growth journal, about every {{days}} days, submit a field photo of this planting, growth stage, and notes on progress (changes, issues).",
+      "progressDueBy": "Next report due by: {{date}}",
+      "progressOverdue": "Report overdue by {{days}} day(s) — open Growth journal and submit a photo + notes.",
+      "progressOk": "On track (next report by {{date}})",
+      "progressOpenJournal": "Growth journal",
+      "detailProgressTitle": "Progress tracking (planting)",
+      "detailProgressInterval": "Interval: every {{days}} days; last entry: {{last}}",
+      "detailProgressNext": "Next deadline: {{date}}",
+      "detailProgressOverdue": "OVERDUE by {{days}} day(s)"
     },
     "fieldSeason": {
       "title": "Instructions",
@@ -983,7 +992,7 @@
     },
     "growthJournal": {
       "screenTitle": "Entry log (photo + GPS)",
-      "screenIntro": "Pick your field, then an approved parcel, then the crop plan (planting or harvest you already registered). Material barcode is optional when it applies. Everything you record ties this parcel to traceability and feeds the product passport. Each entry must include one photo on location plus GPS — starting from day one of the crop. While the crop is in the field, plan at least one photo per month (you can add more any time).",
+      "screenIntro": "Pick your field, an approved parcel, and a crop plan. For plantings: you must submit a journal entry about every ~18 days (server-configurable) — photo on the parcel, GPS, growth stage, and notes on progress. For harvest plans, stage and short notes remain optional.",
       "planLabel": "Crop on this parcel:",
       "planKindPlanting": "Planting",
       "planKindHarvest": "Harvest plan",
@@ -1001,11 +1010,13 @@
       "allParcelsContext": "All parcels on this field",
       "addLogTitle": "New entry log line",
       "addLogContext": "Field: {{estate}}. Parcel: {{parcel}}. Crop plan: {{plan}}. Next step is mandatory: one photo on the parcel with GPS — required for every entry.",
-      "growthStageLabel": "Growth stage (optional)",
+      "growthStageLabel": "Growth stage (optional for harvest plan)",
+      "growthStageLabelPlanting": "Growth stage (required for plantings)",
       "customStage": "Custom",
       "customStagePlaceholder": "e.g. Second flush, canopy full",
-      "notesLabel": "Field notes (optional)",
-      "notesPlaceholder": "What you observed today…",
+      "notesLabel": "Notes (optional for harvest plan)",
+      "notesLabelPlanting": "How the planting is progressing (required, min. 15 characters)",
+      "notesPlaceholder": "Crop condition, changes, pests, irrigation…",
       "takePhotoAndSave": "Continue — camera (required)",
       "photoRequiredLineTitle": "Photo required",
       "photoRequiredLineBody": "Every entry must include a photo taken on the parcel. Tap below to open the camera and GPS capture.",
@@ -1093,7 +1104,10 @@
       "photoLarge": "Photo is too large. Try again with slightly lower quality.",
       "savedTitle": "Saved",
       "savedBody": "Growth log entry was saved.",
-      "saveFailed": "Failed to save growth log"
+      "saveFailed": "Failed to save growth log",
+      "validationTitle": "Check your entry",
+      "plantingNotesTooShort": "For plantings, describe progress with at least {{min}} characters (weather, changes, pests…).",
+      "plantingStageRequired": "For plantings, choose or enter a growth stage."
     },
     "estatesUi": {
       "deleteTitle": "Delete field",

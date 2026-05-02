@@ -107,6 +107,9 @@ export default function GrowthJournalScreen() {
         estateName={selectedEstate?.name}
         parcelLabel={parcelLabel}
         planLabel={planLabel}
+        strictPlantingProgress={
+          parcelPlans.find((p) => p.id === activePlanId)?.announcementType === 'PLANTING'
+        }
       />
     </View>
   );

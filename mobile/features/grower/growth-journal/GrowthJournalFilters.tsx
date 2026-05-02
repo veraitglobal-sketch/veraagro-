@@ -5,7 +5,7 @@ import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { Estate, Parcel } from '../../../lib/api';
 
-export type ParcelPlanOption = { id: string; label: string };
+export type ParcelPlanOption = { id: string; label: string; announcementType?: string };
 
 interface GrowthJournalFiltersProps {
   estates: Estate[];

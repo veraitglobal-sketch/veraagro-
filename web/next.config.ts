@@ -74,6 +74,12 @@ const nextConfig: NextConfig = {
         destination: "/grower/fields",
         permanent: true,
       },
+      /** Common typo / legacy bookmark */
+      {
+        source: "/produce/field-entry",
+        destination: "/producer/field-entry",
+        permanent: true,
+      },
     ];
   },
   async headers() {

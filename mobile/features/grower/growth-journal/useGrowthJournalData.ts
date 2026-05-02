@@ -15,6 +15,8 @@ import { sha256HexFromImageUri } from '../../../lib/image-hash';
 import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from '../../../lib/image-data-url';
 
 const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
+/** Match server default PLANTING_PROGRESS_NOTES_MIN_LEN */
+const PLANTING_NOTES_MIN = 15;
 
 export function useGrowthJournalData() {
   const { t } = useTranslation();
@@ -27,7 +29,7 @@ export function useGrowthJournalData() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [filterEstate, setFilterEstate] = useState<string>('all');
   const [filterParcel, setFilterParcel] = useState<string>('all');
-  const [parcelPlans, setParcelPlans] = useState<{ id: string; label: string }[]>([]);
+  const [parcelPlans, setParcelPlans] = useState<{ id: string; label: string; announcementType: string }[]>([]);
   const [activePlanId, setActivePlanId] = useState('');
   const [plansLoading, setPlansLoading] = useState(false);
 
@@ -114,6 +116,7 @@ export function useGrowthJournalData() {
         const dateStr = a.estimatedDate ? String(a.estimatedDate).slice(0, 10) : '—';
         return {
           id: a.id,
+          announcementType: a.announcementType,
           label: `${kind} · ${a.cropType} · ${dateStr}`,
         };
       });
@@ -148,6 +151,24 @@ export function useGrowthJournalData() {
       if (!activePlanId) {
         Alert.alert(t('producer.growthJournalAlerts.planTitle'), t('producer.growthJournalAlerts.planBody'));
         return;
+      }
+
+      const selectedPlan = parcelPlans.find((p) => p.id === activePlanId);
+      if (selectedPlan?.announcementType === 'PLANTING') {
+        if (payload.notes.trim().length < PLANTING_NOTES_MIN) {
+          Alert.alert(
+            t('producer.growthJournalAlerts.validationTitle'),
+            t('producer.growthJournalAlerts.plantingNotesTooShort', { min: PLANTING_NOTES_MIN }),
+          );
+          return;
+        }
+        if (!payload.growthStage?.trim()) {
+          Alert.alert(
+            t('producer.growthJournalAlerts.validationTitle'),
+            t('producer.growthJournalAlerts.plantingStageRequired'),
+          );
+          return;
+        }
       }
 
       const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
@@ -222,7 +243,7 @@ export function useGrowthJournalData() {
         setUploading(false);
       }
     },
-    [estates.length, filterEstate, filterParcel, activePlanId, loadLogs, t],
+    [estates.length, filterEstate, filterParcel, activePlanId, parcelPlans, loadLogs, t],
   );
 
   const sortedLogs = [...logs].sort(

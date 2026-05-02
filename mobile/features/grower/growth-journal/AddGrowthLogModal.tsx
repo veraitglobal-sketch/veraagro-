@@ -32,6 +32,8 @@ type Props = {
   estateName?: string;
   parcelLabel?: string;
   planLabel?: string;
+  /** Zasad plans require stage + longer notes (server-enforced). */
+  strictPlantingProgress?: boolean;
 };
 
 /**
@@ -45,6 +47,7 @@ export function AddGrowthLogModal({
   estateName,
   parcelLabel,
   planLabel,
+  strictPlantingProgress = false,
 }: Props) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
@@ -112,7 +115,11 @@ export function AddGrowthLogModal({
               })}
             </Text>
             <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
-              {t('producer.growthJournal.growthStageLabel')}
+              {t(
+                strictPlantingProgress
+                  ? 'producer.growthJournal.growthStageLabelPlanting'
+                  : 'producer.growthJournal.growthStageLabel',
+              )}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
               {GROWTH_STAGE_PRESETS.map((s) => {
@@ -173,7 +180,9 @@ export function AddGrowthLogModal({
               />
             ) : null}
             <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
-              {t('producer.growthJournal.notesLabel')}
+              {t(
+                strictPlantingProgress ? 'producer.growthJournal.notesLabelPlanting' : 'producer.growthJournal.notesLabel',
+              )}
             </Text>
             <TextInput
               value={notes}

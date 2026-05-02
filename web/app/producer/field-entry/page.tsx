@@ -5,8 +5,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import OfflineEntryForm from '@/components/OfflineEntryForm';
+import AuthGuard from '@/components/AuthGuard';
+import SidebarLayout from '@/components/SidebarLayout';
+import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useOfflineEntry } from '@/hooks/useOfflineEntry';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI } from '@/lib/api';
 
 type EstateRow = { id: string; name: string };
@@ -127,6 +131,7 @@ function FieldEntryWorkspace({
 export default function FieldEntryPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
+  const navItems = useGrowerNavItems();
   const [estates, setEstates] = useState<EstateRow[]>([]);
   const [selectedFarmId, setSelectedFarmId] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -159,43 +164,53 @@ export default function FieldEntryPage() {
     };
   }, [t]);
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('growerPages.fieldEntryTitle')}</h1>
-          <p className="text-base text-gray-700 max-w-3xl leading-relaxed">{t('growerPages.fieldEntryLead')}</p>
-        </div>
-
-        {loading && (
-          <div className="text-center py-16 text-base text-gray-600">{t('growerPages.fieldEntryLoadingEstates')}</div>
-        )}
-
-        {!loading && loadError && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 text-base">{loadError}</div>
-        )}
-
-        {!loading && !loadError && estates.length === 0 && (
-          <div className="p-6 bg-amber-50 border border-amber-200 rounded-lg text-amber-950 text-base max-w-xl">
-            <p className="font-semibold mb-2 text-lg">{t('growerPages.fieldEntryNoEstateTitle')}</p>
-            <p className="mb-4 leading-relaxed">{t('growerPages.fieldEntryNoEstateBody')}</p>
-            <Link
-              href={loc('/grower/fields')}
-              className="inline-flex min-h-[48px] items-center text-[#2D5A27] font-semibold underline underline-offset-2"
-            >
-              {t('grower.placeholders.openParcels')}
-            </Link>
+  if (loading) {
+    return (
+      <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
+        <SidebarLayout title={t('grower.nav.fieldCapture')} navItems={navItems}>
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-[#2D5A27]" />
+              <p className="mt-4 text-base text-gray-600">{t('growerPages.fieldEntryLoadingEstates')}</p>
+            </div>
           </div>
-        )}
+        </SidebarLayout>
+      </AuthGuard>
+    );
+  }
 
-        {!loading && !loadError && estates.length > 0 && selectedFarmId && (
-          <FieldEntryWorkspace
-            selectedFarmId={selectedFarmId}
-            onEstateChange={setSelectedFarmId}
-            estates={estates}
-          />
-        )}
-      </div>
-    </div>
+  return (
+    <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo="/login/producer">
+      <SidebarLayout title={t('grower.nav.fieldCapture')} navItems={navItems}>
+        <GrowerPageShell>
+          <GrowerPageHeader title={t('growerPages.fieldEntryTitle')} description={t('growerPages.fieldEntryLead')} />
+
+          {loadError && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-800">{loadError}</div>
+          )}
+
+          {!loadError && estates.length === 0 && (
+            <div className="max-w-xl rounded-lg border border-amber-200 bg-amber-50 p-6 text-base text-amber-950">
+              <p className="mb-2 text-lg font-semibold">{t('growerPages.fieldEntryNoEstateTitle')}</p>
+              <p className="mb-4 leading-relaxed">{t('growerPages.fieldEntryNoEstateBody')}</p>
+              <Link
+                href={loc('/grower/fields')}
+                className="inline-flex min-h-[48px] items-center font-semibold text-[#2D5A27] underline underline-offset-2"
+              >
+                {t('grower.placeholders.openParcels')}
+              </Link>
+            </div>
+          )}
+
+          {!loadError && estates.length > 0 && selectedFarmId && (
+            <FieldEntryWorkspace
+              selectedFarmId={selectedFarmId}
+              onEstateChange={setSelectedFarmId}
+              estates={estates}
+            />
+          )}
+        </GrowerPageShell>
+      </SidebarLayout>
+    </AuthGuard>
   );
 }

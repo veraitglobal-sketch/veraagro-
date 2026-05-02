@@ -5,6 +5,10 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { TreatmentLogsService } from '../treatment-logs/treatment-logs.service';
 import { MissionsService } from '../missions/missions.service';
 import * as crypto from 'crypto';
+import {
+  computePlantingProgress,
+  getPlantingProgressIntervalDays,
+} from './planting-progress.util';
 
 export interface CreateHarvestAnnouncementDto {
   parcelId: string;
@@ -293,11 +297,11 @@ export class HarvestAnnouncementsService {
   }
 
   /**
-   * Get all announcements for a farmer
+   * Get all announcements for a farmer (includes planting progress tracking for active PLANTING plans).
    */
   async getFarmerAnnouncements(userId: string) {
     try {
-      return await this.prisma.harvest_announcements.findMany({
+      const list = await this.prisma.harvest_announcements.findMany({
         where: { userId },
         include: {
           parcel: {
@@ -309,6 +313,52 @@ export class HarvestAnnouncementsService {
         orderBy: {
           estimatedDate: 'desc',
         },
+      });
+
+      const plantingIds = list
+        .filter(
+          (a) =>
+            a.announcementType === 'PLANTING' &&
+            a.status !== 'CANCELLED' &&
+            a.status !== 'COMPLETED',
+        )
+        .map((a) => a.id);
+
+      const lastLogByPlan = new Map<string, Date>();
+      if (plantingIds.length > 0) {
+        const agg = await this.prisma.growth_logs.groupBy({
+          by: ['harvestAnnouncementId'],
+          where: {
+            harvestAnnouncementId: { in: plantingIds },
+          },
+          _max: { networkTimestamp: true },
+        });
+        for (const row of agg) {
+          const id = row.harvestAnnouncementId;
+          const maxTs = row._max.networkTimestamp;
+          if (id && maxTs) {
+            lastLogByPlan.set(id, maxTs);
+          }
+        }
+      }
+
+      const intervalDays = getPlantingProgressIntervalDays();
+      const now = new Date();
+
+      return list.map((a) => {
+        const shouldTrack =
+          a.announcementType === 'PLANTING' &&
+          a.status !== 'CANCELLED' &&
+          a.status !== 'COMPLETED';
+        const plantingProgress = shouldTrack
+          ? computePlantingProgress(
+              a.createdAt,
+              lastLogByPlan.get(a.id) ?? null,
+              now,
+              intervalDays,
+            )
+          : null;
+        return { ...a, plantingProgress };
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

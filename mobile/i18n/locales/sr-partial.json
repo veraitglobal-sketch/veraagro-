@@ -449,7 +449,16 @@
       "typeHarvest": "Berba",
       "ha_PENDING": "Na čekanju",
       "ha_APPROVED": "Odobreno",
-      "ha_REJECTED": "Odbijeno"
+      "ha_REJECTED": "Odbijeno",
+      "progressRuleShort": "Obavezno: u „Dnevniku porasta” na svakih ~{{days}} dana pošalji fotografiju zasada, fazu rasta i tekst kako napreduje (promene, problemi).",
+      "progressDueBy": "Sledeći izveštaj najkasnije: {{date}}",
+      "progressOverdue": "Kasni izveštaj {{days}} d. — otvori Dnevnik porasta i pošalji fotografiju + napomenu.",
+      "progressOk": "Napredak: u roku (do {{date}})",
+      "progressOpenJournal": "Dnevnik porasta",
+      "detailProgressTitle": "Praćenje napretka (zasad)",
+      "detailProgressInterval": "Rok: svakih {{days}} dana; poslednji zapis: {{last}}",
+      "detailProgressNext": "Sledeći rok: {{date}}",
+      "detailProgressOverdue": "PREKORAČENO za {{days}} d."
     },
     "fieldSeason": {
       "title": "Uputstva",
@@ -985,7 +994,7 @@
     },
     "growthJournal": {
       "screenTitle": "Dnevnik unosa (fotografija + GPS)",
-      "screenIntro": "Izaberi njivu, zatim odobrenu parcelu, zatim zasad ili plan berbe koji ste već prijavili. Barkod materijala je opciono kad ga koristite. Svi podaci vezuju parcelu za tragabilnost i idu dalje u pasoš proizvoda. Za svaki unos obavezni su fotografija na parceli i GPS — od prvog dana useva. Dok je usev na parceli, planirajte bar jednu fotografiju mesečno (možete i češće).",
+      "screenIntro": "Izaberi njivu, zatim odobrenu parcelu, zatim zasad ili plan berbe. Za zasad: obavezno u dnevniku porasta svakih ~18 dana (podesivo na serveru) — fotografija na parceli, GPS, faza rasta i tekst kako napreduje (promene, problemi). Za plan berbe faza i kraća napomena mogu ostati opcioni.",
       "planLabel": "Usev na ovoj parceli:",
       "planKindPlanting": "Zasad",
       "planKindHarvest": "Plan berbe",
@@ -1003,11 +1012,13 @@
       "allParcelsContext": "Sve parcele na ovoj njivi",
       "addLogTitle": "Novi unos u Dnevniku unosa",
       "addLogContext": "Njiva: {{estate}}. Parcela: {{parcel}}. Usev: {{plan}}. Sledeće je obavezno: jedna fotografija na parceli sa GPS — za svaki unos.",
-      "growthStageLabel": "Faza rasta (opciono)",
+      "growthStageLabel": "Faza rasta (opciono za plan berbe)",
+      "growthStageLabelPlanting": "Faza rasta (obavezno za zasad)",
       "customStage": "Prilagođeno",
       "customStagePlaceholder": "npr. druga berba, pun kanopi",
-      "notesLabel": "Poljske napomene (opciono)",
-      "notesPlaceholder": "Šta si video danas…",
+      "notesLabel": "Napomena (opciono za plan berbe)",
+      "notesLabelPlanting": "Kako napreduje zasad (obavezno, min. 15 znakova)",
+      "notesPlaceholder": "Kako izgleda usev, promene, problemi…",
       "takePhotoAndSave": "Dalje — kamera (obavezno)",
       "photoRequiredLineTitle": "Fotografija je obavezna",
       "photoRequiredLineBody": "Za svaki unos potrebna je fotografija snimljena na parceli. Dodirni dugme ispod da otvoriš kameru i GPS.",
@@ -1097,7 +1108,10 @@
       "photoLarge": "Slika je prevelika. Pokušaj sa manjom kvalitetom.",
       "savedTitle": "Sačuvano",
       "savedBody": "Unos u dnevnik rasta je sačuvan.",
-      "saveFailed": "Nije moguće sačuvati dnevnik rasta"
+      "saveFailed": "Nije moguće sačuvati dnevnik rasta",
+      "validationTitle": "Provera unosa",
+      "plantingNotesTooShort": "Za zasad opiši napredak bar sa {{min}} znakova (vreme, promene, štetočine, zalivanje…).",
+      "plantingStageRequired": "Za zasad izaberi ili upiši fazu rasta."
     },
     "estatesUi": {
       "deleteTitle": "Obriši njivu",
