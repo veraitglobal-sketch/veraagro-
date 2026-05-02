@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Link2, Printer } from "lucide-react";
@@ -21,6 +21,10 @@ function isSection(x: unknown): x is { title: string; body: string } {
   );
 }
 
+function isStringList(x: unknown): x is string[] {
+  return Array.isArray(x) && x.length > 0 && x.every((i) => typeof i === "string");
+}
+
 export default function ProjectOverviewPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
@@ -28,6 +32,14 @@ export default function ProjectOverviewPage() {
 
   const raw = t("projectOverview.sections", { returnObjects: true });
   const sections = Array.isArray(raw) ? raw.filter(isSection) : [];
+
+  const founderBulletsRaw = t("projectOverview.founderBullets", { returnObjects: true });
+  const founderBullets = isStringList(founderBulletsRaw) ? founderBulletsRaw : [];
+
+  const founderSrc = useMemo(
+    () => process.env.NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC?.trim() || "",
+    [],
+  );
 
   const copyPublicUrl = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -52,23 +64,27 @@ export default function ProjectOverviewPage() {
             background: white !important;
           }
           .project-overview-doc .po-section {
+            break-inside: auto;
+            page-break-inside: auto;
+          }
+          .project-overview-doc .po-founder {
             break-inside: avoid;
             page-break-inside: avoid;
           }
           .project-overview-doc {
-            font-size: 10.5pt;
-            line-height: 1.45;
+            font-size: 10pt;
+            line-height: 1.43;
             color: #111827;
           }
           .project-overview-doc h1 {
-            font-size: 16pt;
+            font-size: 15pt;
           }
           .project-overview-doc h2 {
-            font-size: 11pt;
+            font-size: 10.5pt;
           }
           @page {
             size: A4;
-            margin: 14mm;
+            margin: 12mm;
           }
         }
       `}</style>
@@ -141,13 +157,51 @@ export default function ProjectOverviewPage() {
         </h1>
         <p className="mt-4 max-w-prose text-[15px] leading-relaxed text-gray-600">{t("projectOverview.coverSubtitle")}</p>
 
-        <div className="mt-10 space-y-8 sm:space-y-9 print:mt-6 print:space-y-5">
+        <div className="po-stack mt-8 space-y-6 sm:mt-10 sm:space-y-7 print:mt-5 print:space-y-3.5">
           {sections.map((s) => (
-            <section key={s.title} className="po-section rounded-xl border border-gray-200 bg-white p-5 shadow-sm print:rounded-none print:border-0 print:p-0 print:shadow-none">
-              <h2 className="mb-2 text-[1.0625rem] font-semibold tracking-tight text-gray-900">{s.title}</h2>
-              <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-gray-600">{s.body}</p>
+            <section
+              key={s.title}
+              className="po-section rounded-xl border border-gray-200 bg-white p-5 shadow-sm print:rounded-none print:border-0 print:border-b print:border-gray-200 print:bg-transparent print:p-0 print:pb-3 print:shadow-none"
+            >
+              <h2 className="mb-1.5 text-[1.0625rem] font-semibold tracking-tight text-gray-900">{s.title}</h2>
+              <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-gray-600 print:text-[10pt]">{s.body}</p>
             </section>
           ))}
+
+          <section className="po-founder po-section rounded-xl border border-gray-200 bg-white p-5 shadow-sm print:rounded-none print:border-0 print:border-b print:border-gray-200 print:bg-transparent print:p-0 print:pb-3 print:shadow-none">
+            <h2 className="mb-3 text-[1.0625rem] font-semibold tracking-tight text-gray-900">{t("projectOverview.founderTitle")}</h2>
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 print:flex-row">
+              <div className="relative mx-auto shrink-0 sm:mx-0 print:mx-0">
+                <div
+                  className="relative aspect-[4/5] h-44 w-36 overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 shadow-inner ring-1 ring-gray-200/80 print:h-36 print:w-28"
+                  aria-label={t("projectOverview.founderPhotoPlaceholder")}
+                >
+                  {founderSrc ? (
+                    <Image
+                      src={founderSrc}
+                      alt={t("projectOverview.founderPhotoPlaceholder")}
+                      fill
+                      className="object-cover"
+                      sizes="144px"
+                      priority={false}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center">
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+                        {t("projectOverview.founderPhotoPlaceholder")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <p className="po-no-print mt-2 max-w-[9.5rem] text-[10px] leading-snug text-gray-500">{t("projectOverview.founderPhotoHint")}</p>
+              </div>
+              <ul className="min-w-0 flex-1 list-disc space-y-1.5 pl-5 text-[14px] leading-relaxed text-gray-600 print:text-[10pt]">
+                {founderBullets.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          </section>
         </div>
 
         <div className="po-no-print mt-12 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">

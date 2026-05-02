@@ -3919,44 +3919,57 @@
     "toolbarCopied": "Copied",
     "toolbarPrintPdf": "Save as PDF",
     "toolbarPrintAria": "Open print dialog to save as PDF",
-    "introNote": "Use this page like a Projektbeschreibung scaffold: short sections you can cite or lightly edit, then export to PDF for uploads that require a project description.",
-    "pdfLimitHint": "Some programmes only accept a project description in PDF format and cap length (often five pages). After exporting, check the page count before attaching.",
-    "coverEyebrow": "Project description",
-    "coverTitle": "Bio Vera — project overview",
-    "coverSubtitle": "Bio-Ready vertical agrifood operating model: mapped estates, Integrity Guard (barcode + parcel GPS), offline field capture, Protocol 360 batches, refrigerated missions, retail QR passports, and escrow-style settlement with Vera work bonuses tied to material proofs.",
+    "introNote": "Ten short sections (~5 PDF pages): Introduction through Impact plus Founder. Tune copy per funder; export via Print → Save as PDF.",
+    "pdfLimitHint": "Designed for concise PDFs — many calls cap project descriptions at five pages. Optional founder portrait: put a file under `web/public/` and set NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC (e.g. `/project-overview-founder.jpg`).",
+    "coverEyebrow": "Project overview",
+    "coverTitle": "Bio Vera — Project overview",
+    "coverSubtitle": "One vertically integrated agrifood network under Bio‑Ready rules: traceable journeys from parcels and sanctioned inputs through packing, refrigerated logistics and retail passports — so growers, carriers and buyers share one truthful record.",
     "sections": [
       {
-        "title": "1. Project summary",
-        "body": "Bio Vera is a platform-led network that connects conscientious growers with EU-oriented buyers, logistics partners and sanctioned suppliers under one traceable spine. The same identifiers flow from seed and input purchases through field diaries, packing lines, truck custody and buyer-facing passports so compliance, operations and finance reconcile without parallel spreadsheets."
+        "title": "Introduction",
+        "body": "Bio Vera is building a digitally operated agrifood network that connects conscientious growers, logistics operators and retailers who commit to Bio‑Ready transparency. The ambition is corridor-scale trust: Southeastern European production woven into rigorous EU QA and shopper-facing proof without parallel spreadsheet truths."
       },
       {
-        "title": "2. Objectives",
-        "body": "Raise market access and trust for growers who meet Bio-Ready rules; reduce audit friction for buyers through batch-level evidence; keep rural teams productive on patchy networks via offline-first capture; align incentives (Vera Partner seed economics, optional insurance companions where programmes allow, Vera packaging bonuses) with verified behaviour rather than narrative alone."
+        "title": "Problem",
+        "body": "European food commerce still wastes energy on brittle folders: parcels and chemistry are narrated inconsistently; quality teams chase screenshots instead of timestamps; conscientious growers miss market access without expensive compliance theatre; refrigerated custody often fails to reconcile with finance."
       },
       {
-        "title": "3. Approach / intervention",
-        "body": "GIS polygons define where evidence is valid; whitelist-aware scans block unauthorised chemistry; mobile and web clients persist locally then sync; batches inherit Protocol 360 checkpoints; logistics runs as missions with handovers; public QR layers grower, certification and cold-chain facts for retail QA; TaxCalculation-oriented logic keeps VAT and corridor-specific legs explicit in settlement views."
+        "title": "Solution",
+        "body": "We replace fragmented narratives with one spine covering estates, Integrity Guard scans, Protocol 360 batch integrity, refrigerated missions with explicit handovers, retail QR passports, and phased settlement — so auditors, growers and treasury argue over identical batch IDs."
       },
       {
-        "title": "4. Target groups & geography",
-        "body": "Primary operators: growers and estates, packers, carriers and hub receivers, buyers and category teams, programme administrators. Initial corridor emphasis links Balkan cultivation with EU market requirements (including Hamburg-facing retail narratives) while keeping the software pattern extensible to other compliant trade lanes."
+        "title": "Product",
+        "body": "Web grower/supplier dashboards, Expo-ready mobile ergonomics for field teams, logistics partner workspaces for missions and handovers, buyer-facing passports plus admin surfaces for whitelist and exception governance — all hardened for offline stretches and deterministic sync."
       },
       {
-        "title": "5. Workplan (indicative phases)",
-        "body": "Phase A — estate onboarding, boundary truth and catalogues; Phase B — cultivation season capture with Integrity Guard in production; Phase C — packing, batching and mission logistics at scale; Phase D — passport and buyer workspace hardening; Phase E — settlement transparency and partner programme refinements. Timing follows funding and pilot cohort commitments."
+        "title": "Market",
+        "body": "Initial beachhead concentrates on growers in the Balkan corridor who can meet EU-category buyers and refrigerated retail programmes needing verifiable dossiers — scaling partner-by-partner toward additional compliant trade lanes rather than spraying undifferentiated listings."
       },
       {
-        "title": "6. Roles & governance",
-        "body": "Bio Vera supplies the shared software, programme rules and security posture; growers and logistics partners execute field and custody steps in their interfaces; buyers consume passports and mission-grade dossiers; admins review exceptions (blocked scans, boundary disputes, temperature excursions) with attributable logs suitable for external audit."
+        "title": "Business Model",
+        "body": "Programme-aligned economics spanning Vera Partner inputs, programme insurance companions where permissible, Vera material/work bonuses grounded in controls, corridor-specific transport settlements and escrow-style releases segmented for growers, logistics and platform uplift."
       },
       {
-        "title": "7. Risks & mitigations (summary)",
-        "body": "Connectivity — offline-first storage and idempotent sync; trust — barcode and GPS enforcement plus append-only style batch lineage; adoption — role-specific UX and verifier bonuses tied to proofs; cross-border tax complexity — modelled early in calculation layers rather than patched at invoice time."
+        "title": "Current status",
+        "body": "Operating software stack spanning estates, Integrity Guard primitives, cultivation capture, batches, missions and passports in staged rollout — pilot cohort onboarding, corridor logistics partnerships and QA hardening continue in tandem with selective retail-facing pilots."
       },
       {
-        "title": "8. Budget & resources (placeholder)",
-        "body": "Detailed budget lines, co-financing shares and third-party quotes belong in the annex appropriate to each funder. This overview stays narrative so the PDF remains within typical five-page caps; attach spreadsheets where the call requires line-item tables."
+        "title": "Roadmap",
+        "body": "Near term: widen pilot estates, deepen cold-chain instrumentation, broaden buyer dossier tooling, automate settlement narration. Medium term: marketplace density for sanctioned inputs packaging, multinational buyer SKUs and expanded carrier certifications."
+      },
+      {
+        "title": "Impact",
+        "body": "Measurable traceability lowers audit drag for procurement, improves farmer price discovery where documentation is no longer punitive, trims food-safety ambiguity through structured custody timelines, and reinforces consumer trust wherever QR passports surface."
       }
+    ],
+    "founderTitle": "Founder",
+    "founderPhotoPlaceholder": "Founder portrait",
+    "founderPhotoHint": "Add an image such as `web/public/project-overview-founder.jpg` and optionally set NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC=/project-overview-founder.jpg — rounded frame renders automatically.",
+    "founderBullets": [
+      "Name — fill in.",
+      "Role — Founder · Bio Vera.",
+      "Background — summarise relevant operating, agrifood or product experience.",
+      "Contact — founder@biovera.app (replace)."
     ],
     "seeAlsoEyebrow": "Related page",
     "seeAlsoBody": "For the fuller investor-oriented deck (story, appendix depth, optional embedded video), open the Investor Deck.",

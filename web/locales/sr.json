@@ -3949,45 +3949,59 @@
     "toolbarCopied": "Kopirano",
     "toolbarPrintPdf": "Sačuvaj kao PDF",
     "toolbarPrintAria": "Otvori dijalog za štampu / PDF",
-    "introNote": "Struktura kao šablon Projektbeschreibung / opisa projekta: kratke sekcije koje možete prilagoditi, pa izvezite u PDF kad traže zvaničan prilog.",
-    "pdfLimitHint": "Često traže Projektbeschreibung isključivo kao PDF sa ograničenom dužinom (npr. do pet strana). Posle eksporta proverite broj strana pre otpreme.",
-    "coverEyebrow": "Opis projekta",
+    "introNote": "Deset kratkih odeljaka (~5 PDF stranica): od uvoda do efekta plus osnivač. Tekst doterajte za konkurs; Štampa → Sačuvaj kao PDF.",
+    "pdfLimitHint": "Za portret dodajte fajl u `web/public/` (npr. `project-overview-founder.jpg`) i opciono postavite NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC (npr. `/project-overview-founder.jpg`). Pozivi često granice brojem strana.",
+    "coverEyebrow": "Pregled projekta",
     "coverTitle": "Bio Vera — pregled projekta",
-    "coverSubtitle": "Vertikalni Bio-Ready operativni model: parcele na mapi (GIS), Integrity Guard (barkod i GPS), rad u polju uz offline sinhronizaciju, Protocol 360 i batch‑evi, misije u hladnom lanacu, QR pasoši za maloprodaju i obračuni u escrow duhu sa Vera bonusima vezanim za dokumentovane materijale.",
+    "coverSubtitle": "Vertikalno povezana agrifood mreža pod Bio-Ready pravilima: jedan trag dokaza od parcela i odobrenih ulaza preko pakovanja i hladnog lanca do maloprodajnog pasoša.",
     "sections": [
       {
-        "title": "1. Rezime projekta",
-        "body": "Bio Vera je mreža vođena platformom koja povezuje proizvođače koji ispunjavaju Bio-Ready pravila sa kupcima ka EU‑tržištima, partnerskom logistikom i snabdevačima pod istim trajnim tragom dokaza. Istim identifikatorima pratimo nabavku ulaza, evidencije u polju, pakovanje i skladišta, ustupanje robe u kamionu kao i materijale koje kupac vidi pasošem i štafetnom dokumentacijom — bez paralelnih Excel tablica."
+        "title": "Uvod (Introduction)",
+        "body": "Bio Vera razvija digitalno koordinisanu agrifood mrežu koja povezuje savesne proizvođače, logistiku i kupce koji prihvataju istu Bio-Ready transparentnost. Fokus je koridor kao jedinstven pojam poverenja — balkanska proizvodnja i EU kontrolni okvir bez paralelnih naracija u tabelama."
       },
       {
-        "title": "2. Ciljevi",
-        "body": "Jači pristup tržištu i poverenje za uzgajivače koji se drže standarda; manje zamke pri revizijama jer količinski trag postoji za svaki batch; produktivan rad kad je slab signal kroz offline prvo beleženje pa sinhronizaciju; usklađene podsticaje — Vera Partner cene semena gde sleduje, vezano osiguranje gde program dozvoljava, Vera pakovanje‑bonus ako postoje verifikovani dokazi umesto golih priča."
+        "title": "Problem",
+        "body": "Lanac još troši energiju na labave fascikle: ulazi, hemija i lokacije bez jedinstvenog traga nabavku muče screenshot arheologije savesnim uzgajivačima pristup tržištu je skup bez jasnog digitalnog dosijea temperatura često ne priča istu priču kao finansije."
       },
       {
-        "title": "3. Pristup / intervencija",
-        "body": "Poligon određuje da li je GPS evidencija validna; bela lista spreča nedozvoljenu hemiju uz kontrolu barkoda; mobilni i veb klijenti beleže lokalno pa šalju u oblak; pakovanje formira batch kroz Protocol 360; logistiku opisuju formalne misije sa predajama umesto verbalnih tragova; javni sloj QR koda nosi ime farme, sertifikate i hladni lanac; porezi i VAT ostaju razdvojivi u obračunu."
+        "title": "Rešenje (Solution)",
+        "body": "Uvodi se jedinstvena kičma: parcele Integrity Guard pravila Protocol 360 serije misije sa dokumentovanim predajama maloprodajni QR pasoši i fazni obračuni tako da isti batch ID prolazi i revizije polja i trezora."
       },
       {
-        "title": "4. Ciljne grupe i geografija",
-        "body": "Operateri na terenu: gazdinstva, pak‑hau­sevi i magacini prevoz koji preuzima, distributeri i primalci, nabavni timovi kupeča, administracije programa. Poseban narativ je koridor Zapadni Balkan ka EU‑zahtevima za kvalitetom i tragom (uz maloprodajne QA priče uključujući Hamburg‑tradiciju), dizajn softvera dopuštava još lanaca kasnije."
+        "title": "Proizvod (Product)",
+        "body": "Veb i mobilni klijenti za proizvođače snabdevače i logistiku rad prostor za kupce i administraciju programa dizajn uz offline-prvi rad deterministička sinhronizacija kad se signal vrati."
       },
       {
-        "title": "5. Plan rada (orijentacija po fazama)",
-        "body": "Faza A — registracija gazdinstava, definisanje granica parcela i nomenklatura materijala. Faza B — rad u polju sa pravili­ma Integrity Guard‑a u punoj produkciji. Faza C — industrijski obimi pakovanja i batch‑evi, misije za hladni lanac. Faza D — javni pasoši i poboljšanje iskustva nabavnog tima u radnom prostoru. Faza E — obračuni, izveštaji i konsolidacija programa za partnere. Ritam faznih ciljeva sledi dostupno finansiranje i scope pilota."
+        "title": "Tržište (Market)",
+        "body": "Prvi zamah cilja gazdinstva u balkanskom koridoru i EU nabavnu/hladnorešetkastu retail liniju uz partnersko širenje bez generičkih listinga kao jedine opcije."
       },
       {
-        "title": "6. Uloge i upravljanje",
-        "body": "Bio Vera snabdeva zajednički softver, pravila programa i sigurnosnu osnovu. Gazdinstva i logisti­čari unose dokumentaciju u svojim ulogama; kupci i revizija čitaju pasoše zasnovane na tragovima sistema, bez naknadnog sklapanja izveštaja u Word‑u. Administratori obrađuju blokirane barkodove, sporove parcela ili odstupanje temperature uz ostavljen istorijski zapis pogodan za eksterni audit."
+        "title": "Poslovni model (Business model)",
+        "body": "Programsko poravnanje Vera Partner nabavkom opciona osiguranja gde dozvoljeno Vera bonusi ako materijali i pakovanje imaju dokumente transport obračuni po koridoru escrow otpusti jasno segmentiraju proizvođača nosioce i platformu."
       },
       {
-        "title": "7. Rizici i ublažavanja (kratko)",
-        "body": "Povremena konekcija — lokalni zapis i idempotentna sinhronizacija smanjuju gubitak podataka. Poverenje — kombinacija GPS pravila i belih lista na ulazu. Usvajanje u terenu — ulogama prilagođeni interfejs i bonus koji nagrađuje dokumentaciju a ne verbalne izjave. Porezi preko granica — slojevi obračuna rani u modelu, bez krpanja tek na fakturi."
+        "title": "Trenutni status (Current status)",
+        "body": "Jezgro oko gazdinstava Integrity Guard pravila beleženje pakovanje misije i pasoši u postepenom uvođenju paralelno pilot skupovi nabavni hardening dodatni transport partneri."
       },
       {
-        "title": "8. Budžet i resursi (placeholder)",
-        "body": "Stavku po stavci budžet, ko‑finansiranje i nabavna dokumentacija uglavnom se prilažu kao poseban tehnički prilog ako konkurs tako traži. Ovaj dokument namerno ostaje sažeto narativan kako bi PDF držao često traženi limit od do pet stranica; široke tabele zakačiti kao dopunski dokument kada je dozvoljeno."
+        "title": "Plan (Roadmap)",
+        "body": "Kratkoročno više gazdinstava u pilotu dubinski hladni lanac poboljšanje buyer dossier automatizacije obračuna. Srednjeročno SKU gustina snabdevača više retail programa dodatni sertifikovani kamioni."
+      },
+      {
+        "title": "Doprinost (Impact)",
+        "body": "Struktuirana sledljivost spušta trošak revizije, daje uzgajivaču ferije šanse kada dokumentacija radi za njega i štiti saglasnost između police i istorije robe."
       }
     ],
+    "founderTitle": "Osnivač (Founder)",
+    "founderPhotoPlaceholder": "Portret osnivača",
+    "founderPhotoHint": "Dodajte sliku pod web/public/, npr. project-overview-founder.jpg, pa po želji NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC=/project-overview-founder.jpg.",
+    "founderBullets": [
+      "Ime — dopišite.",
+      "Uloga — osnivač · Bio Vera.",
+      "Biografija — relevantno agrifood, operacije ili proizvod (kratko).",
+      "Kontakt — e-pošta ili profilni link."
+    ],
+
     "seeAlsoEyebrow": "Povezano",
     "seeAlsoBody": "Za širu investitorsku priču, tehnički dubok prilog i opcioni video, otvorite stranicu Investitor deck.",
     "seeAlsoLink": "Investitor deck"

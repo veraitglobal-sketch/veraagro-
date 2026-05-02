@@ -3334,45 +3334,59 @@
     "toolbarCopied": "Kopiert",
     "toolbarPrintPdf": "Als PDF speichern",
     "toolbarPrintAria": "Druckdialog öffnen (PDF speichern)",
-    "introNote": "Diese Seite strukturiert Ihre Projektbeschreibung kurz nach üblichem Förderaufbau — anpassbare Abschnitte, dann als PDF für das Portal exportieren.",
-    "pdfLimitHint": "Einige Ausschreibungen verlangen die Projektbeschreibung ausschließlich als PDF und begrenzen die Seitenzahl (oft höchstens fünf). Bitte nach dem Export gegenprüfen.",
-    "coverEyebrow": "Projektbeschreibung",
+    "introNote": "Zehn kompakte Kapitel (~5 PDF-Seiten): von Introduction bis Impact plus Founder. Texte pro Förderaufruf justieren; Druckdialog → Als PDF speichern.",
+    "pdfLimitHint": "Oft verlangen Portale die Projektbeschreibung als PDF mit Seitenlimit (häufig fünf). Optional: Portrait nach `web/public/` legen und `NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC` setzen.",
+    "coverEyebrow": "Projektüberblick",
     "coverTitle": "Bio Vera — Projektüberblick",
-    "coverSubtitle": "Bio-Ready-Vertikal­modell: GIS-Gehöftgrenzen, Integrity Guard (Barcode + GPS polygon-konform), Offline-Erfassung im Feld, Protocol-360‑Chargen, kühlketten-geführte Missionen mit Übergaben, QR-Pässe für den Handel sowie ausgewiesene Settlement-Fächer und Vera-Arbeitsboni geknüpft an Materialnachweise.",
+    "coverSubtitle": "Vertikal integriertes Agrar-Food-Netzwerk nach Bio‑Ready‑Regeln: ein durchgängiger Nachweisweg von Feldpolygonen bis zum Handels-QR‑Pass unter einheitlicher Software.",
     "sections": [
       {
-        "title": "1. Kurzfassung",
-        "body": "Bio Vera betreibt ein plattformvermitteltes Netzwerk zwischen Erzeugern unter gemeinsamen Bio-Ready‑Regeln, Einkaufsteams für EU-/Exportkorridoren, Logistikpartnern und zertifizierten Lieferanten. Kennungen bleiben von Saatgut- oder Inputkauf bis zum Handels-QR zusammenhängend, damit operative, QS- und Finanzorganisationen keine parallelen Wahrheitsebenen pflegen müssen."
+        "title": "Introduction (Einführung)",
+        "body": "Bio Vera entwickelt ein digital geführtes Agrar-Food-Netzwerk, das vorsichtige Produzentinnen, Logistik und Handel unter gemeinsamen Bio‑Ready‑Transparenzpflichten bündelt. Fokus ist ein korridorweites Vertrauen: Produktion Südosteuropa trifft EU‑Konformitätsanforderungen ohne parallele Spreadsheet‑Wahrheiten."
       },
       {
-        "title": "2. Zielsetzung",
-        "body": "Demokratisierung des Marktzugangs für dokumentationsfähige Erzeuger; Verringerung des Audit-Schmerzes für Einkauf durch ladungsfähige Chargenhistorien; Aufrechterhaltung der Produktivität unter intermittierenden Netzen mit Offline-First; Ausrichtung ökonomischer Hebel — Vera-Partner‑Saatprogramme mit optionaler Versicherung wo zulässig, Vera-Paketier‑Boni anhand messbarer Konformitätsnachweise."
+        "title": "Problem",
+        "body": "Im Lebensmittelhandel reißen noch immer Datenfäden: Inputs und Chemie werden uneinheitlich erzählt; Einkauf und QS jagen Screenshots statt Zeitachsen; leistungsfähige Betriebe scheitern ohne teures Papiergeklimper am Markteintritt; Kühlkette und Treasury sprechen selten dieselbe Geschichte."
       },
       {
-        "title": "3. Vorgehensweise / Intervention",
-        "body": "Polygone begrenzen zulässige GPS-Spuren; Whitelist-Barcodes verhindern chemische Außenseiterrollen; Web und Mobile puffern lokal, synchronisieren deterministisch; Packlinien werden zu Protocol-360‑geeigneten Fingerprint-Chargen; Logistik entspricht dokumentierten Missionen samt Kühlüberwachung; öffentlicher QR-Spiegel bildet Ursprungs-, Zertifikats- und Kühlketten‑Kapitel ohne Marketing-Spreizung gegenüber Kernsystem."
+        "title": "Solution (Lösung)",
+        "body": "Ein gemeinsames Rückgrat über Betriebe, Integrity‑Guard‑Scans, Protocol‑360‑Chargensignaturen, Kühl‑Missionen mit Abnahmen, QR‑Pässe und gestaffelte Settlement‑Logiken – Auditors, Feldpersonal und Finanz sprechen denselben Chargencode."
       },
       {
-        "title": "4. Zielgruppen und geographischer Fokus",
-        "body": "Kernteams: Agrarbetriebe, Packstätten und Cross-Dock‑Knoten, Spediteursflotten, QS-Einkauf, AdministratorInnen eines Programmzentrums. Schwerpunkt Storyline Südosteuropa gegen EU-Anforderungen inklusive transparenzaffiner Großhandels-Kommunikation (u. a. Norddeutschland‑Bezüge), ohne die Softwarearchitektur an einen einzelnen Endmarkt zu härten."
+        "title": "Product (Produkt)",
+        "body": "Responsive Grower-/Supplier-Web, Expo-Mobile für Teams mit schwacher Netzanbindung Logistik-/Mission-Dashboards, Käufertooling und Admin‑Governance – Offline‑First Persistenz gefolgt von deterministischem Sync."
       },
       {
-        "title": "5. Phasenplan (indikativ)",
-        "body": "Phase A — Betriebsregistrierung, Parzellenwahrheit, Artikelkataloge. Phase B — Feldsaison mit Integrity Guard‑Regeln in Produktion. Phase C — skalierte Packeinheiten plus Mission-/Kühllogistik. Phase D — Passport-Härtung und Buyer-Workbench. Phase E — Auszahlungs-/Steuerlage-Transparenz und Partnerprogrammfine-Tuning — Kalibrierung erfolgt zusammen mit Förder- und Pilot-Cohort-Verpflichtungen."
+        "title": "Market",
+        "body": "Beachhead: Produzentinnen im Balkan‑Korridor und EU‑Kategorieinkauf mit Kühl-/QA‑Nachweispflicht; Skalierung partnerweise statt diffuser Massenliste."
       },
       {
-        "title": "6. Rollen & Governance",
-        "body": "Bio Vera liefert Softwarekerne, Regelbuch und SOC-orientierte Zugriffsarchitekturen; Produzenten sowie Logistik führen Eingaben dort aus, wo Arbeitsplätze bereits stehen; Einkauf liest strukturierte Pässe; Admin-Queues behandeln Sperrfälle oder Temperatur-Exessen mit revisierbarem Aktivitätsprotokoll."
+        "title": "Business Model",
+        "body": "Programmökonomik mit Vera‑Partner‑Inputs und optional gekoppelter Versicherung, wo erlaubt; Vera‑Boni geknüpft an Materialnachweise; korridorbezogene Transportkalkulation sowie escrow‑segmentierte Auszahlungen für Erzeugung, Logistik und Plattform."
       },
       {
-        "title": "7. Risiken & Gegensteuer (Kurzfassung)",
-        "body": "Netzstabilität — lokale Persistenz + idempotent replizierbare Sync-Protokolle. Nachweisbürokratie — harte Kombination Polygon + Barcode ohne Admin-Faustrecht. Adoption — ergonomische Offline-Pfade sowie bonusrelevantes Materialrouting. Mehrländer-Steuerszenarien — früh modellierte Schnittstellenzonen statt späterer Rechnungs-Not-/Korrekturwellen."
+        "title": "Current status",
+        "body": "Produktive Software für Betriebe, Integrity‑Guard‑Feldaufnahme, Pack-/Chargenbildung, Missionen und Pässe im gestuften Rollout; parallel Pilotkohorten, Logistikbündnisse und Härtung der Käuferoberflächen."
       },
       {
-        "title": "8. Mittel-/Ressourcenübersicht (Platzhalter)",
-        "body": "Detaillierte Kosten-/Kofinanzierungsraster gehören in den Annex der jeweiligen Förderstelle. Dieser Überblick bleibt narrative Schicht, sodass oft geforderte fünf Druckseiten eingehalten werden — Tabellenblätter bitte dort anhängen, wo Ausschreibung explizite Excel-/PDF-Nebenakte erwartet."
+        "title": "Roadmap",
+        "body": "Kurzfristig: mehr Pilotbetriebe, tiefere Kühlinstrumentierung, bessere Dossier-Tools, automatisierte Auszahlungsnarrative. Mittelfristig: dichtere, whitelist-konforme Supplier-Stores, mehr Retail-SKU-Programme, erweiterte zertifizierte Speditionskreise."
+      },
+      {
+        "title": "Impact",
+        "body": "Strukturierte Traceability senkt Auditkosten, verbessert die Preisfindung dokumentationsfähiger Betriebe und verankert Kühl- und Herkunftsdaten dort, wo Verbrauchervertrauen entsteht."
       }
     ],
+    "founderTitle": "Founder",
+    "founderPhotoPlaceholder": "Portrait Gründer/in",
+    "founderPhotoHint": "Legen Sie z. B. `project-overview-founder.jpg` nach `web/public/` und optional `NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC=/project-overview-founder.jpg` — der Rahmen ist abgerundet.",
+    "founderBullets": [
+      "Name – ergänzen.",
+      "Rolle – Gründer/in · Bio Vera.",
+      "Hintergrund – relevante Ops/Agrar-/Produktkompetenz (kurz).",
+      "Kontakt – E-Mail oder Profil-Link."
+    ],
+
     "seeAlsoEyebrow": "Verwandtes",
     "seeAlsoBody": "Für einen ausführlicheren Investor-Storyline-Deck samt Annex-Tiefgang und optionalem Videoblock öffnen Sie das Investor Deck.",
     "seeAlsoLink": "Investor Deck öffnen"
