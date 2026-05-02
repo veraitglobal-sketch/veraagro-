@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -78,9 +79,9 @@ const PLAIN_LANGUAGE_ICONS = [Package, Handshake, Flag];
 const ACCENT = "#2D5A27";
 const ACCENT_HOVER = "#23471f";
 
-type DeckVariant = "cover" | "light" | "wash" | "split" | "appendix-intro" | "close";
+type DeckVariant = "cover" | "light" | "wash" | "split" | "appendix-intro";
 
-/** Full-bleed “slide” shells — minimal chrome like a keynote deck */
+/** Slide shells — restrained presentation layout */
 function slideShell(variant: DeckVariant): string {
   const base =
     "pitch-slide relative mx-auto max-w-[1200px] px-6 sm:px-10 lg:px-14 print:rounded-none";
@@ -89,17 +90,15 @@ function slideShell(variant: DeckVariant): string {
     case "cover":
       return [
         base,
-        "py-14 sm:py-18 lg:py-22",
-        "bg-white border-b-[10px]",
-        `border-[${ACCENT}]`,
-        "rounded-none sm:rounded-2xl shadow-[0_1px_0_rgba(0,0,0,0.06)]",
+        "py-14 sm:py-16 lg:py-24",
+        "bg-white border-b-[10px] border-b-[#2D5A27]",
+        "rounded-none sm:rounded-2xl shadow-[0_1px_0_rgba(0,0,0,0.06)] print:shadow-none",
       ].join(" ");
     case "wash":
       return [
         base,
         "py-12 sm:py-16 lg:py-20",
-        "rounded-none sm:rounded-2xl",
-        `bg-[#F4F8F4]`,
+        "rounded-none sm:rounded-2xl bg-[#F4F8F4]",
         "border border-gray-200/60",
       ].join(" ");
     case "split":
@@ -115,16 +114,11 @@ function slideShell(variant: DeckVariant): string {
         "py-10 sm:py-12 lg:py-14",
         "bg-neutral-900 text-neutral-50 rounded-none sm:rounded-2xl px-8 sm:px-12 lg:px-16",
       ].join(" ");
-    case "close":
-      return [
-        base,
-        `py-12 sm:py-16 bg-[${ACCENT}] text-white rounded-none sm:rounded-2xl border-0`,
-      ].join(" ");
     default:
       return [
         base,
         "py-12 sm:py-16 lg:py-20",
-        "bg-white border border-gray-200/70 rounded-none sm:rounded-2xl shadow-sm shadow-gray-950/[0.02]",
+        "bg-white border border-gray-200/70 rounded-none sm:rounded-2xl shadow-sm shadow-gray-950/[0.02] print:shadow-none",
       ].join(" ");
   }
 }
@@ -132,72 +126,24 @@ function slideShell(variant: DeckVariant): string {
 function SlideKicker({
   children,
   className = "",
-  light = false,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  light?: boolean;
 }) {
   return (
     <p
       className={[
         "text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] mb-3",
-        light ? "text-white/65" : "text-[var(--pitch-accent-muted)]",
+        "text-[#2D5A27]/85",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
-      style={{
-        ...(light ? {} : { color: `${ACCENT}cc` }),
-      }}
     >
       {children}
     </p>
   );
 }
-
-/** Cover — title + deck rhythm */
-function PitchCover({
-  eyebrow,
-  title,
-  subtitle,
-  chips,
-}: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  chips: string[];
-}) {
-  return (
-    <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 lg:items-end">
-      <div className="lg:col-span-8 space-y-5">
-        <SlideKicker>{eyebrow}</SlideKicker>
-        <h1 className="text-[2rem] sm:text-[2.65rem] lg:text-[clamp(2.5rem,4.2vw,3.35rem)] font-semibold text-gray-900 leading-[1.08] tracking-[-0.03em]">
-          {title}
-        </h1>
-        <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl border-l-[3px] pl-5 py-1" style={{ borderColor: ACCENT }}>
-          {subtitle}
-        </p>
-      </div>
-      <div className="lg:col-span-4 lg:text-right space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">{brandLabelStatic}</p>
-        <div className="flex flex-wrap gap-2 lg:justify-end">
-          {chips.map((c) => (
-            <span
-              key={c}
-              className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50/90 px-3 py-1.5 text-xs font-medium text-gray-700"
-            >
-              {c.trim()}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Avoid hook in static label — overwritten at runtime via PitchCover wrapper if needed.
-const brandLabelStatic = ""; // replaced inline below — actually we use translation in parent.
 
 export default function PitchDeckPage() {
   const { t } = useTranslation();
@@ -275,8 +221,12 @@ export default function PitchDeckPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#EBEEEB] [--pitch-accent:#2D5A27]" style={{ ["--pitch-accent" as string]: ACCENT }}>
+    <div className="min-h-screen bg-[#EBEEEB] print:min-h-0 print:bg-white">
       <style jsx global>{`
+        @page {
+          margin: 14mm 14mm 16mm;
+          size: auto;
+        }
         @media print {
           .pitch-toolbar,
           .pitch-top-nav,
@@ -286,10 +236,31 @@ export default function PitchDeckPage() {
           .pitch-slide {
             break-after: page;
             page-break-after: always;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            max-width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
           }
           .pitch-slide:last-of-type {
             break-after: auto;
             page-break-after: auto;
+          }
+          .pitch-slide-closing {
+            min-height: calc(100vh - 28mm);
+            min-height: calc(100dvh - 28mm);
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .pitch-slide-closing .pitch-closing-inner {
+            width: 100%;
+          }
+          .pitch-slide-closing a {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           body {
             background: white !important;
@@ -331,7 +302,7 @@ export default function PitchDeckPage() {
         role="region"
         aria-label={`${t("pitchDeck.toolbarCopyLink")} · ${t("pitchDeck.toolbarPrintPdf")}`}
       >
-        <div className={`h-[3px] w-full bg-[${ACCENT}]`} aria-hidden />
+        <div className="h-[3px] w-full shrink-0 bg-[#2D5A27]" aria-hidden />
         <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-3.5 sm:px-8 lg:px-10">
           <p className="text-[13px] leading-snug text-gray-600 sm:max-w-[52%]">{t("pitchDeck.introNote")}</p>
           <div className="flex flex-wrap gap-2">
@@ -357,14 +328,13 @@ export default function PitchDeckPage() {
         <p className="mx-auto max-w-[1240px] px-6 pb-2.5 text-[11px] text-gray-500 sm:px-8 lg:px-10">{t("pitchDeck.toolbarHint")}</p>
       </div>
 
-      <main className="mx-auto max-w-[1240px] space-y-7 px-5 pb-20 pt-[calc(8.25rem)] sm:space-y-8 sm:pt-[8.85rem] sm:px-6 lg:space-y-9 lg:px-8 lg:pb-28">
+      <main className="mx-auto max-w-[1240px] space-y-7 px-5 pb-20 pt-[calc(8.25rem)] sm:space-y-8 sm:pt-[8.85rem] sm:px-6 lg:space-y-9 lg:px-8 lg:pb-28 print:mx-0 print:max-w-none print:space-y-0 print:px-4 print:!pb-0 print:!pt-4">
         {/* Cover */}
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className={`${slideShell("cover")}`}
-          style={{ borderBottomColor: ACCENT }}
         >
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 lg:items-end">
             <div className="lg:col-span-8 space-y-5">
@@ -517,8 +487,8 @@ export default function PitchDeckPage() {
         {/* Value */}
         <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`${slideShell("split")}`}>
           <div className="mb-14 max-w-[40ch]">
-            <SlideKicker>{t("pitchDeck.advantagesTitle")}</SlideKicker>
-            <div className="h-px w-12 bg-[#2D5A27] mb-5" aria-hidden />
+            <SlideKicker>{t("pitchDeck.advantagesEyebrow")}</SlideKicker>
+            <div className="mb-6 h-px w-12 bg-[#2D5A27]" aria-hidden />
             <h2 className="text-[1.5rem] sm:text-[1.75rem] font-semibold tracking-tight text-gray-900 leading-snug">{t("pitchDeck.advantagesTitle")}</h2>
           </div>
           <div className="grid gap-x-14 gap-y-12 sm:grid-cols-2">
@@ -545,7 +515,7 @@ export default function PitchDeckPage() {
               return (
                 <div key={item.title} className="grid gap-6 py-7 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-12 sm:items-start">
                   <div className="flex items-center gap-2 sm:flex-col sm:items-start">
-                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/08`}>
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/10">
                       <Icon className="size-[18px] text-[#2D5A27]" aria-hidden />
                     </div>
                     <span className="text-[13px] font-semibold uppercase tracking-[0.05em] text-gray-900 sm:mt-2">{item.title}</span>
@@ -567,7 +537,10 @@ export default function PitchDeckPage() {
               </div>
               <ul className="space-y-6">
                 {transparencyBullets.map((line) => (
-                  <li key={line} className="pitch-avoid-split border-l-[3px] pl-5 text-[14px] sm:text-[15px] leading-relaxed text-gray-700 border-[#2D5A27]/55">
+                  <li
+                    key={line}
+                    className="pitch-avoid-split border-l-[3px] border-l-[#6B8F6B] pl-5 text-[14px] sm:text-[15px] leading-relaxed text-gray-700"
+                  >
                     {line}
                   </li>
                 ))}
@@ -619,7 +592,7 @@ export default function PitchDeckPage() {
                       <dt className="mb-2 text-[12px] font-bold uppercase tracking-[0.06em]" style={{ color: ACCENT }}>
                         {item.heading}
                       </dt>
-                      <dd className="text-[13px] sm:text-[14px] leading-[1.65] text-gray-650 text-gray-600">{item.body}</dd>
+                      <dd className="text-[13px] sm:text-[14px] leading-[1.65] text-gray-600">{item.body}</dd>
                     </div>
                   ))}
                 </dl>
@@ -632,13 +605,14 @@ export default function PitchDeckPage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className={`pitch-slide mx-auto max-w-[1200px] rounded-none sm:rounded-2xl px-8 py-12 text-white shadow-[0_24px_50px_-20px_rgba(45,90,39,0.45)]`}
+          className={`pitch-slide pitch-slide-closing mx-auto max-w-[1200px] rounded-none sm:rounded-2xl px-8 py-12 text-white shadow-[0_24px_50px_-20px_rgba(45,90,39,0.45)] print:rounded-none print:!shadow-none print:py-16 print:px-10`}
           style={{ backgroundColor: ACCENT }}
         >
-          <div className="mx-auto max-w-[56ch]">
-            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/65">{t("pitchDeck.coverEyebrow")}</p>
+          <div className="pitch-closing-inner mx-auto max-w-[56ch]">
+            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/65">{t("pitchDeck.ctaClosingEyebrow")}</p>
             <h2 className="mb-6 text-[1.65rem] sm:text-[1.95rem] font-semibold tracking-tight leading-tight">{t("pitchDeck.ctaClosingTitle")}</h2>
-            <p className="mb-10 text-[15px] leading-relaxed text-white/[0.92]">{t("pitchDeck.ctaClosingBody")}</p>
+            <p className="mb-10 hidden text-[15px] leading-relaxed text-white/[0.92] print:block">{t("pitchDeck.ctaClosingBodyPrint")}</p>
+            <p className="mb-10 text-[15px] leading-relaxed text-white/[0.92] print:hidden">{t("pitchDeck.ctaClosingBody")}</p>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href={loc("/contact")}

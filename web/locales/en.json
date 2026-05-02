@@ -3416,146 +3416,148 @@
     "toolbarCopied": "Copied",
     "toolbarPrintPdf": "Save as PDF",
     "toolbarPrintAria": "Open print dialog to save as PDF",
-    "toolbarHint": "When printing, select “Save as PDF” to produce a document suitable for boards, financing partners or internal archives.",
-    "introNote": "This pitch explains what Bio Vera is, how partners trade and operate on the network, and what we aim to accomplish together. Share the link with colleagues or export a PDF.",
+    "toolbarHint": "Tip for PDFs: in the print dialog pick “Save as PDF” — handy for forwarding to colleagues who prefer an attachment.",
+    "introNote": "Below is how we explain Bio Vera to someone new: what it actually is, how partners work together on it, and what we’re trying to accomplish. Grab the link for your team, or tuck a PDF in the board pack.",
     "heroTechPill": "Protocol 360 · Integrity Guard · QR passport",
-    "plainLanguageEyebrow": "Start here",
-    "plainLanguageTitle": "What we are, how we do business, what we achieve",
-    "plainLanguageIntro": "A pitch deck should answer three questions in plain language before the technical appendix. Below: the nature of the network, the rhythm of real-world commerce on the platform, and the partner-level results we optimise for.",
+    "plainLanguageEyebrow": "In plain words",
+    "plainLanguageTitle": "What we are, how deals move, what we gain",
+    "plainLanguageIntro": "Before anyone dives into appendix detail, three things usually need to land emotionally as well as intellectually — what kind of beast this is, what a normal trading week feels like on the rails, and the outcomes partners actually care about. That’s what the next cards are for.",
     "plainLanguageCards": [
       {
         "title": "What Bio Vera is",
-        "body": "Bio Vera is a standards-led agrifood network backed by one software spine. Growers, packers, carriers, suppliers and buyers adopt shared Bio-Ready rules; the system records estates, inputs, field work, batches, logistics missions, settlements and shopper-facing QR passports. The point is credible evidence—barcodes, map boundaries, timestamps, custody—not a loose collection of PDFs and chats."
+        "body": "Think of Bio Vera as a networked food supply chain where everyone agrees to play by the same Bio-Ready rules — and shares one software backbone for the boring part of trust. Growers, packers, carriers, suppliers and retailers all write into the same story: parcels, inputs, diary entries, batches, shipments, money and eventually the shopper-facing QR. We care less about flashy PDFs than about fingerprints you can defend: barcode, map boundary, time stamp, who held the crate when it got warm."
       },
       {
         "title": "How business runs on the platform",
-        "body": "Day-to-day commerce follows the vertical loop: approved inputs (including programme seed and optional insurance tied to qualifying purchases), cultivation evidence with boundary-bound GPS, batches created under Protocol 360, stock moving through missions with explicit custody handovers and cold-chain narrative, then fulfilment to buyers. Revenue is released in defined stages so grower pay, carrier fees, platform and programme economics (including Vera work bonuses when standards are met), and tax treatments on cross-border legs remain separable and reconcilable."
+        "body": "Commercial life runs in a circle most teams already intuit: you buy sanctioned inputs (including programme-priced seed with optional insurance when it applies), prove what happened in the field with GPS that respects the parcel line, mint batches under Protocol 360, ship them via missions where custody actually changes hands, then close with the buyer. Money doesn’t tumble out as one blurry lump — we stagger releases so the grower line, haulage line, programme economics (including Vera work bonuses where earned) and VAT legs across borders stay readable for finance folk who still have to sleep at night."
       },
       {
-        "title": "Outcomes partners work toward",
-        "body": "Audits and buyer diligence become faster because dossiers are chronological and keyed to batches. Retail claims match operations because the QR passport draws from the same data. Growers gain fairer, more predictable compensation and tools that work offline. Incidents shrink in ambiguity when custody and temperature trails are structured. Premium and origin stories rest on substantiated claims. Leadership steers one trustworthy dataset for quality, logistics and finance—not three conflicting versions."
+        "title": "Outcomes we’re optimising for",
+        "body": "If you audit us, pick a batch ID and scroll forward instead of begging three departments for stray attachments. If you walk a supermarket floor, what the QR says shouldn’t blush when compared with the back-office file. Farmers get tooling that survives spotty LTE and payouts that aren’t improvised in retrospect. When refrigerant slips or timelines fight, custody isn’t reconstructed from WhatsApp. And when leadership asks “what really happened?” there’s only one chronological spine feeding quality, logistics and finance — because three competing truths rarely age well."
       }
     ],
     "videoTitle": "Walkthrough video",
-    "videoCaption": "A concise overview of how growers, packers, carriers and retail teams reference the same Bio Vera data backbone.",
-    "videoPlaceholderTitle": "Partner video slot",
-    "videoPlaceholderBody": "Publish your walk-through on YouTube or Vimeo and configure the site with that public URL—the player will load automatically for partners viewing this deck.",
-    "howItWorksEyebrow": "Operating model",
-    "howItWorksTitle": "How Bio Vera works — from estate boundary to QR passport",
-    "howItWorksLead": "The sections below summarise benefits by role. This sequence is how we align growers, buyers and logistics partners on one backbone—regardless of country of origin or destination. It begins with mapped estates and seed economics, adds defensible field evidence, validates packaging and batches, structures logistics custody, and finishes with shopper-facing passports and transparent settlement lines. The specification appendix farther down enumerates fourteen operational pillars with explicit controls, guardrails and platform surfaces—not a marketing synopsis alone.",
+    "videoCaption": "Two minutes narrated beats ten slides of jargon — here’s how field, packing, trucks and retailers read the exact same Vera thread.",
+    "videoPlaceholderTitle": "Room for your own walkthrough",
+    "videoPlaceholderBody": "Record a concise walk-through (screen + voice-over works great), publish it as public or unlisted on YouTube or Vimeo, paste the normal share URL into the site env var NEXT_PUBLIC_PITCH_DECK_VIDEO_URL, redeploy — and this grey box turns into your player.",
+    "howItWorksEyebrow": "How it actually flows",
+    "howItWorksTitle": "From the farm boundary scan to the shelf QR — one continuous thread",
+    "howItWorksLead": "Nobody absorbs seventeen diagrams over lukewarm coffee — so we order this exactly how crews live it day to day: inputs and boundaries, trustworthy field notebooks, auditable pallets, lorries acknowledging custody loudly enough for finance to hear, and only then passports plus splits that accountants can reconcile. Roles differ but facts share the same bloodstream. Prefer every guardrail enumerated? Drop to the appendix: fourteen pillars spelled out patiently.",
     "howItWorksPhases": [
       {
-        "title": "Estates, seed economics and Integrity Guard inputs",
-        "body": "Each estate carries a geo boundary on the platform. Seed purchases honour Vera Partner terms when growers join that programme, with optional insurance placed alongside seed in the purchase flow itself. Sensitive inputs run through whitelist checks against our Vera catalogue — if a barcode is not approved, it does not quietly become compliant evidence later."
+        "title": "Estates, seed economics and guarding what goes onto the crop",
+        "body": "Every farm snaps to a GIS polygon your lawyer can screenshot. Vera Partner tariffing behaves when enrolment flips — and seed flows can politely bundle insurance beside the SKU when that programme smiles on it. Anything chemical-looking survives a whitelist first; rejecting a dubious barcode hurts once, retrofitting folklore months later hurts everyone louder."
       },
       {
-        "title": "Offline field workflows and truthful GPS",
-        "body": "Field diaries and compliance records are stored on the device first when connectivity is limited, then synchronised securely. Entries require a GPS position within the estate boundary—supporting dispute resolution with objective evidence rather than informal communication trails."
+        "title": "Field teams work offline — GPS still tells the honest parcel",
+        "body": "Technicians jot diaries offline when the mast vanishes; the phone syncs when it can breathe again. Locations must land inside that polygon so arguments later lean on satellites, not who remembers shouting across the orchard."
       },
       {
-        "title": "Packaging batches, Protocol 360 checks and Vera work bonus",
-        "body": "Pack-houses convert produce into batches governed by Protocol 360—biometric and material controls where configured. Batch identifiers flow into logistics and the retail QR passport. Where packaging meets Vera material rules, growers may qualify for the Vera work bonus; incentives are tied to verified process discipline."
+        "title": "Packing converts fruit into labelled batches Protocol 360 can sign",
+        "body": "The pack-house isn’t choreography for auditors — it emits batch IDs everybody downstream inherits. Fingerprints stay where biology matters, materials where buyers squint at polythene stacks. Nail the Vera material brief and the Vera work bonus isn’t philanthropy; it’s economics tied to proofs you’d show a sceptical QA lead."
       },
       {
-        "title": "Logistics missions, cold chain and custody handovers",
-        "body": "Carriers and partners execute structured missions: defined pickup windows, chained legs and explicit custody transfers linked to batch IDs. Temperature monitoring and exceptions stay on the same narrative that category and quality teams review—reducing reliance on fragmented email attachments."
+        "title": "Trucks inherit missions, not rumours",
+        "body": "We script pickups, hops and signature moments so “who stared at which pallet?” is boringly answerable — especially when coolant drifts north of tolerant. Attachment chains thin out because telemetry rides in the mission story category managers already skim."
       },
       {
-        "title": "Retail passport, escrow rhythm and payout lines",
-        "body": "In-store QR scanning opens the digital passport: producer profile, certifications, origin and cold-chain context in one coherent view. Payments follow staged escrow releases so grower compensation, logistics fees, platform lines and Vera bonuses remain traceable. Vera Partner seed economics, insurance commissions where programmes apply, and differentiated freight and tax treatment between export legs and destination markets are modelled upstream to support disciplined period-end close."
+        "title": "Shoppers swipe QR; finance honours the choreography",
+        "body": "Retail QR merges grower swagger, certs, corridors and refrigerated chapters without inventing metaphors escrow never heard. Releases fan out deliberately so growers, hauliers, Vera bonuses where earned, seeds margin and insurer slices keep their receipts. Taxes differ between export throats and European shelf zip codes — upstream modelling avoids last-minute archaeology at quarter close."
       }
     ],
-    "coverEyebrow": "Partner overview",
-    "coverTitle": "One operating system for growers, buyers and logistics partners",
-    "coverSubtitle": "Bio Vera is a standards-led agrifood network and software platform. We work with producers and buyers anywhere in the world who commit to our Bio-Ready rules—geography does not define partnership. The spine ties together estate mapping, field compliance, packaging control, mission-based logistics and QR retail verification. Vera Partner seed economics, optional insurance on qualifying purchases and Vera work bonuses for verified packaging align incentives through the chain. Every material claim—approved inputs, estate-bound GPS, batch identity, refrigeration narrative and payout line—is recorded in structured form, not improvised in spreadsheets or messaging apps.",
-    "whyTitle": "Why traceability must be built into operations",
-    "whyLead": "Procurement, quality and food-safety teams need evidence that survives audits and commercial diligence. Growers need fair, predictable compensation and systems that remain usable when network coverage is weak. Siloed spreadsheets and informal channels recreate the same reconciliation burden on every shipment.",
+    "coverEyebrow": "Partner deck",
+    "coverTitle": "One operating spine for growers, buyers and trucking partners",
+    "coverSubtitle": "Bio Vera is where producers and buyers who accept our Bio-Ready rules meet — your flag on the map is not what earns you the seat at the table, behaviour is. One stack keeps maps, field notes, carton checks, trucking handovers and retail QR passports honest with each other. Vera Partner pricing on seed, optional insurance snapped to qualifying buys, Vera packaging bonuses wired to proofs — carrots stay wired to chores. Approved inputs, GPS inside parcel lines, pallet identity, refrigerated episodes and payout lines aren’t campfire stories trapped in spreadsheets and chat threads anymore.",
+    "whyTitle": "Why trace stops being polite once audits lean in",
+    "whyLead": "Nobody wins when procurement chases heroic PDFs while agronomists scribble contradictory truths offline. Vera exists because intermittent networks shouldn’t disqualify conscientious notebooks — and because reconciling ghosts every shipment is misery disguised as ops tempo.",
     "whyBullets": [
-      "Fragmented documentation undermines certification claims, slows dispute resolution and increases regulatory exposure.",
-      "Retail and food-service buyers expect scan-to-origin proof; claims without verifiable data carry limited weight.",
-      "Operational and regulatory complexity favour networks that record custody, quality and finance continuously—not only at invoice time.",
-      "When growers, carriers and merchants each maintain partial copies of the truth, reconciliation errors compound at scale; a single chronological backbone amortises diligence cost across seasons and SKUs."
+      "Broken folders don’t magically heal before certification renewals — they rot quietly until someone expensive notices.",
+      "Retail expects a barcode story that survives a cynical tap; fluff collapses quicker than heirloom tomatoes bruise.",
+      "When custody, QA and treasury only shake hands once a quarter, auditors sense it before KPI decks print.",
+      "Three partial truths about the same pallet inflate finance busywork exponentially — one spine amortises diligence instead."
     ],
-    "solutionTitle": "What Bio Vera integrates",
-    "solutionLead": "Bio Vera is not only a listing channel. It connects controlled field data, logistics missions with explicit custody, phased settlement and retail QR passports—so commercial, compliance and finance stakeholders use a single, consistent record from seed to shelf. Web dashboards, mobile Expo apps for producers and counterpart surfaces for logistics partners read and write against the same API contracts.",
-    "chainTitle": "The vertical operating loop",
+    "solutionTitle": "More than listings — stitched field, freight and treasury",
+    "solutionLead": "We connect agronomy data, refrigerated custody trails and phased settlement so commercial, compliance and finance teams argue over one coherent record from planting decisions through checkout. Grower phones and warehouse dashboards consume the same APIs — parity without parallel fiction.",
+    "chainTitle": "The vertical loop end-to-end",
     "chainSteps": [
-      "Seed — Vera Partner economics for programme-aligned growers",
-      "Insurance — optional coverage associated with qualifying seed purchases",
-      "Cultivation — journals, estate boundaries and barcode rules we enforce",
-      "Packaging — Protocol 360 controls; Vera work bonus when standards are met",
-      "Logistics — missions, handovers and batch-level custody",
-      "Retail — QR passport tying shelf stock to farmer profile, chronological journey segments, certificates and refrigerated context"
+      "Seed economics — differentiated Vera Partner lifts for enrolled growers",
+      "Insurance — optional companions to qualifying seed orders when programmes allow",
+      "Cultivation — journals tethered within estate polygons; disciplined barcodes",
+      "Packaging — Protocol 360 depth plus Vera work bonuses when proofs hold",
+      "Logistics — missions, custody swaps, pallets never orphaned in narrative",
+      "Retail — shopper QR marrying origin biography, certs and cold-chain moments"
     ],
-    "advantagesTitle": "Value by partner type",
+    "advantagesEyebrow": "Upside travels with the role",
+    "advantagesTitle": "Who feels the lift",
     "advantages": [
       {
-        "title": "Growers and estates",
-        "body": "Mobile workflows prioritise offline capture with automatic synchronisation when service returns. Sensitive inputs must match Vera whitelist barcodes; estate-boundary GPS validation supports audit-ready field records."
+        "title": "Growers & estates",
+        "body": "Phones bias toward sleepy LTE basements yet still remember every photo; syncing feels like slack tide instead of confession. Sensitive inputs politely refuse shady barcodes, and parcel GPS wards off “helpful” photos shot from cousin’s hillside."
       },
       {
-        "title": "Retail and procurement",
-        "body": "Batch-level visibility covers refrigeration narrative, certifications and origin on the passport—supporting category management and quality conversations with primary evidence rather than unstructured email threads."
+        "title": "Retail & procurement",
+        "body": "Category chats graduate from screenshot archaeology—passports hand you cold arcs, certs and geography in one calm scroll when the buyer’s patience is thin."
       },
       {
-        "title": "Carriers and logistics partners",
-        "body": "Structured missions document custody transitions in standard terms, which reduces ambiguity after incidents such as temperature excursions or handling disputes."
+        "title": "Carriers & logistics partners",
+        "body": "Missions read like stage directions: who signed which palette when the reefer hiccupped, without inventing new nouns after the truck idled too long."
       },
       {
         "title": "Revenue allocation",
-        "body": "Partner versus standard seed economics, insurance participation where relevant, freight and platform components—including Vera bonuses—are represented explicitly in the payout model."
+        "body": "Seed economics, insurance slices, haulage, platform lift and Vera bonuses sit in separate pockets so nobody’s margin becomes someone else’s ghost write-off."
       },
       {
-        "title": "Compliance and assurance",
-        "body": "Documents and attestations anchor to estates and batch IDs already maintained in-platform, improving continuity compared with ad hoc annual file assembly. Auditors receive a chronological spine—inputs, interventions, geography, imagery and signatures—indexed by immutable batch keys."
+        "title": "Compliance & assurance",
+        "body": "Attachments graduate from annual treasure hunts because estate and batch IDs already anchor the proof—auditors scroll chronology instead of bullying Slack exports."
       },
       {
-        "title": "Brand and origin positioning",
-        "body": "The public passport links shelf SKUs to named origin, certifications and journey data—supporting premium positioning with substantiated claims."
+        "title": "Brand & origin",
+        "body": "Shelf stories stop cosplaying — provenance, certifications and movement trail share the same nervous system the compliance team brags about."
       }
     ],
-    "techTitle": "Technical foundations",
-    "techLead": "Leadership reporting and field operations share the same underlying data; resilience at the edge is a prerequisite, not an afterthought.",
+    "techTitle": "Engineering that stops fighting the field",
+    "techLead": "Ops leads and warehouse leads refresh the same tables for once—edge resilience isn’t a slide promise, it’s table stakes when harvest weeks refuse Wi-Fi.",
     "techItems": [
       {
         "title": "Offline-first field capture",
-        "body": "Critical grower workflows persist locally and upload when connectivity is restored, reducing data loss during peak harvest or low-coverage periods."
+        "body": "Critical moments stay on-device until signal returns—no more superstitious retyping after the combine crawls under a hill."
       },
       {
         "title": "Integrity Guard",
-        "body": "Approved-input barcodes and estate-boundary GPS checks reduce the risk of non-compliant or mis-located entries entering the compliance record."
+        "body": "Green-list barcodes and fence-honest GPS catch creative logging before it metastasises into board-level apologies."
       },
       {
         "title": "Protocol 360",
-        "body": "Layered verification from field through packaging and cold chain provides a structured quality narrative aligned with buyer and regulator expectations."
+        "body": "Structured checks from soil through pack line and refrigerated legs give quality teams a narrative they can defend in front of buyers."
       },
       {
-        "title": "Security and access control",
-        "body": "Role-based access, rate limiting and operational logging support multi-party networks and informed incident response."
+        "title": "Security & access control",
+        "body": "Roles, sane rate limits and searchable logs keep a multi-party network legible when integrations misbehave."
       },
       {
-        "title": "Operational analytics without shadow IT",
-        "body": "Because missions, batches and payments share identifiers, throughput, dwell time, temperature exceptions and payout variance roll up consistently—reducing duplicated BI extracts."
+        "title": "Analytics without shadow spreadsheets",
+        "body": "Because missions, batches and settlements share IDs, dwell and drift metrics stop mutating per department — finance nods, ops nods, fewer pivot tables."
       }
     ],
-    "transparencyTitle": "Verified transparency for buyers",
+    "transparencyTitle": "What shoppers deserve to believe",
     "transparencyBullets": [
-      "The QR journey resolves to a batch passport with producer, route and certification context—designed for concise, factual presentation.",
-      "Cold-chain and custody information appears alongside origin data within the same narrative.",
-      "Bio-Ready positioning is expressed consistently with the evidence surfaced to the end customer.",
-      "Public narratives intentionally exclude marketing language that lacks machine-backed artefacts—protecting grocer reputation and downstream liability."
+      "That QR resolves to someone’s face, certs and route breadcrumbs — succinct, factual, stubbornly linkable.",
+      "Cold narratives and custody sit next to geography instead of politely ignoring each other in separate decks.",
+      "Bio-Ready language on packaging isn’t orphaned from what operations actually surfaced.",
+      "We leave purple adjectives stranded when artefacts don’t back them — reputations downstream matter."
     ],
-    "financeTitle": "Settlement and tax clarity",
-    "financeLead": "Funds are released in defined stages so grower, logistics, platform and Vera bonus components can be reconciled without conflating unrelated lines.",
+    "financeTitle": "Money that stops pretending to be monolithic",
+    "financeLead": "Escrow stages exist so finance can narrate who earned which slice without heroically merging unrelated lines on a Friday night.",
     "financeBullets": [
-      "Vera Partner and standard seed economics are embedded from the first transaction, reducing late-stage payout surprises.",
-      "Insurance commissions are disclosed transparently where relevant programmes apply.",
-      "Cross-border freight and VAT treatment between export legs and destination markets are reflected in tax logic to support compliant reporting.",
-      "Driver remuneration and platform uplift remain separable ledger concepts so forensic finance teams can reconcile each shipment against contracts and statutes."
+      "Vera Partner seed math is baked in from purchase one — no surprise footnotes at payout o’clock.",
+      "Insurance programme picks show their platform commission honestly when they apply.",
+      "International legs pick up the VAT story they actually deserve — reporting teams thank you quietly.",
+      "Driver cheques and platform margins stay in different pockets so reconciliation isn’t theatre."
     ],
-    "detailSpecEyebrow": "Specification",
-    "detailSpecTitle": "Detailed programme overview — 14 pillar coverage",
-    "detailSpecLead": "Bio Vera couples certification-grade traceability with defensible economics. The blocks below mirror how we onboard partners, defend audits and extend the codebase: controlled inputs and seed economics; estate geometry and cultivation chronology; Integrity Guard blocking rules; staged Protocol 360 evidence; offline capture and reconciliation; missions and custody; buyer passports; escrow waterfalls and differentiated tax legs; supplier catalogues disciplined by whitelist logic; RBAC/JWT posture; engineering footprint; and operator-facing workspaces so each persona contributes to one spine instead of forks.",
+    "detailSpecEyebrow": "When you need every rivet",
+    "appendixWatermark": "Appendix — operator depth",
+    "detailSpecTitle": "Extended programme map — all fourteen pillars",
+    "detailSpecLead": "You’ve read the story; this is the workshop manual. We wrote it the way we onboard partners, survive audits and extend the platform: inputs, maps, Integrity Guard, Protocol 360, offline capture, missions, passports, settlement plumbing, supplier catalogues, security posture, engineering footprint, and the desk layouts each role actually touches. Skim or print — it’s meant to be useful, not decorative.",
     "detailSections": [
       {
         "title": "1. Seed, insurance and controlled inputs",
@@ -3884,8 +3886,10 @@
         ]
       }
     ],
-    "ctaClosingTitle": "Discuss partnership",
-    "ctaClosingBody": "This document is written for boards, partners and investors: first the business narrative, then the operational deep dive. Use the toolbar to copy the link or save a PDF. From here, continue to grower, buyer, logistics or investor pages as needed.",
+    "ctaClosingTitle": "Let’s talk about your lane in this loop",
+    "ctaClosingEyebrow": "What’s next",
+    "ctaClosingBody": "You’ve got the narrative and the torque wrench appendix. Copy the live link for your committee, or export a PDF for someone who still prints. From there hop to grower, buyer, logistics or investor pages — whichever hat you’re wearing today.",
+    "ctaClosingBodyPrint": "You’ve read the business narrative and the technical appendix. Continue with the contacts and programme links below, or share the canonical deck URL separately for reviewers who prefer the live version.",
     "ctaContact": "Contact Bio Vera",
     "ctaGrowers": "Grower programme",
     "ctaBuyers": "Buyer information",
