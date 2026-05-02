@@ -57,37 +57,44 @@ export class QualityEntryService {
    * Uses tolerant decode + fallbacks because some PNG/WebP files fail strict metadata checks.
    */
   private async shrinkHandoverImageToJpegDataUrl(buf: Buffer, context: string): Promise<string> {
-    const toJpeg = async (minimal: boolean) => {
-      let img = sharp(buf, { failOn: 'none' }).rotate();
-      if (!minimal) {
-        img = img.flatten({ background: { r: 255, g: 255, b: 255 } });
-      }
-      return img
-        .resize({
-          width: 1280,
-          height: 1280,
-          fit: 'inside',
-          withoutEnlargement: true,
-        })
-        .jpeg(
-          minimal
-            ? { quality: 72, chromaSubsampling: '4:4:4' }
-            : { quality: 76, mozjpeg: true, chromaSubsampling: '4:4:4' },
-        )
-        .toBuffer();
-    };
+    const attempts: Array<{
+      edge: number;
+      quality: number;
+      flatten: boolean;
+      mozjpeg: boolean;
+    }> = [
+      { edge: 1024, quality: 68, flatten: true, mozjpeg: true },
+      { edge: 1024, quality: 62, flatten: false, mozjpeg: false },
+      { edge: 800, quality: 56, flatten: false, mozjpeg: false },
+    ];
 
     let lastMessage = '';
-    for (const minimal of [false, true]) {
+    for (const a of attempts) {
       try {
-        const out = await toJpeg(minimal);
+        let img = sharp(buf, { failOn: 'none' }).rotate();
+        if (a.flatten) {
+          img = img.flatten({ background: { r: 255, g: 255, b: 255 } });
+        }
+        const out = await img
+          .resize({
+            width: a.edge,
+            height: a.edge,
+            fit: 'inside',
+            withoutEnlargement: true,
+          })
+          .jpeg(
+            a.mozjpeg
+              ? { quality: a.quality, mozjpeg: true, chromaSubsampling: '4:4:4' }
+              : { quality: a.quality, chromaSubsampling: '4:4:4' },
+          )
+          .toBuffer();
         if (out.length > 0) {
           return `data:image/jpeg;base64,${out.toString('base64')}`;
         }
       } catch (e) {
         lastMessage = e instanceof Error ? e.message : String(e);
         this.logger.warn(
-          `shrinkHandoverImageToJpegDataUrl (${context}) minimal=${minimal}: ${lastMessage}`,
+          `shrinkHandoverImageToJpegDataUrl (${context}) edge=${a.edge} q=${a.quality}: ${lastMessage}`,
         );
       }
     }
@@ -97,7 +104,7 @@ export class QualityEntryService {
     const mime =
       ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
     const passthrough = `data:${mime};base64,${buf.toString('base64')}`;
-    const maxPassthroughChars = 1_400_000;
+    const maxPassthroughChars = 650_000;
     if (passthrough.length <= maxPassthroughChars) {
       this.logger.warn(
         `shrinkHandoverImageToJpegDataUrl (${context}): passthrough original (${passthrough.length} chars)`,
@@ -559,9 +566,13 @@ export class QualityEntryService {
       for (const s of palletStored) inlineChars += s.length;
       for (const s of truckStored) inlineChars += s.length;
       inlineChars += badgeUrl.length + signatureUrl.length;
-      if (inlineChars > 5_500_000) {
+      this.logger.log(
+        `logisticsHandover inline payload (no blob): ~${inlineChars} chars, photos pallet=${palletStored.length} truck=${truckStored.length}`,
+      );
+      /** Stay under typical Postgres/pooler limits when rows contain base64 JSON */
+      if (inlineChars > 2_600_000) {
         throw new BadRequestException(
-          'Handover is still too large after server compression. Set BLOB_READ_WRITE_TOKEN or use fewer / smaller photos.',
+          'Handover is still too large after server compression. Use fewer photos, or set BLOB_READ_WRITE_TOKEN on the API.',
         );
       }
     }
@@ -655,12 +666,17 @@ export class QualityEntryService {
       }
       if (e instanceof Prisma.PrismaClientUnknownRequestError) {
         const cause = (e as { cause?: unknown }).cause;
-        this.logger.error(
-          `logisticsHandover PrismaClientUnknownRequestError: ${e.message}${cause != null ? ` | cause=${String(cause)}` : ''}`,
-        );
-        const detail = blobConfigured
-          ? 'Try fewer or smaller images. Confirm `prisma migrate deploy` has been applied (pickup driver / handover columns).'
-          : 'Set BLOB_READ_WRITE_TOKEN on the API (Vercel Blob) so images are not stored as huge base64 in the database.';
+        const prismaMsg = `${e.message}${cause != null ? ` ${String(cause)}` : ''}`;
+        this.logger.error(`logisticsHandover PrismaClientUnknownRequestError: ${prismaMsg}`);
+        const low = prismaMsg.toLowerCase();
+        const looksSchema =
+          low.includes('column') ||
+          low.includes('does not exist') ||
+          low.includes('unknown field') ||
+          low.includes('undefined column');
+        const detail = looksSchema
+          ? 'Database schema may be missing columns (e.g. pickup driver / handover fields). Run prisma migrate deploy on this database and check API logs.'
+          : 'Common causes: payload too large for the pooler (set BLOB_READ_WRITE_TOKEN), or DB timeout. Try fewer photos; check API logs for the exact Prisma message.';
         throw new BadRequestException(`Could not write handover to the database. ${detail}`);
       }
       this.logger.error(
