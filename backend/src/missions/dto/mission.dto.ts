@@ -37,15 +37,18 @@ export class CreateMissionDto {
   @IsString()
   pickupAddress: string;
 
-  /** Full drop-off address — required for clear routing and load planning */
+  /**
+   * Drop-off is set by operations (buyer order / admin). Growers may omit; logistics and admin always see full routing when set.
+   */
+  @IsOptional()
   @IsString()
   @MaxLength(2000)
-  destinationAddress: string;
+  destinationAddress?: string;
 
-  /** City / region for grouping multiple partial loads on one truck when they share a destination */
+  @IsOptional()
   @IsString()
   @MaxLength(200)
-  destinationCity: string;
+  destinationCity?: string;
 
   /** Pallets, time window, dock — optional */
   @IsOptional()

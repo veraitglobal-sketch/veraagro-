@@ -131,6 +131,18 @@ export class GrowerPortalService {
     };
   }
 
+  /** No buyer order ref or dock instructions on the grower portal — operations + logistics only. */
+  private missionTrackerCommerceFieldsForGrower(mission: Parameters<
+    GrowerPortalService['missionTrackerCommerceFields']
+  >[0]) {
+    const full = this.missionTrackerCommerceFields(mission);
+    return {
+      productName: full.productName,
+      quantity: full.quantity,
+      unit: full.unit,
+    };
+  }
+
   /** Core query + DTO build (may throw) */
   private async getMissionTrackerRows(growerId: string, batchId?: string): Promise<any[]> {
     const where: Prisma.missionsWhereInput = { growerId };
@@ -328,7 +340,7 @@ export class GrowerPortalService {
           badgePhotoUrl: null,
           driverSignatureUrl: null,
         };
-    const commerce = this.missionTrackerCommerceFields(mission);
+    const commerce = this.missionTrackerCommerceFieldsForGrower(mission);
     return {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
@@ -336,10 +348,6 @@ export class GrowerPortalService {
       productName: commerce.productName,
       quantity: commerce.quantity,
       unit: commerce.unit,
-      orderId: commerce.orderId,
-      orderNumber: commerce.orderNumber,
-      orderStatus: commerce.orderStatus,
-      loadInstructions: commerce.loadInstructions,
       status: mission.status,
       currentMilestone: '—',
       milestones: [],
@@ -411,7 +419,6 @@ export class GrowerPortalService {
         comment: rating.comment,
         rater: rating.users_ratings_raterIdTousers,
         createdAt: rating.createdAt,
-        orderNumber: item.orders.orderNumber,
       }))
     );
 
@@ -472,14 +479,9 @@ export class GrowerPortalService {
       throw new ForbiddenException('You can only view your own missions');
     }
 
-    // Build milestones
-    const milestones = this.buildMilestones(mission);
-
-    // Build route points (masked for privacy)
-    const routePoints = this.buildRoutePoints(mission);
-
-    // Calculate ETA
-    const eta = this.calculateETA(mission);
+    const milestones = this.applyGrowerMilestonePrivacy(this.buildMilestones(mission));
+    const routePoints: ReturnType<GrowerPortalService['buildRoutePoints']> = [];
+    const eta = this.calculateETAGrower(mission);
 
     return {
       missionId: mission.missionNumber,
