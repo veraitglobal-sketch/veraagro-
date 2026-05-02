@@ -3456,10 +3456,11 @@
     "whyBullets": [
       "Fragmented documentation undermines certification claims, slows dispute resolution and increases regulatory exposure.",
       "Retail and food-service buyers expect scan-to-origin proof; claims without verifiable data carry limited weight.",
-      "Operational and regulatory complexity favour networks that record custody, quality and finance continuously—not only at invoice time."
+      "Operational and regulatory complexity favour networks that record custody, quality and finance continuously—not only at invoice time.",
+      "When growers, carriers and merchants each maintain partial copies of the truth, reconciliation errors compound at scale; a single chronological backbone amortises diligence cost across seasons and SKUs."
     ],
     "solutionTitle": "What Bio Vera integrates",
-    "solutionLead": "Bio Vera is not only a listing channel. It connects controlled field data, logistics missions with explicit custody, phased settlement and retail QR passports—so commercial, compliance and finance stakeholders use a single, consistent record from seed to shelf.",
+    "solutionLead": "Bio Vera is not only a listing channel. It connects controlled field data, logistics missions with explicit custody, phased settlement and retail QR passports—so commercial, compliance and finance stakeholders use a single, consistent record from seed to shelf. Web dashboards, mobile Expo apps for producers and counterpart surfaces for logistics partners read and write against the same API contracts.",
     "chainTitle": "The vertical operating loop",
     "chainSteps": [
       "Seed — Vera Partner economics for programme-aligned growers",
@@ -3467,7 +3468,7 @@
       "Cultivation — journals, estate boundaries and barcode rules we enforce",
       "Packaging — Protocol 360 controls; Vera work bonus when standards are met",
       "Logistics — missions, handovers and batch-level custody",
-      "Retail — QR passport combining origin, cold chain and certifications"
+      "Retail — QR passport tying shelf stock to farmer profile, chronological journey segments, certificates and refrigerated context"
     ],
     "advantagesTitle": "Value by partner type",
     "advantages": [
@@ -3489,7 +3490,7 @@
       },
       {
         "title": "Compliance and assurance",
-        "body": "Documents and attestations anchor to estates and batch IDs already maintained in-platform, improving continuity compared with ad hoc annual file assembly."
+        "body": "Documents and attestations anchor to estates and batch IDs already maintained in-platform, improving continuity compared with ad hoc annual file assembly. Auditors receive a chronological spine—inputs, interventions, geography, imagery and signatures—indexed by immutable batch keys."
       },
       {
         "title": "Brand and origin positioning",

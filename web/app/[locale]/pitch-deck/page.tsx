@@ -23,6 +23,35 @@ import { parsePitchDeckVideoUrl } from "@/lib/pitch-deck-video";
 
 type TextBlock = { title: string; body: string };
 
+type DetailSubItem = { heading: string; body: string };
+
+type DetailSectionBlock = { title: string; items: DetailSubItem[] };
+
+function isDetailSubItem(x: unknown): x is DetailSubItem {
+  return (
+    typeof x === "object" &&
+    x !== null &&
+    "heading" in x &&
+    "body" in x &&
+    typeof (x as DetailSubItem).heading === "string" &&
+    typeof (x as DetailSubItem).body === "string"
+  );
+}
+
+function parseDetailSections(raw: unknown): DetailSectionBlock[] {
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const out: DetailSectionBlock[] = [];
+  for (const row of raw) {
+    if (typeof row !== "object" || row === null || !("title" in row) || !("items" in row)) continue;
+    const title = (row as { title: unknown }).title;
+    const itemsRaw = (row as { items: unknown }).items;
+    if (typeof title !== "string" || !Array.isArray(itemsRaw)) continue;
+    const items = itemsRaw.filter(isDetailSubItem);
+    if (items.length > 0) out.push({ title, items });
+  }
+  return out;
+}
+
 function isTextBlockList(x: unknown): x is TextBlock[] {
   return (
     Array.isArray(x) &&
@@ -94,6 +123,11 @@ export default function PitchDeckPage() {
   const financeBullets = useMemo(() => {
     const raw = t("pitchDeck.financeBullets", { returnObjects: true });
     return isStringList(raw) ? raw : [];
+  }, [t]);
+
+  const detailSections = useMemo(() => {
+    const raw = t("pitchDeck.detailSections", { returnObjects: true });
+    return parseDetailSections(raw);
   }, [t]);
 
   const copyPublicUrl = useCallback(() => {
@@ -451,6 +485,49 @@ export default function PitchDeckPage() {
             ))}
           </ul>
         </motion.section>
+
+        {detailSections.length > 0 && (
+          <>
+            <motion.section
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className={sectionClass("pitch-slide border-t-4 border-t-[#2D5A27]")}
+              aria-labelledby="pitch-detail-spec-heading"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#2D5A27] mb-2">{t("pitchDeck.detailSpecEyebrow")}</p>
+              <h2 id="pitch-detail-spec-heading" className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-4">
+                {t("pitchDeck.detailSpecTitle")}
+              </h2>
+              <p className="text-base text-gray-600 leading-relaxed max-w-3xl">{t("pitchDeck.detailSpecLead")}</p>
+            </motion.section>
+
+            {detailSections.map((block) => (
+              <motion.section
+                key={block.title}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                className={sectionClass("pitch-slide")}
+              >
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight border-b border-gray-100 pb-3 mb-6">
+                  {block.title}
+                </h3>
+                <div className="space-y-5">
+                  {block.items.map((item) => (
+                    <div
+                      key={`${block.title}-${item.heading}`}
+                      className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 sm:p-5 print:break-inside-avoid"
+                    >
+                      <p className="text-sm font-semibold text-[#2D5A27] uppercase tracking-wide mb-2">{item.heading}</p>
+                      <p className="text-base text-gray-700 leading-relaxed">{item.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.section>
+            ))}
+          </>
+        )}
 
         {/* Closing CTA */}
         <motion.section

@@ -3530,6 +3530,219 @@
       "Kad program uključi osiguranje, procenat koji ostaje kod platforme piše se čitko — dosadnost je kompliment revizoru.",
       "Međunarodni prevoz i PDV između izvoznih etapa i tržišta odredišta odražavaju se u logici koja podržava usklađeno izveštavanje."
     ],
+    "detailSpecEyebrow": "Specifikacija",
+    "detailSpecTitle": "Detaljan pregled programa — sve glavne tačke",
+    "detailSpecLead": "Bio Vera spaja sledljivost nivoa sertifikacije sa ekonomikom koju možete obraniti na reviziji. Blokovi ispod sled iste stubove kao u tehničkom i poslovnom nacrtu sistema: vertikalnu petlju od semena do police, pravila Integrity Guard-a, Protocol 360, offline ponašanje, kustodiju u logistici, QR pasoš za kupca, strukturu obračuna i poreza, uloge u ekosistemu uključujući dobavljački kanal, bezbednosnu postavu i tehnički trag (PostgreSQL, Nest/API, Next.js i mobilni Expo RN, sinhrono više jezika).",
+    "detailSections": [
+      {
+        "title": "1. Seme, osiguranje i kontrolisani ulazi",
+        "items": [
+          {
+            "heading": "Ekonomika Vera Partner semena",
+            "body": "Uključeni proizvođači vide uslove semena koji se razlikuju od standardnog kataloga. Ta razlika ulazi u modele isplate i u maržu platforme na semenu — transparentno, ne ad hoc."
+          },
+          {
+            "heading": "Osiguranje uz kvalifikujuću kupovinu",
+            "body": "Gde proizvođač bira pokriće, polise mogu pratiti kupovinu semena koja ispunjava uslove; provizije se vode kao jasno prepoznatljiv prihod platforme kada program radi kroz Vera tokove."
+          },
+          {
+            "heading": "Integritet ulaza pre upotrebe na terenu",
+            "body": "Đubriva i zaštita bilja moraju da se poklope sa belom listom. Barkod koji nije u odobrenom katalogu zaustavlja unos — ne ulazi tiho u dosije usklađenosti."
+          },
+          {
+            "heading": "Globalni partneri, jedinstvena pravila",
+            "body": "Zemlja porekla i kupac se razlikuju, ali Vera Partner logika, bela lista i onboarding provere važe podjednako za sve partnere u mreži."
+          }
+        ]
+      },
+      {
+        "title": "2. Gazdinstva, dnevnici uzgoja i granice",
+        "items": [
+          {
+            "heading": "Validacija preko poligona",
+            "body": "Granice gazdinstva u GIS-u služe da GPS svakog terenskog događaja ostane unutar ugovorenog parceta, a ne susednog zemljišta."
+          },
+          {
+            "heading": "Hronologija terena, ne jednokratna fotka",
+            "body": "Dnevnici sabiraju faze rasta, napomene i dokaze u vremenu — podržavaju kontinuirano osiguranje umesto godišnjeg sklapanja fascikli."
+          },
+          {
+            "heading": "Odgovornost uređaja",
+            "body": "Koncept otiska uređaja dopunjava politike pristupa kako bi bilo jasno koji je terminal snimio dokaz."
+          }
+        ]
+      },
+      {
+        "title": "3. Integrity Guard — primena, ne deklaracija",
+        "items": [
+          {
+            "heading": "Barkod i bela lista",
+            "body": "Osetljivi ulazi moraju da se poklope sa zapisima u katalogu; neovlašćena hemija ne postaje deo usklađenog traga."
+          },
+          {
+            "heading": "GPS unutar ograde",
+            "body": "Terenski unosi zahtevaju poziciju unutar poligona; snimak van granice ne može da produži Bio-Ready priču."
+          },
+          {
+            "heading": "Blokada sa sledljivošću",
+            "body": "Pri odbijanju aktiviraju se jasni statusi i adminske površi — blokada ostaje dokumentovana za istragu."
+          }
+        ]
+      },
+      {
+        "title": "4. Protocol 360 — slojevita kontrola kvaliteta",
+        "items": [
+          {
+            "heading": "Teren i zemljište",
+            "body": "Prvi sloj dokazuje agrotehničku i zemljišnu brigu koherentnu sa zahtevima kupaca."
+          },
+          {
+            "heading": "Biometrija i kontrola u pak-hauzu",
+            "body": "Drugi sloj na liniji pakovanja proverava kalibar, vizuelnu vernost i materijale pre nego što palete napuste region uzgoja."
+          },
+          {
+            "heading": "Hladni lanac uz kustodiju",
+            "body": "Treći sloj kombinuje telemetriju i evidenciju predaje tako da obaveza hladnog lanca ostane vezana za isti serijski identifikator do tržišta odredišta."
+          }
+        ]
+      },
+      {
+        "title": "5. Pakovanje, serije i Vera bonus za rad",
+        "items": [
+          {
+            "heading": "Identitet serije povezuje finansije i pasoš",
+            "body": "Svaka serija nosi ključ koji ide u dostave, obračune i QR — sprečava raslojavanje artikala i SKU priča."
+          },
+          {
+            "heading": "Uslov za Vera bonus",
+            "body": "Bonus za rad vežemo za provereno ponašanje pri pakovanju i materijalima, uz jasnu vezu za inspekciju."
+          },
+          {
+            "heading": "Evidencija materijala",
+            "body": "Dosije dobavljača, sertifikata i izjava o usaglašenosti skuplja se oko materijala koji kupuje kategorija kao dokaz uz premium pozicioniranje."
+          }
+        ]
+      },
+      {
+        "title": "6. Offline-first snimanje sa terena",
+        "items": [
+          {
+            "heading": "Lokalni zapis kao podrazumevano stanje",
+            "body": "Na web-u i u mobilnoj aplikaciji kritični unosi ostaju najpre na uređaju dok se kapacitet mreže ne stabilizuje — paralelni princip kao IndexedDB na web-u i trajna lokalna baza na telefonima."
+          },
+          {
+            "heading": "Sinhronizacija po povratku veze",
+            "body": "Red čekanja i jasni statusi sprečavaju gubitak snimaka i beleški bez znanja operatora."
+          },
+          {
+            "heading": "Operativa u slabom signalu",
+            "body": "PRD počiva na realističnim pretpostavkama o ruralnoj mreži: offline nije eksperiment, već osnova."
+          }
+        ]
+      },
+      {
+        "title": "7. Logističke misije i kontrolni centar kustodije",
+        "items": [
+          {
+            "heading": "Struktura misije",
+            "body": "Misije sadrže noge vožnje, preuzimanja, dokumenta i sled akcije — odgovori na ko je držao paletu bez kopanja po istoriji ćaskanja."
+          },
+          {
+            "heading": "Digitalne predaje",
+            "body": "Kvitanja predaju kustodiju između gazde, čvorišta, flote i skladišta prema cilju."
+          },
+          {
+            "heading": "Lokacije i temperatura",
+            "body": "Zapisi lokacije i hladnog lanca uz misiju alarmiraju kad kašnjenje ili devijacija preteknu prag pre nego što kupac otvori incident."
+          }
+        ]
+      },
+      {
+        "title": "8. QR pasoš za kupca i javni trag",
+        "items": [
+          {
+            "heading": "Sadržaj pasoša",
+            "body": "Sken kod na polici otvara serijski dosije — identitet proizvođača, sertifikacije, segmente hladnog lanca i logističke prelome na jednom mestu dostupnom zahtevnim nabavnim timovima u EU ili drugde."
+          },
+          {
+            "heading": "Materijal za nabavku",
+            "body": "Izveštaj na jednoj vezi podržava kategorijske prezentacije i due diligence bez sklapanja deset PDF-ova ručno."
+          },
+          {
+            "heading": "Javnost bez preuveličanja",
+            "body": "Javnim delom prikazujemo samo tvrdnje koje dokumentacija na platformi pokriva — bez marketinškog folklorea iza kojeg nema dokaza."
+          }
+        ]
+      },
+      {
+        "title": "9. Eskro, raspored isplate i učešće vozača",
+        "items": [
+          {
+            "heading": "Faze eskrovog držanja novca",
+            "body": "Sredstva kupca prolaze kroz međuzbir pre finalnog rashoda kako bi se pravila obračuna poštovala sloj za slojem."
+          },
+          {
+            "heading": "Sastav obračuna",
+            "body": "Naknada proizvođača, bazen Vera bonusa, naknada za prevoz, marža na semenu, osiguranje i ekonomija platforme ostaju kao razdvojene stavke uz poreske module."
+          },
+          {
+            "heading": "Naknada vozača u istom modelu",
+            "body": "Vožnja se ne potiskuje u fusnotu; vozač ima jasnu stavku pored ostale podele vrijednosti u analizi isplate."
+          }
+        ]
+      },
+      {
+        "title": "10. Dobavljački kanali i bele liste u katalogu",
+        "items": [
+          {
+            "heading": "Katalog pod istim prismom",
+            "body": "Kupovine kod dobavljača moraju ostati na odobrenim artiklima — bez zaobilaznog uvoza hemije koja polje ne bi smelo da vidi."
+          },
+          {
+            "heading": "Omogućavanje proizvođaču",
+            "body": "Povezani tokovi omogućavaju pakovanje, sadni materijal i inpute unutar programa, uz integritet od koraka jedan."
+          }
+        ]
+      },
+      {
+        "title": "11. Uloge, JWT, ograničenje brzine i logovi",
+        "items": [
+          {
+            "heading": "Višestruke uloge po korisniku",
+            "body": "Isti nalog može pokrivati proizvođača, kupca, logistiku ili admina — politike razdvajaju privilegije."
+          },
+          {
+            "heading": "REST i JWT",
+            "body": "Integracije partnerskih sistema nasleđuju zaštitu tokenom i ograničenje učestalosti radi odbrane od zloupotrebe."
+          },
+          {
+            "heading": "Operativna istraga",
+            "body": "Logovi sa kontekstom zahteva i identitetom korisnika ubrzavaju odgovor kada nešto krene naopako."
+          }
+        ]
+      },
+      {
+        "title": "12. Arhitektura i paritet web / mobilni",
+        "items": [
+          {
+            "heading": "Transakciona baza",
+            "body": "PostgreSQL sa Prisma ORM drži izvor istine; migracije teže idempotentnom SQL-u gde su okruženja istorijski odstupala."
+          },
+          {
+            "heading": "NestJS servisi",
+            "body": "Domeni (gazdinstva, serije, misije, finansije) žive u modulima sa jasnim granicama i health proverama."
+          },
+          {
+            "heading": "Next.js i Expo RN",
+            "body": "Javni sajt, partner dashboardi i investitor priče idu kroz Next App Router; mobilni klijent ponavlja grower tokove uz prevode usklađene sa web paritetom."
+          },
+          {
+            "heading": "Lokalizacija URL-ova",
+            "body": "Marketinške rute sa prefiksom jezika (npr. /en/ i /sr/) rade sa kolačićem i usmeravanjem, dok aplikacije koje nisu pod locale prefiksom ostaju stabilne."
+          }
+        ]
+      }
+    ],
     "ctaClosingTitle": "Razgovor o partnerstvu",
     "ctaClosingBody": "Koristite akcije iznad za deljenje ovog dokumenta ili izvoz u PDF. Nastavite na stranice programa za proizvođače, kupce, logistiku ili investicije.",
     "ctaContact": "Kontaktirajte Bio Veru",
