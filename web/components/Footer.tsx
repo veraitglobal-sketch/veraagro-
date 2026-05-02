@@ -128,18 +128,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={loc('/investor-deck')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                <Link
+                  href={`${loc('/investor-deck')}#investor-deck-hub`}
+                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
+                >
                   {t('footer.investorDeck')}
-                </Link>
-              </li>
-              <li>
-                <Link href={loc('/project-overview')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
-                  {t('footer.projectOverview')}
-                </Link>
-              </li>
-              <li>
-                <Link href={loc('/technical-proposal')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
-                  {t('footer.technicalProposal')}
                 </Link>
               </li>
               <li>
