@@ -104,3 +104,9 @@ export class AdminCreateMissionFromOrderDto {
   @IsNumber()
   targetKg?: number;
 }
+
+/** Logistics-only: advance mission so grower "Mapa puta" and ops status match reality. */
+export class LogisticsMissionLifecycleDto {
+  @IsIn(['DEPART_FARM', 'START_TRANSIT', 'COMPLETE_DELIVERY'])
+  step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY';
+}

@@ -160,7 +160,14 @@
     },
     "handoverInit": {
       "documentFirst": "Before you scan: photograph the sealed load, labels, and any delivery note. Keep proof on your phone; the store will add audit photos in the next step."
-    }
+    },
+    "lifecycleTitle": "Shipment progress (grower map)",
+    "lifecycleHint": "After loading handover, confirm each step so the producer’s route map stays accurate.",
+    "lifecycleDepart": "Truck left farm",
+    "lifecycleTransit": "Started EU transit",
+    "lifecycleDelivered": "Delivered to hub / buyer",
+    "lifecycleErrTitle": "Could not update",
+    "lifecycleErr": "Something went wrong"
   },
   "handover": {
     "permCamera": "Camera permission is required",

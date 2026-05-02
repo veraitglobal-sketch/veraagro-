@@ -5,5 +5,5 @@ export default function LogisticsMissionDetailRoute() {
   const params = useLocalSearchParams<{ id: string }>();
   const missionId =
     typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : undefined;
-  return <MissionDetailScreen missionId={missionId} />;
+  return <MissionDetailScreen missionId={missionId} variant="logistics" />;
 }

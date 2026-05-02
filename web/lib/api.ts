@@ -218,6 +218,17 @@ export const missionsAPI = {
     );
     return response.data;
   },
+  /** Grower journey map: logistics advances status after handover / en route. */
+  advanceMissionLifecycle: async (
+    missionId: string,
+    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
+  ) => {
+    const response = await api.patch(
+      `/missions/${encodeURIComponent(missionId)}/lifecycle`,
+      { step },
+    );
+    return response.data;
+  },
   create: async (data: {
     batchId?: string;
     pickupLocation: { lat: number; lng: number; address?: string };

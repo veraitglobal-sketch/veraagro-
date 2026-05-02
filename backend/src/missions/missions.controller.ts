@@ -16,6 +16,7 @@ import {
   AcceptMissionDto,
   AdminAssignMissionDto,
   AdminCreateMissionFromOrderDto,
+  LogisticsMissionLifecycleDto,
 } from './dto/mission.dto';
 import { UpdateMissionLogisticsDriverDto } from '../logistics-partner/dto/update-mission-driver.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -89,6 +90,18 @@ export class MissionsController {
     @Body() dto: UpdateMissionLogisticsDriverDto,
   ) {
     return this.missionsService.setMissionAssignedLogisticsDriver(req.user.id, id, dto);
+  }
+
+  /** Advance mission status after handover / on the road (grower journey map). */
+  @Patch(':id/lifecycle')
+  @UseGuards(RolesGuard)
+  @Roles('LOGISTICS_PARTNER')
+  advanceMissionLifecycle(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: LogisticsMissionLifecycleDto,
+  ) {
+    return this.missionsService.advanceMissionLifecycle(req.user.id, id, dto.step);
   }
 
   // Admin endpoints

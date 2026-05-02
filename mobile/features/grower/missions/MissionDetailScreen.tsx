@@ -11,12 +11,15 @@ import JourneyMapBlock from './JourneyMapBlock';
 import TimelineBlock from './TimelineBlock';
 import ConsumerFeedbackBlock from './ConsumerFeedbackBlock';
 import FinancialStatusBlock from './FinancialStatusBlock';
+import LogisticsMissionLifecycleBar from './LogisticsMissionLifecycleBar';
 
 interface MissionDetailScreenProps {
   missionId: string | undefined;
+  /** Logistics app: show status advance controls for the grower journey map. */
+  variant?: 'grower' | 'logistics';
 }
 
-export default function MissionDetailScreen({ missionId }: MissionDetailScreenProps) {
+export default function MissionDetailScreen({ missionId, variant = 'grower' }: MissionDetailScreenProps) {
   const { t } = useTranslation();
   const {
     mission,
@@ -82,6 +85,9 @@ export default function MissionDetailScreen({ missionId }: MissionDetailScreenPr
         <View style={{ padding: theme.spacing.md }}>
           <MissionInfoBlock mission={mission} />
           <BatchInfoBlock mission={mission} />
+          {variant === 'logistics' && (
+            <LogisticsMissionLifecycleBar mission={mission} onUpdated={onRefresh} />
+          )}
           <JourneyMapBlock journeyMap={journeyMap} />
           <TimelineBlock mission={mission} />
           <ConsumerFeedbackBlock feedback={consumerFeedback} />

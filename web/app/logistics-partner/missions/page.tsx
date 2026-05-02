@@ -115,6 +115,16 @@ function siblingsByCity(all: Mission[], m: Mission): Mission[] {
   );
 }
 
+function logisticsStatusBadgeClass(status: string): string {
+  if (status === 'COMPLETED') return 'bg-emerald-100 text-emerald-900';
+  if (status === 'IN_TRANSIT') return 'bg-sky-100 text-sky-900';
+  if (status === 'PICKED_UP') return 'bg-indigo-100 text-indigo-900';
+  if (['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'].includes(status)) {
+    return 'bg-amber-100 text-amber-800';
+  }
+  return 'bg-slate-100 text-slate-800';
+}
+
 export default function LogisticsMissionsPage() {
   const { t } = useTranslation();
   const logisticsPartnerNavItems = useLogisticsPartnerNavItems();
@@ -130,6 +140,7 @@ export default function LogisticsMissionsPage() {
   const [activeDriverDraft, setActiveDriverDraft] = useState<Record<string, string>>({});
   const [savingDriverForMission, setSavingDriverForMission] = useState<string | null>(null);
   const [driverFeedback, setDriverFeedback] = useState<string | null>(null);
+  const [lifecycleBusy, setLifecycleBusy] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -232,6 +243,29 @@ export default function LogisticsMissionsPage() {
     }
   };
 
+  const runLifecycle = async (
+    missionId: string,
+    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
+  ) => {
+    const busyKey = `${missionId}:${step}`;
+    setLifecycleBusy(busyKey);
+    setDriverFeedback(null);
+    setError(null);
+    try {
+      await missionsAPI.advanceMissionLifecycle(missionId, step);
+      setDriverFeedback(t('logisticsPages.missionsLifecycleOk'));
+      await reloadMissions();
+    } catch (e: unknown) {
+      const msg =
+        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
+      setError(
+        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logisticsPages.missionsLifecycleErr'),
+      );
+    } finally {
+      setLifecycleBusy(null);
+    }
+  };
+
   const acceptedMissions = missions.filter((m) => ACTIVE_STATUSES.includes(m.status));
   const availableMissions = missions.filter((m) => m.status === 'PENDING');
 
@@ -307,11 +341,17 @@ export default function LogisticsMissionsPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm font-semibold text-gray-900">{mission.missionNumber}</span>
                         <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            isLoadingStatus(mission.status) ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
-                          }`}
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${logisticsStatusBadgeClass(mission.status)}`}
                         >
-                          {isLoadingStatus(mission.status) ? 'Loading' : 'In transit'}
+                          {mission.status === 'COMPLETED'
+                            ? t('logisticsPages.missionBadgeDone')
+                            : mission.status === 'IN_TRANSIT'
+                              ? t('logisticsPages.missionBadgeInTransit')
+                              : mission.status === 'PICKED_UP'
+                                ? t('logisticsPages.missionBadgePickedUp')
+                                : isLoadingStatus(mission.status)
+                                  ? t('logisticsPages.missionBadgeLoading')
+                                  : mission.status}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">
@@ -391,6 +431,54 @@ export default function LogisticsMissionsPage() {
                                 ? t('logisticsPages.missionsAssignDriverSaving')
                                 : t('logisticsPages.missionsAssignDriverSave')}
                             </button>
+                          </div>
+                        </div>
+                      )}
+                      {(mission.status === 'READY_FOR_LOADING' ||
+                        mission.status === 'PICKED_UP' ||
+                        mission.status === 'IN_TRANSIT') && (
+                        <div className="mt-3 rounded-lg border border-sky-200/80 bg-sky-50/50 p-3">
+                          <p className="text-xs font-semibold text-slate-900">
+                            {t('logisticsPages.missionsJourneyTitle')}
+                          </p>
+                          <p className="text-xs text-slate-600 mt-1">{t('logisticsPages.missionsJourneyHint')}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {mission.status === 'READY_FOR_LOADING' && (
+                              <button
+                                type="button"
+                                disabled={lifecycleBusy !== null}
+                                onClick={() => void runLifecycle(mission.id, 'DEPART_FARM')}
+                                className="rounded-lg bg-[#2D5A27] px-3 py-2 text-xs font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                              >
+                                {lifecycleBusy === `${mission.id}:DEPART_FARM`
+                                  ? t('logisticsPages.missionsLifecycleWorking')
+                                  : t('logisticsPages.missionsLifecycleDepart')}
+                              </button>
+                            )}
+                            {mission.status === 'PICKED_UP' && (
+                              <button
+                                type="button"
+                                disabled={lifecycleBusy !== null}
+                                onClick={() => void runLifecycle(mission.id, 'START_TRANSIT')}
+                                className="rounded-lg bg-[#2D5A27] px-3 py-2 text-xs font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                              >
+                                {lifecycleBusy === `${mission.id}:START_TRANSIT`
+                                  ? t('logisticsPages.missionsLifecycleWorking')
+                                  : t('logisticsPages.missionsLifecycleTransit')}
+                              </button>
+                            )}
+                            {mission.status === 'IN_TRANSIT' && (
+                              <button
+                                type="button"
+                                disabled={lifecycleBusy !== null}
+                                onClick={() => void runLifecycle(mission.id, 'COMPLETE_DELIVERY')}
+                                className="rounded-lg bg-[#2D5A27] px-3 py-2 text-xs font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                              >
+                                {lifecycleBusy === `${mission.id}:COMPLETE_DELIVERY`
+                                  ? t('logisticsPages.missionsLifecycleWorking')
+                                  : t('logisticsPages.missionsLifecycleDelivered')}
+                              </button>
+                            )}
                           </div>
                         </div>
                       )}

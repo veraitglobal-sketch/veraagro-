@@ -957,6 +957,13 @@ export const missionsAPI = {
     const response = await api.get(`/grower-portal/financial-status/${batchId}`);
     return response.data;
   },
+  advanceMissionLifecycle: async (
+    missionId: string,
+    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
+  ): Promise<Mission> => {
+    const response = await api.patch(`/missions/${encodeURIComponent(missionId)}/lifecycle`, { step });
+    return response.data;
+  },
 };
 
 // Notifications API

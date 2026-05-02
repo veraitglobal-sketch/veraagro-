@@ -160,7 +160,14 @@
     },
     "handoverInit": {
       "documentFirst": "Pre skeniranja: fotografiši zatvoren teret, nalepnice i otpremnicu. Drži dokaz na telefonu; radnja dodaje slike revizije u sledećem koraku."
-    }
+    },
+    "lifecycleTitle": "Napredak isporuke (mapa kod proizvođača)",
+    "lifecycleHint": "Posle predaje utovara, potvrdi korake da mapa puta ostane tačna.",
+    "lifecycleDepart": "Kamion je napustio farmu",
+    "lifecycleTransit": "Krenuo tranzit u EU",
+    "lifecycleDelivered": "Uručeno u hab / kupcu",
+    "lifecycleErrTitle": "Ažuriranje nije uspelo",
+    "lifecycleErr": "Došlo je do greške"
   },
   "handover": {
     "permCamera": "Dozvola za kameru je obavezna",

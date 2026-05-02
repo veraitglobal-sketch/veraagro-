@@ -833,6 +833,92 @@ export class MissionsService {
   }
 
   /**
+   * Logistics: move mission forward after loading handover and while en route.
+   * Keeps grower portal milestones (pickedUpAt, IN_TRANSIT, COMPLETED) in sync.
+   */
+  async advanceMissionLifecycle(
+    logisticsPartnerId: string,
+    missionId: string,
+    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
+  ) {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: missionId },
+      include: { logistics_handovers: true },
+    });
+
+    if (!mission) {
+      throw new NotFoundException(`Mission with ID ${missionId} not found`);
+    }
+    if (mission.logisticsPartnerId !== logisticsPartnerId) {
+      throw new BadRequestException('Mission not assigned to this logistics partner');
+    }
+    if (mission.status === 'CANCELLED') {
+      throw new BadRequestException('This mission is cancelled');
+    }
+
+    const now = new Date();
+    const patch: Prisma.missionsUpdateInput = { updatedAt: now };
+
+    if (step === 'DEPART_FARM') {
+      if (mission.status !== 'READY_FOR_LOADING') {
+        throw new BadRequestException(
+          `Leave farm is only allowed when status is READY_FOR_LOADING (after loading handover). Current: ${mission.status}`,
+        );
+      }
+      if (!mission.logistics_handovers) {
+        throw new BadRequestException('Complete loading handover on this mission before marking departure.');
+      }
+      patch.pickedUpAt = now;
+      patch.status = 'PICKED_UP';
+    } else if (step === 'START_TRANSIT') {
+      if (mission.status !== 'PICKED_UP') {
+        throw new BadRequestException(
+          `Start EU transit requires status PICKED_UP (truck left farm). Current: ${mission.status}`,
+        );
+      }
+      patch.status = 'IN_TRANSIT';
+    } else {
+      if (mission.status !== 'IN_TRANSIT') {
+        throw new BadRequestException(
+          `Mark delivered requires status IN_TRANSIT. Current: ${mission.status}`,
+        );
+      }
+      patch.status = 'COMPLETED';
+      patch.completedAt = now;
+    }
+
+    const oldStatus = mission.status;
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      data: patch,
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+        assigned_logistics_driver: true,
+      },
+    });
+
+    try {
+      await this.notificationsGateway.notifyMissionUpdate(mission.growerId, updated);
+    } catch (error) {
+      this.logger.warn(`notifyMissionUpdate failed for lifecycle ${missionId}: ${(error as Error)?.message}`);
+    }
+
+    await this.auditTrailService.createAuditTrail({
+      eventType: 'STATUS_CHANGE',
+      entityType: 'Mission',
+      entityId: mission.id,
+      performedByUserId: logisticsPartnerId,
+      oldValue: { status: oldStatus, step },
+      newValue: { status: updated.status, step },
+    });
+
+    return updated;
+  }
+
+  /**
    * Set or clear the delegated pickup driver on a mission (logistics company only).
    */
   async setMissionAssignedLogisticsDriver(

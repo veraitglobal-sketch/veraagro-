@@ -1791,7 +1791,19 @@
     "missionsAssignDriverSave": "Sačuvaj vozača",
     "missionsAssignDriverSaving": "Čuvanje…",
     "missionsAssignDriverUpdated": "Dodela vozača je ažurirana.",
-    "missionsAssignDriverErr": "Ažuriranje vozača nije uspelo. Pokušajte ponovo."
+    "missionsAssignDriverErr": "Ažuriranje vozača nije uspelo. Pokušajte ponovo.",
+    "missionsJourneyTitle": "Napredak isporuke (mapa kod proizvođača)",
+    "missionsJourneyHint": "Posle predaje utovara, koraci ispod redom — da „mapa puta” kod proizvođača prati kamion.",
+    "missionsLifecycleDepart": "Kamion je napustio farmu",
+    "missionsLifecycleTransit": "Krenuo tranzit u EU",
+    "missionsLifecycleDelivered": "Uručeno u hab / kupca",
+    "missionsLifecycleWorking": "Ažuriranje…",
+    "missionsLifecycleErr": "Status nije ažuriran.",
+    "missionsLifecycleOk": "Status isporuke je ažuriran — mapa puta kod proizvođača će se osvežiti.",
+    "missionBadgeLoading": "Na farmi / utovar",
+    "missionBadgePickedUp": "Napustio farmu",
+    "missionBadgeInTransit": "U tranzitu",
+    "missionBadgeDone": "Isporučeno"
   },
   "growerPages": {
     "partnerStore": "Prodavnica partnera",

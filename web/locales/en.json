@@ -1790,7 +1790,19 @@
     "missionsAssignDriverSave": "Save driver",
     "missionsAssignDriverSaving": "Saving…",
     "missionsAssignDriverUpdated": "Driver assignment updated.",
-    "missionsAssignDriverErr": "Could not update driver. Try again."
+    "missionsAssignDriverErr": "Could not update driver. Try again.",
+    "missionsJourneyTitle": "Shipment progress (grower map)",
+    "missionsJourneyHint": "After loading handover, tap these in order so the grower’s “route map” matches the truck.",
+    "missionsLifecycleDepart": "Truck left farm",
+    "missionsLifecycleTransit": "Started EU transit",
+    "missionsLifecycleDelivered": "Delivered to hub / buyer",
+    "missionsLifecycleWorking": "Updating…",
+    "missionsLifecycleErr": "Could not update status.",
+    "missionsLifecycleOk": "Shipment status updated — the grower’s route map will refresh.",
+    "missionBadgeLoading": "At farm / loading",
+    "missionBadgePickedUp": "Left farm",
+    "missionBadgeInTransit": "In transit",
+    "missionBadgeDone": "Delivered"
   },
   "growerPages": {
     "partnerStore": "Partner store",
