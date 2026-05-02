@@ -216,6 +216,11 @@ export default function GrowerWhereToBuyPage() {
             <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-800">{err}</div>
           )}
 
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm px-4 py-4 sm:px-5 sm:py-5">
+            <p className="text-sm text-gray-600 font-light leading-relaxed mb-3">{t('growerPages.whereToBuySupplyFlowIntro')}</p>
+            <GrowerSupplyFlowCard context="suppliers" variant="compact" />
+          </div>
+
           <div
             className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-sm lg:hidden"
             role="tablist"
@@ -276,11 +281,15 @@ export default function GrowerWhereToBuyPage() {
                 </div>
               ) : (
                 <>
-                  <div className="mb-5">
-                    <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.directoryTitle')}</h2>
-                    <p className="text-base text-gray-600 mt-1 font-light leading-relaxed">
-                      {t('growerPages.directoryLead')}
+                  <div className="mb-5 pb-4 border-b border-gray-100">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#2D5A27]">
+                      {t('growerPages.whereToBuyColumnDirectory')}
                     </p>
+                    <p className="text-sm text-gray-600 font-light mt-1 leading-relaxed">
+                      {t('growerPages.whereToBuyColumnDirectoryHint')}
+                    </p>
+                    <h2 className="text-lg font-semibold text-gray-900 mt-4">{t('growerPages.directoryTitle')}</h2>
+                    <p className="text-base text-gray-600 mt-1 font-light leading-relaxed">{t('growerPages.directoryLead')}</p>
                     <p className="text-xs text-amber-900/80 mt-3 rounded-lg bg-amber-50 border border-amber-100/80 px-3 py-2">
                       {t('growerPages.directoryDisclaimer')}
                     </p>
@@ -425,31 +434,41 @@ export default function GrowerWhereToBuyPage() {
               )}
             </div>
 
-            <div
+            <aside
               className={`${
                 mobilePanel === 'orders' ? 'block' : 'hidden'
-              } lg:col-span-5 lg:block min-w-0 space-y-4`}
+              } lg:col-span-5 lg:block min-w-0 lg:sticky lg:top-20 lg:max-h-[min(calc(100vh-5rem),56rem)] lg:overflow-y-auto [scrollbar-gutter:stable]`}
             >
-              <Link
-                href="/grower/where-to-buy/messages"
-                className="flex items-center justify-between gap-3 rounded-xl border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-left hover:border-[#2D5A27]/40 transition-colors"
-              >
-                <div className="min-w-0">
-                  <p className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4 text-[#2D5A27]" />
-                    {t('growerPages.messagesCtaTitle')}
+              <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden flex flex-col min-h-0">
+                <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-gray-100 bg-gray-50/90">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#2D5A27]">
+                    {t('growerPages.whereToBuyColumnOrders')}
                   </p>
-                  <p className="text-xs text-gray-600 font-light mt-0.5">{t('growerPages.messagesCtaBody')}</p>
+                  <p className="text-sm text-gray-600 font-light mt-1.5 leading-relaxed">
+                    {t('growerPages.whereToBuyColumnOrdersHint')}
+                  </p>
                 </div>
-                <span className="text-base font-medium text-[#2D5A27] shrink-0">{t('growerPages.openInbox')}</span>
-              </Link>
-              <div id="my-orders">
-                <PartnerB2BPanel />
-              </div>
-            </div>
-          </div>
 
-          <GrowerSupplyFlowCard context="suppliers" variant="compact" />
+                <Link
+                  href="/grower/where-to-buy/messages"
+                  className="mx-4 sm:mx-5 mt-4 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-left hover:border-[#2D5A27]/30 hover:bg-[#f7faf6] transition-colors min-h-[48px]"
+                >
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                      <MessageCircle className="h-4 w-4 text-[#2D5A27] shrink-0" />
+                      {t('growerPages.messagesCtaTitle')}
+                    </p>
+                    <p className="text-xs text-gray-600 font-light mt-0.5">{t('growerPages.messagesCtaBody')}</p>
+                  </div>
+                  <span className="text-sm font-semibold text-[#2D5A27] shrink-0">{t('growerPages.openInbox')}</span>
+                </Link>
+
+                <div id="my-orders" className="flex-1 min-h-0 min-w-0 flex flex-col pb-2">
+                  <PartnerB2BPanel embedded />
+                </div>
+              </div>
+            </aside>
+          </div>
         </GrowerPageShell>
       </SidebarLayout>
     </AuthGuard>
