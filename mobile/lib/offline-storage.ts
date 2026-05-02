@@ -20,6 +20,8 @@ export interface PendingFieldEntry {
   location: {
     lat: number;
     lng: number;
+    /** Meters (Expo Location); forwarded to API for boundary tolerance. */
+    accuracy?: number;
   };
   timestamp: string;
   status: 'pending' | 'syncing' | 'synced' | 'error';

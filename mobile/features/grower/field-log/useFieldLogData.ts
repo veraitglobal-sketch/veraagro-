@@ -6,8 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
-import { verifyGPS, materialValidator } from '../../../lib/integrity-guard';
-import { estatesAPI, Estate } from '../../../lib/api';
+import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
+import { estatesAPI, Estate, parcelsAPI, Parcel } from '../../../lib/api';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
 import type { PendingFieldEntry } from '../../../lib/offline-storage';
@@ -39,13 +39,14 @@ export function useFieldLogData() {
   const [materialID, setMaterialID] = useState('');
   const [materialKind, setMaterialKind] = useState<MaterialKindForLog>('SEED');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [location, setLocation] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const [gpsWarning, setGpsWarning] = useState(false);
   const [materialValid, setMaterialValid] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
-  const locationRef = useRef<{ lat: number; lng: number } | null>(null);
+  const [parcelsForGps, setParcelsForGps] = useState<Parcel[]>([]);
+  const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
   useEffect(() => {
     locationRef.current = location;
   }, [location]);
@@ -61,6 +62,35 @@ export function useFieldLogData() {
       setEstates([]);
     }
   }, []);
+
+  useEffect(() => {
+    const id = currentEstate?.id;
+    if (!id) {
+      setParcelsForGps([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const list = await parcelsAPI.getByEstate(id);
+        if (!cancelled) setParcelsForGps(Array.isArray(list) ? list : []);
+      } catch {
+        if (!cancelled) setParcelsForGps([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentEstate?.id]);
+
+  useEffect(() => {
+    const loc = locationRef.current;
+    if (!loc) return;
+    const isValid = verifyGPSAgainstEstateOrParcels(loc, currentEstate?.polygonCoordinates, [
+      ...parcelsForGps.map((p) => p.polygonCoordinates),
+    ]);
+    setGpsWarning(!isValid);
+  }, [currentEstate?.polygonCoordinates, parcelsForGps, currentEstate?.id]);
 
   const requestPermissions = useCallback(async () => {
     const [cameraStatus, locationStatus] = await Promise.all([
@@ -127,14 +157,14 @@ export function useFieldLogData() {
         return;
       }
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      const acc =
+        loc.coords.accuracy != null && Number.isFinite(loc.coords.accuracy) ? loc.coords.accuracy : undefined;
+      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude, accuracy: acc };
       setLocation(userLocation);
-      if (currentEstate?.polygonCoordinates) {
-        const isValid = verifyGPS(userLocation, {
-          polygonCoordinates: currentEstate.polygonCoordinates as Array<{ lat: number; lng: number }>,
-        });
-        setGpsWarning(!isValid);
-      }
+      const isValid = verifyGPSAgainstEstateOrParcels(userLocation, currentEstate?.polygonCoordinates, [
+        ...parcelsForGps.map((p) => p.polygonCoordinates),
+      ]);
+      setGpsWarning(!isValid);
     } catch (error: any) {
       Alert.alert(
         t('producer.fieldLogAlerts.locationError'),
@@ -143,7 +173,7 @@ export function useFieldLogData() {
     } finally {
       setLoading(false);
     }
-  }, [currentEstate, t]);
+  }, [currentEstate, parcelsForGps, t]);
 
   useFocusEffect(
     useCallback(() => {

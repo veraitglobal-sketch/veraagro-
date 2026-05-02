@@ -105,6 +105,7 @@ export interface Parcel {
   status: string;
   /** Set when an administrator has approved the parcel; required for batches and entry log sync */
   approvedAt?: string | null;
+  polygonCoordinates?: unknown;
 }
 
 export interface Category {

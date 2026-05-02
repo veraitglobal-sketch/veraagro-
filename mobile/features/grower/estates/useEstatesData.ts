@@ -20,9 +20,11 @@ export function useEstatesData() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadEstates = useCallback(async () => {
+  const loadEstates = useCallback(async (options?: { isPullRefresh?: boolean }) => {
     try {
-      setLoading(true);
+      if (!options?.isPullRefresh) {
+        setLoading(true);
+      }
       try {
         const data = await estatesAPI.getAll();
         const list = Array.isArray(data) ? data : [];
@@ -32,20 +34,28 @@ export function useEstatesData() {
         const cached = await growerOfflineCache.loadEstates();
         setEstates(cached ?? []);
         if (!cached) console.error('Error loading estates:', error);
+        if (options?.isPullRefresh) {
+          Alert.alert(t('producer.estates.loadFailed'), t('producer.estatesUi.errNetwork'));
+        }
       }
     } finally {
-      setLoading(false);
+      if (!options?.isPullRefresh) {
+        setLoading(false);
+      }
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    loadEstates();
+    void loadEstates();
   }, [loadEstates]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadEstates();
-    setRefreshing(false);
+    try {
+      await loadEstates({ isPullRefresh: true });
+    } finally {
+      setRefreshing(false);
+    }
   }, [loadEstates]);
 
   const handleDelete = useCallback((estate: Estate) => {

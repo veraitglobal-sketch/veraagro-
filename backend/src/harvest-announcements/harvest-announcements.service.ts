@@ -80,7 +80,11 @@ export class HarvestAnnouncementsService {
     if (!parcel) {
       throw new ForbiddenException('Parcel not found or access denied');
     }
-    if (!parcel.approvedAt) {
+    const parcelReadyForPlans =
+      parcel.approvedAt != null ||
+      parcel.status === 'ACTIVE' ||
+      parcel.status === 'CERTIFIED';
+    if (!parcelReadyForPlans) {
       throw new ForbiddenException(
         'Harvest and planting announcements require an administrator-approved parcel.',
       );
@@ -222,12 +226,20 @@ export class HarvestAnnouncementsService {
           );
         }
         this.logger.error(`harvest_announcements.create Prisma ${e.code}: ${e.message}`);
+        throw new BadRequestException(
+          'Could not save this plan. Please refresh and try again, or contact support if it continues.',
+        );
       }
       if (e instanceof Prisma.PrismaClientValidationError) {
         this.logger.error(`harvest_announcements.create validation: ${e.message}`);
         throw new BadRequestException('Invalid plan data. Check the form and try again.');
       }
-      throw e;
+      this.logger.error(
+        `harvest_announcements.create unexpected: ${e instanceof Error ? e.message : String(e)}`,
+      );
+      throw new BadRequestException(
+        'Could not save this plan. Please try again or contact support.',
+      );
     }
 
     // 4. Notify admins (async, non-blocking)
@@ -247,10 +259,36 @@ export class HarvestAnnouncementsService {
       }
     }
 
-    // Return the created row (PLANTING has no mission; second findUnique + mission include caused 500s on some DB/client combos)
+    // Plain JSON-safe payload (avoids rare Nest/Date serialization 500s on some hosts)
     return {
-      ...announcement,
-      mission: null,
+      id: announcement.id,
+      parcelId: announcement.parcelId,
+      userId: announcement.userId,
+      announcementType: announcement.announcementType,
+      cropType: announcement.cropType,
+      estimatedDate: announcement.estimatedDate.toISOString(),
+      estimatedQuantity: announcement.estimatedQuantity,
+      plannedLoadingStart: announcement.plannedLoadingStart?.toISOString() ?? null,
+      plannedLoadingEnd: announcement.plannedLoadingEnd?.toISOString() ?? null,
+      loadQuantityKg: announcement.loadQuantityKg,
+      marketChannel: announcement.marketChannel,
+      qualityGrade: announcement.qualityGrade,
+      sortingSpec: announcement.sortingSpec,
+      notes: announcement.notes,
+      status: announcement.status,
+      createdAt: announcement.createdAt.toISOString(),
+      updatedAt: announcement.updatedAt.toISOString(),
+      mission: null as null,
+      parcel: announcement.parcel
+        ? {
+            id: announcement.parcel.id,
+            cropType: announcement.parcel.cropType,
+            estateId: announcement.parcel.estateId,
+            approvedAt: announcement.parcel.approvedAt?.toISOString() ?? null,
+            estates: announcement.parcel.estates ?? undefined,
+          }
+        : null,
+      user: announcement.user,
     };
   }
 

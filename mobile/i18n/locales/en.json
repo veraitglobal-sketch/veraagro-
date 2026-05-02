@@ -561,6 +561,8 @@
       "parcelsWithCount": "Parcels ({{count}})",
       "approvedParcelsOfTotal": "{{approved}} / {{total}} approved",
       "parcelBadge": "Parcels ({{count}})",
+      "parcelPendingApproval": "Awaiting admin approval",
+      "parcelApproved": "Approved",
       "editEstateTitle": "Edit field",
       "certStatusCertified": "Certified",
       "certStatusActive": "Active",

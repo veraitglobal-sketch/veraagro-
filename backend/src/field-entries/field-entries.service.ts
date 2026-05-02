@@ -14,7 +14,7 @@ interface CreateFieldEntryDto {
   fertilizerBarcode?: string; // For compliance check
   data: {
     date: string;
-    location?: { lat: number; lng: number };
+    location?: { lat: number; lng: number; accuracy?: number };
     notes?: string;
     [key: string]: any;
   };
@@ -29,11 +29,26 @@ export class FieldEntriesService {
   ) {}
 
   /**
-   * GPS must be inside the estate boundary and/or an admin-approved parcel.
-   * Parcel check fixes common case: estate polygon still default (e.g. template) while real work follows parcel maps.
+   * Base tolerance (m) from env; widened by device-reported GPS accuracy when sent by client.
+   */
+  private effectiveGpsToleranceMeters(deviceAccuracy?: number): number {
+    const raw = process.env.GPS_BOUNDARY_TOLERANCE_METERS;
+    const parsed = raw != null && raw !== '' ? Number(raw) : NaN;
+    const base = Number.isFinite(parsed) && parsed >= 0 ? parsed : 80;
+    const acc =
+      typeof deviceAccuracy === 'number' &&
+      Number.isFinite(deviceAccuracy) &&
+      deviceAccuracy > 0
+        ? deviceAccuracy
+        : 0;
+    return Math.max(base, acc + 30);
+  }
+
+  /**
+   * GPS must be inside the estate boundary and/or parcel polygons, with a tolerance band for real-world GPS error.
    */
   private async validateGPSLocation(
-    location: { lat: number; lng: number },
+    location: { lat: number; lng: number; accuracy?: number },
     farmId: string,
   ): Promise<{ valid: boolean; reason?: string }> {
     if (
@@ -50,6 +65,14 @@ export class FieldEntriesService {
       return { valid: false, reason: 'Invalid GPS coordinates' };
     }
 
+    /** Local/staging only: skip boundary check (never enable in production). */
+    const relax =
+      process.env.FIELD_ENTRY_RELAX_GPS === '1' ||
+      process.env.FIELD_ENTRY_RELAX_GPS === 'true';
+    if (relax) {
+      return { valid: true };
+    }
+
     const farm = await this.prisma.estates.findUnique({
       where: { id: farmId },
       select: { polygonCoordinates: true },
@@ -59,37 +82,35 @@ export class FieldEntriesService {
       return { valid: false, reason: 'Farm not found' };
     }
 
+    const tol = this.effectiveGpsToleranceMeters(location.accuracy);
     const estatePts = GeometryUtil.polygonFromJson(farm.polygonCoordinates as unknown);
+    const pt = { lat: location.lat, lng: location.lng };
 
     let insideEstate = false;
     if (estatePts.length === 1) {
       insideEstate =
-        GeometryUtil.calculateDistance({ lat: location.lat, lng: location.lng }, estatePts[0]) <= 100;
+        GeometryUtil.calculateDistance(pt, estatePts[0]) <= Math.max(100, tol);
     } else if (estatePts.length >= 3) {
-      insideEstate = GeometryUtil.isPointInPolygon(
-        { lat: location.lat, lng: location.lng },
-        estatePts,
-      );
+      insideEstate = GeometryUtil.isPointInPolygonOrWithinBoundaryMeters(pt, estatePts, tol);
     }
     if (insideEstate) {
       return { valid: true };
     }
 
     const parcels = await this.prisma.parcels.findMany({
-      where: { estateId: farmId, approvedAt: { not: null } },
+      where: { estateId: farmId },
       select: { polygonCoordinates: true },
     });
 
-    const pt = { lat: location.lat, lng: location.lng };
     for (const p of parcels) {
       const pPts = GeometryUtil.polygonFromJson(p.polygonCoordinates as unknown);
       if (pPts.length === 1) {
-        if (GeometryUtil.calculateDistance(pt, pPts[0]) <= 100) {
+        if (GeometryUtil.calculateDistance(pt, pPts[0]) <= Math.max(100, tol)) {
           return { valid: true };
         }
         continue;
       }
-      if (pPts.length >= 3 && GeometryUtil.isPointInPolygon(pt, pPts)) {
+      if (pPts.length >= 3 && GeometryUtil.isPointInPolygonOrWithinBoundaryMeters(pt, pPts, tol)) {
         return { valid: true };
       }
     }
@@ -103,7 +124,7 @@ export class FieldEntriesService {
       return {
         valid: false,
         reason:
-          'GPS location is outside your approved parcel boundaries. If parcels are correct in Grower → Fields, ask an admin to update the estate boundary; then try sync again.',
+          'GPS location is outside your parcel polygons and estate boundary. Draw parcels around where you actually work (or include your test point), refresh, and try sync again; after approval, the same polygons are used for security checks.',
       };
     }
 

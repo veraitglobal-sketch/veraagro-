@@ -137,6 +137,66 @@ export class GeometryUtil {
   }
 
   /**
+   * Minimum great-circle distance from point to polygon edges (sampled segments).
+   * Handles rings where first vertex repeats last.
+   */
+  static minDistanceToPolygonBoundaryMeters(point: Point, polygon: Point[]): number {
+    if (!polygon || polygon.length < 2) {
+      return Infinity;
+    }
+    let n = polygon.length;
+    if (
+      n >= 2 &&
+      polygon[0].lat === polygon[n - 1].lat &&
+      polygon[0].lng === polygon[n - 1].lng
+    ) {
+      n -= 1;
+    }
+    if (n < 2) {
+      return Infinity;
+    }
+    let min = Infinity;
+    for (let i = 0; i < n; i++) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % n];
+      const d = this.distancePointToSegmentMeters(point, a, b);
+      if (d < min) min = d;
+    }
+    return min;
+  }
+
+  /** Approximate distance from point to segment AB by sampling (good enough for boundary tolerance). */
+  static distancePointToSegmentMeters(p: Point, a: Point, b: Point, samples = 24): number {
+    let minD = Infinity;
+    for (let i = 0; i <= samples; i++) {
+      const t = i / samples;
+      const lat = a.lat + t * (b.lat - a.lat);
+      const lng = a.lng + t * (b.lng - a.lng);
+      const d = this.calculateDistance(p, { lat, lng });
+      if (d < minD) minD = d;
+    }
+    return minD;
+  }
+
+  /** Inside polygon, or within tolerance meters of its boundary (typical phone GPS error). */
+  static isPointInPolygonOrWithinBoundaryMeters(
+    point: Point,
+    polygon: Point[],
+    toleranceMeters: number,
+  ): boolean {
+    if (!polygon || polygon.length < 3 || toleranceMeters < 0) {
+      return false;
+    }
+    if (this.isPointInPolygon(point, polygon)) {
+      return true;
+    }
+    if (toleranceMeters === 0) {
+      return false;
+    }
+    return this.minDistanceToPolygonBoundaryMeters(point, polygon) <= toleranceMeters;
+  }
+
+  /**
    * Calculate distance between two GPS points (Haversine formula)
    * Returns distance in meters
    */

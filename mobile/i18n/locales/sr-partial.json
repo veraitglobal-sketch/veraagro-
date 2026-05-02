@@ -562,6 +562,8 @@
       "parcelsWithCount": "Parcele ({{count}})",
       "approvedParcelsOfTotal": "{{approved}} / {{total}} odobreno",
       "parcelBadge": "Parcele ({{count}})",
+      "parcelPendingApproval": "Čeka odobrenje administratora",
+      "parcelApproved": "Odobreno",
       "editEstateTitle": "Uredi njivu",
       "certStatusCertified": "Sertifikovan",
       "certStatusActive": "Aktivan",

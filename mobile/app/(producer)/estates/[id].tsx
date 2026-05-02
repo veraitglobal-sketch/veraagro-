@@ -254,16 +254,44 @@ export default function EstateDetailsScreen() {
                       borderColor: colors.border,
                     }}
                   >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs, flexWrap: 'wrap', gap: 8 }}>
                       <Package size={14} color={colors.text.secondary} strokeWidth={1} />
                       <Text style={{
                         fontSize: 13,
                         fontWeight: '300',
                         color: colors.text.primary,
                         marginLeft: theme.spacing.xs,
+                        flex: 1,
+                        minWidth: 120,
                       }}>
                         {parcel.cropType || t('producer.products.unknownProduct')}
                       </Text>
+                      {(() => {
+                        const ok =
+                          Boolean(parcel.approvedAt) ||
+                          parcel.status === 'ACTIVE' ||
+                          parcel.status === 'CERTIFIED';
+                        return (
+                          <View
+                            style={{
+                              paddingHorizontal: 8,
+                              paddingVertical: 3,
+                              borderRadius: theme.borderRadius.sm,
+                              backgroundColor: ok ? `${colors.success}18` : `${colors.warning}22`,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 10,
+                                fontWeight: '600',
+                                color: ok ? colors.success : colors.warning,
+                              }}
+                            >
+                              {ok ? t('producer.estates.parcelApproved') : t('producer.estates.parcelPendingApproval')}
+                            </Text>
+                          </View>
+                        );
+                      })()}
                     </View>
                     <Text style={{
                       fontSize: 11,

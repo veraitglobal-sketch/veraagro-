@@ -24,15 +24,18 @@ export class EstatesService {
     if (pendingIds.length === 0) {
       return new Set();
     }
-    const grouped = await this.prisma.parcels.groupBy({
-      by: ['estateId'],
+    /** Treat parcel as “cleared for grower work” if admin set approvedAt, or legacy ACTIVE/CERTIFIED rows. */
+    const linked = await this.prisma.parcels.findMany({
       where: {
         estateId: { in: pendingIds },
-        approvedAt: { not: null },
+        OR: [
+          { approvedAt: { not: null } },
+          { status: { in: ['ACTIVE', 'CERTIFIED'] } },
+        ],
       },
-      _count: { _all: true },
+      select: { estateId: true },
     });
-    const toActivate = grouped.map((g) => g.estateId);
+    const toActivate = [...new Set(linked.map((p) => p.estateId))];
     if (toActivate.length === 0) {
       return new Set();
     }
