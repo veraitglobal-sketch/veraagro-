@@ -212,6 +212,53 @@ export default function PitchDeckPage() {
     return parseDetailSections(raw);
   }, [t]);
 
+  const storySection = useMemo(() => {
+    const narrativeRaw = t("pitchDeck.narrativeParagraphs", { returnObjects: true });
+    const narrativeParagraphs = isStringList(narrativeRaw) ? narrativeRaw : [];
+    if (narrativeParagraphs.length > 0) {
+      return (
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
+          <SlideKicker>{t("pitchDeck.narrativeEyebrow")}</SlideKicker>
+          <h2 className="mb-8 text-[1.5rem] sm:text-[1.85rem] font-semibold text-gray-900 tracking-tight leading-tight max-w-[40ch]">{t("pitchDeck.narrativeTitle")}</h2>
+          <div className="max-w-[58ch] space-y-5 text-[15px] sm:text-[1.0625rem] leading-[1.75] text-gray-700">
+            {narrativeParagraphs.map((block, i) => (
+              <p key={i} className="pitch-avoid-split whitespace-pre-line">
+                {block}
+              </p>
+            ))}
+          </div>
+        </motion.section>
+      );
+    }
+    if (plainLanguageCards.length > 0) {
+      return (
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
+          <SlideKicker className="">{t("pitchDeck.plainLanguageEyebrow")}</SlideKicker>
+          <h2 className="text-[1.5rem] sm:text-[1.85rem] font-semibold text-gray-900 tracking-tight leading-tight max-w-[22ch] mb-6">{t("pitchDeck.plainLanguageTitle")}</h2>
+          <p className="mb-11 max-w-[52ch] text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.plainLanguageIntro")}</p>
+          <div
+            className={`grid gap-10 sm:gap-12 lg:gap-14 ${plainLanguageCards.length >= 3 ? "lg:grid-cols-3" : plainLanguageCards.length === 2 ? "sm:grid-cols-2" : ""}`}
+          >
+            {plainLanguageCards.map((card, index) => {
+              const Icon = PLAIN_LANGUAGE_ICONS[index % PLAIN_LANGUAGE_ICONS.length];
+              const n = String(index + 1).padStart(2, "0");
+              return (
+                <div key={card.title} className="pitch-avoid-split group relative pl-5 border-l-[2px]" style={{ borderColor: ACCENT }}>
+                  <span className="absolute -left-px top-0 block h-[2px] w-3 bg-white -translate-x-0" aria-hidden />
+                  <p className="mb-4 font-mono text-[11px] font-bold tracking-widest text-gray-400">{n}</p>
+                  <Icon className="mb-4 size-[22px]" style={{ color: ACCENT }} aria-hidden />
+                  <h3 className="mb-3 text-[1.05rem] font-semibold text-gray-900 leading-snug">{card.title}</h3>
+                  <p className="text-[14px] sm:text-[15px] leading-[1.65] text-gray-600">{card.body}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.section>
+      );
+    }
+    return null;
+  }, [t, plainLanguageCards]);
+
   const copyPublicUrl = useCallback(() => {
     if (typeof window === "undefined") return;
     void navigator.clipboard.writeText(window.location.href).then(() => {
@@ -463,57 +510,7 @@ export default function PitchDeckPage() {
           </div>
         </motion.section>
 
-        {/* Story — narrative prose (preferred) or three summary cards */}
-        {(() => {
-          const narrativeRaw = t("pitchDeck.narrativeParagraphs", { returnObjects: true });
-          const narrativeParagraphs = isStringList(narrativeRaw) ? narrativeRaw : [];
-          if (narrativeParagraphs.length > 0) {
-            return (
-              <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
-                <SlideKicker>{t("pitchDeck.narrativeEyebrow")}</SlideKicker>
-                <h2 className="mb-8 text-[1.5rem] sm:text-[1.85rem] font-semibold text-gray-900 tracking-tight leading-tight max-w-[40ch]">
-                  {t("pitchDeck.narrativeTitle")}
-                </h2>
-                <div className="max-w-[58ch] space-y-5 text-[15px] sm:text-[1.0625rem] leading-[1.75] text-gray-700">
-                  {narrativeParagraphs.map((block, i) => (
-                    <p key={i} className="pitch-avoid-split whitespace-pre-line">
-                      {block}
-                    </p>
-                  ))}
-                </div>
-              </motion.section>
-            );
-          }
-          if (plainLanguageCards.length > 0) {
-            return (
-              <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
-                <SlideKicker className="">{t("pitchDeck.plainLanguageEyebrow")}</SlideKicker>
-                <h2 className="text-[1.5rem] sm:text-[1.85rem] font-semibold text-gray-900 tracking-tight leading-tight max-w-[22ch] mb-6">
-                  {t("pitchDeck.plainLanguageTitle")}
-                </h2>
-                <p className="mb-11 max-w-[52ch] text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.plainLanguageIntro")}</p>
-                <div
-                  className={`grid gap-10 sm:gap-12 lg:gap-14 ${plainLanguageCards.length >= 3 ? "lg:grid-cols-3" : plainLanguageCards.length === 2 ? "sm:grid-cols-2" : ""}`}
-                >
-                  {plainLanguageCards.map((card, index) => {
-                    const Icon = PLAIN_LANGUAGE_ICONS[index % PLAIN_LANGUAGE_ICONS.length];
-                    const n = String(index + 1).padStart(2, "0");
-                    return (
-                      <div key={card.title} className="pitch-avoid-split group relative pl-5 border-l-[2px]" style={{ borderColor: ACCENT }}>
-                        <span className="absolute -left-px top-0 block h-[2px] w-3 bg-white -translate-x-0" aria-hidden />
-                        <p className="mb-4 font-mono text-[11px] font-bold tracking-widest text-gray-400">{n}</p>
-                        <Icon className="mb-4 size-[22px]" style={{ color: ACCENT }} aria-hidden />
-                        <h3 className="mb-3 text-[1.05rem] font-semibold text-gray-900 leading-snug">{card.title}</h3>
-                        <p className="text-[14px] sm:text-[15px] leading-[1.65] text-gray-600">{card.body}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.section>
-            );
-          }
-          return null;
-        })()}
+        {storySection}
 
         {/* Operating model */}
         <motion.section

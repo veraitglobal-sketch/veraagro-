@@ -3454,10 +3454,10 @@
         "body": "If you audit us, pick a batch ID and scroll forward instead of begging three departments for stray attachments. If you walk a supermarket floor, what the QR says shouldn’t blush when compared with the back-office file. Farmers get tooling that survives spotty LTE and payouts that aren’t improvised in retrospect. When refrigerant slips or timelines fight, custody isn’t reconstructed from WhatsApp. And when leadership asks “what really happened?” there’s only one chronological spine feeding quality, logistics and finance — because three competing truths rarely age well."
       }
     ],
-    "videoTitle": "Optional overview video",
-    "videoCaption": "If you add a short clip here, use it alongside this page — the same idea: one traceable record from growers through logistics to buyers, without the noise.",
-    "videoPlaceholderTitle": "Your video sits here once linked",
-    "videoPlaceholderBody": "Publish your clip on YouTube or Vimeo as public or unlisted, set NEXT_PUBLIC_PITCH_DECK_VIDEO_URL in deployment, redeploy — the embed replaces this area.",
+    "videoTitle": "Bio Vera — short pitch overview",
+    "videoCaption": "A brief companion to this page: the idea behind Bio Vera, why transparent trade matters for growers and buyers, and how one platform supports traceable, verified products end to end.",
+    "videoPlaceholderTitle": "Embed your pitch video here",
+    "videoPlaceholderBody": "Publish on YouTube or Vimeo (public or unlisted), set NEXT_PUBLIC_PITCH_DECK_VIDEO_URL where you deploy this site, redeploy — this area becomes the embedded player.",
     "howItWorksEyebrow": "How it actually flows",
     "howItWorksTitle": "From the farm boundary scan to the shelf QR — one continuous thread",
     "howItWorksLead": "Nobody absorbs seventeen diagrams over lukewarm coffee — so we order this exactly how crews live it day to day: inputs and boundaries, trustworthy field notebooks, auditable pallets, lorries acknowledging custody loudly enough for finance to hear, and only then passports plus splits that accountants can reconcile. Roles differ but facts share the same bloodstream. Prefer every guardrail enumerated? Drop to the appendix: fourteen pillars spelled out patiently.",
