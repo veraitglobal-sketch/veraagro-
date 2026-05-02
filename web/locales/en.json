@@ -3425,7 +3425,7 @@
     "videoPlaceholderBody": "Publish your walk-through on YouTube or Vimeo and configure the site with that public URL—the player will load automatically for partners viewing this deck.",
     "howItWorksEyebrow": "Operating model",
     "howItWorksTitle": "How Bio Vera works — from estate boundary to QR passport",
-    "howItWorksLead": "The sections below summarise benefits by role. This sequence is how we align growers, buyers and logistics partners on one backbone—regardless of country of origin or destination. It begins with mapped estates and seed economics, adds defensible field evidence, validates packaging and batches, structures logistics custody, and finishes with shopper-facing passports and transparent settlement lines.",
+    "howItWorksLead": "The sections below summarise benefits by role. This sequence is how we align growers, buyers and logistics partners on one backbone—regardless of country of origin or destination. It begins with mapped estates and seed economics, adds defensible field evidence, validates packaging and batches, structures logistics custody, and finishes with shopper-facing passports and transparent settlement lines. The specification appendix farther down enumerates fourteen operational pillars with explicit controls, guardrails and platform surfaces—not a marketing synopsis alone.",
     "howItWorksPhases": [
       {
         "title": "Estates, seed economics and Integrity Guard inputs",
@@ -3450,7 +3450,7 @@
     ],
     "coverEyebrow": "Partner overview",
     "coverTitle": "One operating system for growers, buyers and logistics partners",
-    "coverSubtitle": "Bio Vera works with producers and buyers around the world who commit to our Bio-Ready standards and operating rules—geography is not a filter on partnership. The platform ties together estate mapping, field compliance, packaging control, mission-based logistics and QR-based retail verification. Vera Partner seed terms, optional insurance linked to qualifying purchases, and Vera work bonuses tied to verified packaging create aligned economics across the chain.",
+    "coverSubtitle": "Bio Vera works with producers and buyers around the world who commit to our Bio-Ready standards and operating rules—geography is not a filter on partnership. The platform ties together estate mapping, field compliance, packaging control, mission-based logistics and QR-based retail verification. Vera Partner seed terms, optional insurance linked to qualifying purchases, and Vera work bonuses tied to verified packaging create aligned economics across the chain. Every serious claim—barcode legitimacy, polygon-bound GPS, batch identity, refrigeration narrative and payout line—is bound to structured records rather than ad hoc spreadsheets or chat threads.",
     "whyTitle": "Why traceability must be built into operations",
     "whyLead": "Procurement, quality and food-safety teams need evidence that survives audits and commercial diligence. Growers need fair, predictable compensation and systems that remain usable when network coverage is weak. Siloed spreadsheets and informal channels recreate the same reconciliation burden on every shipment.",
     "whyBullets": [
@@ -3515,24 +3515,30 @@
       {
         "title": "Security and access control",
         "body": "Role-based access, rate limiting and operational logging support multi-party networks and informed incident response."
+      },
+      {
+        "title": "Operational analytics without shadow IT",
+        "body": "Because missions, batches and payments share identifiers, throughput, dwell time, temperature exceptions and payout variance roll up consistently—reducing duplicated BI extracts."
       }
     ],
     "transparencyTitle": "Verified transparency for buyers",
     "transparencyBullets": [
       "The QR journey resolves to a batch passport with producer, route and certification context—designed for concise, factual presentation.",
       "Cold-chain and custody information appears alongside origin data within the same narrative.",
-      "Bio-Ready positioning is expressed consistently with the evidence surfaced to the end customer."
+      "Bio-Ready positioning is expressed consistently with the evidence surfaced to the end customer.",
+      "Public narratives intentionally exclude marketing language that lacks machine-backed artefacts—protecting grocer reputation and downstream liability."
     ],
     "financeTitle": "Settlement and tax clarity",
     "financeLead": "Funds are released in defined stages so grower, logistics, platform and Vera bonus components can be reconciled without conflating unrelated lines.",
     "financeBullets": [
       "Vera Partner and standard seed economics are embedded from the first transaction, reducing late-stage payout surprises.",
       "Insurance commissions are disclosed transparently where relevant programmes apply.",
-      "Cross-border freight and VAT treatment between export legs and destination markets are reflected in tax logic to support compliant reporting."
+      "Cross-border freight and VAT treatment between export legs and destination markets are reflected in tax logic to support compliant reporting.",
+      "Driver remuneration and platform uplift remain separable ledger concepts so forensic finance teams can reconcile each shipment against contracts and statutes."
     ],
     "detailSpecEyebrow": "Specification",
-    "detailSpecTitle": "Detailed programme overview — pillar coverage",
-    "detailSpecLead": "Bio Vera couples certification-grade traceability with defensible economics. The blocks below summarise the same pillars that drive product, onboarding and auditing: vertical loop, Integrity Guard rules, Protocol 360, offline behaviour, logistics custody, retail passports, settlement design, tax separation, ecosystem roles (including supplier commerce), security posture and engineering footprint (PostgreSQL/Nest/API, Next.js and Expo RN, localisation across locales).",
+    "detailSpecTitle": "Detailed programme overview — 14 pillar coverage",
+    "detailSpecLead": "Bio Vera couples certification-grade traceability with defensible economics. The blocks below mirror how we onboard partners, defend audits and extend the codebase: controlled inputs and seed economics; estate geometry and cultivation chronology; Integrity Guard blocking rules; staged Protocol 360 evidence; offline capture and reconciliation; missions and custody; buyer passports; escrow waterfalls and differentiated tax legs; supplier catalogues disciplined by whitelist logic; RBAC/JWT posture; engineering footprint; and operator-facing workspaces so each persona contributes to one spine instead of forks.",
     "detailSections": [
       {
         "title": "1. Seed, insurance and controlled inputs",
@@ -3552,6 +3558,10 @@
           {
             "heading": "Global partnership, unified rulebook",
             "body": "Partner geography is open; onboarding still enforces Vera Partner semantics, whitelist enforcement and auditing discipline consistently."
+          },
+          {
+            "heading": "Seed cohort traceability",
+            "body": "Qualifying workflows bind purchased seed to programme cohort identifiers so auditors connect variety choice, Vera Partner tariffing and insured lots without reconstructing paper trails shipment by shipment."
           }
         ]
       },
@@ -3569,6 +3579,14 @@
           {
             "heading": "Device-level accountability",
             "body": "Device fingerprint concepts complement policy controls so operators know which handset produced each evidence artefact."
+          },
+          {
+            "heading": "Boundary governance",
+            "body": "Polygon revisions follow controlled onboarding practices so parcels under contract—and only those parcels—authorize GPS-bearing evidence throughout the season."
+          },
+          {
+            "heading": "Certification metadata at source",
+            "body": "Estate-attached certifications and attestations propagate into buyer dossiers alongside field entries, eliminating duplicate collection every audit cycle."
           }
         ]
       },
@@ -3586,6 +3604,14 @@
           {
             "heading": "Blocking with traceability",
             "body": "Rejections escalate for review—closing the gap between ‘blocked’ narratives and investigative follow-through."
+          },
+          {
+            "heading": "Seed and packaging barcode parity",
+            "body": "Seed units and sanctioned packaging SKUs reconcile against authoritative catalogue rows; scans that do not resolve stop upstream of compliance narration."
+          },
+          {
+            "heading": "Admin surfaces for exceptions",
+            "body": "Policy teams review blocked attempts with timestamps, identities and SKU context—making exceptions rare, explicit and attributable."
           }
         ]
       },
@@ -3603,6 +3629,10 @@
           {
             "heading": "Cold chain narrative",
             "body": "Third-layer instrumentation tracks refrigeration commitments end-to-end, pairing telemetry with custody transitions through destination corridors."
+          },
+          {
+            "heading": "Non-conformance and rework visibility",
+            "body": "When checks fail, deviations remain tied to batches and checkpoints so buyers see resolution paths rather than unexplained gaps in the chronological record."
           }
         ]
       },
@@ -3620,6 +3650,14 @@
           {
             "heading": "MaterialControl trace line",
             "body": "Material suppliers, certificates and conformance statements converge for buyer-grade proof."
+          },
+          {
+            "heading": "Harvest-to-batch continuity",
+            "body": "Declared harvest windows and field outputs feed conversion into batch identities so SKU-level passports inherit agronomic chronology—not only pack-house timestamps."
+          },
+          {
+            "heading": "Bonus governance",
+            "body": "Vera bonus triggers reference verified material compliance artefacts; payout reviews can replay predicate logic without discretionary overrides."
           }
         ]
       },
@@ -3637,6 +3675,10 @@
           {
             "heading": "Resilience KPIs baked in",
             "body": "SLAs assume rural fade; uptime narratives extend to intermittent operators without degrading dossier fidelity."
+          },
+          {
+            "heading": "Idempotent ingestion",
+            "body": "Retries and duplicated uploads converge to deterministic server state so flaky connectivity does not fork batch histories."
           }
         ]
       },
@@ -3654,6 +3696,14 @@
           {
             "heading": "Location intelligence",
             "body": "LocationLog-style traces keep dispatchers oriented on lateness, deviations and refrigerated drift before buyers raise alarms."
+          },
+          {
+            "heading": "Multi-leg partner workspaces",
+            "body": "Grower dispatch, fleet hubs, intermediary receivers and final-mile crews each interact through role-scoped dashboards while referencing identical mission identifiers."
+          },
+          {
+            "heading": "Exception runbooks baked into missions",
+            "body": "Temperature excursions or missed handovers generate structured escalation metadata linked to batches so QA teams respond with evidence—not screenshots."
           }
         ]
       },
@@ -3671,6 +3721,10 @@
           {
             "heading": "Public integrity",
             "body": "Only machine-backed statements surface—preventing overstated farm-to-fork language without artefacts."
+          },
+          {
+            "heading": "Live operational context where enabled",
+            "body": "When telemetry is active, passports can reflect freshness indicators and ETA-style context anchored to custody logs—still bounded by factual inputs."
           }
         ]
       },
@@ -3688,6 +3742,14 @@
           {
             "heading": "Driver economics inclusion",
             "body": "Driver fees remain explicit counterparts to grower and platform allocations during settlement reviews."
+          },
+          {
+            "heading": "Order-to-batch reconciliation",
+            "body": "Commercial orders reference batch identities so invoicing, credit notes and release triggers chase the same stock objects finance teams analyse."
+          },
+          {
+            "heading": "Period-end readability",
+            "body": "Because components are segmented early, CFO offices can reconcile season-level programmes without reverse-engineering mixed-line invoices."
           }
         ]
       },
@@ -3701,6 +3763,18 @@
           {
             "heading": "Grower-ready procurement",
             "body": "Connected journeys let growers source packaging, seedlings and sanctioned inputs without violating programme guardrails."
+          },
+          {
+            "heading": "SKU sunset and substitutions",
+            "body": "When chemistry or packaging rows retire, storefronts honour supersession rules instead of silently selling obsolete catalogue lines into compliant programmes."
+          },
+          {
+            "heading": "Price and partner overlays",
+            "body": "Vera Partner users see entitlement-aware merchandising layered on whitelist truth—avoiding contradictory offers between storefront and settlement engines."
+          },
+          {
+            "heading": "Invoicing alignment",
+            "body": "Supplier billing artefacts can cite the same article IDs Integrity Guard recognises in the field, closing reconciliation gaps across procurement and compliance teams."
           }
         ]
       },
@@ -3718,6 +3792,14 @@
           {
             "heading": "Logging & incident lineage",
             "body": "Server-side verbosity supports trace identifiers and Prisma-aware diagnostics so responders rebuild timelines quickly."
+          },
+          {
+            "heading": "Input validation everywhere",
+            "body": "Controllers validate payloads centrally so scripted partners cannot bypass Integrity Guard-equivalent semantics through alternate paths."
+          },
+          {
+            "heading": "Hardened sessions and optional MFA posture",
+            "body": "Authentication stacks align with multi-tenant SaaS expectations; privileged roles leverage stricter hurdles where deployments enable them."
           }
         ]
       },
@@ -3739,6 +3821,48 @@
           {
             "heading": "Locale routing fidelity",
             "body": "Locale-prefixed marketing routes (for example /en/ and /sr/) cooperate with middleware and cookies so multilingual partners bookmark consistent URLs without breaking apps that remain locale-neutral."
+          },
+          {
+            "heading": "API contracts and versioning discipline",
+            "body": "Domain modules expose stable REST verbs for estates, batches, missions and finance consumers; additive evolution preserves mobile and web parity during releases."
+          }
+        ]
+      },
+      {
+        "title": "13. Operational roles and workspaces",
+        "items": [
+          {
+            "heading": "Grower and pack-house operators",
+            "body": "Expo RN prioritises tactile, offline-safe flows for estates, journals, plot evidence, harvesting and packaging transitions while mirroring entitlement logic surfaced on responsive grower dashboards."
+          },
+          {
+            "heading": "Logistics, fleet partners and receivers",
+            "body": "Dedicated dashboards cover mission creation, driver assignment, checkpoints, custody acceptance and escalation—without granting unrelated estate data across tenant boundaries."
+          },
+          {
+            "heading": "Merchants and category managers",
+            "body": "Buyer tooling surfaces passports, dossier downloads and order states grounded in authoritative batch timelines rather than marketing microsites disconnected from fulfilment truth."
+          },
+          {
+            "heading": "Programme administrators",
+            "body": "Internal operators wield moderation, catalogue governance and exception tooling with auditable footprints so policy changes propagate predictably across channels."
+          }
+        ]
+      },
+      {
+        "title": "14. Evidence bundles, QA continuity and contingency",
+        "items": [
+          {
+            "heading": "Structured quality and compliance artefacts",
+            "body": "Quality narratives, photographic evidence (where programmes require it), GPS stamps and checkpoints append to chronological dossiers keyed by estates and batches—supporting inspectors without bespoke spreadsheets per retailer."
+          },
+          {
+            "heading": "Targeted containment",
+            "body": "Immutable batch lineage supports narrow holds: teams can correlate suspect cohorts via identifiers shared by logistics and finance rather than shutting entire unspecified SKUs."
+          },
+          {
+            "heading": "Cross-functional retrospectives",
+            "body": "Because finance, QA and missions reference one identifier set, quarterly business reviews quantify leakage, deviations and bonus outcomes from the same datastore leadership trusts for regulatory defence."
           }
         ]
       }
