@@ -24,6 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
+import { InvestorDeckHub } from "@/components/investor/InvestorDeckHub";
 import { parsePitchDeckVideoUrl } from "@/lib/pitch-deck-video";
 
 type TextBlock = { title: string; body: string };
@@ -470,8 +471,11 @@ export default function PitchDeckPage() {
       </div>
 
       <main className="mx-auto max-w-[1240px] space-y-7 px-5 pb-20 pt-[calc(8.25rem)] sm:space-y-8 sm:pt-[8.85rem] sm:px-6 lg:space-y-9 lg:px-8 lg:pb-28 print:mx-0 print:max-w-none print:space-y-0 print:px-4 print:!pb-0 print:!pt-4">
+        <InvestorDeckHub />
+
         {/* Cover */}
         <motion.section
+          id="investor-deck-pitch"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}

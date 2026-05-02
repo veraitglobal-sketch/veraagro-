@@ -3443,6 +3443,14 @@
     "ctaProducer": "Postanite proizvođač",
     "ctaContact": "Kontakt"
   },
+  "investorDeckPage": {
+    "documentsEyebrow": "Dokumentacija",
+    "documentsTitle": "Materijali na ovoj stranici",
+    "documentsLead": "Kartice otvaraju pregled projekta i tehnički predlog, ili preskoči na prezentacioni deck ispod. Pravila i jezik su ovde grupisani da evaluatori imaju jednu polaznu tačku.",
+    "cardPitchDesc": "Narativ u slajd formatu na ovoj stranici — štampa ili PDF preko trake.",
+    "cardProjectDesc": "Strukturisan rezime: obim, plan, tržište i trenutni status.",
+    "cardTechnicalDesc": "Arhitektura, usklađenost, offline rad i prikladnost za programe."
+  },
   "pitchDeck": {
     "toolbarCopyLink": "Kopiraj link",
     "toolbarCopied": "Kopirano",

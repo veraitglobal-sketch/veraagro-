@@ -2828,6 +2828,14 @@
     "cookiesTitle": "Cookie-Richtlinie",
     "cookiesUpdated": "Letzte Aktualisierung: Januar 2026"
   },
+  "investorDeckPage": {
+    "documentsEyebrow": "Dokumentation",
+    "documentsTitle": "Investorenunterlagen auf dieser Seite",
+    "documentsLead": "Über die Karten öffnen Sie die Projektübersicht und den technischen Vorschlag, oder springen Sie unten zur Pitch‑Präsentation. Rechtliches und Spracheinstellungen sind hier gebündelt — ein Einstieg für Gutachter.",
+    "cardPitchDesc": "Erzählung im Slide‑Format auf dieser Seite — über die Symbolleiste drucken oder als PDF speichern.",
+    "cardProjectDesc": "Strukturierte Projektzusammenfassung: Umfang, Roadmap, Märkte und aktueller Stand.",
+    "cardTechnicalDesc": "Architektur, Compliance, Offline‑First‑Betrieb und Programm‑Passung für Evaluatorinnen und Evaluatoren."
+  },
   "pitchDeck": {
     "toolbarCopyLink": "Link kopieren",
     "toolbarCopied": "Kopiert",
