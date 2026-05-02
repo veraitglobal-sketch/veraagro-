@@ -6,20 +6,20 @@ import Image from "next/image";
 import { Link2, Printer } from "lucide-react";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
-import { TECHNICAL_PROPOSAL_CHAPTERS } from "@/content/technical-proposal";
-import { TP_UI_EN as UI } from "@/content/technical-proposal.ui.en";
+import { EIC_PART_B_CHAPTERS } from "@/content/eic-part-b";
+import { EIC_PART_B_UI_EN as UI } from "@/content/eic-part-b.ui.en";
 
 const TOC_LINK_CLASS =
   "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
 const TOC_NUM_CLASS =
   "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/[0.08] text-[11px] font-bold tabular-nums text-[#2D5A27]";
 
-export default function TechnicalProposalPage() {
+export default function EicPartBPage() {
   const loc = useLocalizedHref();
   const [copied, setCopied] = useState(false);
 
   const anchors = useMemo(
-    () => TECHNICAL_PROPOSAL_CHAPTERS.map((c, index) => ({ id: c.id, title: c.title, index })),
+    () => EIC_PART_B_CHAPTERS.map((c, index) => ({ id: c.id, title: c.title, index })),
     [],
   );
 
@@ -35,8 +35,12 @@ export default function TechnicalProposalPage() {
     if (typeof window !== "undefined") window.print();
   }, []);
 
+  const docAnchor = `#${UI.documentId}`;
+
   return (
-    <div className="min-h-screen bg-[#f4f7f4] text-gray-900 technical-proposal-root print:bg-white">
+    <div
+      className={`min-h-screen bg-[#f4f7f4] text-gray-900 technical-proposal-root ${UI.rootClass} print:bg-white`}
+    >
       <style jsx global>{`
         @media print {
           .technical-proposal-root .tp-no-print {
@@ -97,7 +101,7 @@ export default function TechnicalProposalPage() {
       `}</style>
 
       <a
-        href="#technical-proposal-document"
+        href={docAnchor}
         className="tp-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
         {UI.skipToContent}
@@ -118,10 +122,16 @@ export default function TechnicalProposalPage() {
               priority
             />
             <span className="hidden border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400 sm:inline">
-              {UI.coverEyebrow}
+              {UI.navDocLabel}
             </span>
           </Link>
           <nav className="flex items-center gap-5 text-[13px] font-medium text-gray-600 sm:gap-7">
+            <Link
+              href={loc("/technical-proposal")}
+              className="hidden hover:text-[#2D5A27] xl:inline font-medium"
+            >
+              {UI.navTechnicalProposal}
+            </Link>
             <Link href={loc("/project-overview")} className="hidden hover:text-[#2D5A27] md:inline">
               {UI.navProjectOverview}
             </Link>
@@ -169,7 +179,7 @@ export default function TechnicalProposalPage() {
       </div>
 
       <main
-        id="technical-proposal-document"
+        id={UI.documentId}
         className="technical-proposal-doc mx-auto max-w-[900px] px-5 pb-24 pt-[calc(8.25rem)] scroll-mt-24 sm:px-8 sm:pt-[8.85rem] print:mx-0 print:max-w-none print:px-4 print:pb-12 print:pt-8"
         tabIndex={-1}
       >
@@ -209,7 +219,7 @@ export default function TechnicalProposalPage() {
           </nav>
 
           <div className="divide-y divide-gray-100 px-6 py-2 sm:px-9">
-            {TECHNICAL_PROPOSAL_CHAPTERS.map((chapter) => (
+            {EIC_PART_B_CHAPTERS.map((chapter) => (
               <section key={chapter.id} id={chapter.id} className="scroll-mt-28 py-8 print:scroll-mt-0 print:py-5">
                 <h2 className="tp-heading tp-sans mb-4 text-lg font-semibold text-gray-900 sm:text-xl print:text-[12pt]">
                   {chapter.title}
@@ -230,14 +240,14 @@ export default function TechnicalProposalPage() {
             <p className="tp-sans mt-2 max-w-xl text-sm text-gray-700 sm:text-[15px]">{UI.seeAlsoBody}</p>
             <div className="mt-4 flex flex-wrap gap-3">
               <Link
-                href={loc("/eic-part-b")}
-                className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-5 text-sm font-semibold text-white hover:bg-[#23471f]"
+                href={loc("/technical-proposal")}
+                className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-800 hover:border-[#2D5A27]/35"
               >
-                {UI.seeEicPartB}
+                {UI.seeTechnicalProposal}
               </Link>
               <Link
                 href={loc("/project-overview")}
-                className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-800 hover:border-[#2D5A27]/35"
+                className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-5 text-sm font-semibold text-white hover:bg-[#23471f]"
               >
                 {UI.seeOverview}
               </Link>
