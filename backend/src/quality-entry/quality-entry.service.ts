@@ -54,28 +54,60 @@ export class QualityEntryService {
   /**
    * When BLOB_READ_WRITE_TOKEN is unset, data URLs are stored in Postgres — shrink with sharp
    * so typical handovers stay under pooler / payload limits.
+   * Uses tolerant decode + fallbacks because some PNG/WebP files fail strict metadata checks.
    */
   private async shrinkHandoverImageToJpegDataUrl(buf: Buffer, context: string): Promise<string> {
-    try {
-      const out = await sharp(buf)
-        .rotate()
+    const toJpeg = async (minimal: boolean) => {
+      let img = sharp(buf, { failOn: 'none' }).rotate();
+      if (!minimal) {
+        img = img.flatten({ background: { r: 255, g: 255, b: 255 } });
+      }
+      return img
         .resize({
           width: 1280,
           height: 1280,
           fit: 'inside',
           withoutEnlargement: true,
         })
-        .jpeg({ quality: 76, mozjpeg: true })
+        .jpeg(
+          minimal
+            ? { quality: 72, chromaSubsampling: '4:4:4' }
+            : { quality: 76, mozjpeg: true, chromaSubsampling: '4:4:4' },
+        )
         .toBuffer();
-      return `data:image/jpeg;base64,${out.toString('base64')}`;
-    } catch (e) {
-      this.logger.warn(
-        `shrinkHandoverImageToJpegDataUrl (${context}): ${e instanceof Error ? e.message : String(e)}`,
-      );
-      throw new BadRequestException(
-        `${context}: could not process image. Try another file, or set BLOB_READ_WRITE_TOKEN for cloud storage.`,
-      );
+    };
+
+    let lastMessage = '';
+    for (const minimal of [false, true]) {
+      try {
+        const out = await toJpeg(minimal);
+        if (out.length > 0) {
+          return `data:image/jpeg;base64,${out.toString('base64')}`;
+        }
+      } catch (e) {
+        lastMessage = e instanceof Error ? e.message : String(e);
+        this.logger.warn(
+          `shrinkHandoverImageToJpegDataUrl (${context}) minimal=${minimal}: ${lastMessage}`,
+        );
+      }
     }
+
+    /** Last resort: store original bytes (small files only) so uncommon formats are not hard-blocked. */
+    const ext = QualityEntryService.guessHandoverImageExt(buf);
+    const mime =
+      ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+    const passthrough = `data:${mime};base64,${buf.toString('base64')}`;
+    const maxPassthroughChars = 1_400_000;
+    if (passthrough.length <= maxPassthroughChars) {
+      this.logger.warn(
+        `shrinkHandoverImageToJpegDataUrl (${context}): passthrough original (${passthrough.length} chars)`,
+      );
+      return passthrough;
+    }
+
+    throw new BadRequestException(
+      `${context}: could not compress this image. Try another JPG or PNG, a smaller file, or set BLOB_READ_WRITE_TOKEN on the API.`,
+    );
   }
 
   /**
@@ -113,7 +145,8 @@ export class QualityEntryService {
             `${group}: each image must be at most ${this.MAX_HANDOVER_PHOTO_BYTES} bytes after decoding`,
           );
         }
-        const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, `${group}#${i + 1}`);
+        const label = group === 'pallet' ? 'Pallet' : 'Truck';
+        const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, `${label} photo ${i + 1}`);
         out.push(shrunk);
         continue;
       }
@@ -166,32 +199,39 @@ export class QualityEntryService {
     missionId: string,
     part: string,
   ): Promise<string> {
+    const partLabel =
+      part.includes('badge') || part.includes('pickup-badge')
+        ? 'ID badge'
+        : part.includes('signature')
+          ? 'Driver signature'
+          : part;
+
     const t = dataUrlOrUrl.trim();
     if (t.startsWith('https://') || t.startsWith('http://')) return t;
     if (!t.startsWith('data:image/')) {
-      throw new BadRequestException(`${part}: expected data:image URL or https link`);
+      throw new BadRequestException(`${partLabel}: expected data:image URL or https link`);
     }
     const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
     if (!token) {
       const raw = this.stripDataUrlBase64(t);
       const buf = Buffer.from(raw, 'base64');
-      if (buf.length === 0) throw new BadRequestException(`${part}: invalid image data`);
+      if (buf.length === 0) throw new BadRequestException(`${partLabel}: invalid image data`);
       if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
-        throw new BadRequestException(`${part}: image too large`);
+        throw new BadRequestException(`${partLabel}: image too large`);
       }
-      const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, part);
+      const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, partLabel);
       if (shrunk.length > this.MAX_PHOTO_STRING_LENGTH) {
         throw new BadRequestException(
-          `${part}: still too large after compression; set BLOB_READ_WRITE_TOKEN or use a smaller image.`,
+          `${partLabel}: still too large after compression; set BLOB_READ_WRITE_TOKEN or use a smaller image.`,
         );
       }
       return shrunk;
     }
     const raw = this.stripDataUrlBase64(t);
     const buf = Buffer.from(raw, 'base64');
-    if (buf.length === 0) throw new BadRequestException(`${part}: invalid image data`);
+    if (buf.length === 0) throw new BadRequestException(`${partLabel}: invalid image data`);
     if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
-      throw new BadRequestException(`${part}: image too large`);
+      throw new BadRequestException(`${partLabel}: image too large`);
     }
     const ext = QualityEntryService.guessHandoverImageExt(buf);
     const safePart = part.replace(/\s+/g, '-').slice(0, 40);
