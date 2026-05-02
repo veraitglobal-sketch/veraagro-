@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Link2, Printer, Sparkles } from "lucide-react";
+import { Link2, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
@@ -71,8 +71,13 @@ export default function ProjectOverviewPage() {
     window.print();
   }, []);
 
+  const tocLinkClass =
+    "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
+  const tocNumClass =
+    "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/[0.08] text-[11px] font-bold tabular-nums text-[#2D5A27]";
+
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fafcfa_0%,#f4f7f5_52%,#fafcfa_100%)] text-gray-900 project-overview-root print:bg-white">
+    <div className="min-h-screen bg-[#fafcfa] text-gray-900 project-overview-root print:bg-white">
       <style jsx global>{`
         @media print {
           .project-overview-root .po-no-print {
@@ -92,6 +97,9 @@ export default function ProjectOverviewPage() {
           .project-overview-doc .po-founder-photo-wrap {
             break-inside: avoid;
             page-break-inside: avoid;
+          }
+          .project-overview-doc svg.lucide {
+            display: none !important;
           }
           .project-overview-doc {
             font-size: 10pt;
@@ -113,13 +121,13 @@ export default function ProjectOverviewPage() {
 
       <a
         href="#project-overview-document"
-        className="po-no-print focus:bg-[#2D5A27] focus:text-white sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-semibold"
+        className="po-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-[#2D5A27] focus:ring-offset-2"
       >
         {t("projectOverview.skipToContent")}
       </a>
 
-      <header className="po-no-print fixed top-0 z-50 w-full border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-5 sm:h-[3.65rem] sm:px-8">
+      <header className="po-no-print fixed top-0 z-50 w-full border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md print:hidden">
+        <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between px-6 sm:h-[3.65rem] sm:px-8 lg:px-10">
           <Link
             href={loc("/")}
             className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/30 focus-visible:ring-offset-2"
@@ -136,17 +144,20 @@ export default function ProjectOverviewPage() {
               {t("footer.projectOverview")}
             </span>
           </Link>
-          <nav className="flex items-center gap-4 text-[13px] font-medium text-gray-600 sm:gap-7">
-            <Link
-              href={loc("/investor-deck")}
-              className="hidden hover:text-[#2D5A27] lg:inline-flex"
-            >
-              {t("footer.investorDeck")}
-            </Link>
+          <nav className="flex items-center gap-5 text-[13px] font-medium text-gray-600 sm:gap-7">
             <Link href={loc("/")} className="hidden hover:text-[#2D5A27] transition-colors sm:inline">
               {t("nav.home")}
             </Link>
-            <Link href={loc("/contact")} className="font-semibold text-[#2D5A27] hover:text-[#23471f]">
+            <Link href={loc("/about")} className="hidden hover:text-[#2D5A27] transition-colors md:inline">
+              {t("footer.about")}
+            </Link>
+            <Link href={loc("/investor-deck")} className="hidden hover:text-[#2D5A27] lg:inline">
+              {t("footer.investorDeck")}
+            </Link>
+            <Link
+              href={loc("/contact")}
+              className="font-semibold text-[#2D5A27] transition-colors hover:text-[#23471f]"
+            >
               {t("nav.contact")}
             </Link>
           </nav>
@@ -154,18 +165,18 @@ export default function ProjectOverviewPage() {
       </header>
 
       <div
-        className="po-no-print sticky top-14 z-40 border-b border-gray-200/90 bg-[#fafcfa]/96 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)] backdrop-blur sm:top-[3.65rem]"
+        className="po-no-print sticky top-14 z-40 border-b border-gray-200/90 bg-[#fafcfa]/96 backdrop-blur print:hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.08)] sm:top-[3.65rem]"
         role="region"
         aria-label={`${t("projectOverview.toolbarCopyLink")} · ${t("projectOverview.toolbarPrintPdf")}`}
       >
         <div className="h-[3px] w-full shrink-0 bg-[#2D5A27]" aria-hidden />
-        <div className="mx-auto flex max-w-4xl flex-col gap-3 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-3.5">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-3.5 sm:px-8 lg:px-10">
           <p className="text-[13px] leading-snug text-gray-600 sm:max-w-[52%]">{t("projectOverview.introNote")}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={copyPublicUrl}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-800 shadow-sm hover:border-[#2D5A27]/45 hover:bg-white"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-800 hover:border-[#2D5A27]/50"
             >
               <Link2 className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
               {copied ? t("projectOverview.toolbarCopied") : t("projectOverview.toolbarCopyLink")}
@@ -174,94 +185,101 @@ export default function ProjectOverviewPage() {
               type="button"
               onClick={openPrint}
               aria-label={t("projectOverview.toolbarPrintAria")}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-2 text-[13px] font-semibold text-white shadow-md shadow-[#2D5A27]/22 hover:bg-[#23471f]"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#2D5A27] px-5 py-2 text-[13px] font-semibold text-white shadow-md shadow-[#2D5A27]/25 hover:bg-[#23471f]"
             >
               <Printer className="size-4 shrink-0" aria-hidden />
               {t("projectOverview.toolbarPrintPdf")}
             </button>
           </div>
         </div>
-        <p className="mx-auto max-w-4xl px-5 pb-2.5 text-[11px] leading-snug text-gray-500 sm:px-8">
+        <p className="mx-auto max-w-[1240px] px-6 pb-2.5 text-[11px] leading-snug text-gray-500 sm:px-8 lg:px-10">
           {t("projectOverview.pdfLimitHint")}
         </p>
       </div>
 
       <main
         id="project-overview-document"
-        className="project-overview-doc mx-auto max-w-3xl scroll-mt-24 px-5 pb-20 pt-[calc(8.25rem)] sm:scroll-mt-28 sm:pt-[9rem] print:max-w-none print:scroll-mt-0 print:px-8 print:pb-8 print:pt-6"
+        className="project-overview-doc mx-auto max-w-[1240px] space-y-8 px-5 pb-20 pt-[calc(8.25rem)] scroll-mt-24 sm:space-y-9 sm:px-6 sm:pt-[8.85rem] sm:scroll-mt-28 lg:space-y-10 lg:px-8 lg:pb-28 print:mx-0 print:max-w-none print:space-y-0 print:scroll-mt-0 print:px-4 print:pb-8 print:pt-4"
         tabIndex={-1}
       >
-        <div className="relative border-b border-[#2D5A27]/20 pb-8 sm:pb-9 print:border-gray-200 print:pb-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em]" style={{ color: ACCENT }}>
-            {t("projectOverview.coverEyebrow")}
-          </p>
-          <h1 className="po-heading mt-2 text-[1.65rem] font-semibold tracking-tight text-gray-900 sm:text-[2.05rem] print:text-[15pt]">
-            {t("projectOverview.coverTitle")}
-          </h1>
-          <p className="mt-4 max-w-[58ch] text-[15px] leading-[1.65] text-gray-600">{t("projectOverview.coverSubtitle")}</p>
-        </div>
+        {/* Cover — aligned with investor-deck cover rhythm */}
+        <section className="rounded-none border-b-[10px] border-b-[#2D5A27] bg-white py-10 shadow-[0_1px_0_rgba(0,0,0,0.06)] sm:rounded-2xl sm:border sm:border-gray-200 sm:border-b-[10px] sm:border-b-[#2D5A27] print:rounded-none print:border-0 print:border-b-2 print:border-b-gray-300 print:shadow-none">
+          <div className="mx-auto max-w-[800px] px-1 sm:px-0">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2D5A27]/90 sm:text-xs"
+            >
+              {t("projectOverview.coverEyebrow")}
+            </p>
+            <h1 className="po-heading mt-3 text-[1.85rem] font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-[2.25rem] lg:text-[clamp(2rem,3.5vw,2.65rem)] print:text-[15pt]">
+              {t("projectOverview.coverTitle")}
+            </h1>
+            <p
+              className="mt-5 max-w-2xl border-l-4 py-1 pl-5 text-base leading-[1.6] text-gray-600 sm:text-[1.0625rem]"
+              style={{ borderColor: ACCENT }}
+            >
+              {t("projectOverview.coverSubtitle")}
+            </p>
+          </div>
+        </section>
 
         <nav
-          className="po-no-print mt-8 rounded-xl border border-gray-200/90 bg-white/90 p-4 shadow-sm ring-1 ring-gray-900/[0.04] backdrop-blur sm:p-5"
+          className="po-no-print rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6"
           aria-label={t("projectOverview.contentsNav")}
         >
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400">{t("projectOverview.contentsTitle")}</p>
-            <ChevronDown className="size-4 text-gray-300 sm:hidden" aria-hidden />
-          </div>
-          <ul className="flex snap-x snap-mandatory flex-nowrap gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+            {t("projectOverview.contentsTitle")}
+          </p>
+          <ul className="mt-4 grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
             {sectionAnchors.map(({ slug, title, index }) => (
-              <li key={slug} className="snap-start shrink-0">
-                <a
-                  href={`#${slug}`}
-                  className="inline-flex max-w-[14rem] items-center gap-2 rounded-full border border-gray-200 bg-gray-50/90 px-3 py-2 text-[12px] font-medium text-gray-700 shadow-sm transition-colors hover:border-[#2D5A27]/40 hover:bg-[#f6faf6] hover:text-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35"
-                >
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/09 text-[11px] tabular-nums font-bold text-[#2D5A27]">
-                    {index + 1}
-                  </span>
-                  <span className="line-clamp-2 leading-snug">{title}</span>
+              <li key={slug}>
+                <a href={`#${slug}`} className={tocLinkClass}>
+                  <span className={tocNumClass}>{index + 1}</span>
+                  <span className="min-w-0 leading-snug group-hover:text-gray-900">{title}</span>
                 </a>
               </li>
             ))}
-            <li className="snap-start shrink-0">
-              <a
-                href={`#${FOUNDER_ANCHOR}`}
-                className="inline-flex items-center gap-2 rounded-full border border-[#2D5A27]/35 bg-[#2D5A27]/06 px-3 py-2 text-[12px] font-semibold text-[#2D5A27] shadow-sm transition-colors hover:bg-[#2D5A27]/11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35"
-              >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]">
-                  <Sparkles className="size-4 text-white" aria-hidden />
+            <li>
+              <a href={`#${FOUNDER_ANCHOR}`} className={tocLinkClass}>
+                <span className={tocNumClass}>{sections.length + 1}</span>
+                <span className="min-w-0 font-semibold leading-snug text-[#2D5A27] group-hover:text-[#23471f]">
+                  {t("projectOverview.founderTitle")}
                 </span>
-                {t("projectOverview.founderTitle")}
               </a>
             </li>
           </ul>
         </nav>
 
-        <div className="po-stack mt-8 space-y-5 sm:mt-10 sm:space-y-6 print:mt-5 print:space-y-3.5">
+        <div className="po-stack space-y-7 sm:space-y-8 print:space-y-4">
           {sections.map((s, i) => {
             const id = sectionAnchors[i]?.slug ?? sectionSlug(s.title, i);
             return (
               <section
                 key={id}
                 id={id}
-                className="po-section-inner scroll-mt-28 rounded-2xl border border-gray-200/95 bg-white p-1 shadow-sm ring-1 ring-black/[0.03] print:scroll-mt-0 print:rounded-none print:border-0 print:bg-transparent print:p-0 print:shadow-none print:ring-0"
+                className="po-section-inner scroll-mt-28 rounded-none border border-gray-200/70 bg-white p-5 shadow-sm sm:rounded-2xl sm:p-6 sm:shadow-sm sm:shadow-gray-950/[0.02] print:scroll-mt-0 print:rounded-none print:border-0 print:border-b print:border-gray-200 print:bg-transparent print:p-0 print:shadow-none"
               >
-                <div className="rounded-[calc(1rem-2px)] border-l-[4px] border-[#2D5A27] px-4 py-4 sm:px-5 sm:py-[1.125rem] print:border-l-2 print:px-0 print:py-2">
-                  <h2 id={`${id}-heading`} className="po-heading mb-2 flex flex-wrap items-baseline gap-x-2 text-[1.0725rem] font-semibold tracking-tight text-gray-900">
-                    <span className="text-[12px] font-bold tabular-nums text-[#2D5A27]/85">{String(i + 1).padStart(2, "0")}</span>
-                    <span>{s.title}</span>
-                  </h2>
-                  <div className="text-[14px] leading-[1.65] text-gray-600 print:text-[10pt]" aria-labelledby={`${id}-heading`}>
-                    {s.body
-                      .split(/\n\n+/)
-                      .map((para: string) => para.trim())
-                      .filter(Boolean)
-                      .map((para: string, pi: number) => (
-                        <p key={pi} className={pi ? "mt-3" : ""}>
-                          {para}
-                        </p>
-                      ))}
-                  </div>
+                <h2
+                  id={`${id}-heading`}
+                  className="po-heading mb-3 flex flex-wrap items-baseline gap-x-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-[1.125rem]"
+                >
+                  <span className="text-[12px] font-bold tabular-nums text-[#2D5A27]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{s.title}</span>
+                </h2>
+                <div
+                  className="text-[15px] leading-[1.65] text-gray-600 print:text-[10pt]"
+                  aria-labelledby={`${id}-heading`}
+                >
+                  {s.body
+                    .split(/\n\n+/)
+                    .map((para: string) => para.trim())
+                    .filter(Boolean)
+                    .map((para: string, pi: number) => (
+                      <p key={pi} className={pi ? "mt-3" : ""}>
+                        {para}
+                      </p>
+                    ))}
                 </div>
               </section>
             );
@@ -269,60 +287,62 @@ export default function ProjectOverviewPage() {
 
           <section
             id={FOUNDER_ANCHOR}
-            className="po-founder po-section-inner scroll-mt-28 rounded-2xl border border-[#2D5A27]/25 bg-[linear-gradient(145deg,#fff_0%,#f8fbf9_46%,#fff_100%)] p-1 shadow-md shadow-[#2D5A27]/06 ring-1 ring-[#2D5A27]/08 print:scroll-mt-0 print:rounded-none print:border-gray-300 print:bg-transparent print:p-0 print:shadow-none print:ring-0"
+            className="po-founder po-section-inner scroll-mt-28 rounded-none border border-gray-200/70 bg-white p-5 shadow-sm sm:rounded-2xl sm:p-6 sm:shadow-sm sm:shadow-gray-950/[0.02] print:scroll-mt-0 print:rounded-none print:border-0 print:border-b print:border-gray-200 print:bg-transparent print:p-0 print:shadow-none"
           >
-            <div className="rounded-[calc(1rem-2px)] px-4 py-4 sm:px-5 sm:py-5 print:border-t print:border-gray-200 print:px-0 print:pb-4 print:pt-4">
-              <h2
-                id="po-founder-heading"
-                className="po-heading mb-3 flex flex-wrap items-center gap-2 text-[1.0725rem] font-semibold tracking-tight text-gray-900"
-              >
-                <Sparkles className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
-                <span>{t("projectOverview.founderTitle")}</span>
-              </h2>
+            <h2
+              id="po-founder-heading"
+              className="po-heading mb-4 flex flex-wrap items-baseline gap-x-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-[1.125rem]"
+            >
+              <span className="text-[12px] font-bold tabular-nums text-[#2D5A27]">
+                {String(sections.length + 1).padStart(2, "0")}
+              </span>
+              <span>{t("projectOverview.founderTitle")}</span>
+            </h2>
 
-              <figure className="po-founder-photo-wrap mb-5">
-                <div className="relative aspect-[20/9] max-h-[200px] w-full overflow-hidden rounded-2xl border border-gray-200/95 bg-neutral-100 shadow-md ring-1 ring-black/[0.05] min-[480px]:aspect-[22/9] sm:aspect-[18/5] sm:max-h-[260px] print:aspect-[18/5] print:max-h-[200px]">
-                  <Image
-                    src={founderImageSrc}
-                    alt={t("projectOverview.founderPhotoAlt")}
-                    fill
-                    className="object-cover object-[58%_42%] sm:object-[62%_40%]"
-                    sizes="(max-width:768px) 100vw, 736px"
-                    priority={false}
-                  />
-                </div>
-                <figcaption className="mt-2 text-[12px] font-medium leading-snug tracking-tight text-gray-600 print:text-[9pt]">
-                  {t("projectOverview.founderPhotoCaption")}
-                </figcaption>
-              </figure>
-
-              <p className="po-no-print mb-5 text-[10px] leading-snug text-gray-500">{t("projectOverview.founderPhotoHint")}</p>
-
-              <div
-                className="space-y-3.5 border-t border-gray-100 pt-5 text-[14px] leading-[1.65] text-gray-600 print:space-y-2.5 print:border-gray-200 print:pt-4 print:text-[10pt]"
-                aria-labelledby="po-founder-heading"
-              >
-                {founderParagraphs.map((paragraph, pi) => (
-                  <p key={pi}>{paragraph}</p>
-                ))}
+            <figure className="po-founder-photo-wrap mb-6">
+              <div className="relative aspect-[20/9] max-h-[200px] w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-100 min-[480px]:aspect-[22/9] sm:aspect-[18/5] sm:max-h-[260px] print:aspect-[18/5] print:max-h-[200px]">
+                <Image
+                  src={founderImageSrc}
+                  alt={t("projectOverview.founderPhotoAlt")}
+                  fill
+                  className="object-cover object-[58%_42%] sm:object-[62%_40%]"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  priority={false}
+                />
               </div>
+              <figcaption className="mt-2 text-sm font-medium text-gray-600 print:text-[9pt]">
+                {t("projectOverview.founderPhotoCaption")}
+              </figcaption>
+            </figure>
+
+            <p className="po-no-print mb-6 text-xs leading-relaxed text-gray-500">{t("projectOverview.founderPhotoHint")}</p>
+
+            <div
+              className="space-y-3 border-t border-gray-100 pt-6 text-[15px] leading-[1.65] text-gray-600 print:space-y-2.5 print:border-gray-200 print:pt-4 print:text-[10pt]"
+              aria-labelledby="po-founder-heading"
+            >
+              {founderParagraphs.map((paragraph, pi) => (
+                <p key={pi}>{paragraph}</p>
+              ))}
             </div>
           </section>
         </div>
 
-        <div className="po-no-print mt-12 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">{t("projectOverview.seeAlsoEyebrow")}</p>
-          <p className="mt-2 text-sm leading-relaxed text-gray-600">{t("projectOverview.seeAlsoBody")}</p>
+        <section className="po-no-print rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+            {t("projectOverview.seeAlsoEyebrow")}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-gray-600 sm:text-base">{t("projectOverview.seeAlsoBody")}</p>
           <Link
             href={loc("/investor-deck")}
-            className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2"
+            className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
           >
             {t("projectOverview.seeAlsoLink")}
           </Link>
-        </div>
+        </section>
 
-        <div className="mt-10 hidden border-t border-gray-200 pt-5 text-[11px] leading-relaxed text-gray-500 print:block">
-          <p className="font-semibold text-gray-700">{t("projectOverview.seeAlsoEyebrow")}</p>
+        <div className="mt-8 hidden border-t border-gray-200 pt-5 text-xs leading-relaxed text-gray-500 print:block sm:text-[11px]">
+          <p className="font-semibold text-gray-800">{t("projectOverview.seeAlsoEyebrow")}</p>
           <p className="mt-2">{t("projectOverview.seeAlsoBody")}</p>
         </div>
       </main>
