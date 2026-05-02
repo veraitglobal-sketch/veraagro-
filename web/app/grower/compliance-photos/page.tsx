@@ -324,7 +324,7 @@ export default function CompliancePhotosPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('grower.compliancePhotos.checklistHeading')}</h2>
           <p className="text-base text-gray-600 mb-4">

@@ -410,7 +410,7 @@ export default function CreateMissionPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
         >
           <p className="text-base text-gray-600 mb-3 leading-relaxed">
             <strong>Before this page:</strong> batch in <strong>PACKED</strong> or <strong>QUALITY_VERIFIED</strong> (

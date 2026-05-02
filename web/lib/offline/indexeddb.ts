@@ -132,10 +132,12 @@ export async function getUnsyncedEntries(): Promise<FieldEntry[]> {
   return new Promise((resolve, reject) => {
     const transaction = database.transaction([STORE_ENTRIES], 'readonly');
     const store = transaction.objectStore(STORE_ENTRIES);
-    const index = store.index('synced');
-    const request = index.getAll(false as unknown as IDBValidKey);
+    const request = store.getAll();
 
-    request.onsuccess = () => resolve(request.result as FieldEntry[]);
+    request.onsuccess = () => {
+      const entries = (request.result as FieldEntry[]).filter((e) => e.synced === false);
+      resolve(entries);
+    };
     request.onerror = () => reject(request.error);
   });
 }
@@ -243,24 +245,19 @@ export async function hasScannedCode(farmId?: string): Promise<boolean> {
 
 export async function clearScannedCodes(farmId?: string): Promise<void> {
   const database = await getDB();
+  const codes = await getScannedCodes(farmId);
+  if (codes.length === 0) {
+    return;
+  }
 
   return new Promise((resolve, reject) => {
     const transaction = database.transaction([STORE_SCANNED_CODES], 'readwrite');
     const store = transaction.objectStore(STORE_SCANNED_CODES);
-    const request = farmId
-      ? store.index('farmId').openCursor(IDBKeyRange.only(farmId))
-      : store.openCursor();
-
-    request.onsuccess = (event) => {
-      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
-      if (cursor) {
-        cursor.delete();
-        cursor.continue();
-      } else {
-        resolve();
-      }
-    };
-    request.onerror = () => reject(request.error);
+    for (const code of codes) {
+      store.delete(code.id);
+    }
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 

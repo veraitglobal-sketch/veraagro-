@@ -210,6 +210,8 @@ When implementing features, follow this priority:
 
 Before marking a feature as complete:
 - [ ] **Cross-surface parity** — if you add or change a backend contract (new fields, routes, or flows), wire the same capability on every surface that should support it (typically **web** + **mobile** for grower/seller actions; **supplier** or **admin** where a role has its own app). Do not leave API-only or web-only “half” unless explicitly out of scope; note migrations (`prisma migrate deploy`) for schema changes.
+- [ ] **BioVera web UI** — grower/producer pages use shared shells and tokens (`rounded-xl`, `border-gray-200`, `shadow-sm`, `#2D5A27`, `min-h-[48px]` CTAs); i18n via translation keys, not hardcoded English on SR-default flows.
+- [ ] **Verified delivery** — `tsc --noEmit` clean for touched packages; no known runtime errors on the flows you changed (including IndexedDB offline paths).
 - [ ] Works offline (IndexedDB/SQLite)
 - [ ] Barcode validation implemented
 - [ ] GPS validation implemented
@@ -264,6 +266,24 @@ Before marking a feature as complete:
    - Responsive design
    - Touch-friendly
    - Works on tablets/phones
+
+### BioVera UI consistency (mandatory for web grower/producer)
+
+New or refactored pages must match existing grower shells — do not invent one-off card/button styles.
+
+- **Surfaces:** Reuse `GrowerPageShell`, `SidebarLayout`, and patterns from recent grower/producer pages (e.g. `rounded-xl border border-gray-200 bg-white shadow-sm`, section padding `p-5 sm:p-6`).
+- **Primary actions:** `#2D5A27` fill, hover `#23471f` (or equivalent), `rounded-lg`, touch targets at least `min-h-[48px]`, focus ring `ring-[#2D5A27]` / offset 2.
+- **Form controls:** `rounded-lg border border-gray-300`, focus `focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/25`, text `text-base` where farmers type.
+- **Language:** Use `useTranslation` / `growerPages.*` (or the correct namespace). No raw English on Serbian-default surfaces; add keys to `sr.json` and `en.json` together.
+- **Do not** shrink main content to a “mobile-only” column on desktop without matching sibling cards; main grids should align to the same width rhythm as the estate/dashboard cards.
+
+### Delivery completeness (mandatory)
+
+A feature is not done until verified end-to-end on the code path you touched:
+
+- Run `npx tsc --noEmit` in the relevant package (`web`, `mobile`, `api` as applicable).
+- Fix runtime errors (console, IndexedDB, network) for the happy path and the error states you surface in UI.
+- Offline flows: validate IndexedDB reads/writes (valid keys, existing indexes, migrations if schema changes).
 
 ---
 

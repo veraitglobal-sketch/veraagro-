@@ -291,7 +291,7 @@ export default function GrowerPortalPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.portalActiveMissionsTitle')}</h2>
           <p className="text-base text-gray-500 mt-1 mb-4 font-light">{t('growerPages.portalActiveMissionsLead')}</p>
@@ -369,7 +369,7 @@ export default function GrowerPortalPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
           >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalJourneyTitle')}</h2>
             
@@ -463,7 +463,7 @@ export default function GrowerPortalPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
           >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalFeedbackTitle')}</h2>
             
@@ -561,7 +561,7 @@ export default function GrowerPortalPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
           >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalFinancialTitle')}</h2>
             <div className="space-y-4">

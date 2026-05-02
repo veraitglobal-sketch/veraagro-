@@ -186,7 +186,7 @@ export default function GrowerFieldsPage() {
               <Loader2 className="w-8 h-8 animate-spin text-[#2D5A27]" />
             </div>
           ) : estates.length === 0 ? (
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-8">
               <p className="text-base text-gray-600 mb-4">{t('growerPages.noFieldsYet')}</p>
               <form onSubmit={handleAddEstate} className="flex flex-wrap items-center gap-2">
                 <input
@@ -208,7 +208,7 @@ export default function GrowerFieldsPage() {
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-wrap items-center gap-2">
+              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   value={newEstateName}
@@ -230,7 +230,7 @@ export default function GrowerFieldsPage() {
                 <div
                   key={estate.id}
                   id={`grower-estate-${estate.id}`}
-                  className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 scroll-mt-24"
+                  className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6 scroll-mt-24"
                 >
                   <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                     <MapPin className="w-5 h-5" />
