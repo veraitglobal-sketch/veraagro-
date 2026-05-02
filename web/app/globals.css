@@ -159,3 +159,10 @@ img {
   background: transparent !important;
   border: none !important;
 }
+
+@media print {
+  nav[data-biovera-root-navigation] {
+    display: none !important;
+  }
+}
+
