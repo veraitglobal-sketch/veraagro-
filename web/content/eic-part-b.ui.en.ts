@@ -9,7 +9,7 @@ export const EIC_PART_B_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "Framed for EU grant reviewers in four questions: why this exists, how large the market is, how we earn money, why we will succeed—then implementation and budget. Export with Print → Save as PDF. Align numbers with your portal budget and accountant before submission.",
+    "Whole-programme story for EU reviewers: biological production plus Vera-spec packaging from converter partners ordered via authorised suppliers, retail-eligible growers, integrated logistics and triple-layer control—digital integrity, sanctioned procurement chains and field agents—not “software alone”. Four core questions then plan and budget. Export via Print → Save as PDF.",
   pdfHint:
     "Transfer totals into the official Funding & Tenders budget tables; keep this page as the narrative companion.",
   copyLink: "Copy link",
@@ -19,7 +19,7 @@ export const EIC_PART_B_UI_EN = {
   coverEyebrow: "EU grant narrative",
   coverTitle: "Bio Vera — Part B narrative (four-question frame)",
   coverSubtitle:
-    "Why we exist · Market size · Revenue model · Why we will succeed — plus implementation plan and budget. Technical depth remains in the site’s Detailed technical proposal for engineers and diligence.",
+    "One organism: bio production, Vera packaging partners (supplier-led ordering), batch labels and conformity discipline, qualifying growers stepping into retail fulfilment lanes, refrigerated logistics—and triple oversight (digital, procurement, agents on the ground). Then: why · market · revenue · success · plan · budget.",
   shellLanguageNote:
     "Evaluators first look for purpose, market, economics and credibility—then timeline and money. Use the official Part B PDF template for upload; this page is the drafting shell.",
   contentsTitle: "Contents",
