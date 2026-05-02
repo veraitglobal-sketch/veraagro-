@@ -90,8 +90,9 @@ function slideShell(variant: DeckVariant): string {
     case "cover":
       return [
         base,
+        "pitch-slide-cover",
         "py-14 sm:py-16 lg:py-24",
-        "bg-white border-b-[10px] border-b-[#2D5A27]",
+        "bg-white border-b-[10px] border-b-[#2D5A27] print:border-b-[3px] print:pb-10 print:sm:pb-12",
         "rounded-none sm:rounded-2xl shadow-[0_1px_0_rgba(0,0,0,0.06)] print:shadow-none",
       ].join(" ");
     case "wash":
@@ -111,8 +112,10 @@ function slideShell(variant: DeckVariant): string {
     case "appendix-intro":
       return [
         base,
+        "pitch-appendix-intro",
         "py-10 sm:py-12 lg:py-14",
         "bg-neutral-900 text-neutral-50 rounded-none sm:rounded-2xl px-8 sm:px-12 lg:px-16",
+        "print:!bg-gray-100 print:!text-gray-900 print:!border print:!border-gray-200",
       ].join(" ");
     default:
       return [
@@ -227,40 +230,91 @@ export default function PitchDeckPage() {
           margin: 14mm 14mm 16mm;
           size: auto;
         }
+        /* Print/PDF = document flow — not full-screen slides */
         @media print {
           .pitch-toolbar,
           .pitch-top-nav,
           .pitch-no-print {
             display: none !important;
           }
+          main {
+            padding-top: 0.5rem !important;
+          }
           .pitch-slide {
-            break-after: page;
-            page-break-after: always;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            max-width: 100% !important;
+            break-after: auto !important;
+            page-break-after: auto !important;
+            padding-top: 1.1rem !important;
+            padding-bottom: 1.35rem !important;
             margin-left: 0 !important;
             margin-right: 0 !important;
+            max-width: 100% !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: #fff !important;
+            background-image: none !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .pitch-slide + .pitch-slide {
+            padding-top: 1.65rem !important;
+            margin-top: 0.65rem !important;
+            border-top: 1px solid #e5e7eb !important;
+          }
+          .pitch-slide-cover {
+            break-after: page !important;
+            page-break-after: always !important;
+            margin-top: 0 !important;
+            padding-bottom: 1.75rem !important;
+          }
+          .pitch-slide-cover + .pitch-slide {
+            border-top: none !important;
+            padding-top: 1.1rem !important;
           }
           .pitch-slide:last-of-type {
-            break-after: auto;
-            page-break-after: auto;
+            break-after: auto !important;
+            page-break-after: auto !important;
+            padding-bottom: 1.75rem !important;
           }
           .pitch-slide-closing {
-            min-height: calc(100vh - 28mm);
-            min-height: calc(100dvh - 28mm);
-            display: flex !important;
-            flex-direction: column;
-            justify-content: center;
+            min-height: 0 !important;
+            margin-top: 1.75rem !important;
+            padding: 1.25rem 1rem !important;
+            display: block !important;
+            background: #f9fafb !important;
+            color: #111827 !important;
+            border-radius: 0 !important;
+            border: 1px solid #e5e7eb !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
           .pitch-slide-closing .pitch-closing-inner {
-            width: 100%;
+            max-width: 100% !important;
+            margin: 0 !important;
+            width: 100% !important;
+          }
+          .pitch-slide-closing h2,
+          .pitch-slide-closing > .pitch-closing-inner > p.mb-10 {
+            color: #111827 !important;
+          }
+          .pitch-slide-closing > .pitch-closing-inner > p:first-of-type {
+            color: #6b7280 !important;
           }
           .pitch-slide-closing a {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            background: #fff !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
+            box-shadow: none !important;
+          }
+          .pitch-slide-closing a:first-of-type {
+            background: #2d5a27 !important;
+            color: #fff !important;
+            border-color: #2d5a27 !important;
+          }
+          .pitch-appendix-intro + .pitch-slide {
+            margin-top: 0 !important;
           }
           body {
             background: white !important;
@@ -573,11 +627,18 @@ export default function PitchDeckPage() {
               className={`${slideShell("appendix-intro")} pitch-appendix`}
               aria-labelledby="pitch-detail-spec-heading"
             >
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.35em] text-white/55">{t("pitchDeck.detailSpecEyebrow")}</p>
-              <h2 id="pitch-detail-spec-heading" className="text-[clamp(1.35rem,2.5vw,1.85rem)] font-semibold tracking-tight text-white">
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.35em] text-white/55 print:!text-gray-500">
+                {t("pitchDeck.detailSpecEyebrow")}
+              </p>
+              <h2
+                id="pitch-detail-spec-heading"
+                className="text-[clamp(1.35rem,2.5vw,1.85rem)] font-semibold tracking-tight text-white print:!text-gray-900"
+              >
                 {t("pitchDeck.detailSpecTitle")}
               </h2>
-              <p className="mt-6 max-w-[58ch] text-[14px] sm:text-[15px] leading-[1.62] text-white/76">{t("pitchDeck.detailSpecLead")}</p>
+              <p className="mt-6 max-w-[58ch] text-[14px] sm:text-[15px] leading-[1.62] text-white/76 print:!text-gray-700">
+                {t("pitchDeck.detailSpecLead")}
+              </p>
             </motion.section>
 
             {detailSections.map((block) => (
@@ -605,7 +666,7 @@ export default function PitchDeckPage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className={`pitch-slide pitch-slide-closing mx-auto max-w-[1200px] rounded-none sm:rounded-2xl px-8 py-12 text-white shadow-[0_24px_50px_-20px_rgba(45,90,39,0.45)] print:rounded-none print:!shadow-none print:py-16 print:px-10`}
+          className={`pitch-slide pitch-slide-closing mx-auto max-w-[1200px] rounded-none sm:rounded-2xl px-8 py-12 text-white shadow-[0_24px_50px_-20px_rgba(45,90,39,0.45)] print:rounded-none print:!shadow-none`}
           style={{ backgroundColor: ACCENT }}
         >
           <div className="pitch-closing-inner mx-auto max-w-[56ch]">
