@@ -14,5 +14,9 @@ export default function VeraAIChatbotWrapper() {
   }, []);
 
   if (!mounted) return null;
-  return <VeraAIChatbot />;
+  return (
+    <div className="print:hidden">
+      <VeraAIChatbot />
+    </div>
+  );
 }

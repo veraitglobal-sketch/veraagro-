@@ -188,6 +188,8 @@ export default function ProjectOverviewPage() {
             padding-bottom: 1rem;
             margin-bottom: 0.75rem;
             border-bottom: 1pt solid #9ca3af;
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
           .project-overview-doc .po-doc-panel {
             border: none !important;
@@ -289,7 +291,7 @@ export default function ProjectOverviewPage() {
 
       <main
         id="project-overview-document"
-        className="project-overview-doc mx-auto max-w-[1240px] px-5 pb-20 pt-[calc(8.25rem)] scroll-mt-24 sm:px-6 sm:pt-[8.85rem] sm:scroll-mt-28 lg:px-8 lg:pb-28 print:mx-0 print:max-w-none print:scroll-mt-0 print:px-4 print:pb-8 print:pt-4"
+        className="project-overview-doc mx-auto max-w-[1240px] px-5 pb-20 pt-[calc(8.25rem)] scroll-mt-24 sm:px-6 sm:pt-[8.85rem] sm:scroll-mt-28 lg:px-8 lg:pb-28 print:mx-0 print:max-w-none print:scroll-mt-0 print:px-4 print:pb-10 print:pt-6"
         tabIndex={-1}
       >
         <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8 xl:gap-12">
@@ -396,12 +398,12 @@ export default function ProjectOverviewPage() {
                   className="po-founder po-section-inner scroll-mt-28 pb-10 pt-0 print:scroll-mt-0 print:pb-6"
                 >
                   <figure className="po-founder-photo-wrap overflow-hidden border-b border-gray-200 bg-gray-100 print:border print:border-gray-400 print:bg-white">
-                    <div className="relative aspect-[21/9] w-full sm:aspect-[18/7] lg:aspect-[21/9] print:aspect-[18/7]">
+                    <div className="relative mx-auto h-[176px] w-full px-4 py-4 sm:h-[212px] sm:px-5 lg:h-[236px] print:h-[160px] print:px-2 print:py-3">
                       <Image
                         src={founderImageSrc}
                         alt={t("projectOverview.founderPhotoAlt")}
                         fill
-                        className="object-cover object-[56%_40%]"
+                        className="object-contain object-center"
                         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 92vw, 1100px"
                         quality={92}
                         unoptimized={founderBannerUnoptimized}
