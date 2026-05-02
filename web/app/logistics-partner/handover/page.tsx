@@ -396,6 +396,7 @@ export default function LogisticsHandoverPage() {
           pickupDriverId: selectedPickupDriverId.trim(),
           pickupBadgePhoto: badgePhotoDataUrl,
           pickupDriverSignatureDataUrl,
+          pickupDriverSignature: pickupDriverSignatureDataUrl,
         }),
       });
 
@@ -509,6 +510,108 @@ export default function LogisticsHandoverPage() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Pickup driver, badge, signature — before photos so it is not missed */}
+            <div className="rounded-lg border border-gray-200 border-l-4 border-l-[#2D5A27] bg-[#f7faf6] p-4 space-y-6">
+              <h3 className="text-base font-semibold text-gray-900">
+                {t('logisticsPages.handoverPickupSectionTitle')}
+              </h3>
+              <p className="text-xs text-gray-600">{t('logisticsPages.handoverPickupSectionLead')}</p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverPickupDriverLabel')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverPickupDriverHint')}</p>
+                <select
+                  value={selectedPickupDriverId}
+                  onChange={(e) => setSelectedPickupDriverId(e.target.value)}
+                  required
+                  disabled={driversLoading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent bg-white"
+                >
+                  <option value="">
+                    {driversLoading
+                      ? t('logisticsPages.driversLoading')
+                      : drivers.length === 0
+                        ? t('logisticsPages.handoverPickupDriverNoDrivers')
+                        : t('logisticsPages.handoverPickupDriverPlaceholder')}
+                  </option>
+                  {drivers.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {[d.firstName, d.lastName].filter(Boolean).join(' ')}
+                      {d.phone ? ` · ${d.phone}` : ''}
+                    </option>
+                  ))}
+                </select>
+                {drivers.length === 0 && !driversLoading && (
+                  <p className="mt-2 text-sm text-amber-900">
+                    <a href="/logistics-partner/drivers" className="font-medium text-[#2D5A27] underline">
+                      {t('logisticsPages.handoverPickupDriverAddLink')}
+                    </a>
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverBadgeTitle')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverBadgeHint')}</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#2D5A27] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#23471f]"
+                  onChange={(e) => void onBadgeFile(e.target.files)}
+                />
+                {badgePhotoDataUrl && (
+                  <div className="mt-3">
+                    <img
+                      src={badgePhotoDataUrl}
+                      alt=""
+                      className="max-h-40 rounded-lg border border-gray-200 object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setBadgePhotoDataUrl(null)}
+                      className="mt-2 text-sm text-red-700 underline"
+                    >
+                      {t('logisticsPages.handoverBadgeRemove')}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverDriverSigTitle')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverDriverSigHint')}</p>
+                <div className="rounded-lg border border-gray-300 bg-white overflow-hidden touch-none max-w-lg">
+                  <canvas
+                    ref={sigCanvasRef}
+                    width={SIG_W}
+                    height={SIG_H}
+                    className="w-full h-[120px] cursor-crosshair"
+                    onMouseDown={startSig}
+                    onMouseMove={moveSig}
+                    onMouseUp={endSig}
+                    onMouseLeave={endSig}
+                    onTouchStart={startSig}
+                    onTouchMove={moveSig}
+                    onTouchEnd={endSig}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={clearSignature}
+                  className="mt-2 text-sm text-gray-700 underline"
+                >
+                  {t('logisticsPages.handoverDriverSigClear')}
+                </button>
+              </div>
             </div>
 
             {/* Inside Truck Temperature */}
@@ -633,108 +736,6 @@ export default function LogisticsHandoverPage() {
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Pickup driver, badge, signature */}
-            <div className="border-t border-gray-200 pt-6 space-y-6">
-              <h3 className="text-base font-semibold text-gray-900">
-                {t('logisticsPages.handoverPickupSectionTitle')}
-              </h3>
-              <p className="text-xs text-gray-500">{t('logisticsPages.handoverPickupSectionLead')}</p>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('logisticsPages.handoverPickupDriverLabel')}
-                </label>
-                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverPickupDriverHint')}</p>
-                <select
-                  value={selectedPickupDriverId}
-                  onChange={(e) => setSelectedPickupDriverId(e.target.value)}
-                  required
-                  disabled={driversLoading}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                >
-                  <option value="">
-                    {driversLoading
-                      ? t('logisticsPages.driversLoading')
-                      : drivers.length === 0
-                        ? t('logisticsPages.handoverPickupDriverNoDrivers')
-                        : t('logisticsPages.handoverPickupDriverPlaceholder')}
-                  </option>
-                  {drivers.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {[d.firstName, d.lastName].filter(Boolean).join(' ')}
-                      {d.phone ? ` · ${d.phone}` : ''}
-                    </option>
-                  ))}
-                </select>
-                {drivers.length === 0 && !driversLoading && (
-                  <p className="mt-2 text-sm text-amber-800">
-                    <a href="/logistics-partner/drivers" className="font-medium text-[#2D5A27] underline">
-                      {t('logisticsPages.handoverPickupDriverAddLink')}
-                    </a>
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('logisticsPages.handoverBadgeTitle')}
-                </label>
-                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverBadgeHint')}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#2D5A27] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#23471f]"
-                  onChange={(e) => void onBadgeFile(e.target.files)}
-                />
-                {badgePhotoDataUrl && (
-                  <div className="mt-3">
-                    <img
-                      src={badgePhotoDataUrl}
-                      alt=""
-                      className="max-h-40 rounded-lg border border-gray-200 object-contain"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setBadgePhotoDataUrl(null)}
-                      className="mt-2 text-sm text-red-700 underline"
-                    >
-                      {t('logisticsPages.handoverBadgeRemove')}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('logisticsPages.handoverDriverSigTitle')}
-                </label>
-                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverDriverSigHint')}</p>
-                <div className="rounded-lg border border-gray-300 bg-white overflow-hidden touch-none max-w-lg">
-                  <canvas
-                    ref={sigCanvasRef}
-                    width={SIG_W}
-                    height={SIG_H}
-                    className="w-full h-[120px] cursor-crosshair"
-                    onMouseDown={startSig}
-                    onMouseMove={moveSig}
-                    onMouseUp={endSig}
-                    onMouseLeave={endSig}
-                    onTouchStart={startSig}
-                    onTouchMove={moveSig}
-                    onTouchEnd={endSig}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={clearSignature}
-                  className="mt-2 text-sm text-gray-700 underline"
-                >
-                  {t('logisticsPages.handoverDriverSigClear')}
-                </button>
-              </div>
             </div>
 
             {photoError && <p className="text-sm text-amber-700">{photoError}</p>}

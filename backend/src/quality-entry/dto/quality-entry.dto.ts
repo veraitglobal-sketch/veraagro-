@@ -10,7 +10,7 @@ import {
   ArrayMinSize,
   ArrayMaxSize,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class WeatherAtHarvestDto {
   @IsNumber()
@@ -99,7 +99,19 @@ export class LogisticsHandoverDto {
   @IsString()
   pickupBadgePhoto: string;
 
+  /** Alias for older/mobile clients that send a shorter key (merged into pickupDriverSignatureDataUrl). */
+  @IsOptional()
+  @IsString()
+  pickupDriverSignature?: string;
+
   /** Driver signature at farm pickup (data URL or https) */
+  @Transform(({ obj }) => {
+    const a = obj.pickupDriverSignatureDataUrl;
+    const b = obj.pickupDriverSignature;
+    if (typeof a === 'string' && a.trim()) return a.trim();
+    if (typeof b === 'string' && b.trim()) return b.trim();
+    return typeof a === 'string' ? a : typeof b === 'string' ? b : '';
+  })
   @IsString()
   pickupDriverSignatureDataUrl: string;
 }

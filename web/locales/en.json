@@ -1691,7 +1691,7 @@
     "handoverChainBody": "The grower completes quality entry for the lot first. You record the truck here (inside temperature {{min}}–{{max}}°C, pallet load + interior photos). When saved, the mission can advance to READY FOR LOADING. Cold-chain evidence before goods leave the farm gate.",
     "handoverEvidenceSaved": "Evidence saved. Loading can proceed.",
     "handoverFormTitle": "Logistics handover",
-    "handoverFormLead": "Temperature in range, at least one pallet photo, and at least one inside-truck photo—all three are required.",
+    "handoverFormLead": "Required: pickup driver, ID badge photo, and driver signature (green block below), then truck temperature in range, plus pallet and inside-truck photos.",
     "handoverSelectMission": "Select mission *",
     "handoverMissionsLoading": "Loading…",
     "handoverMissionsEmpty": "No missions awaiting handover",

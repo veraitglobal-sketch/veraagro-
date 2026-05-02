@@ -1692,7 +1692,7 @@
     "handoverChainBody": "Proizvođač prvo završi unos kvaliteta za lot. Vi ovde beležite kamion (temperatura unutra {{min}}–{{max}}°C, teret paleta + fotografije unutrašnjosti). Posle čuvanja, misija može na READY FOR LOADING. Dokaz hladnog lanca pre nego što robe napuste kapiju farme.",
     "handoverEvidenceSaved": "Dokaz je sačuvan. Utovar može da nastavi.",
     "handoverFormTitle": "Logistička predaja",
-    "handoverFormLead": "Temperatura u dozvoljenom opsegu, najmanje jedna fotografija palete i najmanje jedna iz unutrašnjosti kamiona—svako od ta tri uslova je obavezno.",
+    "handoverFormLead": "Obavezno: vozač, fotografija kartice/bedža i potpis vozača (zeleni blok ispod), zatim temperatura u kamionu u opsegu, plus fotografije paleta i unutrašnjosti kamiona.",
     "handoverSelectMission": "Izaberite misiju *",
     "handoverMissionsLoading": "Učitavanje…",
     "handoverMissionsEmpty": "Nema misija koje čekaju predaju",
