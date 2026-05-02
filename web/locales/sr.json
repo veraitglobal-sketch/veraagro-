@@ -3417,16 +3417,16 @@
     "toolbarCopied": "Kopirano",
     "toolbarPrintPdf": "Sačuvaj kao PDF",
     "toolbarPrintAria": "Otvori štampu da sačuvaš PDF",
-    "toolbarHint": "U štampi izaberite „Sačuvaj kao PDF“ — zgodno za opštinu, banku ili arhivu.",
-    "introNote": "Zalepite URL u WhatsApp ili u prezentaciju. Hoćete štampu? PDF preko štampe — kako god vam leži.",
+    "toolbarHint": "U dijalogu za štampu izaberite „Sačuvaj kao PDF“ radi dokumenta pogodnog za odbore, finansijske partnere ili internu arhivu.",
+    "introNote": "Podelite ovu stranicu kolegama i partnerima ili sačuvajte PDF za pregled van mreže.",
     "heroTechPill": "Protocol 360 · Integrity Guard · QR pasoš",
     "videoTitle": "Video obilazak",
-    "videoCaption": "Kratko kako proizvođač, pak-hauz, vozač i maloprodaja u Hamburgu diraju istu Vera kičmu podataka.",
+    "videoCaption": "Kratak pregled kako proizvođači, pakovanje, prevoznici i maloprodajni timovi koriste istu Vera osnovu podataka.",
     "videoPlaceholderTitle": "Mesto za partnerski video",
-    "videoPlaceholderBody": "Kad objavite video na YouTube-u ili Vimeo-u, u podešavanjima okruženja ukazite na taj javni URL — ovaj okvir se sam popuni za partnere koji otvaraju deck.",
-    "howItWorksEyebrow": "Operativna dubina",
+    "videoPlaceholderBody": "Objavite obilazak na YouTube-u ili Vimeo-u i u konfiguraciji okruženja navedite taj javni URL — plejer će se automatski učitati za partnere koji gledaju ovaj dokument.",
+    "howItWorksEyebrow": "Operativni model",
     "howItWorksTitle": "Kako Bio Vera radi — od granice gazdinstva do QR pasoša",
-    "howItWorksLead": "Kartice niže sumiraju glavne prednosti. Ispod je redosled koji naš tim usklađuje sa proizvođačima i kupcima: prvo poligon i ekonomika semena, zatim oštra terenska evidencija, zatim serije i mehanika Vera bonusa, zatim eksplicitna kustodija u logistici, i na kraju pasoš za kupca uz fazirane isplate koje i posle pitanja revizora ostaju čitljive.",
+    "howItWorksLead": "Niže ćete naći pogodnosti po ulozi. Ispod je redosled kojim usklađujemo proizvođače, kupce i logističke partnere na jednoj osnovi — nezavisno od zemlje porekla ili odredišta. Počinjemo mapiranjem gazdinstava i ekonomikom semena, dodajemo odbranjivu terensku evidenciju, validiramo pakovanje i serije, strukturiramo kustodiju u logistici i zaključujemo prodajnim pasošem uz transparentne linije obračuna.",
     "howItWorksPhases": [
       {
         "title": "Gazdinstva, ekonomika semena i unosi uz Integrity Guard",
@@ -3434,108 +3434,108 @@
       },
       {
         "title": "Terenski rad van mreže i GPS koji drži istinu",
-        "body": "Dnevnik i foto dokazi prvo na uređaju kad signala nema, pa sinhronizacija kad se mreža vrati. Unos traži GPS unutar poligona gazdinstva; to zvuči tvrdoglavo dok ne dođe spor oko serije — onda branimo poštene uzgajivače bez rekonstrukcije ćaskanja iz prošlog meseca."
+        "body": "Dnevnik terena i dokazi o usklađenosti prvo se čuvaju na uređaju kada je veza ograničena, pa se bezbedno sinhronizuju. Svaki unos zahteva GPS poziciju unutar granice gazdinstva — što omogućava rešavanje sporova na osnovu objektivnih podataka, umesto rekonstruisane neformalne korespondencije."
       },
       {
         "title": "Pakovanje, serije, Protocol 360 i Vera bonus za rad",
-        "body": "U pak-hauzu voće i povrće ulaze u serije koje proveravamo kroz očekivanja Protocol 360 — biometrija i kontrola materijala gde je podešeno. Svaka serija dobija identitete koji idu u logistiku i kasnije u QR pasoš. Kad pakovanje poštuje Vera disciplinu materijala, proizvođač može da ostvari Vera bonus za rad; nagrađujemo ponašanje koje možemo da proverimo, ne rečenicu koju niko ne može da dokaže slikom."
+        "body": "U pakovanju nastaju serije pod Protocol 360 — biometrijske i materijalne kontrole gde su podešene. Identifikatori serije prelaze u logistiku i kasnije u maloprodajni QR pasoš. Kada pakovanje ispunjava Vera pravila za materijal, proizvođač može ostvariti Vera bonus za rad; podsticaji su vezani za proverljivu procesnu disciplinu."
       },
       {
-        "title": "Misije, zabeleške hladnog lanca i predaje prema Hamburgu",
-        "body": "Vozači rade po strukturisanim misijama: prozori preuzimanja, noge u lancu i jasne predaje kustodije vezane za serije. Temperatura i odstupanja ostaju na istom narativu koji nabavka otvara u Hamburgu — da se ne čita hladni lanac iz fusnote u PDF-u koji je neko zaboravio poslati."
+        "title": "Logističke misije, hladni lanac i predaje kustodije",
+        "body": "Prevoznici i partneri izvršavaju strukturisane misije: definisani prozori preuzimanja, niz etapa i jasne predaje robne kustodije vezane za ID serije. Praćenje temperature i odstupanja ostaje na istom vremenskom sledu koji kategorije i kvalitet pregledaju — sa manjim oslanjanjem na rasejane priloge izmejlom."
       },
       {
         "title": "Pasoš u radnji, eskro ritam i linije isplate",
-        "body": "Sken QR na polici otvara pasoš: priča o gazdinstvu, sertifikati i kontekst hladnog lanca u jednom smislenom rasporedu. Priliv novca prati faziran eskro da baza za farmera, Vera bonus, prevoz i ekonomika platforme ostanu rastavljive. Razlika Vera Partner naspram kataloga semena, diskretne provizije osiguranja i različit poreski kontekst (koridor naspram noge sa PDV u Nemačkoj) modeluju se ranije da petak u finansijama ne bude arheologija."
+        "body": "Sken QR u radnji otvara digitalni pasoš: profil proizvođača, sertifikacije, poreklo i kontekst hladnog lanca na jednoj koherentnoj strani. Plaćanja prate faziran eskro kako naknade za proizvođača, troškovi logistike, linije platforme i Vera bonusi ostanu isprativi. Ekonomija Vera Partner semena, provizije osiguranja gde program važi, kao i razlikovani izvozni i poreski konteksti na relaciji prema tržištima odredišta obrađuju se unapred u modelu radi disciplinovanog obračuna."
       }
     ],
-    "coverEyebrow": "Kratak Vera brifing (~7 min)",
-    "coverTitle": "Od balkanske plantaže do hamburške kase — bez gubitka ni niti priče",
-    "coverSubtitle": "Bio Vera je kičma koju smo želeli još pre aplikacije: jedno mesto gde gazdinstvo, linija pakovanja, kamioni i QR u radnji govore isti jezik. Bio-Ready disciplina, Vera Partner uslovi gde ima smisla, Vera bonus kad pakovanje prođe kontrolu — i isplate koje ni ponedeljkov revizorski mejl neće poljuljati.",
-    "whyTitle": "Zašto smo ovoliko direktni",
-    "whyLead": "Kupac ne ustaje i ne traži još jedan grafikon. Njemu treba fascikla koja preživi nabavku. Proizvođač želi svoj dinar/evro bez rekonstrukcije istorije u Excelu kad kamion ode.",
+    "coverEyebrow": "Pregled za partnere",
+    "coverTitle": "Jedan operativni sistem za proizvođače, kupce i logističke partnere",
+    "coverSubtitle": "Bio Vera saraduje sa proizvođačima i kupcima širom sveta koji prihvataju naše Bio-Ready standarde i operativna pravila — geografija nije uslov ulaska u mrežu. Platforma objedinjava mapu gazdinstava, terensku usklađenost, kontrolu pakovanja, misije u logistici i maloprodajnu QR verifikaciju. Vera Partner ekonomika semena, opciono osiguranje uz kvalifikujuće kupovine i Vera bonus za rad uz proverljivo pakovanje usklađuju poticaje u celom lancu.",
+    "whyTitle": "Zašto sledljivost mora biti deo operativnog modela",
+    "whyLead": "Nabavka, kvalitet i bezbednost hrane traže dokumentaciju koja prolazi revizije i komercijalnu proveru. Proizvođačima su potrebne predvidive isplate i sistem koji radi i pri ograničenoj mreži. Fragmentisani alati i neformalni kanali ponavljaju isti trošak usklađivanja oko svake pošiljke.",
     "whyBullets": [
-      "Kad se evidencija živi između Vibera i tri Excela koja se zovu „konačno“, revizija uđe u avion i svi krenu iz glave. Taj haos prodajemo kao Bio-Ready disciplinu — nama ne prolazi.",
-      "Kupac oseti kad je sve zelenilo u marketinšu. Kad QR otvori ime gazde, certifikate i put robe, ima šta pokazati ozbiljnome kategorija menadžeru.",
-      "Vrelina, kolone, zaobilasci — sve zvuči školski dok vas ne pogodi teretom. Jedna kičma Vere od semena do ruke kupcu u Hamburgu pobediće „krpljenje“ pojedinačnih deonica koje sutra niko ne pomene."
+      "Rasejana dokumentacija slabi certifikacione priče, usporava rešavanje sporova i povećava regulatorni rizik.",
+      "Maloprodaja i ugostiteljstvo sve više očekuju sken-do-porekla dokaz; izjave bez podataka imaju ograničen kredibilitet.",
+      "Operativna i regulatorna složenost idu u prilog mrežama koje beleže kustodiju, kvalitet i finansije kontinuirano — ne samo na obračunu fakture."
     ],
-    "solutionTitle": "Šta Vera držimo skupa — u praksi",
-    "solutionLead": "Mi nismo još jedan marketplejz iznad Excela. Čuvamo zajedno terensku istinu (GPS i šta kao materijal uopšte sme na beloj listi), misije za vozače koji su zaista držali kutije, fazirane isplate kojima ne treba rekonstrukcija „sledećeg jutra“ i QR priču koju nabavka može jednostavno proslediti — jer se pare i reputacija lede baš onde gde su nam se aplikacije i grupni četovi rasparčavali.",
-    "chainTitle": "Krug kojim nam proizvođači ponavljaju leđa od štampe",
+    "solutionTitle": "Šta Bio Vera integriše",
+    "solutionLead": "Bio Vera nije samo kanal objave. Objedinjuje kontrolisane terenske podatke, logističke misije sa jasnom kustodijom, fazirane isplate i maloprodajni QR pasoš — kako bi komercijalni kadar, funkcije za usklađenost i finansije koristili isti izvor podataka od polja do police.",
+    "chainTitle": "Vertikalna operativna petlja",
     "chainSteps": [
-      "Seme — Vera Partner cena kad uđete u naš paket pravila",
-      "Osiguranje — pokraj semena ako proizvođač želi pokriće",
-      "Proizvodnja — dnevnici, poligoni, pravila koja stvarno proveravamo",
-      "Pakovanje — Vera bonus za rad kad materijal prođe kontrolu",
-      "Logistika — misije i predaje prema Hamburgu",
-      "Polica — QR otvara pasoš: serija, gazdinstvo, hladni lanac, certifikati"
+      "Seme — Vera Partner ekonomika za proizvođače u programu",
+      "Osiguranje — opciono, u vezi sa kvalifikujućom kupovinom semena",
+      "Proizvodnja — dnevnici, granice gazdinstva i pravila barkoda koja primenjujemo",
+      "Pakovanje — Protocol 360; Vera bonus za rad kada su standardi ispunjeni",
+      "Logistika — misije, predaje i kustodija na nivou serije",
+      "Maloprodaja — QR pasoš: poreklo, hladni lanac i sertifikacije"
     ],
-    "advantagesTitle": "Ko šta dobija — bez PowerPoint folklora",
+    "advantagesTitle": "Vrednost po tipu partnera",
     "advantages": [
       {
-        "title": "Gazde i ekipe na terenu",
-        "body": "Telefon snimi prvo lokalno, sinhronizuje kad se mreža pojavi — žetva ne čeka Wi-Fi. Barkod koji nije na beloj listi Vere ne „prođe“ kroz unos. GPS unutar ograde zvuči formalno, dok jednom ne dođe do spora oko serije; onda svi shvate zašto smo tvrdoglavi."
+        "title": "Proizvođači i gazdinstva",
+        "body": "Mobilni procesi naglašavaju offline snimanje uz automatsku sinhronizaciju kada je veza dostupna. Osetljivi unosi moraju odgovarati barkodima sa Vere bele liste; validacija GPS unutar gazdinstva podržava revizijsko poreklo evidencije sa terena."
       },
       {
-        "title": "Retail i nabavka",
-        "body": "Vidiš koja serija kroz šta prolazi u hladnoj priči — ne iz mejla sutra u tri popodne. Mapa porekla i sertifikati su na istoj strani koju šef kategorije može proslediti dalje bez stida."
+        "title": "Maloprodaja i nabavka",
+        "body": "Vidljivost na nivou serije obuhvata narativ hladnog lanca, sertifikacije i geografiju na pasošu — podržava razgovore kategorije i kvaliteta primarnom dokumentacijom, bez neusklađenih nizova mejlova."
       },
       {
-        "title": "Šoferi i flote",
-        "body": "Misije kažu jednostavno ko je držao robu. Manje paničnih poruka posle pokvarene palete i pokušaja da se istorija napiše unazad."
+        "title": "Prevoznici i logistika",
+        "body": "Strukturisane misije beleže predaje kustodije jedinstvenim rečnikom, što smanjuje dvosmislenosti posle incidenta kao što su temperaturne devijacije ili sporna manipulacija."
       },
       {
-        "title": "Kako se ček deli",
-        "body": "Partner seme naspram katalog cene — razlika je u modelu od prvog dana, ne iznenadna fusnota. Sitna provizija osiguranja i transport vidljivi su kao dosadni, ali fer stavovi. Baza za farmera, Vera bonus, vožnja, platforma — sve označeno pre nego što zatvaranje meseca zamiriše na paniku."
+        "title": "Raspodela prihoda",
+        "body": "Ekonomika partner naspram standardnog semena, učešće osiguranja gde važi, prevoz i linije platforme — uključujući Vera bonuse — prikazane su eksplicitno u modelu obračuna."
       },
       {
-        "title": "Ljudi od usklađenosti",
-        "body": "Dokumenti se vežu za ID gazdinstva i serije koje ste već uneli. Rutina u februaru bolja je od noćnog sklapanja dosijea iz foldera „OSTALO“."
+        "title": "Usklađenost i osiguranje kvaliteta",
+        "body": "Potvrde i dokumenti vežu se za gazdinstva i ID serija koji se već vode na platformi, što poboljšava kontinuitet u poređenju sa godišnjim sklapanjem datoteka ad hoc."
       },
       {
-        "title": "Brend i poreklo na polici",
-        "body": "Na polici stoje ime, zemlja i papire kojima nabavni tim može bez stida da kopira screenshot — premium koji držite kad sutra iko zapita za poreklo."
+        "title": "Brend i poreklo",
+        "body": "Javni pasoš povezuje artikle na polici sa imenovanom provenijencijom, sertifikatima i putem robe — uz tvrdnje koje podržavaju podaci dostupni kupcu."
       }
     ],
-    "techTitle": "Inženjerske stvari kojih se ne štedi",
-    "techLead": "Izvršnim tablovima aplaudiraju brojevi blatnjavom vocu treba najpre offline rezultat koji ne nestane.",
+    "techTitle": "Tehnički temelji",
+    "techLead": "Izveštaji rukovodstva i terenski rad dele isti izvor podataka; otpornost na terenu je preduslov, ne dopuna.",
     "techItems": [
       {
-        "title": "Offline prvo, bez izvinjenja",
-        "body": "SQLite u telefonu preživi žetvu kad se mreža guši. Kad se kanal vrati šalju se podaci; izgubljena fotografija jednako ubija priču — zato prvo beležimo kod kuće na uređaju, ne tek „kad hvatam bolji signal na brdu“."
+        "title": "Terenski unos prioritetno offline",
+        "body": "Ključni proizvođački tokovi trajno se čuvaju lokalno i šalju na server kad je konekcija ponovo dostupna, smanjujući gubitak zapisa tokom vršnjaka ili slabe pokrivenosti signalom."
       },
       {
-        "title": "Integriti gard, kako mi zovemo stvar",
-        "body": "Materijal ulazi samo ako barkod stoji na beloj listi; GPS mora ostati unutar poligona gazdinstva. Zvuči strogo dok ne pokuša neko da „uredi“ unos; onda blokada deluje kao zaštita svih u lancu."
+        "title": "Integrity Guard",
+        "body": "Odobreni barkod materijala i GPS u okviru poligona gazdinstva smanjuju rizik da neprimereni ili pogrešno locirani zapisi postanu deo sleda usklađenosti."
       },
       {
-        "title": "Navika Protocol 360",
-        "body": "Zemljište, biometrija na liniji, temperatura u transportu — tri sloja, ne jedan lep dan za Instagram i tri meseca tišine posle toga."
+        "title": "Protocol 360",
+        "body": "Slojevita provera od polja do pakovanja i hladnog lanca podržava strukturisan narativ kvaliteta u skladu sa očekivanjima kupaca i tela za nadzor."
       },
       {
-        "title": "Bezbednost kad krene šum",
-        "body": "Uloge, ograničenje učestalosti, logovi — dosadno je dok automatizovani pokušaji ne kucnu; tad tim zna zašto je dosadnost dobra investicija."
+        "title": "Bezbednost i kontrola pristupa",
+        "body": "Uloge, ograničenje učestalosti i operativni logovi podržavaju višestrane mreže i odgovor na incidente."
       }
     ],
-    "transparencyTitle": "Priče koje kupac škrabne noktom po ekranu",
+    "transparencyTitle": "Proverljiva transparentnost za kupce",
     "transparencyBullets": [
-      "QR vodi ka pasošu serije farmi rutom — bez beskrajne uvodnice.",
-      "Temperatura i predaje robe stoje u istom narativu hladnog lanca ništa zakopano na strani 47 PDF-a koji niko ne štampa.",
-      "Bio-Ready i mapa porekla stoje zajedno, onako kako i Vera javno govori — bez šminke koja se skine na prvom QR skeniranju."
+      "QR vodi do pasoša serije sa kontekstom proizvođača, rute i sertifikacija — sažeto i činjenično.",
+      "Podaci o hladnom lancu i kustodiji prikazani su zajedno sa poreklom, ne kao odvojeni prilog.",
+      "Bio-Ready pozicioniranje je usklađeno sa onim što kupac vidi u digitalnom pasošu."
     ],
-    "financeTitle": "Put novca bez mitologije",
-    "financeLead": "Novac faziramo kroz eskro faze kao da držimo red u gužvi: farmer, vozač, platforma, Vera bonus — svako svoje ime na listi pre nego što računovodstvo uđe u seriju paničnih poziva.",
+    "financeTitle": "Obračun i poreska jasnoća",
+    "financeLead": "Sredstva se otpuštaju u definisanim fazama kako bi se komponente za proizvođača, logistiku, platformu i Vera bonuse mogle uskladiti bez mešanja nepovezanih stavki.",
     "financeBullets": [
       "Razliku Vera Partner naspram standardnog semena model zna od prvog unosa — iznenađenje u fusnoti ne dolazi u pitanju.",
       "Kad program uključi osiguranje, procenat koji ostaje kod platforme piše se čitko — dosadnost je kompliment revizoru.",
-      "„Balkan“ noga bez PDV-a stoji poređana sa hamburškom nogom gde porez ima smisla — sitnica koja u petak u pet čuva živce."
+      "Međunarodni prevoz i PDV između izvoznih etapa i tržišta odredišta odražavaju se u logici koja podržava usklađeno izveštavanje."
     ],
-    "ctaClosingTitle": "Ako ovo ima smisla — čujemo se",
-    "ctaClosingBody": "Kopiranje linka gore štedi prosleđivanje odboru; štampa u PDF štedi tetkin arhiv. Zatim šetajte sajtom po ulozi koja vam prija — uzgajivač, nabavka, šped ili radoznali investitor.",
-    "ctaContact": "Piši Hamburg timu",
-    "ctaGrowers": "Koridor za uzgajivače",
-    "ctaBuyers": "Za kupce",
-    "ctaInvestors": "Ugao za investitore"
+    "ctaClosingTitle": "Razgovor o partnerstvu",
+    "ctaClosingBody": "Koristite akcije iznad za deljenje ovog dokumenta ili izvoz u PDF. Nastavite na stranice programa za proizvođače, kupce, logistiku ili investicije.",
+    "ctaContact": "Kontaktirajte Bio Veru",
+    "ctaGrowers": "Program za proizvođače",
+    "ctaBuyers": "Informacije za kupce",
+    "ctaInvestors": "Materijali za investitore"
   },
   "helpCenterPage": {
     "title": "Centar za pomoć",

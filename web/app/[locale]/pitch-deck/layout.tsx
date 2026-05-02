@@ -6,11 +6,11 @@ const OG_LOCALE: Record<
 > = {
   sr: {
     description:
-      "Bio Vera pitch: vertikalni lanac od polja do maloprodaje, transparentnost i prednosti za partnere. Podelite link ili sačuvajte PDF.",
+      "Bio Vera: jedinstven vertikalni operativni model za uzgajivače, kupce i logistiku širom sveta koji prihvate Bio-Ready standarde. Delite prezentacionu stranu ili izvezite PDF.",
   },
   en: {
     description:
-      "Bio Vera pitch deck: field-to-retail vertical chain, transparency, and partner advantages. Share the link or save as PDF.",
+      "Bio Vera: one vertical operating model for growers, buyers and logistics partners worldwide who adopt Bio-Ready standards. Share this deck or export PDF.",
   },
 };
 
