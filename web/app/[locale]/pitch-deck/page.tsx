@@ -237,6 +237,17 @@ export default function PitchDeckPage() {
           .pitch-no-print {
             display: none !important;
           }
+          /*
+           * Framer Motion: sections use whileInView({ opacity: 1 }) from opacity 0.
+           * Print often rasterizes without every block having been in view → blank “pages”.
+           * !important beats inline opacity/transform from motion.
+           */
+          main section {
+            opacity: 1 !important;
+            transform: none !important;
+            filter: none !important;
+            visibility: visible !important;
+          }
           main {
             padding-top: 0.5rem !important;
           }
@@ -319,9 +330,13 @@ export default function PitchDeckPage() {
           body {
             background: white !important;
           }
+          /*
+           * Avoiding breaks inside many tall blocks makes Chrome insert odd blank pages;
+           * allow natural breaks in print while keeping screen layout unchanged.
+           */
           .pitch-avoid-split {
-            break-inside: avoid;
-            page-break-inside: avoid;
+            break-inside: auto !important;
+            page-break-inside: auto !important;
           }
         }
       `}</style>
