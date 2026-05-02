@@ -43,6 +43,15 @@ export class MissionsService {
     return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
   }
 
+  private async assertActiveLogisticsDriver(partnerId: string, driverId: string): Promise<void> {
+    const d = await this.prisma.logistics_drivers.findFirst({
+      where: { id: driverId, logisticsPartnerId: partnerId, isActive: true },
+    });
+    if (!d) {
+      throw new BadRequestException('Invalid or inactive driver for your company');
+    }
+  }
+
   /**
    * When true, a batch with a parcel must have a CONFIRMED harvest (berba) plan before transport.
    * Admins confirm plans in /admin/harvest-plans. Set in production to match "ops order → then ship" flow.
@@ -776,18 +785,29 @@ export class MissionsService {
       });
     }
 
+    let nextDriverId: string | null | undefined;
+    if (dto.logisticsDriverId !== undefined) {
+      const raw = dto.logisticsDriverId?.trim() ?? '';
+      nextDriverId = raw.length > 0 ? raw : null;
+      if (nextDriverId) {
+        await this.assertActiveLogisticsDriver(logisticsPartnerId, nextDriverId);
+      }
+    }
+
     const updated = await this.prisma.missions.update({
       where: { id: missionId },
       data: {
         status: 'ACCEPTED',
         vehicleId: dto.vehicleId || mission.vehicleId,
         acceptedAt: new Date(),
+        ...(nextDriverId !== undefined ? { assignedLogisticsDriverId: nextDriverId } : {}),
       },
       include: {
         users_missions_growerIdTousers: true,
         users_missions_logisticsPartnerIdTousers: true,
         vehicles: true,
         batches: true,
+        assigned_logistics_driver: true,
       },
     });
 
@@ -809,6 +829,45 @@ export class MissionsService {
     });
 
     return updated;
+  }
+
+  /**
+   * Set or clear the delegated pickup driver on a mission (logistics company only).
+   */
+  async setMissionAssignedLogisticsDriver(
+    logisticsPartnerId: string,
+    missionId: string,
+    dto: UpdateMissionLogisticsDriverDto,
+  ) {
+    if (!Object.prototype.hasOwnProperty.call(dto, 'logisticsDriverId')) {
+      throw new BadRequestException('logisticsDriverId is required (UUID or null to clear)');
+    }
+    const mission = await this.prisma.missions.findUnique({ where: { id: missionId } });
+    if (!mission) {
+      throw new NotFoundException(`Mission with ID ${missionId} not found`);
+    }
+    if (mission.logisticsPartnerId !== logisticsPartnerId) {
+      throw new BadRequestException('Mission not assigned to this logistics partner');
+    }
+    if (mission.status === 'COMPLETED' || mission.status === 'CANCELLED') {
+      throw new BadRequestException('Cannot change pickup driver on a finished mission');
+    }
+    const raw = logisticsDriverId?.trim() ?? '';
+    const nextId = raw.length > 0 ? raw : null;
+    if (nextId) {
+      await this.assertActiveLogisticsDriver(logisticsPartnerId, nextId);
+    }
+    return this.prisma.missions.update({
+      where: { id: missionId },
+      data: { assignedLogisticsDriverId: nextId, updatedAt: new Date() },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+        assigned_logistics_driver: true,
+      },
+    });
   }
 
   /**
@@ -972,6 +1031,11 @@ export class MissionsService {
     if (!vehicle) {
       throw new BadRequestException('No available refrigerated vehicle. Add or free a vehicle first.');
     }
+    let assignedLogisticsDriverId: string | undefined;
+    if (dto.logisticsDriverId?.trim()) {
+      await this.assertActiveLogisticsDriver(logisticsPartnerId, dto.logisticsDriverId.trim());
+      assignedLogisticsDriverId = dto.logisticsDriverId.trim();
+    }
     return this.prisma.missions.update({
       where: { id: missionId },
       data: {
@@ -980,12 +1044,14 @@ export class MissionsService {
         status: 'ASSIGNED',
         assignedAt: new Date(),
         updatedAt: new Date(),
+        ...(assignedLogisticsDriverId ? { assignedLogisticsDriverId } : {}),
       },
       include: {
         users_missions_growerIdTousers: true,
         users_missions_logisticsPartnerIdTousers: true,
         vehicles: true,
         batches: true,
+        assigned_logistics_driver: true,
       },
     });
   }

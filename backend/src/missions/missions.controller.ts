@@ -17,6 +17,7 @@ import {
   AdminAssignMissionDto,
   AdminCreateMissionFromOrderDto,
 } from './dto/mission.dto';
+import { UpdateMissionLogisticsDriverDto } from '../logistics-partner/dto/update-mission-driver.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -77,6 +78,17 @@ export class MissionsController {
     @Body() dto: AcceptMissionDto,
   ) {
     return this.missionsService.claimUnassignedMission(req.user.id, id, dto);
+  }
+
+  @Patch(':id/assigned-logistics-driver')
+  @UseGuards(RolesGuard)
+  @Roles('LOGISTICS_PARTNER')
+  setMissionPickupDriver(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: UpdateMissionLogisticsDriverDto,
+  ) {
+    return this.missionsService.setMissionAssignedLogisticsDriver(req.user.id, id, dto);
   }
 
   // Admin endpoints

@@ -64,6 +64,11 @@ export class AcceptMissionDto {
   @IsOptional()
   @IsString()
   vehicleId?: string;
+
+  /** Delegated pickup person (logistics_drivers row); grower sees profile on portal */
+  @IsOptional()
+  @IsString()
+  logisticsDriverId?: string;
 }
 
 /** Admin assigns a logistics partner to a still-unassigned mission (PENDING, no driver). */
