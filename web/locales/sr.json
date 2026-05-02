@@ -4015,26 +4015,6 @@
     "seeAlsoPrintEyebrow": "Dopunski materijal",
     "seeAlsoPrintBody": "Posebna investitorska prezentacija sa proširenim narativom i prilogom (i multimedijom gde je primenljivo) objavljena je odvojeno na veb-sajtu Bio Vera pod nazivom Investitor deck."
   },
-  "technicalProposal": {
-    "toolbarCopyLink": "Kopiraj link",
-    "toolbarCopied": "Kopirano",
-    "toolbarPrintPdf": "Sačuvaj kao PDF",
-    "toolbarPrintAria": "Štampa / PDF",
-    "contentsTitle": "Sadržaj",
-    "contentsNav": "Skok na poglavlje",
-    "skipToContent": "Preskoči na dokument",
-    "introNote": "Duži tehnički predlog (obično ~20–28 strana A4, 11pt). Koristi sadržaj ispod ili Štampa → Sačuvaj kao PDF za prijave i due diligence.",
-    "pdfHint": "Brojčane vrednosti sa oznakom [ILLUSTRATIVE] primeni podatke iz revizije i pravnog savetovanja pre ugovorne upotrebe.",
-    "coverEyebrow": "Tehnički dokument",
-    "coverTitle": "Bio Vera — detaljni tehnički predlog",
-    "coverSubtitle": "Inovacije, arhitektura, faza implementacije, KPI okvir, organizacija, ilustrativni finansijski sloj, dodaci za API-e, nadzor i QA—za grant konsorcijume i partnerski tehnički onboarding.",
-    "bodyLanguageNote": "Glavno tehničko telo dokumenta prikazano je na engleskom radi međunarodnih prijava. Oblik stranice i navigacija tek su na jeziku sajta koji ste izabrali.",
-    "seeAlsoEyebrow": "Povezani dokumenti",
-    "seeAlsoBody": "Prateći materijali: sažeti pregled projekta i investitorski deck.",
-    "seeOverview": "Pregled projekta",
-    "seeInvestorDeck": "Investitor deck",
-    "seeAlsoPrintBody": "Proširen narativ na sajtu Bio Vera: Pregled projekta i Investitor deck; prilozi kao posebni PDF mogu uz NDA materijale."
-  },
   "helpCenterPage": {
     "title": "Centar za pomoć",
     "searchPlaceholder": "Pretraži pomoć…",

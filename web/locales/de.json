@@ -3399,25 +3399,5 @@
     "seeAlsoLink": "Investor Deck öffnen",
     "seeAlsoPrintEyebrow": "Ergänzende Unterlagen",
     "seeAlsoPrintBody": "Eine investorenorientierte Darstellung mit erweiterter Erzähllinie und Anhang (sowie Multimedia, soweit zutreffend) ist separat auf der Bio‑Vera-Website als Investor Deck veröffentlicht."
-  },
-  "technicalProposal": {
-    "toolbarCopyLink": "Link kopieren",
-    "toolbarCopied": "Kopiert",
-    "toolbarPrintPdf": "Als PDF speichern",
-    "toolbarPrintAria": "Druckdialog öffnen (PDF speichern)",
-    "contentsTitle": "Inhalt",
-    "contentsNav": "Zu Kapitel springen",
-    "skipToContent": "Zum Dokument springen",
-    "introNote": "Ausführliches technisches Konzept (bei A4 ca. 20–28 Seiten bei 11pt). Inhalt unten oder Druckdialog → Als PDF für Anträge und Due Diligence.",
-    "pdfHint": "Mit [ILLUSTRATIVE] markierte Zahlen sind vor vertraglicher Nutzung durch geprüfte Finanz-/ und Rechtswerte zu ersetzen.",
-    "coverEyebrow": "Technisches Dokument",
-    "coverTitle": "Bio Vera — technisches Detailkonzept",
-    "coverSubtitle": "Innovation, Architektur, phasierte Umsetzung, KPI‑Rahmen, Organisation, illustrierte Finanzstruktur, Anhänge zu APIs, Observability und QA — für Konsortien und technisches Partner‑Onboarding.",
-    "bodyLanguageNote": "Der eigentliche Fachtext liegt auf Englisch (internationale Verfahren). Shell und Navigation folgen der gewählten Website‑Sprache.",
-    "seeAlsoEyebrow": "Verwandte Dokumente",
-    "seeAlsoBody": "Begleitmaterial: gekürzter Projektüberblick und Investor‑Storyline‑Deck.",
-    "seeOverview": "Projektüberblick",
-    "seeInvestorDeck": "Investor Deck öffnen",
-    "seeAlsoPrintBody": "Erweiterter Überblick: Projektüberblick und Investor Deck auf der Bio‑Vera‑Website; Anhänge ggf. separat unter NDA."
   }
 }

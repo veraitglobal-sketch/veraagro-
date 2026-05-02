@@ -3984,26 +3984,6 @@
     "seeAlsoPrintEyebrow": "Supplementary material",
     "seeAlsoPrintBody": "An investor-oriented presentation with extended narrative and appendix (and multimedia where applicable) is published separately on the Bio Vera website as the Investor Deck."
   },
-  "technicalProposal": {
-    "toolbarCopyLink": "Copy link",
-    "toolbarCopied": "Copied",
-    "toolbarPrintPdf": "Save as PDF",
-    "toolbarPrintAria": "Open print dialog to save as PDF",
-    "contentsTitle": "Contents",
-    "contentsNav": "Jump to chapter",
-    "skipToContent": "Skip to document",
-    "introNote": "Long-form technical proposal (~20–28 printed pages typical at A4, 11pt). Use outline below / browser Print → Save as PDF for adjudication dossiers.",
-    "pdfHint": "Figures flagged [ILLUSTRATIVE] in the narrative must be replaced with audited finance and legal counsel numbers before contractual use.",
-    "coverEyebrow": "Technical document",
-    "coverTitle": "Bio Vera — detailed technical proposal",
-    "coverSubtitle": "Innovation envelope, architecture, phased implementation, KPI framing, organisational shape, illustrative financial scaffolding, annex material on APIs, observability & QA—for grants, consortium due diligence and partner engineering intake.",
-    "bodyLanguageNote": "The substantive technical body of this web document is English for international submissions. Navigation, document shell and summaries follow your chosen site language.",
-    "seeAlsoEyebrow": "Related documents",
-    "seeAlsoBody": "Companion materials: condensed project narrative and investor storyline deck.",
-    "seeOverview": "Project overview",
-    "seeInvestorDeck": "Open Investor Deck",
-    "seeAlsoPrintBody": "Extended narrative: Project overview and Investor Deck on the Bio Vera website; annex attachments may circulate under separate NDA artefacts."
-  },
   "helpCenterPage": {
     "title": "Help center",
     "searchPlaceholder": "Search for help...",

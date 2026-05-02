@@ -4,10 +4,10 @@ import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Link2, Printer } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
 import { TECHNICAL_PROPOSAL_CHAPTERS } from "@/content/technical-proposal";
+import { TP_UI_EN as UI } from "@/content/technical-proposal.ui.en";
 
 const TOC_LINK_CLASS =
   "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
@@ -15,7 +15,6 @@ const TOC_NUM_CLASS =
   "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/[0.08] text-[11px] font-bold tabular-nums text-[#2D5A27]";
 
 export default function TechnicalProposalPage() {
-  const { t } = useTranslation();
   const loc = useLocalizedHref();
   const [copied, setCopied] = useState(false);
 
@@ -101,7 +100,7 @@ export default function TechnicalProposalPage() {
         href="#technical-proposal-document"
         className="tp-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
-        {t("technicalProposal.skipToContent")}
+        {UI.skipToContent}
       </a>
 
       <header className="tp-no-print fixed top-0 z-50 w-full border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md print:hidden">
@@ -112,25 +111,25 @@ export default function TechnicalProposalPage() {
           >
             <Image
               src="/logo1.png"
-              alt={t("footer.logoAlt")}
+              alt={UI.logoAlt}
               width={64}
               height={24}
               className="h-6 w-auto"
               priority
             />
             <span className="hidden border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400 sm:inline">
-              {t("technicalProposal.coverEyebrow")}
+              {UI.coverEyebrow}
             </span>
           </Link>
           <nav className="flex items-center gap-5 text-[13px] font-medium text-gray-600 sm:gap-7">
             <Link href={loc("/project-overview")} className="hidden hover:text-[#2D5A27] md:inline">
-              {t("footer.projectOverview")}
+              {UI.navProjectOverview}
             </Link>
             <Link href={loc("/investor-deck")} className="hidden hover:text-[#2D5A27] lg:inline">
-              {t("footer.investorDeck")}
+              {UI.navInvestorDeck}
             </Link>
             <Link href={loc("/contact")} className="font-semibold text-[#2D5A27] hover:text-[#23471f]">
-              {t("nav.contact")}
+              {UI.navContact}
             </Link>
           </nav>
         </div>
@@ -139,11 +138,11 @@ export default function TechnicalProposalPage() {
       <div
         className="tp-no-print sticky top-14 z-40 border-b border-gray-200/90 bg-[#fafcfa]/96 backdrop-blur print:hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)] sm:top-[3.65rem]"
         role="region"
-        aria-label={`${t("technicalProposal.toolbarCopyLink")} · ${t("technicalProposal.toolbarPrintPdf")}`}
+        aria-label={UI.toolbarRegion}
       >
         <div className="h-[3px] w-full bg-[#2D5A27]" aria-hidden />
         <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p className="max-w-xl text-[13px] leading-snug text-gray-600">{t("technicalProposal.introNote")}</p>
+          <p className="max-w-xl text-[13px] leading-snug text-gray-600">{UI.introNote}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -151,21 +150,21 @@ export default function TechnicalProposalPage() {
               className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-800"
             >
               <Link2 className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
-              {copied ? t("technicalProposal.toolbarCopied") : t("technicalProposal.toolbarCopyLink")}
+              {copied ? UI.copied : UI.copyLink}
             </button>
             <button
               type="button"
               onClick={openPrint}
-              aria-label={t("technicalProposal.toolbarPrintAria")}
+              aria-label={UI.savePdfAria}
               className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#2D5A27] px-5 py-2 text-[13px] font-semibold text-white shadow-md shadow-[#2D5A27]/22 hover:bg-[#23471f]"
             >
               <Printer className="size-4 shrink-0" aria-hidden />
-              {t("technicalProposal.toolbarPrintPdf")}
+              {UI.savePdf}
             </button>
           </div>
         </div>
         <p className="mx-auto max-w-[1240px] px-6 pb-2.5 text-[11px] text-gray-500 sm:px-8 lg:px-10">
-          {t("technicalProposal.pdfHint")}
+          {UI.pdfHint}
         </p>
       </div>
 
@@ -177,25 +176,25 @@ export default function TechnicalProposalPage() {
         <div className="tp-panel rounded-none border border-gray-200/90 bg-white shadow-sm sm:rounded-2xl print:shadow-none">
           <header className="tp-cover px-6 py-10 sm:px-10 sm:py-11 print:border-0">
             <p className="tp-sans text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
-              {t("technicalProposal.coverEyebrow")}
+              {UI.coverEyebrow}
             </p>
             <h1 className="tp-sans mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 sm:text-[2.1rem] print:text-[16pt]">
-              {t("technicalProposal.coverTitle")}
+              {UI.coverTitle}
             </h1>
             <p className="tp-sans mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 sm:text-[1.0625rem]">
-              {t("technicalProposal.coverSubtitle")}
+              {UI.coverSubtitle}
             </p>
             <p className="tp-sans mt-4 rounded-lg border border-amber-200/90 bg-amber-50/80 px-4 py-3 text-[13px] leading-snug text-amber-950 print:border-gray-300 print:bg-gray-50 print:text-gray-800">
-              {t("technicalProposal.bodyLanguageNote")}
+              {UI.shellLanguageNote}
             </p>
           </header>
 
           <nav
             className="tp-no-print border-t border-gray-100 bg-[#fafcfa]/75 px-5 py-4 sm:px-9"
-            aria-label={t("technicalProposal.contentsNav")}
+            aria-label={UI.contentsNav}
           >
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
-              {t("technicalProposal.contentsTitle")}
+              {UI.contentsTitle}
             </p>
             <ul className="columns-1 gap-x-10 sm:columns-2">
               {anchors.map(({ id, title, index }) => (
@@ -226,28 +225,28 @@ export default function TechnicalProposalPage() {
 
           <section className="tp-no-print mt-6 border-t border-gray-100 bg-[#F4F8F4] px-6 py-6 sm:px-9">
             <p className="tp-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2D5A27]/75">
-              {t("technicalProposal.seeAlsoEyebrow")}
+              {UI.seeAlsoEyebrow}
             </p>
-            <p className="tp-sans mt-2 max-w-xl text-sm text-gray-700 sm:text-[15px]">{t("technicalProposal.seeAlsoBody")}</p>
+            <p className="tp-sans mt-2 max-w-xl text-sm text-gray-700 sm:text-[15px]">{UI.seeAlsoBody}</p>
             <div className="mt-4 flex flex-wrap gap-3">
               <Link
                 href={loc("/project-overview")}
                 className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-800 hover:border-[#2D5A27]/35"
               >
-                {t("technicalProposal.seeOverview")}
+                {UI.seeOverview}
               </Link>
               <Link
                 href={loc("/investor-deck")}
                 className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-5 text-sm font-semibold text-white hover:bg-[#23471f]"
               >
-                {t("technicalProposal.seeInvestorDeck")}
+                {UI.seeInvestorDeck}
               </Link>
             </div>
           </section>
 
           <div className="tp-sans hidden border-t border-gray-200 px-6 py-4 text-[10pt] text-gray-700 print:block sm:px-9">
-            <p className="font-semibold text-gray-900">{t("technicalProposal.seeAlsoEyebrow")}</p>
-            <p className="mt-2">{t("technicalProposal.seeAlsoPrintBody")}</p>
+            <p className="font-semibold text-gray-900">{UI.seeAlsoEyebrow}</p>
+            <p className="mt-2">{UI.seeAlsoPrintBody}</p>
           </div>
         </div>
       </main>
