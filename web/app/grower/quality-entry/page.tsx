@@ -207,9 +207,9 @@ export default function QualityEntryPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-green-50 border border-green-200 rounded-lg"
+            className="p-4 bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg"
           >
-            <p className="text-base text-green-800">✓ {fk('successMessage')}</p>
+            <p className="text-base text-[#1a3d17]">✓ {fk('successMessage')}</p>
           </motion.div>
         )}
 
@@ -241,7 +241,7 @@ export default function QualityEntryPage() {
                   value={selectedBatch}
                   onChange={(e) => setSelectedBatch(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                 >
                   <option value="">{fk('selectBatchPlaceholder')}</option>
                   {batches.map((batch) => (
@@ -270,7 +270,7 @@ export default function QualityEntryPage() {
                     min="-20"
                     max="50"
                     step="0.1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                     placeholder={fk('temperaturePlaceholder')}
                   />
                 </div>
@@ -287,7 +287,7 @@ export default function QualityEntryPage() {
                     min="0"
                     max="100"
                     step="0.1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                     placeholder={fk('humidityPlaceholder')}
                   />
                 </div>
@@ -300,7 +300,7 @@ export default function QualityEntryPage() {
                     value={formData.cloudCover}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                   >
                     {CLOUD_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -325,7 +325,7 @@ export default function QualityEntryPage() {
                   value={formData.preCoolingStartTime}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                 />
               </div>
             </div>
@@ -351,14 +351,14 @@ export default function QualityEntryPage() {
                       />
                       <label
                         htmlFor={`photo-${index}`}
-                        className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-center"
+                        className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#2D5A27]/50 transition-colors text-center"
                       >
                         {formData.visualGradePhotos[index] ? (
                           <div className="space-y-2">
-                            <svg className="w-8 h-8 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-8 h-8 text-[#2D5A27] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <p className="text-base text-green-600">{fk('photoUploaded')}</p>
+                            <p className="text-base text-[#2D5A27]">{fk('photoUploaded')}</p>
                             <img
                               src={formData.visualGradePhotos[index]}
                               alt={fk(crateKey)}
@@ -391,7 +391,7 @@ export default function QualityEntryPage() {
                     checked={formData.standardConfirmation}
                     onChange={handleInputChange}
                     required
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-[#2D5A27] focus:ring-[#2D5A27]/50 border-gray-300 rounded"
                   />
                 </div>
                 <div className="ml-3 text-base">
@@ -413,7 +413,7 @@ export default function QualityEntryPage() {
                 value={formData.notes}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                 placeholder={fk('notesPlaceholder')}
               />
             </div>
@@ -423,7 +423,7 @@ export default function QualityEntryPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? fk('submitting') : fk('submit')}
               </button>

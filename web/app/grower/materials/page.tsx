@@ -341,8 +341,8 @@ export default function GrowerMaterialsPage() {
           </div>
         )}
         {success && (
-          <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
-            <p className="text-base text-green-800">{success}</p>
+          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4">
+            <p className="text-base text-[#1a3d17]">{success}</p>
           </div>
         )}
 
@@ -352,7 +352,7 @@ export default function GrowerMaterialsPage() {
             <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatCrate')}</div>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="text-2xl font-medium text-green-600">{balance?.labelRollBalance ?? 0}</div>
+            <div className="text-2xl font-medium text-[#2D5A27]">{balance?.labelRollBalance ?? 0}</div>
             <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatRolls')}</div>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white p-4">
@@ -419,7 +419,7 @@ export default function GrowerMaterialsPage() {
             <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-base text-red-800">{wlErr}</p>
           )}
           {wlOk && (
-            <p className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-base text-green-800">{wlOk}</p>
+            <p className="mb-4 rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] px-3 py-2 text-base text-[#1a3d17]">{wlOk}</p>
           )}
           <div className="space-y-4">
             <div>
@@ -495,7 +495,7 @@ export default function GrowerMaterialsPage() {
               <select
                 value={selectedMaterial}
                 onChange={(e) => setSelectedMaterial(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]/50"
               >
                 <option value="">{t('growerPages.materialsSelectPlaceholder')}</option>
                 {materialTypes.map((type) => (
@@ -517,7 +517,7 @@ export default function GrowerMaterialsPage() {
                 onChange={(e) => setQuantity(e.target.value)}
                 min="1"
                 max="200"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]/50"
                 placeholder={t('growerPages.materialsQuantityPlaceholder')}
               />
               <p className="mt-1 text-xs text-gray-500">{t('growerPages.materialsQuantityHint')}</p>
@@ -568,7 +568,7 @@ export default function GrowerMaterialsPage() {
                 {labelRollStats.total > 0 ? (
                   <>
                     {' — '}
-                    <span className="text-green-800">{t('growerPages.materialsSerialSold', { count: labelRollStats.sold })}</span>
+                    <span className="text-[#1a3d17]">{t('growerPages.materialsSerialSold', { count: labelRollStats.sold })}</span>
                     {labelRollStats.used > 0 ? (
                       <>
                         {', '}

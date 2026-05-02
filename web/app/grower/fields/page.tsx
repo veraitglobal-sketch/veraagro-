@@ -255,7 +255,7 @@ export default function GrowerFieldsPage() {
                         <div className="flex flex-wrap items-center justify-end gap-2">
                           {parcel.approvedAt ? (
                             <>
-                              <span className="inline-flex items-center gap-1 text-sm text-green-700 bg-green-50 px-2.5 py-1.5 rounded">
+                              <span className="inline-flex items-center gap-1 text-sm text-[#23471f] bg-[#f7faf6] px-2.5 py-1.5 rounded border border-[#2D5A27]/20">
                                 <CheckCircle className="w-3.5 h-3.5 shrink-0" /> {t('growerPages.statusApproved')}
                               </span>
                               {parcel.publicCode && (

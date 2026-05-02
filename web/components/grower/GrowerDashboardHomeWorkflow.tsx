@@ -87,8 +87,8 @@ export default function GrowerDashboardHomeWorkflow() {
       titleKey: 'grower.dashboard.workflow.allowedTitle',
       descKey: 'grower.dashboard.workflow.allowedDesc',
       icon: CheckCircle2,
-      iconClass: 'text-green-700',
-      bgClass: 'bg-green-50',
+      iconClass: 'text-[#23471f]',
+      bgClass: 'bg-[#f7faf6]',
     },
     {
       href: loc('/grower/season'),

@@ -13,6 +13,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBanner';
 import GrowerDashboardHomeWorkflow from '@/components/grower/GrowerDashboardHomeWorkflow';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function GrowerDashboardPage() {
   const { t } = useTranslation();
@@ -75,9 +76,9 @@ export default function GrowerDashboardPage() {
         setFarmerProfileUrl(null);
         setQrImageUrl(null);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading dashboard data:', err);
-      setError(err.message || t('grower.dashboard.loadFailed'));
+      setError(growerApiErrorOrT(err, t, 'grower.dashboard.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -88,7 +89,7 @@ export default function GrowerDashboardPage() {
     switch (s) {
       case 'CERTIFIED':
       case 'COMPLETED':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-[#f7faf6] text-[#23471f] border-[#2D5A27]/20';
       // Mission pipeline (Prisma MissionStatus) — not order `DELIVERED`
       case 'ASSIGNED':
       case 'ACCEPTED':
@@ -114,7 +115,7 @@ export default function GrowerDashboardPage() {
         <SidebarLayout title={t('grower.nav.dashboard')} navItems={navItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
               <p className="mt-4 text-gray-600 font-light">{t('grower.dashboard.loading')}</p>
             </div>
           </div>
@@ -131,7 +132,7 @@ export default function GrowerDashboardPage() {
             <p className="text-red-700 font-light">{error}</p>
             <button
               onClick={loadData}
-              className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              className="mt-4 px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors text-sm font-medium"
             >
               {t('grower.dashboard.retry')}
             </button>
@@ -172,7 +173,7 @@ export default function GrowerDashboardPage() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalEstates')}</h3>
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </div>
@@ -182,7 +183,7 @@ export default function GrowerDashboardPage() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalParcels')}</h3>
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
               </div>
@@ -192,7 +193,7 @@ export default function GrowerDashboardPage() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.certifiedEstates')}</h3>
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -273,7 +274,7 @@ export default function GrowerDashboardPage() {
                 <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.myEstates')}</h2>
                 <Link
                   href={loc('/grower/fields')}
-                  className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                 >
                   {t('grower.dashboard.addEstate')}
                 </Link>
@@ -286,7 +287,7 @@ export default function GrowerDashboardPage() {
                     <Link
                       key={estate.id}
                       href={`${loc('/grower/fields')}?estate=${encodeURIComponent(estate.id)}`}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
+                      className="border border-gray-200 rounded-lg p-4 hover:border-[#2D5A27]/35 transition-colors"
                     >
                       <h3 className="text-base font-medium text-gray-900 mb-2">{estate.name}</h3>
                       <p className="text-base text-gray-600 font-light mb-3">
@@ -303,7 +304,7 @@ export default function GrowerDashboardPage() {
                   <p className="text-base text-gray-600 font-light mb-4">{t('grower.dashboard.noEstates')}</p>
                   <Link
                     href={loc('/grower/fields')}
-                    className="inline-flex min-h-[48px] items-center justify-center text-green-600 hover:text-green-700 font-medium text-base px-4"
+                    className="inline-flex min-h-[48px] items-center justify-center text-[#2D5A27] hover:text-[#23471f] font-medium text-base px-4"
                   >
                     {t('grower.dashboard.createFirstEstate')}
                   </Link>
@@ -321,9 +322,9 @@ export default function GrowerDashboardPage() {
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg p-4">
                     <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.totalProfit')}</p>
-                    <p className="text-2xl font-light text-green-700">
+                    <p className="text-2xl font-light text-[#23471f]">
                       €{financialData.summary?.totalProfit?.toFixed(2) || '0.00'}
                     </p>
                   </div>
@@ -377,7 +378,7 @@ export default function GrowerDashboardPage() {
                 <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.recentMissions')}</h2>
                 <Link
                   href={loc('/grower/portal')}
-                  className="inline-flex min-h-[44px] items-center text-base text-green-600 hover:text-green-700 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/40 focus-visible:ring-offset-2 rounded px-1"
+                  className="inline-flex min-h-[44px] items-center text-base text-[#2D5A27] hover:text-[#23471f] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded px-1"
                 >
                   {t('grower.dashboard.viewAll')}
                 </Link>
@@ -389,7 +390,7 @@ export default function GrowerDashboardPage() {
                   {missions.slice(0, 5).map((mission: any) => (
                     <div
                       key={mission.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
+                      className="border border-gray-200 rounded-lg p-4 hover:border-[#2D5A27]/35 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="text-base font-medium text-gray-900">

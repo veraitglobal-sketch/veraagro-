@@ -85,7 +85,7 @@ export default function GrowerOfflineOutboxBanner() {
       {syncNotice ? (
         <div
           role="status"
-          className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-base text-green-900 md:px-5"
+          className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] px-4 py-3 text-base text-[#1a3d17] md:px-5"
         >
           {syncNotice}
         </div>
@@ -109,7 +109,7 @@ export default function GrowerOfflineOutboxBanner() {
                 type="button"
                 onClick={() => void handleSync()}
                 disabled={syncing || pending === 0}
-                className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-base font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               >
                 {syncing ? t('grower.dashboard.outboxSending') : t('grower.dashboard.outboxSyncNow')}
               </button>

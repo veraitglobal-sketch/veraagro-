@@ -11,6 +11,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI, growthLogsAPI, parcelsAPI } from '@/lib/api';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2, NotebookPen } from 'lucide-react';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 type EstateRow = { id: string; name: string };
 type ParcelMini = { id: string; cropType?: string | null };
@@ -55,8 +56,8 @@ export default function GrowerFieldDiaryPage() {
         if (list?.length) {
           setEstateId((prev) => prev || list[0].id);
         }
-      } catch {
-        if (!cancelled) setErr(t('growerPages.loadFieldsFailed'));
+      } catch (e: unknown) {
+        if (!cancelled) setErr(growerApiErrorOrT(e, t, 'growerPages.loadFieldsFailed'));
       }
     })();
     return () => {

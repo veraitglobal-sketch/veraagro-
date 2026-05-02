@@ -8,6 +8,7 @@ import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI } from '@/lib/api';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import { ArrowLeft, Store, Package, Send, Loader2 } from 'lucide-react';
 
 type StoreData = Awaited<ReturnType<typeof growerSupplierB2bAPI.getPublicStore>>;
@@ -40,16 +41,13 @@ export default function GrowerPartnerStorePage() {
         init[c.id] = '';
       });
       setQuantities(init);
-    } catch (e) {
+    } catch (e: unknown) {
       setData(null);
-      setLoadErr(
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Store not found, or partner is inactive.',
-      );
+      setLoadErr(growerApiErrorOrT(e, t, 'grower.partnerStoreOrder.loadFailedDefault'));
     } finally {
       setLoading(false);
     }
-  }, [supplierUserId]);
+  }, [supplierUserId, t]);
 
   useEffect(() => {
     void load();
@@ -65,7 +63,7 @@ export default function GrowerPartnerStorePage() {
       if (!raw) continue;
       const q = parseFloat(raw);
       if (Number.isNaN(q) || q <= 0) {
-        setSubmitErr(`Invalid quantity for “${line.name}”. Use a positive number.`);
+        setSubmitErr(t('grower.partnerStoreOrder.invalidQty', { name: line.name }));
         return;
       }
       items.push({
@@ -76,9 +74,13 @@ export default function GrowerPartnerStorePage() {
     }
     if (items.length === 0) {
       if (data.catalog.length === 0 && note.trim()) {
-        items.push({ label: `Request: ${note.trim().slice(0, 500)}`, quantity: 1, unit: 'inquiry' });
+        items.push({
+          label: t('grower.partnerStoreOrder.inquiryLineLabel', { snippet: note.trim().slice(0, 500) }),
+          quantity: 1,
+          unit: 'inquiry',
+        });
       } else {
-        setSubmitErr('Enter a quantity for at least one product line, or add a note if the catalog is empty.');
+        setSubmitErr(t('grower.partnerStoreOrder.needQtyOrNote'));
         return;
       }
     }
@@ -93,9 +95,8 @@ export default function GrowerPartnerStorePage() {
         threadId: thread.id,
       })) as { id?: string };
       setSuccessId(order?.id || 'ok');
-    } catch (err) {
-      const m = (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      setSubmitErr(Array.isArray(m) ? m.join(' ') : m || (err instanceof Error ? err.message : 'Order failed'));
+    } catch (err: unknown) {
+      setSubmitErr(growerApiErrorOrT(err, t, 'grower.partnerStoreOrder.orderFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -110,13 +111,13 @@ export default function GrowerPartnerStorePage() {
             className="inline-flex items-center gap-2 text-base text-[#2D5A27] hover:underline mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to locations
+            {t('grower.partnerStoreOrder.backToLocations')}
           </Link>
 
           {loading && (
             <p className="text-base text-gray-500 flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Loading store…
+              {t('grower.partnerStoreOrder.loading')}
             </p>
           )}
 
@@ -130,7 +131,7 @@ export default function GrowerPartnerStorePage() {
             <>
               {data.mapOnPublicDirectory === false && (
                 <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2.5 text-base text-sky-950 mb-4">
-                  This partner is not on the public “Where to buy” map yet. You can still order using this link.
+                  {t('grower.partnerStoreOrder.notOnMap')}
                 </div>
               )}
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm mb-6">
@@ -149,9 +150,21 @@ export default function GrowerPartnerStorePage() {
                       <p className="text-base text-gray-500 font-light mt-2 leading-relaxed">{data.description}</p>
                     )}
                     <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                      {data.partnerCode && <span>Partner code: {data.partnerCode}</span>}
-                      {data.contactPhone && <span>Phone: {data.contactPhone}</span>}
-                      {data.contactEmail && <span>Email: {data.contactEmail}</span>}
+                      {data.partnerCode && (
+                        <span>
+                          {t('grower.partnerStoreOrder.partnerCode')} {data.partnerCode}
+                        </span>
+                      )}
+                      {data.contactPhone && (
+                        <span>
+                          {t('grower.partnerStoreOrder.phone')} {data.contactPhone}
+                        </span>
+                      )}
+                      {data.contactEmail && (
+                        <span>
+                          {t('grower.partnerStoreOrder.email')} {data.contactEmail}
+                        </span>
+                      )}
                     </div>
                     {data.website && (
                       <a
@@ -160,7 +173,7 @@ export default function GrowerPartnerStorePage() {
                         rel="noopener noreferrer"
                         className="text-base text-[#2D5A27] hover:underline mt-2 inline-block"
                       >
-                        Store website
+                        {t('grower.partnerStoreOrder.website')}
                       </a>
                     )}
                   </div>
@@ -171,16 +184,12 @@ export default function GrowerPartnerStorePage() {
                 <div>
                   <h2 className="text-base font-medium text-gray-900 flex items-center gap-2 mb-3">
                     <Package className="h-4 w-4 text-[#2D5A27]" />
-                    Product list & quantities
+                    {t('grower.partnerStoreOrder.catalogTitle')}
                   </h2>
-                  <p className="text-xs text-gray-500 font-light mb-4">
-                    Enter how much you need for each line (same units as in the store catalog). Your order is sent to
-                    this partner; they confirm or adjust in the supplier portal.
-                  </p>
+                  <p className="text-xs text-gray-500 font-light mb-4">{t('grower.partnerStoreOrder.catalogHint')}</p>
                   {data.catalog.length === 0 ? (
                     <p className="text-base text-gray-500 border border-dashed border-gray-200 rounded-lg p-6 text-center">
-                      This store has not published catalog lines yet. Use the note below to describe what you need, or
-                      contact them by phone/email.
+                      {t('grower.partnerStoreOrder.emptyCatalog')}
                     </p>
                   ) : (
                     <ul className="space-y-3">
@@ -205,19 +214,20 @@ export default function GrowerPartnerStorePage() {
                                 <p className="text-xs text-gray-500 font-light line-clamp-2 mt-0.5">{line.description}</p>
                               )}
                               <p className="text-xs text-gray-500 mt-1">
-                                Unit: {line.unit}
-                                {line.listPrice != null && ` · list €${line.listPrice.toFixed(2)}`}
-                                {line.sku && ` · SKU ${line.sku}`}
+                                {t('grower.partnerStoreOrder.unit')} {line.unit}
+                                {line.listPrice != null &&
+                                  ` · ${t('grower.partnerStoreOrder.listPrice', { price: line.listPrice.toFixed(2) })}`}
+                                {line.sku && ` · ${t('grower.partnerStoreOrder.sku', { sku: line.sku })}`}
                               </p>
                             </div>
                           </div>
                           <label className="flex items-center gap-2 shrink-0 w-full sm:w-36">
-                            <span className="text-xs text-gray-500">Qty</span>
+                            <span className="text-xs text-gray-500">{t('grower.partnerStoreOrder.qty')}</span>
                             <input
                               type="text"
                               inputMode="decimal"
                               className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-base"
-                              placeholder="0"
+                              placeholder={t('grower.partnerStoreOrder.qtyPlaceholder')}
                               value={quantities[line.id] ?? ''}
                               onChange={(e) => setQuantities((q) => ({ ...q, [line.id]: e.target.value }))}
                             />
@@ -229,13 +239,13 @@ export default function GrowerPartnerStorePage() {
                 </div>
 
                 <div>
-                  <label className="text-base font-medium text-gray-800">Note to the store (optional)</label>
+                  <label className="text-base font-medium text-gray-800">{t('grower.partnerStoreOrder.noteLabel')}</label>
                   <textarea
                     className="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2 text-base font-light"
                     rows={3}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    placeholder="e.g. needed for field prep by date …"
+                    placeholder={t('grower.partnerStoreOrder.notePlaceholder')}
                   />
                 </div>
 
@@ -256,7 +266,7 @@ export default function GrowerPartnerStorePage() {
                     ) : (
                       <Send className="h-4 w-4" />
                     )}
-                    Send order to store
+                    {t('grower.partnerStoreOrder.submit')}
                   </button>
                 </div>
               </form>
@@ -265,13 +275,12 @@ export default function GrowerPartnerStorePage() {
 
           {successId && (
             <div className="rounded-xl border border-[#2D5A27]/30 bg-[#2D5A27]/5 p-6 text-center">
-              <p className="text-gray-800 font-medium">Order sent</p>
-              <p className="text-base text-gray-600 font-light mt-2">
-                The partner will see it under Supplier → Orders. You can continue the conversation in your messages
-                (mobile app) or check back for their confirmation.
-              </p>
+              <p className="text-gray-800 font-medium">{t('grower.partnerStoreOrder.successTitle')}</p>
+              <p className="text-base text-gray-600 font-light mt-2">{t('grower.partnerStoreOrder.successBody')}</p>
               {successId !== 'ok' && (
-                <p className="text-xs text-gray-500 font-mono mt-2">Ref: {successId}</p>
+                <p className="text-xs text-gray-500 font-mono mt-2">
+                  {t('grower.partnerStoreOrder.successRef', { id: successId })}
+                </p>
               )}
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <button
@@ -279,7 +288,7 @@ export default function GrowerPartnerStorePage() {
                   onClick={() => router.push('/grower/where-to-buy')}
                   className="text-base text-[#2D5A27] hover:underline"
                 >
-                  Back to locations
+                  {t('grower.partnerStoreOrder.backToLocations')}
                 </button>
                 {data && (
                   <button
@@ -297,7 +306,7 @@ export default function GrowerPartnerStorePage() {
                     }}
                     className="text-base text-gray-600 hover:underline"
                   >
-                    Place another order
+                    {t('grower.partnerStoreOrder.placeAnother')}
                   </button>
                 )}
               </div>

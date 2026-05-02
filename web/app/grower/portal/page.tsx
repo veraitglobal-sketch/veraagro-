@@ -16,6 +16,8 @@ import { Truck } from 'lucide-react';
 import { missionStatusBadgeClass } from '@/lib/mission-ui';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import type { CommercialAgentPublic } from '@/lib/auth';
+import { useToast } from '@/hooks/useToast';
+import ToastContainer from '@/components/Toast';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -119,6 +121,7 @@ export default function GrowerPortalPage() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
   const navItems = useGrowerNavItems();
+  const { toasts, success, removeToast } = useToast();
 
   const formatLocale = (iso: string | null | undefined, dateOnly?: boolean) => {
     if (iso == null) return '';
@@ -260,15 +263,19 @@ export default function GrowerPortalPage() {
 
   if (loading) {
     return (
-      <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
-        <GrowerPageShell>
-          <div className="flex h-64 items-center justify-center text-gray-500">{t('growerPages.portalLoading')}</div>
-        </GrowerPageShell>
-      </SidebarLayout>
+      <>
+        <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
+          <GrowerPageShell>
+            <div className="flex h-64 items-center justify-center text-gray-500">{t('growerPages.portalLoading')}</div>
+          </GrowerPageShell>
+        </SidebarLayout>
+        <ToastContainer toasts={toasts} onClose={removeToast} />
+      </>
     );
   }
 
   return (
+    <>
     <SidebarLayout title={t('grower.nav.missionTracker')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader title={t('grower.nav.missionTracker')} description={t('growerPages.portalPageDescription')} />
@@ -311,8 +318,8 @@ export default function GrowerPortalPage() {
                   onClick={() => handleMissionSelect(mission.missionId)}
                   className={`w-full text-left p-4 rounded-lg border transition-colors ${
                     selectedBatch === mission.batchId
-                      ? 'border-green-600 bg-green-50'
-                      : 'border-gray-200 hover:border-green-300'
+                      ? 'border-[#2D5A27] bg-[#f7faf6]'
+                      : 'border-gray-200 hover:border-[#2D5A27]/35'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -380,7 +387,7 @@ export default function GrowerPortalPage() {
                   <div key={index} className="flex-1 flex items-center">
                     <div className="flex flex-col items-center flex-1">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
-                        milestone.status === 'completed' ? 'bg-green-500 text-white' :
+                        milestone.status === 'completed' ? 'bg-[#2D5A27] text-white' :
                         milestone.status === 'in_progress' ? 'bg-blue-500 text-white animate-pulse' :
                         'bg-gray-200 text-gray-500'
                       }`}>
@@ -393,7 +400,7 @@ export default function GrowerPortalPage() {
                         )}
                       </div>
                       <p className={`text-xs font-medium text-center ${
-                        milestone.status === 'completed' ? 'text-green-600' :
+                        milestone.status === 'completed' ? 'text-[#2D5A27]' :
                         milestone.status === 'in_progress' ? 'text-blue-600' :
                         'text-gray-500'
                       }`}>
@@ -405,7 +412,7 @@ export default function GrowerPortalPage() {
                     </div>
                     {index < journeyMap.milestones.length - 1 && (
                       <div className={`flex-1 h-0.5 mx-2 ${
-                        milestone.status === 'completed' ? 'bg-green-500' : 'bg-gray-200'
+                        milestone.status === 'completed' ? 'bg-[#2D5A27]' : 'bg-gray-200'
                       }`}></div>
                     )}
                   </div>
@@ -504,7 +511,7 @@ export default function GrowerPortalPage() {
 
                 {/* Excellence Certificate */}
                 {consumerFeedback.hasExcellenceCertificate && consumerFeedback.certificate && (
-                  <div className="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-green-50 border-2 border-yellow-400 rounded-lg">
+                  <div className="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-[#f7faf6] border-2 border-yellow-400 rounded-lg">
                     <div className="text-center">
                       <div className="text-4xl mb-2">🏆</div>
                       <h3 className="text-xl font-bold text-gray-900 mb-2">{t('growerPages.portalCertTitle')}</h3>
@@ -524,11 +531,11 @@ export default function GrowerPortalPage() {
                                 url: origin + consumerFeedback.certificate.shareableUrl,
                               });
                             } else if (navigator.clipboard) {
-                              navigator.clipboard.writeText(consumerFeedback.certificate.socialMediaText);
-                              alert(t('grower.profilePage.alertCertCopied'));
+                              void navigator.clipboard.writeText(consumerFeedback.certificate.socialMediaText);
+                              success(t('grower.profilePage.alertCertCopied'));
                             }
                           }}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          className="px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors"
                         >
                           {t('growerPages.portalShareCert')}
                         </button>
@@ -568,7 +575,7 @@ export default function GrowerPortalPage() {
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaymentStatus')}</p>
                 <p className={`text-lg font-bold ${
-                  financialStatus.paymentStatus === 'PROCESSING' ? 'text-green-600' :
+                  financialStatus.paymentStatus === 'PROCESSING' ? 'text-[#2D5A27]' :
                   financialStatus.paymentStatus === 'AWAITING_APPROVAL' ? 'text-yellow-600' :
                   'text-gray-600'
                 }`}>
@@ -584,7 +591,7 @@ export default function GrowerPortalPage() {
                 </div>
                 <div>
                   <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaid')}</p>
-                  <p className="text-lg font-bold text-green-600">
+                  <p className="text-lg font-bold text-[#2D5A27]">
                     €{financialStatus.paidAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
@@ -600,5 +607,7 @@ export default function GrowerPortalPage() {
         )}
       </GrowerPageShell>
     </SidebarLayout>
+    <ToastContainer toasts={toasts} onClose={removeToast} />
+    </>
   );
 }

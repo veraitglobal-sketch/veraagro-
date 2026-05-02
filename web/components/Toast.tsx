@@ -37,14 +37,14 @@ const ToastComponent = ({ toast, onClose }: ToastProps) => {
   };
 
   const colors = {
-    success: 'bg-green-50 border-green-200 text-green-800',
+    success: 'bg-[#f7faf6] border-[#2D5A27]/25 text-[#1a3d17]',
     error: 'bg-red-50 border-red-200 text-red-800',
     info: 'bg-blue-50 border-blue-200 text-blue-800',
     warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
   };
 
   const iconColors = {
-    success: 'text-green-600',
+    success: 'text-[#2D5A27]',
     error: 'text-red-600',
     info: 'text-blue-600',
     warning: 'text-yellow-600',

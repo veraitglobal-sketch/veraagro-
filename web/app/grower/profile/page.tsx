@@ -10,9 +10,13 @@ import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { useToast } from '@/hooks/useToast';
+import ToastContainer from '@/components/Toast';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function FarmerProfilePage() {
   const { t } = useTranslation();
+  const { toasts, success, error: showError, warning, removeToast } = useToast();
   const growerNavItems = useGrowerNavItems();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -54,9 +58,9 @@ export default function FarmerProfilePage() {
       } else {
         setQrImageUrl(null);
       }
-    } catch (error) {
-      console.error('Error loading profile:', error);
-      alert(t('grower.profilePage.alertLoadFailed'));
+    } catch (loadErr: unknown) {
+      console.error('Error loading profile:', loadErr);
+      showError(t('grower.profilePage.alertLoadFailed'));
     } finally {
       if (!skip) setLoading(false);
     }
@@ -68,13 +72,13 @@ export default function FarmerProfilePage() {
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert(t('grower.profilePage.alertPhotoTooBig'));
+      warning(t('grower.profilePage.alertPhotoTooBig'));
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert(t('grower.profilePage.alertNotImage'));
+      warning(t('grower.profilePage.alertNotImage'));
       return;
     }
 
@@ -90,10 +94,12 @@ export default function FarmerProfilePage() {
       setUploading(true);
       await farmerProfileAPI.uploadPhoto(file);
       await loadProfile({ skipLoading: true });
-      alert(t('grower.profilePage.alertPhotoOk'));
-    } catch (error: any) {
-      console.error('Error uploading photo:', error);
-      alert(error.response?.data?.message || t('grower.profilePage.alertPhotoUploadFailed'));
+      success(t('grower.profilePage.alertPhotoOk'));
+    } catch (uploadErr: unknown) {
+      console.error('Error uploading photo:', uploadErr);
+      showError(
+        growerApiErrorOrT(uploadErr, t, 'grower.profilePage.alertPhotoUploadFailed'),
+      );
       // Revert preview on error
       setPhotoPreview(profile?.farmer?.photo || null);
     } finally {
@@ -110,7 +116,7 @@ export default function FarmerProfilePage() {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     } catch {
-      alert(t('grower.profilePage.alertCopyFailed'));
+      showError(t('grower.profilePage.alertCopyFailed'));
     }
   };
 
@@ -141,10 +147,10 @@ export default function FarmerProfilePage() {
         generation: formData.generation || undefined,
       });
       await loadProfile();
-      alert(t('grower.profilePage.alertSaveOk'));
-    } catch (error: any) {
-      console.error('Error saving profile:', error);
-      alert(error.response?.data?.message || t('grower.profilePage.alertSaveFailed'));
+      success(t('grower.profilePage.alertSaveOk'));
+    } catch (saveErr: unknown) {
+      console.error('Error saving profile:', saveErr);
+      showError(growerApiErrorOrT(saveErr, t, 'grower.profilePage.alertSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -161,6 +167,7 @@ export default function FarmerProfilePage() {
             </div>
           </GrowerPageShell>
         </SidebarLayout>
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </AuthGuard>
     );
   }
@@ -180,7 +187,7 @@ export default function FarmerProfilePage() {
             <label className="block text-base font-medium text-gray-700 mb-3">{t('grower.profilePage.photoLabel')}</label>
             <div className="flex items-center gap-6">
               {/* Photo Preview */}
-              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-green-600 shadow-lg">
+              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#2D5A27] shadow-lg">
                 {photoPreview ? (
                   <Image
                     src={photoPreview}
@@ -192,7 +199,7 @@ export default function FarmerProfilePage() {
                     }
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-[#f7faf6] to-[#e8f0e6] flex items-center justify-center">
                     <span className="text-4xl">🌱</span>
                   </div>
                 )}
@@ -213,7 +220,7 @@ export default function FarmerProfilePage() {
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
                     uploading
                       ? 'border-gray-300 bg-gray-50 text-gray-400 cursor-not-allowed'
-                      : 'border-green-600 bg-green-50 text-green-700 hover:bg-green-100'
+                      : 'border-[#2D5A27] bg-[#f7faf6] text-[#23471f] hover:bg-[#eef5ec]'
                   }`}
                 >
                   {uploading ? (
@@ -243,7 +250,7 @@ export default function FarmerProfilePage() {
               rows={4}
               value={formData.farmerBio}
               onChange={(e) => setFormData({ ...formData, farmerBio: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]"
               placeholder={t('grower.profilePage.bioPlaceholder')}
             />
             <p className="text-xs text-gray-500 mt-1 font-light">{t('grower.profilePage.bioHint')}</p>
@@ -260,7 +267,7 @@ export default function FarmerProfilePage() {
               min="0"
               value={formData.yearsOfExperience}
               onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]"
               placeholder={t('grower.profilePage.yearsPlaceholder')}
             />
           </div>
@@ -275,7 +282,7 @@ export default function FarmerProfilePage() {
               id="generation"
               value={formData.generation}
               onChange={(e) => setFormData({ ...formData, generation: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]"
               placeholder={t('grower.profilePage.generationPlaceholder')}
             />
             <p className="text-xs text-gray-500 mt-1 font-light">{t('grower.profilePage.generationHint')}</p>
@@ -428,6 +435,7 @@ export default function FarmerProfilePage() {
         </div>
         </GrowerPageShell>
       </SidebarLayout>
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </AuthGuard>
   );
 }

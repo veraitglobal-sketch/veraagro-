@@ -10,6 +10,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useAuth } from '@/lib/auth';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import {
   Package,
   Search,
@@ -84,6 +85,7 @@ export default function GrowerBatchesPage() {
   const [checkingApproval, setCheckingApproval] = useState(false);
   const [approving, setApproving] = useState(false);
   const [showTraceabilityJson, setShowTraceabilityJson] = useState(false);
+  const [approvalNotice, setApprovalNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     loadBatches();
@@ -100,9 +102,9 @@ export default function GrowerBatchesPage() {
       const data = await batchesAPI.getAll();
       setBatches(data);
       setFilteredBatches(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading batches:', err);
-      setError(err.message || 'Failed to load batches');
+      setError(growerApiErrorOrT(err, t, 'growerPages.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -149,31 +151,39 @@ export default function GrowerBatchesPage() {
 
   const handleCheckLoadingApproval = async (batch: Batch) => {
     setCheckingApproval(true);
+    setApprovalNotice(null);
     try {
       const result = await standardEngineAPI.checkLoadingApproval(batch.id);
       setLoadingApproval(result);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error checking loading approval:', err);
-      alert(err.response?.data?.message || 'Error checking approval requirements');
+      setApprovalNotice({
+        type: 'error',
+        message: growerApiErrorOrT(err, t, 'grower.batchesApproval.checkFailed'),
+      });
     } finally {
       setCheckingApproval(false);
     }
   };
 
   const handleApproveForLoading = async (batch: Batch) => {
-    if (!confirm('Are you sure you want to approve this batch for loading? All requirements must be met.')) {
+    if (!window.confirm(t('grower.batchesApproval.confirmApprove'))) {
       return;
     }
-    
+
     setApproving(true);
+    setApprovalNotice(null);
     try {
-      const result = await standardEngineAPI.approveForLoading(batch.id);
-      alert('Batch approved for loading!');
+      await standardEngineAPI.approveForLoading(batch.id);
+      setApprovalNotice({ type: 'success', message: t('grower.batchesApproval.approvedOk') });
       setLoadingApproval(null);
-      loadBatches(); // Refresh list
-    } catch (err: any) {
+      void loadBatches();
+    } catch (err: unknown) {
       console.error('Error approving for loading:', err);
-      alert(err.response?.data?.message || 'Cannot approve. Please check all requirements.');
+      setApprovalNotice({
+        type: 'error',
+        message: growerApiErrorOrT(err, t, 'grower.batchesApproval.approveFailed'),
+      });
     } finally {
       setApproving(false);
     }
@@ -182,7 +192,7 @@ export default function GrowerBatchesPage() {
   const getStatusColor = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'HARVESTED':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-[#e8f0e6] text-[#1a3d17] border-[#2D5A27]/25';
       case 'IN_TRANSIT':
         return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'AT_HUB':
@@ -222,7 +232,7 @@ export default function GrowerBatchesPage() {
         <SidebarLayout title={t('grower.nav.myBatches')} navItems={navItems}>
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto"></div>
               <p className="mt-4 text-base text-gray-600">{t('growerPages.loadingBatches')}</p>
             </div>
           </div>
@@ -258,6 +268,26 @@ export default function GrowerBatchesPage() {
             </div>
           )}
 
+          {approvalNotice && (
+            <div
+              className={`mb-6 rounded-lg border px-4 py-3 text-base ${
+                approvalNotice.type === 'success'
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-950'
+                  : 'border-red-200 bg-red-50 text-red-900'
+              }`}
+              role="status"
+            >
+              <p className="font-medium">{approvalNotice.message}</p>
+              <button
+                type="button"
+                onClick={() => setApprovalNotice(null)}
+                className="mt-2 text-sm underline opacity-90 hover:opacity-100"
+              >
+                {t('common.close')}
+              </button>
+            </div>
+          )}
+
           {/* Filters */}
           {showFilters && (
             <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
@@ -272,7 +302,7 @@ export default function GrowerBatchesPage() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder={t('growerPages.searchBatchesPlaceholder')}
-                      className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -283,7 +313,7 @@ export default function GrowerBatchesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                   >
                     <option value="all">{t('growerPages.allStatuses')}</option>
                     {uniqueStatuses.map((status) => (
@@ -300,7 +330,7 @@ export default function GrowerBatchesPage() {
                   <select
                     value={productFilter}
                     onChange={(e) => setProductFilter(e.target.value)}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                   >
                     <option value="all">{t('growerPages.allProducts')}</option>
                     {uniqueProducts.map((product) => (
@@ -320,7 +350,7 @@ export default function GrowerBatchesPage() {
                     setStatusFilter('all');
                     setProductFilter('all');
                   }}
-                  className="mt-4 inline-flex min-h-[44px] items-center text-base text-green-600 hover:text-green-700 font-medium"
+                  className="mt-4 inline-flex min-h-[44px] items-center text-base text-[#2D5A27] hover:text-[#23471f] font-medium"
                 >
                   {t('growerPages.clearFilters')}
                 </button>
@@ -335,7 +365,7 @@ export default function GrowerBatchesPage() {
               <div className="text-base text-gray-600 mt-1">{t('growerPages.totalBatches')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="text-2xl font-medium text-green-600">
+              <div className="text-2xl font-medium text-[#2D5A27]">
                 {batches.filter((b) => b.status === 'HARVESTED').length}
               </div>
               <div className="text-base text-gray-600 mt-1">{t('growerPages.harvested')}</div>
@@ -417,7 +447,7 @@ export default function GrowerBatchesPage() {
                       <div className="flex items-center gap-2 ml-4">
                         <button
                           onClick={() => handleViewDetails(batch)}
-                          className="inline-flex items-center min-h-[48px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                          className="inline-flex items-center min-h-[48px] px-4 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           {t('growerPages.viewDetails')}
@@ -466,7 +496,7 @@ export default function GrowerBatchesPage() {
                 <div className="p-6">
                   {loadingDetails ? (
                     <div className="flex items-center justify-center h-64">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27]"></div>
                     </div>
                   ) : (
                     <div className="space-y-6">
@@ -642,7 +672,7 @@ export default function GrowerBatchesPage() {
                             type="button"
                             onClick={() => handleCheckLoadingApproval(selectedBatch!)}
                             disabled={checkingApproval}
-                            className="inline-flex items-center min-h-[48px] px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            className="inline-flex items-center min-h-[48px] px-4 py-3 border-2 border-[#2D5A27] text-[#2D5A27] bg-white text-base font-medium rounded-lg hover:bg-[#f7faf6] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                           >
                             <CheckCircle className="w-5 h-5 mr-2 shrink-0" />
                             {checkingApproval ? t('growerPages.standardChecking') : t('growerPages.standardCheckRequirements')}
@@ -655,14 +685,14 @@ export default function GrowerBatchesPage() {
                                 key={key}
                                 className={`p-3 rounded-lg border ${
                                   item.passed
-                                    ? 'bg-green-50 border-green-200'
+                                    ? 'bg-[#f7faf6] border-[#2D5A27]/20'
                                     : 'bg-red-50 border-red-200'
                                 }`}
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
                                     {item.passed ? (
-                                      <CheckCircle className="w-5 h-5 text-green-600" />
+                                      <CheckCircle className="w-5 h-5 text-[#2D5A27]" />
                                     ) : (
                                       <AlertCircle className="w-5 h-5 text-red-600" />
                                     )}
@@ -677,7 +707,7 @@ export default function GrowerBatchesPage() {
                                 type="button"
                                 onClick={() => handleApproveForLoading(selectedBatch!)}
                                 disabled={approving}
-                                className="w-full inline-flex items-center justify-center min-h-[52px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                                className="w-full inline-flex items-center justify-center min-h-[52px] px-4 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                               >
                                 <CheckCircle className="w-5 h-5 mr-2 shrink-0" />
                                 {approving ? t('growerPages.standardApproving') : t('growerPages.standardApproveForLoading')}
@@ -697,7 +727,7 @@ export default function GrowerBatchesPage() {
                       <div className="border-t border-gray-200 pt-6">
                         <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('growerPages.batchActionsTitle')}</h3>
                         <div className="flex flex-wrap gap-3">
-                          <button type="button" className="inline-flex items-center min-h-[48px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2">
+                          <button type="button" className="inline-flex items-center min-h-[48px] px-4 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2">
                             <QrCode className="w-5 h-5 mr-2 shrink-0" />
                             {t('growerPages.batchActionViewQr')}
                           </button>

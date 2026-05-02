@@ -1,18 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { missionsAPI, batchesAPI } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 
-/** Shown when POST /missions fails so we see status, message, and non-JSON bodies (e.g. 502 HTML). */
-function formatMissionCreateError(error: unknown): string {
+/** Shown when POST /missions fails — localized wrapper + technical detail when present */
+function formatMissionCreateError(error: unknown, t: TFunction): string {
   const e = error as {
     code?: string;
     message?: string;
@@ -20,15 +22,18 @@ function formatMissionCreateError(error: unknown): string {
   };
   if (!e?.response) {
     const code = e?.code;
-    const msg = e?.message || 'Request failed';
+    const msg = e?.message || t('grower.missionCreate.errRequestFailed');
     if (code === 'ERR_NETWORK' || msg === 'Network Error') {
       return [
-        'The browser could not reach the API (network / CORS / wrong URL).',
-        `Tried base URL from config (see also Network tab for the real URL): ${WEB_API_BASE}`,
-        `Error: ${msg}`,
+        t('grower.missionCreate.errBrowserCouldNotReachApi'),
+        t('grower.missionCreate.errTriedBaseUrl', { base: WEB_API_BASE }),
+        t('grower.missionCreate.errDetail', { detail: msg }),
       ].join('\n\n');
     }
-    return `No response from server${code ? ` (${code})` : ''}. ${msg}`;
+    return t('grower.missionCreate.errNoResponseFromServer', {
+      codePart: code ? t('grower.missionCreate.errCodePart', { code: String(code) }) : '',
+      msg,
+    });
   }
   const status = e.response.status;
   const data = e.response.data as Record<string, unknown> | string | undefined;
@@ -51,17 +56,15 @@ function formatMissionCreateError(error: unknown): string {
       try {
         body = JSON.stringify(data, null, 2);
       } catch {
-        body = 'Could not read error body';
+        body = t('grower.missionCreate.errCouldNotReadBody');
       }
     }
   }
   if (!body) {
-    body =
-      'Empty or unreadable error body — open DevTools → Network, click the /missions request, and read the Response; the real reason is also in API server logs.';
+    body = t('grower.missionCreate.errEmptyBody');
   }
   return `${prefix}\n\n${body}`;
 }
-
 
 interface Batch {
   id: string;
@@ -79,11 +82,17 @@ const GEO_OPTIONS: PositionOptions = {
   timeout: 18_000,
 };
 
+const btnPrimary =
+  'inline-flex items-center gap-2 px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] transition-colors disabled:bg-gray-400';
+const btnPrimaryLg =
+  'px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 bg-[#2D5A27] text-white hover:bg-[#23471f]';
+const inputFocus = 'focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]';
+
 export default function CreateMissionPage() {
   const { t } = useTranslation();
   const navItems = useGrowerNavItems();
-  /** Initial batch list only (do not conflate with GPS) */
   const [batchesLoading, setBatchesLoading] = useState(true);
+  const [batchLoadError, setBatchLoadError] = useState<string | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [addressLookupLoading, setAddressLookupLoading] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
@@ -95,15 +104,11 @@ export default function CreateMissionPage() {
     pickupAddress: '',
     pickupLat: '',
     pickupLng: '',
-    /** Used to group partial loads (e.g. 200 kg + 500 kg) on one truck to the same city */
     destinationCity: '',
-    /** Full drop-off: hub, buyer DC, wholesale market gate, etc. */
     destinationAddress: '',
-    /** Pallets, time window, dock — optional */
     loadInstructions: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  /** API message when mission is blocked (materials + compliance) */
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [complianceForBatch, setComplianceForBatch] = useState<{
     complete: boolean;
@@ -111,22 +116,16 @@ export default function CreateMissionPage() {
     stickerRollId: string | null;
   } | null>(null);
   const [complianceLoading, setComplianceLoading] = useState(false);
-  /**
-   * Track where the user last set values from — helps debug "where does this come from?"
-   * Coords are never loaded from the estate/batch in DB; they are only browser GPS or manual.
-   */
   const [lineage, setLineage] = useState<{
     coordFrom: 'none' | 'browser-gps' | 'typed';
     addressFrom: 'none' | 'nominatim' | 'placeholder' | 'typed';
   }>({ coordFrom: 'none', addressFrom: 'none' });
-  /** Nominatim often has no house number in OpenStreetMap at this pin — show hint */
   const [addressMissingHouseNo, setAddressMissingHouseNo] = useState(false);
 
   useEffect(() => {
-    loadBatches();
+    void loadBatches();
   }, []);
 
-  // After filtering to PACKED / QUALITY_VERIFIED, clear selection if that lot is no longer in the list
   useEffect(() => {
     setFormData((prev) => {
       if (!prev.batchId) return prev;
@@ -141,14 +140,13 @@ export default function CreateMissionPage() {
       return;
     }
     let cancelled = false;
-    (async () => {
+    void (async () => {
       setComplianceLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(
-          `${WEB_API_BASE}/material-control/compliance-status/${formData.batchId}`,
-          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
-        );
+        const res = await fetch(`${WEB_API_BASE}/material-control/compliance-status/${formData.batchId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         if (!res.ok) {
           if (!cancelled) setComplianceForBatch(null);
           return;
@@ -172,16 +170,17 @@ export default function CreateMissionPage() {
 
   const loadBatches = async () => {
     try {
+      setBatchLoadError(null);
       setBatchesLoading(true);
-      // Get batches that are ready for transport (PACKED status)
       const allBatches = await batchesAPI.getMyBatches();
-      const readyBatches = allBatches.filter((b: any) => 
-        b.status === 'PACKED' || b.status === 'QUALITY_VERIFIED'
+      const readyBatches = allBatches.filter(
+        (b: { status?: string }) => b.status === 'PACKED' || b.status === 'QUALITY_VERIFIED'
       );
       setBatches(readyBatches);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading batches:', error);
-      alert('Failed to load batches');
+      setBatchLoadError(growerApiErrorOrT(error, t, 'grower.missionCreate.errLoadBatches'));
+      setBatches([]);
     } finally {
       setBatchesLoading(false);
     }
@@ -189,7 +188,7 @@ export default function CreateMissionPage() {
 
   const getCurrentLocation = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
+      setLocationHint(t('grower.missionCreate.geoNotSupported'));
       return;
     }
 
@@ -212,12 +211,9 @@ export default function CreateMissionPage() {
       },
       (error) => {
         console.error('Error getting location:', error);
-        const code = error && typeof error === 'object' && 'code' in error ? (error as GeolocationPositionError).code : 0;
-        const msg =
-          code === 1
-            ? 'Location permission was denied. Allow location for this site or enter coordinates and address below.'
-            : 'Could not get GPS before timeout. Enter latitude, longitude, and address manually.';
-        setLocationHint(msg);
+        const code =
+          error && typeof error === 'object' && 'code' in error ? (error as GeolocationPositionError).code : 0;
+        setLocationHint(code === 1 ? t('grower.missionCreate.geoDenied') : t('grower.missionCreate.geoTimeout'));
         setLocationLoading(false);
       },
       GEO_OPTIONS
@@ -248,12 +244,6 @@ export default function CreateMissionPage() {
           pickupLat: prev.pickupLat || String(lat),
           pickupLng: prev.pickupLng || String(lng),
         }));
-        if (process.env.NODE_ENV === 'development') {
-          // eslint-disable-next-line no-console
-          console.log('[Request transport] Address from Nominatim (OSM) for', lat, lng, {
-            hasHouseNumber: data.hasHouseNumber,
-          });
-        }
         return;
       }
       setLineage((p) => ({ ...p, addressFrom: 'placeholder' }));
@@ -261,11 +251,14 @@ export default function CreateMissionPage() {
         ...prev,
         pickupAddress:
           prev.pickupAddress.trim() ||
-          `Near ${lat.toFixed(5)}, ${lng.toFixed(5)} — add farm name, street, and city`,
+          t('grower.missionCreate.geoPlaceholderAddress', {
+            lat: lat.toFixed(5),
+            lng: lng.toFixed(5),
+          }),
         pickupLat: prev.pickupLat || String(lat),
         pickupLng: prev.pickupLng || String(lng),
       }));
-      setLocationHint('Address lookup did not return a name. We filled a placeholder — please edit the address.');
+      setLocationHint(t('grower.missionCreate.geoLookupNoName'));
     } catch (error) {
       console.error('Error reverse geocoding:', error);
       setLineage((p) => ({ ...p, addressFrom: 'placeholder' }));
@@ -273,11 +266,14 @@ export default function CreateMissionPage() {
         ...prev,
         pickupAddress:
           prev.pickupAddress.trim() ||
-          `Near ${lat.toFixed(5)}, ${lng.toFixed(5)} — add farm name, street, and city`,
+          t('grower.missionCreate.geoPlaceholderAddress', {
+            lat: lat.toFixed(5),
+            lng: lng.toFixed(5),
+          }),
         pickupLat: prev.pickupLat || String(lat),
         pickupLng: prev.pickupLng || String(lng),
       }));
-      setLocationHint('Address lookup failed. You can still submit — please type the full pickup address.');
+      setLocationHint(t('grower.missionCreate.geoLookupFailed'));
     } finally {
       setAddressLookupLoading(false);
     }
@@ -287,30 +283,30 @@ export default function CreateMissionPage() {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.batchId) {
-      newErrors.batchId = 'Please select a batch';
+      newErrors.batchId = t('grower.missionCreate.valSelectBatch');
     }
 
     if (!formData.pickupAddress.trim()) {
-      newErrors.pickupAddress = 'Please enter pickup address';
+      newErrors.pickupAddress = t('grower.missionCreate.valPickupAddress');
     }
 
     if (!formData.pickupLat || !formData.pickupLng) {
-      newErrors.location = 'Please get your location or enter coordinates manually';
+      newErrors.location = t('grower.missionCreate.valLocation');
     } else {
       const la = parseFloat(formData.pickupLat);
       const ln = parseFloat(formData.pickupLng);
       if (!Number.isFinite(la) || !Number.isFinite(ln)) {
-        newErrors.location = 'Latitude and longitude must be valid numbers';
+        newErrors.location = t('grower.missionCreate.valLatLngNumbers');
       } else if (Math.abs(la) > 90 || Math.abs(ln) > 180) {
-        newErrors.location = 'Coordinates are out of range (lat ±90, lng ±180)';
+        newErrors.location = t('grower.missionCreate.valLatLngRange');
       }
     }
 
     if (!formData.destinationCity.trim()) {
-      newErrors.destinationCity = 'Enter destination city or region (for dispatch to combine loads)';
+      newErrors.destinationCity = t('grower.missionCreate.valDestinationCity');
     }
     if (!formData.destinationAddress.trim() || formData.destinationAddress.trim().length < 5) {
-      newErrors.destinationAddress = 'Enter full delivery address (buyer, hub, market, dock)';
+      newErrors.destinationAddress = t('grower.missionCreate.valDestinationAddress');
     }
 
     setErrors(newErrors);
@@ -342,7 +338,7 @@ export default function CreateMissionPage() {
         loadInstructions: formData.loadInstructions.trim() || undefined,
       };
 
-      const mission = await missionsAPI.create(missionData);
+      await missionsAPI.create(missionData);
 
       setSuccess(true);
       setTimeout(() => {
@@ -350,7 +346,7 @@ export default function CreateMissionPage() {
       }, 2000);
     } catch (error: unknown) {
       console.error('Error creating mission:', error);
-      setSubmitError(formatMissionCreateError(error));
+      setSubmitError(formatMissionCreateError(error, t));
     } finally {
       setSubmitting(false);
     }
@@ -361,7 +357,7 @@ export default function CreateMissionPage() {
       <SidebarLayout title={t('grower.nav.requestTransport')} navItems={navItems}>
         <GrowerPageShell>
           <div className="flex h-64 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" />
           </div>
         </GrowerPageShell>
       </SidebarLayout>
@@ -374,25 +370,23 @@ export default function CreateMissionPage() {
         <GrowerPageShell className="space-y-6">
           <GrowerPageHeader
             title={t('growerPages.requestTransport')}
-            description="Your request was sent. You can follow the run in Mission tracker."
+            description={t('grower.missionCreate.headerDescSuccess')}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm"
           >
-            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
-            <h2 className="mb-2 text-2xl font-semibold text-gray-900">Transport request received</h2>
-            <p className="mb-4 text-gray-600">
-              Your request is <strong>queued for dispatch</strong>. BioVera operations assigns a cold-chain driver; you
-              can track the run below as soon as it is assigned.
-            </p>
+            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-[#2D5A27]" />
+            <h2 className="mb-2 text-2xl font-semibold text-gray-900">{t('grower.missionCreate.successTitle')}</h2>
+            <p className="mb-4 text-gray-600">{t('grower.missionCreate.successBody')}</p>
             <p className="text-base text-gray-500">
-              Redirecting to{' '}
-              <Link href="/grower/portal" className="font-semibold text-[#2D5A27] underline">
-                Mission tracker
-              </Link>{' '}
-              (same as sidebar: /grower/portal)…
+              <Trans
+                i18nKey="grower.missionCreate.successRedirect"
+                components={[
+                  <Link key="portal" href="/grower/portal" className="font-semibold text-[#2D5A27] underline" />,
+                ]}
+              />
             </p>
           </motion.div>
         </GrowerPageShell>
@@ -405,55 +399,63 @@ export default function CreateMissionPage() {
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title={t('growerPages.requestTransport')}
-          description="Pick a ready batch, pickup location, and delivery. Prerequisites: quality entry and compliance complete for the lot."
+          description={t('grower.missionCreate.headerDescForm')}
         />
+        {batchLoadError && (
+          <div
+            className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950"
+            role="alert"
+          >
+            <p className="font-medium">{t('grower.missionCreate.errLoadBatches')}</p>
+            <p className="mt-1">{batchLoadError}</p>
+            <button
+              type="button"
+              onClick={() => void loadBatches()}
+              className="mt-3 text-sm font-medium text-[#2D5A27] underline"
+            >
+              {t('growerPages.retry')}
+            </button>
+          </div>
+        )}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
         >
           <p className="text-base text-gray-600 mb-3 leading-relaxed">
-            <strong>Before this page:</strong> batch in <strong>PACKED</strong> or <strong>QUALITY_VERIFIED</strong> (
+            <strong>{t('grower.missionCreate.introBeforeLabel')}</strong> {t('grower.missionCreate.introBeforeStatuses')}{' '}
+            (
             <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
-              My batches
+              {t('grower.nav.myBatches')}
             </Link>
             ) →{' '}
             <Link href="/grower/quality-entry" className="text-[#2D5A27] font-medium underline">
-              Quality entry
+              {t('grower.nav.qualityEntry')}
             </Link>{' '}
-            if required →{' '}
+            {t('grower.missionCreate.introIfRequired')} →{' '}
             <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
-              Compliance photos
+              {t('grower.nav.compliancePhotos')}
             </Link>{' '}
-            + label roll complete. Then pick the lot below.
+            {t('grower.missionCreate.introAfterCompliance')}
           </p>
           <p className="text-base text-gray-600 mb-6 leading-relaxed">
-            Choose a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and full <strong>drop-off</strong>{' '}
-            details. The request is sent to <strong>BioVera operations</strong> (admin panel) — they assign a driver when
-            ready; until then the mission shows as <strong>pending</strong>. Order stock on{' '}
+            {t('grower.missionCreate.introChooseLead')}{' '}
             <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
-              Materials
+              {t('grower.nav.materials')}
             </Link>{' '}
-            if you still need crates or labels.
+            {t('grower.missionCreate.introIfNeedSupplies')}
           </p>
           <p className="text-base text-gray-500 mb-6 border-l-2 border-gray-200 pl-3">
-            <strong>After transport:</strong> when the request is created successfully, the app takes you to{' '}
+            <strong>{t('grower.missionCreate.introAfterLabel')}</strong> {t('grower.missionCreate.introAfterBody')}{' '}
             <Link href="/grower/portal" className="text-[#2D5A27] font-medium underline">
-              Mission tracker
+              {t('grower.nav.missionTracker')}
             </Link>{' '}
-            to follow the run (map, status, logistics).
+            {t('grower.missionCreate.introAfterTail')}
           </p>
 
           <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-base text-slate-800">
-            <p className="font-medium text-slate-900">Split order (e.g. 800 kg + 200 kg, two farms, same day)</p>
-            <p className="mt-1.5 leading-relaxed">
-              One mission = <strong>one batch</strong> and <strong>one pickup</strong>. You cannot attach two grower lots to a
-              single mission. Each farm that supplies part of a buyer line creates <strong>their own</strong> transport
-              request for <strong>their</strong> batch. Use the <strong>same</strong> destination city and full delivery
-              address on both, and in <strong>Load / dock instructions</strong> write the same purchase reference (e.g. “Order
-              #… — 800 kg, leg 1/2, morning window”) and (“… 200 kg, leg 2/2”) so logistics and the driver see two related
-              runs. They may be assigned to one truck (two stops) or two vehicles—operations decide.
-            </p>
+            <p className="font-medium text-slate-900">{t('grower.missionCreate.splitOrderTitle')}</p>
+            <p className="mt-1.5 leading-relaxed">{t('grower.missionCreate.splitOrderBody')}</p>
           </div>
 
           {submitError && (
@@ -461,50 +463,42 @@ export default function CreateMissionPage() {
               className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-900"
               role="alert"
             >
-              <p className="font-medium">Could not create transport</p>
+              <p className="font-medium">{t('grower.missionCreate.submitErrorTitle')}</p>
               <p className="mt-1 whitespace-pre-wrap">{submitError}</p>
               {/compliance|photo|packaging|crate|materials|Non-standard|Missing balance|label roll/i.test(
                 submitError
               ) && (
                 <p className="mt-3 text-xs text-red-800/90">
-                  Add photos:{' '}
-                  <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
-                    Compliance photos
-                  </Link>
-                  . Order crates / stock:{' '}
-                  <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline">
-                    Materials
-                  </Link>
-                  . Message your material partner:{' '}
-                  <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline">
-                    Suppliers &amp; orders
-                  </Link>
-                  . Still stuck:{' '}
-                  <Link href="/contact" className="font-semibold text-[#2D5A27] underline">
-                    Contact
-                  </Link>
-                  .
+                  <Trans
+                    i18nKey="grower.missionCreate.submitErrorFooter"
+                    components={{
+                      compliance: <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline" />,
+                      materials: <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline" />,
+                      suppliers: <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline" />,
+                      contact: <Link href="/contact" className="font-semibold text-[#2D5A27] underline" />,
+                    }}
+                  />
                 </p>
               )}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Batch Selection */}
             <div>
               <label className="block text-base font-medium text-gray-700 mb-2">
-                Select Batch * {batches.length === 0 && <span className="text-red-500">(No ready batches available)</span>}
+                {t('grower.missionCreate.labelSelectBatch')}{' '}
+                {batches.length === 0 && <span className="text-red-500">{t('grower.missionCreate.noReadyBatches')}</span>}
               </label>
               <select
                 value={formData.batchId}
                 onChange={(e) => setFormData({ ...formData, batchId: e.target.value })}
                 required
                 disabled={batches.length === 0}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                className={`w-full px-4 py-2 border rounded-lg ${inputFocus} focus:border-transparent ${
                   errors.batchId ? 'border-red-500' : 'border-gray-300'
                 } ${batches.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               >
-                <option value="">-- Select Batch --</option>
+                <option value="">{t('grower.missionCreate.selectBatchPlaceholder')}</option>
                 {batches.map((batch) => (
                   <option key={batch.id} value={batch.id}>
                     {batch.batchId} - {batch.productName} ({batch.quantity} {batch.unit})
@@ -513,19 +507,17 @@ export default function CreateMissionPage() {
               </select>
               {errors.batchId && <p className="text-red-500 text-xs mt-1">{errors.batchId}</p>}
               {batches.length === 0 && (
-                <p className="text-base text-gray-500 mt-2">
-                  You need to have batches with status "PACKED" or "QUALITY_VERIFIED" to request transport.
-                </p>
+                <p className="text-base text-gray-500 mt-2">{t('grower.missionCreate.needPackedOrVerified')}</p>
               )}
               {formData.batchId && (
                 <div className="mt-3 rounded-lg border px-3 py-2 text-base">
                   {complianceLoading ? (
-                    <p className="text-gray-600">Checking compliance for this lot…</p>
+                    <p className="text-gray-600">{t('grower.missionCreate.complianceChecking')}</p>
                   ) : complianceForBatch?.complete ? (
                     <p className="text-emerald-800 flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
                       <span>
-                        Compliance and label roll are on file for this lot
+                        {t('grower.missionCreate.complianceOk')}
                         {complianceForBatch.stickerRollId ? (
                           <>
                             {' '}
@@ -537,41 +529,39 @@ export default function CreateMissionPage() {
                     </p>
                   ) : complianceForBatch ? (
                     <div className="text-amber-900">
-                      <p className="font-medium">Compliance not complete for this lot</p>
+                      <p className="font-medium">{t('grower.missionCreate.complianceIncomplete')}</p>
                       {complianceForBatch.missingPhotoTypes?.length > 0 && (
                         <p className="mt-1">
-                          Missing photo types: <strong>{complianceForBatch.missingPhotoTypes.join(', ')}</strong>
+                          {t('grower.missionCreate.complianceMissingPhotos')}{' '}
+                          <strong>{complianceForBatch.missingPhotoTypes.join(', ')}</strong>
                         </p>
                       )}
                       {!complianceForBatch.stickerRollId &&
                         complianceForBatch.missingPhotoTypes?.length === 0 && (
-                          <p className="mt-1">Label roll is not linked to this lot in the system yet.</p>
+                          <p className="mt-1">{t('grower.missionCreate.complianceNoRoll')}</p>
                         )}
                       <p className="mt-2">
                         <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
-                          Open Compliance photos
+                          {t('grower.missionCreate.complianceOpenLink')}
                         </Link>{' '}
-                        and submit all three photos plus the sticker roll ID, then return here.
+                        {t('grower.missionCreate.complianceOpenTail')}
                       </p>
                     </div>
                   ) : (
-                    <p className="text-gray-600">Could not load compliance status. You can still try to submit.</p>
+                    <p className="text-gray-600">{t('grower.missionCreate.complianceLoadFailed')}</p>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Pickup Location */}
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">
-                Pickup Location *
-              </label>
+              <label className="block text-base font-medium text-gray-700 mb-2">{t('grower.missionCreate.pickupLocation')}</label>
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={getCurrentLocation}
                   disabled={locationLoading || addressLookupLoading}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400"
+                  className={`${btnPrimary} disabled:bg-gray-400`}
                 >
                   {locationLoading || addressLookupLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -579,10 +569,10 @@ export default function CreateMissionPage() {
                     <MapPin className="w-4 h-4" />
                   )}
                   {locationLoading
-                    ? 'Getting GPS...'
+                    ? t('grower.missionCreate.gpsGetting')
                     : addressLookupLoading
-                      ? 'Looking up address...'
-                      : 'Use my current location'}
+                      ? t('grower.missionCreate.gpsLookupAddress')
+                      : t('grower.missionCreate.gpsUseCurrent')}
                 </button>
               </div>
               {locationHint && (
@@ -590,35 +580,31 @@ export default function CreateMissionPage() {
                   {locationHint}
                 </p>
               )}
-              <p className="text-xs text-gray-500 mb-2">Or type lat/lng and address manually—no need to use GPS.</p>
+              <p className="text-xs text-gray-500 mb-2">{t('grower.missionCreate.manualCoordsHint')}</p>
               <div className="mb-3 rounded-md border border-gray-200 bg-gray-50/80 px-3 py-2 text-xs text-gray-600 space-y-1">
-                <p className="font-medium text-gray-700">Data source (not from your batch in the database)</p>
+                <p className="font-medium text-gray-700">{t('grower.missionCreate.lineageTitle')}</p>
                 <p>
-                  <span className="text-gray-500">Coordinates:</span>{' '}
-                  {lineage.coordFrom === 'browser-gps' && 'last set from this browser’s GPS (WGS-84).'}
-                  {lineage.coordFrom === 'typed' && 'you typed (or edited) the numbers in the fields.'}
-                  {lineage.coordFrom === 'none' && 'not set yet. Use the button or type lat/lng.'}
+                  <span className="text-gray-500">{t('grower.missionCreate.lineageCoordLabel')}</span>{' '}
+                  {lineage.coordFrom === 'browser-gps' && t('grower.missionCreate.lineageCoordGps')}
+                  {lineage.coordFrom === 'typed' && t('grower.missionCreate.lineageCoordTyped')}
+                  {lineage.coordFrom === 'none' && t('grower.missionCreate.lineageCoordNone')}
                 </p>
                 <p>
-                  <span className="text-gray-500">Address:</span>{' '}
-                  {lineage.addressFrom === 'nominatim' && 'from OpenStreetMap (Nominatim) after GPS. Street + number only if that point exists in the map data — not 100% from GPS.'}
-                  {lineage.addressFrom === 'placeholder' && 'a temporary line we filled when the geocoder had no name — you should fix it to the real farm gate if needed.'}
-                  {lineage.addressFrom === 'typed' && 'you typed in the box (or last edit was by you).'}
-                  {lineage.addressFrom === 'none' && 'not set from lookup yet — add it yourself for the driver.'}
+                  <span className="text-gray-500">{t('grower.missionCreate.lineageAddrLabel')}</span>{' '}
+                  {lineage.addressFrom === 'nominatim' && t('grower.missionCreate.lineageAddrNominatim')}
+                  {lineage.addressFrom === 'placeholder' && t('grower.missionCreate.lineageAddrPlaceholder')}
+                  {lineage.addressFrom === 'typed' && t('grower.missionCreate.lineageAddrTyped')}
+                  {lineage.addressFrom === 'none' && t('grower.missionCreate.lineageAddrNone')}
                 </p>
                 <details className="pt-1 text-gray-500">
-                  <summary className="cursor-pointer text-[#2D5A27]">How to double-check in the browser</summary>
-                  <p className="mt-1 pl-0">
-                    Open <strong>DevTools</strong> (F12) → <strong>Network</strong> → after clicking the green button, look for
-                    the request to <code className="text-gray-800">/api/reverse-geocode</code> — that is the address lookup.
-                    The mission send goes to your API <code className="text-gray-800">POST /missions</code> (see axios in Network).
-                  </p>
+                  <summary className="cursor-pointer text-[#2D5A27]">{t('grower.missionCreate.lineageDevSummary')}</summary>
+                  <p className="mt-1 pl-0">{t('grower.missionCreate.lineageDevBody')}</p>
                 </details>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>
-                  <label className="block text-xs text-gray-600 mb-1">Latitude</label>
+                  <label className="block text-xs text-gray-600 mb-1">{t('grower.missionCreate.latLabel')}</label>
                   <input
                     type="number"
                     step="any"
@@ -627,14 +613,14 @@ export default function CreateMissionPage() {
                       setLineage((p) => ({ ...p, coordFrom: 'typed' }));
                       setFormData({ ...formData, pickupLat: e.target.value });
                     }}
-                    placeholder="e.g., 44.7866"
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                    placeholder={t('grower.missionCreate.latPlaceholder')}
+                    className={`w-full px-3 py-2 border rounded-lg ${inputFocus} ${
                       errors.location ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-600 mb-1">Longitude</label>
+                  <label className="block text-xs text-gray-600 mb-1">{t('grower.missionCreate.lngLabel')}</label>
                   <input
                     type="number"
                     step="any"
@@ -643,8 +629,8 @@ export default function CreateMissionPage() {
                       setLineage((p) => ({ ...p, coordFrom: 'typed' }));
                       setFormData({ ...formData, pickupLng: e.target.value });
                     }}
-                    placeholder="e.g., 20.4489"
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                    placeholder={t('grower.missionCreate.lngPlaceholder')}
+                    className={`w-full px-3 py-2 border rounded-lg ${inputFocus} ${
                       errors.location ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -653,11 +639,8 @@ export default function CreateMissionPage() {
               {errors.location && <p className="text-red-500 text-xs mb-2">{errors.location}</p>}
             </div>
 
-            {/* Pickup Address */}
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">
-                Pickup Address *
-              </label>
+              <label className="block text-base font-medium text-gray-700 mb-2">{t('grower.missionCreate.pickupAddressLabel')}</label>
               <textarea
                 value={formData.pickupAddress}
                 onChange={(e) => {
@@ -665,52 +648,45 @@ export default function CreateMissionPage() {
                   setAddressMissingHouseNo(false);
                   setFormData({ ...formData, pickupAddress: e.target.value });
                 }}
-                placeholder="Enter full pickup address (e.g., Farm Name, Street, City, Country)"
+                placeholder={t('grower.missionCreate.pickupAddressPlaceholder')}
                 rows={3}
                 required
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                className={`w-full px-4 py-2 border rounded-lg ${inputFocus} focus:border-transparent ${
                   errors.pickupAddress ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
               {errors.pickupAddress && <p className="text-red-500 text-xs mt-1">{errors.pickupAddress}</p>}
               {addressMissingHouseNo && (
                 <p className="text-base text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mt-2">
-                  <strong>House or gate number not in the address.</strong> The public map (OpenStreetMap) often has no
-                  building number at your GPS point. Add the exact street and number, or a farm / gate name, so the
-                  driver knows where to stop.
+                  {t('grower.missionCreate.houseNumberHint')}
                 </p>
               )}
             </div>
 
-            {/* Delivery / drop-off — required for routing and load planning */}
             <div className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4 space-y-4">
-              <h3 className="text-base font-semibold text-gray-900">Where this load is going (delivery)</h3>
-              <p className="text-xs text-gray-600">
-                Operations and drivers need a <strong>clear drop-off</strong>. If several small lots go to the{' '}
-                <strong>same city</strong>, you can use the same spelling so dispatch can assign the <strong>same
-                driver</strong> to both missions (one truck, two stops) when they are ready.
-              </p>
+              <h3 className="text-base font-semibold text-gray-900">{t('grower.missionCreate.deliverySectionTitle')}</h3>
+              <p className="text-xs text-gray-600">{t('grower.missionCreate.deliverySectionHint')}</p>
               <div>
-                <label className="block text-base font-medium text-gray-700 mb-1">Destination city / region *</label>
+                <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.missionCreate.destinationCityLabel')}</label>
                 <input
                   type="text"
                   value={formData.destinationCity}
                   onChange={(e) => setFormData({ ...formData, destinationCity: e.target.value })}
-                  placeholder="e.g. Hamburg, Berlin, Munich"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                  placeholder={t('grower.missionCreate.destinationCityPlaceholder')}
+                  className={`w-full px-4 py-2 border rounded-lg ${inputFocus} ${
                     errors.destinationCity ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
                 {errors.destinationCity && <p className="text-red-500 text-xs mt-1">{errors.destinationCity}</p>}
               </div>
               <div>
-                <label className="block text-base font-medium text-gray-700 mb-1">Full delivery address *</label>
+                <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.missionCreate.destinationAddressLabel')}</label>
                 <textarea
                   value={formData.destinationAddress}
                   onChange={(e) => setFormData({ ...formData, destinationAddress: e.target.value })}
-                  placeholder="Company or hub name, street, gate, city, country — as agreed for handover"
+                  placeholder={t('grower.missionCreate.destinationAddressPlaceholder')}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 ${
+                  className={`w-full px-4 py-2 border rounded-lg ${inputFocus} ${
                     errors.destinationAddress ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -720,34 +696,31 @@ export default function CreateMissionPage() {
               </div>
               <div>
                 <label className="block text-base font-medium text-gray-700 mb-1">
-                  Loading / delivery notes (optional)
+                  {t('grower.missionCreate.loadInstructionsLabel')}
                 </label>
                 <textarea
                   value={formData.loadInstructions}
                   onChange={(e) => setFormData({ ...formData, loadInstructions: e.target.value })}
-                  placeholder="E.g. 2 Euro pallets, delivery 06:00–10:00, cold dock B — anything the loader should know"
+                  placeholder={t('grower.missionCreate.loadInstructionsPlaceholder')}
                   rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className={`w-full px-4 py-2 border border-gray-300 rounded-lg ${inputFocus}`}
                 />
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="flex gap-3 justify-end pt-4 border-t">
               <button
                 type="button"
                 onClick={() => window.history.back()}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
-                Cancel
+                {t('grower.missionCreate.cancel')}
               </button>
               <button
                 type="submit"
                 disabled={submitting || batches.length === 0}
-                className={`px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-                  submitting || batches.length === 0
-                    ? 'bg-gray-400 text-white cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
+                className={`${btnPrimaryLg} ${
+                  submitting || batches.length === 0 ? 'bg-gray-400 text-white cursor-not-allowed hover:bg-gray-400' : ''
                 }`}
               >
                 {submitting ? (

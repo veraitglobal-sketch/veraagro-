@@ -195,7 +195,8 @@ export default function CompliancePhotosPage() {
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      alert(t('grower.compliancePhotos.errors.photoSize'));
+      setSuccess(null);
+      setError(t('grower.compliancePhotos.errors.photoSize'));
       return;
     }
 
@@ -315,9 +316,9 @@ export default function CompliancePhotosPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-green-50 border border-green-200 rounded-lg"
+            className="p-4 bg-[#f7faf6] border border-[#2D5A27]/20 rounded-lg"
           >
-            <p className="text-base text-green-800">{success}</p>
+            <p className="text-base text-[#1a3d17]">{success}</p>
           </motion.div>
         )}
 
@@ -368,7 +369,7 @@ export default function CompliancePhotosPage() {
               <select
                 value={selectedBatch}
                 onChange={(e) => handleBatchChange(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
               >
                 <option value="">{t('grower.compliancePhotos.selectBatchPlaceholder')}</option>
                 {batches.map((batch) => (
@@ -455,7 +456,7 @@ export default function CompliancePhotosPage() {
                     const v = e.target.value;
                     if (v) setStickerRollId(v);
                   }}
-                  className="w-full px-4 py-2 mb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 mb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                 >
                   <option value="">{t('grower.compliancePhotos.pickRollPlaceholder')}</option>
                   {labelRolls
@@ -479,12 +480,12 @@ export default function CompliancePhotosPage() {
                     value={stickerRollId}
                     onChange={(e) => setStickerRollId(e.target.value)}
                     placeholder={t('grower.compliancePhotos.stickerInputPlaceholder')}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
                   />
                   <button
                     type="button"
                     onClick={handleVerifySticker}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 border-2 border-[#2D5A27] text-[#2D5A27] bg-white rounded-lg hover:bg-[#f7faf6] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50"
                   >
                     {t('grower.compliancePhotos.verify')}
                   </button>
@@ -512,7 +513,7 @@ export default function CompliancePhotosPage() {
                         />
                         <label
                           htmlFor={`photo-${photo.type}`}
-                          className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-center"
+                          className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#2D5A27]/50 transition-colors text-center"
                         >
                           {photos[photo.type] ? (
                             <div className="space-y-2">
@@ -521,7 +522,7 @@ export default function CompliancePhotosPage() {
                                 alt={photo.label}
                                 className="w-full h-48 object-cover rounded mt-2"
                               />
-                              <p className="text-base text-green-600">
+                              <p className="text-base text-[#2D5A27]">
                                 {t('grower.compliancePhotos.photoAddedPending')}
                               </p>
                             </div>
@@ -576,7 +577,7 @@ export default function CompliancePhotosPage() {
                     !stickerRollId ||
                     Object.keys(photos).length !== requiredPhotos.length
                   }
-                  className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {uploading
                     ? t('grower.compliancePhotos.uploading')
