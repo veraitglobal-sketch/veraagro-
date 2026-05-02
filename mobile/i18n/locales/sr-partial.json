@@ -283,6 +283,7 @@
       "returnOk": "Povraćaj zabeležen"
     },
     "dashboard": {
+      "defaultFarmName": "Moje gazdinstvo",
       "partner": "Kod",
       "nextStep": {
         "eyebrow": "Šta dalje",
@@ -373,7 +374,10 @@
         "receivedAtFarmWithWhen": "Primljeno na farmi: {{when}}",
         "waitingSupplierConfirm": "Čeka se potvrda snabdevača…",
         "receivingInProgress": "…",
-        "markReceivedFailed": "Nije moguće označiti prijem na farmi. Pokušaj ponovo."
+        "markReceivedFailed": "Nije moguće označiti prijem na farmi. Pokušaj ponovo.",
+        "threadDeepLinkMissing": "Link ka razgovoru nije ispravan.",
+        "threadNotFound": "Ovaj razgovor nije dostupan na tvom nalogu.",
+        "openPartnerOrdersList": "Otvori porudžbine partnera"
       },
       "quickActions": "Brze akcije",
       "more": "Još",
@@ -662,6 +666,7 @@
     },
     "qualityEntry": {
       "screenTitle": "Unos kvaliteta",
+      "batchHeading": "Partija",
       "selectBatch": "Izaberi partiju",
       "qualityScoreRange": "Ocena kvaliteta mora biti između 0 i 100",
       "qualityScore": "Ocena kvaliteta (0–100, opciono)",

@@ -8,6 +8,17 @@ import { Activity, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
+
+const MISSION_FILTER_STATUSES = [
+  'PENDING',
+  'ASSIGNED',
+  'ACCEPTED',
+  'IN_PROGRESS',
+  'PICKED_UP',
+  'IN_TRANSIT',
+  'COMPLETED',
+] as const;
 
 type Lp = {
   id: string;
@@ -20,7 +31,8 @@ type Lp = {
 };
 
 export default function MissionsManagementPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const adminNavItems = useAdminNavItems();
   const [missions, setMissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +61,7 @@ export default function MissionsManagementPage() {
       setMissions(data);
     } catch (err: any) {
       console.error('Error loading missions:', err);
-      setError(err.message || 'Failed to load missions');
+      setError(err.message || t('adminPages.missions.errLoadMissions'));
     } finally {
       setLoading(false);
     }
@@ -66,7 +78,7 @@ export default function MissionsManagementPage() {
         const list = (await missionsAPI.getLogisticsPartnersAdmin()) as Lp[];
         setPartners(Array.isArray(list) ? list : []);
       } catch (e: any) {
-        setAssignError(e?.message || 'Could not load logistics partners');
+        setAssignError(e?.message || t('adminPages.missions.errLoadPartners'));
         setPartners([]);
       } finally {
         setPartnersLoading(false);
@@ -92,7 +104,7 @@ export default function MissionsManagementPage() {
       await loadMissions();
     } catch (e: any) {
       setAssignError(
-        e?.response?.data?.message || e?.message || 'Assign failed',
+        e?.response?.data?.message || e?.message || t('adminPages.missions.errAssign'),
       );
     } finally {
       setAssignSubmitting(false);
@@ -112,21 +124,13 @@ export default function MissionsManagementPage() {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">Missions &amp; transport dispatch</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Flow: <strong>Harvest plan</strong> (grower) → you confirm in Harvest plans, grower ships when ready →{' '}
-                <strong>Request transport</strong> creates a mission. Here: <strong>PENDING</strong> = no driver yet — you
-                can <strong>Assign</strong> a specific partner and vehicle, or leave the mission open for logistics to{' '}
-                <em>claim</em> in their app (first-come, then accept).
-              </p>
+              <h1 className="text-2xl font-light text-gray-900">{t('adminPages.missions.headerTitle')}</h1>
+              <p className="text-sm text-gray-600 mt-1">{t('adminPages.missions.headerSubtitle')}</p>
             </div>
           </div>
 
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-            <strong>Multi-stop / one truck:</strong> the system still stores <strong>one batch per mission</strong>. To
-            group two grower lots, keep both requests on the <strong>same destination city and address</strong> and
-            reference the same order in notes — then assign the <strong>same</strong> driver to both rows here, or use
-            Command Control to reassign.
+            {t('adminPages.missions.multiStopHint')}
           </div>
 
           <div className="bg-white rounded-lg shadow border border-gray-200 p-4 flex flex-wrap items-center gap-4">
@@ -135,14 +139,12 @@ export default function MissionsManagementPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="ASSIGNED">Assigned</option>
-              <option value="ACCEPTED">Accepted</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="PICKED_UP">Picked Up</option>
-              <option value="IN_TRANSIT">In Transit</option>
-              <option value="COMPLETED">Completed</option>
+              <option value="">{t('adminPages.missions.filterAllStatuses')}</option>
+              {MISSION_FILTER_STATUSES.map((st) => (
+                <option key={st} value={st}>
+                  {t(`adminPages.missions.statuses.${st}`)}
+                </option>
+              ))}
             </select>
             <label className="inline-flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
@@ -151,13 +153,13 @@ export default function MissionsManagementPage() {
                 onChange={(e) => setUnassignedOnly(e.target.checked)}
                 className="rounded border-gray-300"
               />
-              Only PENDING, no driver yet
+              {t('adminPages.missions.unassignedOnly')}
             </label>
             <a
               href="/admin/command-control"
               className="text-sm text-green-800 underline ml-auto"
             >
-              Command Control (reassign)
+              {t('adminPages.missions.commandControlLink')}
             </a>
           </div>
 
@@ -169,7 +171,7 @@ export default function MissionsManagementPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading missions...</p>
+                <p className="mt-4 text-gray-600">{t('adminPages.missions.loading')}</p>
               </div>
             </div>
           ) : (
@@ -177,15 +179,15 @@ export default function MissionsManagementPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mission</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grower</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Buyer order</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Driver</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colMission')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colGrower')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colDestination')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colBuyerOrder')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colDriver')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colProduct')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colStatus')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colCreated')}</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('adminPages.missions.colActions')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -204,7 +206,7 @@ export default function MissionsManagementPage() {
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 max-w-[200px]">
                           <div className="font-medium text-gray-800">
-                            {mission.destinationCity || '—'}
+                            {mission.destinationCity || t('common.emDash')}
                           </div>
                           {mission.destinationAddress && (
                             <div className="text-xs text-gray-500 line-clamp-2">{mission.destinationAddress}</div>
@@ -214,17 +216,17 @@ export default function MissionsManagementPage() {
                           {mission.orders?.orderNumber ? (
                             <span className="font-mono text-xs">{mission.orders.orderNumber}</span>
                           ) : (
-                            <span className="text-gray-400">—</span>
+                            <span className="text-gray-400">{t('common.emDash')}</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {mission.users_missions_logisticsPartnerIdTousers?.firstName}{' '}
                           {mission.users_missions_logisticsPartnerIdTousers?.lastName || (
-                            <span className="text-amber-700">Unassigned</span>
+                            <span className="text-amber-700">{t('adminPages.missions.unassigned')}</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                          {mission.batches?.productName || mission.orders?.productName || '—'}
+                          {mission.batches?.productName || mission.orders?.productName || t('common.emDash')}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           <span
@@ -238,11 +240,13 @@ export default function MissionsManagementPage() {
                                     : 'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {mission.status.replace(/_/g, ' ')}
+                            {t(`adminPages.missions.statuses.${mission.status as string}`, {
+                              defaultValue: mission.status.replace(/_/g, ' '),
+                            })}
                           </span>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(mission.createdAt).toLocaleString()}
+                          {new Date(mission.createdAt).toLocaleString(dateLocale)}
                         </td>
                         <td className="px-4 py-3 text-right">
                           {canAssign && (
@@ -252,7 +256,7 @@ export default function MissionsManagementPage() {
                               className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md px-3 py-1.5"
                             >
                               <Truck className="w-4 h-4" />
-                              Assign driver
+                              {t('adminPages.missions.assignDriver')}
                             </button>
                           )}
                         </td>
@@ -264,7 +268,7 @@ export default function MissionsManagementPage() {
               {displayed.length === 0 && (
                 <div className="text-center py-12">
                   <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No missions in this view</p>
+                  <p className="text-gray-500">{t('adminPages.missions.emptyState')}</p>
                 </div>
               )}
             </div>
@@ -277,16 +281,19 @@ export default function MissionsManagementPage() {
               aria-modal="true"
             >
               <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
-                <h2 className="text-lg font-semibold text-gray-900">Assign driver</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('adminPages.missions.assignModalTitle')}</h2>
                 <p className="text-sm text-gray-600">
-                  Mission <strong>{assignMission.missionNumber}</strong> — {assignMission.batches?.productName || 'Load'}
+                  {t('adminPages.missions.assignModalMission', {
+                    missionNumber: assignMission.missionNumber,
+                    product: assignMission.batches?.productName || t('adminPages.missions.loadFallback'),
+                  })}
                 </p>
                 {partnersLoading ? (
-                  <p className="text-sm text-gray-500">Loading partners…</p>
+                  <p className="text-sm text-gray-500">{t('adminPages.missions.loadingPartners')}</p>
                 ) : (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Logistics partner *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.missions.labelLogisticsPartner')}</label>
                       <select
                         value={selectedPartnerId}
                         onChange={(e) => {
@@ -295,25 +302,27 @@ export default function MissionsManagementPage() {
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       >
-                        <option value="">Select…</option>
+                        <option value="">{t('adminPages.missions.selectPartner')}</option>
                         {partners.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.firstName} {p.lastName}
                             {p.partnerCode ? ` (${p.partnerCode})` : ''}
-                            {p.vehicles?.length ? ` — ${p.vehicles.length} vehicle(s)` : ' — no temperature-controlled vehicle available'}
+                            {p.vehicles?.length
+                              ? ` — ${t('adminPages.missions.partnerVehicles', { count: p.vehicles.length })}`
+                              : ` — ${t('adminPages.missions.partnerNoColdVehicle')}`}
                           </option>
                         ))}
                       </select>
                     </div>
                     {selectedPartner && selectedPartner.vehicles.length > 0 && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle (optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.missions.labelVehicleOptional')}</label>
                         <select
                           value={selectedVehicleId}
                           onChange={(e) => setSelectedVehicleId(e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
-                          <option value="">Auto (first available cold truck)</option>
+                          <option value="">{t('adminPages.missions.vehicleAuto')}</option>
                           {selectedPartner.vehicles.map((v) => (
                             <option key={v.id} value={v.id}>
                               {v.vehicleNumber || v.licensePlate || v.id}
@@ -331,7 +340,7 @@ export default function MissionsManagementPage() {
                     onClick={() => setAssignMission(null)}
                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
-                    Cancel
+                    {t('adminPages.missions.cancel')}
                   </button>
                   <button
                     type="button"
@@ -339,7 +348,7 @@ export default function MissionsManagementPage() {
                     onClick={submitAssign}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                   >
-                    {assignSubmitting ? 'Assigning…' : 'Assign'}
+                    {assignSubmitting ? t('adminPages.missions.assigning') : t('adminPages.missions.assign')}
                   </button>
                 </div>
               </div>

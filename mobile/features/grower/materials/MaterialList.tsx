@@ -78,7 +78,7 @@ export function MaterialList({
         </Text>
         {lastSync && (
           <Text style={{
-            fontSize: 11,
+            fontSize: 15,
             fontWeight: '300',
             color: colors.text.tertiary,
           }}>
@@ -123,7 +123,7 @@ export function MaterialList({
                   {material.name || material.barcode}
                 </Text>
                 <Text style={{
-                  fontSize: 11,
+                  fontSize: 15,
                   fontWeight: '300',
                   color: colors.text.secondary,
                 }}>
@@ -131,7 +131,7 @@ export function MaterialList({
                 </Text>
                 {material.manufacturer && (
                   <Text style={{
-                    fontSize: 11,
+                    fontSize: 15,
                     fontWeight: '300',
                     color: colors.text.secondary,
                     marginTop: 2,
@@ -147,7 +147,7 @@ export function MaterialList({
                 backgroundColor: `${getTypeColor(material.type ?? 'OTHER')}15`,
               }}>
                 <Text style={{
-                  fontSize: 10,
+                  fontSize: 14,
                   fontWeight: '300',
                   color: getTypeColor(material.type ?? 'OTHER'),
                   letterSpacing: 0.3,
@@ -164,7 +164,7 @@ export function MaterialList({
                 borderTopColor: colors.border,
               }}>
                 <Text style={{
-                  fontSize: 11,
+                  fontSize: 15,
                   fontWeight: '300',
                   color: colors.text.secondary,
                 }}>

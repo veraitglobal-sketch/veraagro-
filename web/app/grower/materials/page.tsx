@@ -300,7 +300,7 @@ export default function GrowerMaterialsPage() {
     return (
       <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
         <GrowerPageShell>
-          <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">
+          <div className="flex min-h-[40vh] items-center justify-center text-base text-gray-500">
             {t('growerPages.materialsLoading')}
           </div>
         </GrowerPageShell>
@@ -317,7 +317,7 @@ export default function GrowerMaterialsPage() {
           balance.crateBalance === 0 &&
           balance.labelRollBalance === 0 &&
           balance.filmMeterBalance === 0 && (
-            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-base text-amber-950">
               <p className="font-medium">{t('growerPages.materialsBalanceZeroTitle')}</p>
               <p className="mt-1 font-light leading-relaxed">
                 <Trans
@@ -332,36 +332,36 @@ export default function GrowerMaterialsPage() {
 
         {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
+            <p className="text-base text-red-800">{error}</p>
           </div>
         )}
         {typesError && (
           <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <p className="text-sm text-amber-950">{typesError}</p>
+            <p className="text-base text-amber-950">{typesError}</p>
           </div>
         )}
         {success && (
           <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
-            <p className="text-sm text-green-800">{success}</p>
+            <p className="text-base text-green-800">{success}</p>
           </div>
         )}
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-gray-900">{balance?.crateBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatCrate')}</div>
+            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatCrate')}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-green-600">{balance?.labelRollBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatRolls')}</div>
+            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatRolls')}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
-            <div className="mt-1 text-sm text-gray-600">{t('growerPages.materialsStatFilm')}</div>
+            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatFilm')}</div>
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
+        <p className="text-base text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
           <span className="text-gray-500">{t('growerPages.materialsShortcuts')}</span>
           <span className="text-gray-300 hidden sm:inline">·</span>
           <a href="#label-roll-ids" className="font-medium text-[#2D5A27] underline">
@@ -390,8 +390,8 @@ export default function GrowerMaterialsPage() {
           onSubmit={submitWhitelistMaterial}
         >
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsWhitelistTitle')}</h2>
-          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">{t('growerPages.materialsWhitelistIntro')}</p>
-          <p className="mb-3 text-sm font-medium text-gray-800">{t('growerPages.materialsWhitelistPickType')}</p>
+          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">{t('growerPages.materialsWhitelistIntro')}</p>
+          <p className="mb-3 text-base font-medium text-gray-800">{t('growerPages.materialsWhitelistPickType')}</p>
           <div className="mb-6 flex flex-wrap gap-2">
             {(['SEED', 'FERTILIZER', 'PESTICIDE', 'OTHER'] as const).map((id) => {
               const on = wlType === id;
@@ -406,7 +406,7 @@ export default function GrowerMaterialsPage() {
                     setWlErr(null);
                     setWlOk(null);
                   }}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`rounded-full px-4 py-2 text-base font-medium transition-colors ${
                     on ? 'bg-[#2D5A27] text-white' : 'border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -416,14 +416,14 @@ export default function GrowerMaterialsPage() {
             })}
           </div>
           {wlErr && (
-            <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{wlErr}</p>
+            <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-base text-red-800">{wlErr}</p>
           )}
           {wlOk && (
-            <p className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">{wlOk}</p>
+            <p className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-base text-green-800">{wlOk}</p>
           )}
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-name">
+              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-name">
                 {t('growerPages.materialsWhitelistName')}
               </label>
               <input
@@ -438,7 +438,7 @@ export default function GrowerMaterialsPage() {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-barcode">
+              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-barcode">
                 {t('growerPages.materialsWhitelistBarcode')}
               </label>
               <input
@@ -454,7 +454,7 @@ export default function GrowerMaterialsPage() {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="wl-mfg">
+              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-mfg">
                 {t('growerPages.materialsWhitelistManufacturer')}
               </label>
               <input
@@ -479,7 +479,7 @@ export default function GrowerMaterialsPage() {
 
         <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsPurchaseTitle')}</h2>
-          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">
+          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
             <Trans
               i18nKey="growerPages.materialsPurchaseIntro"
               components={[
@@ -491,7 +491,7 @@ export default function GrowerMaterialsPage() {
           </p>
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">{t('growerPages.materialsProductLabel')}</label>
+              <label className="mb-2 block text-base font-medium text-gray-700">{t('growerPages.materialsProductLabel')}</label>
               <select
                 value={selectedMaterial}
                 onChange={(e) => setSelectedMaterial(e.target.value)}
@@ -510,7 +510,7 @@ export default function GrowerMaterialsPage() {
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">{t('growerPages.materialsQuantityLabel')}</label>
+              <label className="mb-2 block text-base font-medium text-gray-700">{t('growerPages.materialsQuantityLabel')}</label>
               <input
                 type="number"
                 value={quantity}
@@ -524,7 +524,7 @@ export default function GrowerMaterialsPage() {
             </div>
             {selectedMaterial && quantity && (
               <div className="rounded-lg bg-gray-50 p-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   {t('growerPages.materialsTotalCost', {
                     amount: (
                       parseFloat(quantity) *
@@ -547,7 +547,7 @@ export default function GrowerMaterialsPage() {
 
         <div id="label-roll-ids" className="mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsLabelRollTitle')}</h2>
-          <p className="mb-4 text-sm text-gray-500 font-light leading-relaxed">
+          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
             <Trans
               i18nKey="growerPages.materialsLabelRollIntro"
               components={[
@@ -556,12 +556,12 @@ export default function GrowerMaterialsPage() {
               ]}
             />
           </p>
-          {serialsError && <p className="mb-2 text-sm text-amber-800">{serialsError}</p>}
+          {serialsError && <p className="mb-2 text-base text-amber-800">{serialsError}</p>}
           {labelRolls.length === 0 && !serialsError ? (
-            <p className="text-sm text-gray-500">{t('growerPages.materialsLabelRollEmpty')}</p>
+            <p className="text-base text-gray-500">{t('growerPages.materialsLabelRollEmpty')}</p>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 <span className="font-medium text-gray-900">
                   {t('growerPages.materialsSerialOnFile', { count: labelRollStats.total })}
                 </span>
@@ -596,7 +596,7 @@ export default function GrowerMaterialsPage() {
                     value={labelRollFilter}
                     onChange={(e) => setLabelRollFilter(e.target.value)}
                     placeholder={t('growerPages.materialsSerialSearchPh')}
-                    className="w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                    className="w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-1 focus:ring-[#2D5A27]"
                   />
                   {labelRollFilter.trim() && (
                     <p className="mt-1.5 text-xs text-gray-500">
@@ -614,9 +614,9 @@ export default function GrowerMaterialsPage() {
                   {filteredLabelRolls.map((r) => (
                     <li
                       key={r.serialNumber}
-                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 text-sm sm:py-2.5"
+                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 text-base sm:py-2.5"
                     >
-                      <code className="break-all font-mono text-xs text-gray-900 sm:text-sm">{r.serialNumber}</code>
+                      <code className="break-all font-mono text-xs text-gray-900 sm:text-base">{r.serialNumber}</code>
                       <span className="shrink-0 text-xs text-gray-500">
                         {rollStatusLabel(r.status)}
                         {r.soldAt ? ` · ${formatDateTime(r.soldAt)}` : ''}
@@ -625,7 +625,7 @@ export default function GrowerMaterialsPage() {
                   ))}
                 </ul>
                 {filteredLabelRolls.length === 0 && labelRollFilter.trim() && (
-                  <p className="p-3 text-sm text-gray-500">{t('growerPages.materialsSerialNoMatch')}</p>
+                  <p className="p-3 text-base text-gray-500">{t('growerPages.materialsSerialNoMatch')}</p>
                 )}
               </div>
             </div>
@@ -651,8 +651,8 @@ export default function GrowerMaterialsPage() {
               />
             </svg>
             <div>
-              <p className="text-sm font-medium text-blue-800">{t('growerPages.materialsImportantTitle')}</p>
-              <p className="mt-1 text-sm text-blue-700 font-light leading-relaxed">{t('growerPages.materialsImportantBody')}</p>
+              <p className="text-base font-medium text-blue-800">{t('growerPages.materialsImportantTitle')}</p>
+              <p className="mt-1 text-base text-blue-700 font-light leading-relaxed">{t('growerPages.materialsImportantBody')}</p>
             </div>
           </div>
         </div>

@@ -18,7 +18,7 @@ type Props = {
 function SupplyFlowOrderedSteps({ context }: { context: 'suppliers' | 'materials' }) {
   const { t } = useTranslation();
   return (
-    <ol className="space-y-3 text-sm text-gray-800 list-none">
+    <ol className="space-y-3 text-base text-gray-800 list-none">
       <li
         className={`pl-0 border-l-4 pl-4 py-2 -ml-px ${
           context === 'suppliers'
@@ -114,10 +114,10 @@ export default function GrowerSupplyFlowCard({ context, className = '', variant 
         className={`rounded-lg border border-gray-200 bg-white p-0 shadow-sm ${className}`.trim()}
       >
         <details className="group">
-          <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-lg [&::-webkit-details-marker]:hidden">
+          <summary className="cursor-pointer list-none px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-lg [&::-webkit-details-marker]:hidden">
             {t('growerPages.sfCompactHeadline')} — <span className="text-[#2D5A27]">{t('growerPages.sfCompactOpen')}</span>
           </summary>
-          <div className="px-4 pb-4 pt-0 border-t border-gray-100 space-y-3 text-sm text-gray-600">
+          <div className="px-4 pb-4 pt-0 border-t border-gray-100 space-y-3 text-base text-gray-600">
             <p className="pt-2 font-light">
               <span className="font-medium text-gray-800">{t('growerPages.sfCompactThisPage')}</span> ={' '}
               {t('growerPages.sfCompactEquals')}{' '}
@@ -151,9 +151,9 @@ export default function GrowerSupplyFlowCard({ context, className = '', variant 
         className={`rounded-lg border border-[#2D5A27]/20 bg-gradient-to-b from-white to-gray-50/80 p-4 sm:p-5 shadow-sm space-y-3 ${className}`.trim()}
       >
         <h2 className="text-base font-semibold text-gray-900">{t('growerPages.sfCollapsibleTitle')}</h2>
-        <p className="text-sm text-gray-600 font-light leading-relaxed">{t('growerPages.sfCollapsibleIntro')}</p>
+        <p className="text-base text-gray-600 font-light leading-relaxed">{t('growerPages.sfCollapsibleIntro')}</p>
         <details className="group rounded-md border border-gray-200 bg-white/80">
-          <summary className="cursor-pointer list-none px-3 py-2.5 text-sm font-medium text-[#23471f] hover:bg-gray-50/80 rounded-t-md">
+          <summary className="cursor-pointer list-none px-3 py-2.5 text-base font-medium text-[#23471f] hover:bg-gray-50/80 rounded-t-md">
             <span className="underline decoration-[#2D5A27]/30 underline-offset-2">{t('growerPages.sfCollapsibleShow')}</span>
             <span className="text-gray-500 font-normal">{t('growerPages.sfCollapsibleHint')}</span>
           </summary>
@@ -175,7 +175,7 @@ export default function GrowerSupplyFlowCard({ context, className = '', variant 
     >
       <div>
         <h2 className="text-base font-semibold text-gray-900">{t('growerPages.sfDefaultTitle')}</h2>
-        <p className="text-sm text-gray-600 mt-1 font-light">{t('growerPages.sfDefaultIntro')}</p>
+        <p className="text-base text-gray-600 mt-1 font-light">{t('growerPages.sfDefaultIntro')}</p>
       </div>
 
       <SupplyFlowOrderedSteps context={context} />

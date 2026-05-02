@@ -26,7 +26,7 @@ export default function GrowerPackageBadgesPrintOrderInfoPage() {
             title={t('grower.packageBadges.printOrderInfoTitle')}
             description={t('grower.packageBadges.printOrderMoved')}
           />
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-gray-600">
             <Link
               href="/grower/package-badges"
               className="font-medium text-[#2D5A27] underline-offset-2 hover:underline"

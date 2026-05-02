@@ -56,8 +56,9 @@ export function MaterialsScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingVertical: 12,
+            paddingVertical: 16,
             paddingHorizontal: theme.spacing.md,
+            minHeight: 52,
             backgroundColor: `${theme.colors.primary}12`,
             borderRadius: theme.borderRadius.lg,
             borderWidth: 1,
@@ -66,8 +67,8 @@ export function MaterialsScreen() {
             gap: 8,
           }}
         >
-          <Plus size={20} color={theme.colors.primary} strokeWidth={2} />
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary }}>{t('producer.materials.addButton')}</Text>
+          <Plus size={22} color={theme.colors.primary} strokeWidth={2} />
+          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.primary }}>{t('producer.materials.addButton')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push('/map')}
@@ -96,8 +97,12 @@ export function MaterialsScreen() {
             <MapPin size={22} color="#C2410C" strokeWidth={1.5} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text.primary }}>{t('producer.materials.mapBannerTitle')}</Text>
-            <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 4, fontWeight: '500' }}>{t('producer.materials.mapBannerCta')}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, lineHeight: 22 }}>
+              {t('producer.materials.mapBannerTitle')}
+            </Text>
+            <Text style={{ fontSize: 15, color: theme.colors.primary, marginTop: 6, fontWeight: '600' }}>
+              {t('producer.materials.mapBannerCta')}
+            </Text>
           </View>
           <ChevronRight size={20} color={colors.text.secondary} strokeWidth={1.5} />
         </TouchableOpacity>

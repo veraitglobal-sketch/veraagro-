@@ -178,7 +178,7 @@ export default function GrowerFieldsPage() {
           />
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-base text-red-700">{error}</div>
           )}
 
           {loading ? (
@@ -187,19 +187,19 @@ export default function GrowerFieldsPage() {
             </div>
           ) : estates.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
-              <p className="text-gray-600 mb-4">{t('growerPages.noFieldsYet')}</p>
+              <p className="text-base text-gray-600 mb-4">{t('growerPages.noFieldsYet')}</p>
               <form onSubmit={handleAddEstate} className="flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
                   placeholder={t('growerPages.fieldNamePlaceholder')}
-                  className="px-3 py-2 border border-gray-300 rounded-lg w-56 focus:ring-2 focus:ring-[#2D5A27]"
+                  className="px-3 py-3 border border-gray-300 rounded-lg w-56 text-base focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
                   type="submit"
                   disabled={addingEstate}
-                  className="inline-flex items-center gap-1 px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
+                  className="inline-flex min-h-[48px] items-center justify-center gap-2 px-5 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   {t('growerPages.addField')}
@@ -214,13 +214,13 @@ export default function GrowerFieldsPage() {
                   value={newEstateName}
                   onChange={(e) => setNewEstateName(e.target.value)}
                   placeholder={t('growerPages.placeholderNewField')}
-                  className="px-3 py-2 border border-gray-300 rounded-lg w-48 text-sm focus:ring-2 focus:ring-[#2D5A27]"
+                  className="px-3 py-3 border border-gray-300 rounded-lg w-48 min-w-[12rem] text-base focus:ring-2 focus:ring-[#2D5A27]"
                 />
                 <button
                   type="button"
                   onClick={() => handleAddEstate()}
                   disabled={addingEstate || !newEstateName.trim()}
-                  className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
+                  className="inline-flex min-h-[48px] items-center justify-center gap-2 px-5 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                 >
                   {addingEstate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   {t('growerPages.addField')}
@@ -234,12 +234,12 @@ export default function GrowerFieldsPage() {
                 >
                   <div className="flex items-center gap-2 text-[#2D5A27] mb-4">
                     <MapPin className="w-5 h-5" />
-                    <h2 className="text-lg font-medium">{estate.name}</h2>
+                    <h2 className="text-xl font-medium">{estate.name}</h2>
                   </div>
 
                   <div className="space-y-3 mb-4">
                     {(estate.parcels || []).length === 0 && (
-                      <p className="text-sm text-gray-500 font-light py-2">{t('growerPages.fieldsNoParcelsOnEstate')}</p>
+                      <p className="text-base text-gray-500 font-light py-2">{t('growerPages.fieldsNoParcelsOnEstate')}</p>
                     )}
                     {(estate.parcels || []).map((parcel) => (
                       <div
@@ -247,23 +247,23 @@ export default function GrowerFieldsPage() {
                         className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100"
                       >
                         <div>
-                          <span className="font-medium text-gray-900">
+                          <span className="font-medium text-base text-gray-900">
                             {parcel.cropType || t('growerPages.fieldParcel')}
                           </span>
-                          <span className="ml-2 text-xs text-gray-500">({parcel.id.slice(0, 8)}…)</span>
+                          <span className="ml-2 text-sm text-gray-500">({parcel.id.slice(0, 8)}…)</span>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-2">
                           {parcel.approvedAt ? (
                             <>
-                              <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
-                                <CheckCircle className="w-3 h-3" /> {t('growerPages.statusApproved')}
+                              <span className="inline-flex items-center gap-1 text-sm text-green-700 bg-green-50 px-2.5 py-1.5 rounded">
+                                <CheckCircle className="w-3.5 h-3.5 shrink-0" /> {t('growerPages.statusApproved')}
                               </span>
                               {parcel.publicCode && (
                                 <Link
                                   href={`/plot/${encodeURIComponent(parcel.publicCode)}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-xs font-medium text-gray-600 hover:text-[#2D5A27] underline"
+                                  className="inline-flex min-h-[44px] items-center text-sm font-medium text-gray-700 hover:text-[#2D5A27] underline px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 rounded"
                                 >
                                   {t('growerPages.publicPlotPage')}
                                 </Link>
@@ -272,7 +272,7 @@ export default function GrowerFieldsPage() {
                                 type="button"
                                 onClick={() => void openStoreQr(parcel.id)}
                                 disabled={plotQrLoading}
-                                className="inline-flex items-center gap-1 text-sm font-medium text-gray-800 hover:text-[#2D5A27] disabled:opacity-50"
+                                className="inline-flex min-h-[44px] items-center gap-1.5 px-2 text-base font-medium text-gray-800 hover:text-[#2D5A27] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded"
                                 title={t('growerPages.fieldQrMapTitle')}
                               >
                                 {plotQrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
@@ -281,14 +281,14 @@ export default function GrowerFieldsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleFormBatch(estate.id, parcel.id, estate.name, parcel.cropType || undefined)}
-                                className="text-sm font-medium text-[#2D5A27] hover:underline"
+                                className="inline-flex min-h-[44px] items-center text-base font-medium text-[#2D5A27] hover:underline px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 rounded"
                               >
                                 {t('growerPages.createBatch')}
                               </button>
                             </>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded">
-                              <Clock className="w-3 h-3" /> {t('growerPages.statusPending')}
+                            <span className="inline-flex items-center gap-1 text-sm text-amber-700 bg-amber-50 px-2.5 py-1.5 rounded">
+                              <Clock className="w-3.5 h-3.5 shrink-0" /> {t('growerPages.statusPending')}
                             </span>
                           )}
                         </div>
@@ -303,13 +303,13 @@ export default function GrowerFieldsPage() {
                       onChange={(e) => setNewParcelCrop(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddParcel(estate.id)}
                       placeholder={t('growerPages.placeholderCrop')}
-                      className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-48 focus:ring-2 focus:ring-[#2D5A27]"
+                      className="px-3 py-3 border border-gray-300 rounded-lg text-base w-48 min-w-[12rem] focus:ring-2 focus:ring-[#2D5A27]"
                     />
                     <button
                       type="button"
                       onClick={() => handleAddParcel(estate.id)}
                       disabled={addingParcel !== null}
-                      className="inline-flex items-center gap-1 px-3 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50"
+                      className="inline-flex min-h-[48px] items-center justify-center gap-2 px-5 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {addingParcel === estate.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                       {t('growerPages.addParcel')}
@@ -322,7 +322,7 @@ export default function GrowerFieldsPage() {
 
           {/* Modal / panel: Form batch (only when parcel is approved) */}
           {plotQrErr && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{plotQrErr}</div>
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-base text-red-700">{plotQrErr}</div>
           )}
 
           {plotQr && (
@@ -332,17 +332,17 @@ export default function GrowerFieldsPage() {
             >
               <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">{t('growerPages.fieldQrTitle')}</h3>
-                <p className="text-xs text-gray-500 mb-3">{t('growerPages.fieldQrHint')}</p>
+                <p className="text-sm text-gray-600 mb-3 leading-relaxed">{t('growerPages.fieldQrHint')}</p>
                 <div className="flex justify-center p-2 bg-gray-50 rounded-lg mb-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={plotQr.qrCodeDataUrl} alt="Plot QR" className="w-48 h-48" />
                 </div>
-                <p className="text-xs font-mono text-center text-gray-600 break-all mb-2">{plotQr.publicCode}</p>
+                <p className="text-sm font-mono text-center text-gray-600 break-all mb-2">{plotQr.publicCode}</p>
                 <a
                   href={plotQr.publicUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-[#2D5A27] font-medium block text-center mb-4 underline"
+                  className="inline-flex min-h-[44px] items-center justify-center text-base text-[#2D5A27] font-medium w-full text-center mb-4 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 rounded"
                 >
                   {t('growerPages.openPublicPage')}
                 </a>
@@ -354,14 +354,14 @@ export default function GrowerFieldsPage() {
                     a.download = `bio-vera-plot-${plotQr.publicCode}.png`;
                     a.click();
                   }}
-                  className="w-full py-2 bg-[#2D5A27] text-white rounded-lg text-sm font-medium hover:bg-[#23471f]"
+                  className="w-full min-h-[48px] py-3 bg-[#2D5A27] text-white rounded-lg text-base font-medium hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                 >
                   {t('growerPages.downloadPng')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setPlotQr(null)}
-                  className="w-full mt-2 py-2 text-gray-600 text-sm"
+                  className="w-full mt-2 min-h-[48px] py-3 text-gray-700 text-base font-medium hover:bg-gray-50 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2"
                 >
                   {t('common.close')}
                 </button>
@@ -372,65 +372,65 @@ export default function GrowerFieldsPage() {
           {formBatchParcel && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setFormBatchParcel(null)}>
               <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('growerPages.modalCreateBatch')}</h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <h3 className="text-xl font-medium text-gray-900 mb-2">{t('growerPages.modalCreateBatch')}</h3>
+                <p className="text-base text-gray-600 mb-4 leading-relaxed">
                   {t('growerPages.modalCreateBatchHint', { estateName: formBatchParcel.estateName })}
                 </p>
                 <form onSubmit={handleCreateBatch} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelProduct')}</label>
+                    <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.labelProduct')}</label>
                     <input
                       type="text"
                       value={batchForm.productName}
                       onChange={(e) => setBatchForm((f) => ({ ...f, productName: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#2D5A27]"
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelQuantity')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.labelQuantity')}</label>
                       <input
                         type="number"
                         min={0.1}
                         step={0.1}
                         value={batchForm.quantity}
                         onChange={(e) => setBatchForm((f) => ({ ...f, quantity: Number(e.target.value) || 0 }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#2D5A27]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelUnit')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.labelUnit')}</label>
                       <input
                         type="text"
                         value={batchForm.unit}
                         onChange={(e) => setBatchForm((f) => ({ ...f, unit: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#2D5A27]"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('growerPages.labelHarvestDate')}</label>
+                    <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.labelHarvestDate')}</label>
                     <input
                       type="date"
                       value={batchForm.harvestDate}
                       onChange={(e) => setBatchForm((f) => ({ ...f, harvestDate: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]"
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#2D5A27]"
                     />
                   </div>
-                  {batchError && <p className="text-sm text-red-600">{batchError}</p>}
-                  <div className="flex gap-3 pt-2">
+                  {batchError && <p className="text-base text-red-600">{batchError}</p>}
+                  <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row">
                     <button
                       type="button"
                       onClick={() => setFormBatchParcel(null)}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                      className="flex-1 min-h-[48px] px-4 py-3 border border-gray-300 text-gray-800 text-base font-medium rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
                     >
                       {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       disabled={submittingBatch}
-                      className="flex-1 px-4 py-2 bg-[#2D5A27] text-white rounded-lg hover:bg-[#23471f] disabled:opacity-50"
+                      className="flex-1 min-h-[48px] px-4 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {submittingBatch ? t('growerPages.creating') : t('growerPages.createBatch')}
                     </button>

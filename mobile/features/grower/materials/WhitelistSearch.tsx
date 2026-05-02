@@ -90,7 +90,7 @@ export function WhitelistSearch({
                 }}
               >
                 <Text style={{
-                  fontSize: 12,
+                  fontSize: 16,
                   fontWeight: '300',
                   color: filterType === f.id ? colors.primary : colors.text.secondary,
                   letterSpacing: 0.3,

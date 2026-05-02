@@ -17,11 +17,11 @@ const PENDING_HANDOVER_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const MAX_PHOTOS_PER_GROUP = 20;
 
-function readFileAsDataUrl(file: File): Promise<string> {
+function readFileAsDataUrl(file: File, readFailedMessage: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(r.result as string);
-    r.onerror = () => reject(new Error('Failed to read file'));
+    r.onerror = () => reject(new Error(readFailedMessage));
     r.readAsDataURL(file);
   });
 }
@@ -126,22 +126,22 @@ export default function LogisticsHandoverPage() {
     for (let i = 0; i < files.length; i += 1) {
       const f = files[i];
       if (!f.type.startsWith('image/')) {
-        setPhotoError('Only image files are allowed (JPEG, PNG, WebP).');
+        setPhotoError(t('logisticsPages.handoverPhotoOnlyImages'));
         return;
       }
       if (f.size > MAX_PHOTO_BYTES) {
-        setPhotoError('Max 5MB per photo.');
+        setPhotoError(t('logisticsPages.handoverPhotoMaxFile'));
         return;
       }
       if (next.length >= MAX_PHOTOS_PER_GROUP) {
-        setPhotoError(`Max ${MAX_PHOTOS_PER_GROUP} photos per group.`);
+        setPhotoError(t('logisticsPages.handoverPhotoMaxGroup', { max: MAX_PHOTOS_PER_GROUP }));
         return;
       }
       try {
-        const dataUrl = await readFileAsDataUrl(f);
+        const dataUrl = await readFileAsDataUrl(f, t('logisticsPages.handoverPhotoReadFailed'));
         next.push(dataUrl);
       } catch {
-        setPhotoError('Could not read file.');
+        setPhotoError(t('logisticsPages.handoverPhotoReadFailed'));
         return;
       }
     }
@@ -162,7 +162,7 @@ export default function LogisticsHandoverPage() {
     setSubmitting(true);
 
     if (!selectedMission) {
-      setError('Please select a mission');
+      setError(t('logisticsPages.handoverErrSelectMission'));
       setSubmitting(false);
       return;
     }
@@ -170,19 +170,23 @@ export default function LogisticsHandoverPage() {
     const temp = parseFloat(truckTemperature);
     if (temp < STANDARD_TEMP_MIN || temp > STANDARD_TEMP_MAX) {
       setError(
-        `Truck temperature (${temp}°C) is outside standard range (${STANDARD_TEMP_MIN}°C - ${STANDARD_TEMP_MAX}°C). Loading is blocked. Please adjust temperature before proceeding.`
+        t('logisticsPages.handoverErrTempRange', {
+          temp,
+          min: STANDARD_TEMP_MIN,
+          max: STANDARD_TEMP_MAX,
+        }),
       );
       setSubmitting(false);
       return;
     }
 
     if (palletPhotos.length < 1) {
-      setError('Add at least one pallet photo.');
+      setError(t('logisticsPages.handoverErrPalletPhoto'));
       setSubmitting(false);
       return;
     }
     if (truckInteriorPhotos.length < 1) {
-      setError('Add at least one inside-truck photo.');
+      setError(t('logisticsPages.handoverErrTruckPhoto'));
       setSubmitting(false);
       return;
     }
@@ -211,8 +215,8 @@ export default function LogisticsHandoverPage() {
           const m = errorData?.message;
           msg = Array.isArray(m) ? m.join(' ') : (m || errorData?.error || msg);
         } catch {
-          const t = await response.text();
-          if (t?.trim()) msg = t.slice(0, 500);
+          const bodyText = await response.text();
+          if (bodyText?.trim()) msg = bodyText.slice(0, 500);
         }
         throw new Error(msg);
       }
@@ -228,7 +232,7 @@ export default function LogisticsHandoverPage() {
         refreshMissions();
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to complete handover');
+      setError(err.message || t('logisticsPages.handoverErrComplete'));
     } finally {
       setSubmitting(false);
     }
@@ -250,43 +254,42 @@ export default function LogisticsHandoverPage() {
     <SidebarLayout title={t('logisticsPages.loadingHandover')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Loading handover"
-          description="Document inside truck temperature and photos here—same layout style as grower Quality entry. Required before the run can move to ready for loading."
+          title={t('logisticsPages.handoverHeaderTitle')}
+          description={t('logisticsPages.handoverHeaderDescription')}
         />
 
         <div className="rounded-lg border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-950">
-          <p className="font-semibold text-amber-950">Where this sits in the chain</p>
+          <p className="font-semibold text-amber-950">{t('logisticsPages.handoverChainTitle')}</p>
           <p className="mt-1 leading-relaxed">
-            The grower completes <strong>quality entry</strong> for the lot first. You record the <strong>truck</strong> here
-            (inside temperature {STANDARD_TEMP_MIN}–{STANDARD_TEMP_MAX}°C, pallet load + interior photos). When saved, the
-            mission can advance to <strong>READY FOR LOADING</strong>. Cold-chain evidence before goods leave the farm gate.
+            {t('logisticsPages.handoverChainBody', {
+              min: STANDARD_TEMP_MIN,
+              max: STANDARD_TEMP_MAX,
+            })}
           </p>
         </div>
 
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="text-sm font-medium text-red-800">{t('common.error')}</p>
             <p className="mt-1 text-sm text-red-800">{error}</p>
           </div>
         )}
 
         {success && (
           <div className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 p-4">
-            <p className="text-sm text-[#23471f]">Evidence saved. Loading can proceed.</p>
+            <p className="text-sm text-[#23471f]">{t('logisticsPages.handoverEvidenceSaved')}</p>
           </div>
         )}
 
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Logistics handover</h2>
-          <p className="mb-6 text-sm text-gray-600">
-            Temperature in range, at least one pallet photo, and at least one inside-truck photo—all three are required.
-          </p>
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('logisticsPages.handoverFormTitle')}</h2>
+          <p className="mb-6 text-sm text-gray-600">{t('logisticsPages.handoverFormLead')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Mission Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Mission *
+                {t('logisticsPages.handoverSelectMission')}
               </label>
               <select
                 value={selectedMission}
@@ -295,10 +298,19 @@ export default function LogisticsHandoverPage() {
                 disabled={missionsLoading}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
               >
-                <option value="">{missionsLoading ? 'Loading...' : missions.length === 0 ? 'No missions awaiting handover' : '-- Select Mission --'}</option>
+                <option value="">
+                  {missionsLoading
+                    ? t('logisticsPages.handoverMissionsLoading')
+                    : missions.length === 0
+                      ? t('logisticsPages.handoverMissionsEmpty')
+                      : t('logisticsPages.handoverMissionPickPlaceholder')}
+                </option>
                 {missions.map((mission) => (
                   <option key={mission.id} value={mission.id}>
-                    {mission.missionNumber} - Batch {mission.batches?.batchId || mission.batchId || '—'}
+                    {t('logisticsPages.handoverMissionOption', {
+                      missionNumber: mission.missionNumber,
+                      batchId: mission.batches?.batchId || mission.batchId || t('common.emDash'),
+                    })}
                   </option>
                 ))}
               </select>
@@ -307,7 +319,7 @@ export default function LogisticsHandoverPage() {
             {/* Inside Truck Temperature */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Inside Truck Temperature (°C) *
+                {t('logisticsPages.handoverTruckTempLabel')}
               </label>
               <input
                 type="number"
@@ -324,7 +336,7 @@ export default function LogisticsHandoverPage() {
                     ? 'border-red-500 bg-red-50 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-[#2D5A27]'
                 }`}
-                placeholder="e.g., 4.5"
+                placeholder={t('logisticsPages.handoverTempPlaceholder')}
               />
               {truckTemperature && (
                 <div className="mt-2">
@@ -333,27 +345,37 @@ export default function LogisticsHandoverPage() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Temperature is within standard range ({STANDARD_TEMP_MIN}°C - {STANDARD_TEMP_MAX}°C)
+                      {t('logisticsPages.handoverTempValid', {
+                        min: STANDARD_TEMP_MIN,
+                        max: STANDARD_TEMP_MAX,
+                      })}
                     </p>
                   ) : temperatureStatus === 'invalid' ? (
                     <p className="text-sm text-red-600 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
-                      Temperature is outside standard range. Loading is blocked. Please adjust temperature.
+                      {t('logisticsPages.handoverTempInvalid')}
                     </p>
                   ) : null}
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-2">
-                Standard range: {STANDARD_TEMP_MIN}°C - {STANDARD_TEMP_MAX}°C
+                {t('logisticsPages.handoverTempRangeHint', {
+                  min: STANDARD_TEMP_MIN,
+                  max: STANDARD_TEMP_MAX,
+                })}
               </p>
             </div>
 
             {/* Pallet photos */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="mb-2 text-base font-semibold text-gray-900">Pallet photos *</h3>
-              <p className="mb-3 text-xs text-gray-500">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                {t('logisticsPages.handoverPalletPhotosTitle')}
+              </h3>
+              <p className="mb-3 text-xs text-gray-500">
+                {t('logisticsPages.handoverPalletPhotosHint', { max: MAX_PHOTOS_PER_GROUP })}
+              </p>
               <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-4">
                 <input
                   type="file"
@@ -372,7 +394,7 @@ export default function LogisticsHandoverPage() {
                         type="button"
                         onClick={() => removePhoto('pallet', index)}
                         className="absolute top-0 right-0 bg-black/60 text-white text-xs px-1 rounded-bl"
-                        aria-label="Remove"
+                        aria-label={t('logisticsPages.handoverRemovePhotoAria')}
                       >
                         ×
                       </button>
@@ -384,8 +406,12 @@ export default function LogisticsHandoverPage() {
 
             {/* Inside truck photos */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="mb-2 text-base font-semibold text-gray-900">Inside the truck *</h3>
-              <p className="mb-3 text-xs text-gray-500">At least one; up to {MAX_PHOTOS_PER_GROUP} (max 5MB per file)</p>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                {t('logisticsPages.handoverTruckPhotosTitle')}
+              </h3>
+              <p className="mb-3 text-xs text-gray-500">
+                {t('logisticsPages.handoverTruckPhotosHint', { max: MAX_PHOTOS_PER_GROUP })}
+              </p>
               <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-4">
                 <input
                   type="file"
@@ -404,7 +430,7 @@ export default function LogisticsHandoverPage() {
                         type="button"
                         onClick={() => removePhoto('truck', index)}
                         className="absolute top-0 right-0 bg-black/60 text-white text-xs px-1 rounded-bl"
-                        aria-label="Remove"
+                        aria-label={t('logisticsPages.handoverRemovePhotoAria')}
                       >
                         ×
                       </button>
@@ -419,14 +445,14 @@ export default function LogisticsHandoverPage() {
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notes (Optional)
+                {t('logisticsPages.handoverNotesLabel')}
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
-                placeholder="Any additional information..."
+                placeholder={t('logisticsPages.handoverNotesPlaceholder')}
               />
             </div>
 
@@ -437,16 +463,16 @@ export default function LogisticsHandoverPage() {
                 disabled={submitting || !handoverComplete}
                 className="w-full px-6 py-3 bg-[#2D5A27] text-white font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {submitting ? 'Saving…' : 'Finish loading handover'}
+                {submitting ? t('logisticsPages.handoverSubmitSaving') : t('logisticsPages.handoverSubmit')}
               </button>
               {temperatureStatus === 'invalid' && (
                 <p className="text-sm text-red-600 mt-2 text-center">
-                  Cannot proceed: Temperature must be within standard range
+                  {t('logisticsPages.handoverBlockedByTemp')}
                 </p>
               )}
               {temperatureStatus === 'valid' && (palletPhotos.length < 1 || truckInteriorPhotos.length < 1) && (
                 <p className="text-sm text-gray-600 mt-2 text-center">
-                  Add pallet and inside-truck photos to finish.
+                  {t('logisticsPages.handoverNeedPhotos')}
                 </p>
               )}
             </div>

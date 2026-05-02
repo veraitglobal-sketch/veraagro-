@@ -9,6 +9,7 @@ import { batchesAPI, standardEngineAPI } from '@/lib/api';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useAuth } from '@/lib/auth';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import {
   Package,
   Search,
@@ -59,6 +60,7 @@ interface Batch {
 
 export default function GrowerBatchesPage() {
   const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [batches, setBatches] = useState<Batch[]>([]);
@@ -221,7 +223,7 @@ export default function GrowerBatchesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">{t('growerPages.loadingBatches')}</p>
+              <p className="mt-4 text-base text-gray-600">{t('growerPages.loadingBatches')}</p>
             </div>
           </div>
         </SidebarLayout>
@@ -240,7 +242,7 @@ export default function GrowerBatchesPage() {
               <button
                 type="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
               >
                 <Filter className="mr-2 h-4 w-4" />
                 {t('growerPages.filters')}
@@ -262,7 +264,7 @@ export default function GrowerBatchesPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Search */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.search')}</label>
+                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.search')}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
@@ -270,18 +272,18 @@ export default function GrowerBatchesPage() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder={t('growerPages.searchBatchesPlaceholder')}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 {/* Status Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.status')}</label>
+                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.status')}</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
                     <option value="all">{t('growerPages.allStatuses')}</option>
                     {uniqueStatuses.map((status) => (
@@ -294,11 +296,11 @@ export default function GrowerBatchesPage() {
 
                 {/* Product Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('growerPages.product')}</label>
+                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.product')}</label>
                   <select
                     value={productFilter}
                     onChange={(e) => setProductFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
                     <option value="all">{t('growerPages.allProducts')}</option>
                     {uniqueProducts.map((product) => (
@@ -318,7 +320,7 @@ export default function GrowerBatchesPage() {
                     setStatusFilter('all');
                     setProductFilter('all');
                   }}
-                  className="mt-4 text-sm text-green-600 hover:text-green-700 font-medium"
+                  className="mt-4 inline-flex min-h-[44px] items-center text-base text-green-600 hover:text-green-700 font-medium"
                 >
                   {t('growerPages.clearFilters')}
                 </button>
@@ -330,25 +332,25 @@ export default function GrowerBatchesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-gray-900">{batches.length}</div>
-              <div className="text-sm text-gray-600 mt-1">{t('growerPages.totalBatches')}</div>
+              <div className="text-base text-gray-600 mt-1">{t('growerPages.totalBatches')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-green-600">
                 {batches.filter((b) => b.status === 'HARVESTED').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">{t('growerPages.harvested')}</div>
+              <div className="text-base text-gray-600 mt-1">{t('growerPages.harvested')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-blue-600">
                 {batches.filter((b) => b.status === 'IN_TRANSIT').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">{t('growerPages.inTransit')}</div>
+              <div className="text-base text-gray-600 mt-1">{t('growerPages.inTransit')}</div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="text-2xl font-medium text-purple-600">
                 {batches.filter((b) => b.status === 'SOLD').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">{t('growerPages.sold')}</div>
+              <div className="text-base text-gray-600 mt-1">{t('growerPages.sold')}</div>
             </div>
           </div>
 
@@ -368,7 +370,7 @@ export default function GrowerBatchesPage() {
                             {batch.batchId}
                           </h3>
                           <span
-                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold border ${getStatusColor(
                               batch.status
                             )}`}
                           >
@@ -378,7 +380,7 @@ export default function GrowerBatchesPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-base text-gray-600">
                             <Package className="w-4 h-4 text-gray-400" />
                             <span className="font-medium text-gray-900">{batch.productName}</span>
                             <span className="text-gray-500">
@@ -386,7 +388,7 @@ export default function GrowerBatchesPage() {
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-base text-gray-600">
                             <Calendar className="w-4 h-4 text-gray-400" />
                             <span>
                               {t('growerPages.harvestedOn')}{' '}
@@ -394,7 +396,7 @@ export default function GrowerBatchesPage() {
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-base text-gray-600">
                             <MapPin className="w-4 h-4 text-gray-400" />
                             <span>
                               {batch.estates?.name || t('growerPages.na')}
@@ -404,7 +406,7 @@ export default function GrowerBatchesPage() {
                         </div>
 
                         {batch.hubs && (
-                          <div className="mt-2 text-sm text-gray-600">
+                          <div className="mt-2 text-base text-gray-600">
                             <span className="font-medium">{t('growerPages.currentLocation')}</span>{' '}
                             {batch.hubs.name}
                             {batch.hubs.city && `, ${batch.hubs.city}`}
@@ -415,7 +417,7 @@ export default function GrowerBatchesPage() {
                       <div className="flex items-center gap-2 ml-4">
                         <button
                           onClick={() => handleViewDetails(batch)}
-                          className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                          className="inline-flex items-center min-h-[48px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           {t('growerPages.viewDetails')}
@@ -428,7 +430,7 @@ export default function GrowerBatchesPage() {
             ) : (
               <div className="text-center py-12">
                 <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 font-light">
+                <p className="text-base text-gray-600 font-light max-w-md mx-auto">
                   {batches.length === 0 ? t('growerPages.noBatches') : t('growerPages.noBatchesFilter')}
                 </p>
               </div>
@@ -442,17 +444,19 @@ export default function GrowerBatchesPage() {
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-2xl font-light text-gray-900">
-                        Batch Details: {selectedBatch.batchId}
+                      <h2 className="text-2xl font-semibold text-gray-900">
+                        {t('growerPages.batchDetailsHeading', { batchId: selectedBatch.batchId })}
                       </h2>
-                      <p className="text-sm text-gray-600 mt-1">{selectedBatch.productName}</p>
+                      <p className="text-base text-gray-600 mt-1">{selectedBatch.productName}</p>
                     </div>
                     <button
+                      type="button"
                       onClick={() => {
                         setSelectedBatch(null);
                         setBatchDetails(null);
                       }}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="min-h-[48px] min-w-[48px] inline-flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 text-xl leading-none"
+                      aria-label={t('common.close')}
                     >
                       ✕
                     </button>
@@ -469,10 +473,10 @@ export default function GrowerBatchesPage() {
                       {/* Basic Info */}
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Status</label>
+                          <label className="text-base font-medium text-gray-700">{t('growerPages.status')}</label>
                           <div className="mt-1">
                             <span
-                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold border ${getStatusColor(
                                 selectedBatch.status
                               )}`}
                             >
@@ -482,20 +486,20 @@ export default function GrowerBatchesPage() {
                           </div>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Quantity</label>
-                          <p className="mt-1 text-gray-900">
+                          <label className="text-base font-medium text-gray-700">{t('growerPages.batchDetailQuantity')}</label>
+                          <p className="mt-1 text-base text-gray-900">
                             {selectedBatch.quantity} {selectedBatch.unit}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Harvest Date</label>
-                          <p className="mt-1 text-gray-900">
+                          <label className="text-base font-medium text-gray-700">{t('growerPages.batchDetailHarvestDate')}</label>
+                          <p className="mt-1 text-base text-gray-900">
                             {new Date(selectedBatch.harvestDate).toLocaleDateString()}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Estate</label>
-                          <p className="mt-1 text-gray-900">
+                          <label className="text-base font-medium text-gray-700">{t('growerPages.batchDetailEstate')}</label>
+                          <p className="mt-1 text-base text-gray-900">
                             {selectedBatch.estates?.name || 'N/A'}
                           </p>
                         </div>
@@ -504,20 +508,18 @@ export default function GrowerBatchesPage() {
                       {/* Traceability — human-readable; raw JSON available for support */}
                       {batchDetails && (
                         <div className="border-t border-gray-200 pt-6">
-                          <h3 className="text-lg font-medium text-gray-900 mb-1">
-                            Traceability
+                          <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                            {t('growerPages.traceabilityTitle')}
                           </h3>
-                          <p className="text-sm text-gray-500 font-light mb-4">
-                            Origin, people, and location. <strong>Transported by</strong> is set when a driver is
-                            assigned to this batch in the system; it can stay empty until then even if you requested a
-                            mission.
+                          <p className="text-base text-gray-600 font-light mb-4 leading-relaxed">
+                            {t('growerPages.traceabilityIntro')}
                           </p>
                           {batchDetails.traceability ? (
-                            <div className="space-y-4 text-sm">
+                            <div className="space-y-4 text-base">
                               {batchDetails.traceability.origin?.estate && (
                                 <div className="rounded-lg border border-gray-100 bg-gray-50/80 p-4">
-                                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2">
-                                    Origin
+                                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">
+                                    {t('growerPages.traceabilityOrigin')}
                                   </p>
                                   <p className="text-gray-900">
                                     Estate: {batchDetails.traceability.origin.estate.name}
@@ -537,36 +539,36 @@ export default function GrowerBatchesPage() {
                               )}
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="rounded-lg border border-gray-100 p-4">
-                                  <p className="text-xs font-medium text-gray-500 mb-1">Harvested by</p>
+                                  <p className="text-sm font-semibold text-gray-600 mb-1">{t('growerPages.traceabilityHarvestedBy')}</p>
                                   <p className="text-gray-900">
                                     {batchDetails.traceability.harvestedBy?.name || '—'}
                                   </p>
                                 </div>
                                 <div className="rounded-lg border border-gray-100 p-4">
-                                  <p className="text-xs font-medium text-gray-500 mb-1">Transported by (batch record)</p>
-                                  <p className="text-gray-900">
+                                  <p className="text-sm font-semibold text-gray-600 mb-1">{t('growerPages.traceabilityTransportedBy')}</p>
+                                  <p className="text-base text-gray-900">
                                     {batchDetails.traceability.transportedBy?.name || (
-                                      <span className="text-amber-800">Not assigned yet</span>
+                                      <span className="text-amber-800">{t('growerPages.traceabilityNotAssignedYet')}</span>
                                     )}
                                   </p>
                                 </div>
                               </div>
                               <div className="rounded-lg border border-gray-100 p-4">
-                                <p className="text-xs font-medium text-gray-500 mb-1">Current location</p>
-                                <p className="text-gray-900">
+                                <p className="text-sm font-semibold text-gray-600 mb-1">{t('growerPages.traceabilityCurrentLocation')}</p>
+                                <p className="text-base text-gray-900">
                                   {formatCurrentLocation(batchDetails.traceability.currentLocation)}
                                 </p>
                               </div>
                               {Array.isArray(batchDetails.traceability.locationHistory) &&
                                 batchDetails.traceability.locationHistory.length > 0 && (
                                   <div>
-                                    <p className="text-xs font-medium text-gray-500 mb-2">Location history</p>
+                                    <p className="text-sm font-semibold text-gray-600 mb-2">{t('growerPages.traceabilityLocationHistory')}</p>
                                     <ul className="space-y-2">
                                       {batchDetails.traceability.locationHistory.map(
                                         (entry: Record<string, unknown>, idx: number) => (
                                           <li
                                             key={idx}
-                                            className="rounded border border-gray-100 bg-white px-3 py-2 text-gray-700"
+                                            className="rounded border border-gray-100 bg-white px-3 py-3 text-base text-gray-700"
                                           >
                                             {String(entry.status ?? '—')}
                                             {entry.driverId != null && ` · driver set`}
@@ -580,7 +582,7 @@ export default function GrowerBatchesPage() {
                               {Array.isArray(batchDetails.traceability.orders) &&
                                 batchDetails.traceability.orders.length > 0 && (
                                   <div>
-                                    <p className="text-xs font-medium text-gray-500 mb-2">Linked orders</p>
+                                    <p className="text-sm font-semibold text-gray-600 mb-2">{t('growerPages.traceabilityLinkedOrders')}</p>
                                     <ul className="list-disc pl-5 text-gray-700">
                                       {batchDetails.traceability.orders.map(
                                         (o: { orderNumber?: string; orderId?: string }) => (
@@ -596,33 +598,33 @@ export default function GrowerBatchesPage() {
                                 (selectedBatch.status || '').toUpperCase(),
                               ) && (
                                 <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                                  <p className="text-sm text-gray-800">
-                                    Need pickup? Create a <strong>transport mission</strong> for this batch.
+                                  <p className="text-base text-gray-800 leading-relaxed">
+                                    {t('growerPages.traceabilityPickupHint')}
                                   </p>
                                   <Link
-                                    href="/grower/missions/create"
-                                    className="inline-flex items-center justify-center rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] shrink-0"
+                                    href={loc('/grower/missions/create')}
+                                    className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white hover:bg-[#23471f] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                                   >
-                                    Request transport
+                                    {t('growerPages.requestTransport')}
                                   </Link>
                                 </div>
                               )}
                               <button
                                 type="button"
                                 onClick={() => setShowTraceabilityJson((v) => !v)}
-                                className="text-xs text-gray-500 hover:text-gray-800 underline"
+                                className="text-sm text-gray-600 hover:text-gray-900 underline min-h-[44px] px-1"
                               >
-                                {showTraceabilityJson ? 'Hide' : 'Show'} raw JSON (support / debugging)
+                                {showTraceabilityJson ? t('growerPages.traceabilityHideRawJson') : t('growerPages.traceabilityShowRawJson')}
                               </button>
                               {showTraceabilityJson && (
-                                <pre className="text-xs text-gray-600 whitespace-pre-wrap bg-gray-100 rounded-lg p-3 overflow-x-auto">
+                                <pre className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-100 rounded-lg p-4 overflow-x-auto">
                                   {JSON.stringify(batchDetails, null, 2)}
                                 </pre>
                               )}
                             </div>
                           ) : (
                             <div className="bg-gray-50 rounded-lg p-4">
-                              <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+                              <pre className="text-base text-gray-700 whitespace-pre-wrap">
                                 {JSON.stringify(batchDetails, null, 2)}
                               </pre>
                             </div>
@@ -633,16 +635,17 @@ export default function GrowerBatchesPage() {
                       {/* Standard Engine - Loading Approval */}
                       <div className="border-t border-gray-200 pt-6">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            German Standard Compliance Check
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {t('growerPages.standardComplianceTitle')}
                           </h3>
                           <button
+                            type="button"
                             onClick={() => handleCheckLoadingApproval(selectedBatch!)}
                             disabled={checkingApproval}
-                            className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            className="inline-flex items-center min-h-[48px] px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                           >
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            {checkingApproval ? 'Checking...' : 'Check Requirements'}
+                            <CheckCircle className="w-5 h-5 mr-2 shrink-0" />
+                            {checkingApproval ? t('growerPages.standardChecking') : t('growerPages.standardCheckRequirements')}
                           </button>
                         </div>
                         {loadingApproval && (
@@ -663,25 +666,26 @@ export default function GrowerBatchesPage() {
                                     ) : (
                                       <AlertCircle className="w-5 h-5 text-red-600" />
                                     )}
-                                    <span className="font-medium text-gray-900">{item.requirement}</span>
+                                    <span className="font-medium text-base text-gray-900">{item.requirement}</span>
                                   </div>
                                 </div>
-                                <p className="text-sm text-gray-600 mt-1 ml-7">{item.message}</p>
+                                <p className="text-base text-gray-600 mt-1 ml-7 leading-relaxed">{item.message}</p>
                               </div>
                             ))}
                             {loadingApproval.canApprove ? (
                               <button
+                                type="button"
                                 onClick={() => handleApproveForLoading(selectedBatch!)}
                                 disabled={approving}
-                                className="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                                className="w-full inline-flex items-center justify-center min-h-[52px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                               >
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                {approving ? 'Approving...' : 'Approve for Loading'}
+                                <CheckCircle className="w-5 h-5 mr-2 shrink-0" />
+                                {approving ? t('growerPages.standardApproving') : t('growerPages.standardApproveForLoading')}
                               </button>
                             ) : (
-                              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                                <p className="text-sm text-yellow-800">
-                                  Please complete all requirements before approving for loading.
+                              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <p className="text-base text-yellow-900 leading-relaxed">
+                                  {t('growerPages.standardCompleteAllFirst')}
                                 </p>
                               </div>
                             )}
@@ -691,19 +695,19 @@ export default function GrowerBatchesPage() {
 
                       {/* Actions */}
                       <div className="border-t border-gray-200 pt-6">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Actions</h3>
-                        <div className="flex gap-3">
-                          <button className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
-                            <QrCode className="w-4 h-4 mr-2" />
-                            View QR Code
+                        <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('growerPages.batchActionsTitle')}</h3>
+                        <div className="flex flex-wrap gap-3">
+                          <button type="button" className="inline-flex items-center min-h-[48px] px-4 py-3 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2">
+                            <QrCode className="w-5 h-5 mr-2 shrink-0" />
+                            {t('growerPages.batchActionViewQr')}
                           </button>
-                          <button className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                            <Truck className="w-4 h-4 mr-2" />
-                            Move to Hub
+                          <button type="button" className="inline-flex items-center min-h-[48px] px-4 py-3 bg-white border border-gray-300 text-gray-800 text-base font-medium rounded-lg hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2">
+                            <Truck className="w-5 h-5 mr-2 shrink-0" />
+                            {t('growerPages.batchActionMoveToHub')}
                           </button>
-                          <button className="inline-flex items-center px-4 py-2 bg-white border border-red-300 text-red-700 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors">
-                            <AlertCircle className="w-4 h-4 mr-2" />
-                            Report Issue
+                          <button type="button" className="inline-flex items-center min-h-[48px] px-4 py-3 bg-white border border-red-300 text-red-800 text-base font-medium rounded-lg hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2">
+                            <AlertCircle className="w-5 h-5 mr-2 shrink-0" />
+                            {t('growerPages.batchActionReportIssue')}
                           </button>
                         </div>
                       </div>

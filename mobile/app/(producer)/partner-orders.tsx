@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { b2bSuppliersAPI } from '../../lib/api';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { theme } from '../../lib/theme';
@@ -284,7 +284,11 @@ export default function GrowerPartnerOrdersScreen() {
           threads.map((th) => (
             <TouchableOpacity
               key={th.id}
-              onPress={() => router.push(`/b2b-supplier/${th.supplierUserId}` as any)}
+              onPress={() =>
+                router.push(
+                  `/b2b-supplier/${encodeURIComponent(th.supplierUserId)}?threadId=${encodeURIComponent(th.id)}` as Href,
+                )
+              }
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',

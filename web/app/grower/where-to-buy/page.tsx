@@ -212,7 +212,7 @@ export default function GrowerWhereToBuyPage() {
           />
 
           {err && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-800">{err}</div>
           )}
 
           <div
@@ -225,7 +225,7 @@ export default function GrowerWhereToBuyPage() {
               role="tab"
               aria-selected={mobilePanel === 'directory'}
               onClick={() => setMobilePanel('directory')}
-              className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-lg px-3 py-2.5 text-base font-medium transition-colors ${
                 mobilePanel === 'directory' ? 'bg-[#2D5A27] text-white shadow' : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -242,7 +242,7 @@ export default function GrowerWhereToBuyPage() {
                   el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
-              className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-lg px-3 py-2.5 text-base font-medium transition-colors ${
                 mobilePanel === 'orders' ? 'bg-[#2D5A27] text-white shadow' : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -259,16 +259,16 @@ export default function GrowerWhereToBuyPage() {
               } lg:col-span-7 lg:block min-h-0 min-w-0 flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6`}
             >
               {loading ? (
-                <p className="text-sm text-gray-500">{t('growerPages.loadingDirectory')}</p>
+                <p className="text-base text-gray-500">{t('growerPages.loadingDirectory')}</p>
               ) : items.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-sm text-gray-600 text-center">
+                <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-base text-gray-600 text-center">
                   <Store className="h-10 w-10 text-gray-300 mx-auto mb-2" />
                   <p className="font-medium text-gray-800">{t('growerPages.emptyDirectoryTitle')}</p>
                   <p className="mt-3 font-light max-w-md mx-auto">{t('growerPages.emptyDirectoryBody')}</p>
                   <button
                     type="button"
                     onClick={() => void load()}
-                    className="mt-4 text-sm text-[#2D5A27] font-medium hover:underline"
+                    className="mt-4 text-base text-[#2D5A27] font-medium hover:underline"
                   >
                     {t('growerPages.retry')}
                   </button>
@@ -277,7 +277,7 @@ export default function GrowerWhereToBuyPage() {
                 <>
                   <div className="mb-5">
                     <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.directoryTitle')}</h2>
-                    <p className="text-sm text-gray-600 mt-1 font-light leading-relaxed">
+                    <p className="text-base text-gray-600 mt-1 font-light leading-relaxed">
                       {t('growerPages.directoryLead')}
                     </p>
                     <p className="text-xs text-amber-900/80 mt-3 rounded-lg bg-amber-50 border border-amber-100/80 px-3 py-2">
@@ -298,7 +298,7 @@ export default function GrowerWhereToBuyPage() {
                             setSelectedCountry(c);
                             setPage(1);
                           }}
-                          className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                          className={`rounded-full px-3 py-1.5 text-base font-medium transition-colors ${
                             selectedCountry === c
                               ? 'bg-[#2D5A27] text-white'
                               : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -311,13 +311,13 @@ export default function GrowerWhereToBuyPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-1">
+                    <h3 className="text-base font-medium text-gray-900 flex items-center gap-2 mb-1">
                       <List className="h-4 w-4 text-[#2D5A27]" />
                       {t('growerPages.locationsTitle')}
                     </h3>
                     <p className="text-xs text-gray-500 font-light mb-4">{t('growerPages.locationsHint')}</p>
                     {sortedForList.length === 0 && items.length > 0 ? (
-                      <p className="text-sm text-gray-500 font-light py-6 text-center rounded-xl border border-dashed border-gray-200 bg-gray-50/50">
+                      <p className="text-base text-gray-500 font-light py-6 text-center rounded-xl border border-dashed border-gray-200 bg-gray-50/50">
                         {t('growerPages.noLocationsForCountry')}
                       </p>
                     ) : (
@@ -332,7 +332,7 @@ export default function GrowerWhereToBuyPage() {
                             }`}
                           >
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium text-gray-900 text-sm flex flex-wrap items-center gap-2">
+                              <p className="font-medium text-gray-900 text-base flex flex-wrap items-center gap-2">
                                 {loc.name}
                                 {inRegion && (
                                   <span className="text-[10px] font-medium uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-1.5 py-0.5 rounded">
@@ -340,7 +340,7 @@ export default function GrowerWhereToBuyPage() {
                                   </span>
                                 )}
                               </p>
-                              <p className="text-sm text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
+                              <p className="text-base text-gray-600 font-light mt-0.5 flex items-start gap-1.5">
                                 <MapPinned className="h-3.5 w-3.5 text-gray-400 shrink-0 mt-0.5" />
                                 <span>{formatAddressLine(loc)}</span>
                               </p>
@@ -378,7 +378,7 @@ export default function GrowerWhereToBuyPage() {
               )}
 
               {!loading && items.length > 0 && totalPages > 1 && (
-                <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-600">
+                <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-base text-gray-600">
                   <p className="text-xs text-gray-500">
                     {t('growerPages.paginationSummary', {
                       from: (pageClamped - 1) * PAGE_SIZE + 1,
@@ -391,7 +391,7 @@ export default function GrowerWhereToBuyPage() {
                       type="button"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={pageClamped <= 1}
-                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-gray-50"
+                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-base disabled:opacity-40 hover:bg-gray-50"
                     >
                       <ChevronLeft className="h-4 w-4" />
                       {t('growerPages.pagePrev')}
@@ -403,7 +403,7 @@ export default function GrowerWhereToBuyPage() {
                       type="button"
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={pageClamped >= totalPages}
-                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-gray-50"
+                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-base disabled:opacity-40 hover:bg-gray-50"
                     >
                       {t('growerPages.pageNext')}
                       <ChevronRight className="h-4 w-4" />
@@ -434,13 +434,13 @@ export default function GrowerWhereToBuyPage() {
                 className="flex items-center justify-between gap-3 rounded-xl border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-left hover:border-[#2D5A27]/40 transition-colors"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                  <p className="text-base font-semibold text-gray-900 flex items-center gap-2">
                     <MessageCircle className="h-4 w-4 text-[#2D5A27]" />
                     {t('growerPages.messagesCtaTitle')}
                   </p>
                   <p className="text-xs text-gray-600 font-light mt-0.5">{t('growerPages.messagesCtaBody')}</p>
                 </div>
-                <span className="text-sm font-medium text-[#2D5A27] shrink-0">{t('growerPages.openInbox')}</span>
+                <span className="text-base font-medium text-[#2D5A27] shrink-0">{t('growerPages.openInbox')}</span>
               </Link>
               <div id="my-orders">
                 <PartnerB2BPanel />

@@ -40,13 +40,13 @@ function findRelease(raw: unknown, releaseId: string): PressRelease | null {
 export default function PressReleaseFullPage() {
   const params = useParams<{ releaseId: string }>();
   const releaseId = params.releaseId;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
 
   const release = useMemo(() => {
     const raw = t('pressPage.releases', { returnObjects: true });
     return releaseId ? findRelease(raw, releaseId) : null;
-  }, [t, releaseId]);
+  }, [t, releaseId, i18n.language]);
 
   if (!releaseId || !release) {
     notFound();

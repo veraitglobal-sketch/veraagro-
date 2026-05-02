@@ -63,8 +63,8 @@ export default function GrowerOfflineOutboxBanner() {
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-amber-900">{t('grower.dashboard.outboxTitle')}</p>
-          <p className="text-sm text-amber-800/90 mt-1">
+          <p className="text-base font-medium text-amber-900">{t('grower.dashboard.outboxTitle')}</p>
+          <p className="text-base text-amber-800/90 mt-1">
             {t('grower.dashboard.outboxBody', { count: pending })}
           </p>
         </div>
@@ -73,13 +73,13 @@ export default function GrowerOfflineOutboxBanner() {
             type="button"
             onClick={() => void handleSync()}
             disabled={syncing || pending === 0}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+            className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 rounded-lg bg-blue-600 text-white text-base font-medium hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
           >
             {syncing ? t('grower.dashboard.outboxSending') : t('grower.dashboard.outboxSyncNow')}
           </button>
           <Link
             href={workspaceHref}
-            className="px-4 py-2 rounded-lg border border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/10"
+            className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 rounded-lg border border-[#2D5A27] text-[#2D5A27] text-base font-medium hover:bg-[#2D5A27]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
           >
             {t('grower.dashboard.outboxOpenWorkspace')}
           </Link>

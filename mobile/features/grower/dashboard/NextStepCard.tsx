@@ -141,13 +141,13 @@ export default function NextStepCard(props: NextStepCardProps) {
           )}
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
             {t('producer.dashboard.nextStep.eyebrow')}
           </Text>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>{title}</Text>
+          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>{title}</Text>
         </View>
       </View>
-      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.sm }}>{body}</Text>
+      <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>{body}</Text>
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.8}
@@ -157,11 +157,12 @@ export default function NextStepCard(props: NextStepCardProps) {
           justifyContent: 'space-between',
           backgroundColor: theme.colors.primary,
           borderRadius: theme.borderRadius.md,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
+          paddingVertical: 16,
+          paddingHorizontal: 16,
+          minHeight: 52,
         }}
       >
-        <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>{cta}</Text>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>{cta}</Text>
         <ChevronRight size={20} color={theme.colors.text.inverse} strokeWidth={2} />
       </TouchableOpacity>
     </View>

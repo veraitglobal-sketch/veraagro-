@@ -140,40 +140,43 @@ export default function GrowerPlantingsPage() {
           />
 
           {err && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">{err}</div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">{err}</div>
           )}
 
-          <p className="text-sm text-gray-600">
-            <Link href={loc('/grower/fields')} className="text-[#2D5A27] font-medium underline">
+          <p className="text-base text-gray-600">
+            <Link
+              href={loc('/grower/fields')}
+              className="text-[#2D5A27] font-medium underline underline-offset-2 inline-flex min-h-[44px] items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 rounded px-0.5"
+            >
               {t('grower.placeholders.openParcels')}
             </Link>
           </p>
 
           {loading ? (
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-base text-gray-600">
               <Loader2 className="h-5 w-5 animate-spin text-[#2D5A27]" />
               {t('growerPages.loadingPlantings')}
             </div>
           ) : (
             <>
               <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
                   <Sprout className="h-5 w-5 text-[#2D5A27]" />
                   {t('growerPages.plantingsFormTitle')}
                 </h2>
                 {approvedParcels.length === 0 ? (
-                  <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                  <p className="text-base text-amber-900 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 leading-relaxed">
                     {t('growerPages.plantingsApprovedOnly')}
                   </p>
                 ) : (
                   <form onSubmit={submitPlanting} className="space-y-4 max-w-lg">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('growerPages.plantingsFormParcel')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormParcel')}</label>
                       <select
                         required
                         value={formParcelId}
                         onChange={(e) => setFormParcelId(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#2D5A27]/30"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       >
                         <option value="">{t('growerPages.plantingsSelectParcel')}</option>
                         {approvedParcels.map((p) => (
@@ -184,38 +187,38 @@ export default function GrowerPlantingsPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('growerPages.plantingsFormCrop')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormCrop')}</label>
                       <input
                         type="text"
                         required
                         value={formCrop}
                         onChange={(e) => setFormCrop(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#2D5A27]/30"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('growerPages.plantingsFormDate')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormDate')}</label>
                       <input
                         type="date"
                         required
                         value={formDate}
                         onChange={(e) => setFormDate(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#2D5A27]/30"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('growerPages.plantingsFormNotes')}</label>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormNotes')}</label>
                       <textarea
                         value={formNotes}
                         onChange={(e) => setFormNotes(e.target.value)}
                         rows={2}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#2D5A27]/30"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={saving}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
+                      className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Leaf className="h-4 w-4" />}
                       {saving ? t('growerPages.plantingsFormSaving') : t('growerPages.plantingsFormSubmit')}
@@ -270,46 +273,46 @@ function AnnouncementsTable({
   if (rows.length === 0) {
     return (
       <section className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 p-5">
-        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-2">
+        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
           <Icon className="h-5 w-5 text-[#2D5A27]" />
           {title}
         </h2>
-        <p className="text-sm text-gray-600 font-light">{empty}</p>
+        <p className="text-base text-gray-600 font-light leading-relaxed">{empty}</p>
       </section>
     );
   }
   return (
     <section className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
-      <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-gray-50/80">
+      <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-gray-50/80">
         <Icon className="h-5 w-5 text-[#2D5A27]" />
         {title}
       </h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full text-sm">
+        <table className="min-w-full text-base">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-xs text-gray-500 tracking-wide">
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableField')}</th>
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableParcel')}</th>
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableType')}</th>
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableCrop')}</th>
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableDate')}</th>
-              <th className="px-4 py-2 font-medium">{t('growerPages.plantingsTableStatus')}</th>
+            <tr className="border-b border-gray-100 text-left text-sm text-gray-600 tracking-wide">
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableField')}</th>
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableParcel')}</th>
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableType')}</th>
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableCrop')}</th>
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableDate')}</th>
+              <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableStatus')}</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((a) => (
               <tr key={a.id} className="border-b border-gray-50 hover:bg-gray-50/80">
-                <td className="px-4 py-2.5 text-gray-800">{a.parcel?.estates?.name || '—'}</td>
-                <td className="px-4 py-2.5 text-gray-700">
+                <td className="px-4 py-3 text-gray-800">{a.parcel?.estates?.name || '—'}</td>
+                <td className="px-4 py-3 text-gray-700">
                   {a.parcel?.cropType || a.parcelId.slice(0, 8)}…
                 </td>
-                <td className="px-4 py-2.5">
+                <td className="px-4 py-3">
                   {a.announcementType === 'PLANTING' ? t('growerPages.annTypePLANTING') : t('growerPages.annTypeHARVEST')}
                 </td>
-                <td className="px-4 py-2.5 font-medium text-gray-900">{a.cropType}</td>
-                <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap">{formatDate(a.estimatedDate)}</td>
-                <td className="px-4 py-2.5">
-                  <span className="text-xs font-medium rounded-full bg-gray-100 px-2 py-0.5">{haStatus(a.status)}</span>
+                <td className="px-4 py-3 font-medium text-gray-900">{a.cropType}</td>
+                <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatDate(a.estimatedDate)}</td>
+                <td className="px-4 py-3">
+                  <span className="text-sm font-medium rounded-full bg-gray-100 px-2.5 py-1">{haStatus(a.status)}</span>
                 </td>
               </tr>
             ))}

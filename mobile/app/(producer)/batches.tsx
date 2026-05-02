@@ -13,10 +13,10 @@ import { useAppLocaleTag } from '../../lib/date-locale';
 /**
  * Batches Screen
  * List of all batches with status and traceability
- * Matches buyer dashboard styling
+ * Grower-friendly typography and tap targets (readable labels, ≥44pt actions).
  */
 export default function BatchesScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
   const [batches, setBatches] = useState<any[]>([]);
@@ -100,15 +100,18 @@ export default function BatchesScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           activeOpacity={0.7}
-          style={{ marginRight: theme.spacing.md }}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.back')}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={{ marginRight: theme.spacing.md, minWidth: 44, minHeight: 44, justifyContent: 'center' }}
         >
           <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
         </TouchableOpacity>
         <Text style={{
-          fontSize: 18,
-          fontWeight: '300',
+          fontSize: 20,
+          fontWeight: '600',
           color: theme.colors.text.primary,
-          letterSpacing: 0.5,
+          letterSpacing: 0.2,
           flex: 1,
         }}>
           {t('producer.batches.listScreenTitle')}
@@ -138,19 +141,21 @@ export default function BatchesScreen() {
                 onPress={() => setFilter(f.id)}
                 activeOpacity={0.7}
                 style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  minHeight: 44,
+                  justifyContent: 'center',
+                  borderRadius: theme.borderRadius.md,
                   borderWidth: 0.5,
                   borderColor: filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
                   backgroundColor: filter === f.id ? `${theme.colors.primary}10` : 'transparent',
                 }}
               >
                 <Text style={{
-                  fontSize: 11,
-                  fontWeight: '300',
+                  fontSize: 15,
+                  fontWeight: '600',
                   color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                  letterSpacing: 0.3,
+                  letterSpacing: 0.2,
                 }}>
                   {f.label}
                 </Text>
@@ -183,9 +188,9 @@ export default function BatchesScreen() {
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{
                 color: theme.colors.text.secondary,
-                fontSize: 11,
-                fontWeight: '300',
-                letterSpacing: 0.3,
+                fontSize: 16,
+                fontWeight: '500',
+                letterSpacing: 0.2,
               }}>
                 {t('producer.batches.loading')}
               </Text>
@@ -199,14 +204,16 @@ export default function BatchesScreen() {
               borderColor: 'rgba(0, 0, 0, 0.05)',
               alignItems: 'center',
             }}>
-              <Package size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
+              <Package size={40} color={theme.colors.text.tertiary} strokeWidth={1.25} />
               <Text style={{
-                fontSize: 11,
-                fontWeight: '300',
+                fontSize: 16,
+                fontWeight: '500',
                 color: theme.colors.text.secondary,
                 marginTop: theme.spacing.sm,
-                letterSpacing: 0.3,
+                letterSpacing: 0.2,
                 textAlign: 'center',
+                lineHeight: 24,
+                paddingHorizontal: theme.spacing.md,
               }}>
                 {t('producer.batches.emptyList')}
               </Text>
@@ -221,67 +228,68 @@ export default function BatchesScreen() {
                   style={{
                     backgroundColor: theme.colors.surface,
                     borderRadius: theme.borderRadius.md,
-                    padding: theme.spacing.md,
+                    padding: theme.spacing.md + 2,
                     borderWidth: 0.5,
                     borderColor: 'rgba(0, 0, 0, 0.05)',
+                    minHeight: 88,
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
                     <View style={{
-                      width: 40,
-                      height: 40,
+                      width: 48,
+                      height: 48,
                       borderRadius: theme.borderRadius.sm,
                       backgroundColor: `${getStatusColor(batch.status)}15`,
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginRight: theme.spacing.sm,
                     }}>
-                      <Package size={20} color={getStatusColor(batch.status)} strokeWidth={1} />
+                      <Package size={22} color={getStatusColor(batch.status)} strokeWidth={1.5} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-                        <QrCode size={14} color={theme.colors.text.secondary} strokeWidth={1} />
+                        <QrCode size={18} color={theme.colors.text.secondary} strokeWidth={1.5} />
                         <Text style={{
-                          fontSize: 12,
-                          fontWeight: '300',
+                          fontSize: 17,
+                          fontWeight: '600',
                           color: theme.colors.text.primary,
                           marginLeft: theme.spacing.xs,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         }}>
                           {batch.batchId || batch.id.slice(0, 8)}
                         </Text>
                       </View>
                       <Text style={{
-                        fontSize: 11,
-                        fontWeight: '300',
+                        fontSize: 15,
+                        fontWeight: '500',
                         color: theme.colors.text.secondary,
-                        letterSpacing: 0.2,
+                        letterSpacing: 0.1,
                       }}>
                         {batch.productName || t('producer.batches.product')}
                       </Text>
                       {batch.quantity && (
                         <Text style={{
-                          fontSize: 11,
-                          fontWeight: '300',
+                          fontSize: 15,
+                          fontWeight: '400',
                           color: theme.colors.text.secondary,
-                          marginTop: 2,
-                          letterSpacing: 0.2,
+                          marginTop: 4,
+                          letterSpacing: 0.1,
                         }}>
                           {batch.quantity} {batch.unit || 'kg'}
                         </Text>
                       )}
                     </View>
                     <View style={{
-                      paddingHorizontal: theme.spacing.sm,
-                      paddingVertical: theme.spacing.xs,
+                      paddingHorizontal: 12,
+                      paddingVertical: 8,
                       borderRadius: theme.borderRadius.sm,
                       backgroundColor: `${getStatusColor(batch.status)}15`,
                     }}>
                       <Text style={{
-                        fontSize: 9,
-                        fontWeight: '300',
+                        fontSize: 13,
+                        fontWeight: '600',
                         color: getStatusColor(batch.status),
-                        letterSpacing: 0.3,
+                        letterSpacing: 0.2,
                       }}>
                         {getStatusLabel(batch.status)}
                       </Text>
@@ -294,13 +302,13 @@ export default function BatchesScreen() {
                       alignItems: 'center',
                       marginTop: theme.spacing.xs,
                     }}>
-                      <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
+                      <Calendar size={16} color={theme.colors.text.secondary} strokeWidth={1.5} />
                       <Text style={{
-                        fontSize: 9,
-                        fontWeight: '300',
+                        fontSize: 14,
+                        fontWeight: '500',
                         color: theme.colors.text.secondary,
-                        marginLeft: 4,
-                        letterSpacing: 0.2,
+                        marginLeft: 6,
+                        letterSpacing: 0.1,
                       }}>
                         {`${t('producer.batches.harvestLabel')}: ${new Date(batch.harvestDate).toLocaleDateString(dateLocale)}`}
                       </Text>

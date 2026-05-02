@@ -58,7 +58,7 @@ export default function EntryForm() {
             <X size={20} color={theme.colors.error} strokeWidth={1} />
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 15,
                 fontWeight: '300',
                 color: theme.colors.error,
                 marginLeft: theme.spacing.sm,
@@ -73,7 +73,7 @@ export default function EntryForm() {
 
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 16,
             fontWeight: '300',
             color: theme.colors.text.secondary,
             lineHeight: 18,
@@ -86,7 +86,7 @@ export default function EntryForm() {
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 16,
               fontWeight: '300',
               color: theme.colors.text.primary,
               letterSpacing: 0.5,
@@ -114,7 +114,7 @@ export default function EntryForm() {
                 >
                   <Text
                     style={{
-                      fontSize: 11,
+                      fontSize: 15,
                       fontWeight: '300',
                       color: isSelected ? theme.colors.background : theme.colors.text.primary,
                       letterSpacing: 0.3,
@@ -132,7 +132,7 @@ export default function EntryForm() {
           <View style={{ marginBottom: theme.spacing.md }}>
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: '300',
                 color: theme.colors.text.primary,
                 letterSpacing: 0.5,
@@ -160,7 +160,7 @@ export default function EntryForm() {
                   >
                     <Text
                       style={{
-                        fontSize: 11,
+                        fontSize: 15,
                         fontWeight: '400',
                         color: isSelected ? theme.colors.background : theme.colors.text.primary,
                         letterSpacing: 0.3,
@@ -174,7 +174,7 @@ export default function EntryForm() {
             </View>
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: '300',
                 color: theme.colors.text.primary,
                 letterSpacing: 0.5,
@@ -198,7 +198,7 @@ export default function EntryForm() {
               <TextInput
                 style={{
                   flex: 1,
-                  fontSize: 11,
+                  fontSize: 15,
                   fontWeight: '300',
                   color: theme.colors.text.primary,
                   letterSpacing: 0.2,
@@ -243,7 +243,7 @@ export default function EntryForm() {
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 16,
               fontWeight: '300',
               color: theme.colors.text.primary,
               letterSpacing: 0.5,
@@ -269,7 +269,7 @@ export default function EntryForm() {
             {photoUri ? (
               <Text
                 style={{
-                  fontSize: 11,
+                  fontSize: 15,
                   fontWeight: '300',
                   color: theme.colors.success,
                   letterSpacing: 0.3,
@@ -282,7 +282,7 @@ export default function EntryForm() {
                 <Camera size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
                 <Text
                   style={{
-                    fontSize: 11,
+                    fontSize: 15,
                     fontWeight: '300',
                     color: theme.colors.text.secondary,
                     marginTop: theme.spacing.xs,
@@ -299,7 +299,7 @@ export default function EntryForm() {
         <View style={{ marginBottom: theme.spacing.lg }}>
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 16,
               fontWeight: '300',
               color: theme.colors.text.primary,
               letterSpacing: 0.5,
@@ -330,7 +330,7 @@ export default function EntryForm() {
                   <>
                     <Text
                       style={{
-                        fontSize: 11,
+                        fontSize: 15,
                         fontWeight: '300',
                         color: theme.colors.text.primary,
                         letterSpacing: 0.2,
@@ -340,7 +340,7 @@ export default function EntryForm() {
                     </Text>
                     <Text
                       style={{
-                        fontSize: 9,
+                        fontSize: 13,
                         fontWeight: '300',
                         color: theme.colors.success,
                         marginTop: 2,
@@ -353,7 +353,7 @@ export default function EntryForm() {
                 ) : (
                   <Text
                     style={{
-                      fontSize: 11,
+                      fontSize: 15,
                       fontWeight: '300',
                       color: theme.colors.text.secondary,
                       letterSpacing: 0.2,
@@ -391,7 +391,7 @@ export default function EntryForm() {
           ) : (
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: '300',
                 color:
                   !activityType || !photoUri || !location

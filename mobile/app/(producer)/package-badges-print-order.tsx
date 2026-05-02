@@ -30,7 +30,7 @@ export default function PackageBadgesPrintOrderInfoScreen() {
           style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}
         >
           <ChevronLeft size={22} color={theme.colors.text.primary} />
-          <Text style={{ color: theme.colors.text.secondary, fontSize: 14 }}>{t('common.back')}</Text>
+          <Text style={{ color: theme.colors.text.secondary, fontSize: 16 }}>{t('common.back')}</Text>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Info size={22} color={theme.colors.primary} />
@@ -54,5 +54,5 @@ export default function PackageBadgesPrintOrderInfoScreen() {
 
 const styles = StyleSheet.create({
   top: { borderBottomWidth: 1, borderBottomColor: theme.colors.border, paddingBottom: 12 },
-  body: { fontSize: 15, color: theme.colors.text.secondary, lineHeight: 24 },
+  body: { fontSize: 17, color: theme.colors.text.secondary, lineHeight: 26 },
 });

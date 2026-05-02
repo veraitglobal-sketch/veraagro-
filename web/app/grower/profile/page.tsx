@@ -157,7 +157,7 @@ export default function FarmerProfilePage() {
           <GrowerPageShell>
             <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" />
-              <p className="text-sm text-gray-600">{t('grower.profilePage.loading')}</p>
+              <p className="text-base text-gray-600">{t('grower.profilePage.loading')}</p>
             </div>
           </GrowerPageShell>
         </SidebarLayout>
@@ -173,11 +173,11 @@ export default function FarmerProfilePage() {
         <div className="grid grid-cols-1 gap-6 items-stretch lg:grid-cols-2 lg:gap-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sm:p-7 flex flex-col h-full min-h-0">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('grower.profilePage.cardTitle')}</h2>
-          <p className="text-sm text-gray-500 mb-6 font-light">{t('grower.profilePage.cardLead')}</p>
+          <p className="text-base text-gray-500 mb-6 font-light">{t('grower.profilePage.cardLead')}</p>
 
           {/* Photo Upload Section */}
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">{t('grower.profilePage.photoLabel')}</label>
+            <label className="block text-base font-medium text-gray-700 mb-3">{t('grower.profilePage.photoLabel')}</label>
             <div className="flex items-center gap-6">
               {/* Photo Preview */}
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-green-600 shadow-lg">
@@ -235,7 +235,7 @@ export default function FarmerProfilePage() {
 
           {/* Bio Section */}
           <div className="mb-6">
-            <label htmlFor="farmerBio" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="farmerBio" className="block text-base font-medium text-gray-700 mb-2">
               {t('grower.profilePage.bioLabel')}
             </label>
             <textarea
@@ -251,7 +251,7 @@ export default function FarmerProfilePage() {
 
           {/* Years of Experience */}
           <div className="mb-6">
-            <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="yearsOfExperience" className="block text-base font-medium text-gray-700 mb-2">
               {t('grower.profilePage.yearsLabel')}
             </label>
             <input
@@ -267,7 +267,7 @@ export default function FarmerProfilePage() {
 
           {/* Generation */}
           <div>
-            <label htmlFor="generation" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="generation" className="block text-base font-medium text-gray-700 mb-2">
               {t('grower.profilePage.generationLabel')}
             </label>
             <input
@@ -316,7 +316,7 @@ export default function FarmerProfilePage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-white">{t('grower.profilePage.qrTitle')}</h2>
-                  <p className="text-sm text-white/85 font-light">{t('grower.profilePage.qrSubtitle')}</p>
+                  <p className="text-base text-white/85 font-light">{t('grower.profilePage.qrSubtitle')}</p>
                 </div>
               </div>
             </div>
@@ -346,18 +346,18 @@ export default function FarmerProfilePage() {
                     <div className="flex-1 w-full min-w-0 space-y-6">
                       {/* Profile link + copy */}
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">{t('grower.profilePage.profileLinkLabel')}</p>
+                        <p className="text-base font-medium text-gray-700 mb-2">{t('grower.profilePage.profileLinkLabel')}</p>
                         <div className="flex flex-wrap gap-2">
                           <input
                             type="text"
                             readOnly
                             value={profileUrl}
-                            className="flex-1 min-w-0 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600 font-mono"
+                            className="flex-1 min-w-0 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-base text-gray-600 font-mono"
                           />
                           <button
                             type="button"
                             onClick={handleCopyLink}
-                            className="inline-flex items-center gap-2 rounded-lg border border-[#2D5A27] bg-white px-4 py-2 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
+                            className="inline-flex items-center gap-2 rounded-lg border border-[#2D5A27] bg-white px-4 py-2 text-base font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
                           >
                             {linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                             {linkCopied ? t('grower.profilePage.copied') : t('grower.profilePage.copyLink')}
@@ -367,7 +367,7 @@ export default function FarmerProfilePage() {
                           href={profileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-2 inline-flex items-center gap-1.5 text-sm text-[#2D5A27] hover:underline"
+                          className="mt-2 inline-flex items-center gap-1.5 text-base text-[#2D5A27] hover:underline"
                         >
                           <ExternalLink className="h-4 w-4" />
                           {t('grower.profilePage.openPublic')}
@@ -376,12 +376,12 @@ export default function FarmerProfilePage() {
                       {/* Download */}
                       {qrImageUrl && (
                         <div>
-                          <p className="text-sm font-medium text-gray-700 mb-2">{t('grower.profilePage.downloadSectionTitle')}</p>
+                          <p className="text-base font-medium text-gray-700 mb-2">{t('grower.profilePage.downloadSectionTitle')}</p>
                           <p className="text-xs text-gray-500 mb-2 font-light">{t('grower.profilePage.downloadSectionHint')}</p>
                           <button
                             type="button"
                             onClick={handleDownloadQr}
-                            className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#2D5A27]/90"
+                            className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2.5 text-base font-medium text-white hover:bg-[#2D5A27]/90"
                           >
                             <Download className="h-4 w-4" />
                             {t('grower.profilePage.downloadPng')}
@@ -390,8 +390,8 @@ export default function FarmerProfilePage() {
                       )}
                       {/* Where to use */}
                       <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
-                        <p className="text-sm font-medium text-gray-800 mb-3">{t('grower.profilePage.whereUseTitle')}</p>
-                        <ul className="space-y-2 text-sm text-gray-600 font-light">
+                        <p className="text-base font-medium text-gray-800 mb-3">{t('grower.profilePage.whereUseTitle')}</p>
+                        <ul className="space-y-2 text-base text-gray-600 font-light">
                           <li className="flex items-center gap-2">
                             <Package className="h-4 w-4 text-[#2D5A27]" />
                             {t('grower.profilePage.whereUsePackaging')}

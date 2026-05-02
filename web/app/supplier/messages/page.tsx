@@ -3,8 +3,12 @@
 import { useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
+import { useTranslation } from 'react-i18next';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 export default function SupplierMessagesPage() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const [threads, setThreads] = useState<
     Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyThreads>>
   >([]);
@@ -22,7 +26,7 @@ export default function SupplierMessagesPage() {
     try {
       setThreads(await b2bSupplierPortalAPI.getMyThreads());
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed');
+      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errThreads'));
     } finally {
       setLoading(false);
     }
@@ -38,7 +42,7 @@ export default function SupplierMessagesPage() {
     try {
       setMessages(await b2bSupplierPortalAPI.getThreadMessages(id));
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed to load messages');
+      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errOpen'));
     }
   };
 
@@ -52,7 +56,7 @@ export default function SupplierMessagesPage() {
       setMessages(await b2bSupplierPortalAPI.getThreadMessages(activeId));
       await loadThreads();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Send failed');
+      setErr(e instanceof Error ? e.message : t('supplier.messagesPage.errSend'));
     } finally {
       setSending(false);
     }
@@ -63,27 +67,27 @@ export default function SupplierMessagesPage() {
       requiredRoles={['MATERIAL_SUPPLIER']}
       redirectTo="/login?returnTo=%2Fsupplier%2Fmessages"
     >
-      <h1 className="text-xl font-light text-gray-900 mb-4">Messages</h1>
-      {loading && <p className="text-sm text-gray-500">Loading…</p>}
+      <h1 className="text-xl font-light text-gray-900 mb-4">{t('supplier.nav.messages')}</h1>
+      {loading && <p className="text-sm text-gray-500">{t('supplier.messagesPage.loading')}</p>}
       {err && <p className="text-sm text-red-600 mb-3">{err}</p>}
       <div className="grid md:grid-cols-2 gap-4 min-h-[360px]">
         <ul className="space-y-1">
-          {threads.map((t) => (
-            <li key={t.id}>
+          {threads.map((thread) => (
+            <li key={thread.id}>
               <button
                 type="button"
-                onClick={() => void openThread(t.id)}
+                onClick={() => void openThread(thread.id)}
                 className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-                  activeId === t.id
+                  activeId === thread.id
                     ? 'bg-[#2D5A27]/10 text-[#1a3616]'
                     : 'hover:bg-gray-100 text-gray-800'
                 }`}
               >
-                {t.farmer
-                  ? `${t.farmer.firstName || ''} ${t.farmer.lastName || ''} · ${t.farmer.partnerCode || ''}`
-                  : t.id}
+                {thread.farmer
+                  ? `${thread.farmer.firstName || ''} ${thread.farmer.lastName || ''} · ${thread.farmer.partnerCode || ''}`
+                  : thread.id}
                 <div className="text-xs text-gray-500">
-                  {t.lastMessageAt && new Date(t.lastMessageAt).toLocaleString()}
+                  {thread.lastMessageAt && new Date(thread.lastMessageAt).toLocaleString(dateLocale)}
                 </div>
               </button>
             </li>
@@ -91,7 +95,7 @@ export default function SupplierMessagesPage() {
         </ul>
         <div className="bg-white border border-gray-200 rounded-lg flex flex-col p-3 min-h-[300px]">
           {!activeId && (
-            <p className="text-sm text-gray-500 m-auto">Select a conversation</p>
+            <p className="text-sm text-gray-500 m-auto">{t('supplier.messagesPage.selectConversation')}</p>
           )}
           {activeId && (
             <>
@@ -99,14 +103,16 @@ export default function SupplierMessagesPage() {
                 {messages.map((m) => (
                   <div key={m.id} className="text-sm border-b border-gray-100 pb-2">
                     <p className="text-gray-800 whitespace-pre-wrap">{m.body}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{new Date(m.createdAt).toLocaleString()}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      {new Date(m.createdAt).toLocaleString(dateLocale)}
+                    </p>
                   </div>
                 ))}
               </div>
               <div className="flex gap-2 mt-auto">
                 <input
                   className="flex-1 border border-gray-200 rounded px-2 py-2 text-sm"
-                  placeholder="Reply…"
+                  placeholder={t('supplier.messagesPage.placeholderReply')}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), void send())}
@@ -117,14 +123,16 @@ export default function SupplierMessagesPage() {
                   onClick={() => void send()}
                   className="px-3 py-2 bg-[#2D5A27] text-white text-sm rounded disabled:opacity-50"
                 >
-                  Send
+                  {t('supplier.messagesPage.send')}
                 </button>
               </div>
             </>
           )}
         </div>
       </div>
-      {!loading && threads.length === 0 && <p className="text-sm text-gray-500 mt-4">No messages yet.</p>}
+      {!loading && threads.length === 0 && (
+        <p className="text-sm text-gray-500 mt-4">{t('supplier.messagesPage.empty')}</p>
+      )}
     </AuthGuard>
   );
 }

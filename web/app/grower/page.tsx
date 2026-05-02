@@ -12,6 +12,7 @@ import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBanner';
+import GrowerDashboardHomeWorkflow from '@/components/grower/GrowerDashboardHomeWorkflow';
 
 export default function GrowerDashboardPage() {
   const { t } = useTranslation();
@@ -164,11 +165,13 @@ export default function GrowerDashboardPage() {
 
           <GrowerOfflineOutboxBanner />
 
+          <GrowerDashboardHomeWorkflow />
+
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-600">{t('grower.dashboard.totalEstates')}</h3>
+                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalEstates')}</h3>
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
@@ -178,7 +181,7 @@ export default function GrowerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-600">{t('grower.dashboard.totalParcels')}</h3>
+                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalParcels')}</h3>
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
@@ -188,7 +191,7 @@ export default function GrowerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-600">{t('grower.dashboard.certifiedEstates')}</h3>
+                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.certifiedEstates')}</h3>
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -200,15 +203,15 @@ export default function GrowerDashboardPage() {
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0">
-                <h2 className="text-base font-medium text-gray-900">{t('grower.dashboard.fieldDiaryCardTitle')}</h2>
-                <p className="text-sm text-gray-600 font-light mt-1">
+                <h2 className="text-lg font-semibold text-gray-900">{t('grower.dashboard.fieldDiaryCardTitle')}</h2>
+                <p className="text-base text-gray-700 font-light mt-1">
                   {journalEntryCount === null ? '—' : t('grower.dashboard.fieldDiaryCardCount', { count: journalEntryCount })}
                 </p>
-                <p className="text-sm text-gray-500 font-light mt-2 max-w-xl">{t('grower.dashboard.fieldDiaryCardHint')}</p>
+                <p className="text-base text-gray-600 font-light mt-2 max-w-xl leading-relaxed">{t('grower.dashboard.fieldDiaryCardHint')}</p>
               </div>
               <Link
                 href={loc('/grower/field-diary')}
-                className="shrink-0 px-4 py-2.5 rounded-lg bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#254a21] transition-colors"
+                className="shrink-0 inline-flex items-center justify-center min-h-[48px] px-5 py-3 rounded-lg bg-[#2D5A27] text-white text-base font-medium hover:bg-[#254a21] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
               >
                 {t('grower.dashboard.fieldDiaryCardCta')}
               </Link>
@@ -216,9 +219,12 @@ export default function GrowerDashboardPage() {
           </div>
 
           <div className="bg-[#2D5A27]/5 border border-[#2D5A27]/20 rounded-lg p-5">
-            <h2 className="text-base font-medium text-gray-900 mb-1">{t('grower.dashboard.stepsBlockTitle')}</h2>
-            <p className="text-sm text-gray-600 font-light mb-3">{t('grower.dashboard.stepsBlockDescription')}</p>
-            <Link href="/grower/season" className="text-sm font-medium text-[#2D5A27] hover:underline">
+            <h2 className="text-lg font-medium text-gray-900 mb-1">{t('grower.dashboard.stepsBlockTitle')}</h2>
+            <p className="text-base text-gray-600 font-light mb-3 leading-relaxed">{t('grower.dashboard.stepsBlockDescription')}</p>
+            <Link
+              href={loc('/grower/season')}
+              className="inline-flex min-h-[44px] items-center text-base font-medium text-[#2D5A27] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded"
+            >
               {t('grower.dashboard.stepsOpen')}
             </Link>
           </div>
@@ -238,10 +244,10 @@ export default function GrowerDashboardPage() {
                 )}
                 <div>
                   <h3 className="text-base font-medium text-gray-900">{t('grower.dashboard.qrTitle')}</h3>
-                  <p className="text-sm text-gray-600 font-light mt-0.5">{t('grower.dashboard.qrDescription')}</p>
+                  <p className="text-base text-gray-600 font-light mt-0.5 leading-relaxed">{t('grower.dashboard.qrDescription')}</p>
                   <Link
-                    href="/grower/profile"
-                    className="inline-block mt-2 text-sm font-medium text-[#2D5A27] hover:underline"
+                    href={loc('/grower/profile')}
+                    className="inline-flex min-h-[44px] items-center mt-2 text-base font-medium text-[#2D5A27] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded"
                   >
                     {t('grower.dashboard.qrViewProfile')}
                   </Link>
@@ -252,7 +258,7 @@ export default function GrowerDashboardPage() {
                   href={farmerProfileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-gray-500 hover:text-[#2D5A27]"
+                  className="text-base text-gray-600 hover:text-[#2D5A27] underline-offset-2 hover:underline"
                 >
                   {t('grower.dashboard.openPublicProfile')}
                 </a>
@@ -266,8 +272,8 @@ export default function GrowerDashboardPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.myEstates')}</h2>
                 <Link
-                  href="/grower/fields"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                  href={loc('/grower/fields')}
+                  className="inline-flex min-h-[48px] items-center justify-center px-5 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                 >
                   {t('grower.dashboard.addEstate')}
                 </Link>
@@ -279,14 +285,14 @@ export default function GrowerDashboardPage() {
                   {estates.map((estate: any) => (
                     <Link
                       key={estate.id}
-                      href={`/grower/fields?estate=${encodeURIComponent(estate.id)}`}
+                      href={`${loc('/grower/fields')}?estate=${encodeURIComponent(estate.id)}`}
                       className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
                     >
                       <h3 className="text-base font-medium text-gray-900 mb-2">{estate.name}</h3>
-                      <p className="text-sm text-gray-600 font-light mb-3">
+                      <p className="text-base text-gray-600 font-light mb-3">
                         {t('grower.dashboard.parcelCount', { count: estate.parcels?.length || 0 })}
                       </p>
-                      <span className={`inline-block px-3 py-1 rounded text-xs font-medium border ${getStatusColor(estate.status || 'PENDING_SETUP')}`}>
+                      <span className={`inline-block px-3 py-1.5 rounded text-sm font-medium border ${getStatusColor(estate.status || 'PENDING_SETUP')}`}>
                         {estate.status || 'PENDING_SETUP'}
                       </span>
                     </Link>
@@ -294,10 +300,10 @@ export default function GrowerDashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 font-light mb-4">{t('grower.dashboard.noEstates')}</p>
+                  <p className="text-base text-gray-600 font-light mb-4">{t('grower.dashboard.noEstates')}</p>
                   <Link
-                    href="/grower/fields"
-                    className="text-green-600 hover:text-green-700 font-medium text-sm"
+                    href={loc('/grower/fields')}
+                    className="inline-flex min-h-[48px] items-center justify-center text-green-600 hover:text-green-700 font-medium text-base px-4"
                   >
                     {t('grower.dashboard.createFirstEstate')}
                   </Link>
@@ -311,24 +317,24 @@ export default function GrowerDashboardPage() {
             <div className="bg-white border border-gray-200 rounded-lg">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.financialOverview')}</h2>
-                <p className="text-sm text-gray-600 font-light mt-1">{t('grower.dashboard.financialOverviewSub')}</p>
+                <p className="text-base text-gray-600 font-light mt-1">{t('grower.dashboard.financialOverviewSub')}</p>
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-1">{t('grower.dashboard.totalProfit')}</p>
+                    <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.totalProfit')}</p>
                     <p className="text-2xl font-light text-green-700">
                       €{financialData.summary?.totalProfit?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-1">{t('grower.dashboard.seedMargin')}</p>
+                    <p className="text-base font-medium text-gray-600 mb-1">{t('grower.dashboard.seedMargin')}</p>
                     <p className="text-2xl font-light text-blue-700">
                       €{financialData.summary?.seedMargin?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-1">
+                    <p className="text-base font-medium text-gray-600 mb-1">
                       {t('grower.dashboard.certificationSavings')}
                     </p>
                     <p className="text-2xl font-light text-purple-700">
@@ -336,7 +342,7 @@ export default function GrowerDashboardPage() {
                     </p>
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-1">
+                    <p className="text-base font-medium text-gray-600 mb-1">
                       {t('grower.dashboard.packagingCommissions')}
                     </p>
                     <p className="text-2xl font-light text-yellow-700">
@@ -346,13 +352,13 @@ export default function GrowerDashboardPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-2">{t('grower.dashboard.transportMargin')}</p>
+                    <p className="text-base font-medium text-gray-600 mb-2">{t('grower.dashboard.transportMargin')}</p>
                     <p className="text-xl font-light text-gray-900">
                       €{financialData.summary?.transportMargin?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-600 mb-2">
+                    <p className="text-base font-medium text-gray-600 mb-2">
                       {t('grower.dashboard.insuranceCommissions')}
                     </p>
                     <p className="text-xl font-light text-gray-900">
@@ -368,12 +374,12 @@ export default function GrowerDashboardPage() {
           <div className="bg-white border border-gray-200 rounded-lg">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-light text-gray-900">Recent Missions</h2>
+                <h2 className="text-xl font-light text-gray-900">{t('grower.dashboard.recentMissions')}</h2>
                 <Link
-                  href="/grower/portal"
-                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                  href={loc('/grower/portal')}
+                  className="inline-flex min-h-[44px] items-center text-base text-green-600 hover:text-green-700 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/40 focus-visible:ring-offset-2 rounded px-1"
                 >
-                  View All →
+                  {t('grower.dashboard.viewAll')}
                 </Link>
               </div>
             </div>
@@ -389,12 +395,14 @@ export default function GrowerDashboardPage() {
                         <h3 className="text-base font-medium text-gray-900">
                           {t('grower.dashboard.missionLabel', { id: mission.missionNumber || mission.id })}
                         </h3>
-                        <span className={`px-3 py-1 rounded text-xs font-medium border ${getStatusColor(mission.status || 'PENDING')}`}>
-                          {mission.status || 'PENDING'}
+                        <span className={`px-3 py-1.5 rounded text-sm font-medium border ${getStatusColor(mission.status || 'PENDING')}`}>
+                          {t(`adminPages.missions.statuses.${mission.status as string}`, {
+                            defaultValue: (mission.status || 'PENDING').replace(/_/g, ' '),
+                          })}
                         </span>
                       </div>
                       {mission.batches && (
-                        <p className="text-sm text-gray-600 font-light">
+                        <p className="text-base text-gray-600 font-light">
                           {t('grower.dashboard.batch')}: {mission.batches.batchId || t('grower.dashboard.notAvailable')}
                         </p>
                       )}
@@ -403,7 +411,7 @@ export default function GrowerDashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 font-light">{t('grower.dashboard.noMissions')}</p>
+                  <p className="text-base text-gray-600 font-light">{t('grower.dashboard.noMissions')}</p>
                 </div>
               )}
             </div>

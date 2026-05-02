@@ -52,12 +52,13 @@ const row = {
   borderColor: theme.colors.border,
   flexDirection: 'row' as const,
   alignItems: 'center' as const,
-  minHeight: 72,
+  /** Farmer-friendly tap target (see .cursorrules ~60px+) */
+  minHeight: 80,
 };
 
 const iconBox = (bg: string, border?: string) => ({
-  width: 48,
-  height: 48,
+  width: 52,
+  height: 52,
   borderRadius: theme.borderRadius.md,
   backgroundColor: bg,
   alignItems: 'center' as const,
@@ -164,7 +165,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
       <View style={{ marginBottom: theme.spacing.lg }}>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '600',
             color: theme.colors.text.primary,
             marginBottom: 4,
@@ -174,10 +175,10 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
         </Text>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: '400',
             color: theme.colors.text.secondary,
-            lineHeight: 20,
+            lineHeight: 22,
             marginBottom: theme.spacing.md,
           }}
         >
@@ -188,10 +189,10 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
             <TouchableOpacity key={item.key} onPress={item.onPress} activeOpacity={0.7} style={row}>
               <View style={iconBox(item.accent)}>{item.icon}</View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 4 }}>
                   {t(item.titleKey)}
                 </Text>
-                <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, lineHeight: 18 }}>
+                <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.secondary, lineHeight: 22 }}>
                   {t(item.descKey)}
                 </Text>
               </View>
@@ -203,7 +204,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
       <View style={{ marginBottom: theme.spacing.lg }}>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '600',
             color: theme.colors.text.primary,
             marginBottom: 4,
@@ -213,10 +214,10 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
         </Text>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: '400',
             color: theme.colors.text.secondary,
-            lineHeight: 20,
+            lineHeight: 22,
             marginBottom: theme.spacing.md,
           }}
         >
@@ -258,12 +259,13 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               style={{
                 backgroundColor: theme.colors.primaryLight,
                 borderRadius: theme.borderRadius.md,
-                paddingVertical: 12,
-                paddingHorizontal: 12,
+                paddingVertical: 16,
+                paddingHorizontal: 14,
                 borderWidth: 1,
                 borderColor: theme.colors.border,
                 flexDirection: 'row',
                 alignItems: 'center',
+                minHeight: 58,
                 minWidth: '47%',
                 flexGrow: 1,
               }}
@@ -272,7 +274,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               <Text
                 style={{
                   marginLeft: 8,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: '600',
                   color: theme.colors.text.primary,
                   flex: 1,
@@ -289,9 +291,9 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
       <View style={{ marginBottom: theme.spacing.lg }}>
         <Text
           style={{
-            fontSize: 12,
-            fontWeight: '500',
-            color: theme.colors.text.tertiary,
+            fontSize: 13,
+            fontWeight: '600',
+            color: theme.colors.text.secondary,
             marginBottom: theme.spacing.sm,
             textTransform: 'uppercase',
             letterSpacing: 0.5,
@@ -308,12 +310,13 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               style={{
                 backgroundColor: theme.colors.surface,
                 borderRadius: theme.borderRadius.md,
-                paddingVertical: 12,
+                paddingVertical: 16,
                 paddingHorizontal: 14,
                 borderWidth: 1,
                 borderColor: theme.colors.border,
                 flexDirection: 'row',
                 alignItems: 'center',
+                minHeight: 58,
                 minWidth: '47%',
                 flexGrow: 1,
               }}
@@ -322,7 +325,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               <Text
                 style={{
                   marginLeft: 8,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: '500',
                   color: theme.colors.text.primary,
                   flex: 1,

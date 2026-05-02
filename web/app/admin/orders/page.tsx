@@ -8,6 +8,7 @@ import { ShoppingCart, Truck } from 'lucide-react';
 
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 /** Prisma OrderStatus — must match backend */
 const ORDER_STATUSES = [
@@ -24,7 +25,8 @@ const ORDER_STATUSES = [
 ] as const;
 
 export default function OrdersManagementPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const adminNavItems = useAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [fulfillmentEstates, setFulfillmentEstates] = useState<
@@ -63,7 +65,7 @@ export default function OrdersManagementPage() {
       setFulfillmentEstates(Array.isArray(est) ? est : []);
     } catch (err: any) {
       console.error('Error loading orders:', err);
-      setError(err.message || 'Failed to load orders');
+      setError(err.message || t('adminPages.orderManagement.errLoad'));
     } finally {
       setLoading(false);
     }
@@ -79,7 +81,7 @@ export default function OrdersManagementPage() {
       );
     } catch (err: any) {
       console.error('updateStatus', err);
-      setError(err.response?.data?.message || err.message || 'Failed to update status');
+      setError(err.response?.data?.message || err.message || t('adminPages.orderManagement.errUpdateStatus'));
     } finally {
       setSavingId(null);
     }
@@ -95,7 +97,7 @@ export default function OrdersManagementPage() {
       );
     } catch (err: any) {
       console.error('approveOrder', err);
-      setError(err.response?.data?.message || err.message || 'Failed to accept order');
+      setError(err.response?.data?.message || err.message || t('adminPages.orderManagement.errApprove'));
     } finally {
       setSavingId(null);
     }
@@ -118,7 +120,7 @@ export default function OrdersManagementPage() {
     } catch (err: any) {
       console.error('confirmBankPayment', err);
       setError(
-        err.response?.data?.message || err.message || 'Failed to confirm bank payment',
+        err.response?.data?.message || err.message || t('adminPages.orderManagement.errBank'),
       );
     } finally {
       setSavingId(null);
@@ -143,7 +145,7 @@ export default function OrdersManagementPage() {
       setMissionTargetKg('');
     } catch (err: any) {
       setError(
-        err.response?.data?.message || err.message || 'Could not create mission for this order',
+        err.response?.data?.message || err.message || t('adminPages.orderManagement.errMission'),
       );
     } finally {
       setMissionSaving(false);
@@ -161,7 +163,7 @@ export default function OrdersManagementPage() {
     } catch (err: any) {
       console.error('updateFulfillment', err);
       setError(
-        err.response?.data?.message || err.message || 'Failed to update fulfilling farm',
+        err.response?.data?.message || err.message || t('adminPages.orderManagement.errFulfillment'),
       );
     } finally {
       setSavingId(null);
@@ -174,13 +176,17 @@ export default function OrdersManagementPage() {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">Orders Management</h1>
+              <h1 className="text-2xl font-light text-gray-900">{t('adminPages.orderManagement.headerTitle')}</h1>
               <p className="text-sm text-gray-600 mt-1 max-w-3xl">
-                Assign a <strong>fulfilling farm</strong> to connect the buyer to a grower. Then use{' '}
-                <strong>Prep + mission</strong> to send them a transport task with your notes (kg, industrial / retail, packaging).
-                The mission is <strong>PENDING</strong> until you assign logistics in{' '}
-                <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">Missions</a> or a driver claims
-                it.
+                {t('adminPages.orderManagement.headerSubtitleBefore')}
+                <strong>{t('adminPages.orderManagement.headerPrepMissionStrong')}</strong>
+                {t('adminPages.orderManagement.headerSubtitleMid')}
+                <strong>{t('adminPages.orderManagement.headerPendingStrong')}</strong>
+                {t('adminPages.orderManagement.headerSubtitleAfterMissions')}
+                <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">
+                  {t('adminPages.orderManagement.missionsLink')}
+                </a>
+                {t('adminPages.orderManagement.headerSubtitleEnd')}
               </p>
             </div>
           </div>
@@ -195,7 +201,7 @@ export default function OrdersManagementPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading orders...</p>
+                <p className="mt-4 text-gray-600">{t('adminPages.orderManagement.loading')}</p>
               </div>
             </div>
           ) : (
@@ -203,16 +209,16 @@ export default function OrdersManagementPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order Number</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Buyer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fulfilling farm</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grower mission</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Change status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colOrderNumber')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colBuyer')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colProduct')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colQuantity')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colAmount')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colFulfillingFarm')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colGrowerMission')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colStatus')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colChangeStatus')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colCreated')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -242,9 +248,11 @@ export default function OrdersManagementPage() {
                             void updateFulfillment(order.id, v === '' ? null : v);
                           }}
                           className="text-sm border border-gray-300 rounded-md px-2 py-1.5 bg-white w-full max-w-full focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-600 disabled:opacity-50"
-                          aria-label={`Fulfilling farm for ${order.orderNumber}`}
+                          aria-label={t('adminPages.orderManagement.fulfillingFarmAria', {
+                            orderNumber: order.orderNumber,
+                          })}
                         >
-                          <option value="">(not set)</option>
+                          <option value="">{t('adminPages.orderManagement.notSet')}</option>
                           {fulfillmentEstates.map((e) => (
                             <option key={e.id} value={e.id}>
                               {e.name}
@@ -263,13 +271,13 @@ export default function OrdersManagementPage() {
                             setMissionModal({ orderId: order.id, orderNumber: order.orderNumber });
                           }}
                           className="inline-flex items-center gap-1 text-xs font-medium rounded-md px-2.5 py-1.5 border border-[#2D5A27]/30 text-[#2D5A27] hover:bg-[#2D5A27]/5 disabled:opacity-40 disabled:cursor-not-allowed"
-                          title="Create a PENDING mission for this grower with prep notes (set fulfilling farm first)"
+                          title={t('adminPages.orderManagement.prepMissionTitle')}
                         >
                           <Truck className="w-3.5 h-3.5" />
-                          Prep + mission
+                          {t('adminPages.orderManagement.prepMissionCta')}
                         </button>
                         {!order.fulfillingEstateId && (
-                          <p className="text-[10px] text-amber-700 mt-1">Set farm first</p>
+                          <p className="text-[10px] text-amber-700 mt-1">{t('adminPages.orderManagement.setFarmFirst')}</p>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -280,7 +288,7 @@ export default function OrdersManagementPage() {
                             onClick={() => void approveOrder(order.id)}
                             className="text-xs font-medium rounded-md px-3 py-1.5 bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
                           >
-                            Accept order
+                            {t('adminPages.orderManagement.acceptOrder')}
                           </button>
                         ) : order.status === 'APPROVED' && !order.payments ? (
                           <button
@@ -292,10 +300,10 @@ export default function OrdersManagementPage() {
                             }}
                             className="text-xs font-medium rounded-md px-3 py-1.5 bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50"
                           >
-                            Confirm bank payment
+                            {t('adminPages.orderManagement.confirmBankPayment')}
                           </button>
                         ) : (
-                          <span className="text-xs text-gray-400">—</span>
+                          <span className="text-xs text-gray-400">{t('common.emDash')}</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -305,7 +313,9 @@ export default function OrdersManagementPage() {
                           order.status === 'APPROVED' ? 'bg-sky-100 text-sky-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {order.status}
+                          {t(`adminPages.orderManagement.statuses.${order.status}`, {
+                            defaultValue: order.status,
+                          })}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -314,17 +324,19 @@ export default function OrdersManagementPage() {
                           disabled={savingId === order.id}
                           onChange={(e) => updateStatus(order.id, e.target.value)}
                           className="text-sm border border-gray-300 rounded-md px-2 py-1.5 bg-white max-w-[11rem] focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-600 disabled:opacity-50"
-                          aria-label={`Update status for ${order.orderNumber}`}
+                          aria-label={t('adminPages.orderManagement.updateStatusAria', {
+                            orderNumber: order.orderNumber,
+                          })}
                         >
                           {ORDER_STATUSES.map((s) => (
                             <option key={s} value={s}>
-                              {s}
+                              {t(`adminPages.orderManagement.statuses.${s}`)}
                             </option>
                           ))}
                         </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        {new Date(order.createdAt).toLocaleDateString(dateLocale)}
                       </td>
                     </tr>
                   ))}
@@ -333,7 +345,7 @@ export default function OrdersManagementPage() {
               {orders.length === 0 && (
                 <div className="text-center py-12">
                   <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No orders found</p>
+                  <p className="text-gray-500">{t('adminPages.orderManagement.emptyState')}</p>
                 </div>
               )}
             </div>
@@ -349,26 +361,26 @@ export default function OrdersManagementPage() {
           >
             <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 space-y-4">
               <h2 id="mission-modal-title" className="text-lg font-medium text-gray-900">
-                Prep &amp; transport mission
+                {t('adminPages.orderManagement.missionModalTitle')}
               </h2>
               <p className="text-sm text-gray-600">
-                Order <span className="font-mono">{missionModal.orderNumber}</span> — creates a task for the assigned
-                grower with pickup on their farm and delivery to the address on the order. Stays PENDING for dispatch
-                (you assign a driver) or for logistics to claim.
+                {t('adminPages.orderManagement.missionModalLead', {
+                  orderNumber: missionModal.orderNumber,
+                })}
               </p>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Target kg (optional)</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{t('adminPages.orderManagement.labelTargetKg')}</label>
                 <input
                   type="text"
                   inputMode="decimal"
                   value={missionTargetKg}
                   onChange={(e) => setMissionTargetKg(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  placeholder="e.g. 500"
+                  placeholder={t('adminPages.orderManagement.placeholderTargetKg')}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Channel (optional)</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{t('adminPages.orderManagement.labelChannel')}</label>
                 <select
                   value={missionChannel}
                   onChange={(e) =>
@@ -378,22 +390,22 @@ export default function OrdersManagementPage() {
                   }
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                 >
-                  <option value="">(not set)</option>
-                  <option value="INDUSTRIAL">Industrial</option>
-                  <option value="RETAIL">Retail</option>
-                  <option value="MIXED">Mixed</option>
+                  <option value="">{t('adminPages.orderManagement.notSet')}</option>
+                  <option value="INDUSTRIAL">{t('adminPages.orderManagement.channelIndustrial')}</option>
+                  <option value="RETAIL">{t('adminPages.orderManagement.channelRetail')}</option>
+                  <option value="MIXED">{t('adminPages.orderManagement.channelMixed')}</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Operations notes (class, box type, time window, buyer ref…)
+                  {t('adminPages.orderManagement.labelOpsNotes')}
                 </label>
                 <textarea
                   value={missionOpsNotes}
                   onChange={(e) => setMissionOpsNotes(e.target.value)}
                   rows={4}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  placeholder="What the grower should prepare and how it should be sorted/packed for this buyer."
+                  placeholder={t('adminPages.orderManagement.placeholderOpsNotes')}
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
@@ -407,7 +419,7 @@ export default function OrdersManagementPage() {
                   }}
                   className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('adminPages.orderManagement.cancel')}
                 </button>
                 <button
                   type="button"
@@ -415,7 +427,7 @@ export default function OrdersManagementPage() {
                   onClick={() => void createFarmMission()}
                   className="px-4 py-2 text-sm rounded-md bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
                 >
-                  {missionSaving ? 'Creating…' : 'Create mission'}
+                  {missionSaving ? t('adminPages.orderManagement.creating') : t('adminPages.orderManagement.createMission')}
                 </button>
               </div>
             </div>
@@ -431,23 +443,21 @@ export default function OrdersManagementPage() {
           >
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 space-y-4">
               <h2 id="bank-modal-title" className="text-lg font-medium text-gray-900">
-                Confirm bank transfer received
+                {t('adminPages.orderManagement.bankModalTitle')}
               </h2>
               <p className="text-sm text-gray-600">
-                Order <span className="font-mono">{bankModal.orderNumber}</span> will be
-                marked PAID and an escrow payment record will be created. Use this when the
-                amount is visible on the BioVera account.
+                {t('adminPages.orderManagement.bankModalLead', { orderNumber: bankModal.orderNumber })}
               </p>
               <div>
                 <label htmlFor="bank-tx" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bank reference (optional)
+                  {t('adminPages.orderManagement.bankRefLabel')}
                 </label>
                 <input
                   id="bank-tx"
                   value={bankTxId}
                   onChange={(e) => setBankTxId(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  placeholder="e.g. payment order number"
+                  placeholder={t('adminPages.orderManagement.bankRefPlaceholder')}
                   autoComplete="off"
                 />
               </div>
@@ -460,7 +470,7 @@ export default function OrdersManagementPage() {
                   }}
                   className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('adminPages.orderManagement.cancel')}
                 </button>
                 <button
                   type="button"
@@ -468,7 +478,7 @@ export default function OrdersManagementPage() {
                   onClick={() => void confirmBankPayment()}
                   className="px-4 py-2 text-sm rounded-md bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50"
                 >
-                  {savingId === bankModal.orderId ? 'Saving…' : 'Mark as PAID'}
+                  {savingId === bankModal.orderId ? t('adminPages.orderManagement.saving') : t('adminPages.orderManagement.markPaid')}
                 </button>
               </div>
             </div>

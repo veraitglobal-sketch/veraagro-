@@ -9,7 +9,19 @@ import Link from 'next/link';
 import { Users, Plus, Edit2, Trash2, Search, Filter, QrCode, Download, X, CheckCircle, MapPin, KeyRound, Copy } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
+import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import { WEB_API_BASE } from '@/lib/api-base';
+
+const USER_ROLE_KEYS = [
+  'FARMER',
+  'GROWER',
+  'BUYER',
+  'LOGISTICS_PARTNER',
+  'MATERIAL_SUPPLIER',
+  'COMMERCIAL_AGENT',
+  'ADMIN',
+  'SUPER_ADMIN',
+] as const;
 
 interface User {
   id: string;
@@ -45,7 +57,8 @@ interface User {
 }
 
 export default function UsersManagementPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const adminNavItems = useAdminNavItems();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,20 +112,20 @@ export default function UsersManagementPage() {
       setUsers(data);
     } catch (err: any) {
       console.error('Error loading users:', err);
-      setError(err.message || 'Failed to load users');
+      setError(err.message || t('adminPages.userManagement.errLoadUsers'));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm(t('adminPages.userManagement.confirmDeleteUser'))) return;
     
     try {
       await usersAPI.delete(id);
       loadUsers();
     } catch (err: any) {
-      alert(err.message || 'Failed to delete user');
+      alert(err.message || t('adminPages.userManagement.errDeleteUser'));
     }
   };
 
@@ -149,14 +162,13 @@ export default function UsersManagementPage() {
         sendEmail: formData.sendEmail,
       });
       
-      // Show success message
-      let successMessage = 'User created successfully!';
+      let successMessage = t('adminPages.userManagement.createSuccess');
       if (newUser.passwordGenerated && newUser.password) {
-        successMessage += `\n\nGenerated password: ${newUser.password}`;
+        successMessage += `\n\n${t('adminPages.userManagement.createGeneratedPassword', { password: newUser.password })}`;
         if (newUser.emailSent) {
-          successMessage += '\n✅ Password sent to email.';
+          successMessage += `\n✅ ${t('adminPages.userManagement.createPasswordEmailed')}`;
         } else if (formData.sendEmail) {
-          successMessage += '\n⚠️ Email not sent (check email configuration).';
+          successMessage += `\n⚠️ ${t('adminPages.userManagement.createEmailNotSent')}`;
         }
       }
       
@@ -178,21 +190,21 @@ export default function UsersManagementPage() {
       }
       loadUsers();
     } catch (err: any) {
-      alert(err.message || 'Failed to create user');
+      alert(err.message || t('adminPages.userManagement.errCreateUser'));
     }
   };
 
   const handleApproveVerification = async (userId: string) => {
-    if (!confirm('Are you sure you want to approve verification for this user?')) return;
+    if (!confirm(t('adminPages.userManagement.confirmApproveVerification'))) return;
     
     try {
       await usersAPI.update(userId, {
         status: 'ACTIVE',
       });
       loadUsers();
-      alert('Verification approved successfully!');
+      alert(t('adminPages.userManagement.approveSuccess'));
     } catch (err: any) {
-      alert(err.message || 'Failed to approve verification');
+      alert(err.message || t('adminPages.userManagement.errApproveVerification'));
     }
   };
 
@@ -206,7 +218,7 @@ export default function UsersManagementPage() {
         try {
           buyerCompanyProfile = JSON.parse(formData.buyerCompanyProfileJson) as Record<string, unknown>;
         } catch {
-          alert('Buyer company profile must be valid JSON');
+          alert(t('adminPages.userManagement.errInvalidBuyerJson'));
           return;
         }
       }
@@ -246,7 +258,7 @@ export default function UsersManagementPage() {
       resetForm();
       loadUsers();
     } catch (err: any) {
-      alert(err.message || 'Failed to update user');
+      alert(err.message || t('adminPages.userManagement.errUpdateUser'));
     }
   };
 
@@ -277,7 +289,7 @@ export default function UsersManagementPage() {
     if (!editingUser) return;
     if (
       !confirm(
-        `Generate a new temporary password for ${editingUser.partnerCode}? The old password will stop working immediately.`,
+        t('adminPages.userManagement.confirmResetPassword', { partnerCode: editingUser.partnerCode }),
       )
     ) {
       return;
@@ -285,18 +297,12 @@ export default function UsersManagementPage() {
     setResettingPassword(true);
     try {
       const r = await usersAPI.adminResetPassword(editingUser.id);
-      const lines = [
-        `Partner code: ${r.partnerCode}`,
-        r.email ? `Email: ${r.email}` : '',
-        ``,
-        `New temporary password (copy and send securely; shown once):`,
-        r.temporaryPassword,
-      ]
-        .filter(Boolean)
-        .join('\n');
-      alert(lines);
+      const parts: string[] = [t('adminPages.userManagement.resetAlertPartner', { code: r.partnerCode })];
+      if (r.email) parts.push(t('adminPages.userManagement.resetAlertEmail', { email: r.email }));
+      parts.push('', t('adminPages.userManagement.resetAlertPasswordIntro'), r.temporaryPassword);
+      alert(parts.join('\n'));
     } catch (err: any) {
-      alert(err?.response?.data?.message || err?.message || 'Failed to reset password');
+      alert(err?.response?.data?.message || err?.message || t('adminPages.userManagement.errResetPassword'));
     } finally {
       setResettingPassword(false);
     }
@@ -364,15 +370,15 @@ export default function UsersManagementPage() {
           {/* Header */}
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">User Management</h1>
-              <p className="text-sm text-gray-600 mt-1">Manage all users in the system</p>
+              <h1 className="text-2xl font-light text-gray-900">{t('adminPages.userManagement.headerTitle')}</h1>
+              <p className="text-sm text-gray-600 mt-1">{t('adminPages.userManagement.headerSubtitle')}</p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
               className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              Create User
+              {t('adminPages.userManagement.createUser')}
             </button>
           </div>
 
@@ -383,7 +389,7 @@ export default function UsersManagementPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search users..."
+                  placeholder={t('adminPages.userManagement.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -394,25 +400,24 @@ export default function UsersManagementPage() {
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >
-                <option value="">All Roles</option>
-                <option value="FARMER">Farmer</option>
-                <option value="GROWER">Grower</option>
-                <option value="BUYER">Buyer</option>
-                <option value="LOGISTICS_PARTNER">Logistics Partner</option>
-                <option value="MATERIAL_SUPPLIER">Material supplier (B2B map)</option>
-                <option value="COMMERCIAL_AGENT">Commercial agent (field)</option>
-                <option value="ADMIN">Admin</option>
-                <option value="SUPER_ADMIN">Super Admin</option>
+                <option value="">{t('adminPages.userManagement.filterAllRoles')}</option>
+                {USER_ROLE_KEYS.map((role) => (
+                  <option key={role} value={role}>
+                    {t(`adminPages.userManagement.roles.${role}`)}
+                  </option>
+                ))}
               </select>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >
-                <option value="">All Statuses</option>
-                <option value="ACTIVE">Active</option>
-                <option value="SUSPENDED">Suspended</option>
-                <option value="PENDING_VERIFICATION">Pending Verification</option>
+                <option value="">{t('adminPages.userManagement.filterAllStatuses')}</option>
+                {(['ACTIVE', 'SUSPENDED', 'PENDING_VERIFICATION'] as const).map((st) => (
+                  <option key={st} value={st}>
+                    {t(`adminPages.userManagement.statuses.${st}`)}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -428,7 +433,7 @@ export default function UsersManagementPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading users...</p>
+                <p className="mt-4 text-gray-600">{t('adminPages.userManagement.loading')}</p>
               </div>
             </div>
           ) : (
@@ -437,25 +442,25 @@ export default function UsersManagementPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      {t('adminPages.userManagement.colUser')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
+                      {t('adminPages.userManagement.colRole')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      {t('adminPages.userManagement.colStatus')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Agent
+                      {t('adminPages.userManagement.colAgent')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estates
+                      {t('adminPages.userManagement.colEstates')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
+                      {t('adminPages.userManagement.colCreated')}
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      {t('adminPages.userManagement.colActions')}
                     </th>
                   </tr>
                 </thead>
@@ -480,7 +485,7 @@ export default function UsersManagementPage() {
                               key={role}
                               className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded"
                             >
-                              {role.replace(/_/g, ' ')}
+                              {t(`adminPages.userManagement.roles.${role}`, { defaultValue: role.replace(/_/g, ' ') })}
                             </span>
                           ))}
                         </div>
@@ -495,7 +500,9 @@ export default function UsersManagementPage() {
                               : 'bg-yellow-100 text-yellow-800'
                           }`}
                         >
-                          {user.status.replace(/_/g, ' ')}
+                          {t(`adminPages.userManagement.statuses.${user.status}`, {
+                            defaultValue: user.status.replace(/_/g, ' '),
+                          })}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 max-w-[10rem]">
@@ -514,7 +521,7 @@ export default function UsersManagementPage() {
                         {user._count?.estates || 0}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {new Date(user.createdAt).toLocaleDateString(dateLocale)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2 items-center">
@@ -522,7 +529,7 @@ export default function UsersManagementPage() {
                             <Link
                               href={`/admin/farm/${user.id}`}
                               className="text-[#2D5A27] hover:text-[#2D5A27]/80 p-1.5 rounded hover:bg-[#2D5A27]/5"
-                              title="View farm detail"
+                              title={t('adminPages.userManagement.titleFarmDetail')}
                             >
                               <MapPin className="w-4 h-4" />
                             </Link>
@@ -531,7 +538,7 @@ export default function UsersManagementPage() {
                             <button
                               onClick={() => handleApproveVerification(user.id)}
                               className="text-green-600 hover:text-green-900"
-                              title="Approve verification"
+                              title={t('adminPages.userManagement.titleApproveVerification')}
                             >
                               <CheckCircle className="w-4 h-4" />
                             </button>
@@ -539,14 +546,14 @@ export default function UsersManagementPage() {
                           <button
                             onClick={() => openEditModal(user)}
                             className="text-green-600 hover:text-green-900"
-                            title="Edit user"
+                            title={t('adminPages.userManagement.titleEditUser')}
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
                             className="text-red-600 hover:text-red-900"
-                            title="Delete user"
+                            title={t('adminPages.userManagement.titleDeleteUser')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -559,7 +566,7 @@ export default function UsersManagementPage() {
               {users.length === 0 && (
                 <div className="text-center py-12">
                   <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No users found</p>
+                  <p className="text-gray-500">{t('adminPages.userManagement.noUsers')}</p>
                 </div>
               )}
             </div>
@@ -573,11 +580,11 @@ export default function UsersManagementPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
               >
-                <h2 className="text-xl font-semibold mb-4">Create New User</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('adminPages.userManagement.modalCreateTitle')}</h2>
                 <form onSubmit={handleCreate} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Partner Code *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelPartnerCode')}</label>
                       <input
                         type="text"
                         value={formData.partnerCode}
@@ -587,7 +594,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelEmail')}</label>
                       <input
                         type="email"
                         value={formData.email}
@@ -596,7 +603,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelFirstName')}</label>
                       <input
                         type="text"
                         value={formData.firstName}
@@ -606,7 +613,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelLastName')}</label>
                       <input
                         type="text"
                         value={formData.lastName}
@@ -616,7 +623,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelPhone')}</label>
                       <input
                         type="tel"
                         value={formData.phone}
@@ -626,19 +633,19 @@ export default function UsersManagementPage() {
                     </div>
                     {(formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Production country (for QR label)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelProductionCountry')}</label>
                         <input
                           type="text"
-                          placeholder="e.g. Serbia, Italy"
+                          placeholder={t('adminPages.userManagement.productionCountryPlaceholder')}
                           value={formData.productionCountry}
                           onChange={(e) => setFormData({ ...formData, productionCountry: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
-                        <p className="text-xs text-gray-500 mt-0.5">Shown as &quot;Produced in [country], Region [X]. Grown to Vera standards.&quot;</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{t('adminPages.userManagement.productionCountryHint')}</p>
                       </div>
                     )}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelPassword')}</label>
                       <div className="space-y-2">
                         <label className="flex items-center">
                           <input
@@ -653,7 +660,7 @@ export default function UsersManagementPage() {
                             }}
                             className="mr-2"
                           />
-                          <span className="text-sm text-gray-700">Auto-generate password</span>
+                          <span className="text-sm text-gray-700">{t('adminPages.userManagement.autoGenPassword')}</span>
                         </label>
                         {!formData.autoGeneratePassword && (
                           <input
@@ -672,15 +679,15 @@ export default function UsersManagementPage() {
                               onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
                               className="mr-2"
                             />
-                            <span className="text-sm text-gray-700">Send password to email</span>
+                            <span className="text-sm text-gray-700">{t('adminPages.userManagement.sendPasswordEmail')}</span>
                           </label>
                         )}
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelRoles')}</label>
                       <div className="space-y-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'COMMERCIAL_AGENT', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {USER_ROLE_KEYS.map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"
@@ -694,21 +701,25 @@ export default function UsersManagementPage() {
                               }}
                               className="mr-2"
                             />
-                            <span className="text-sm text-gray-700">{role.replace(/_/g, ' ')}</span>
+                            <span className="text-sm text-gray-700">
+                              {t(`adminPages.userManagement.roles.${role}`, { defaultValue: role.replace(/_/g, ' ') })}
+                            </span>
                           </label>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelStatus')}</label>
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
-                        <option value="PENDING_VERIFICATION">Pending Verification</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="SUSPENDED">Suspended</option>
+                        {(['PENDING_VERIFICATION', 'ACTIVE', 'SUSPENDED'] as const).map((st) => (
+                          <option key={st} value={st}>
+                            {t(`adminPages.userManagement.statuses.${st}`)}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -721,13 +732,13 @@ export default function UsersManagementPage() {
                       }}
                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                     >
-                      Cancel
+                      {t('adminPages.userManagement.cancel')}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >
-                      Create User
+                      {t('adminPages.userManagement.submitCreate')}
                     </button>
                   </div>
                 </form>
@@ -744,7 +755,7 @@ export default function UsersManagementPage() {
                 className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">Farmer QR Code Generated</h2>
+                  <h2 className="text-xl font-semibold">{t('adminPages.userManagement.qrModalTitle')}</h2>
                   <button
                     onClick={() => {
                       setCreatedFarmer(null);
@@ -758,29 +769,25 @@ export default function UsersManagementPage() {
                 </div>
                 
                 <div className="text-center mb-4">
-                  <p className="text-sm text-gray-600 mb-2">
-                    QR code for <strong>{createdFarmer.name}</strong>
-                  </p>
-                  <p className="text-xs text-gray-500 mb-4">
-                    This QR code will be printed on product boxes
-                  </p>
+                  <p className="text-sm text-gray-600 mb-2">{t('adminPages.userManagement.qrModalLead', { name: createdFarmer.name })}</p>
+                  <p className="text-xs text-gray-500 mb-4">{t('adminPages.userManagement.qrModalHint')}</p>
                   
                   {/* QR Code Image */}
                   <div className="bg-white p-4 border-2 border-gray-200 rounded-lg inline-block mb-4">
                     <img
                       src={`${WEB_API_BASE}/farmer-profile/qr/${createdFarmer.qrCode}/image`}
-                      alt="Farmer QR Code"
+                      alt={t('adminPages.userManagement.qrCodeImageAlt')}
                       className="w-48 h-48 mx-auto"
                     />
                   </div>
                   
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                    <p className="text-xs text-green-800 font-medium mb-1">QR Code ID:</p>
+                    <p className="text-xs text-green-800 font-medium mb-1">{t('adminPages.userManagement.qrCodeIdLabel')}</p>
                     <p className="text-sm text-green-900 font-mono">{createdFarmer.qrCode}</p>
                   </div>
                   
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                    <p className="text-xs text-blue-800 font-medium mb-1">Profile URL:</p>
+                    <p className="text-xs text-blue-800 font-medium mb-1">{t('adminPages.userManagement.profileUrlLabel')}</p>
                     <a
                       href={createdFarmer.profileUrl}
                       target="_blank"
@@ -800,7 +807,7 @@ export default function UsersManagementPage() {
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                     >
                       <Download className="w-4 h-4" />
-                      Download QR Code
+                      {t('adminPages.userManagement.downloadQr')}
                     </button>
                     <button
                       onClick={() => {
@@ -810,7 +817,7 @@ export default function UsersManagementPage() {
                       }}
                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                     >
-                      Close
+                      {t('adminPages.userManagement.close')}
                     </button>
                   </div>
                 </div>
@@ -826,11 +833,11 @@ export default function UsersManagementPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
               >
-                <h2 className="text-xl font-semibold mb-2">Edit User</h2>
+                <h2 className="text-xl font-semibold mb-2">{t('adminPages.userManagement.modalEditTitle')}</h2>
                 <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">User ID</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('adminPages.userManagement.userIdLabel')}</p>
                       <p className="text-xs font-mono text-gray-800 break-all mt-1" title={editingUser.id}>
                         {editingUser.id}
                       </p>
@@ -839,17 +846,17 @@ export default function UsersManagementPage() {
                       type="button"
                       onClick={() => void navigator.clipboard.writeText(editingUser.id)}
                       className="shrink-0 p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100 text-gray-600"
-                      title="Copy user ID"
+                      title={t('adminPages.userManagement.copyUserIdTitle')}
                     >
                       <Copy className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">Use this UUID in API filters, database joins, or support tickets.</p>
+                  <p className="text-xs text-gray-500 mt-2">{t('adminPages.userManagement.userIdHint')}</p>
                 </div>
                 <form onSubmit={handleUpdate} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Partner Code</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelPartnerCodeReadonly')}</label>
                       <input
                         type="text"
                         value={formData.partnerCode}
@@ -858,7 +865,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelEmail')}</label>
                       <input
                         type="email"
                         value={formData.email}
@@ -867,7 +874,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelFirstNameEdit')}</label>
                       <input
                         type="text"
                         value={formData.firstName}
@@ -877,7 +884,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelLastNameEdit')}</label>
                       <input
                         type="text"
                         value={formData.lastName}
@@ -887,7 +894,7 @@ export default function UsersManagementPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelPhone')}</label>
                       <input
                         type="tel"
                         value={formData.phone}
@@ -897,10 +904,10 @@ export default function UsersManagementPage() {
                     </div>
                     {(formData.roles.includes('FARMER') || formData.roles.includes('GROWER')) && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Production country (for QR label)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelProductionCountry')}</label>
                         <input
                           type="text"
-                          placeholder="e.g. Serbia, Italy"
+                          placeholder={t('adminPages.userManagement.productionCountryPlaceholder')}
                           value={formData.productionCountry}
                           onChange={(e) => setFormData({ ...formData, productionCountry: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -908,21 +915,23 @@ export default function UsersManagementPage() {
                       </div>
                     )}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelStatus')}</label>
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
-                        <option value="PENDING_VERIFICATION">Pending Verification</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="SUSPENDED">Suspended</option>
+                        {(['PENDING_VERIFICATION', 'ACTIVE', 'SUSPENDED'] as const).map((st) => (
+                          <option key={st} value={st}>
+                            {t(`adminPages.userManagement.statuses.${st}`)}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Roles</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.labelRoles')}</label>
                       <div className="grid grid-cols-3 gap-2">
-                        {['FARMER', 'GROWER', 'BUYER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER', 'COMMERCIAL_AGENT', 'ADMIN', 'SUPER_ADMIN'].map((role) => (
+                        {USER_ROLE_KEYS.map((role) => (
                           <label key={role} className="flex items-center">
                             <input
                               type="checkbox"
@@ -936,7 +945,9 @@ export default function UsersManagementPage() {
                               }}
                               className="mr-2"
                             />
-                            <span className="text-sm text-gray-700">{role.replace(/_/g, ' ')}</span>
+                            <span className="text-sm text-gray-700">
+                              {t(`adminPages.userManagement.roles.${role}`, { defaultValue: role.replace(/_/g, ' ') })}
+                            </span>
                           </label>
                         ))}
                       </div>
@@ -945,19 +956,14 @@ export default function UsersManagementPage() {
                       ['FARMER', 'GROWER', 'LOGISTICS_PARTNER', 'MATERIAL_SUPPLIER'].includes(r),
                     ) && (
                       <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Assigned commercial agent
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">
-                          Who supports this account in the field. You assign manually; agent office (below) can help
-                          match by region.
-                        </p>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.assignedAgentLabel')}</label>
+                        <p className="text-xs text-gray-500 mb-2">{t('adminPages.userManagement.assignedAgentHint')}</p>
                         <select
                           value={formData.assignedAgentUserId}
                           onChange={(e) => setFormData({ ...formData, assignedAgentUserId: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                         >
-                          <option value="">— None —</option>
+                          <option value="">{t('adminPages.userManagement.agentNone')}</option>
                           {commercialAgents.map((a) => (
                             <option key={a.id} value={a.id}>
                               {a.firstName} {a.lastName} ({a.partnerCode})
@@ -971,28 +977,28 @@ export default function UsersManagementPage() {
                     )}
                     {formData.roles.includes('COMMERCIAL_AGENT') && (
                       <div className="col-span-2 space-y-3 rounded-lg border border-dashed border-gray-200 p-3 bg-gray-50/50">
-                        <p className="text-sm font-medium text-gray-800">Field / office (for matching growers &amp; partners)</p>
+                        <p className="text-sm font-medium text-gray-800">{t('adminPages.userManagement.caSectionTitle')}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs text-gray-600 mb-0.5">Office name (optional)</label>
+                            <label className="block text-xs text-gray-600 mb-0.5">{t('adminPages.userManagement.caOfficeName')}</label>
                             <input
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                               value={formData.caOfficeName}
                               onChange={(e) => setFormData({ ...formData, caOfficeName: e.target.value })}
-                              placeholder="e.g. South Serbia"
+                              placeholder={t('adminPages.userManagement.caOfficePlaceholder')}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-600 mb-0.5">Street &amp; number *</label>
+                            <label className="block text-xs text-gray-600 mb-0.5">{t('adminPages.userManagement.caStreet')}</label>
                             <input
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                               value={formData.caAddress}
                               onChange={(e) => setFormData({ ...formData, caAddress: e.target.value })}
-                              placeholder="Bulevar 1"
+                              placeholder={t('adminPages.userManagement.caStreetPlaceholder')}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-600 mb-0.5">Postal code</label>
+                            <label className="block text-xs text-gray-600 mb-0.5">{t('adminPages.userManagement.caPostal')}</label>
                             <input
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                               value={formData.caPostalCode}
@@ -1000,7 +1006,7 @@ export default function UsersManagementPage() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-600 mb-0.5">City *</label>
+                            <label className="block text-xs text-gray-600 mb-0.5">{t('adminPages.userManagement.caCity')}</label>
                             <input
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                               value={formData.caCity}
@@ -1008,12 +1014,12 @@ export default function UsersManagementPage() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-600 mb-0.5">Country *</label>
+                            <label className="block text-xs text-gray-600 mb-0.5">{t('adminPages.userManagement.caCountry')}</label>
                             <input
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                               value={formData.caCountry}
                               onChange={(e) => setFormData({ ...formData, caCountry: e.target.value })}
-                              placeholder="Serbia"
+                              placeholder={t('adminPages.userManagement.caCountryPlaceholder')}
                             />
                           </div>
                         </div>
@@ -1021,12 +1027,8 @@ export default function UsersManagementPage() {
                     )}
                     {formData.roles.includes('BUYER') && (
                       <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Buyer company profile (JSON)
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">
-                          Same data as in the buyer portal under Company profile. Use valid JSON: company, deliveryLocations, authorizedPersonnel.
-                        </p>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.userManagement.buyerJsonLabel')}</label>
+                        <p className="text-xs text-gray-500 mb-2">{t('adminPages.userManagement.buyerJsonHint')}</p>
                         <textarea
                           value={formData.buyerCompanyProfileJson}
                           onChange={(e) => setFormData({ ...formData, buyerCompanyProfileJson: e.target.value })}
@@ -1037,11 +1039,8 @@ export default function UsersManagementPage() {
                     )}
                   </div>
                   <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-sm text-amber-950">
-                    <p className="font-medium mb-1">Lost password / new temporary login</p>
-                    <p className="text-xs text-amber-900/80 mb-2">
-                      Creates a new 12-character password. After they log in, they can set their own in Supplier settings
-                      (web) or profile.
-                    </p>
+                    <p className="font-medium mb-1">{t('adminPages.userManagement.resetPasswordTitle')}</p>
+                    <p className="text-xs text-amber-900/80 mb-2">{t('adminPages.userManagement.resetPasswordHint')}</p>
                     <button
                       type="button"
                       onClick={() => void handleAdminResetPassword()}
@@ -1049,7 +1048,7 @@ export default function UsersManagementPage() {
                       className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-950 hover:bg-amber-100 disabled:opacity-50"
                     >
                       <KeyRound className="h-4 w-4" />
-                      {resettingPassword ? 'Generating…' : 'Generate new temporary password'}
+                      {resettingPassword ? t('adminPages.userManagement.resetPasswordGenerating') : t('adminPages.userManagement.resetPasswordCta')}
                     </button>
                   </div>
                   <div className="flex gap-3 justify-end pt-4 border-t">
@@ -1061,13 +1060,13 @@ export default function UsersManagementPage() {
                       }}
                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                     >
-                      Cancel
+                      {t('adminPages.userManagement.cancel')}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >
-                      Update User
+                      {t('adminPages.userManagement.submitUpdate')}
                     </button>
                   </div>
                 </form>

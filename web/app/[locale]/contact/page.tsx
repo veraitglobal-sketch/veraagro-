@@ -334,9 +334,7 @@ export default function ContactPage() {
 
                   {submitStatus === 'success' && (
                     <div className="p-4 bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-lg">
-                      <p className="text-sm text-[#23471f] font-light">
-                        Thank you for your message! We'll get back to you as soon as possible.
-                      </p>
+                      <p className="text-sm text-[#23471f] font-light">{t('contactPage.successMessage')}</p>
                     </div>
                   )}
 

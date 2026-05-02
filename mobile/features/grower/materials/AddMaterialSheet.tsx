@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollInner: { padding: theme.spacing.lg, paddingBottom: 40 },
   label: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text.secondary,
     marginBottom: 6,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.colors.surface,
   },
-  hint: { fontSize: 12, color: theme.colors.text.tertiary, marginTop: 6, marginBottom: 8 },
+  hint: { fontSize: 16, color: theme.colors.text.tertiary, marginTop: 6, marginBottom: 8 },
   saveBtn: {
     marginTop: 24,
     backgroundColor: theme.colors.primary,

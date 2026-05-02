@@ -22,9 +22,17 @@ type Msg = { id: string; body: string; createdAt: string; sender: { firstName: s
 /**
  * Grower: contact material supplier (seeds, inputs) — thread + short direct order
  */
+function paramFirst(raw: string | string[] | undefined): string | undefined {
+  if (typeof raw === 'string') return raw;
+  if (Array.isArray(raw) && raw[0]) return raw[0];
+  return undefined;
+}
+
 export default function B2bSupplierScreen() {
   const { t } = useTranslation();
-  const { userId } = useLocalSearchParams<{ userId: string }>();
+  const params = useLocalSearchParams<{ userId: string; threadId?: string | string[] }>();
+  const userId = paramFirst(params.userId) ?? '';
+  const threadIdFromLink = paramFirst(params.threadId);
   const router = useRouter();
   const { token } = useAuth();
   const [profile, setProfile] = useState<any>(null);
@@ -43,9 +51,13 @@ export default function B2bSupplierScreen() {
       const p = await b2bSuppliersAPI.getPublic(userId);
       setProfile(p);
       if (token) {
-        const thread = await b2bSuppliersAPI.getOrCreateThread(userId);
-        setThreadId(thread.id);
-        const msgs = await b2bSuppliersAPI.getMessages(thread.id);
+        let tid = threadIdFromLink?.trim() || '';
+        if (!tid) {
+          const thread = await b2bSuppliersAPI.getOrCreateThread(userId);
+          tid = thread.id;
+        }
+        setThreadId(tid);
+        const msgs = await b2bSuppliersAPI.getMessages(tid);
         setMessages(msgs);
       }
     } catch (e: any) {
@@ -53,7 +65,7 @@ export default function B2bSupplierScreen() {
     } finally {
       setLoading(false);
     }
-  }, [userId, token, t]);
+  }, [userId, token, t, threadIdFromLink]);
 
   useEffect(() => {
     void load();

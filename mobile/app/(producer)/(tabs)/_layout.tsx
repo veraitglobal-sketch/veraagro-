@@ -25,7 +25,7 @@ export default function ProducerTabsLayout() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: '500',
           letterSpacing: -0.2,
           marginTop: 2,

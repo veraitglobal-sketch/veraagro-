@@ -274,7 +274,7 @@ export default function GrowerPortalPage() {
         <GrowerPageHeader title={t('grower.nav.missionTracker')} description={t('growerPages.portalPageDescription')} />
         {assignedAgent !== undefined && <AssignedAgentCard agent={assignedAgent} className="mb-0" />}
 
-        <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-sm text-gray-700">
+        <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 px-4 py-3 text-base text-gray-700">
           <p className="font-medium text-gray-900">{t('growerPages.portalWhatIsTitle')}</p>
           <p className="mt-1 text-gray-600 font-light leading-relaxed">
             <Trans
@@ -294,10 +294,10 @@ export default function GrowerPortalPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.portalActiveMissionsTitle')}</h2>
-          <p className="text-sm text-gray-500 mt-1 mb-4 font-light">{t('growerPages.portalActiveMissionsLead')}</p>
+          <p className="text-base text-gray-500 mt-1 mb-4 font-light">{t('growerPages.portalActiveMissionsLead')}</p>
 
           {listError && (
-            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-base text-red-800">
               {listError}
             </div>
           )}
@@ -318,7 +318,7 @@ export default function GrowerPortalPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-gray-900">{mission.missionNumber}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-base text-gray-600">
                         {mission.productName} • {mission.quantity} {mission.unit}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -342,18 +342,18 @@ export default function GrowerPortalPage() {
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50/80 px-6 py-10 text-center">
                 <Truck className="h-10 w-10 text-gray-300 mb-3" strokeWidth={1.25} />
                 <p className="text-gray-900 font-medium">{t('growerPages.portalNoMissionsTitle')}</p>
-                <p className="text-sm text-gray-600 mt-2 max-w-md font-light">{t('growerPages.portalNoMissionsBody')}</p>
+                <p className="text-base text-gray-600 mt-2 max-w-md font-light">{t('growerPages.portalNoMissionsBody')}</p>
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href={loc('/grower/missions/create')}
-                    className="inline-flex items-center gap-2 rounded-md bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#234a20]"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#2D5A27] px-4 py-2 text-base font-medium text-white hover:bg-[#234a20]"
                   >
                     <Truck className="h-4 w-4" />
                     {t('grower.nav.requestTransport')}
                   </Link>
                   <Link
                     href={loc('/grower/batches')}
-                    className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
                   >
                     {t('grower.nav.myBatches')}
                   </Link>
@@ -389,7 +389,7 @@ export default function GrowerPortalPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         ) : (
-                          <span className="text-sm font-bold">{index + 1}</span>
+                          <span className="text-base font-bold">{index + 1}</span>
                         )}
                       </div>
                       <p className={`text-xs font-medium text-center ${
@@ -430,7 +430,7 @@ export default function GrowerPortalPage() {
                       <Popup>
                         <div>
                           <p className="font-medium">{t('growerPages.portalMapPoint', { n: index + 1 })}</p>
-                          <p className="text-sm text-gray-600">{point.address || t('growerPages.portalInTransit')}</p>
+                          <p className="text-base text-gray-600">{point.address || t('growerPages.portalInTransit')}</p>
                           <p className="text-xs text-gray-500">{formatLocale(point.timestamp)}</p>
                         </div>
                       </Popup>
@@ -450,7 +450,7 @@ export default function GrowerPortalPage() {
             {/* ETA */}
             {journeyMap.eta && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm font-medium text-blue-900">📦 Live ETA</p>
+                <p className="text-base font-medium text-blue-900">📦 Live ETA</p>
                 <p className="text-lg font-bold text-blue-600 mt-1">{journeyMap.eta}</p>
               </div>
             )}
@@ -477,7 +477,7 @@ export default function GrowerPortalPage() {
                     <p className="text-2xl font-bold text-gray-900">
                       {consumerFeedback.averageRating.toFixed(1)}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-base text-gray-600">
                       ({t('growerPages.portalRating', { count: consumerFeedback.totalRatings })})
                     </p>
                   </div>
@@ -493,7 +493,7 @@ export default function GrowerPortalPage() {
                         <p className="text-xs text-gray-500">{formatLocale(rating.createdAt, true)}</p>
                       </div>
                       {rating.comment && (
-                        <p className="text-sm text-gray-700 mt-2">"{rating.comment}"</p>
+                        <p className="text-base text-gray-700 mt-2">"{rating.comment}"</p>
                       )}
                       <p className="text-xs text-gray-500 mt-2">
                         {t('growerPages.portalOrder', { order: rating.orderNumber })}
@@ -508,7 +508,7 @@ export default function GrowerPortalPage() {
                     <div className="text-center">
                       <div className="text-4xl mb-2">🏆</div>
                       <h3 className="text-xl font-bold text-gray-900 mb-2">{t('growerPages.portalCertTitle')}</h3>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <p className="text-base text-gray-600 mb-4">
                         {t('growerPages.portalCertBody', { estate: consumerFeedback.certificate.estateName })}
                       </p>
                       <div className="flex items-center justify-center gap-4">
@@ -566,7 +566,7 @@ export default function GrowerPortalPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('growerPages.portalFinancialTitle')}</h2>
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPaymentStatus')}</p>
+                <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaymentStatus')}</p>
                 <p className={`text-lg font-bold ${
                   financialStatus.paymentStatus === 'PROCESSING' ? 'text-green-600' :
                   financialStatus.paymentStatus === 'AWAITING_APPROVAL' ? 'text-yellow-600' :
@@ -577,19 +577,19 @@ export default function GrowerPortalPage() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalTotalAmount')}</p>
+                  <p className="text-base text-gray-600 mb-1">{t('growerPages.portalTotalAmount')}</p>
                   <p className="text-lg font-bold text-gray-900">
                     €{financialStatus.totalAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPaid')}</p>
+                  <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPaid')}</p>
                   <p className="text-lg font-bold text-green-600">
                     €{financialStatus.paidAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('growerPages.portalPending')}</p>
+                  <p className="text-base text-gray-600 mb-1">{t('growerPages.portalPending')}</p>
                   <p className="text-lg font-bold text-yellow-600">
                     €{financialStatus.pendingAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}
                   </p>

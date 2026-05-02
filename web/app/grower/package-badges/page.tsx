@@ -168,7 +168,7 @@ export default function GrowerPackageBadgesPage() {
             right={
               <Link
                 href="/grower/package-badges/scan"
-                className="text-sm font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
+                className="text-base font-medium text-[#2D5A27] hover:text-[#23471f] whitespace-nowrap"
               >
                 {t('grower.packageBadges.headerScan')}
               </Link>
@@ -176,13 +176,13 @@ export default function GrowerPackageBadgesPage() {
           />
 
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</div>
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-800">{error}</div>
           )}
 
           {successSerial && (
             <div className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 p-4 space-y-2">
               <p className="font-medium text-[#23471f]">{t('grower.packageBadges.successTitle')}</p>
-              <p className="text-sm text-gray-700">{t('grower.packageBadges.successHint')}</p>
+              <p className="text-base text-gray-700">{t('grower.packageBadges.successHint')}</p>
               <code className="block break-all text-xs bg-white/80 border border-gray-200 rounded p-2">{url}</code>
               <button
                 type="button"
@@ -192,7 +192,7 @@ export default function GrowerPackageBadgesPage() {
                     setTimeout(() => setCopied(false), 2000);
                   });
                 }}
-                className="text-sm font-medium text-[#2D5A27] underline"
+                className="text-base font-medium text-[#2D5A27] underline"
               >
                 {copied ? t('grower.packageBadges.copied') : t('grower.packageBadges.copyUrl')}
               </button>
@@ -201,7 +201,7 @@ export default function GrowerPackageBadgesPage() {
 
           <form onSubmit={onSubmit} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-5 max-w-xl">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.parentLabel')}</label>
+              <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.packageBadges.parentLabel')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.parentHint')}</p>
               <input
                 value={parentSerial}
@@ -213,7 +213,7 @@ export default function GrowerPackageBadgesPage() {
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-700 mb-2">{t('grower.packageBadges.typeLabel')}</span>
+              <span className="block text-base font-medium text-gray-700 mb-2">{t('grower.packageBadges.typeLabel')}</span>
               <div className="flex flex-wrap gap-2">
                 {(
                   [
@@ -225,7 +225,7 @@ export default function GrowerPackageBadgesPage() {
                     key={v}
                     type="button"
                     onClick={() => setBadgeType(v)}
-                    className={`px-3 py-2 rounded-lg text-sm border ${
+                    className={`px-3 py-2 rounded-lg text-base border ${
                       badgeType === v
                         ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#23471f]'
                         : 'border-gray-200 text-gray-700'
@@ -238,19 +238,19 @@ export default function GrowerPackageBadgesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.childrenLabel')}</label>
+              <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.packageBadges.childrenLabel')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.childrenHint')}</p>
               <textarea
                 value={childrenRaw}
                 onChange={(e) => setChildrenRaw(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-base focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
                 placeholder={t('grower.packageBadges.childrenPlaceholder')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('grower.packageBadges.linkPrintOrder')}</label>
+              <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.packageBadges.linkPrintOrder')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.linkPrintOrderHint')}</p>
               <select
                 value={selectedPrintOrderId}
@@ -272,7 +272,7 @@ export default function GrowerPackageBadgesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t('grower.packageBadges.batchLabel')}</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">{t('grower.packageBadges.batchLabel')}</label>
               <select
                 value={batchInternalId}
                 onChange={(e) => setBatchInternalId(e.target.value)}

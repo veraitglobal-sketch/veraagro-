@@ -178,8 +178,8 @@ export default function LogisticsHandoverReceiverPage() {
           const m = errorData?.message;
           msg = Array.isArray(m) ? m.join(' ') : (m || errorData?.error || msg);
         } catch {
-          const t = await res.text();
-          if (t?.trim()) msg = t.slice(0, 500);
+          const bodyText = await res.text();
+          if (bodyText?.trim()) msg = bodyText.slice(0, 500);
         }
         throw new Error(msg);
       }
@@ -196,7 +196,7 @@ export default function LogisticsHandoverReceiverPage() {
         URL.revokeObjectURL(url);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Could not open PDF');
+      setError(err instanceof Error ? err.message : t('logisticsPages.receiverErrPdf'));
     } finally {
       setPdfOpening(false);
     }
@@ -208,12 +208,12 @@ export default function LogisticsHandoverReceiverPage() {
     setSubmitting(true);
 
     if (!selectedMission) {
-      setError('Please select a mission');
+      setError(t('logisticsPages.receiverErrSelectMission'));
       setSubmitting(false);
       return;
     }
     if (!receiverName.trim()) {
-      setError("Enter the receiver's name");
+      setError(t('logisticsPages.receiverErrName'));
       setSubmitting(false);
       return;
     }
@@ -259,8 +259,8 @@ export default function LogisticsHandoverReceiverPage() {
           const m = errorData?.message;
           msg = Array.isArray(m) ? m.join(' ') : (m || errorData?.error || msg);
         } catch {
-          const t = await response.text();
-          if (t?.trim()) msg = t.slice(0, 500);
+          const bodyText = await response.text();
+          if (bodyText?.trim()) msg = bodyText.slice(0, 500);
         }
         throw new Error(msg);
       }
@@ -274,7 +274,7 @@ export default function LogisticsHandoverReceiverPage() {
         refreshMissions();
       }, 4000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to save receiver proof');
+      setError(err instanceof Error ? err.message : t('logisticsPages.receiverErrSave'));
     } finally {
       setSubmitting(false);
     }
@@ -296,38 +296,37 @@ export default function LogisticsHandoverReceiverPage() {
     <SidebarLayout title={t('logisticsPages.receiverProof')} navItems={navItems}>
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
-          title="Receiver at handover"
-          description="After loading is documented, record who received the load and optionally capture a signature. A PDF is generated for your audit trail."
+          title={t('logisticsPages.receiverHeaderTitle')}
+          description={t('logisticsPages.receiverHeaderDescription')}
         />
 
         <div className="rounded-lg border border-emerald-200 bg-emerald-50/90 p-4 text-sm text-emerald-950">
-          <p className="font-semibold">Prerequisite</p>
-          <p className="mt-1 leading-relaxed">
-            Complete <strong>Loading handover</strong> first (temperature + photos). Missions listed here are already at or
-            after <strong>READY FOR LOADING</strong>.
-          </p>
+          <p className="font-semibold">{t('logisticsPages.receiverPrereqTitle')}</p>
+          <p className="mt-1 leading-relaxed">{t('logisticsPages.receiverPrereqBody')}</p>
         </div>
 
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="text-sm font-medium text-red-800">{t('common.error')}</p>
             <p className="mt-1 text-sm text-red-800">{error}</p>
           </div>
         )}
 
         {success && (
           <div className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 p-4">
-            <p className="text-sm text-[#23471f]">Receiver proof saved. You can open the PDF below if this tab is still on the same mission.</p>
+            <p className="text-sm text-[#23471f]">{t('logisticsPages.receiverSuccessMessage')}</p>
           </div>
         )}
 
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Receiver name and signature</h2>
-          <p className="mb-6 text-sm text-gray-600">Name is required; sign on the pad or leave blank to submit name only.</p>
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('logisticsPages.receiverFormTitle')}</h2>
+          <p className="mb-6 text-sm text-gray-600">{t('logisticsPages.receiverFormLead')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Mission *</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                {t('logisticsPages.receiverMissionLabel')}
+              </label>
               <select
                 value={selectedMission}
                 onChange={(e) => setSelectedMission(e.target.value)}
@@ -337,41 +336,49 @@ export default function LogisticsHandoverReceiverPage() {
               >
                 <option value="">
                   {missionsLoading
-                    ? 'Loading...'
+                    ? t('logisticsPages.receiverMissionsLoading')
                     : missions.length === 0
-                      ? 'No eligible missions (complete loading handover first)'
-                      : '— Select mission —'}
+                      ? t('logisticsPages.receiverMissionsEmpty')
+                      : t('logisticsPages.receiverMissionPlaceholder')}
                 </option>
                 {missions.map((mission) => (
                   <option key={mission.id} value={mission.id}>
-                    {mission.missionNumber} — {mission.batches?.batchId || mission.batchId || '—'} ({mission.status})
+                    {t('logisticsPages.receiverMissionOption', {
+                      missionNumber: mission.missionNumber,
+                      batchId: mission.batches?.batchId || mission.batchId || t('common.emDash'),
+                      status: mission.status,
+                    })}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Receiver name *</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                {t('logisticsPages.receiverNameLabel')}
+              </label>
               <input
                 type="text"
                 value={receiverName}
                 onChange={(e) => setReceiverName(e.target.value)}
                 required
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
-                placeholder="Name of person receiving the load"
+                placeholder={t('logisticsPages.receiverNamePlaceholder')}
                 autoComplete="name"
               />
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Signature (optional)</span>
+                <span className="text-sm font-medium text-gray-700">
+                  {t('logisticsPages.receiverSignatureLabel')}
+                </span>
                 <button
                   type="button"
                   onClick={() => initCanvas()}
                   className="text-sm text-[#2D5A27] underline hover:text-[#23471f]"
                 >
-                  Clear
+                  {t('logisticsPages.receiverSignatureClear')}
                 </button>
               </div>
               <div className="overflow-hidden rounded-lg border border-gray-300 bg-white">
@@ -389,7 +396,7 @@ export default function LogisticsHandoverReceiverPage() {
                   onTouchEnd={endDraw}
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">Use mouse or finger on a tablet. Clear and redraw if needed.</p>
+              <p className="mt-1 text-xs text-gray-500">{t('logisticsPages.receiverSignatureHint')}</p>
             </div>
 
             <div className="border-t border-gray-200 pt-6">
@@ -398,14 +405,14 @@ export default function LogisticsHandoverReceiverPage() {
                 disabled={submitting || !selectedMission || !receiverName.trim()}
                 className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {submitting ? 'Saving…' : 'Save receiver proof'}
+                {submitting ? t('logisticsPages.receiverSubmitSaving') : t('logisticsPages.receiverSubmit')}
               </button>
             </div>
           </form>
 
           {selectedMission && (
             <div className="mt-6 border-t border-gray-200 pt-6">
-              <p className="mb-2 text-sm font-medium text-gray-700">Download PDF (after proof is saved for this mission)</p>
+              <p className="mb-2 text-sm font-medium text-gray-700">{t('logisticsPages.receiverPdfSection')}</p>
               <button
                 type="button"
                 disabled={pdfOpening}
@@ -413,7 +420,7 @@ export default function LogisticsHandoverReceiverPage() {
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 disabled:opacity-50"
               >
                 {pdfOpening ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-                Open receiver PDF
+                {t('logisticsPages.receiverPdfButton')}
               </button>
             </div>
           )}

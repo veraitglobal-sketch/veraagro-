@@ -18,7 +18,7 @@ export default function DashboardScreen() {
   const p = useBioVeraScreenPadding();
   const data = useDashboardData(user);
 
-  const farmName = data.estates[0]?.name || 'My Farm';
+  const farmName = data.estates[0]?.name || t('producer.dashboard.defaultFarmName');
 
   const estateCount = data.estates.length;
   const ps = data.parcelSteps;
@@ -123,25 +123,27 @@ export default function DashboardScreen() {
             style={{
               backgroundColor: theme.colors.primaryLight,
               borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.md,
+              paddingVertical: theme.spacing.md,
+              paddingHorizontal: theme.spacing.md,
               marginBottom: theme.spacing.md,
               borderWidth: 1,
               borderColor: theme.colors.border,
+              minHeight: 72,
             }}
           >
-            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, marginBottom: 4 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary, marginBottom: 6 }}>
               {t('producer.dashboard.farmer.alertsTitle')}
             </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, lineHeight: 18 }}>
+            <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
               {alertLine}
             </Text>
-            <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 6, fontWeight: '500' }}>
+            <Text style={{ fontSize: 14, color: theme.colors.primary, marginTop: 8, fontWeight: '600' }}>
               {t('producer.dashboard.farmer.alertsOpen')}
             </Text>
           </TouchableOpacity>
         ) : null}
         <FarmerHomeSection handlers={farmerHandlers} />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, lineHeight: 18, marginTop: theme.spacing.sm }}>
+        <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, lineHeight: 21, marginTop: theme.spacing.sm }}>
           {t('producer.dashboard.farmer.profileMore')}
         </Text>
       </View>

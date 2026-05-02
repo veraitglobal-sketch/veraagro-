@@ -186,7 +186,7 @@ function PressReleaseCard({
 }
 
 export default function PressPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [keyFactsOpen, setKeyFactsOpen] = useState(false);
@@ -194,31 +194,31 @@ export default function PressPage() {
   const pressReleases = useMemo(() => {
     const raw = t('pressPage.releases', { returnObjects: true });
     return isPressReleaseArray(raw) ? raw : [];
-  }, [t]);
+  }, [t, i18n.language]);
 
   const assetGroups = useMemo(() => {
     const raw = t('pressPage.assetGroups', { returnObjects: true });
     return isAssetGroupArray(raw) ? raw : [];
-  }, [t]);
+  }, [t, i18n.language]);
 
   const keyFacts = useMemo(() => {
     const raw = t('pressPage.keyFacts', { returnObjects: true });
     return isStringArray(raw) ? raw : [];
-  }, [t]);
+  }, [t, i18n.language]);
 
   const aboutParagraphs = useMemo(() => {
     const raw = t('pressPage.aboutParagraphs', { returnObjects: true });
     return isStringArray(raw) ? raw : [];
-  }, [t]);
+  }, [t, i18n.language]);
 
   const usageBullets = useMemo(() => {
     const raw = t('pressPage.usageBullets', { returnObjects: true });
     return isStringArray(raw) ? raw : [];
-  }, [t]);
+  }, [t, i18n.language]);
 
   const ctaContactHref = useMemo(
     () => `${loc('/contact')}?subject=${encodeURIComponent(t('pressPage.ctaQuerySubject'))}`,
-    [loc, t],
+    [loc, t, i18n.language],
   );
 
   return (

@@ -27,11 +27,11 @@ export default function DashboardHeader({ farmName, partnerCode, connected }: Da
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: '600', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.text.primary, letterSpacing: -0.2 }}>
             {farmName}
           </Text>
           {partnerCode && (
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 2 }}>
+            <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4, lineHeight: 20 }}>
               {t('producer.dashboard.partner')}: {partnerCode}
             </Text>
           )}

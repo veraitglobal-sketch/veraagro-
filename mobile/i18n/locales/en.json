@@ -283,6 +283,7 @@
       "returnOk": "Return recorded"
     },
     "dashboard": {
+      "defaultFarmName": "My farm",
       "partner": "Code",
       "nextStep": {
         "eyebrow": "What to do next",
@@ -373,7 +374,10 @@
         "receivedAtFarmWithWhen": "Received at farm: {{when}}",
         "waitingSupplierConfirm": "Waiting for supplier to confirm…",
         "receivingInProgress": "…",
-        "markReceivedFailed": "Could not mark order as received. Try again."
+        "markReceivedFailed": "Could not mark order as received. Try again.",
+        "threadDeepLinkMissing": "Conversation link is invalid.",
+        "threadNotFound": "This conversation is not available on your account.",
+        "openPartnerOrdersList": "Open partner orders"
       },
       "quickActions": "Quick actions",
       "more": "More",
@@ -661,6 +665,7 @@
     },
     "qualityEntry": {
       "screenTitle": "Quality entry",
+      "batchHeading": "Batch",
       "selectBatch": "Select a batch",
       "qualityScoreRange": "Quality score must be between 0 and 100",
       "qualityScore": "Quality score (0-100, optional)",

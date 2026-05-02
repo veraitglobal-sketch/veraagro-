@@ -22,7 +22,7 @@
 |---|---------|---------|--------|
 | P1.1 | **Footer:** „Za logistiku“ → **`/logistics-partner`** namerno **bez** `loc()` (app ruta je locale-free kao `/grower`). Komentar u kodu. | — | 🟢 |
 | P1.2 | **Footer:** bedževi postaju **`<a>`** kada su u env postavljeni **`NEXT_PUBLIC_IOS_APP_STORE_URL`** / **`NEXT_PUBLIC_ANDROID_PLAY_STORE_URL`**; inače ostaju neklikabilni span. Vidi **`web/.env.example`**. | Popuniti env u prod kad listing postoji. | 🟢 |
-| P1.3 | **Kontakt / FAQ / Press** na `/sr/…` — istorijski problem engleskog sadržaja uz srpski izbor jezika. | Završiti `useTranslation` + `sr.json` na tim stranicama; smoke na `biovera.app/sr/contact`, `/sr/faq`, `/sr/press`. | 🟡 |
+| P1.3 | **Kontakt / FAQ / Press:** UI je kroz `t()`; poruka uspeha na kontaktu je **`contactPage.successMessage`**; **press** `useMemo` zavisi od **`i18n.language`** da bi se pri `/sr` osvežio `returnObjects` sadržaj; **server `generateMetadata`** (`contact/faq/press` **layout.tsx** + **`lib/marketing-page-meta.ts`**) za naslov/tab i SEO po jeziku. | Smoke: `/sr/contact`, `/sr/faq`, `/sr/press` + pojedinačno saopštenje. | 🟢 |
 | P1.4 | **Vision / roadmap:** na **`web/app/[locale]/page.tsx`** postoje **`id="vision"`** i **`id="roadmap"`** (`scroll-mt-24`); footer **`loc('/')#...`** je u redu. | — | 🟢 |
 
 ---
@@ -31,7 +31,7 @@
 
 | # | Problem | Predlog | Status |
 |---|---------|---------|--------|
-| P2.1 | **Admin / supplier / logistics** — delovi i18n su dodati, ali ostaju **naslovi ili kartice** na engleskom gde komponenta nije vezana za `t()`. | Sistematski grep po `web/app/admin`, `supplier`, `logistics-partner` za hardkodovan tekst (duži stringovi). | 🟡 |
+| P2.1 | **Admin / supplier / logistics** — lokalizacija. | **Supplier:** **Poruke** / **Porudžbine** — `supplier.messagesPage*`, `supplier.ordersPage*`, `supplier.orderStatusB2B.*`, `dateIntlLocaleFromLanguageTag`. **Logistics-partner:** `handover` / `handover-receiver` — `logisticsPages.*`. **Admin:** **`/admin/vera-insights`** — `adminPages.veraInsights.*`; **`/admin/users`** — `adminPages.userManagement.*`; **`/admin/missions`** — `adminPages.missions.*`; **`/admin/orders`** — `adminPages.orderManagement.*` + datumi. Ostali admin ekrani — isti obrazac po potrebi. | 🟡 |
 | P2.2 | **Buyer portal** vs **buyer shop** — matrica u parity planu; proveriti da li svi „nazad u portal“ / „u korpu“ linkovi vode na kanonske rute posle redirecta. | Ručni prolaz + eventualno dodatni redirect za preostale legacy `/buyer/*`. | 🟡 |
 | P2.3 | **Notifikacije na webu** — da li svaka stavka u `NotificationCenter` ima smislen `actionUrl` i da li se poklapa sa mobilnim mapperom (`resolve-notification-action`). | Uskladiti poruke backenda + frontend fallback. | ? |
 

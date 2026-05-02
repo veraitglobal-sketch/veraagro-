@@ -107,21 +107,21 @@ export default function GrowerPartnerStorePage() {
         <div className="max-w-3xl">
           <Link
             href="/grower/where-to-buy"
-            className="inline-flex items-center gap-2 text-sm text-[#2D5A27] hover:underline mb-4"
+            className="inline-flex items-center gap-2 text-base text-[#2D5A27] hover:underline mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to locations
           </Link>
 
           {loading && (
-            <p className="text-sm text-gray-500 flex items-center gap-2">
+            <p className="text-base text-gray-500 flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading store…
             </p>
           )}
 
           {loadErr && !loading && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">
               {loadErr}
             </div>
           )}
@@ -129,7 +129,7 @@ export default function GrowerPartnerStorePage() {
           {data && !successId && (
             <>
               {data.mapOnPublicDirectory === false && (
-                <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2.5 text-sm text-sky-950 mb-4">
+                <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2.5 text-base text-sky-950 mb-4">
                   This partner is not on the public “Where to buy” map yet. You can still order using this link.
                 </div>
               )}
@@ -140,13 +140,13 @@ export default function GrowerPartnerStorePage() {
                   </div>
                   <div>
                     <h1 className="text-xl font-medium text-gray-900">{data.businessName}</h1>
-                    <p className="text-sm text-gray-600 font-light mt-1">
+                    <p className="text-base text-gray-600 font-light mt-1">
                       {[data.address, [data.postalCode, data.city].filter(Boolean).join(' '), data.country]
                         .filter(Boolean)
                         .join(' · ')}
                     </p>
                     {data.description && (
-                      <p className="text-sm text-gray-500 font-light mt-2 leading-relaxed">{data.description}</p>
+                      <p className="text-base text-gray-500 font-light mt-2 leading-relaxed">{data.description}</p>
                     )}
                     <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                       {data.partnerCode && <span>Partner code: {data.partnerCode}</span>}
@@ -158,7 +158,7 @@ export default function GrowerPartnerStorePage() {
                         href={data.website.startsWith('http') ? data.website : `https://${data.website}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-[#2D5A27] hover:underline mt-2 inline-block"
+                        className="text-base text-[#2D5A27] hover:underline mt-2 inline-block"
                       >
                         Store website
                       </a>
@@ -169,7 +169,7 @@ export default function GrowerPartnerStorePage() {
 
               <form onSubmit={onSubmit} className="space-y-6">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-3">
+                  <h2 className="text-base font-medium text-gray-900 flex items-center gap-2 mb-3">
                     <Package className="h-4 w-4 text-[#2D5A27]" />
                     Product list & quantities
                   </h2>
@@ -178,7 +178,7 @@ export default function GrowerPartnerStorePage() {
                     this partner; they confirm or adjust in the supplier portal.
                   </p>
                   {data.catalog.length === 0 ? (
-                    <p className="text-sm text-gray-500 border border-dashed border-gray-200 rounded-lg p-6 text-center">
+                    <p className="text-base text-gray-500 border border-dashed border-gray-200 rounded-lg p-6 text-center">
                       This store has not published catalog lines yet. Use the note below to describe what you need, or
                       contact them by phone/email.
                     </p>
@@ -200,7 +200,7 @@ export default function GrowerPartnerStorePage() {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-medium text-gray-900 text-sm">{line.name}</p>
+                              <p className="font-medium text-gray-900 text-base">{line.name}</p>
                               {line.description && (
                                 <p className="text-xs text-gray-500 font-light line-clamp-2 mt-0.5">{line.description}</p>
                               )}
@@ -216,7 +216,7 @@ export default function GrowerPartnerStorePage() {
                             <input
                               type="text"
                               inputMode="decimal"
-                              className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                              className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-base"
                               placeholder="0"
                               value={quantities[line.id] ?? ''}
                               onChange={(e) => setQuantities((q) => ({ ...q, [line.id]: e.target.value }))}
@@ -229,9 +229,9 @@ export default function GrowerPartnerStorePage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-800">Note to the store (optional)</label>
+                  <label className="text-base font-medium text-gray-800">Note to the store (optional)</label>
                   <textarea
-                    className="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-light"
+                    className="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2 text-base font-light"
                     rows={3}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
@@ -240,7 +240,7 @@ export default function GrowerPartnerStorePage() {
                 </div>
 
                 {submitErr && (
-                  <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                  <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-base text-red-800">
                     {submitErr}
                   </div>
                 )}
@@ -249,7 +249,7 @@ export default function GrowerPartnerStorePage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-2.5 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
                   >
                     {submitting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -266,7 +266,7 @@ export default function GrowerPartnerStorePage() {
           {successId && (
             <div className="rounded-xl border border-[#2D5A27]/30 bg-[#2D5A27]/5 p-6 text-center">
               <p className="text-gray-800 font-medium">Order sent</p>
-              <p className="text-sm text-gray-600 font-light mt-2">
+              <p className="text-base text-gray-600 font-light mt-2">
                 The partner will see it under Supplier → Orders. You can continue the conversation in your messages
                 (mobile app) or check back for their confirmation.
               </p>
@@ -277,7 +277,7 @@ export default function GrowerPartnerStorePage() {
                 <button
                   type="button"
                   onClick={() => router.push('/grower/where-to-buy')}
-                  className="text-sm text-[#2D5A27] hover:underline"
+                  className="text-base text-[#2D5A27] hover:underline"
                 >
                   Back to locations
                 </button>
@@ -295,7 +295,7 @@ export default function GrowerPartnerStorePage() {
                         setQuantities(z);
                       }
                     }}
-                    className="text-sm text-gray-600 hover:underline"
+                    className="text-base text-gray-600 hover:underline"
                   >
                     Place another order
                   </button>

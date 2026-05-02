@@ -40,7 +40,7 @@ export default function SyncQueueStrip({
         <CloudUpload size={22} color={pendingCount > 0 ? '#b45309' : theme.colors.text.secondary} strokeWidth={1.75} />
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: '600',
             color: theme.colors.text.primary,
             marginLeft: theme.spacing.sm,
@@ -53,7 +53,7 @@ export default function SyncQueueStrip({
       </View>
 
       {pendingCount > 0 ? (
-        <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.sm }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>
           {t('producer.dashboard.syncStrip.pendingLine', { count: pendingCount })}
         </Text>
       ) : null}
@@ -61,9 +61,9 @@ export default function SyncQueueStrip({
       {lastError ? (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 14,
             color: '#b91c1c',
-            lineHeight: 18,
+            lineHeight: 20,
             marginBottom: theme.spacing.sm,
           }}
           numberOfLines={3}
@@ -79,14 +79,16 @@ export default function SyncQueueStrip({
         style={{
           backgroundColor: theme.colors.primary,
           borderRadius: theme.borderRadius.md,
-          paddingVertical: 11,
-          paddingHorizontal: 14,
+          paddingVertical: 15,
+          paddingHorizontal: 16,
+          minHeight: 48,
           opacity: syncing ? 0.65 : 1,
           marginBottom: theme.spacing.sm,
           alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.inverse }}>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
           {t('producer.dashboard.syncStrip.syncNow')}
         </Text>
       </TouchableOpacity>
@@ -94,9 +96,15 @@ export default function SyncQueueStrip({
       <TouchableOpacity
         onPress={onOpenFieldLog}
         activeOpacity={0.75}
-        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingVertical: 10,
+          minHeight: 44,
+        }}
       >
-        <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.primary }}>
+        <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.primary }}>
           {t('producer.dashboard.syncStrip.openLog')}
         </Text>
         <ChevronRight size={20} color={theme.colors.primary} strokeWidth={2} />

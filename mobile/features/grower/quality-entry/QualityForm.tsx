@@ -68,7 +68,7 @@ export function QualityForm({
         </View>
         {selectedBatch.quantity != null && (
           <Text style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
           }}>
@@ -89,7 +89,7 @@ export function QualityForm({
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text style={{
-              fontSize: 13,
+              fontSize: 16,
               fontWeight: '300',
               color: colors.text.secondary,
             }}>
@@ -102,7 +102,7 @@ export function QualityForm({
               backgroundColor: `${getStatusColor(qualityEntry.status)}15`,
             }}>
               <Text style={{
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: '300',
                 color: getStatusColor(qualityEntry.status),
                 letterSpacing: 0.3,
@@ -117,7 +117,7 @@ export function QualityForm({
       {/* Quality Score */}
       <View style={{ marginBottom: theme.spacing.md }}>
         <Text style={{
-          fontSize: 13,
+          fontSize: 16,
           fontWeight: '300',
           color: colors.text.secondary,
           marginBottom: theme.spacing.xs,
@@ -148,7 +148,7 @@ export function QualityForm({
       {/* Notes */}
       <View style={{ marginBottom: theme.spacing.md }}>
         <Text style={{
-          fontSize: 13,
+          fontSize: 16,
           fontWeight: '300',
           color: colors.text.secondary,
           marginBottom: theme.spacing.xs,

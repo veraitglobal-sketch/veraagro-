@@ -199,7 +199,7 @@ export default function QualityEntryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 bg-red-50 border border-red-200 rounded-lg"
           >
-            <p className="text-sm text-red-800">{error}</p>
+            <p className="text-base text-red-800">{error}</p>
           </motion.div>
         )}
 
@@ -209,7 +209,7 @@ export default function QualityEntryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 bg-green-50 border border-green-200 rounded-lg"
           >
-            <p className="text-sm text-green-800">✓ {fk('successMessage')}</p>
+            <p className="text-base text-green-800">✓ {fk('successMessage')}</p>
           </motion.div>
         )}
 
@@ -223,13 +223,13 @@ export default function QualityEntryPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
                 {fk('selectBatch')} *
               </label>
               {batchesLoading ? (
-                <p className="text-sm text-gray-500">{fk('loadingBatches')}</p>
+                <p className="text-base text-gray-500">{fk('loadingBatches')}</p>
               ) : batches.length === 0 ? (
-                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
                   {fk('noBatchesLead')}{' '}
                   <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
                     {fk('createBatchCta')}
@@ -258,7 +258,7 @@ export default function QualityEntryPage() {
               <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('weatherAtHarvest')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-base font-medium text-gray-700 mb-2">
                     {fk('temperature')} *
                   </label>
                   <input
@@ -275,7 +275,7 @@ export default function QualityEntryPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-base font-medium text-gray-700 mb-2">
                     {fk('humidity')} *
                   </label>
                   <input
@@ -292,7 +292,7 @@ export default function QualityEntryPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-base font-medium text-gray-700 mb-2">
                     {fk('cloudCover')} *
                   </label>
                   <select
@@ -316,7 +316,7 @@ export default function QualityEntryPage() {
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('preCoolingTitle')}</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-base font-medium text-gray-700 mb-2">
                   {fk('preCoolingLabel')} *
                 </label>
                 <input
@@ -333,11 +333,11 @@ export default function QualityEntryPage() {
             {/* Visual Grade Photos */}
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-base font-semibold text-gray-900 mb-4">{fk('visualPhotosTitle')}</h3>
-              <p className="text-sm text-gray-600 mb-4">{fk('visualPhotosIntro')}</p>
+              <p className="text-base text-gray-600 mb-4">{fk('visualPhotosIntro')}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {CRATE_KEYS.map((crateKey, index) => (
                   <div key={crateKey} className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-base font-medium text-gray-700">
                       {fk(crateKey)} *
                     </label>
                     <div className="relative">
@@ -358,7 +358,7 @@ export default function QualityEntryPage() {
                             <svg className="w-8 h-8 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <p className="text-sm text-green-600">{fk('photoUploaded')}</p>
+                            <p className="text-base text-green-600">{fk('photoUploaded')}</p>
                             <img
                               src={formData.visualGradePhotos[index]}
                               alt={fk(crateKey)}
@@ -370,7 +370,7 @@ export default function QualityEntryPage() {
                             <svg className="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <p className="text-sm text-gray-500">{fk('clickToUpload')}</p>
+                            <p className="text-base text-gray-500">{fk('clickToUpload')}</p>
                           </div>
                         )}
                       </label>
@@ -394,7 +394,7 @@ export default function QualityEntryPage() {
                     className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                   />
                 </div>
-                <div className="ml-3 text-sm">
+                <div className="ml-3 text-base">
                   <label htmlFor="standardConfirmation" className="font-medium text-gray-700">
                     {fk('standardConfirmationShort')} *
                   </label>
@@ -405,7 +405,7 @@ export default function QualityEntryPage() {
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
                 {fk('notesLabel')}
               </label>
               <textarea

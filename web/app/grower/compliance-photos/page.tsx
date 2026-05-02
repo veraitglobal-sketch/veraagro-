@@ -307,7 +307,7 @@ export default function CompliancePhotosPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 bg-red-50 border border-red-200 rounded-lg"
           >
-            <p className="text-sm text-red-800">{error}</p>
+            <p className="text-base text-red-800">{error}</p>
           </motion.div>
         )}
 
@@ -317,7 +317,7 @@ export default function CompliancePhotosPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 bg-green-50 border border-green-200 rounded-lg"
           >
-            <p className="text-sm text-green-800">{success}</p>
+            <p className="text-base text-green-800">{success}</p>
           </motion.div>
         )}
 
@@ -327,7 +327,7 @@ export default function CompliancePhotosPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('grower.compliancePhotos.checklistHeading')}</h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-base text-gray-600 mb-4">
             {t('grower.compliancePhotos.introBeforeStrong')}
             <strong>{t('grower.compliancePhotos.introStrong')}</strong>
             {t('grower.compliancePhotos.introAfterStrong')}
@@ -335,7 +335,7 @@ export default function CompliancePhotosPage() {
             {t('grower.compliancePhotos.introEnd')}
           </p>
 
-          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 text-sm text-gray-800">
+          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 text-base text-gray-800">
             <p className="font-medium text-gray-900 mb-2">{t('grower.compliancePhotos.explainerTitle')}</p>
             <ul className="list-disc pl-5 space-y-1 text-gray-700">
               {explainerBullets.map((bullet, i) => (
@@ -353,11 +353,11 @@ export default function CompliancePhotosPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('grower.compliancePhotos.selectLot')}</label>
+            <label className="block text-base font-medium text-gray-700 mb-2">{t('grower.compliancePhotos.selectLot')}</label>
             {batchesLoading ? (
-              <p className="text-sm text-gray-500">{t('grower.compliancePhotos.loadingBatches')}</p>
+              <p className="text-base text-gray-500">{t('grower.compliancePhotos.loadingBatches')}</p>
             ) : batches.length === 0 ? (
-              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+              <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
                 {t('grower.compliancePhotos.noBatches')}{' '}
                 <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
                   {t('grower.compliancePhotos.createBatch')}
@@ -381,7 +381,7 @@ export default function CompliancePhotosPage() {
           </div>
 
           {selectedBatch && statusLoading && (
-            <p className="text-sm text-gray-500 mb-4">{t('grower.compliancePhotos.loadingStatus')}</p>
+            <p className="text-base text-gray-500 mb-4">{t('grower.compliancePhotos.loadingStatus')}</p>
           )}
 
           {selectedBatch && !statusLoading && complianceStatus?.complete && !showReplaceForm && (
@@ -394,7 +394,7 @@ export default function CompliancePhotosPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mt-1">
                     {t('grower.compliancePhotos.complianceCompleteTitle')}
                   </h3>
-                  <p className="text-sm text-gray-700 mt-1">
+                  <p className="text-base text-gray-700 mt-1">
                     {t('grower.compliancePhotos.resolvedLotPrefix')}{' '}
                     <span className="font-mono font-medium">{complianceStatus.publicBatchId}</span>{' '}
                     {t('grower.compliancePhotos.resolvedBody')}
@@ -404,7 +404,7 @@ export default function CompliancePhotosPage() {
                   ✓
                 </div>
               </div>
-              <dl className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <dl className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-base">
                 <div>
                   <dt className="text-gray-500">{t('grower.compliancePhotos.stickerRollDt')}</dt>
                   <dd className="font-mono font-medium text-gray-900">
@@ -436,7 +436,7 @@ export default function CompliancePhotosPage() {
                   setError(null);
                   setSuccess(null);
                 }}
-                className="mt-4 w-full sm:w-auto px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50"
+                className="mt-4 w-full sm:w-auto px-4 py-2 text-base font-medium border border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50"
               >
                 {t('grower.compliancePhotos.updatePhotosCta')}
               </button>
@@ -446,7 +446,7 @@ export default function CompliancePhotosPage() {
           {showForm && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-base font-medium text-gray-700 mb-2">
                   {t('grower.compliancePhotos.stickerRollLabel')}
                 </label>
                 <select
@@ -499,7 +499,7 @@ export default function CompliancePhotosPage() {
                 <div className="space-y-4">
                   {requiredPhotos.map((photo, index) => (
                     <div key={photo.type} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">{photo.label} *</label>
+                      <label className="block text-base font-medium text-gray-700">{photo.label} *</label>
                       <p className="text-xs text-gray-500 mb-2">{photo.description}</p>
                       <div className="relative">
                         <input
@@ -521,7 +521,7 @@ export default function CompliancePhotosPage() {
                                 alt={photo.label}
                                 className="w-full h-48 object-cover rounded mt-2"
                               />
-                              <p className="text-sm text-green-600">
+                              <p className="text-base text-green-600">
                                 {t('grower.compliancePhotos.photoAddedPending')}
                               </p>
                             </div>
@@ -540,7 +540,7 @@ export default function CompliancePhotosPage() {
                                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                               </svg>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-base text-gray-500">
                                 {t('grower.compliancePhotos.clickToUpload')}
                               </p>
                             </div>
@@ -563,7 +563,7 @@ export default function CompliancePhotosPage() {
                       setError(null);
                       setSuccess(null);
                     }}
-                    className="mb-3 text-sm text-gray-600 hover:text-gray-900 underline"
+                    className="mb-3 text-base text-gray-600 hover:text-gray-900 underline"
                   >
                     {t('grower.compliancePhotos.cancelKeep')}
                   </button>
@@ -592,7 +592,7 @@ export default function CompliancePhotosPage() {
           )}
 
           {selectedBatch && !statusLoading && complianceStatus === null && (
-            <p className="text-sm text-amber-800">{t('grower.compliancePhotos.statusLoadError')}</p>
+            <p className="text-base text-amber-800">{t('grower.compliancePhotos.statusLoadError')}</p>
           )}
         </motion.div>
       </GrowerPageShell>

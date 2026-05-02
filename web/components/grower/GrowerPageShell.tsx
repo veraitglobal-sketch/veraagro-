@@ -34,7 +34,7 @@ export function GrowerPageHeader({
       <div className="min-w-0">
         <h1 className="text-3xl font-light tracking-tight text-gray-900">{title}</h1>
         {description != null && description !== '' && (
-          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-gray-600">{description}</p>
+          <p className="mt-1 max-w-3xl text-base leading-relaxed text-gray-700">{description}</p>
         )}
       </div>
       {right ? <div className="shrink-0">{right}</div> : null}

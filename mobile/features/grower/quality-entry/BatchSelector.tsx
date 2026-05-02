@@ -25,13 +25,13 @@ export function BatchSelector({
   return (
     <View style={{ marginBottom: theme.spacing.md }}>
       <Text style={{
-        fontSize: 13,
+        fontSize: 16,
         fontWeight: '300',
         color: colors.text.secondary,
         marginBottom: theme.spacing.xs,
         letterSpacing: 0.3,
       }}>
-        Batch
+        {t('producer.qualityEntry.batchHeading')}
       </Text>
       {loading ? (
         <View style={{ padding: theme.spacing.md, alignItems: 'center' }}>
@@ -46,7 +46,7 @@ export function BatchSelector({
           borderColor: colors.border,
         }}>
           <Text style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
           }}>
@@ -70,7 +70,7 @@ export function BatchSelector({
                 }}
               >
                 <Text style={{
-                  fontSize: 12,
+                  fontSize: 15,
                   fontWeight: '300',
                   color: selectedBatchId === batch.id ? colors.primary : colors.text.secondary,
                   letterSpacing: 0.3,

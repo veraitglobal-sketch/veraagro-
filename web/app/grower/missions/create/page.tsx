@@ -387,7 +387,7 @@ export default function CreateMissionPage() {
               Your request is <strong>queued for dispatch</strong>. BioVera operations assigns a cold-chain driver; you
               can track the run below as soon as it is assigned.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-base text-gray-500">
               Redirecting to{' '}
               <Link href="/grower/portal" className="font-semibold text-[#2D5A27] underline">
                 Mission tracker
@@ -412,7 +412,7 @@ export default function CreateMissionPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
-          <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+          <p className="text-base text-gray-600 mb-3 leading-relaxed">
             <strong>Before this page:</strong> batch in <strong>PACKED</strong> or <strong>QUALITY_VERIFIED</strong> (
             <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
               My batches
@@ -427,7 +427,7 @@ export default function CreateMissionPage() {
             </Link>{' '}
             + label roll complete. Then pick the lot below.
           </p>
-          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          <p className="text-base text-gray-600 mb-6 leading-relaxed">
             Choose a <strong>ready batch</strong>, <strong>pickup</strong> (GPS or coordinates), and full <strong>drop-off</strong>{' '}
             details. The request is sent to <strong>BioVera operations</strong> (admin panel) — they assign a driver when
             ready; until then the mission shows as <strong>pending</strong>. Order stock on{' '}
@@ -436,7 +436,7 @@ export default function CreateMissionPage() {
             </Link>{' '}
             if you still need crates or labels.
           </p>
-          <p className="text-sm text-gray-500 mb-6 border-l-2 border-gray-200 pl-3">
+          <p className="text-base text-gray-500 mb-6 border-l-2 border-gray-200 pl-3">
             <strong>After transport:</strong> when the request is created successfully, the app takes you to{' '}
             <Link href="/grower/portal" className="text-[#2D5A27] font-medium underline">
               Mission tracker
@@ -444,7 +444,7 @@ export default function CreateMissionPage() {
             to follow the run (map, status, logistics).
           </p>
 
-          <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-800">
+          <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-base text-slate-800">
             <p className="font-medium text-slate-900">Split order (e.g. 800 kg + 200 kg, two farms, same day)</p>
             <p className="mt-1.5 leading-relaxed">
               One mission = <strong>one batch</strong> and <strong>one pickup</strong>. You cannot attach two grower lots to a
@@ -458,7 +458,7 @@ export default function CreateMissionPage() {
 
           {submitError && (
             <div
-              className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"
+              className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-900"
               role="alert"
             >
               <p className="font-medium">Could not create transport</p>
@@ -492,7 +492,7 @@ export default function CreateMissionPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Batch Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
                 Select Batch * {batches.length === 0 && <span className="text-red-500">(No ready batches available)</span>}
               </label>
               <select
@@ -513,12 +513,12 @@ export default function CreateMissionPage() {
               </select>
               {errors.batchId && <p className="text-red-500 text-xs mt-1">{errors.batchId}</p>}
               {batches.length === 0 && (
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-base text-gray-500 mt-2">
                   You need to have batches with status "PACKED" or "QUALITY_VERIFIED" to request transport.
                 </p>
               )}
               {formData.batchId && (
-                <div className="mt-3 rounded-lg border px-3 py-2 text-sm">
+                <div className="mt-3 rounded-lg border px-3 py-2 text-base">
                   {complianceLoading ? (
                     <p className="text-gray-600">Checking compliance for this lot…</p>
                   ) : complianceForBatch?.complete ? (
@@ -563,7 +563,7 @@ export default function CreateMissionPage() {
 
             {/* Pickup Location */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
                 Pickup Location *
               </label>
               <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -586,7 +586,7 @@ export default function CreateMissionPage() {
                 </button>
               </div>
               {locationHint && (
-                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-3">
+                <p className="text-base text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-3">
                   {locationHint}
                 </p>
               )}
@@ -655,7 +655,7 @@ export default function CreateMissionPage() {
 
             {/* Pickup Address */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
                 Pickup Address *
               </label>
               <textarea
@@ -674,7 +674,7 @@ export default function CreateMissionPage() {
               />
               {errors.pickupAddress && <p className="text-red-500 text-xs mt-1">{errors.pickupAddress}</p>}
               {addressMissingHouseNo && (
-                <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mt-2">
+                <p className="text-base text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mt-2">
                   <strong>House or gate number not in the address.</strong> The public map (OpenStreetMap) often has no
                   building number at your GPS point. Add the exact street and number, or a farm / gate name, so the
                   driver knows where to stop.
@@ -684,14 +684,14 @@ export default function CreateMissionPage() {
 
             {/* Delivery / drop-off — required for routing and load planning */}
             <div className="rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900">Where this load is going (delivery)</h3>
+              <h3 className="text-base font-semibold text-gray-900">Where this load is going (delivery)</h3>
               <p className="text-xs text-gray-600">
                 Operations and drivers need a <strong>clear drop-off</strong>. If several small lots go to the{' '}
                 <strong>same city</strong>, you can use the same spelling so dispatch can assign the <strong>same
                 driver</strong> to both missions (one truck, two stops) when they are ready.
               </p>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Destination city / region *</label>
+                <label className="block text-base font-medium text-gray-700 mb-1">Destination city / region *</label>
                 <input
                   type="text"
                   value={formData.destinationCity}
@@ -704,7 +704,7 @@ export default function CreateMissionPage() {
                 {errors.destinationCity && <p className="text-red-500 text-xs mt-1">{errors.destinationCity}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full delivery address *</label>
+                <label className="block text-base font-medium text-gray-700 mb-1">Full delivery address *</label>
                 <textarea
                   value={formData.destinationAddress}
                   onChange={(e) => setFormData({ ...formData, destinationAddress: e.target.value })}
@@ -719,7 +719,7 @@ export default function CreateMissionPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-base font-medium text-gray-700 mb-1">
                   Loading / delivery notes (optional)
                 </label>
                 <textarea

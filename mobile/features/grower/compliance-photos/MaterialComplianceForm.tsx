@@ -52,7 +52,7 @@ export function MaterialComplianceForm() {
         >
           {t('producer.compliance.batchForm.checklistHeading')}
         </Text>
-        <Text style={{ fontSize: 13, color: colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
+        <Text style={{ fontSize: 16, color: colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
           {t('producer.compliance.batchForm.intro')}{' '}
           <Text
             onPress={() => router.push('/(producer)/materials')}
@@ -72,16 +72,16 @@ export function MaterialComplianceForm() {
             marginBottom: theme.spacing.lg,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.primary, marginBottom: 6 }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.primary, marginBottom: 6 }}>
             {t('producer.compliance.batchForm.explainerTitle')}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
+          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
             • {t('producer.compliance.batchForm.explainerBullet0')}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
+          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
             • {t('producer.compliance.batchForm.explainerBullet1')}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
+          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
             • {t('producer.compliance.batchForm.explainerBullet2')}
           </Text>
         </View>
@@ -101,7 +101,7 @@ export function MaterialComplianceForm() {
           </Text>
         ) : (
           <>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 8 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.tertiary, marginBottom: 8 }}>
               {t('producer.compliance.batchForm.selectLot')}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
@@ -122,7 +122,7 @@ export function MaterialComplianceForm() {
                   >
                     <Text
                       numberOfLines={2}
-                      style={{ fontSize: 12, color: sel ? colors.primary : colors.text.primary, maxWidth: 200 }}
+                      style={{ fontSize: 15, color: sel ? colors.primary : colors.text.primary, maxWidth: 200 }}
                     >
                       {b.batchId} — {b.productName}
                     </Text>
@@ -157,23 +157,23 @@ export function MaterialComplianceForm() {
                 marginBottom: theme.spacing.lg,
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primary, marginBottom: 4 }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.primary, marginBottom: 4 }}>
                 {t('producer.compliance.batchForm.resolvedBadge')}
               </Text>
               <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 4 }}>
                 {t('producer.compliance.batchForm.complianceCompleteTitle')}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text.secondary, lineHeight: 20, marginBottom: 8 }}>
+              <Text style={{ fontSize: 16, color: colors.text.secondary, lineHeight: 20, marginBottom: 8 }}>
                 {t('producer.compliance.batchForm.resolvedBody', { batchId: c.complianceStatus.publicBatchId })}
               </Text>
               {c.complianceStatus.uploadedPhotoTypes?.length > 0 ? (
-                <Text style={{ fontSize: 12, color: colors.text.tertiary, marginBottom: 12 }}>
+                <Text style={{ fontSize: 15, color: colors.text.tertiary, marginBottom: 12 }}>
                   {t('producer.compliance.batchForm.photoTypesOnFile')}:{' '}
                   {c.complianceStatus.uploadedPhotoTypes.join(', ')}
                 </Text>
               ) : null}
               {c.complianceStatus.stickerRollId ? (
-                <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: 12 }}>
+                <Text style={{ fontSize: 15, color: colors.text.secondary, marginBottom: 12 }}>
                   {t('producer.compliance.batchForm.stickerOnFile')}: {c.complianceStatus.stickerRollId}
                 </Text>
               ) : null}
@@ -198,10 +198,10 @@ export function MaterialComplianceForm() {
 
         {c.showForm ? (
           <View>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.primary, marginBottom: 8 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.primary, marginBottom: 8 }}>
               {t('producer.compliance.batchForm.stickerRollLabel')}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: 8 }}>
+            <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 8 }}>
               {t('producer.compliance.batchForm.labelRollLogicHint')}
             </Text>
             {c.pickableRolls.length > 12 ? (
@@ -224,7 +224,7 @@ export function MaterialComplianceForm() {
                   }}
                 />
                 {c.stickerRollListMeta.mode === 'search' ? (
-                  <Text style={{ fontSize: 11, color: colors.text.tertiary, marginBottom: 8 }}>
+                  <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: 8 }}>
                     {t('producer.compliance.batchForm.labelRollMatchCount', {
                       shown: c.stickerRollListForUi.length,
                       total: c.stickerRollListMeta.matchCount,
@@ -234,7 +234,7 @@ export function MaterialComplianceForm() {
                       : ''}
                   </Text>
                 ) : c.stickerRollListMeta.mode === 'recent' ? (
-                  <Text style={{ fontSize: 11, color: colors.text.tertiary, marginBottom: 8 }}>
+                  <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: 8 }}>
                     {t('producer.compliance.batchForm.labelRollShowingRecent', {
                       total: c.stickerRollListMeta.matchCount,
                     })}
@@ -263,7 +263,7 @@ export function MaterialComplianceForm() {
                         backgroundColor: sel ? `${colors.primary}10` : colors.background,
                       }}
                     >
-                      <Text style={{ fontSize: 11, color: sel ? colors.primary : colors.text.secondary }}>
+                      <Text style={{ fontSize: 14, color: sel ? colors.primary : colors.text.secondary }}>
                         {r.serialNumber}
                       </Text>
                     </TouchableOpacity>
@@ -272,7 +272,7 @@ export function MaterialComplianceForm() {
               </View>
             </ScrollView>
             {c.pickableRolls.length === 0 ? (
-              <Text style={{ fontSize: 12, color: theme.colors.warning, marginBottom: 8 }}>
+              <Text style={{ fontSize: 15, color: theme.colors.warning, marginBottom: 8 }}>
                 {t('producer.compliance.batchForm.labelRollNoneAvailable')}
               </Text>
             ) : null}
@@ -311,7 +311,7 @@ export function MaterialComplianceForm() {
                 )}
               </TouchableOpacity>
             </View>
-            <Text style={{ fontSize: 11, color: colors.text.tertiary, marginBottom: theme.spacing.lg }}>
+            <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: theme.spacing.lg }}>
               {t('producer.compliance.batchForm.stickerHelp')}
             </Text>
 
@@ -336,7 +336,7 @@ export function MaterialComplianceForm() {
                 }}
                 style={{ marginBottom: 12 }}
               >
-                <Text style={{ fontSize: 13, color: colors.text.tertiary, textDecorationLine: 'underline' }}>
+                <Text style={{ fontSize: 16, color: colors.text.tertiary, textDecorationLine: 'underline' }}>
                   {t('producer.compliance.batchForm.cancelKeep')}
                 </Text>
               </TouchableOpacity>
@@ -363,7 +363,7 @@ export function MaterialComplianceForm() {
               )}
             </TouchableOpacity>
             {c.showReplaceForm && c.selectedBatch ? (
-              <Text style={{ fontSize: 11, color: theme.colors.warning, marginTop: 8 }}>
+              <Text style={{ fontSize: 14, color: theme.colors.warning, marginTop: 8 }}>
                 {t('producer.compliance.batchForm.replaceWarning', { batchId: c.selectedBatch.batchId })}
               </Text>
             ) : null}
@@ -391,7 +391,7 @@ function PhotoRow({
       <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text.primary, marginBottom: 2 }}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.label`)} *
       </Text>
-      <Text style={{ fontSize: 12, color: colors.text.tertiary, marginBottom: 8, lineHeight: 18 }}>
+      <Text style={{ fontSize: 15, color: colors.text.tertiary, marginBottom: 8, lineHeight: 18 }}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.hint`)}
       </Text>
       <TouchableOpacity
@@ -423,7 +423,7 @@ function PhotoRow({
               }}
             >
               <Check size={16} color={colors.primary} />
-              <Text style={{ fontSize: 12, color: colors.primary }}>{t('producer.compliance.batchForm.photoAdded')}</Text>
+              <Text style={{ fontSize: 15, color: colors.primary }}>{t('producer.compliance.batchForm.photoAdded')}</Text>
             </View>
           </View>
         ) : (

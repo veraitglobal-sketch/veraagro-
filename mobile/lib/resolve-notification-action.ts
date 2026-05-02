@@ -1,5 +1,6 @@
 import type { Href } from 'expo-router';
 
+import { webGrowerPathToMobileHref } from './grower-web-href-to-mobile';
 import { PRODUCER_ROLES } from './post-login-redirect';
 
 export interface NotificationActionContext {
@@ -74,13 +75,13 @@ export function resolveNotificationActionHref(
     return null;
   }
 
-  if (path === '/grower/portal' || path.endsWith('/grower/portal')) {
-    const params = new URLSearchParams(queryPart);
-    const missionId = params.get('missionId');
-    if (missionId) {
-      return `/(producer)/mission/${encodeURIComponent(missionId)}` as Href;
-    }
-    return '/(producer)/missions' as Href;
+  if (path === '/producer/field-entry' || path.endsWith('/producer/field-entry')) {
+    return '/(producer)/scanner' as Href;
+  }
+
+  const growerMobile = webGrowerPathToMobileHref(path, queryPart);
+  if (growerMobile) {
+    return growerMobile as Href;
   }
 
   /** Web buyer portal (`/buyer-portal/*`) → buyer tabs. */
@@ -242,10 +243,6 @@ export function resolveNotificationActionHref(
 
   if (path.startsWith('/(producer)/')) {
     return trimmed as Href;
-  }
-
-  if (path.startsWith('/grower/')) {
-    return '/(producer)/(tabs)' as Href;
   }
 
   return null;

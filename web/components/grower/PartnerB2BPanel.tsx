@@ -100,7 +100,7 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
           <Inbox className="h-5 w-5 text-[#2D5A27] shrink-0" />
           {t('growerPages.b2bOrdersTitle')}
         </h2>
-        <p className="text-sm text-gray-600">{t('growerPages.b2bOrdersLead')}</p>
+        <p className="text-base text-gray-600">{t('growerPages.b2bOrdersLead')}</p>
         <p className="text-xs text-gray-500 mt-1.5">
           {t('growerPages.b2bOrdersMaterialsLineBefore')}{' '}
           <Link href="/grower/materials" className="text-[#2D5A27] font-medium hover:underline">
@@ -115,28 +115,28 @@ export default function PartnerB2BPanel({ className = '' }: PartnerB2BPanelProps
       </div>
 
       {loading && (
-        <p className="text-sm text-gray-500 flex items-center gap-2">
+        <p className="text-base text-gray-500 flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
           {t('growerPages.b2bLoading')}
         </p>
       )}
       {err && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">{String(err)}</div>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">{String(err)}</div>
       )}
 
       {!loading && !err && (
         <>
           <section>
-            <h3 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-3">
+            <h3 className="text-base font-medium text-gray-900 flex items-center gap-2 mb-3">
               <Package className="h-4 w-4 text-[#2D5A27]" />
               {t('growerPages.b2bDirectOrders')}
             </h3>
             {orders.length === 0 ? (
-              <p className="text-sm text-gray-500 font-light">{t('growerPages.b2bNoOrdersYet')}</p>
+              <p className="text-base text-gray-500 font-light">{t('growerPages.b2bNoOrdersYet')}</p>
             ) : (
               <ul className="space-y-3 max-h-[min(50vh,32rem)] overflow-y-auto pr-1 [scrollbar-gutter:stable]">
                 {orders.map((o) => (
-                  <li key={o.id} className="rounded-lg border border-gray-200 bg-gray-50/80 p-3 text-sm">
+                  <li key={o.id} className="rounded-lg border border-gray-200 bg-gray-50/80 p-3 text-base">
                     <div className="flex flex-wrap justify-between gap-2 mb-2">
                       <span className="font-medium text-gray-900">{supplierDisplayName(o, t)}</span>
                       <span

@@ -141,32 +141,35 @@ export default function GrowerFieldDiaryPage() {
             description={t('growerPages.fieldDiaryPageLead')}
           />
 
-          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#2D5A27]/[0.07] px-4 py-3 space-y-2 text-sm text-gray-900">
-            <p className="font-medium text-[#1a3817]">{t('growerPages.fieldDiarySyncedTitle')}</p>
-            <p className="text-gray-700 font-light">{t('growerPages.fieldDiarySyncedBody')}</p>
-            <p className="text-gray-700 font-light border-t border-[#2D5A27]/15 pt-2 mt-2">
+          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#2D5A27]/[0.07] px-4 py-4 space-y-2 text-base text-gray-900">
+            <p className="font-semibold text-[#1a3817]">{t('growerPages.fieldDiarySyncedTitle')}</p>
+            <p className="text-gray-700 font-light leading-relaxed">{t('growerPages.fieldDiarySyncedBody')}</p>
+            <p className="text-gray-700 font-light border-t border-[#2D5A27]/15 pt-3 mt-2 leading-relaxed">
               {t('growerPages.fieldDiaryMobileEntryHint')}
             </p>
           </div>
 
-          <p className="text-sm text-gray-600">
-            <Link href={loc('/grower/fields')} className="text-[#2D5A27] font-medium underline">
+          <p className="text-base text-gray-600">
+            <Link
+              href={loc('/grower/fields')}
+              className="text-[#2D5A27] font-medium underline underline-offset-2 inline-flex min-h-[44px] items-center"
+            >
               {t('grower.placeholders.openParcels')}
             </Link>
           </p>
 
           {estates.length === 0 && !loading ? (
-            <p className="text-sm text-gray-600">{t('growerPages.noFieldsYet')}</p>
+            <p className="text-base text-gray-600">{t('growerPages.noFieldsYet')}</p>
           ) : (
             <div className="flex flex-wrap items-end gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{t('growerPages.fieldDiarySelectEstate')}</label>
+                <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.fieldDiarySelectEstate')}</label>
                 <select
                   value={estateId}
                   onChange={(e) => {
                     setEstateId(e.target.value);
                   }}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-[12rem] focus:ring-2 focus:ring-[#2D5A27]/30"
+                  className="rounded-lg border border-gray-300 px-3 py-3 text-base min-w-[12rem] focus:ring-2 focus:ring-[#2D5A27]/30"
                 >
                   {estates.map((e) => (
                     <option key={e.id} value={e.id}>
@@ -176,11 +179,11 @@ export default function GrowerFieldDiaryPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{t('growerPages.fieldDiarySelectParcel')}</label>
+                <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.fieldDiarySelectParcel')}</label>
                 <select
                   value={parcelId}
                   onChange={(e) => setParcelId(e.target.value)}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-[12rem] focus:ring-2 focus:ring-[#2D5A27]/30"
+                  className="rounded-lg border border-gray-300 px-3 py-3 text-base min-w-[12rem] focus:ring-2 focus:ring-[#2D5A27]/30"
                 >
                   <option value="ALL">{t('growerPages.fieldDiaryAllParcels')}</option>
                   {parcels.map((p) => (
@@ -194,38 +197,38 @@ export default function GrowerFieldDiaryPage() {
           )}
 
           {err && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{err}</div>
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-800">{err}</div>
           )}
 
           {loading && estateId ? (
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-base text-gray-600">
               <Loader2 className="h-5 w-5 animate-spin text-[#2D5A27]" />
               {t('growerPages.loadingFieldDiary')}
             </div>
           ) : (
             <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
               {sortedLogs.length === 0 ? (
-                <div className="p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2">
-                  <NotebookPen className="h-10 w-10 text-gray-300" />
+                <div className="p-8 text-center text-base text-gray-500 flex flex-col items-center gap-3">
+                  <NotebookPen className="h-12 w-12 text-gray-300" />
                   {t('growerPages.fieldDiaryNoLogs')}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
+                  <table className="min-w-full text-base">
                     <thead>
-                      <tr className="border-b border-gray-100 text-left text-xs text-gray-500 tracking-wide">
-                        <th className="px-4 py-2 font-medium w-14">{t('growerPages.fieldDiaryColPhoto')}</th>
-                        <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColWhen')}</th>
-                        <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColParcel')}</th>
-                        <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColPlan')}</th>
-                        <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColStage')}</th>
-                        <th className="px-4 py-2 font-medium">{t('growerPages.fieldDiaryColNotes')}</th>
+                      <tr className="border-b border-gray-100 text-left text-sm text-gray-600 tracking-wide">
+                        <th className="px-4 py-3 font-medium w-14">{t('growerPages.fieldDiaryColPhoto')}</th>
+                        <th className="px-4 py-3 font-medium">{t('growerPages.fieldDiaryColWhen')}</th>
+                        <th className="px-4 py-3 font-medium">{t('growerPages.fieldDiaryColParcel')}</th>
+                        <th className="px-4 py-3 font-medium">{t('growerPages.fieldDiaryColPlan')}</th>
+                        <th className="px-4 py-3 font-medium">{t('growerPages.fieldDiaryColStage')}</th>
+                        <th className="px-4 py-3 font-medium">{t('growerPages.fieldDiaryColNotes')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sortedLogs.map((row) => (
                         <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                          <td className="px-4 py-2.5 align-middle">
+                          <td className="px-4 py-3 align-middle">
                             {row.imageUrl ? (
                               <img
                                 src={row.imageUrl}
@@ -239,19 +242,19 @@ export default function GrowerFieldDiaryPage() {
                               />
                             )}
                           </td>
-                          <td className="px-4 py-2.5 text-gray-700 whitespace-nowrap">
+                          <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
                             {formatWhen(row.createdAt)}
                           </td>
-                          <td className="px-4 py-2.5 text-gray-800">
+                          <td className="px-4 py-3 text-gray-800">
                             {row.parcels?.cropType || row.parcelId?.slice(0, 8) || '—'}…
                           </td>
-                          <td className="px-4 py-2.5 text-gray-700">
+                          <td className="px-4 py-3 text-gray-700">
                             {row.harvest_announcements
                               ? `${row.harvest_announcements.cropType} (${planTypeLabel(row.harvest_announcements.announcementType)})`
                               : '—'}
                           </td>
-                          <td className="px-4 py-2.5 text-gray-600">{row.growthStage || '—'}</td>
-                          <td className="px-4 py-2.5 text-gray-700 max-w-md font-light">{row.notes || '—'}</td>
+                          <td className="px-4 py-3 text-gray-600">{row.growthStage || '—'}</td>
+                          <td className="px-4 py-3 text-gray-700 max-w-md font-light leading-relaxed">{row.notes || '—'}</td>
                         </tr>
                       ))}
                     </tbody>

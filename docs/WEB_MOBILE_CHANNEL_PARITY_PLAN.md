@@ -74,6 +74,16 @@ Za **P2.3 / Q1** — ne mora sve biti 1:1 ako je UX namerno drugačiji.
 |---------|-----|
 | `/(producer)/(tabs)` | `/grower` |
 | Terenski dnevnik + outbox strip | `/grower` (banner) + `/producer/field-entry` |
+| `/(producer)/partner-orders`, `/b2b-supplier/[userId]`, `/b2b-thread/[id]` | `/grower/where-to-buy`, `/grower/where-to-buy/messages`, `…/thread/[id]`, `…/store/[supplierUserId]` |
+
+Detaljna matrica, checklista i faze: [`GROWER_WEB_MOBILE_PRIORITY_PLAN.md`](GROWER_WEB_MOBILE_PRIORITY_PLAN.md).
+
+#### Smoke (grower) — kratak set
+
+1. **Web:** `/grower` — učitavanje, `GrowerDashboardHomeWorkflow` linkovi (uključujući terenski unos), skorašnje misije; `/grower/fields?estate=` skrol do gazdinstva.  
+2. **Mob:** Početak — offline strip / refresh; partner porudžbine; otvaranje B2B thread-a (lista → chat).  
+3. **Notifikacije:** `actionUrl` sa `/grower/portal?missionId=`, `/grower/fields?estate=`, `/grower/where-to-buy/store/:id` — mobilni **resolve** + `webGrowerPathToMobileHref` vode na odgovarajući ekran.  
+4. **Offline:** jedan unos u airplane modu → sinhronizacija posle mreže (web banner / mob strip).
 
 ---
 
