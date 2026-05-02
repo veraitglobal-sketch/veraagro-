@@ -1,7 +1,7 @@
 /**
  * Part B — “full film” programme depth (English).
  * Maps to diligence sections: problem, solution, mechanics, market, competition, business model, scaling, impact, team, finances.
- * Numeric ranges marked [ILLUSTRATIVE] are placeholders for chartered models and audited data.
+ * Numeric ranges are discussion scaffolding; bind them to chartered models and audited data before formal submission.
  */
 import type { TechnicalProposalChapter } from "@/content/technical-proposal.part-a";
 
@@ -54,15 +54,15 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
   },
   {
     id: "pb-04-market-numbers",
-    title: "Part B — 4. Market (quantified framing [ILLUSTRATIVE])",
+    title: "Part B — 4. Market (quantified framing)",
     paragraphs: [
       "Product focus today targets SKUs where category buyers already demand verifiable cold narratives (soft fruit, leafy lines, premium organics)—programme configuration encodes default temperature bands and packaging photo expectations (`bio_vera_standards`) aligning marketing claims with QA scripts rather than generic “farm app” horizontalism.",
-      "European fresh and chilled horticulture procurement aggregates to large multi-billion-euro annual baskets across modern retail; speciality, organic and protected-origin lines justify higher documentation spend per tonne than undifferentiated commodities [ILLUSTRATIVE macro framing—replace with licensed industry statistics before binding filings]. Vera deliberately chases programme wedges where QA already rewards proof density rather than generic TAM vanity.",
-      "Beachhead hypothesis: Southeastern European exporters capable of refrigerated integrity into German distribution clock represent [ILLUSTRATIVE: hundreds to low-thousands of commercial-grade estates transitioning across three to five seasonal windows] addressable via pilot cohort onboarding rather than broadcast acquisition.",
+      "European fresh and chilled horticulture procurement aggregates to large multi-billion-euro annual baskets across modern retail; speciality, organic and protected-origin lines justify higher documentation spend per tonne than undifferentiated commodities—binding filings should cite licensed industry statistics. Vera deliberately chases programme wedges where QA already rewards proof density rather than generic TAM vanity.",
+      "Beachhead hypothesis: Southeastern European exporters capable of refrigerated integrity into German distribution represent a scalable pool—from hundreds toward low-thousands of commercial-grade estates over several seasonal windows—addressable via pilot cohort onboarding rather than broadcast acquisition.",
       "Operational addressable depth: each onboarded estate can fan out dozens of parcels, hundreds of treatments and multiple seasonal announcements—pricing models weight programme fees against mission telemetry density and buyer passport consumption rather than naïvely per-seat grower SaaS metrics alone.",
-      "Buyer SKU programme uplift remains explicitly contingent on dossier KPIs—not slide optimism: exemplar illustrative bands (e.g. EUR 35–110M contingent baskets after multiple seasons) belong only in chartered FP&A worksheets referencing named retailers [ILLUSTRATIVE—do not excerpt without attribution].",
-      "Logistics attach rate: refrigerated missions per batch programme forecast [ILLUSTRATIVE: median 4–11 legs per seasonal SKU wave] implying telemetry completeness targets drive integration priorities before raw route optimisation ambitions.",
-      "Digital adoption precondition: handset OS matrix minimums published each release anticipating [ILLUSTRATIVE: Android share >80% corridor-weighted demographic]—device lab budgets sized accordingly.",
+      "Buyer SKU programme uplift remains explicitly contingent on dossier KPIs—not slide optimism: exemplar bands (e.g. EUR 35–110M contingent baskets after multiple seasons) belong only in chartered FP&A worksheets referencing named retailers with proper attribution.",
+      "Logistics attach rate: refrigerated missions per batch programme often span multiple legs per seasonal SKU wave—telemetry completeness targets drive integration priorities before raw route optimisation ambitions.",
+      "Digital adoption precondition: handset OS matrix minimums published each release anticipating Android-majority corridor demographics—device lab budgets sized accordingly.",
       "Sensitivity: halving achievable estate throughput pushes break-even horizons—Part B finances section aligns scenario toggles.",
       "Data governance note: externally facing market assertions in binding submissions must cite third-party datasets (Eurostat derivatives, Nielsen-family extracts if licensed, trade association compilations)—this document supplies structural placeholders only.",
     ],
@@ -101,7 +101,7 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
     title: "Part B — 7. Scaling (EU depth and disciplined global posture)",
     paragraphs: [
       "European scaling prioritises depth: repeatable corridor templates (estate ingestion playbooks SR/DE, logistics handshake RACI doubles, DPIA artefacts per geography) replicated before widening SKUs arbitrarily—preventing brittle horizontal sprawl collapsing dossier coherence.",
-      "Wave sequencing: Baltic-Adriatic pilot spine → Rhine-North diffusion leveraging Hamburg retail anchor hypotheses → contingent southern expansion gated on handshake telemetry maturity benchmarks [ILLUSTRATIVE wave labels only].",
+      "Wave sequencing runs Baltic–Adriatic pilot depth first, Rhine–North diffusion with Hamburg retail anchors next, then southern expansion only when handshake telemetry benchmarks justify it—geographic labels are indicative, not fixed roadshow claims.",
       "Regulatory stack harmonisation tracks GDPR operational maturity, SCC/DPA inventories for cross-border grower dossier consumption, refrigeration evidence admissibility practices evolving under buyer QA—not attempting harmonised global statute replacement.",
       "Language expansion acknowledges retail corridors (FR/ES complements existing EN/SR/DE emphasis) strictly via professional glossary-controlled translation—not raw machine mistranslation of chemical identifiers.",
       "Global posture remains selective: opportunistic buyer-led corridors (e.g. Latin American sourcing programmes feeding EU passports) entertained only where custody instrumentation parity can be stipulated contractually—no vanity flag-map expansion absent handshake feasibility.",
@@ -123,7 +123,7 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
       "Shortened documentation loops indirectly trim wasted harvest rejections stemming from retrospective paperwork failures unrelated to intrinsic quality—reducing spoilage footprints attributable to bureaucracy rather than agronomy.",
       "Economic inclusion: conscientious SMEs gain negotiating leverage resembling larger integrated exporters possessing in-house dossier teams—compressing oligopsony information advantages slowly if programmes scale ethically without predatory onboarding.",
       "Rural resilience benefits when younger professionals perceive digitised stewardship careers as respectable—countering hollowed-out valley demographics stressing EU peripheral regions.",
-      "Macro measurement discipline: attributable CO₂ deltas require baselined longitudinal studies versus control estates [STUDY ACTION]; Vera commits archiving anonymised aggregate telemetry suitable for consortium climate reporting—not premature retail badge confection.",
+      "Macro measurement discipline: attributable CO₂ deltas require baselined longitudinal studies versus control estates under an explicit study design; Vera commits archiving anonymised aggregate telemetry suitable for consortium climate reporting—not premature retail badge confection.",
       "Logistics optimisation secondary effects curtail redundant emergency airfreight substitutions born of mistrust outages—hypothesis contingent on telemetry proving fewer panic reroutes.",
       "Social ergonomics lowers digital exclusion friction for ageing operators respecting large typography, optional audio cues—human-centred KPI not traditionally appearing in carbons-focused decks yet material to adoption fidelity.",
       "Risk framing: overstated eco claims backlash could damage credibility—marketing governance reviews tie consumer-facing wording to dossier subgraph coverage thresholds before release stamping.",
@@ -144,7 +144,7 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
       "Domain liaisons spanning agronomic QA translators, refrigerated logistics veterans and treasury-aligned analysts embed vocabulary precision into schema migrations—preventing brittle abstractions coined in isolation from operators.",
       "Security and compliance desk maintains rotating ownership on escrow narration modules and dossier merges—paired programming mitigates key-person existential risk prized by diligence committees.",
       "Localisation desk enforces glossary discipline forbidding chemically ambiguous machine translation outputs—particularly German/Serbian regulatory nuance divergence corridors.",
-      "Advisory scaffolding (legal DP, chartered finance external, category buyer alumni) complements leadership without crowding executing squads—the ratio tuned per funding stage milestones [BOARD GOVERNANCE].",
+      "Advisory scaffolding (legal DP, chartered finance external, category buyer alumni) complements leadership without crowding executing squads—the ratio is tuned per funding stage as the board directs.",
       "Founder narrative bridging communications discipline with multi-year Vera brand evolution informs external storytelling credibility—not operational substitute for delegated engineering leadership scalability.",
       "Recruiting ethos weights systems empathy interviewing alongside algorithms—avoid monoculture optimise-only mindsets brittle under humane field variability.",
       "HR continuity codifies shadow documentation weeks before departing senior owners rotate—preventing folklore loss triggering regressions auditors rediscover painfully later.",
@@ -156,7 +156,7 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
   },
   {
     id: "pb-10-finances",
-    title: "Part B — 10. Finances [ILLUSTRATIVE]",
+    title: "Part B — 10. Finances (discussion scaffolding)",
     paragraphs: [
       "DISCLAIMER: numbers scaffold discussion—not forecasts; chartered accountants, auditors and corridor-specific counsel must replace placeholders before underwriting, subsidy certification or regulated offering contexts.",
       "Engineering/product steady-state payroll band (annualised illustrative): EUR 680k–1.05m covering blended 7–11 FTE equivalents including QA automation and periodic UX ethnography—not raw headcount fetish.",

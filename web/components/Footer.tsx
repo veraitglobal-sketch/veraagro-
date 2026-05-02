@@ -143,7 +143,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={loc('/eic-part-b')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                <Link href={loc("/technical-proposal#eic-why-exists")} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('footer.eicPartB')}
                 </Link>
               </li>

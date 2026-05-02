@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const TITLE = "Bio Vera — Detailed technical proposal | PDF";
 const DESCRIPTION =
-  "Long-form Bio Vera technical proposal (English): innovation, architecture, roadmap, KPIs, team, economics—printable A4 PDF via browser Print → Save as PDF.";
+  "Long-form Bio Vera proposal (English): EU grant narrative (purpose, market, economics, execution, budget), full programme diagnosis, innovation, architecture, roadmap, KPIs, team and risk—printable A4 PDF via Print → Save as PDF.";
 
 export async function generateMetadata({
   params,

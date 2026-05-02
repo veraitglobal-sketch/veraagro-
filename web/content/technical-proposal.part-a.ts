@@ -1,6 +1,6 @@
 /**
  * Technical proposal chapters (English) — Part A.
- * Figures marked [ILLUSTRATIVE] must be replaced with audited company data before formal submission.
+ * Economics and market bands in this document are discussion scaffolding; bind numbers to audited models before formal submission.
  */
 export type TechnicalProposalChapter = {
   readonly id: string;
@@ -13,20 +13,20 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_A: readonly TechnicalProposalChapt
     id: "tp-executive-summary",
     title: "1. Executive summary",
     paragraphs: [
-      "The overarching goal of Bio Vera is straightforward: conscientious growers in the Balkan corridor should reach EU-grade retail shelves without being punished by paperwork, disconnected spreadsheets, or broken cold-chain stories—and buyers should be able to trust origin, custody and packaging claims because they rest on shared evidence, not parallel narratives rebuilt for each audit. Vera is intentionally vertical: seeds and inputs through cultivation compliance, packing, refrigerated legs and retail passports are treated as one programme, because that is how food safety and fairness actually behave in reality.",
-      "Concretely, Bio Vera combines product and operating rhythm. Software holds a single batch-centric chronology—from estate boundaries and field facts to shipments, checkpoints and eventual QR dossiers—that growers, auditors, carriers, procurement and treasury can reconcile to the same identifiers and timestamps. Behavioural complements (offline-first tools for unreliable connectivity; Integrity Guard for approved inputs and material identity where configured; phased settlement narration where escrow semantics apply) exist to protect that goal rather than distract from it.",
-      "Innovation narrative in one sentence: reproducible proof at the edge meets buyer-grade dossiers—ergonomic enough for field teams aged sixty-plus yet strict enough that blocked chemistry or implausible geo evidence cannot silently pass as “someone fixed it offline.” ",
-      "This document restates objectives, architecture, delivery phases, impact hypotheses and an illustrative economics envelope so funders, consortium partners and technical counterparts can diligence the programme as a coherent system—not a slideshow promise. Nothing here replaces contracts, orders or regulatory filings; binding language lives in executed agreements.",
-      "Success reads as stakeholder outcomes before engineering vanity metrics: less buyer time lost reconstructing dossiers; growers who capture clean records once and reuse them; fewer refrigerated custody disputes because handovers exist as structured objects; payment stories that cite the same batch timeline as QA. Operational volume (estates onboarded, missions completed, passports consumed) accompanies reliability measures (offline sync reconciliation, discrepancy rates, incident recovery). Implementation assumes parity between critical grower journeys on web and mobile where product policy requires both channels.",
+      "Bio Vera starts from a simple unfairness: many Balkan growers already farm well enough for serious EU retail, yet they lose money and sleep to paperwork that never matches the pallet, spreadsheets that contradict the truck and cold-chain excuses nobody can defend. Buyers want to believe origin and packaging claims, but without one shared timeline they rehearse trust from scratch each audit season. Vera therefore treats seeds and inputs, field work, packing, refrigerated legs and buyer-facing dossiers as a single programme—because that is how food safety and fairness work in practice, not in slide decks.",
+      "In plain terms we combine disciplined operations with software that remembers the same batch from the greenhouse to the Hamburg shelf boundary. One chronology spans estate borders, treatments, pickups, checkpoints and eventual QR dossiers—so growers, auditors, carriers, procurement and treasury read the same identifiers and timestamps. Offline-first flows suit weak mobile signal in the rows; Integrity Guard catches inputs and packing identity where the programme requires it; where escrow applies, payouts can follow milestones instead of improvised narratives.",
+      "Stated plainly for technical readers: credible proof from the farm meets buyer-grade dossiers—simple enough for experienced operators outdoors, strict enough that false chemistry or implausible geography cannot quietly hide behind “someone synced it later”.",
+      "This proposal spells out objectives, architecture, phased delivery and impact—including discussion-level economics—so funders, partners and engineering teams can run end-to-end diligence on the programme. It is not a substitute for executed contracts or regulatory filings.",
+      "Success is human first: fewer days lost rebuilding dossiers in purchasing offices; growers who record cleanly once and reuse that file; fewer cold-chain fights because handovers exist as structured events; payouts that cite the same story as QA. Behind that we track volume (estates, missions, passports) and reliability (sync discrepancies, recovery after incidents). Where policy requires both, grower flows stay aligned on web and mobile.",
     ],
   },
   {
     id: "tp-problem",
     title: "2. Programme fit snapshot (full diagnosis: Part B — 1)",
     paragraphs: [
-      "The disciplined, narrative-deep treatment of stakeholder pain (growers, buyers, logistics), systemic fragmentation of evidence and corridor connectivity realities lives in Programme Part B — §1 Problem (detailed analysis). Read that chapter first when preparing grants, consortium memos or external diligence excerpts.",
-      "This snapshot states only Vera’s compact thesis: conscientious corridors lose margin when proof does not unify—Bio Vera aligns seed/input programmes, Integrity Guard–backed cultivation records, refrigerated custody objects and Hamburg retail passports onto one deterministic batch spine so subsidy logic, QA scorecards and fair grower remuneration can converge instead of drifting across departments.",
-      "Adjacent fit note: dossier interoperability with disciplined buyers (structured SKU governance) stays intentionally low-integration-tax—technical choices (REST payloads, Postgres, offline stores) reinforce that pragmatism; expansion narrative continues in Programme Part B — §7 Scaling.",
+      "Growers carry the daily stress; buyers carry the SKU risk; hauliers sit between them—each speaks a slightly different dialect of “proof”. The long-form problem chapter (Programme Part B — §1) walks through that fragmentation and weak connectivity step by step. Read it before lifting excerpts into grants or memos.",
+      "Here is only the gist: conscientious corridors leak margin whenever evidence stays split across departments and inboxes. Vera lines up seed and input programmes, cultivation records guarded by Integrity rules, refrigerated custody and retail passports on one deterministic batch spine—so subsidy checks, QA scorecards and farmer pay can meet instead of drifting apart.",
+      "We keep buyer integration pragmatic: mainstream REST payloads, Postgres, offline stores—not exotic stacks that scare procurement IT. Scaling narrative continues in Programme Part B — §7.",
     ],
   },
   {
@@ -59,7 +59,7 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_A: readonly TechnicalProposalChapt
       "Domain boundaries (logical): identity & session; estate & geometry; field evidence; material control; batch & packaging; logistics missions & handovers; buyer-facing passport projection; admin governance (whitelist, exceptions); payments narrative (escrow segments as applicable).",
       "Repository-shaped anchor (non-exhaustive Prisma aggregates): estates/parcels/treatment_logs/seed_scans; bio_white_list; compliance_logs & compliance_photos; batches with freshness_trackers/temperature_logs/quality_entries/package_badges; missions with logistics_handovers, border_wait_times, location_logs; orders/deliveries/payments (+ splitDetails JSON); wallets & supplier catalogues for sanctioned inputs.",
       "Backend services realising enforcement include `IntegrityGuardService`/`ComplianceService`/`GpsValidatorService` pipelines and offline `SyncService` batching—with Nest modules exposing REST contracts consumed by growers, logistics dashboards, buyer tooling and admins.",
-      "Deployment assumptions favour reproducible artefacts (standalone Next output compatible with regulated hosting stacks), segregated secrets, TLS everywhere, hardened admin paths, backups with quarterly restore rehearsals [ILLUSTRATIVE operational cadence—set per environment]. API compatibility is semantic-versioned externally when partners embed.",
+      "Deployment assumptions favour reproducible artefacts (standalone Next output compatible with regulated hosting stacks), segregated secrets, TLS everywhere, hardened admin paths, backups with restore rehearsals on a cadence set per deployment (often quarterly). API compatibility is semantic-versioned externally when partners embed.",
       "Internationalisation separates content keys from transactional identifiers to avoid collation surprises in dossier merges; locale prefixes align public marketing readability with Serbian/German corridors while preserving canonical batch identifiers language-agnostic.",
     ],
   },
@@ -70,7 +70,7 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_A: readonly TechnicalProposalChapt
       "Identifier hygiene: externally visible dossiers hinge on opaque, stable identifiers for batches and missions rather than sequentially guessable surrogates at the edge. Join keys between events are typed; nullable foreign keys avoided on mandatory custody joins where policy demands completeness.",
       "Temporal modelling: authoritative event times recorded with ingestion offsets for skew detection; reconciliation jobs flag negative-duration anomalies for operator triage.",
       "Audit trail: materially sensitive inserts/updates elevate to append-only semantics at the persistence layer where feasible; destructive operations escalate to privileged roles plus compensating reversal records rather than silent deletes.",
-      "Privacy tiers: passport projection applies field redaction matrices for surname-level data policy vs internal operator views; DPIA artefacts should be authored per rollout geography [TEMPLATE ACTION].",
+      "Privacy tiers: passport projection applies field redaction matrices for surname-level data policy vs internal operator views; DPIA artefacts should be authored per rollout geography together with counsel and standard templates.",
     ],
   },
   {

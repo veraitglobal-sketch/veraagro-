@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 
-const TITLE = "Bio Vera — EU Part B narrative (why, market, revenue, success) | Bio Vera";
+const TITLE = "Bio Vera — EU grant narrative | Bio Vera";
 const DESCRIPTION =
-  "Grant-oriented Part B draft in English: why Bio Vera exists, market size, how we earn, why we will succeed, plus implementation and budget. Printable PDF via browser Print.";
+  "This URL forwards to the Detailed technical proposal. The EU grant storyline (purpose, market, revenue, execution, budget) is part of that document — print via browser Print → Save as PDF.";
+const canonicalPath = "/technical-proposal";
 
 export async function generateMetadata({
   params,
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://biovera.app";
+  const canonical = `${base}/${locale}${canonicalPath}`;
   return {
     title: TITLE,
     description: DESCRIPTION,
-    robots: { index: true, follow: true },
-    openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
+    alternates: { canonical },
+    robots: { index: false, follow: true },
+    openGraph: { title: TITLE, description: DESCRIPTION, type: "website", url: canonical },
     twitter: { card: "summary", title: TITLE, description: DESCRIPTION },
   };
 }

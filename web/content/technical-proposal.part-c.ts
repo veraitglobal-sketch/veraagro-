@@ -7,7 +7,7 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_C: readonly TechnicalProposalChapt
     title: "15. Annex — API idioms, error taxonomy and versioning",
     paragraphs: [
       "Public integration surfaces converge on REST payloads with RFC7807-style problem+json compatible fields for programmatic clients; undocumented side channels are discouraged to prevent shadow integrations that bypass auditing.",
-      "Semantic versioning publishes major bumps when incompatible field removals occur; additive fields ship as minor increments; deprecation windows minimum ninety days for externally consumed routes unless emergency security deprecation [PROGRAMME POLICY].",
+      "Semantic versioning publishes major bumps when incompatible field removals occur; additive fields ship as minor increments; deprecation windows minimum ninety days for externally consumed routes unless a documented security exception shortens the window under Vera API lifecycle policy.",
       "Idempotency headers supported on ingestion routes that materially affect parcels or payouts; duplicate submits return prior committed identifiers with informational codes rather than alarming operators.",
       "Locale negotiation does not mutate canonical identifiers; textual fields may localise projections while stable keys remain invariant for joins across dossier artefacts.",
       "Pagination uses opaque cursors rather than naive offsets beyond shallow listing endpoints to mitigate pathological scans when estates scale into tens of thousands of historical events.",
@@ -18,15 +18,15 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_C: readonly TechnicalProposalChapt
   },
   {
     id: "tp-annex-sre",
-    title: "16. Annex — Reliability targets, observability & SLO sketches [ILLUSTRATIVE]",
+    title: "16. Annex — Reliability targets, observability and SLO sketches",
     paragraphs: [
       "Availability framing differentiates dossier reads (higher SLA sensitivity) versus non-critical dashboards; early pilot SLA may pragmatically waive strict financial rebates in favour transparent incident logs until measurement stabilises.",
-      "Synthetic checks probe mission lifecycle milestones hourly from neutral vantage points geographically distributed; alerting routes through on-call rotations with playbook links embedded in Grafana-style annotations [STACK PLACEHOLDER].",
+      "Synthetic checks probe mission lifecycle milestones hourly from neutral vantage points geographically distributed; alerting routes through on-call rotations with playbook links embedded in the observability tooling (e.g. Grafana annotations).",
       "Distributed tracing propagated on API boundaries materially affecting custody edges; sampled on high-volume benign reads to cap cost envelopes.",
       "Database guardrails include statement timeout escalation, pooled connection dashboards, quarterly EXPLAIN audits on dossier merges crossing threshold row counts triggering index proposals.",
       "Disaster rehearsal scenarios: Postgres restore from backup artefact onto isolated cluster + smoke-test passport assembly; tabletop with buyer representatives twice yearly coordinating communications templates.",
       "Cost observability allocates tags per SKU programme and pilot cohort—not merely environment—to prevent silent subsidy cross-subsidisation between unrelated buyer experiments.",
-      "Incident classification codifies Sev1–4 timelines; Sev1 mandates executive notification within SLA minutes and external partner status page updates when buyer-facing dossiers stale beyond agreed windows [NUMBERS PROGRAMME-SPECIFIC].",
+      "Incident classification codifies Sev1–4 timelines; Sev1 mandates executive notification within SLA minutes and external partner status page updates when buyer-facing dossiers go stale beyond contractually agreed windows (numeric SLAs set per programme).",
     ],
   },
   {
@@ -47,10 +47,10 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_C: readonly TechnicalProposalChapt
     title: "18. Annex — Capacity planning, benchmarking and future research",
     paragraphs: [
       "Horizontal scaling hypotheses assume dossier merges remain O(n log n) relative lineage growth—proved only empirically; scheduled rearchitecture triggers if asymptotic divergence observed beyond profiling noise across three consecutive benchmarking weeks.",
-      "Sharding strategy deferred until transactional row hotspots exceed pragmatic single-region Postgres ceiling [THRESHOLD ILLUSTRATIVE: tens of billions of granular temperature samples aggregated]; archival tiering partitions historical micro-samples sooner.",
+      "Sharding strategy deferred until transactional row hotspots exceed pragmatic single-region Postgres limits at extreme telemetry volume (e.g. aggregated temperature samples in the billions); archival tiering partitions historical micro-samples sooner.",
       "Edge caching of passive passport reads contemplated via signed short-lived artefacts when retail traffic spikes coincide with transient origin degradation—engineering trade-off pits freshness vs scalability.",
       "Research backlog: probabilistic cryptographic attestations bridging low-connectivity stamping; reinforcement assistance ranking grower anomaly alerts minimizing false-positive fatigue; multilingual summarisation strictly opt-in respecting producer agency.",
-      "Patent posture eschews aggressive submarine filings; defensive publication considered for obvious combinations that could otherwise be nuisance-filed against ecosystem participants—strategy counsel decision [LEGAL REVIEW].",
+      "Patent posture eschews aggressive submarine filings; defensive publication considered for obvious combinations that could otherwise be nuisance-filed against ecosystem participants, following advice from patent counsel.",
       "Environmental extended metrics (CO₂ equivalents) remain non-authoritative absent verified third-party metering chains; dossier flags clearly separate measured vs interpolated environmental commentary to protect buyer trust.",
       "Community governance post-scale may adopt advisory farmer council rotating seats per geography—beyond software scope yet noted for inclusion in consortium grant narrative alignment.",
       "Technical proposal evolution: authoritative copies versioned externally (Git tagging + signed PDF artefacts) superseding ephemeral web-render snapshot; hyperlink in PDF footers should cite canonical semver for audit defensibility.",
