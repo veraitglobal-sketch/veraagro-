@@ -230,7 +230,7 @@ export default function TechnicalProposalPage() {
             <p className="tp-sans mt-2 max-w-xl text-sm text-gray-700 sm:text-[15px]">{UI.seeAlsoBody}</p>
             <div className="mt-4 flex flex-wrap gap-3">
               <a
-                href="#eic-why-exists"
+                href="#doc-executive-pitch"
                 className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-5 text-sm font-semibold text-white hover:bg-[#23471f]"
               >
                 {UI.seeGrantNarrativeInDocument}

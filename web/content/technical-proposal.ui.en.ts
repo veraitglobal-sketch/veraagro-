@@ -8,7 +8,7 @@ export const TP_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "Single document for reviewers: right after the executive summary you’ll find the EU grant storyline (purpose, market, revenue, execution, implementation, budget—anchors #eic-why-exists … #eic-budget), then the full programme Part B diagnosis and technical annex. Transfer budget totals into official Funding & Tenders tables. Export: Print → Save as PDF.",
+    "Read order: §1 tells you what to skim vs study; §2 is the compact pitch (economics & budget). Programme Part B continues the story + market + competition + finances in depth; the atlas is abbreviated—full route lists/OpenAPI exports live outside this PDF for partners. Funding & Tenders tables stay authoritative for money. Export: Print → Save as PDF.",
   pdfHint:
     "Use figures signed off by finance and tax advisors before any contractual or commission submission.",
   copyLink: "Copy link",
@@ -18,7 +18,7 @@ export const TP_UI_EN = {
   coverEyebrow: "Technical document",
   coverTitle: "Bio Vera — Detailed technical proposal",
   coverSubtitle:
-    "Includes the printable EU-style grant storyline (purpose, market, economics, why we succeed, plan and budget), then deeper programme narrative, architecture and annexes—all in one file for diligence and Funding & Tenders companion export.",
+    "Compact opening for evaluators, full programme narration (problem → market → business model → finances), a short implementation atlas, then engineering annexes—including architecture, offline strategy, deeper security/KPI annexes—for teams that want proof.",
   coverDisclaimer:
     "Versioning for legal archives may cite a repository tag or signed artefact under NDA. Budget lines in the deep annex should match your finance sign-off before any binding filing.",
   /** Printed cover callout — English-only chrome for reviewers. */
@@ -28,10 +28,10 @@ export const TP_UI_EN = {
   contentsNav: "Table of chapters",
   seeAlsoEyebrow: "Related materials",
   seeAlsoBody:
-    "Jump to the in-document EU grant storyline (anchors below in the contents list), or open the condensed project overview and Investor Deck separately.",
-  seeGrantNarrativeInDocument: "EU grant storyline (jump to §1)",
+    "Jump to the executive pitch, or open the project overview / Investor Deck for shorter decks.",
+  seeGrantNarrativeInDocument: "Executive pitch (jump)",
   seeOverview: "Project overview",
   seeInvestorDeck: "Open Investor Deck",
   seeAlsoPrintBody:
-    "EU grant storyline is chapters 2–7 in this PDF (starting at “Why Bio Vera exists”). Also: project overview, Investor Deck, official Funding & Tenders portal for budget tables.",
+    "Opening sections include “How to read” plus the Executive pitch with budget bullets; Part B expands market and finances. Annex: Funding & Tenders portal for totals; Partner OpenAPI artefacts under NDA.",
 } as const;
