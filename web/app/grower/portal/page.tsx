@@ -31,10 +31,10 @@ const Polyline = dynamic(() => import('react-leaflet').then(mod => mod.Polyline)
 interface MissionTracker {
   missionId: string;
   missionNumber: string;
-  batchId: string;
+  batchId: string | null;
   productName: string;
-  quantity: number;
-  unit: string;
+  quantity: number | null;
+  unit: string | null;
   status: string;
   currentMilestone: string;
   milestones: Array<{
@@ -49,6 +49,10 @@ interface MissionTracker {
   requestedAt: string;
   pickedUpAt: string | null;
   completedAt: string | null;
+  orderId?: string | null;
+  orderNumber?: string | null;
+  orderStatus?: string | null;
+  loadInstructions?: string | null;
   pickupDriverPerson?: {
     firstName?: string;
     lastName?: string;
@@ -360,8 +364,16 @@ export default function GrowerPortalPage() {
                     <div>
                       <p className="font-medium text-gray-900">{mission.missionNumber}</p>
                       <p className="text-base text-gray-600">
-                        {mission.productName} • {mission.quantity} {mission.unit}
+                        {mission.productName}
+                        {mission.quantity != null
+                          ? `${mission.unit != null && mission.unit !== '' ? ` • ${mission.quantity} ${mission.unit}` : ` • ${mission.quantity}`}`
+                          : ''}
                       </p>
+                      {mission.orderNumber ? (
+                        <p className="text-sm font-medium text-[#2D5A27] mt-1">
+                          {t('growerPages.portalOrder', { order: mission.orderNumber })}
+                        </p>
+                      ) : null}
                       <p className="text-xs text-gray-500 mt-1">
                         {t('growerPages.portalCurrentStep', { milestone: mission.currentMilestone })}
                       </p>
@@ -414,6 +426,42 @@ export default function GrowerPortalPage() {
               person &&
               [person.firstName, person.lastName].filter(Boolean).join(' ').trim();
             return (
+              <>
+                {(sm.orderNumber || sm.loadInstructions) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl border border-[#2D5A27]/25 bg-[#f7faf6] shadow-sm p-5 sm:p-6"
+                  >
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      {sm.loadInstructions
+                        ? t('growerPages.portalPrepInstructionsTitle')
+                        : t('growerPages.portalOrderMissionTitle')}
+                    </h2>
+                    {sm.loadInstructions ? (
+                      <p className="mt-1 text-base text-gray-600 font-light">
+                        {t('growerPages.portalPrepInstructionsLead')}
+                      </p>
+                    ) : null}
+                    {sm.orderNumber ? (
+                      <p className="mt-4 text-base font-medium text-gray-900">
+                        {t('growerPages.portalOrder', { order: sm.orderNumber })}
+                      </p>
+                    ) : null}
+                    {sm.orderNumber ? (
+                      <p className="mt-2 text-sm text-gray-600">{t('growerPages.portalLinkedOrderHint')}</p>
+                    ) : null}
+                    {sm.loadInstructions ? (
+                      <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4">
+                        <p className="text-sm font-medium text-gray-700 mb-2">{sm.productName}</p>
+                        <div className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                          {sm.loadInstructions}
+                        </div>
+                      </div>
+                    ) : null}
+                  </motion.div>
+                )}
+
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -517,6 +565,7 @@ export default function GrowerPortalPage() {
                   )}
                 </div>
               </motion.div>
+              </>
             );
           })()}
 

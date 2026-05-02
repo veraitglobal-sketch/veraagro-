@@ -80,6 +80,57 @@ export class GrowerPortalService {
     }
   }
 
+  /** Product/qty for tracker: prefer packed batch, else buyer order linked on mission (`admin/from-order`). */
+  private missionTrackerCommerceFields(mission: {
+    batches?: {
+      productName?: string | null;
+      quantity?: unknown;
+      unit?: string | null;
+      batchId?: string | null;
+    } | null;
+    orders?: {
+      id?: string;
+      orderNumber?: string;
+      productName?: string;
+      quantity?: unknown;
+      unit?: string | null;
+      status?: string;
+    } | null;
+    loadInstructions?: string | null;
+  }) {
+    const batch = mission.batches;
+    const order = mission.orders;
+    const productName =
+      (batch?.productName && String(batch.productName).trim()) ||
+      (order?.productName && String(order.productName).trim()) ||
+      '—';
+    let quantity: number | null = null;
+    if (batch?.quantity != null && batch.quantity !== '') {
+      const n = typeof batch.quantity === 'number' ? batch.quantity : Number(batch.quantity);
+      quantity = Number.isFinite(n) ? n : null;
+    } else if (order?.quantity != null && order.quantity !== '') {
+      const n = typeof order.quantity === 'number' ? order.quantity : Number(order.quantity);
+      quantity = Number.isFinite(n) ? n : null;
+    }
+    const unit =
+      (batch?.unit && String(batch.unit).trim()) ||
+      (order?.unit && String(order.unit).trim()) ||
+      null;
+    const loadInstructions =
+      typeof mission.loadInstructions === 'string' && mission.loadInstructions.trim()
+        ? mission.loadInstructions.trim()
+        : null;
+    return {
+      productName,
+      quantity,
+      unit,
+      orderId: order?.id ?? null,
+      orderNumber: order?.orderNumber ?? null,
+      orderStatus: order?.status ?? null,
+      loadInstructions,
+    };
+  }
+
   /** Core query + DTO build (may throw) */
   private async getMissionTrackerRows(growerId: string, batchId?: string): Promise<any[]> {
     const where: Prisma.missionsWhereInput = { growerId };
@@ -128,6 +179,16 @@ export class GrowerPortalService {
         },
       },
       vehicles: { select: { vehicleNumber: true } },
+      orders: {
+        select: {
+          id: true,
+          orderNumber: true,
+          productName: true,
+          quantity: true,
+          unit: true,
+          status: true,
+        },
+      },
       border_wait_times: {
         orderBy: { borderArrivalTime: 'desc' },
         take: 32,
@@ -174,6 +235,16 @@ export class GrowerPortalService {
               },
             },
             vehicles: { select: { vehicleNumber: true } },
+            orders: {
+              select: {
+                id: true,
+                orderNumber: true,
+                productName: true,
+                quantity: true,
+                unit: true,
+                status: true,
+              },
+            },
           },
           orderBy: { createdAt: 'desc' },
         });
@@ -257,18 +328,18 @@ export class GrowerPortalService {
           badgePhotoUrl: null,
           driverSignatureUrl: null,
         };
+    const commerce = this.missionTrackerCommerceFields(mission);
     return {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
       batchId: mission.batches?.batchId ?? null,
-      productName: mission.batches?.productName ?? '—',
-      quantity:
-        mission.batches?.quantity == null
-          ? null
-          : typeof mission.batches.quantity === 'number'
-            ? mission.batches.quantity
-            : Number(mission.batches.quantity),
-      unit: mission.batches?.unit ?? null,
+      productName: commerce.productName,
+      quantity: commerce.quantity,
+      unit: commerce.unit,
+      orderId: commerce.orderId,
+      orderNumber: commerce.orderNumber,
+      orderStatus: commerce.orderStatus,
+      loadInstructions: commerce.loadInstructions,
       status: mission.status,
       currentMilestone: '—',
       milestones: [],
@@ -532,7 +603,7 @@ export class GrowerPortalService {
     const milestones = this.buildMilestones(mission);
     const currentMilestone = milestones.find((m) => m.isCurrent) || milestones[0];
 
-    const qty = mission.batches?.quantity;
+    const commerce = this.missionTrackerCommerceFields(mission);
     const handover = mission.logistics_handovers;
     const snap = handover?.pickupDriverSnapshot as Record<string, unknown> | null | undefined;
     const assigned = mission.assigned_logistics_driver;
@@ -577,9 +648,13 @@ export class GrowerPortalService {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
       batchId: mission.batches?.batchId,
-      productName: mission.batches?.productName,
-      quantity: qty == null || typeof qty === 'number' ? qty : Number(qty),
-      unit: mission.batches?.unit,
+      productName: commerce.productName,
+      quantity: commerce.quantity,
+      unit: commerce.unit,
+      orderId: commerce.orderId,
+      orderNumber: commerce.orderNumber,
+      orderStatus: commerce.orderStatus,
+      loadInstructions: commerce.loadInstructions,
       status: mission.status,
       currentMilestone: currentMilestone?.name,
       milestones,
