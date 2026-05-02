@@ -49,7 +49,7 @@ export const TECHNICAL_PROPOSAL_PROGRAMME_PART_B: readonly TechnicalProposalChap
       "Internationalisation separates locale presentation from invariant identifiers—dossiers remain stable regardless of Serbian, German or English UX shells elsewhere on the ecosystem.",
       "Operational toggles segregate staging permissiveness from production strictness; feature flags degrade enforcement surfaces without rewriting historical timelines when buyer freeze events demand reversibility discipline.",
       "Technical honesty: certain admin instruments may mature web-first if policy-risk profile supports it—grower and logistics-critical paths insist on cross-surface parity as policy mandates.",
-      "Taken together the mechanics articulate a single slogan engineering can audit: deterministic identifiers offline-first ingestion integrity-filtered payloads structured custody phased economic narration projecting verifiable dossiers outward.",
+      "Taken together the mechanics articulate a single slogan engineering can audit: deterministic identifiers offline-first ingestion integrity-filtered payloads structured custody phased economic narration projecting verifiable dossiers outward. The following **Implementation atlas** chapters enumerate canonical REST surfaces (NestJS `@Controller` paths), rate limits where coded, logistics handover PDF flows, QR verification downloads, and the distinction between dossier-generation APIs versus public verification routes.",
     ],
   },
   {

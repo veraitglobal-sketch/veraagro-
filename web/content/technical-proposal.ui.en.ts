@@ -8,7 +8,7 @@ export const TP_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "After the executive summary, Programme Part B answers the diligence spine in order—problem (deep), solution, how it works, market, competition, business model, EU/global scaling, impact, team, finances—followed by further technical annex material. Export via Print → Save as PDF (A4); enable “Background graphics” if headings look faint.",
+    "After the executive summary, Programme Part B walks the diligence spine (problem → finances). Implementation atlas sections then tie that narrative to NestJS routes (sync, missions, QR/passports, logistics handovers). Deeper annex chapters follow. Export via Print → Save as PDF (A4); enable “Background graphics” if headings look faint.",
   pdfHint:
     "Numeric ranges marked [ILLUSTRATIVE] are placeholders only—substitute chartered finance models, audited historicals and tax counsel conclusions before contractual or grant certification use.",
   copyLink: "Copy link",
