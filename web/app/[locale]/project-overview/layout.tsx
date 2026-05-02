@@ -10,12 +10,38 @@ const OG_LOCALE: Record<
   },
   en: {
     description:
-      "Structured Bio Vera project overview for grant-style PDF uploads (e.g. Projektbeschreibung): concise narrative, print and save as PDF.",
+      "Structured Bio Vera project overview for grant-style PDF uploads (e.g. Projektbeschreibung): concise narrative, outline navigation, print and save as PDF.",
   },
   de: {
     description:
-      "Strukturierter Bio-Vera-Projektüberblick für Förderunterlagen (Projektbeschreibung als PDF, oft max. fünf Seiten) — drucken oder als PDF speichern.",
+      "Strukturierter Bio-Vera-Projektüberblick für Förderunterlagen (Projektbeschreibung als PDF, oft max. fünf Seiten) — Inhalt, Druck oder PDF.",
   },
+  ro: {
+    description:
+      "Prezentarea proiectului Bio Vera pentru dosare tip PDF: concisă, navigare pe secțiuni, tipărire.",
+  },
+  bg: {
+    description:
+      "Преглед на проекта Bio Vera за подаване като PDF: стегнат текст, секции за навигация, печат.",
+  },
+  fr: {
+    description:
+      "Aperçu projet Bio Vera pour dossiers PDF: concis, sommaire cliquable, impression.",
+  },
+  es: {
+    description:
+      "Descripción del proyecto Bio Vera para PDFs de convocatorias: contenido compacto e impresión.",
+  },
+};
+
+const PAGE_TITLE: Record<string, string> = {
+  en: "Project overview | Bio Vera",
+  sr: "Pregled projekta | Bio Vera",
+  de: "Projektüberblick | Bio Vera",
+  ro: "Prezentarea proiectului | Bio Vera",
+  bg: "Преглед на проекта | Bio Vera",
+  fr: "Aperçu du projet | Bio Vera",
+  es: "Descripción del proyecto | Bio Vera",
 };
 
 export async function generateMetadata({
@@ -23,7 +49,7 @@ export async function generateMetadata({
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   const { locale } = await params;
   const og = OG_LOCALE[locale] ?? OG_LOCALE.en;
-  const title = "Project overview | Bio Vera";
+  const title = PAGE_TITLE[locale] ?? PAGE_TITLE.en;
   return {
     title,
     description: og.description,
