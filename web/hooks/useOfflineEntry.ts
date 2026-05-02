@@ -15,6 +15,7 @@ import {
 } from '@/lib/offline/indexeddb';
 import { syncAllEntries, setupAutoSync, setupPeriodicSync, isOnline, onOnlineStatusChange } from '@/lib/offline/sync';
 import { checkCompliance } from '@/lib/offline/compliance';
+import i18n from '@/i18n/config';
 
 export type EntryType = 'PRSKANJE' | 'SETVA' | 'BERBA';
 
@@ -117,8 +118,8 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
       // Count unsynced entries
       const unsynced = entriesData.filter((e) => !e.synced);
       setPendingSync(unsynced.length);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load data');
+    } catch (err: unknown) {
+      setError(i18n.t('growerPages.fieldEntryOfflineLoadFailed'));
       console.error('Error loading offline data:', err);
     } finally {
       setLoading(false);
@@ -136,8 +137,9 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         setError(null);
         await saveScannedCode(code, type, farmId);
         await loadData(); // Reload to get updated codes
-      } catch (err: any) {
-        setError(err.message || 'Failed to save scanned code');
+      } catch (err: unknown) {
+        setError(i18n.t('growerPages.fieldEntryOfflineSaveScanFailed'));
+        console.error('saveScannedCode:', err);
         throw err;
       }
     },
@@ -160,7 +162,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!hasScan && !options?.seedSerialNumber && !options?.packagingBarcode) {
           return {
             success: false,
-            error: 'Scan a seed or packaging barcode first before entering data.',
+            error: i18n.t('growerPages.fieldEntryOfflineAddScanFirst'),
           };
         }
 
@@ -172,7 +174,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!seedSerialNumber && !packagingBarcode) {
           return {
             success: false,
-            error: 'Seed serial number or packaging barcode is missing.',
+            error: i18n.t('growerPages.fieldEntryOfflineMissingSeedOrPackaging'),
           };
         }
 
@@ -183,17 +185,20 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
             if (!complianceResult.compliant || complianceResult.blocked) {
               return {
                 success: false,
-                error: complianceResult.reason || 'Compliance check failed. Entry blocked.',
+                error: complianceResult.reason || i18n.t('growerPages.fieldEntryOfflineComplianceDefault'),
               };
             }
-          } catch (complianceError: any) {
+          } catch (complianceError: unknown) {
             // If offline, allow entry but mark for compliance check on sync
             if (!online) {
               console.warn('Offline - compliance check will be performed on sync');
             } else {
               return {
                 success: false,
-                error: complianceError.message || 'Compliance check failed',
+                error:
+                  complianceError instanceof Error && complianceError.message
+                    ? complianceError.message
+                    : i18n.t('growerPages.fieldEntryOfflineComplianceFailed'),
               };
             }
           }
@@ -203,7 +208,7 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         if (!farmId) {
           return {
             success: false,
-            error: 'Farm ID is required.',
+            error: i18n.t('growerPages.fieldEntryOfflineFarmRequired'),
           };
         }
 
@@ -234,8 +239,9 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
         }
 
         return { success: true, entryId };
-      } catch (err: any) {
-        const errorMsg = err.message || 'Failed to save entry';
+      } catch (err: unknown) {
+        console.error('addEntry:', err);
+        const errorMsg = i18n.t('growerPages.fieldEntryOfflineSaveEntryFailed');
         setError(errorMsg);
         return { success: false, error: errorMsg };
       }
@@ -248,8 +254,9 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
       setError(null);
       await deleteFieldEntry(id);
       await loadData();
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete entry');
+    } catch (err: unknown) {
+      setError(i18n.t('growerPages.fieldEntryOfflineDeleteFailed'));
+      console.error('deleteFieldEntry:', err);
       throw err;
     }
   }, []);
@@ -261,9 +268,10 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
       setPendingSync(result.failed);
       await loadData();
       return result;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to sync';
+    } catch (err: unknown) {
+      const errorMsg = i18n.t('growerPages.fieldEntryOfflineSyncFailed');
       setError(errorMsg);
+      console.error('syncAllEntries:', err);
       throw err;
     }
   }, []);

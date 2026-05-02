@@ -128,4 +128,36 @@ rg "<Text[^>]*>\\s*[A-Z]" mobile/features/grower --glob '*.tsx' | head -40
 
 ---
 
+## 7. Lista+ — backlog (šta još dodati ili produbiti)
+
+**Lista+** znači: prioriteti, kratak opseg, i veza na kanal (vidi [WEB_MOBILE_CHANNEL_PARITY_PLAN.md](WEB_MOBILE_CHANNEL_PARITY_PLAN.md) — Q1–Q3, P2.3, P3.1). Označeno: 🔴 nema / veliki jaz · 🟡 delimično · tip **P** = proizvodni izbor (web vs app).
+
+| # | Tema | Stanje | Šta uraditi (konkretno) |
+|---|------|--------|-------------------------|
+| L1 | **Wallet (novčanik) na webu** | 🟡 mob tab, web bez rute | **P:** ili `/grower/wallet` (ili pod `/grower/profile#wallet`) sa istim API-jem kao mobilni tab, ili zvanično „samo u aplikaciji“ + CTA ka store / deep link; ažurirati §2 matricu. |
+| L2 | **Harvest tab ↔ web** | 🟡 mob `(tabs)/harvest`, web kroz plantings/dnevnik | **P:** dedicirana `/grower/harvest` (lite) ili jači CTA blok na `/grower` i `/grower/plantings` koji kopira mobilni sadržaj; smoke **[Q]** na oba. |
+| L3 | **Growth journal / Vera insights** | 🔴 mob stack, web bez pandana | Inventar ekrana u `mobile/app/(producer)` → odluka po modulu: web stranica u sidebaru, embed u postojeću (npr. plantings), ili dokumentovati izuzetak. |
+| L4 | **Offline / outbox UX** | 🟡 | Q2: **Urađeno (batch 2):** `GrowerOfflineOutboxBanner` — rasklopiva lista do 5 pending stavki + „+ još N“, povratna poruka posle „Sync now“ (`outboxSyncDone` / `outboxSyncPartial`), i18n za `outbox*` u `de`/`fr`/`ro`/`bg`/`es`. **Ostaje:** isti nivo na mobilnom / detaljnija istorija grešaka po zapisu. |
+| L5 | **i18n — svi jezici** | 🟡 | **Urađeno (batch 1):** `fieldEntry*`, `smartLock*`, `fieldEntryOffline*`, `apiErrorGeneric` u `de`/`fr`/`ro`/`bg`/`es` + `en`/`sr`. Ostaje: ostali `growerPages` ključevi koji još padaju na fallback; grep hardkod EN po `/grower/*`. |
+| L6 | **„Sirovi“ API tekstovi** | 🟡 | **Urađeno (batch 1):** `web/lib/grower-api-error.ts` (`growerApiErrorOrT`); `useOfflineEntry` koristi `i18n.t` za sve korisničke greške; `/producer/scanner` koristi helper. Dalje: ostali grower catch blokovi po stranicama. |
+| L7 | **Producer legacy rute** | 🟡 | `/producer/estates`, `/producer/scanner` — vizuelni i jezički paritet sa grower shellom (card tokens iz `.cursorrules`); razmotriti redirect ka `/grower/fields` gde nema razloga za poseban UI. |
+| L8 | **Deep link / notifikacije** | 🟢 osnova | Periodično: novi `actionUrl` obrasci → `resolve-notification-action` + `webGrowerPathToMobileHref`; regresija iz [WEB_MOBILE_CHANNEL_PARITY_PLAN.md](WEB_MOBILE_CHANNEL_PARITY_PLAN.md) smoke § „Notifikacije“. |
+| L9 | **Integrity guard paritet** | 🟡 proveriti | Barkod + GPS + whitelist đubriva: ista pravila i poruke web `OfflineEntryForm` / sync vs mobilni terenski tok; dokumentovati ograničenja PWA (npr. kamera). |
+| L10 | **Admin / misije copy zajednički** | 🟢 delom | Gde grower vidi statuse misija, držati jedan skup ključeva (`adminPages.missions.statuses` ili zajednički `grower.missions.*`) da web i mob ne divergiraju. |
+
+### Predloženi redosled (sprint)
+
+1. **L5 + L6** — brz dobitak, niski rizik.  
+2. **L4** — smanjuje podršku i nedoumice oko offline.  
+3. **L1** ili eksplicitan **„wallet samo u app“** — jedna odluka, pa implementacija.  
+4. **L2 / L3** — posle produkt prioriteta.  
+5. **L7 / L9** — kontinuirani hardening.
+
+### Kriterijum „gotovo“ za stavku iz Liste+
+
+- Izvorni kod + `tsc` za dirnute pakete; **[Q]** smoke za P0 tokove koje stavka dira.  
+- Ako je **izuzetak** (samo mobilno / samo web): jedna rečenica u §2 matrici ili ovde u tabeli, bez kontradikcije sa sidebarom (`web/lib/grower-nav.tsx`).
+
+---
+
 *Kreiran za fokus na grower web + mobilni; ažurirati po sprintovima.*

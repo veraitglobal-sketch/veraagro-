@@ -80,7 +80,7 @@ export default function GrowerPackageBadgesScanPage() {
 
           <form
             onSubmit={onLookup}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm max-w-xl space-y-4"
+            className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm max-w-xl space-y-4"
           >
             <div>
               <label className="block text-base font-medium text-gray-700 mb-1">
@@ -120,7 +120,7 @@ export default function GrowerPackageBadgesScanPage() {
                 </p>
               )}
 
-              <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <h3 className="text-base font-semibold text-gray-500 uppercase tracking-wide mb-3">
                   {t('grower.packageBadges.scanScannedAs')}
                 </h3>

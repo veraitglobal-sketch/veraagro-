@@ -12,6 +12,7 @@ import { useOfflineEntry } from '@/hooks/useOfflineEntry';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI } from '@/lib/api';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 type EstateRow = { id: string; name: string };
 
@@ -109,8 +110,11 @@ function FieldEntryWorkspace({
                 >
                   <div className="flex items-center justify-between mb-1 gap-2">
                     <span className="font-semibold text-gray-900">{activityLabel(entry.type)}</span>
-                    <span className={`text-sm font-medium shrink-0 ${entry.synced ? 'text-[#2D5A27]' : 'text-amber-700'}`}>
-                      {entry.synced ? '✓' : '⏳'}
+                    <span
+                      className={`text-sm font-medium shrink-0 ${entry.synced ? 'text-[#2D5A27]' : 'text-amber-700'}`}
+                      title={entry.synced ? t('growerPages.fieldEntryStatusSynced') : t('growerPages.fieldEntryStatusPending')}
+                    >
+                      {entry.synced ? t('growerPages.fieldEntryStatusSynced') : t('growerPages.fieldEntryStatusPending')}
                     </span>
                   </div>
                   <div className="text-sm text-gray-600">
@@ -154,7 +158,7 @@ export default function FieldEntryPage() {
         }
       } catch (e: unknown) {
         if (!cancelled) {
-          setLoadError(e instanceof Error ? e.message : t('growerPages.fieldEntryLoadFailed'));
+          setLoadError(growerApiErrorOrT(e, t, 'growerPages.fieldEntryLoadFailed'));
         }
       } finally {
         if (!cancelled) setLoading(false);

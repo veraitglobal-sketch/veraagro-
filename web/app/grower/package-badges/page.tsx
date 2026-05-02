@@ -199,7 +199,7 @@ export default function GrowerPackageBadgesPage() {
             </div>
           )}
 
-          <form onSubmit={onSubmit} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-5 max-w-xl">
+          <form onSubmit={onSubmit} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-5 max-w-xl">
             <div>
               <label className="block text-base font-medium text-gray-700 mb-1">{t('grower.packageBadges.parentLabel')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('grower.packageBadges.parentHint')}</p>

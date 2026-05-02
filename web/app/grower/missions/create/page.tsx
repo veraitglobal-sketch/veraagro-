@@ -379,7 +379,7 @@ export default function CreateMissionPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
+            className="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm"
           >
             <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
             <h2 className="mb-2 text-2xl font-semibold text-gray-900">Transport request received</h2>

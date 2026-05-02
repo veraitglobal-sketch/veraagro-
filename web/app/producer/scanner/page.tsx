@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { smartLockAPI } from '@/lib/api';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 const inputClassName =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-base text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25';
@@ -57,20 +58,7 @@ export default function ScannerPage() {
 
       setResult(data);
     } catch (err: unknown) {
-      const message =
-        err &&
-        typeof err === 'object' &&
-        'response' in err &&
-        err.response &&
-        typeof err.response === 'object' &&
-        'data' in err.response &&
-        err.response.data &&
-        typeof err.response.data === 'object' &&
-        'message' in err.response.data &&
-        typeof (err.response.data as { message?: unknown }).message === 'string'
-          ? (err.response.data as { message: string }).message
-          : t('growerPages.smartLockScanError');
-      setError(message);
+      setError(growerApiErrorOrT(err, t));
     } finally {
       setLoading(false);
     }

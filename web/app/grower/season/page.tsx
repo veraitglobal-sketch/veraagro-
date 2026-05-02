@@ -85,7 +85,7 @@ export default function GrowerFieldSeasonPage() {
                         : t('grower.season.glanceNoParcel')}
                   </p>
                 </div>
-                <div className="flex flex-col justify-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+                <div className="flex flex-col justify-center rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     {t('grower.journey.fieldsMapKicker')}
                   </p>
@@ -100,7 +100,7 @@ export default function GrowerFieldSeasonPage() {
               </div>
             )}
 
-            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
               <GrowerSeasonJourney />
             </div>
         </GrowerPageShell>

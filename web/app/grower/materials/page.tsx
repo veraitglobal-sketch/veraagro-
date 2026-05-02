@@ -347,15 +347,15 @@ export default function GrowerMaterialsPage() {
         )}
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-gray-900">{balance?.crateBalance ?? 0}</div>
             <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatCrate')}</div>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-green-600">{balance?.labelRollBalance ?? 0}</div>
             <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatRolls')}</div>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
             <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
             <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatFilm')}</div>
           </div>
@@ -386,7 +386,7 @@ export default function GrowerMaterialsPage() {
         </p>
 
         <form
-          className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-white p-6 shadow-sm"
+          className="mb-6 rounded-xl border border-[#2D5A27]/20 bg-white p-6 shadow-sm"
           onSubmit={submitWhitelistMaterial}
         >
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsWhitelistTitle')}</h2>
@@ -477,7 +477,7 @@ export default function GrowerMaterialsPage() {
           </div>
         </form>
 
-        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsPurchaseTitle')}</h2>
           <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
             <Trans
@@ -545,7 +545,7 @@ export default function GrowerMaterialsPage() {
           </div>
         </div>
 
-        <div id="label-roll-ids" className="mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div id="label-roll-ids" className="mb-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsLabelRollTitle')}</h2>
           <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
             <Trans
