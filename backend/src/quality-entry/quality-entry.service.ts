@@ -407,6 +407,21 @@ export class QualityEntryService {
       throw new BadRequestException('Pickup driver not found or not active for your company');
     }
 
+    const blobConfigured = Boolean((process.env.BLOB_READ_WRITE_TOKEN || '').trim());
+    if (!blobConfigured) {
+      let inlineChars = 0;
+      for (const s of dto.palletPhotos) inlineChars += s.length;
+      for (const s of dto.truckInteriorPhotos) inlineChars += s.length;
+      inlineChars += dto.pickupBadgePhoto.length;
+      inlineChars += dto.pickupDriverSignatureDataUrl.length;
+      /** Without blob, base64 stays in Postgres JSON/Text — many providers choke above ~3–4MB JSON. */
+      if (inlineChars > 3_200_000) {
+        throw new BadRequestException(
+          'Handover images are too large to save without cloud storage. Set BLOB_READ_WRITE_TOKEN (Vercel Blob) on the API server, then retry.',
+        );
+      }
+    }
+
     const pickupDriverSnapshot = {
       driverId: pickupDriver.id,
       firstName: pickupDriver.firstName,
@@ -558,9 +573,10 @@ export class QualityEntryService {
         this.logger.error(
           `logisticsHandover PrismaClientUnknownRequestError: ${e.message}${cause != null ? ` | cause=${String(cause)}` : ''}`,
         );
-        throw new BadRequestException(
-          'Could not write handover to the database. Try again with smaller or fewer images, or contact support.',
-        );
+        const detail = blobConfigured
+          ? 'Try fewer or smaller images. Confirm `prisma migrate deploy` has been applied (pickup driver / handover columns).'
+          : 'Set BLOB_READ_WRITE_TOKEN on the API (Vercel Blob) so images are not stored as huge base64 in the database.';
+        throw new BadRequestException(`Could not write handover to the database. ${detail}`);
       }
       this.logger.error(
         `logisticsHandover: ${e instanceof Error ? e.message : String(e)}`,

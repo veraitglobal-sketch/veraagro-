@@ -20,6 +20,12 @@ const MAX_PHOTOS_PER_GROUP = 20;
 const SIG_W = 480;
 const SIG_H = 160;
 
+/** Parse temperature from inputs like "5,2" or "5.2" (common in sr-RS locales). */
+function parseLocaleTemperature(raw: string): number {
+  const normalized = raw.trim().replace(/\s/g, '').replace(',', '.');
+  return parseFloat(normalized);
+}
+
 function readFileAsDataUrl(file: File, readFailedMessage: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const r = new FileReader();
@@ -199,8 +205,10 @@ export default function LogisticsHandoverPage() {
 
   useEffect(() => {
     if (truckTemperature) {
-      const temp = parseFloat(truckTemperature);
-      if (temp >= STANDARD_TEMP_MIN && temp <= STANDARD_TEMP_MAX) {
+      const temp = parseLocaleTemperature(truckTemperature);
+      if (!Number.isFinite(temp)) {
+        setTemperatureStatus('invalid');
+      } else if (temp >= STANDARD_TEMP_MIN && temp <= STANDARD_TEMP_MAX) {
         setTemperatureStatus('valid');
       } else {
         setTemperatureStatus('invalid');
@@ -232,10 +240,10 @@ export default function LogisticsHandoverPage() {
       }
       try {
         const compressed = await compressImage(f, {
-          maxWidth: 1920,
-          maxHeight: 1920,
-          maxSizeMB: 1.75,
-          quality: 0.82,
+          maxWidth: 1600,
+          maxHeight: 1600,
+          maxSizeMB: 1.1,
+          quality: 0.8,
           useWebWorker: true,
         });
         const dataUrl = await readFileAsDataUrl(compressed, t('logisticsPages.handoverPhotoReadFailed'));
@@ -263,9 +271,10 @@ export default function LogisticsHandoverPage() {
     }
     try {
       const compressed = await compressImage(f, {
-        maxWidth: 1920,
-        maxHeight: 1920,
-        maxSizeMB: 1.75,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        maxSizeMB: 1.1,
+        quality: 0.8,
         useWebWorker: true,
       });
       const dataUrl = await readFileAsDataUrl(compressed, t('logisticsPages.handoverPhotoReadFailed'));
@@ -330,8 +339,8 @@ export default function LogisticsHandoverPage() {
       return;
     }
 
-    const temp = parseFloat(truckTemperature);
-    if (temp < STANDARD_TEMP_MIN || temp > STANDARD_TEMP_MAX) {
+    const temp = parseLocaleTemperature(truckTemperature);
+    if (!Number.isFinite(temp) || temp < STANDARD_TEMP_MIN || temp > STANDARD_TEMP_MAX) {
       setError(
         t('logisticsPages.handoverErrTempRange', {
           temp,
@@ -372,7 +381,7 @@ export default function LogisticsHandoverPage() {
     }
     let pickupDriverSignatureDataUrl: string;
     try {
-      pickupDriverSignatureDataUrl = sigCanvas.toDataURL('image/png');
+      pickupDriverSignatureDataUrl = sigCanvas.toDataURL('image/jpeg', 0.82);
     } catch {
       setError(t('logisticsPages.handoverErrDriverSignature'));
       setSubmitting(false);
