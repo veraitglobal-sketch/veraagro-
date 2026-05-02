@@ -3418,6 +3418,36 @@
     "toolbarPrintAria": "Open print dialog to save as PDF",
     "toolbarHint": "In print, choose “Save as PDF” — tidy hand-out for councils, banks or your own archive.",
     "introNote": "Paste this URL into WhatsApp or a board slide. Prefer paper? Grab a PDF via print — whatever fits your ritual.",
+    "heroTechPill": "Protocol 360 · Integrity Guard · QR passport",
+    "videoTitle": "Walkthrough video",
+    "videoCaption": "Two minutes on how growers, pack-houses, drivers and Hamburg retail touch the same data spine.",
+    "videoPlaceholderTitle": "Partner video slot",
+    "videoPlaceholderBody": "When your walk-through is published on YouTube or Vimeo, point the site configuration at that URL — this frame fills in automatically for partners opening the deck.",
+    "howItWorksEyebrow": "Operational depth",
+    "howItWorksTitle": "How Bio Vera works — from estate boundary to QR passport",
+    "howItWorksLead": "The summary cards further down capture the headline benefits. Here is the operating sequence our teams reconcile with growers and buyers: polygons and seed economics first, hardened field evidence second, batches and Vera bonus mechanics third, explicit logistics custody fourth, and finally shopper-facing passports with staged payouts that still make sense after audit questions.",
+    "howItWorksPhases": [
+      {
+        "title": "Estates, seed economics and Integrity Guard inputs",
+        "body": "Each estate carries a geo boundary on the platform. Seed purchases honour Vera Partner terms when growers join that programme, with optional insurance placed alongside seed in the purchase flow itself. Sensitive inputs run through whitelist checks against our Vera catalogue — if a barcode is not approved, it does not quietly become compliant evidence later."
+      },
+      {
+        "title": "Offline field workflows and truthful GPS",
+        "body": "Field diaries and compliance snapshots save on device first when connectivity fades, then sync automatically on return. Entries require GPS fixes inside the estate polygon; that blunt rule is how we defend honest growers during disputes without relying on reconstructed chat logs months later."
+      },
+      {
+        "title": "Packaging batches, Protocol 360 checks and Vera work bonus",
+        "body": "Pack-houses seal produce into batches validated through Protocol 360 expectations — biometric and material controls where configured. Each batch acquires identifiers that propagate into downstream logistics plus the eventual QR passport. When packaging honours Vera material discipline, growers can qualify for Vera work bonuses; we anchor rewards on behaviours we can inspect, not buzzwords nobody can screenshot."
+      },
+      {
+        "title": "Missions, cold-chain notes and Hamburg-bound handovers",
+        "body": "Drivers receive structured missions: pickup windows, chained legs and explicit custody handovers tied to batches. Refrigeration checkpoints and deviations stay attached to the same batch narrative procurement opens later — so Hamburg teams interrogate telemetry and custody together, not as disconnected PDF fragments."
+      },
+      {
+        "title": "Retail passport, escrow rhythm and payout lines",
+        "body": "Scanning QR on shelf opens passport — farmer-facing context, certificates and geography, plus cold-chain storyline in one disciplined layout. Incoming payments honour staged escrow so farmer base payouts, Vera bonus allocations, freight lines and Vera platform economics remain dissectible. Partner seed uplift, discrete insurance commissions and differentiated transport tax posture (corridor vs Hamburg VAT-bearing legs) stay modelled upstream so closing week does not become forensic archaeology."
+      }
+    ],
     "coverEyebrow": "Seven-minute Vera brief",
     "coverTitle": "From Balkan orchard to Hamburg checkout — without losing the plot",
     "coverSubtitle": "Bio Vera is the spine we wished existed years ago: one place where estates, packaging lines, lorries and retail QR tell the same story. Bio-Ready discipline, Vera Partner seed terms where it matters, Vera bonus when packing is spot-on — and payouts that survive a Monday audit.",

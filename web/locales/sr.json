@@ -3419,6 +3419,36 @@
     "toolbarPrintAria": "Otvori štampu da sačuvaš PDF",
     "toolbarHint": "U štampi izaberite „Sačuvaj kao PDF“ — zgodno za opštinu, banku ili arhivu.",
     "introNote": "Zalepite URL u WhatsApp ili u prezentaciju. Hoćete štampu? PDF preko štampe — kako god vam leži.",
+    "heroTechPill": "Protocol 360 · Integrity Guard · QR pasoš",
+    "videoTitle": "Video obilazak",
+    "videoCaption": "Kratko kako proizvođač, pak-hauz, vozač i maloprodaja u Hamburgu diraju istu Vera kičmu podataka.",
+    "videoPlaceholderTitle": "Mesto za partnerski video",
+    "videoPlaceholderBody": "Kad objavite video na YouTube-u ili Vimeo-u, u podešavanjima okruženja ukazite na taj javni URL — ovaj okvir se sam popuni za partnere koji otvaraju deck.",
+    "howItWorksEyebrow": "Operativna dubina",
+    "howItWorksTitle": "Kako Bio Vera radi — od granice gazdinstva do QR pasoša",
+    "howItWorksLead": "Kartice niže sumiraju glavne prednosti. Ispod je redosled koji naš tim usklađuje sa proizvođačima i kupcima: prvo poligon i ekonomika semena, zatim oštra terenska evidencija, zatim serije i mehanika Vera bonusa, zatim eksplicitna kustodija u logistici, i na kraju pasoš za kupca uz fazirane isplate koje i posle pitanja revizora ostaju čitljive.",
+    "howItWorksPhases": [
+      {
+        "title": "Gazdinstva, ekonomika semena i unosi uz Integrity Guard",
+        "body": "Svako gazdinstvo nosi geografsku granicu na platformi. Kupovina semena poštuje Vera Partner uslove kad proizvođač uđe u taj program, a osiguranje može da stoji uz seme u istom toku kupovine. Osetljivi unosi prolaze kroz belu listu u Vera katalogu — ako barkod nije odobren, ne postaje tiho „usklađen“ dokaz kasnije."
+      },
+      {
+        "title": "Terenski rad van mreže i GPS koji drži istinu",
+        "body": "Dnevnik i foto dokazi prvo na uređaju kad signala nema, pa sinhronizacija kad se mreža vrati. Unos traži GPS unutar poligona gazdinstva; to zvuči tvrdoglavo dok ne dođe spor oko serije — onda branimo poštene uzgajivače bez rekonstrukcije ćaskanja iz prošlog meseca."
+      },
+      {
+        "title": "Pakovanje, serije, Protocol 360 i Vera bonus za rad",
+        "body": "U pak-hauzu voće i povrće ulaze u serije koje proveravamo kroz očekivanja Protocol 360 — biometrija i kontrola materijala gde je podešeno. Svaka serija dobija identitete koji idu u logistiku i kasnije u QR pasoš. Kad pakovanje poštuje Vera disciplinu materijala, proizvođač može da ostvari Vera bonus za rad; nagrađujemo ponašanje koje možemo da proverimo, ne rečenicu koju niko ne može da dokaže slikom."
+      },
+      {
+        "title": "Misije, zabeleške hladnog lanca i predaje prema Hamburgu",
+        "body": "Vozači rade po strukturisanim misijama: prozori preuzimanja, noge u lancu i jasne predaje kustodije vezane za serije. Temperatura i odstupanja ostaju na istom narativu koji nabavka otvara u Hamburgu — da se ne čita hladni lanac iz fusnote u PDF-u koji je neko zaboravio poslati."
+      },
+      {
+        "title": "Pasoš u radnji, eskro ritam i linije isplate",
+        "body": "Sken QR na polici otvara pasoš: priča o gazdinstvu, sertifikati i kontekst hladnog lanca u jednom smislenom rasporedu. Priliv novca prati faziran eskro da baza za farmera, Vera bonus, prevoz i ekonomika platforme ostanu rastavljive. Razlika Vera Partner naspram kataloga semena, diskretne provizije osiguranja i različit poreski kontekst (koridor naspram noge sa PDV u Nemačkoj) modeluju se ranije da petak u finansijama ne bude arheologija."
+      }
+    ],
     "coverEyebrow": "Kratak Vera brifing (~7 min)",
     "coverTitle": "Od balkanske plantaže do hamburške kase — bez gubitka ni niti priče",
     "coverSubtitle": "Bio Vera je kičma koju smo želeli još pre aplikacije: jedno mesto gde gazdinstvo, linija pakovanja, kamioni i QR u radnji govore isti jezik. Bio-Ready disciplina, Vera Partner uslovi gde ima smisla, Vera bonus kad pakovanje prođe kontrolu — i isplate koje ni ponedeljkov revizorski mejl neće poljuljati.",
