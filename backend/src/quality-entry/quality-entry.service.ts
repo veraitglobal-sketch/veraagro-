@@ -697,10 +697,15 @@ export class QualityEntryService {
           low.includes('does not exist') ||
           low.includes('unknown field') ||
           low.includes('undefined column');
+        const mentionsHandoverEnum =
+          low.includes('logisticshandoverstatus') ||
+          (low.includes('expression is of type') && low.includes('handover') && low.includes('status'));
         const detail = looksSchema
-          ? `Database schema may be missing handover/pickup columns. Run: npx prisma migrate deploy on the API against this database. Detail: ${prismaMsg.slice(0, 400)}`
-          : 'Common causes: payload too large for the pooler (set BLOB_READ_WRITE_TOKEN), or DB timeout. Try fewer photos; check API logs for the exact Prisma message.';
-        throw new BadRequestException(`Could not write handover to the database. ${detail}`);
+          ? mentionsHandoverEnum
+            ? 'The logistics_handovers.status column must use the same PostgreSQL enum as the API (HandoverStatus). On the API host run: npx prisma migrate deploy with production DATABASE_URL (includes migration 20260704120000_align_logistics_handover_status_column).'
+            : 'The database is probably missing migrations for loading handover (pickup driver, photos, signature). On the API server, run: npx prisma migrate deploy — with the same DATABASE_URL as production — then retry. Ask your admin to check API logs.'
+          : 'The request may be too large for the connection pool, or the database timed out. Try fewer photos, set BLOB_READ_WRITE_TOKEN on the API, or check API logs.';
+        throw new BadRequestException(`Could not save loading handover to the database. ${detail}`);
       }
       this.logger.error(
         `logisticsHandover: ${e instanceof Error ? e.message : String(e)}`,

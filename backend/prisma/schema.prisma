@@ -538,7 +538,7 @@ model logistics_handovers {
   verifiedBy               String
   notes                    String?
   timestamp                DateTime                @default(now())
-  status                   LogisticsHandoverStatus @default(PENDING)
+  status                   HandoverStatus @default(PENDING)
   /// Field pickup: delegated driver (from logistics_drivers) + immutable snapshot
   pickupDriverId               String?
   pickupDriverSnapshot         Json?
@@ -1645,13 +1645,6 @@ enum InventoryStatus {
   IN_TRANSIT
   SOLD
   EXPIRED
-}
-
-enum LogisticsHandoverStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  BLOCKED
 }
 
 enum MaterialStatus {
