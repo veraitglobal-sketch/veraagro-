@@ -3416,95 +3416,95 @@
     "toolbarCopied": "Copied",
     "toolbarPrintPdf": "Save as PDF",
     "toolbarPrintAria": "Open print dialog to save as PDF",
-    "toolbarHint": "Tip: in the print dialog, choose «Save as PDF» (or your browser’s equivalent) to download a static copy.",
-    "introNote": "Share this URL with partners, investors, or municipalities — or save a PDF for offline use.",
-    "coverEyebrow": "Partner & investor overview",
-    "coverTitle": "Bio Vera — vertical agri network",
-    "coverSubtitle": "Traceable bio-compliant produce from Balkan cultivation through logistics to Hamburg retail — one operating system for growers, partners, and buyers.",
-    "whyTitle": "Why scale this now",
-    "whyLead": "Retail and wholesale buyers need proof of origin, EU-aligned compliance, and resilient cold-chain documentation — while growers need fair payouts and tools that still work offline in the field.",
+    "toolbarHint": "In print, choose “Save as PDF” — tidy hand-out for councils, banks or your own archive.",
+    "introNote": "Paste this URL into WhatsApp or a board slide. Prefer paper? Grab a PDF via print — whatever fits your ritual.",
+    "coverEyebrow": "Seven-minute Vera brief",
+    "coverTitle": "From Balkan orchard to Hamburg checkout — without losing the plot",
+    "coverSubtitle": "Bio Vera is the spine we wished existed years ago: one place where estates, packaging lines, lorries and retail QR tell the same story. Bio-Ready discipline, Vera Partner seed terms where it matters, Vera bonus when packing is spot-on — and payouts that survive a Monday audit.",
+    "whyTitle": "Why we built it this bluntly",
+    "whyLead": "Buyers do not wake up begging for dashboards. They need paperwork that survives their QA inbox. Growers want their cheque without rewriting history in spreadsheets after the truck pulls away.",
     "whyBullets": [
-      "Fragmented spreadsheets and paper trails fail audits and delay payments.",
-      "Consumers and B2B buyers increasingly demand QR-verifiable journeys, not marketing claims.",
-      "Climate and logistics volatility rewards networks that coordinate seed → shelf with shared data rails."
+      "When the diary lives in WhatsApp memories and three half-finished Excel files, auditors show up — and everyone improvises. That is not Bio-Ready culture.",
+      "Shoppers know greenwash smells off. QR that lands on farmer + certs + custody beats glossy copy that screams trust.",
+      "Heatwaves, queues, reroutes — boring until you live them. Passing one spine from Vera seed cheque to Hamburg hand-over beats patching each lane separately."
     ],
-    "solutionTitle": "What Bio Vera delivers",
-    "solutionLead": "A single platform connects cultivation standards, packaging verification, escrow-friendly settlements, and buyer-facing transparency — instead of stitching five disconnected tools together.",
-    "chainTitle": "The vertical chain (the loop)",
+    "solutionTitle": "What Vera actually holds together",
+    "solutionLead": "Marketplaces sell boxes. Vera threads field truth (GPS, inputs we actually whitelist), missions for drivers who genuinely moved pallets, escrow timing nobody has to renegotiate overnight, plus the QR passport procurement can paste into email — because money and credibility freeze exactly where spreadsheets and chats used to peel apart.",
+    "chainTitle": "The loop growers quote back to us",
     "chainSteps": [
-      "Seed — partner pricing & standards",
-      "Insurance — optional cover tied to purchases",
-      "Cultivation — bio-compliance & field evidence",
-      "Packaging — compliance bonus when materials meet Vera rules",
-      "Logistics — monitored legs toward northern EU markets",
-      "Retail — QR passports buyers can trust"
+      "Seed — Vera Partner rebate when you marry our standard",
+      "Insurance tucked beside seed if the grower wants cover",
+      "Cultivation — journals, polygons, barcode rules we enforce",
+      "Pack-house — Vera work bonus when materials pass control",
+      "Logistics — missions + handovers Hamburg-bound",
+      "Shelf — QR opens passport (farmer • cold chain • certs)"
     ],
-    "advantagesTitle": "Advantages for stakeholders",
+    "advantagesTitle": "Concrete wins — no stakeholder bingo",
     "advantages": [
       {
-        "title": "Growers",
-        "body": "Offline-first mobile workflows, GPS-aware field logs, barcode integrity checks, and clearer paths to bonuses when packaging meets standards."
+        "title": "Growers & estates",
+        "body": "The app survives orchards without miracle reception — jot locally, sneak out when bandwidth returns. Barcodes absent from Vera’s whitelist stay absent. Boundary GPS irritates politely until cargo gets disputed once; then geography quietly buys everyone dinner."
       },
       {
-        "title": "Buyers & retailers",
-        "body": "Batch-level QR transparency, cold-chain oriented signals, and consistent EU-facing documentation instead of ad-hoc PDF chasing."
+        "title": "Retail & procurement",
+        "body": "Know which batch actually rode which refrigeration story — not rumours from somebody’s hurried email. Certificates sit next to geography on the passport. Procurement’s brutal 17:03 questions land on screenshots already glowing."
       },
       {
-        "title": "Logistics partners",
-        "body": "Structured missions and handovers so custody changes are explicit — fewer disputes, faster reconciliation."
+        "title": "Drivers & fleets",
+        "body": "Missions spell custody in plain verbs. Fewer frantic threads rebuilding who held the seals after spoiled crates."
       },
       {
-        "title": "Platform economics",
-        "body": "Purpose-built splits that reflect seed margin, insurance participation, transport, and Vera bonuses — aligned incentives across the chain."
+        "title": "How the cheque splits",
+        "body": "Partner seed vs catalogue seed — margin difference is modelled upfront. Tiny insurance commissions surface transparently alongside transport maths. Farmer base • Vera bonus • haulage • Vera cut — articulated so nobody hand-waves euro path at closing."
       },
       {
-        "title": "Compliance teams",
-        "body": "Evidence hangs off estates, batches, and shipments — closer to continuous assurance than annual panic audits."
+        "title": "Compliance humans",
+        "body": "Files hang off Estates + Batch IDs you already typed. Routine beats sweating February dossiers scraped from oblivion."
       },
       {
-        "title": "Brand & origin story",
-        "body": "Public-facing journeys tie a shelf SKU back to farm identity and certifications — premium positioning with proof."
+        "title": "Brand & storytelling",
+        "body": "Polish SKU shows named farm geography + certs your category buyer can screenshot. Premium without poetry."
       }
     ],
-    "techTitle": "Technical pillars",
-    "techLead": "Built for fields that lose signal — not only for dashboards on fibre.",
+    "techTitle": "Engineering quirks we refuse to drop",
+    "techLead": "Executive dashboards applaud numbers; orchard mud needs offline fidelity first.",
     "techItems": [
       {
-        "title": "Offline-first capture",
-        "body": "Critical grower flows persist locally first and sync when connectivity returns — reducing lost harvest notes or compliance shots."
+        "title": "Offline-first guts",
+        "body": "SQLite on phone survives harvest frenzy. Connectivity returns — uploads queue politely. Lose the photo lose the shipment story; we optimised for not losing photos."
       },
       {
-        "title": "Integrity guardrails",
-        "body": "Barcode whitelist checks for sensitive inputs and GPS-within-boundary validation for field events — blocking obvious misuse early."
+        "title": "Integrity Guard (really)",
+        "body": "Barcode ↔ BioWhitelist for chemistry; GPS inside polygon for field truth. Blocking feels harsh until first fraudulent spray attempt — then you send flowers."
       },
       {
-        "title": "Protocol mindset",
-        "body": "Quality narrative anchored in staged verification — soil through packaging — rather than one-off snapshots."
+        "title": "Protocol 360 habit",
+        "body": "Soil biometric pack-line cold-chain — deliberate beats staged for Instagram audits."
       },
       {
-        "title": "Security-aware operations",
-        "body": "Role-based access, rate limiting, and audit-oriented APIs suitable for multi-party agricultural networks."
+        "title": "Operational security hygiene",
+        "body": "Roles boundaries rate-limit logs — sleepy until bots knock; then priceless."
       }
     ],
-    "transparencyTitle": "Transparency buyers verify",
+    "transparencyTitle": "Stories buyers poke with fingernails",
     "transparencyBullets": [
-      "Unique batch identifiers surfaced through QR journeys.",
-      "Cold-chain oriented monitoring story alongside custody hops.",
-      "Grower-visible certifications and geography — aligned with Bio Vera positioning."
+      "QR → passport Batch farmer route — landing fluff kept short.",
+      "Temperature + custody hops ride same narrative — refrigeration not footnote appendix.",
+      "Bio-Ready + geo visible same screen — positioning matches Vera voice honestly."
     ],
-    "financeTitle": "Settlement clarity",
-    "financeLead": "Funds flow through escrow-style staging so farmer base payouts, logistics fees, platform revenue lines, and Vera bonuses can be traced — not buried in a single lump invoice.",
+    "financeTitle": "Euro path without mythology",
+    "financeLead": "Escrow-ish staging slows drama: farmer wedge driver wedge platform wedge Vera bonus wedge — each labelled before mood darkens accountants.",
     "financeBullets": [
-      "Partner vs standard seed economics reflected in modelling.",
-      "Insurance commissions as part of disclosed platform revenue where applicable.",
-      "Transport leg awareness (e.g. VAT-bearing vs exempt contexts) kept explicit in tax logic."
+      "Vera Partner versus catalogue seed lands in the maths from day zero — payout night stays dull in a good way.",
+      "Tiny insurance commissions show up cleanly when programmes genuinely ride along — auditors like invoices that whisper.",
+      "Balkan corridor rates next to Hamburg VAT-bearing legs remain explicit inside our modelling — nerd candy that avoids Friday spreadsheets."
     ],
-    "ctaClosingTitle": "Explore with us",
-    "ctaClosingBody": "Use the buttons above to share this deck or save a PDF — then continue on the site for role-specific detail.",
-    "ctaContact": "Talk to the team",
-    "ctaGrowers": "Grower programme",
-    "ctaBuyers": "For buyers",
-    "ctaInvestors": "Investor hub"
+    "ctaClosingTitle": "If this resonance — ping us",
+    "ctaClosingBody": "Copy link up top saves board forwards; PDF button keeps grandmother-friendly archives — then roam product pages wired to YOUR hat (grower, buyer, freight, VC curiosity).",
+    "ctaContact": "Talk with Hamburg crew",
+    "ctaGrowers": "Growers lane",
+    "ctaBuyers": "Buyers lane",
+    "ctaInvestors": "Investors corner"
   },
   "helpCenterPage": {
     "title": "Help center",
