@@ -3418,8 +3418,25 @@
     "toolbarPrintPdf": "Sačuvaj kao PDF",
     "toolbarPrintAria": "Otvori štampu da sačuvaš PDF",
     "toolbarHint": "U dijalogu za štampu izaberite „Sačuvaj kao PDF“ radi dokumenta pogodnog za odbore, finansijske partnere ili internu arhivu.",
-    "introNote": "Podelite ovu stranicu kolegama i partnerima ili sačuvajte PDF za pregled van mreže.",
+    "introNote": "Ovaj dokument objašnjava šta je Bio Vera, kako partneri trguju i operišu u mreži i šta zajedno postižemo. Podelite link sa timom ili izvezite PDF.",
     "heroTechPill": "Protocol 360 · Integrity Guard · QR pasoš",
+    "plainLanguageEyebrow": "Počnite odavde",
+    "plainLanguageTitle": "Šta smo, kako se posluje, šta postižemo",
+    "plainLanguageIntro": "Pitch treba prvo u običnom jeziku da odgovori na tri pitanja — pre tehničkog priloga. Ispod: priroda mreže, ritam stvarnog poslovanja na platformi i ishodi koje optimizujemo za partnere.",
+    "plainLanguageCards": [
+      {
+        "title": "Šta je Bio Vera",
+        "body": "Bio Vera je mreža poljoprivrede i hrane vođena zajedničkim standardima, uz jedan softverski stub. Proizvođači, pak-hauz, prevoznici, dobavljači i kupci prihvataju Bio-Ready pravila; sistem beleži gazdinstva, ulaze, terenski rad, serije, misije u logistici, obračune i maloprodajni QR pasoš. Cilj su verodostojni dokazi — barkod, granica parcele, vreme, predaja kustodije — a ne rastureni PDF-ovi i dopisivanje."
+      },
+      {
+        "title": "Kako teče posao na platformi",
+        "body": "Svakodnevni posao prati vertikalnu petlju: odobreni ulazi (uključujući programsko seme po Vera Partner cenovniku i opciono osiguranje kod kvalifikujuće kupovine); terenska evidencija sa GPS koji ostaje unutar poligona gazdinstva; serije nastale uz Protocol 360; zaliha u misijama sa jasnim predajama kustodije i tragom hladnog lanca do ispunjenja porudžbine kod kupca. Sredstva se otpuštaju u fazama kako naknada proizvođača, prevoza, ekonomija platforme i programa — uključujući Vera bonus za rad kada standardi budu dostignuti — kao i porez na izvoznim i obračunskim nogama ostanu razdvojivi i sledivi finansijskom timu."
+      },
+      {
+        "title": "Kakve ishode gradimo",
+        "body": "Revizije i nabavna provera ubrzavaju se jer su paketi dokumentacije hronološki i vezani za identitet serije. Maloprodajne poruke odgovaraju operativi jer pasoš vuče iste podatke. Proizvođač dobija predvidljiviju naknadu i alat koji radi offline. Sporovi oko pošiljke su ređi kad su kustodija i temperatura strukturisani. Premium i porijeklo počivaju na podacima, ne samo sloganima. Upravljanje gleda jedan izvor istine za kvalitet, logistiku i finansije — bez tri paralelne izmisljene „istine”."
+      }
+    ],
     "videoTitle": "Video obilazak",
     "videoCaption": "Kratak pregled kako proizvođači, pakovanje, prevoznici i maloprodajni timovi koriste istu Vera osnovu podataka.",
     "videoPlaceholderTitle": "Mesto za partnerski video",
@@ -3451,7 +3468,7 @@
     ],
     "coverEyebrow": "Pregled za partnere",
     "coverTitle": "Jedan operativni sistem za proizvođače, kupce i logističke partnere",
-    "coverSubtitle": "Bio Vera saraduje sa proizvođačima i kupcima širom sveta koji prihvataju naše Bio-Ready standarde i operativna pravila — geografija nije uslov ulaska u mrežu. Platforma objedinjava mapu gazdinstava, terensku usklađenost, kontrolu pakovanja, misije u logistici i maloprodajnu QR verifikaciju. Vera Partner ekonomika semena, opciono osiguranje uz kvalifikujuće kupovine i Vera bonus za rad uz proverljivo pakovanje usklađuju poticaje u celom lancu. Svaka ozbiljna tvrdnja — legitimnost barkoda, GPS unutar poligona, identitet serije, narativ hladnog lanca i linije isplate — vezuje se za strukturisane evidencije, ne za Excel i ćaskanje izvan sistema.",
+    "coverSubtitle": "Bio Vera je mreža poljoprivrede i hrane uz zajedničke Bio-Ready standarde i jednu softversku platformu. Saradujemo sa proizvođačima i kupcima bilo gde na svetu koji te standarde prihvate — geografija sama po sebi ne filtrira partnerstvo. Stub povezuje mapu gazdinstava, evidenciju sa terena, pakovanje, misije kustodije u logistici i QR potvrdu kod kupca. Vera Partner ekonomika semena, opciono osiguranje uz kvalifikujuću kupovinu i Vera bonus za rad pri proverljivoj ambalaži poravnavaju pobude u celom lancu. Svaka materijalna tvrdnja — odobreni ulaz, GPS unutar poligona, identitet serije, hladni lanac i obračunske linije — ide u strukturisane zapise umesto paralelnih tabela ili ćaskanja.",
     "whyTitle": "Zašto sledljivost mora biti deo operativnog modela",
     "whyLead": "Nabavka, kvalitet i bezbednost hrane traže dokumentaciju koja prolazi revizije i komercijalnu proveru. Proizvođačima su potrebne predvidive isplate i sistem koji radi i pri ograničenoj mreži. Fragmentisani alati i neformalni kanali ponavljaju isti trošak usklađivanja oko svake pošiljke.",
     "whyBullets": [
@@ -3869,7 +3886,7 @@
       }
     ],
     "ctaClosingTitle": "Razgovor o partnerstvu",
-    "ctaClosingBody": "Koristite akcije iznad za deljenje ovog dokumenta ili izvoz u PDF. Nastavite na stranice programa za proizvođače, kupce, logistiku ili investicije.",
+    "ctaClosingBody": "Dokument je za odbore, partnere i investitore — prvo poslovni narativ, ispod detaljna specifikacija. Kopirajte link ili izvezite PDF, zatim nastavite na stranice za proizvođače, kupce, logistiku ili investicije.",
     "ctaContact": "Kontaktirajte Bio Veru",
     "ctaGrowers": "Program za proizvođače",
     "ctaBuyers": "Informacije za kupce",

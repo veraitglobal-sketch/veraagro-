@@ -3417,8 +3417,25 @@
     "toolbarPrintPdf": "Save as PDF",
     "toolbarPrintAria": "Open print dialog to save as PDF",
     "toolbarHint": "When printing, select “Save as PDF” to produce a document suitable for boards, financing partners or internal archives.",
-    "introNote": "Share this page with colleagues and partners, or save a PDF for offline review.",
+    "introNote": "This pitch explains what Bio Vera is, how partners trade and operate on the network, and what we aim to accomplish together. Share the link with colleagues or export a PDF.",
     "heroTechPill": "Protocol 360 · Integrity Guard · QR passport",
+    "plainLanguageEyebrow": "Start here",
+    "plainLanguageTitle": "What we are, how we do business, what we achieve",
+    "plainLanguageIntro": "A pitch deck should answer three questions in plain language before the technical appendix. Below: the nature of the network, the rhythm of real-world commerce on the platform, and the partner-level results we optimise for.",
+    "plainLanguageCards": [
+      {
+        "title": "What Bio Vera is",
+        "body": "Bio Vera is a standards-led agrifood network backed by one software spine. Growers, packers, carriers, suppliers and buyers adopt shared Bio-Ready rules; the system records estates, inputs, field work, batches, logistics missions, settlements and shopper-facing QR passports. The point is credible evidence—barcodes, map boundaries, timestamps, custody—not a loose collection of PDFs and chats."
+      },
+      {
+        "title": "How business runs on the platform",
+        "body": "Day-to-day commerce follows the vertical loop: approved inputs (including programme seed and optional insurance tied to qualifying purchases), cultivation evidence with boundary-bound GPS, batches created under Protocol 360, stock moving through missions with explicit custody handovers and cold-chain narrative, then fulfilment to buyers. Revenue is released in defined stages so grower pay, carrier fees, platform and programme economics (including Vera work bonuses when standards are met), and tax treatments on cross-border legs remain separable and reconcilable."
+      },
+      {
+        "title": "Outcomes partners work toward",
+        "body": "Audits and buyer diligence become faster because dossiers are chronological and keyed to batches. Retail claims match operations because the QR passport draws from the same data. Growers gain fairer, more predictable compensation and tools that work offline. Incidents shrink in ambiguity when custody and temperature trails are structured. Premium and origin stories rest on substantiated claims. Leadership steers one trustworthy dataset for quality, logistics and finance—not three conflicting versions."
+      }
+    ],
     "videoTitle": "Walkthrough video",
     "videoCaption": "A concise overview of how growers, packers, carriers and retail teams reference the same Bio Vera data backbone.",
     "videoPlaceholderTitle": "Partner video slot",
@@ -3450,7 +3467,7 @@
     ],
     "coverEyebrow": "Partner overview",
     "coverTitle": "One operating system for growers, buyers and logistics partners",
-    "coverSubtitle": "Bio Vera works with producers and buyers around the world who commit to our Bio-Ready standards and operating rules—geography is not a filter on partnership. The platform ties together estate mapping, field compliance, packaging control, mission-based logistics and QR-based retail verification. Vera Partner seed terms, optional insurance linked to qualifying purchases, and Vera work bonuses tied to verified packaging create aligned economics across the chain. Every serious claim—barcode legitimacy, polygon-bound GPS, batch identity, refrigeration narrative and payout line—is bound to structured records rather than ad hoc spreadsheets or chat threads.",
+    "coverSubtitle": "Bio Vera is a standards-led agrifood network and software platform. We work with producers and buyers anywhere in the world who commit to our Bio-Ready rules—geography does not define partnership. The spine ties together estate mapping, field compliance, packaging control, mission-based logistics and QR retail verification. Vera Partner seed economics, optional insurance on qualifying purchases and Vera work bonuses for verified packaging align incentives through the chain. Every material claim—approved inputs, estate-bound GPS, batch identity, refrigeration narrative and payout line—is recorded in structured form, not improvised in spreadsheets or messaging apps.",
     "whyTitle": "Why traceability must be built into operations",
     "whyLead": "Procurement, quality and food-safety teams need evidence that survives audits and commercial diligence. Growers need fair, predictable compensation and systems that remain usable when network coverage is weak. Siloed spreadsheets and informal channels recreate the same reconciliation burden on every shipment.",
     "whyBullets": [
@@ -3868,7 +3885,7 @@
       }
     ],
     "ctaClosingTitle": "Discuss partnership",
-    "ctaClosingBody": "Use the actions above to share this deck or export a PDF. Continue to the relevant programme pages for growers, buyers, logistics partners or investors.",
+    "ctaClosingBody": "This document is written for boards, partners and investors: first the business narrative, then the operational deep dive. Use the toolbar to copy the link or save a PDF. From here, continue to grower, buyer, logistics or investor pages as needed.",
     "ctaContact": "Contact Bio Vera",
     "ctaGrowers": "Grower programme",
     "ctaBuyers": "Buyer information",

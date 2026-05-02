@@ -15,6 +15,10 @@ import {
   BadgeCheck,
   QrCode,
   Play,
+  Package,
+  Handshake,
+  Flag,
+  ChevronRight,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
@@ -69,21 +73,144 @@ function isStringList(x: unknown): x is string[] {
 
 const ADV_ICONS = [Sprout, BadgeCheck, Truck, Wallet, ClipboardCheck, Sparkles];
 const TECH_ICONS = [Sparkles, ClipboardCheck, BadgeCheck, QrCode];
+const PLAIN_LANGUAGE_ICONS = [Package, Handshake, Flag];
 
-/** Bio Vera marketing shell: white cards, subtle ring, green accent rail */
-function sectionClass(extra = ""): string {
-  return [
-    "pitch-slide rounded-xl border border-gray-200 bg-white p-5 sm:p-6 lg:p-8 shadow-sm ring-1 ring-gray-900/[0.04]",
-    extra,
-  ]
-    .filter(Boolean)
-    .join(" ");
+const ACCENT = "#2D5A27";
+const ACCENT_HOVER = "#23471f";
+
+type DeckVariant = "cover" | "light" | "wash" | "split" | "appendix-intro" | "close";
+
+/** Full-bleed “slide” shells — minimal chrome like a keynote deck */
+function slideShell(variant: DeckVariant): string {
+  const base =
+    "pitch-slide relative mx-auto max-w-[1200px] px-6 sm:px-10 lg:px-14 print:rounded-none";
+
+  switch (variant) {
+    case "cover":
+      return [
+        base,
+        "py-14 sm:py-18 lg:py-22",
+        "bg-white border-b-[10px]",
+        `border-[${ACCENT}]`,
+        "rounded-none sm:rounded-2xl shadow-[0_1px_0_rgba(0,0,0,0.06)]",
+      ].join(" ");
+    case "wash":
+      return [
+        base,
+        "py-12 sm:py-16 lg:py-20",
+        "rounded-none sm:rounded-2xl",
+        `bg-[#F4F8F4]`,
+        "border border-gray-200/60",
+      ].join(" ");
+    case "split":
+      return [
+        base,
+        "py-12 sm:py-16 lg:py-20",
+        `bg-[linear-gradient(90deg,#fafcfa_0%,#fafcfa_52%,white_52%,white_100%)]`,
+        "border border-gray-200/70 rounded-none sm:rounded-2xl",
+      ].join(" ");
+    case "appendix-intro":
+      return [
+        base,
+        "py-10 sm:py-12 lg:py-14",
+        "bg-neutral-900 text-neutral-50 rounded-none sm:rounded-2xl px-8 sm:px-12 lg:px-16",
+      ].join(" ");
+    case "close":
+      return [
+        base,
+        `py-12 sm:py-16 bg-[${ACCENT}] text-white rounded-none sm:rounded-2xl border-0`,
+      ].join(" ");
+    default:
+      return [
+        base,
+        "py-12 sm:py-16 lg:py-20",
+        "bg-white border border-gray-200/70 rounded-none sm:rounded-2xl shadow-sm shadow-gray-950/[0.02]",
+      ].join(" ");
+  }
 }
+
+function SlideKicker({
+  children,
+  className = "",
+  light = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  light?: boolean;
+}) {
+  return (
+    <p
+      className={[
+        "text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] mb-3",
+        light ? "text-white/65" : "text-[var(--pitch-accent-muted)]",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      style={{
+        ...(light ? {} : { color: `${ACCENT}cc` }),
+      }}
+    >
+      {children}
+    </p>
+  );
+}
+
+/** Cover — title + deck rhythm */
+function PitchCover({
+  eyebrow,
+  title,
+  subtitle,
+  chips,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  chips: string[];
+}) {
+  return (
+    <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 lg:items-end">
+      <div className="lg:col-span-8 space-y-5">
+        <SlideKicker>{eyebrow}</SlideKicker>
+        <h1 className="text-[2rem] sm:text-[2.65rem] lg:text-[clamp(2.5rem,4.2vw,3.35rem)] font-semibold text-gray-900 leading-[1.08] tracking-[-0.03em]">
+          {title}
+        </h1>
+        <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl border-l-[3px] pl-5 py-1" style={{ borderColor: ACCENT }}>
+          {subtitle}
+        </p>
+      </div>
+      <div className="lg:col-span-4 lg:text-right space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">{brandLabelStatic}</p>
+        <div className="flex flex-wrap gap-2 lg:justify-end">
+          {chips.map((c) => (
+            <span
+              key={c}
+              className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50/90 px-3 py-1.5 text-xs font-medium text-gray-700"
+            >
+              {c.trim()}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Avoid hook in static label — overwritten at runtime via PitchCover wrapper if needed.
+const brandLabelStatic = ""; // replaced inline below — actually we use translation in parent.
 
 export default function PitchDeckPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
   const [copied, setCopied] = useState(false);
+
+  const chips = useMemo(() => {
+    const raw = t("pitchDeck.heroTechPill");
+    return String(raw)
+      .split(/[\u00b7·]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }, [t]);
 
   const videoEmbed = useMemo(
     () => parsePitchDeckVideoUrl(process.env.NEXT_PUBLIC_PITCH_DECK_VIDEO_URL),
@@ -125,6 +252,11 @@ export default function PitchDeckPage() {
     return isStringList(raw) ? raw : [];
   }, [t]);
 
+  const plainLanguageCards = useMemo(() => {
+    const raw = t("pitchDeck.plainLanguageCards", { returnObjects: true });
+    return isTextBlockList(raw) ? raw : [];
+  }, [t]);
+
   const detailSections = useMemo(() => {
     const raw = t("pitchDeck.detailSections", { returnObjects: true });
     return parseDetailSections(raw);
@@ -143,7 +275,7 @@ export default function PitchDeckPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#EBEEEB] [--pitch-accent:#2D5A27]" style={{ ["--pitch-accent" as string]: ACCENT }}>
       <style jsx global>{`
         @media print {
           .pitch-toolbar,
@@ -162,175 +294,175 @@ export default function PitchDeckPage() {
           body {
             background: white !important;
           }
+          .pitch-avoid-split {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
         }
       `}</style>
 
-      {/* Top nav */}
-      <header className="pitch-top-nav fixed top-0 w-full z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md print:hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 sm:h-16">
-            <Link
-              href={loc("/")}
-              className="flex items-center gap-2 rounded-lg hover:opacity-90 transition-opacity shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/30 focus-visible:ring-offset-2"
-            >
-              <Image
-                src="/logo1.png"
-                alt={t("footer.logoAlt")}
-                width={64}
-                height={24}
-                className="h-5 w-auto"
-                priority
-              />
-              <span className="hidden sm:inline text-sm font-semibold text-gray-500 border-l border-gray-200 pl-3 ml-1">
-                {t("footer.pitchDeck")}
-              </span>
+      <header className="pitch-top-nav fixed top-0 w-full z-50 border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md print:hidden">
+        <div className="mx-auto flex h-14 sm:h-[3.65rem] max-w-[1240px] items-center justify-between px-6 sm:px-8 lg:px-10">
+          <Link
+            href={loc("/")}
+            className="flex items-center gap-2 rounded-lg hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/30 focus-visible:ring-offset-2"
+          >
+            <Image src="/logo1.png" alt={t("footer.logoAlt")} width={64} height={24} className="h-6 w-auto" priority />
+            <span className="hidden sm:inline border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">
+              {t("footer.pitchDeck")}
+            </span>
+          </Link>
+          <nav className="flex gap-7 text-[13px] font-medium text-gray-600">
+            <Link href={loc("/")} className="hover:text-[#2D5A27] transition-colors hidden sm:inline">
+              {t("nav.home")}
             </Link>
-            <nav className="flex gap-6 items-center text-sm font-medium text-gray-600">
-              <Link
-                href={loc("/")}
-                className="hover:text-[#2D5A27] transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 hidden sm:inline"
-              >
-                {t("nav.home")}
-              </Link>
-              <Link
-                href={loc("/about")}
-                className="hover:text-[#2D5A27] transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 hidden md:inline"
-              >
-                {t("footer.about")}
-              </Link>
-              <Link
-                href={loc("/contact")}
-                className="text-[#2D5A27] hover:text-[#23471f] transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2"
-              >
-                {t("nav.contact")}
-              </Link>
-            </nav>
-          </div>
+            <Link href={loc("/about")} className="hover:text-[#2D5A27] transition-colors hidden md:inline">
+              {t("footer.about")}
+            </Link>
+            <Link href={loc("/contact")} className="font-semibold text-[#2D5A27] hover:text-[#23471f]">
+              {t("nav.contact")}
+            </Link>
+          </nav>
         </div>
       </header>
 
-      {/* Action bar — Bio Vera primary + neutral secondary */}
       <div
-        className="pitch-toolbar print:hidden sticky top-14 sm:top-16 z-40 border-b border-gray-200 bg-white shadow-sm"
+        className="pitch-toolbar sticky top-14 sm:top-[3.65rem] z-40 border-b border-gray-200/90 bg-[#fafcfa]/96 backdrop-blur print:hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.08)]"
         role="region"
         aria-label={`${t("pitchDeck.toolbarCopyLink")} · ${t("pitchDeck.toolbarPrintPdf")}`}
       >
-        <div className="h-1 bg-[#2D5A27]" aria-hidden />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 justify-between">
-          <p className="text-sm text-gray-600 leading-snug max-w-2xl">{t("pitchDeck.introNote")}</p>
-          <div className="flex flex-wrap gap-2 shrink-0">
+        <div className={`h-[3px] w-full bg-[${ACCENT}]`} aria-hidden />
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-3.5 sm:px-8 lg:px-10">
+          <p className="text-[13px] leading-snug text-gray-600 sm:max-w-[52%]">{t("pitchDeck.introNote")}</p>
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={copyPublicUrl}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 min-h-[48px] hover:border-[#2D5A27] hover:text-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-800 hover:border-[#2D5A27]/50 hover:bg-white"
             >
-              <Link2 className="w-4 h-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              <Link2 className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
               {copied ? t("pitchDeck.toolbarCopied") : t("pitchDeck.toolbarCopyLink")}
             </button>
             <button
               type="button"
               onClick={openPrint}
               aria-label={t("pitchDeck.toolbarPrintAria")}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-4 py-2.5 text-sm font-medium text-white min-h-[48px] hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 transition-colors shadow-sm"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#2D5A27] px-5 py-2 text-[13px] font-semibold text-white hover:bg-[#23471f] shadow-md shadow-[#2D5A27]/25"
             >
-              <Printer className="w-4 h-4 shrink-0" aria-hidden />
+              <Printer className="size-4 shrink-0" aria-hidden />
               {t("pitchDeck.toolbarPrintPdf")}
             </button>
           </div>
         </div>
-        <p className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-2.5 text-xs text-gray-500">{t("pitchDeck.toolbarHint")}</p>
+        <p className="mx-auto max-w-[1240px] px-6 pb-2.5 text-[11px] text-gray-500 sm:px-8 lg:px-10">{t("pitchDeck.toolbarHint")}</p>
       </div>
 
-      <main className="pt-[7.75rem] sm:pt-[8rem] pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8 sm:space-y-10">
-        {/* Hero */}
+      <main className="mx-auto max-w-[1240px] space-y-7 px-5 pb-20 pt-[calc(8.25rem)] sm:space-y-8 sm:pt-[8.85rem] sm:px-6 lg:space-y-9 lg:px-8 lg:pb-28">
+        {/* Cover */}
         <motion.section
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-          className={sectionClass(
-            "pitch-slide bg-gradient-to-br from-white via-white to-[#2D5A27]/[0.07] border-[#2D5A27]/20",
-          )}
+          transition={{ duration: 0.4 }}
+          className={`${slideShell("cover")}`}
+          style={{ borderBottomColor: ACCENT }}
         >
-          <div className="flex flex-col lg:flex-row lg:items-stretch lg:gap-10">
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2D5A27] mb-3">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 lg:items-end">
+            <div className="lg:col-span-8 space-y-5">
+              <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] mb-1" style={{ color: ACCENT }}>
                 {t("pitchDeck.coverEyebrow")}
               </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-semibold text-gray-900 leading-tight tracking-tight mb-4">
+              <h1 className="text-[2rem] sm:text-[2.65rem] lg:text-[clamp(2.5rem,4.2vw,3.35rem)] font-semibold text-gray-900 leading-[1.08] tracking-[-0.03em]">
                 {t("pitchDeck.coverTitle")}
               </h1>
-              <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl">
+              <p className="text-base sm:text-[1.0625rem] text-gray-600 leading-[1.6] max-w-2xl border-l-[4px] pl-5 py-1" style={{ borderColor: ACCENT }}>
                 {t("pitchDeck.coverSubtitle")}
               </p>
-            </div>
-            <div className="mt-8 lg:mt-0 lg:w-[280px] shrink-0 flex flex-col justify-center">
-              <div className="rounded-xl border border-[#2D5A27]/25 bg-[#2D5A27]/[0.06] p-5 text-center lg:text-left">
-                <p className="text-xs font-semibold text-[#2D5A27] uppercase tracking-wide mb-2">{t("brand.name")}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{t("footer.tagline")}</p>
-                <div className="mt-4 h-px bg-[#2D5A27]/20" aria-hidden />
-                <p className="mt-4 text-xs text-gray-500 leading-snug">{t("pitchDeck.heroTechPill")}</p>
+              <div className="pt-6 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-gray-500">
+                <span className="flex items-center gap-1 font-medium text-gray-800">
+                  <ChevronRight className="size-4 text-[#2D5A27]" aria-hidden /> {t("footer.tagline")}
+                </span>
               </div>
             </div>
+            <aside className="lg:col-span-4 lg:pl-6 lg:border-l lg:border-gray-200/90 space-y-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">{t("brand.name")}</p>
+              <div className="flex flex-wrap gap-2">
+                {(chips.length ? chips : [t("pitchDeck.heroTechPill")]).map((c) => (
+                  <span
+                    key={c}
+                    className="rounded-full border border-gray-200/90 bg-[#fafcfa] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-700"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </aside>
           </div>
         </motion.section>
 
-        {/* How it works — expanded */}
+        {/* Story — What / How / Outcomes */}
+        {plainLanguageCards.length > 0 && (
+          <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
+            <SlideKicker className="">{t("pitchDeck.plainLanguageEyebrow")}</SlideKicker>
+            <h2 className="text-[1.5rem] sm:text-[1.85rem] font-semibold text-gray-900 tracking-tight leading-tight max-w-[22ch] mb-6">
+              {t("pitchDeck.plainLanguageTitle")}
+            </h2>
+            <p className="mb-11 max-w-[52ch] text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.plainLanguageIntro")}</p>
+            <div
+              className={`grid gap-10 sm:gap-12 lg:gap-14 ${plainLanguageCards.length >= 3 ? "lg:grid-cols-3" : plainLanguageCards.length === 2 ? "sm:grid-cols-2" : ""}`}
+            >
+              {plainLanguageCards.map((card, index) => {
+                const Icon = PLAIN_LANGUAGE_ICONS[index % PLAIN_LANGUAGE_ICONS.length];
+                const n = String(index + 1).padStart(2, "0");
+                return (
+                  <div key={card.title} className="pitch-avoid-split group relative pl-5 border-l-[2px]" style={{ borderColor: ACCENT }}>
+                    <span className="absolute -left-px top-0 block h-[2px] w-3 bg-white -translate-x-0" aria-hidden />
+                    <p className="mb-4 font-mono text-[11px] font-bold tracking-widest text-gray-400">{n}</p>
+                    <Icon className="mb-4 size-[22px]" style={{ color: ACCENT }} aria-hidden />
+                    <h3 className="mb-3 text-[1.05rem] font-semibold text-gray-900 leading-snug">{card.title}</h3>
+                    <p className="text-[14px] sm:text-[15px] leading-[1.65] text-gray-600">{card.body}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.section>
+        )}
+
+        {/* Operating model */}
         <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className={sectionClass("pitch-slide border-t-4 border-t-[#2D5A27]")}
+          className={slideShell("light")}
         >
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#2D5A27] mb-2">
-            {t("pitchDeck.howItWorksEyebrow")}
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-4">
-            {t("pitchDeck.howItWorksTitle")}
-          </h2>
-          <p className="text-base text-gray-600 leading-relaxed max-w-3xl mb-10 border-l-4 border-[#2D5A27]/35 pl-4 sm:pl-5">
-            {t("pitchDeck.howItWorksLead")}
-          </p>
-          <ol className="space-y-6">
+          <SlideKicker>{t("pitchDeck.howItWorksEyebrow")}</SlideKicker>
+          <div className="mb-12 max-w-[48ch]">
+            <h2 className="text-[1.5rem] sm:text-[1.85rem] font-semibold tracking-tight text-gray-900 leading-tight mb-4">
+              {t("pitchDeck.howItWorksTitle")}
+            </h2>
+            <p className="text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.howItWorksLead")}</p>
+          </div>
+          <div className="relative space-y-0 before:absolute before:left-[15px] before:top-2 before:h-[calc(100%-24px)] before:w-px before:bg-gray-300 sm:before:left-[19px]">
             {howItWorksPhases.map((phase, index) => (
-              <li
-                key={phase.title}
-                className="relative flex gap-4 sm:gap-6 rounded-xl border border-gray-100 bg-gray-50/60 p-4 sm:p-6 hover:border-[#2D5A27]/25 transition-colors"
-              >
-                <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27] text-sm font-bold text-white shadow-sm"
-                  aria-hidden
+              <div key={phase.title} className="relative pb-11 pl-11 sm:pl-14 pitch-avoid-split last:pb-0">
+                <span
+                  className="absolute left-0 top-0.5 flex size-8 sm:size-[2.375rem] items-center justify-center rounded-full border-[3px] border-white bg-gray-900 text-[11px] font-bold tabular-nums text-white shadow-sm sm:text-xs"
+                  style={{ outline: `1px solid ${ACCENT}33`, boxShadow: `0 0 0 6px rgba(245,247,244,1)` }}
                 >
                   {index + 1}
-                </div>
-                <div className="min-w-0 pt-0.5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{phase.title}</h3>
-                  <p className="text-base text-gray-600 leading-relaxed">{phase.body}</p>
-                </div>
-              </li>
+                </span>
+                <h3 className="text-[1.0625rem] font-semibold text-gray-900 mb-2">{phase.title}</h3>
+                <p className="text-[14px] sm:text-[15px] leading-[1.65] text-gray-600 max-w-[62ch]">{phase.body}</p>
+              </div>
             ))}
-          </ol>
+          </div>
         </motion.section>
 
-        {/* Video */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className={`${sectionClass("pitch-no-print")} overflow-hidden`}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
-            <div>
-              <div className="inline-flex items-center gap-2 text-[#2D5A27] mb-2">
-                <Play className="w-5 h-5" aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-wider">{t("pitchDeck.videoTitle")}</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
-                {t("pitchDeck.videoCaption")}
-              </h2>
-            </div>
-          </div>
+        {/* Demo */}
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`${slideShell("light")} pitch-no-print overflow-hidden`}>
+          <SlideKicker>{t("pitchDeck.videoTitle")}</SlideKicker>
+          <h2 className="mb-10 text-[1.35rem] sm:text-[1.65rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.videoCaption")}</h2>
           {videoEmbed ? (
-            <div className="relative aspect-video w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-gray-200 bg-black shadow-md ring-1 ring-black/5">
+            <div className="relative mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-xl bg-black shadow-lg ring-1 ring-black/10">
               <iframe
                 title={t("pitchDeck.videoTitle")}
                 src={videoEmbed.embedUrl}
@@ -341,230 +473,193 @@ export default function PitchDeckPage() {
               />
             </div>
           ) : (
-            <div className="relative aspect-video w-full max-w-4xl mx-auto rounded-xl border-2 border-dashed border-gray-300 bg-gradient-to-b from-gray-50 to-[#2D5A27]/[0.04] flex flex-col items-center justify-center text-center px-6">
-              <div className="rounded-full bg-white p-4 shadow-sm ring-1 ring-gray-200 mb-4">
-                <Play className="w-10 h-10 text-[#2D5A27]" aria-hidden />
-              </div>
-              <p className="text-base font-semibold text-gray-900 mb-2">{t("pitchDeck.videoPlaceholderTitle")}</p>
-              <p className="text-sm text-gray-600 max-w-md leading-relaxed">{t("pitchDeck.videoPlaceholderBody")}</p>
+            <div className="relative mx-auto flex aspect-video w-full max-w-4xl flex-col items-center justify-center rounded-xl bg-gradient-to-br from-neutral-900 to-[#1a3817] px-8 text-center text-white shadow-lg">
+              <Play className="mb-6 size-12 opacity-95" aria-hidden />
+              <p className="mb-3 text-[1.0625rem] font-semibold tracking-tight">{t("pitchDeck.videoPlaceholderTitle")}</p>
+              <p className="max-w-md text-sm leading-relaxed text-white/72">{t("pitchDeck.videoPlaceholderBody")}</p>
             </div>
           )}
         </motion.section>
 
-        {/* Why */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className={sectionClass("pitch-slide")}
-        >
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
-            {t("pitchDeck.whyTitle")}
-          </h2>
-          <p className="text-base text-gray-600 leading-relaxed mb-8 max-w-prose">{t("pitchDeck.whyLead")}</p>
-          <ul className="space-y-4 max-w-3xl">
-            {whyBullets.map((line) => (
-              <li key={line} className="flex gap-3 text-base text-gray-700 leading-relaxed">
-                <span className="mt-2 h-2 w-2 rounded-full bg-[#2D5A27] shrink-0" aria-hidden />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
+        {/* Problem → Solution / chain */}
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
+          <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <h2 className="mb-3 text-[1.5rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.whyTitle")}</h2>
+              <p className="mb-9 text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.whyLead")}</p>
+              <ul className="space-y-5">
+                {whyBullets.map((line) => (
+                  <li key={line} className="flex gap-3 text-[14px] sm:text-[15px] leading-[1.62] text-gray-700 pitch-avoid-split">
+                    <span className="mt-2 size-1 shrink-0 rounded-full bg-[#2D5A27]" aria-hidden />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={`lg:border-l lg:pl-14 lg:border-gray-300/70`}>
+              <h2 className="mb-3 text-[1.5rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.solutionTitle")}</h2>
+              <p className="mb-10 text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.solutionLead")}</p>
+              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: ACCENT }}>
+                {t("pitchDeck.chainTitle")}
+              </p>
+              <ol className="space-y-6">
+                {chainSteps.map((step, i) => (
+                  <li key={step} className="flex gap-4 pitch-avoid-split">
+                    <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-[#2D5A27] text-xs font-bold tabular-nums text-white">{i + 1}</span>
+                    <span className="text-[14px] sm:text-[15px] font-semibold leading-[1.55] text-gray-800 pt-0.5">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
         </motion.section>
 
-        {/* Solution + chain — numbered rail */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className={sectionClass("pitch-slide")}
-        >
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
-            {t("pitchDeck.solutionTitle")}
-          </h2>
-          <p className="text-base text-gray-600 leading-relaxed mb-10 max-w-3xl">{t("pitchDeck.solutionLead")}</p>
-          <h3 className="text-sm font-semibold text-[#2D5A27] uppercase tracking-wide mb-6">{t("pitchDeck.chainTitle")}</h3>
-          <ol className="relative space-y-0 max-w-3xl border-l-2 border-[#2D5A27]/25 pl-8 ml-3">
-            {chainSteps.map((step, i) => (
-              <li key={step} className="relative pb-8 last:pb-0">
-                <span className="absolute -left-[1.8125rem] top-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#2D5A27] text-xs font-bold text-white shadow-sm ring-2 ring-[#2D5A27]/20">
-                  {i + 1}
-                </span>
-                <p className="text-base text-gray-800 font-medium leading-relaxed pt-0.5 pr-8">{step}</p>
-              </li>
-            ))}
-          </ol>
-        </motion.section>
-
-        {/* Advantages */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className={sectionClass("pitch-slide")}
-        >
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-8">
-            {t("pitchDeck.advantagesTitle")}
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-5 lg:gap-6">
+        {/* Value */}
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`${slideShell("split")}`}>
+          <div className="mb-14 max-w-[40ch]">
+            <SlideKicker>{t("pitchDeck.advantagesTitle")}</SlideKicker>
+            <div className="h-px w-12 bg-[#2D5A27] mb-5" aria-hidden />
+            <h2 className="text-[1.5rem] sm:text-[1.75rem] font-semibold tracking-tight text-gray-900 leading-snug">{t("pitchDeck.advantagesTitle")}</h2>
+          </div>
+          <div className="grid gap-x-14 gap-y-12 sm:grid-cols-2">
             {advantages.map((item, index) => {
               const Icon = ADV_ICONS[index % ADV_ICONS.length];
               return (
-                <div
-                  key={item.title}
-                  className="group rounded-xl border border-gray-200 bg-gray-50/40 p-5 sm:p-6 transition-all hover:border-[#2D5A27]/40 hover:bg-white hover:shadow-md ring-1 ring-transparent hover:ring-[#2D5A27]/10"
-                >
-                  <Icon className="w-7 h-7 text-[#2D5A27] mb-3" aria-hidden />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{item.body}</p>
+                <div key={item.title} className="pitch-avoid-split group">
+                  <Icon className="mb-5 size-[22px]" style={{ color: ACCENT }} aria-hidden />
+                  <h3 className="mb-3 text-[1.05rem] font-semibold tracking-tight text-gray-900">{item.title}</h3>
+                  <p className="text-[14px] sm:text-[15px] leading-[1.62] text-gray-600">{item.body}</p>
                 </div>
               );
             })}
           </div>
         </motion.section>
 
-        {/* Tech */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className={sectionClass("pitch-slide")}
-        >
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-2">
-            {t("pitchDeck.techTitle")}
-          </h2>
-          <p className="text-base text-gray-600 mb-8 max-w-3xl leading-relaxed">{t("pitchDeck.techLead")}</p>
-          <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
+        {/* Proof row: tech */}
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("light")}>
+          <h2 className="mb-2 text-[1.5rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.techTitle")}</h2>
+          <p className="mb-12 max-w-[52ch] text-[15px] text-gray-600 leading-relaxed">{t("pitchDeck.techLead")}</p>
+          <div className="divide-y divide-gray-200 border-y border-gray-200">
             {techItems.map((item, index) => {
               const Icon = TECH_ICONS[index % TECH_ICONS.length];
               return (
-                <div
-                  key={item.title}
-                  className="rounded-xl border border-gray-200 bg-white p-5 sm:p-6 border-l-[3px] border-l-[#2D5A27] shadow-sm"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2D5A27]/10">
-                      <Icon className="w-5 h-5 text-[#2D5A27]" aria-hidden />
+                <div key={item.title} className="grid gap-6 py-7 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-12 sm:items-start">
+                  <div className="flex items-center gap-2 sm:flex-col sm:items-start">
+                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/08`}>
+                      <Icon className="size-[18px] text-[#2D5A27]" aria-hidden />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                    <span className="text-[13px] font-semibold uppercase tracking-[0.05em] text-gray-900 sm:mt-2">{item.title}</span>
                   </div>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{item.body}</p>
+                  <p className="text-[14px] sm:text-[15px] leading-[1.62] text-gray-600">{item.body}</p>
                 </div>
               );
             })}
           </div>
         </motion.section>
 
-        {/* Transparency */}
-        <motion.section initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={sectionClass("pitch-slide")}>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-6">
-            {t("pitchDeck.transparencyTitle")}
-          </h2>
-          <ul className="space-y-5 max-w-3xl">
-            {transparencyBullets.map((line) => (
-              <li key={line} className="flex gap-4 text-base text-gray-700 leading-relaxed rounded-lg border border-gray-100 bg-gray-50/50 p-4 sm:p-5">
-                <QrCode className="w-6 h-6 text-[#2D5A27] shrink-0 mt-0.5" aria-hidden />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.section>
-
-        {/* Finance */}
-        <motion.section initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={sectionClass("pitch-slide")}>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
-            {t("pitchDeck.financeTitle")}
-          </h2>
-          <p className="text-base text-gray-600 leading-relaxed mb-6 max-w-3xl">{t("pitchDeck.financeLead")}</p>
-          <ul className="space-y-4 max-w-3xl">
-            {financeBullets.map((line) => (
-              <li key={line} className="flex gap-3 text-base text-gray-700 leading-relaxed">
-                <Wallet className="w-5 h-5 text-[#2D5A27] shrink-0 mt-1" aria-hidden />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
+        {/* Buyer + Economics */}
+        <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("wash")}>
+          <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
+            <div>
+              <div className="mb-10 flex items-center gap-3">
+                <QrCode className="size-[26px]" style={{ color: ACCENT }} aria-hidden />
+                <h2 className="text-[1.35rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.transparencyTitle")}</h2>
+              </div>
+              <ul className="space-y-6">
+                {transparencyBullets.map((line) => (
+                  <li key={line} className="pitch-avoid-split border-l-[3px] pl-5 text-[14px] sm:text-[15px] leading-relaxed text-gray-700 border-[#2D5A27]/55">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <div className="mb-10 flex items-center gap-3">
+                <Wallet className="size-[26px]" style={{ color: ACCENT }} aria-hidden />
+                <h2 className="text-[1.35rem] font-semibold tracking-tight text-gray-900">{t("pitchDeck.financeTitle")}</h2>
+              </div>
+              <p className="mb-8 max-w-[50ch] text-[15px] leading-relaxed text-gray-600">{t("pitchDeck.financeLead")}</p>
+              <ul className="space-y-6">
+                {financeBullets.map((line) => (
+                  <li key={line} className="flex gap-4 text-[14px] sm:text-[15px] leading-[1.62] text-gray-700 pitch-avoid-split">
+                    <span className="mt-2 inline-block size-1.5 shrink-0 rounded-sm bg-[#2D5A27]" aria-hidden />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </motion.section>
 
         {detailSections.length > 0 && (
           <>
             <motion.section
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className={sectionClass("pitch-slide border-t-4 border-t-[#2D5A27]")}
+              className={`${slideShell("appendix-intro")} pitch-appendix`}
               aria-labelledby="pitch-detail-spec-heading"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#2D5A27] mb-2">{t("pitchDeck.detailSpecEyebrow")}</p>
-              <h2 id="pitch-detail-spec-heading" className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-4">
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.35em] text-white/55">{t("pitchDeck.detailSpecEyebrow")}</p>
+              <h2 id="pitch-detail-spec-heading" className="text-[clamp(1.35rem,2.5vw,1.85rem)] font-semibold tracking-tight text-white">
                 {t("pitchDeck.detailSpecTitle")}
               </h2>
-              <p className="text-base text-gray-600 leading-relaxed max-w-3xl">{t("pitchDeck.detailSpecLead")}</p>
+              <p className="mt-6 max-w-[58ch] text-[14px] sm:text-[15px] leading-[1.62] text-white/76">{t("pitchDeck.detailSpecLead")}</p>
             </motion.section>
 
             {detailSections.map((block) => (
-              <motion.section
-                key={block.title}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                className={sectionClass("pitch-slide")}
-              >
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight border-b border-gray-100 pb-3 mb-6">
-                  {block.title}
-                </h3>
-                <div className="space-y-5">
+              <motion.section key={block.title} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={slideShell("light")}>
+                <div className="mb-10 flex flex-col gap-4 border-b border-gray-200 pb-8 sm:flex-row sm:items-end sm:justify-between">
+                  <h3 className="text-[clamp(1.15rem,2vw,1.35rem)] font-semibold tracking-tight text-gray-900">{block.title}</h3>
+                  <span className="text-[11px] font-medium uppercase tracking-widest text-gray-400">{t("pitchDeck.appendixWatermark")}</span>
+                </div>
+                <dl className="space-y-10">
                   {block.items.map((item) => (
-                    <div
-                      key={`${block.title}-${item.heading}`}
-                      className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 sm:p-5 print:break-inside-avoid"
-                    >
-                      <p className="text-sm font-semibold text-[#2D5A27] uppercase tracking-wide mb-2">{item.heading}</p>
-                      <p className="text-base text-gray-700 leading-relaxed">{item.body}</p>
+                    <div key={`${block.title}-${item.heading}`} className="pitch-avoid-split max-w-[68ch]">
+                      <dt className="mb-2 text-[12px] font-bold uppercase tracking-[0.06em]" style={{ color: ACCENT }}>
+                        {item.heading}
+                      </dt>
+                      <dd className="text-[13px] sm:text-[14px] leading-[1.65] text-gray-650 text-gray-600">{item.body}</dd>
                     </div>
                   ))}
-                </div>
+                </dl>
               </motion.section>
             ))}
           </>
         )}
 
-        {/* Closing CTA */}
         <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="pitch-slide rounded-xl border border-[#2D5A27]/30 bg-[#2D5A27] text-white p-8 sm:p-10 shadow-lg ring-1 ring-[#23471f]/40 print:bg-white print:text-gray-900 print:border-gray-300 print:ring-0"
+          className={`pitch-slide mx-auto max-w-[1200px] rounded-none sm:rounded-2xl px-8 py-12 text-white shadow-[0_24px_50px_-20px_rgba(45,90,39,0.45)]`}
+          style={{ backgroundColor: ACCENT }}
         >
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-3">{t("pitchDeck.ctaClosingTitle")}</h2>
-          <p className="text-base text-white/90 print:text-gray-600 mb-8 max-w-2xl leading-relaxed">
-            {t("pitchDeck.ctaClosingBody")}
-          </p>
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-            <Link
-              href={loc("/contact")}
-              className="inline-flex justify-center items-center min-h-[48px] px-5 rounded-lg bg-white text-[#23471f] text-sm font-semibold hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#2D5A27] print:ring-[#2D5A27] print:ring-offset-white"
-            >
-              {t("pitchDeck.ctaContact")}
-            </Link>
-            <Link
-              href={loc("/growers")}
-              className="inline-flex justify-center items-center min-h-[48px] px-5 rounded-lg border border-white/60 text-white hover:bg-white/10 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 print:border-gray-400 print:text-gray-900"
-            >
-              {t("pitchDeck.ctaGrowers")}
-            </Link>
-            <Link
-              href={loc("/for-buyers")}
-              className="inline-flex justify-center items-center min-h-[48px] px-5 rounded-lg border border-white/60 text-white hover:bg-white/10 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 print:border-gray-400 print:text-gray-900"
-            >
-              {t("pitchDeck.ctaBuyers")}
-            </Link>
-            <Link
-              href={loc("/investors")}
-              className="inline-flex justify-center items-center min-h-[48px] px-5 rounded-lg border border-white/60 text-white hover:bg-white/10 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 print:border-gray-400 print:text-gray-900"
-            >
-              {t("pitchDeck.ctaInvestors")}
-            </Link>
+          <div className="mx-auto max-w-[56ch]">
+            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/65">{t("pitchDeck.coverEyebrow")}</p>
+            <h2 className="mb-6 text-[1.65rem] sm:text-[1.95rem] font-semibold tracking-tight leading-tight">{t("pitchDeck.ctaClosingTitle")}</h2>
+            <p className="mb-10 text-[15px] leading-relaxed text-white/[0.92]">{t("pitchDeck.ctaClosingBody")}</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href={loc("/contact")}
+                className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-white px-6 py-3 text-[14px] font-semibold hover:bg-neutral-50"
+                style={{ color: ACCENT_HOVER }}
+              >
+                {t("pitchDeck.ctaContact")}
+              </Link>
+              <Link
+                href={loc("/growers")}
+                className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-white/65 px-6 py-3 text-[14px] font-semibold hover:bg-white/10"
+              >
+                {t("pitchDeck.ctaGrowers")}
+              </Link>
+              <Link href={loc("/for-buyers")} className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-white/65 px-6 py-3 text-[14px] font-semibold hover:bg-white/10">
+                {t("pitchDeck.ctaBuyers")}
+              </Link>
+              <Link href={loc("/investors")} className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-white/65 px-6 py-3 text-[14px] font-semibold hover:bg-white/10">
+                {t("pitchDeck.ctaInvestors")}
+              </Link>
+            </div>
           </div>
         </motion.section>
       </main>
