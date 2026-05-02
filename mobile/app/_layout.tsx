@@ -1,3 +1,4 @@
+import { LogBox } from 'react-native';
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,6 +8,9 @@ import '../i18n/config';
 import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
 import { theme } from '../lib/theme';
+
+// RN 0.81+ deprecates built-in SafeAreaView; some deps still trigger this until they migrate.
+LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 
 /**
  * Expo Router’s Stack `screenOptions` types only allow a subset of header styles

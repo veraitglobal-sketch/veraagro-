@@ -248,7 +248,7 @@ export class SyncService {
    */
   async getLateEntries(userId?: string): Promise<any[]> {
     try {
-      return await (this.prisma as any).compliance_logs.findMany({
+      return await this.prisma.compliance_logs.findMany({
         where: {
           complianceStatus: 'PENDING',
           blockedReason: {
@@ -257,14 +257,14 @@ export class SyncService {
           ...(userId && { farmerId: userId }),
         },
         include: {
-          farmer: {
+          users: {
             select: {
               id: true,
               firstName: true,
               lastName: true,
             },
           },
-          estate: {
+          estates: {
             select: {
               id: true,
               name: true,

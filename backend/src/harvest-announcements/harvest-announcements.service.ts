@@ -9,25 +9,7 @@ import {
   computePlantingProgress,
   getPlantingProgressIntervalDays,
 } from './planting-progress.util';
-
-export interface CreateHarvestAnnouncementDto {
-  parcelId: string;
-  announcementType: 'HARVEST' | 'PLANTING';
-  cropType: string;
-  /** Planned harvest (picker) */
-  estimatedDate: string; // ISO date or datetime
-  estimatedQuantity?: number; // kg expected
-  /** Planned loading window (optional) */
-  plannedLoadingStart?: string; // ISO
-  plannedLoadingEnd?: string; // ISO
-  /** Load quantity (kg) — defaults to estimated quantity in UI if omitted */
-  loadQuantityKg?: number;
-  /** INDUSTRIAL | RETAIL | MIXED */
-  marketChannel?: string;
-  qualityGrade?: string;
-  sortingSpec?: string;
-  notes?: string;
-}
+import { CreateHarvestAnnouncementDto } from './dto/create-harvest-announcement.dto';
 
 export interface AdminUpdateHarvestAnnouncementDto {
   status?: string;
@@ -55,6 +37,115 @@ export class HarvestAnnouncementsService {
     phone: true,
     roles: true,
   } as const;
+
+  /** JSON-safe primitives for POST /harvest-announcements body (avoid Express 500 on odd Prisma driver values). */
+  private static jsonIso(d: unknown): string | null {
+    if (d instanceof Date && Number.isFinite(d.getTime())) return d.toISOString();
+    return null;
+  }
+
+  private static jsonNum(n: unknown): number | null {
+    if (n == null) return null;
+    const x = Number(n);
+    return Number.isFinite(x) ? x : null;
+  }
+
+  private buildSafeHarvestCreateResponse(announcement: {
+    id: string;
+    parcelId: string;
+    userId: string;
+    announcementType: string;
+    cropType: string;
+    estimatedDate: Date;
+    estimatedQuantity: unknown;
+    plannedLoadingStart: Date | null;
+    plannedLoadingEnd: Date | null;
+    loadQuantityKg: unknown;
+    marketChannel: string | null;
+    qualityGrade: string | null;
+    sortingSpec: string | null;
+    notes: string | null;
+    status: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string | null;
+      phone: string | null;
+      roles: unknown;
+    } | null;
+    parcel: {
+      id: string;
+      cropType: string | null;
+      estateId: string;
+      approvedAt: Date | null;
+      estates: {
+        id: string;
+        name: string;
+        status: unknown;
+        ownerId: string;
+      } | null;
+    } | null;
+  }): Record<string, unknown> {
+    const safeUser = announcement.user
+      ? {
+          id: announcement.user.id,
+          firstName: announcement.user.firstName,
+          lastName: announcement.user.lastName,
+          email: announcement.user.email ?? null,
+          phone: announcement.user.phone ?? null,
+          roles: Array.isArray(announcement.user.roles)
+            ? announcement.user.roles.map((r) => String(r))
+            : [],
+        }
+      : null;
+    const pe = announcement.parcel?.estates;
+    const safeParcelEstate = pe
+      ? {
+          id: pe.id,
+          name: pe.name,
+          status: String(pe.status),
+          ownerId: pe.ownerId,
+        }
+      : undefined;
+
+    const estIso = HarvestAnnouncementsService.jsonIso(announcement.estimatedDate);
+
+    return {
+      id: announcement.id,
+      parcelId: announcement.parcelId,
+      userId: announcement.userId,
+      announcementType: announcement.announcementType,
+      cropType: announcement.cropType,
+      estimatedDate: estIso ?? new Date(0).toISOString(),
+      estimatedQuantity: HarvestAnnouncementsService.jsonNum(announcement.estimatedQuantity),
+      plannedLoadingStart: HarvestAnnouncementsService.jsonIso(announcement.plannedLoadingStart),
+      plannedLoadingEnd: HarvestAnnouncementsService.jsonIso(announcement.plannedLoadingEnd),
+      loadQuantityKg: HarvestAnnouncementsService.jsonNum(announcement.loadQuantityKg),
+      marketChannel: announcement.marketChannel,
+      qualityGrade: announcement.qualityGrade,
+      sortingSpec: announcement.sortingSpec,
+      notes: announcement.notes,
+      status: announcement.status,
+      createdAt:
+        HarvestAnnouncementsService.jsonIso(announcement.createdAt) ?? new Date(0).toISOString(),
+      updatedAt:
+        HarvestAnnouncementsService.jsonIso(announcement.updatedAt) ?? new Date(0).toISOString(),
+      mission: null as null,
+      parcel: announcement.parcel
+        ? {
+            id: announcement.parcel.id,
+            cropType: announcement.parcel.cropType,
+            estateId: announcement.parcel.estateId,
+            approvedAt: HarvestAnnouncementsService.jsonIso(announcement.parcel.approvedAt),
+            estates: safeParcelEstate,
+          }
+        : null,
+      user: safeUser,
+    };
+  }
 
   constructor(
     private prisma: PrismaService,
@@ -229,7 +320,9 @@ export class HarvestAnnouncementsService {
           'Could not save this plan: parcel was removed or your session does not match the farm. Open My fields, refresh, and try again.',
         );
         }
-        this.logger.error(`harvest_announcements.create Prisma ${e.code}: ${e.message}`);
+        this.logger.error(
+          `harvest_announcements.create Prisma ${e.code}: ${e.message} meta=${JSON.stringify(e.meta ?? {})}`,
+        );
         throw new BadRequestException(
           'Could not save this plan. Please refresh the page and try again. If it keeps happening, contact support.',
         );
@@ -263,37 +356,24 @@ export class HarvestAnnouncementsService {
       }
     }
 
-    // Plain JSON-safe payload (avoids rare Nest/Date serialization 500s on some hosts)
-    return {
-      id: announcement.id,
-      parcelId: announcement.parcelId,
-      userId: announcement.userId,
-      announcementType: announcement.announcementType,
-      cropType: announcement.cropType,
-      estimatedDate: announcement.estimatedDate.toISOString(),
-      estimatedQuantity: announcement.estimatedQuantity,
-      plannedLoadingStart: announcement.plannedLoadingStart?.toISOString() ?? null,
-      plannedLoadingEnd: announcement.plannedLoadingEnd?.toISOString() ?? null,
-      loadQuantityKg: announcement.loadQuantityKg,
-      marketChannel: announcement.marketChannel,
-      qualityGrade: announcement.qualityGrade,
-      sortingSpec: announcement.sortingSpec,
-      notes: announcement.notes,
-      status: announcement.status,
-      createdAt: announcement.createdAt.toISOString(),
-      updatedAt: announcement.updatedAt.toISOString(),
-      mission: null as null,
-      parcel: announcement.parcel
-        ? {
-            id: announcement.parcel.id,
-            cropType: announcement.parcel.cropType,
-            estateId: announcement.parcel.estateId,
-            approvedAt: announcement.parcel.approvedAt?.toISOString() ?? null,
-            estates: announcement.parcel.estates ?? undefined,
-          }
-        : null,
-      user: announcement.user,
-    };
+    try {
+      return this.buildSafeHarvestCreateResponse(announcement);
+    } catch (serializeErr) {
+      this.logger.error(
+        `harvest create: response serialization failed for ${announcement.id}: ${
+          serializeErr instanceof Error ? serializeErr.message : String(serializeErr)
+        }`,
+        serializeErr instanceof Error ? serializeErr.stack : undefined,
+      );
+      return {
+        id: announcement.id,
+        parcelId: announcement.parcelId,
+        userId: announcement.userId,
+        announcementType: announcement.announcementType,
+        status: announcement.status,
+        mission: null as null,
+      };
+    }
   }
 
   /**

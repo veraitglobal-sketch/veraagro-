@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -40,6 +42,23 @@ export interface PriceAlert {
   message: string;
 }
 
+/** DB row shape when optional Prisma model `priceAlert` exists (not in all deployments). */
+type PriceAlertRowInput = {
+  cropType: string;
+  retailer: string;
+  location: string;
+  previousPrice: number;
+  currentPrice: number;
+  priceChange: number;
+  priceChangePercentage: number;
+  alertType: string;
+  message: string;
+};
+
+type OptionalPriceAlertDelegate = {
+  create: (args: { data: PriceAlertRowInput }) => Promise<unknown>;
+};
+
 @Injectable()
 export class MarketScraperService {
   private readonly logger = new Logger(MarketScraperService.name);
@@ -63,6 +82,12 @@ export class MarketScraperService {
     private httpService: HttpService,
     private notificationsService: NotificationsService,
   ) {}
+
+  /** Best-effort: `price_alerts` / `priceAlert` may be absent from generated client. */
+  private optionalPriceAlertDelegate(): OptionalPriceAlertDelegate | undefined {
+    return (this.prisma as unknown as { priceAlert?: OptionalPriceAlertDelegate })
+      .priceAlert;
+  }
 
   /**
    * SCHEDULED: Run every morning at 6:00 AM
@@ -188,8 +213,9 @@ export class MarketScraperService {
     // Check if model exists (try-catch for graceful degradation)
     try {
       for (const price of prices) {
-        await (this.prisma as any).scrapedPrice.create({
+        await this.prisma.scraped_prices.create({
           data: {
+            id: randomUUID(),
             retailer: price.retailer,
             product: price.product,
             cropType: this.getCropTypeFromProduct(price.product),
@@ -210,7 +236,7 @@ export class MarketScraperService {
           ? String((error as { code: unknown }).code)
           : '';
       if (prismaCode === 'P2001' || msg.includes('model') || msg.includes('does not exist')) {
-        this.logger.warn('ScrapedPrice model not found. Add it to schema.prisma and run migration.');
+        this.logger.warn('scraped_prices table/model not available. Add migration if needed.');
         throw error;
       }
       throw error;
@@ -226,7 +252,7 @@ export class MarketScraperService {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
 
-      const previousPrice = await (this.prisma as any).scrapedPrice.findFirst({
+      const previousPrice = await this.prisma.scraped_prices.findFirst({
         where: {
           retailer: newPrice.retailer,
           product: newPrice.product,
@@ -269,32 +295,36 @@ export class MarketScraperService {
    * Create price alert
    */
   private async createPriceAlert(alert: PriceAlert): Promise<PriceAlert> {
-    // Store alert in database (if model exists)
-    try {
-      await (this.prisma as any).priceAlert.create({
-        data: {
-          cropType: alert.cropType,
-          retailer: alert.retailer,
-          location: alert.location,
-          previousPrice: alert.previousPrice,
-          currentPrice: alert.currentPrice,
-          priceChange: alert.priceChange,
-          priceChangePercentage: alert.priceChangePercentage,
-          alertType: alert.alertType,
-          message: alert.message,
-        },
-      });
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
-      const prismaCode =
-        error && typeof error === 'object' && 'code' in error
-          ? String((error as { code: unknown }).code)
-          : '';
-      if (prismaCode === 'P2001' || msg.includes('model')) {
-        this.logger.warn('PriceAlert model not found. Alert sent but not persisted.');
-      } else {
-        throw error;
+    const delegate = this.optionalPriceAlertDelegate();
+    if (delegate) {
+      try {
+        await delegate.create({
+          data: {
+            cropType: alert.cropType,
+            retailer: alert.retailer,
+            location: alert.location,
+            previousPrice: alert.previousPrice,
+            currentPrice: alert.currentPrice,
+            priceChange: alert.priceChange,
+            priceChangePercentage: alert.priceChangePercentage,
+            alertType: alert.alertType,
+            message: alert.message,
+          },
+        });
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : String(error);
+        const prismaCode =
+          error && typeof error === 'object' && 'code' in error
+            ? String((error as { code: unknown }).code)
+            : '';
+        if (prismaCode === 'P2001' || msg.includes('model')) {
+          this.logger.warn('PriceAlert model not found. Alert sent but not persisted.');
+        } else {
+          throw error;
+        }
       }
+    } else {
+      this.logger.warn('PriceAlert delegate not on Prisma client; alert not persisted to DB.');
     }
 
     return alert;
@@ -355,7 +385,7 @@ export class MarketScraperService {
     fuelCost?: number
   ): Promise<MarginCalculation> {
     // Get latest scraped price
-    const latestPrice = await (this.prisma as any).scrapedPrice.findFirst({
+    const latestPrice = await this.prisma.scraped_prices.findFirst({
       where: {
         cropType,
         location,
@@ -419,7 +449,7 @@ export class MarketScraperService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    const prices = await (this.prisma as any).scrapedPrice.findMany({
+    const prices = await this.prisma.scraped_prices.findMany({
       where: {
         cropType,
         location,
@@ -464,7 +494,7 @@ export class MarketScraperService {
    * Get latest prices for a crop type and location
    */
   async getLatestPrices(cropType?: string, location?: string): Promise<ScrapedPrice[]> {
-    const where: any = {};
+    const where: Prisma.scraped_pricesWhereInput = {};
     if (cropType) {
       where.cropType = cropType;
     }
@@ -472,7 +502,7 @@ export class MarketScraperService {
       where.location = location;
     }
 
-    const prices = await (this.prisma as any).scrapedPrice.findMany({
+    const prices = await this.prisma.scraped_prices.findMany({
       where,
       orderBy: {
         scrapedAt: 'desc',

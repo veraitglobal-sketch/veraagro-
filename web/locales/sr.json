@@ -1108,6 +1108,10 @@
       "noReadyBatches": "(Nema spremnih serija)",
       "selectBatchPlaceholder": "-- Izaberite seriju --",
       "needPackedOrVerified": "Potrebne su serije u statusu PACKED ili QUALITY_VERIFIED da biste zatražili transport.",
+      "emptyBatchNextSteps": "Tipični sledeći koraci:",
+      "emptyBatchLinkBatches": "Moje partije (pakovanje)",
+      "emptyBatchLinkQuality": "Kvalitet za seriju",
+      "emptyBatchLinkCompliance": "Fotografije usklađenosti",
       "complianceChecking": "Provera usklađenosti za ovu seriju…",
       "complianceOk": "Usklađenost i rolna etiketa su evidentirani za ovu seriju",
       "complianceIncomplete": "Usklađenost nije kompletna za ovu seriju",
@@ -1722,6 +1726,34 @@
     "analytics": "Analitika i izveštaji",
     "veraStandard": "Bio Vera standard"
   },
+  "buyerPortalOrders": {
+    "emptyTitle": "Nema porudžbina",
+    "emptyHintFiltered": "Pokušajte da promenite filtere.",
+    "emptyHintShop": "Poručite preko Vera Trade ili otvorite prodavnicu proizvoda.",
+    "emptyCtaTrade": "Otvori Vera Trade",
+    "emptyCtaShop": "Prodavnica",
+    "emptyCtaDashboard": "Kontrolna tabla"
+  },
+  "buyerPortalHistory": {
+    "emptyTitle": "Nema istorije porudžbina",
+    "emptyHintAll": "Još nema završenih ili otkazanih porudžbina.",
+    "emptyHintFilter": "Nijedna porudžbina ne odgovara izabranom filteru.",
+    "emptyCtaOrders": "Aktivne porudžbine",
+    "emptyCtaTrade": "Otvori Vera Trade"
+  },
+  "buyerPortalDeliveries": {
+    "emptyTitle": "Nema isporuka",
+    "emptyHintSearch": "Pokušajte drugačiju pretragu.",
+    "emptyHintNone": "Isporuke se pojavljuju posle porudžbine i dodele logistike.",
+    "emptyCtaOrders": "Moje porudžbine",
+    "emptyCtaTrade": "Otvori Vera Trade"
+  },
+  "buyerPortalSuppliers": {
+    "emptyTitle": "Nema Vera partnera",
+    "emptyHintSearch": "Pokušajte drugačiju pretragu.",
+    "emptyHintNone": "Partneri se pojavljuju kad su aktivni u mreži.",
+    "emptyCtaTrade": "Pregled Vera Trade"
+  },
   "buyerPortalVeraStandard": {
     "title": "Bio Vera standard",
     "description": "Naš standard garantuje neosporni digitalni dokaz za svaki proizvod.",
@@ -1860,7 +1892,17 @@
     "missionBadgeLoading": "Na farmi / utovar",
     "missionBadgePickedUp": "Napustio farmu",
     "missionBadgeInTransit": "U tranzitu",
-    "missionBadgeDone": "Isporučeno"
+    "missionBadgeDone": "Isporučeno",
+    "missionsPageActiveTitle": "Aktivne misije",
+    "missionsPageActiveLoading": "Učitavanje…",
+    "missionsPageActiveEmpty": "Trenutno nema aktivnih misija.",
+    "missionsPageActiveEmptyCtaPool": "Preuzmite vožnju ispod (dostupne)",
+    "missionsPageActiveEmptyCtaVehicles": "Flota: vozila",
+    "missionsPageAvailableTitle": "Dostupne misije",
+    "missionsPageAvailableEmpty": "Trenutno nema dostupnih misija.",
+    "missionsPageAvailableEmptyHint": "Kada proizvođač zatraži prevoz ili operativa otvori vožnju, pojaviće se ovde. Registrujte hladnjačska vozila.",
+    "missionsPageAvailableEmptyCtaVehicles": "Upravljaj vozilima",
+    "missionsPageLoadError": "Učitavanje misija nije uspelo"
   },
   "growerPages": {
     "partnerStore": "Prodavnica partnera",
@@ -2102,6 +2144,7 @@
     "locationsHint": "Prodavnica partnera — katalog i direktna porudžbina. Maloprodaja — preuzimanje u centru.",
     "emptyDirectoryTitle": "Još nema lokacija u javnom imeniku",
     "emptyDirectoryBody": "Zamolite admina Bio Vera da odobri partnere ili doda maloprodajne podatke. Kada se unosi pojave, videće se po zemlji.",
+    "emptyDirectoryContact": "Kontakt podrška",
     "retry": "Pokušaj ponovo",
     "directoryLoadError": "Imenik nije učitan. Proverite da API radi i da je NEXT_PUBLIC_API_URL podešen na sajtu.",
     "loadFailed": "Učitavanje nije uspelo",
@@ -2133,6 +2176,7 @@
     "partner": "Partner",
     "inboxBack": "Nazad na dobavljače i porudžbine",
     "inboxEmpty": "Još nema konverzacija — otvorite prodavnicu partnera i koristite poruke (ili vezu uz porudžbinu).",
+    "inboxEmptyCta": "Otvori dobavljače i porudžbine",
     "inboxOpenChat": "Otvori ćaskanje",
     "sf1t": "1. Partner i B2B porudžbina",
     "sf1": "Na stranici <0>Dobavljači i porudžbine</0> filtrirajte po mestu, otvorite <1>prodavnicu partnera</1> i pošaljite <2>direktnu porudžbinu</2>. Dobavljač menja status (npr. NA ČEKANJU → POTVRĐENO → ISPUNJENO), a vi možete koristiti <3>Konverzaciju</3> za poruke.",
@@ -2171,6 +2215,7 @@
     "plantingsSectionPlanting": "Planovi sadnje",
     "plantingsSectionHarvest": "Planovi berbe",
     "plantingsEmpty": "Još nema planova. Unesite plan ispod ili u mobilnoj aplikaciji Bio Vera proizvođač.",
+    "plantingsEmptyGoToForm": "Idi na formu za unos iznad",
     "plantingsFormTitle": "Prijava plana sadnje",
     "plantingsFormParcel": "Parcela (samo odobrene)",
     "plantingsFormCrop": "Usev / sorta",
@@ -2271,6 +2316,8 @@
     "fieldDiarySelectParcel": "Filtar po parceli (opciono)",
     "fieldDiaryAllParcels": "Sve parcele na ovom polju",
     "fieldDiaryNoLogs": "Nema unosa za ovaj izbor.",
+    "fieldDiaryEmptyCtaCapture": "Unos na parceli (PWA / mobilni)",
+    "fieldDiaryEmptyCtaPlans": "Planovi useva",
     "fieldDiaryColWhen": "Vreme unosa",
     "fieldDiaryColParcel": "Parcela",
     "fieldDiaryColPlan": "Plan useva",
@@ -2388,6 +2435,7 @@
       "placeholderReply": "Odgovor…",
       "send": "Pošalji",
       "empty": "Još nema poruka.",
+      "emptyCta": "Pogledaj dolazne porudžbine",
       "errThreads": "Ne mogu da se učitaju razgovori",
       "errOpen": "Ne mogu da se učitaju poruke",
       "errSend": "Slanje nije uspelo"
@@ -2406,7 +2454,17 @@
       "statusLabel": "Status",
       "itemFallback": "Stavka",
       "errLoad": "Učitavanje nije uspelo",
-      "errUpdate": "Ažuriranje nije uspelo"
+      "errUpdate": "Ažuriranje nije uspelo",
+      "emptyTitle": "Još nema dolaznih porudžbina",
+      "emptyBody": "Proizvođači šalju B2B zahteve sa vaše javne prodavnice kada imate redove u katalogu i aktivan tok partnerstva.",
+      "emptyCtaCatalog": "Upravljaj katalogom",
+      "emptyCtaMessages": "Otvori poruke"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Trenutni redovi",
+      "loading": "Učitavanje…",
+      "emptyList": "Još nema redova u katalogu. Dodajte prvi proizvod u formi iznad — proizvođači vide ovo na javnoj prodavnici.",
+      "emptyListCta": "Idi na formu za proizvod"
     },
     "orderStatusB2B": {
       "PENDING": "Na čekanju",

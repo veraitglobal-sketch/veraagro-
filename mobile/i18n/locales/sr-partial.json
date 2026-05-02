@@ -79,8 +79,9 @@
       "certifiedFood": "Sertifikovana hrana"
     },
     "products": {
-      "count": "{{count}} proizvod",
-      "count_plural": "{{count}} proizvoda"
+      "count_one": "{{count}} proizvod",
+      "count_few": "{{count}} proizvoda",
+      "count_other": "{{count}} proizvoda"
     },
     "errors": {
       "loadFailed": "Učitavanje proizvoda nije uspelo"
@@ -326,7 +327,9 @@
         "pendingLine_other": "{{count}} stavki čeka slanje.",
         "errorLine": "Poslednja greška",
         "syncNow": "Pošalji sad",
-        "openLog": "Otvori Dnevnik unosa"
+        "openLog": "Otvori Dnevnik unosa",
+        "helpWhy": "Zašto se ne šalje?",
+        "helpWhyTitle": "O zapisima na čekanju"
       },
       "financialOrders": {
         "title": "Finansijski pregled",
@@ -339,9 +342,17 @@
         "veraFootnote": "Model po kg isporučene partije — stvarna isplata po pravilima usklađenosti.",
         "platformAdminHint": "Ovaj nalog ima admin ulogu — API je vratio operatorski pregled. Za udio iz porudžbina koristite nalog samo kao proizvođač ili admin finansije na webu."
       },
+      "homeFinanceTeaserTitle": "Novčanik i porudžbine",
+      "homeFinanceTeaserOpen": "Otvori novčanik",
+      "homeFinanceTeaserHint": "Eskrou, isplate i Vera bonus — sve na jednoj strani.",
+      "farmToolsTitle": "Alati na farmi",
+      "farmToolsCardTitle": "Svi alati na farmi",
+      "farmToolsCardSubtitle": "Parcele, dnevnik, materijali, transport, partije — sve na jednom mestu.",
       "farmer": {
         "blockTitle": "Na farmi — redosled",
         "blockHint": "1–3: koraci, parcele, zasadi · 4 Dnevnik · 5 Materijali · 6–8: dozvoljeno, zabranjeno, sertifikati.",
+        "blockTitleFarmTools": "Alati na farmi",
+        "blockHintFarmTools": "Samo prečice — ceo vodič korak-po-korak je u donjoj traci „Uputstva”, da ne dupliramo.",
         "instructionsTitle": "Uputstva",
         "instructionsDesc": "Koraci u sezoni — isti smisao kao kartica Koraci/Uputstva u donjoj traci.",
         "parcelsTitle": "Moje parcele",
@@ -476,7 +487,12 @@
       "detailProgressTitle": "Praćenje napretka (zasad)",
       "detailProgressInterval": "Rok: svakih {{days}} dana; poslednji zapis: {{last}}",
       "detailProgressNext": "Sledeći rok: {{date}}",
-      "detailProgressOverdue": "PREKORAČENO za {{days}} d."
+      "detailProgressOverdue": "PREKORAČENO za {{days}} d.",
+      "errSaveGeneric": "Zasad nije sačuvan. Povuci ekran da osvežiš listu, pa probaj ponovo. Ako se i dalje dešava, javi podršci.",
+      "errSaveParcelRemoved": "Parcela je možda uklonjena ili sesija više ne odgovara gazdinstvu. Otvori „Moje parcele”, osveži, ponovo izaberi parcelu, pa sačuvaj.",
+      "errSaveAccess": "Parcela nije pronađena ili nemaš pristup. Otvori „Moje parcele” i osveži.",
+      "errSaveNotApproved": "Zasadi zahtevaju odobrenu parcelu od admina. Sačekaj odobrenje ili izaberi drugu parcelu.",
+      "errSaveInvalidData": "Server nije prihvatio podatke. Proveri parcelu, usev i datum, pa probaj ponovo."
     },
     "fieldSeason": {
       "title": "Uputstva",
@@ -632,6 +648,7 @@
       "locationFailed": "Nije moguće dobiti lokaciju",
       "saved": "Izveštaj o žetvi sačuvan. Biće poslat kada si onlajn.",
       "saveFailed": "Nije moguće sačuvati izveštaj o žetvi",
+      "serverError": "Greška na serveru prilikom čuvanja plana. Pokušaj ponovo za koji minut. Ako se ponavlja, javi podršci.",
       "enterCropType": "Unesi vrstu useva",
       "enterQuantity": "Unesi ispravnu količinu",
       "locationRequired": "Lokacija je obavezna",
@@ -917,6 +934,7 @@
       "locationHintDenied": "Dozvoli lokaciju da popuni GPS i adresu, ili unesi ručno ispod.",
       "locationHintGps": "GPS sačuvan. Ako je adresa prazna, upiši punu adresu preuzimanja sa farme.",
       "locationHintFailed": "Nije moguće očitati GPS. Unesi geografsku širinu, dužinu i adresu ručno.",
+      "pickupCoordsFreedomNote": "GPS preuzimanja može biti kapija ili dvorište farme — ne moraš biti tu u trenutku slanja. Server proverava samo da su koordinate ispravni brojevi, ne da si unutar mape parcele.",
       "latitude": "Geografska širina",
       "longitude": "Geografska dužina",
       "pickupAddress": "Adresa preuzimanja",
@@ -946,6 +964,7 @@
       },
       "successTitle": "Transport zatražen",
       "successBody": "Zahtev je poslat. Operativa će dodeliti vozača; prati status pod Zadaci.",
+      "serverError": "Greška servera pri slanju zahteva za transport. Pokušaj ponovo za koji trenutak. Ako se ponavlja, javi podršci.",
       "ok": "U redu"
     },
     "materials": {
@@ -965,8 +984,9 @@
       "certification": "Sertifikacija",
       "barcode": "Barkod",
       "lastSync": "Poslednja sinhro",
-      "materialCount": "{{count}} materijal",
-      "materialCount_plural": "{{count}} materijala",
+      "materialCount_one": "{{count}} materijal",
+      "materialCount_few": "{{count}} materijala",
+      "materialCount_other": "{{count}} materijala",
       "addButton": "Dodaj materijal",
       "addForm": {
         "title": "Dodaj materijal",
@@ -1091,7 +1111,7 @@
       "photo": "Fotografija (obavezno)",
       "location": "Lokacija",
       "saveEntry": "Sačuvaj unos",
-      "warningNotOnParcel": "Upozorenje: nisi na svojoj parceli!",
+      "warningNotOnParcel": "Upozorenje: GPS tačka nije unutar crtanih granica gazdinstva/parcele na serveru (ne gleda se tekst adrese). Pomeri se na parcelu ili preraj poligon da uključi ovu tačku.",
       "photoLoaded": "Fotografija učitana",
       "addPhoto": "Dodaj fotografiju",
       "getLocation": "Trenutna lokacija",
@@ -1117,7 +1137,7 @@
       "locationRequired": "Lokacija je obavezna",
       "materialInvalid": "Materijal nije validan. Proveri barkod ili kod semena.",
       "gpsOffParcelTitle": "Upozorenje",
-      "gpsOffParcelBody": "Nisi na svojoj parceli! Da li želiš da nastaviš?"
+      "gpsOffParcelBody": "Trenutni GPS je van sačuvanih granica gazdinstva/parcele. Možeš ipak staviti unos u red. Popravka: preraj mape parcele/gazdinstva da uključe ovaj GPS ili uhvati lokaciju na polju."
     },
     "growthJournalAlerts": {
       "estateTitle": "Njiva",

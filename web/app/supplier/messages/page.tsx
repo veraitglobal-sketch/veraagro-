@@ -5,6 +5,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 export default function SupplierMessagesPage() {
@@ -132,7 +133,15 @@ export default function SupplierMessagesPage() {
         </div>
       </div>
       {!loading && threads.length === 0 && (
-        <p className="text-sm text-gray-500 mt-4">{t('supplier.messagesPage.empty')}</p>
+        <div className="mt-4 rounded-lg border border-dashed border-gray-200 bg-gray-50/80 p-6 text-sm text-gray-600 space-y-3">
+          <p>{t('supplier.messagesPage.empty')}</p>
+          <Link
+            href="/supplier/orders"
+            className="inline-flex min-h-[44px] items-center font-medium text-[#2D5A27] underline"
+          >
+            {t('supplier.messagesPage.emptyCta')}
+          </Link>
+        </div>
       )}
     </AuthGuard>
   );

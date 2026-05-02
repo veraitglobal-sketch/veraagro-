@@ -79,8 +79,8 @@
       "certifiedFood": "Certified food"
     },
     "products": {
-      "count": "{{count}} product",
-      "count_plural": "{{count}} products"
+      "count_one": "{{count}} product",
+      "count_other": "{{count}} products"
     },
     "errors": {
       "loadFailed": "Failed to load products"
@@ -325,7 +325,9 @@
         "pendingLine_other": "{{count}} items waiting to upload.",
         "errorLine": "Last error",
         "syncNow": "Send now",
-        "openLog": "Open entry log"
+        "openLog": "Open entry log",
+        "helpWhy": "Why won't it send?",
+        "helpWhyTitle": "About pending uploads"
       },
       "financialOrders": {
         "title": "Financial overview",
@@ -338,9 +340,17 @@
         "veraFootnote": "Model from delivered batch weight — actual payout follows compliance rules.",
         "platformAdminHint": "This account has an admin role, so the API returned the platform dashboard. Use a grower-only login to see your order share here, or use the web admin finance screen."
       },
+      "homeFinanceTeaserTitle": "Wallet & orders",
+      "homeFinanceTeaserOpen": "Open wallet",
+      "homeFinanceTeaserHint": "Escrow, payouts, and Vera bonus — full breakdown.",
+      "farmToolsTitle": "Farm tools",
+      "farmToolsCardTitle": "All farm tools",
+      "farmToolsCardSubtitle": "Parcels, diary, materials, transport, batches — organized in one screen.",
       "farmer": {
         "blockTitle": "On the farm — follow this order",
         "blockHint": "1–3: steps, parcels, plantings · 4 Field log · 5 Materials · 6–8: allowed, banned, certificates.",
+        "blockTitleFarmTools": "Farm tools",
+        "blockHintFarmTools": "Shortcuts only — full step-by-step guide stays under the Instructions tab.",
         "instructionsTitle": "Instructions",
         "instructionsDesc": "Season steps — same ideas as on the website (Uputstva).",
         "parcelsTitle": "My parcels",
@@ -475,7 +485,12 @@
       "detailProgressTitle": "Progress tracking (planting)",
       "detailProgressInterval": "Interval: every {{days}} days; last entry: {{last}}",
       "detailProgressNext": "Next deadline: {{date}}",
-      "detailProgressOverdue": "OVERDUE by {{days}} day(s)"
+      "detailProgressOverdue": "OVERDUE by {{days}} day(s)",
+      "errSaveGeneric": "Could not save this planting. Pull down to refresh lists, then try again. If it keeps happening, contact support.",
+      "errSaveParcelRemoved": "The parcel may have been removed or your session no longer matches the farm. Open My parcels, refresh, select the parcel again, then save.",
+      "errSaveAccess": "Parcel not found or you do not have access. Open My parcels and refresh.",
+      "errSaveNotApproved": "Plantings require an admin-approved parcel. Wait for approval or choose another parcel.",
+      "errSaveInvalidData": "The server could not accept this data. Check parcel, crop and date, then try again."
     },
     "fieldSeason": {
       "title": "Instructions",
@@ -630,6 +645,7 @@
       "locationFailed": "Could not get location",
       "saved": "Harvest report saved. It will be sent when you are online.",
       "saveFailed": "Could not save harvest report",
+      "serverError": "Server error while saving the plan. Your data may still be OK — try again in a moment. If it continues, contact support.",
       "enterCropType": "Enter crop type",
       "enterQuantity": "Enter a valid quantity",
       "locationRequired": "Location is required",
@@ -915,6 +931,7 @@
       "locationHintDenied": "Allow location to fill GPS and address, or enter them manually below.",
       "locationHintGps": "GPS saved. If address is empty, type the full farm pickup address.",
       "locationHintFailed": "Could not read GPS. Enter latitude, longitude, and address manually.",
+      "pickupCoordsFreedomNote": "Pickup GPS can be the farm gate or yard — you do not need to be there when you submit. The server only checks that coordinates are valid numbers, not that you are inside the parcel map.",
       "latitude": "Latitude",
       "longitude": "Longitude",
       "pickupAddress": "Pickup address",
@@ -944,6 +961,7 @@
       },
       "successTitle": "Transport requested",
       "successBody": "Your request was sent. Operations will assign a driver; track status under Missions.",
+      "serverError": "Server error while requesting transport. Try again in a moment. If it keeps happening, contact support.",
       "ok": "OK"
     },
     "materials": {
@@ -963,8 +981,8 @@
       "certification": "Certification",
       "barcode": "Barcode",
       "lastSync": "Last sync",
-      "materialCount": "{{count}} material",
-      "materialCount_plural": "{{count}} materials",
+      "materialCount_one": "{{count}} material",
+      "materialCount_other": "{{count}} materials",
       "addButton": "Add material",
       "addForm": {
         "title": "Add material",
@@ -1087,7 +1105,7 @@
       "photo": "Photo (required)",
       "location": "Location",
       "saveEntry": "Save entry",
-      "warningNotOnParcel": "Warning: You are not on your parcel!",
+      "warningNotOnParcel": "Warning: your GPS fix is outside the farm/parcel map shapes saved on the server (not the address text). Move to the plot or redraw the parcel to include this point.",
       "photoLoaded": "Photo loaded successfully",
       "addPhoto": "Add photo",
       "getLocation": "Get current location",
@@ -1113,7 +1131,7 @@
       "locationRequired": "Location is required",
       "materialInvalid": "Material is not valid. Check the barcode or seed code.",
       "gpsOffParcelTitle": "Warning",
-      "gpsOffParcelBody": "You are not on your parcel! Do you want to continue?"
+      "gpsOffParcelBody": "Your current GPS is outside the saved farm/parcel boundaries. You can still queue the entry for later. Fix: redraw parcels / estate map to include this GPS, or capture location on the field."
     },
     "growthJournalAlerts": {
       "estateTitle": "Field",

@@ -91,32 +91,97 @@ export class MissionsService {
     return e instanceof Error && e.name === 'PrismaClientValidationError';
   }
 
-  /** JSON response for POST /missions: no password hashes; tolerate Decimal/BigInt in nested Json. */
+  /**
+   * JSON for POST /missions — explicit fields only. Spreading the full Prisma graph + JSON.stringify
+   * has produced non-HttpException failures (response serialization) that surface as 500 "Internal server error".
+   */
   private static missionCreateHttpPayload(mission: Record<string, unknown>): Record<string, unknown> {
-    const stripUser = (u: unknown) => {
-      if (!u || typeof u !== 'object') {
-        return u;
-      }
-      const { passwordHash: _ph, ...rest } = u as Record<string, unknown>;
-      return rest;
+    const iso = (v: unknown): unknown => {
+      if (v instanceof Date && Number.isFinite(v.getTime())) return v.toISOString();
+      return v ?? null;
     };
-    const { users_missions_growerIdTousers, users_missions_logisticsPartnerIdTousers, ...rest } = mission;
-    const out = {
-      ...rest,
-      users_missions_growerIdTousers: stripUser(users_missions_growerIdTousers),
-      users_missions_logisticsPartnerIdTousers: stripUser(users_missions_logisticsPartnerIdTousers),
+    const safeUser = (u: unknown): unknown => {
+      if (!u || typeof u !== 'object') return u ?? null;
+      const o = u as Record<string, unknown>;
+      return {
+        id: o.id,
+        email: o.email,
+        phone: o.phone,
+        firstName: o.firstName,
+        lastName: o.lastName,
+        partnerCode: o.partnerCode,
+        roles: o.roles,
+        status: o.status,
+        isVeraPartner: o.isVeraPartner,
+        createdAt: iso(o.createdAt),
+        updatedAt: iso(o.updatedAt),
+      };
     };
-    return JSON.parse(
-      JSON.stringify(out, (_key, value) => {
-        if (typeof value === 'bigint') {
-          return value.toString();
-        }
-        if (value != null && typeof value === 'object' && typeof (value as { toJSON?: () => unknown }).toJSON === 'function') {
-          return (value as { toJSON: () => unknown }).toJSON();
-        }
-        return value;
-      }),
-    ) as Record<string, unknown>;
+    const safeBatch = (b: unknown): unknown => {
+      if (!b || typeof b !== 'object') return b ?? null;
+      const o = b as Record<string, unknown>;
+      return {
+        id: o.id,
+        batchId: o.batchId,
+        estateId: o.estateId,
+        parcelId: o.parcelId,
+        productName: o.productName,
+        quantity: o.quantity,
+        unit: o.unit,
+        harvestDate: iso(o.harvestDate),
+        status: o.status,
+        qualityIssues: o.qualityIssues,
+        locationHistory: o.locationHistory,
+        createdAt: iso(o.createdAt),
+        updatedAt: iso(o.updatedAt),
+      };
+    };
+    const safeVehicle = (v: unknown): unknown => {
+      if (!v || typeof v !== 'object') return v ?? null;
+      const o = v as Record<string, unknown>;
+      return {
+        id: o.id,
+        vehicleNumber: o.vehicleNumber,
+        licensePlate: o.licensePlate,
+        type: o.type,
+        make: o.make,
+        model: o.model,
+        hasFrigo: o.hasFrigo,
+        status: o.status,
+        currentLocation: o.currentLocation,
+        createdAt: iso(o.createdAt),
+        updatedAt: iso(o.updatedAt),
+      };
+    };
+    return {
+      id: mission.id,
+      missionNumber: mission.missionNumber,
+      growerId: mission.growerId,
+      batchId: mission.batchId ?? null,
+      harvestAnnouncementId: mission.harvestAnnouncementId ?? null,
+      pickupLocation: mission.pickupLocation,
+      pickupAddress: mission.pickupAddress,
+      destinationAddress: mission.destinationAddress ?? null,
+      destinationCity: mission.destinationCity ?? null,
+      loadInstructions: mission.loadInstructions ?? null,
+      logisticsPartnerId: mission.logisticsPartnerId ?? null,
+      assignedLogisticsDriverId: mission.assignedLogisticsDriverId ?? null,
+      vehicleId: mission.vehicleId ?? null,
+      optimalRoute: mission.optimalRoute ?? null,
+      estimatedPickupTime: iso(mission.estimatedPickupTime),
+      status: mission.status,
+      requestedAt: iso(mission.requestedAt),
+      assignedAt: iso(mission.assignedAt),
+      acceptedAt: iso(mission.acceptedAt),
+      pickedUpAt: iso(mission.pickedUpAt),
+      completedAt: iso(mission.completedAt),
+      createdAt: iso(mission.createdAt),
+      updatedAt: iso(mission.updatedAt),
+      users_missions_growerIdTousers: safeUser(mission.users_missions_growerIdTousers),
+      users_missions_logisticsPartnerIdTousers: safeUser(mission.users_missions_logisticsPartnerIdTousers),
+      batches: safeBatch(mission.batches),
+      vehicles: safeVehicle(mission.vehicles),
+    };
   }
 
   private async assertActiveLogisticsDriver(partnerId: string, driverId: string): Promise<void> {
@@ -717,141 +782,161 @@ export class MissionsService {
    * (očekivana berba / prozor utovara). No batch is required; batch links later at packing.
    */
   async createMissionFromHarvestAnnouncement(announcementId: string, growerId: string) {
-    const ann = await this.prisma.harvest_announcements.findFirst({
-      where: { id: announcementId, userId: growerId, announcementType: 'HARVEST' },
-      include: { parcel: { include: { estates: true } } },
-    });
-    if (!ann) {
-      return null;
-    }
-
-    const existing = await this.prisma.missions.findFirst({
-      where: { harvestAnnouncementId: announcementId },
-    });
-    if (existing) {
-      return existing;
-    }
-
-    const estate = ann.parcel?.estates;
-    if (!estate) {
-      this.logger.warn(`Harvest mission skipped: no estate on parcel for announcement ${announcementId}`);
-      return null;
-    }
-
-    const pickup = MissionsService.centroidFromEstatePolygon(estate.polygonCoordinates);
-    if (!pickup) {
-      this.logger.warn(`Harvest mission skipped: estate ${estate.id} has no drawable boundary`);
-      return null;
-    }
-
-    const grower = await this.prisma.users.findUnique({ where: { id: growerId } });
-    if (!grower || !this.isGrowerAccount(grower.roles as string[])) {
-      return null;
-    }
-
-    const autoAssign = this.shouldAutoAssignLogistics();
-    const logisticsPartner = autoAssign
-      ? await this.findNearestLogisticsPartner(pickup.lat, pickup.lng)
-      : null;
-    const partnerLoc = logisticsPartner
-      ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation)
-      : null;
-    const routeCalc = await this.calculateOptimalRoute(pickup, partnerLoc);
-    const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
-    const destAddr = ann.notes?.trim() || null;
-    const destCity = ann.marketChannel?.trim() || null;
-    const optimalRouteWithDest = {
-      ...optimalRoute,
-      destination: { address: destAddr, city: destCity },
-    } as Prisma.InputJsonValue;
-    const missionNumber = await this.generateMissionNumber();
-    const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
-    const pickupAddress = `${estate.name} — ${ann.cropType}${qty != null ? ` (~${Number(qty).toFixed(0)} kg)` : ''} · plan berbe`;
-    const plannedTime = ann.plannedLoadingStart ?? ann.estimatedDate;
-    const estimatedPickupTime =
-      MissionsService.toSafeDateTime(plannedTime) ??
-      MissionsService.toSafeDateTime(routeCalc.estimatedArrival) ??
-      new Date();
-
-    const mission = await this.prisma.missions.create({
-      data: {
-        id: crypto.randomUUID(),
-        missionNumber,
-        growerId,
-        batchId: null,
-        harvestAnnouncementId: ann.id,
-        pickupLocation: pickup as any,
-        pickupAddress,
-        destinationAddress: destAddr,
-        destinationCity: destCity,
-        loadInstructions:
-          qty != null
-            ? `Harvest plan: ~${Number(qty).toFixed(0)} kg ${ann.cropType} (confirm dock & time with buyer/hub)`
-            : `Harvest plan: ${ann.cropType} (confirm quantity and drop-off)`,
-        logisticsPartnerId: logisticsPartner?.id ?? null,
-        vehicleId: logisticsPartner?.vehicleId ?? null,
-        optimalRoute: optimalRouteWithDest,
-        estimatedPickupTime,
-        status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
-        assignedAt: logisticsPartner ? new Date() : null,
-        updatedAt: new Date(),
-      },
-      include: {
-        users_missions_growerIdTousers: true,
-        users_missions_logisticsPartnerIdTousers: true,
-        vehicles: true,
-        batches: true,
-        harvest_announcement: true,
-      },
-    });
-
     try {
-      await this.auditTrailService.createAuditTrail({
-        eventType: 'STATUS_CHANGE',
-        entityType: 'Mission',
-        entityId: mission.id,
-        performedByUserId: growerId,
-        newValue: {
-          status: mission.status,
-          missionNumber: mission.missionNumber,
-          fromHarvestPlan: true,
-          harvestAnnouncementId: ann.id,
-        },
-        location: pickup,
+      const ann = await this.prisma.harvest_announcements.findFirst({
+        where: { id: announcementId, userId: growerId, announcementType: 'HARVEST' },
+        include: { parcel: { include: { estates: true } } },
       });
-    } catch (auditErr) {
-      this.logger.warn(
-        `createMissionFromHarvestAnnouncement: audit trail failed for mission ${mission.id}`,
-        auditErr instanceof Error ? auditErr.stack : auditErr,
-      );
-    }
+      if (!ann) {
+        return null;
+      }
 
-    try {
-      await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
-    } catch (error) {
-      this.logger.warn(`notifyMissionUpdate failed: ${(error as Error).message}`);
-    }
+      const existing = await this.prisma.missions.findFirst({
+        where: { harvestAnnouncementId: announcementId },
+      });
+      if (existing) {
+        return existing;
+      }
 
-    if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
-      try {
-        const g = mission.users_missions_growerIdTousers;
-        const growerLabel = g
-          ? `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Grower'
-          : 'Grower';
-        await this.notificationsService.notifyAdminsForNewTransportRequest({
-          missionNumber: mission.missionNumber,
-          growerLabel,
-          destinationCity: mission.destinationCity,
-          missionId: mission.id,
-        });
-      } catch (e) {
+      const estate = ann.parcel?.estates;
+      if (!estate) {
+        this.logger.warn(`Harvest mission skipped: no estate on parcel for announcement ${announcementId}`);
+        return null;
+      }
+
+      const pickup = MissionsService.centroidFromEstatePolygon(estate.polygonCoordinates);
+      if (
+        !pickup ||
+        !Number.isFinite(pickup.lat) ||
+        !Number.isFinite(pickup.lng)
+      ) {
         this.logger.warn(
-          `notifyAdminsForNewTransportRequest (harvest mission) failed: ${e instanceof Error ? e.message : String(e)}`,
+          `Harvest mission skipped: invalid pickup centroid for estate ${estate.id} (announcement ${announcementId})`,
+        );
+        return null;
+      }
+
+      const grower = await this.prisma.users.findUnique({ where: { id: growerId } });
+      if (!grower || !this.isGrowerAccount(grower.roles as string[])) {
+        return null;
+      }
+
+      const autoAssign = this.shouldAutoAssignLogistics();
+      const logisticsPartner = autoAssign
+        ? await this.findNearestLogisticsPartner(pickup.lat, pickup.lng)
+        : null;
+      const partnerLoc = logisticsPartner
+        ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation)
+        : null;
+      const routeCalc = await this.calculateOptimalRoute(pickup, partnerLoc);
+      const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
+      const destAddr = ann.notes?.trim() || null;
+      const destCity = ann.marketChannel?.trim() || null;
+      const optimalRouteWithDest = {
+        ...optimalRoute,
+        destination: { address: destAddr, city: destCity },
+      } as Prisma.InputJsonValue;
+      const missionNumber = await this.generateMissionNumber();
+      const qty = ann.loadQuantityKg ?? ann.estimatedQuantity;
+      const qtyNum = qty != null ? Number(qty) : NaN;
+      const qtyLabel = Number.isFinite(qtyNum) ? ` (~${qtyNum.toFixed(0)} kg)` : '';
+      const pickupAddress = `${estate.name} — ${ann.cropType}${qtyLabel} · plan berbe`;
+      const plannedTime = ann.plannedLoadingStart ?? ann.estimatedDate;
+      const estimatedPickupTime =
+        MissionsService.toSafeDateTime(plannedTime) ??
+        MissionsService.toSafeDateTime(routeCalc.estimatedArrival) ??
+        new Date();
+
+      const loadInstructions =
+        Number.isFinite(qtyNum) && qtyNum > 0
+          ? `Harvest plan: ~${qtyNum.toFixed(0)} kg ${ann.cropType} (confirm dock & time with buyer/hub)`
+          : `Harvest plan: ${ann.cropType} (confirm quantity and drop-off)`;
+
+      const mission = await this.prisma.missions.create({
+        data: {
+          id: crypto.randomUUID(),
+          missionNumber,
+          growerId,
+          batchId: null,
+          harvestAnnouncementId: ann.id,
+          pickupLocation: pickup as any,
+          pickupAddress,
+          destinationAddress: destAddr,
+          destinationCity: destCity,
+          loadInstructions,
+          logisticsPartnerId: logisticsPartner?.id ?? null,
+          vehicleId: logisticsPartner?.vehicleId ?? null,
+          optimalRoute: optimalRouteWithDest,
+          estimatedPickupTime,
+          status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
+          assignedAt: logisticsPartner ? new Date() : null,
+          updatedAt: new Date(),
+        },
+        include: {
+          users_missions_growerIdTousers: true,
+          users_missions_logisticsPartnerIdTousers: true,
+          vehicles: true,
+          batches: true,
+          harvest_announcement: true,
+        },
+      });
+
+      try {
+        await this.auditTrailService.createAuditTrail({
+          eventType: 'STATUS_CHANGE',
+          entityType: 'Mission',
+          entityId: mission.id,
+          performedByUserId: growerId,
+          newValue: {
+            status: mission.status,
+            missionNumber: mission.missionNumber,
+            fromHarvestPlan: true,
+            harvestAnnouncementId: ann.id,
+          },
+          location: pickup,
+        });
+      } catch (auditErr) {
+        this.logger.warn(
+          `createMissionFromHarvestAnnouncement: audit trail failed for mission ${mission.id}`,
+          auditErr instanceof Error ? auditErr.stack : auditErr,
         );
       }
-    }
 
-    return mission;
+      try {
+        await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
+      } catch (error) {
+        this.logger.warn(`notifyMissionUpdate failed: ${(error as Error).message}`);
+      }
+
+      if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+        try {
+          const g = mission.users_missions_growerIdTousers;
+          const growerLabel = g
+            ? `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Grower'
+            : 'Grower';
+          await this.notificationsService.notifyAdminsForNewTransportRequest({
+            missionNumber: mission.missionNumber,
+            growerLabel,
+            destinationCity: mission.destinationCity,
+            missionId: mission.id,
+          });
+        } catch (e) {
+          this.logger.warn(
+            `notifyAdminsForNewTransportRequest (harvest mission) failed: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        }
+      }
+
+      return mission;
+    } catch (e) {
+      this.logger.error(
+        `createMissionFromHarvestAnnouncement failed (announcementId=${announcementId}, growerId=${growerId}): ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+        e instanceof Error ? e.stack : undefined,
+      );
+      return null;
+    }
   }
 
   /**

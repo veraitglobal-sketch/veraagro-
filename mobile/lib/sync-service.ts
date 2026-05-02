@@ -12,6 +12,7 @@ import type { Estate } from './api';
 import i18n from '../i18n/config';
 import { growerOfflineCache } from './grower-offline-cache';
 import { apiErrorMessage, axiosResponseStatus } from './api-error';
+import { tString } from './i18n-strings';
 
 // Create API instance for sync
 const syncApi = axios.create({
@@ -167,7 +168,7 @@ export const syncService = {
         success++;
       } catch (error: unknown) {
         const msg = apiErrorMessage(error, 'Sync failed');
-        console.error(`Error syncing entry ${entry.id}:`, msg);
+        console.warn(`[field-entry sync] ${entry.id}: ${msg}`);
         entry.status = 'error';
         entry.error = msg;
         await this.updateEntryStatus(entry.id, 'error', msg);
@@ -391,7 +392,10 @@ export const syncService = {
       JSON.stringify({
         syncing: false,
         lastSyncTime: new Date().toISOString(),
-        lastError: totalFailed > 0 ? i18n.t('producer.sync.itemsNotSent', { count: totalFailed }) : null,
+        lastError:
+          totalFailed > 0
+            ? tString(i18n.t, 'producer.sync.itemsNotSent', { count: totalFailed })
+            : null,
       })
     );
 

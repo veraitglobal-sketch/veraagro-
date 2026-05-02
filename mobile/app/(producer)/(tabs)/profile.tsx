@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
 import { Wallet, Settings, LogOut, MapPin, Map, Package, Truck, Bell, Image as ImageIcon, CheckCircle, FileText, Camera } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { tString } from '../../../lib/i18n-strings';
 import { useRouter } from 'expo-router';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { useState, useEffect } from 'react';
@@ -151,7 +152,7 @@ export default function ProfileScreen() {
               color: theme.colors.text.secondary,
               letterSpacing: 0.3,
             }}>
-              {t('producer.dashboard.syncStrip.pendingLine', { count: pendingCount })}
+              {tString(t, 'producer.dashboard.syncStrip.pendingLine', { count: pendingCount })}
             </Text>
           </View>
         )}

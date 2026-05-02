@@ -13,6 +13,7 @@ import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 const PAGE_SIZE = 8;
 
@@ -69,6 +70,7 @@ function normalizeCountry(c: string | undefined) {
 
 export default function GrowerWhereToBuyPage() {
   const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const growerNavItems = useGrowerNavItems();
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -278,6 +280,14 @@ export default function GrowerWhereToBuyPage() {
                   >
                     {t('growerPages.retry')}
                   </button>
+                  <p className="mt-4">
+                    <Link
+                      href={loc('/contact')}
+                      className="inline-flex min-h-[44px] items-center text-base text-[#2D5A27] font-medium underline"
+                    >
+                      {t('growerPages.emptyDirectoryContact')}
+                    </Link>
+                  </p>
                 </div>
               ) : (
                 <>

@@ -160,7 +160,15 @@ export default function GrowerFieldDiaryPage() {
           </p>
 
           {estates.length === 0 && !loading ? (
-            <p className="text-base text-gray-600">{t('growerPages.noFieldsYet')}</p>
+            <div className="rounded-lg border border-gray-200 bg-gray-50/80 px-4 py-4 text-base text-gray-700 space-y-3">
+              <p>{t('growerPages.noFieldsYet')}</p>
+              <Link
+                href={loc('/grower/fields')}
+                className="inline-flex min-h-[44px] items-center font-semibold text-[#2D5A27] underline underline-offset-2"
+              >
+                {t('grower.placeholders.openParcels')}
+              </Link>
+            </div>
           ) : (
             <div className="flex flex-wrap items-end gap-4">
               <div>
@@ -209,9 +217,23 @@ export default function GrowerFieldDiaryPage() {
           ) : (
             <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
               {sortedLogs.length === 0 ? (
-                <div className="p-8 text-center text-base text-gray-500 flex flex-col items-center gap-3">
+                <div className="p-8 text-center text-base text-gray-500 flex flex-col items-center gap-4">
                   <NotebookPen className="h-12 w-12 text-gray-300" />
-                  {t('growerPages.fieldDiaryNoLogs')}
+                  <p>{t('growerPages.fieldDiaryNoLogs')}</p>
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href={loc('/producer/field-entry')}
+                      className="inline-flex min-h-[44px] items-center rounded-md bg-[#2D5A27] px-4 py-2 text-base font-medium text-white hover:bg-[#23471f]"
+                    >
+                      {t('growerPages.fieldDiaryEmptyCtaCapture')}
+                    </Link>
+                    <Link
+                      href={loc('/grower/plantings')}
+                      className="inline-flex min-h-[44px] items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-800 hover:bg-gray-50"
+                    >
+                      {t('growerPages.fieldDiaryEmptyCtaPlans')}
+                    </Link>
+                  </div>
                 </div>
               ) : (
                 <div className="overflow-x-auto">

@@ -5,6 +5,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 const STATUS_OPTIONS = ['PENDING', 'CONFIRMED', 'REJECTED', 'FULFILLED', 'CANCELLED'] as const;
@@ -144,6 +145,26 @@ export default function SupplierOrdersPage() {
             </div>
           );
         })}
+        {!loading && list.length === 0 && (
+          <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/80 p-8 text-center text-sm text-gray-600 space-y-3">
+            <p className="font-medium text-gray-800">{t('supplier.ordersPage.emptyTitle')}</p>
+            <p className="text-gray-600 font-light max-w-md mx-auto">{t('supplier.ordersPage.emptyBody')}</p>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Link
+                href="/supplier/catalog"
+                className="inline-flex min-h-[44px] items-center rounded-md bg-[#2D5A27] px-4 py-2 text-base font-medium text-white hover:bg-[#23471f]"
+              >
+                {t('supplier.ordersPage.emptyCtaCatalog')}
+              </Link>
+              <Link
+                href="/supplier/messages"
+                className="inline-flex min-h-[44px] items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-800 hover:bg-gray-50"
+              >
+                {t('supplier.ordersPage.emptyCtaMessages')}
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </AuthGuard>
   );

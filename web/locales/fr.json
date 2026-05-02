@@ -1025,7 +1025,12 @@
     "missionCreate": {
       "submitCta": "Demander un transport",
       "creating": "Création...",
-      "errSubmitFailed": "Impossible de créer la demande de transport. Réessayez ou vérifiez la conformité et le statut du lot."
+      "errSubmitFailed": "Impossible de créer la demande de transport. Réessayez ou vérifiez la conformité et le statut du lot.",
+      "needPackedOrVerified": "Vous avez besoin de lots en statut PACKED ou QUALITY_VERIFIED pour demander un transport.",
+      "emptyBatchNextSteps": "Prochaines étapes :",
+      "emptyBatchLinkBatches": "Mes lots (conditionner)",
+      "emptyBatchLinkQuality": "Saisie qualité",
+      "emptyBatchLinkCompliance": "Photos conformité"
     }
   },
   "adminNav": {
@@ -1497,6 +1502,7 @@
     "locationsHint": "Boutique partenaire — catalogue et commande directe. Vente au détail – ramassage en hub.",
     "emptyDirectoryTitle": "Aucun emplacement dans l'annuaire public pour l'instant",
     "emptyDirectoryBody": "Demandez à un administrateur Bio Vera d'approuver les partenaires ou d'ajouter des données de vente au détail. Les annonces apparaîtront par pays lorsqu'elles seront disponibles.",
+    "emptyDirectoryContact": "Contacter le support",
     "retry": "Essayer à nouveau",
     "directoryLoadError": "Impossible de charger le répertoire. Vérifiez que l'API est en cours d'exécution et que NEXT_PUBLIC_API_URL est défini sur le site.",
     "loadFailed": "Échec du chargement",
@@ -1528,6 +1534,7 @@
     "partner": "Partenaire",
     "inboxBack": "Retour aux fournisseurs et commandes",
     "inboxEmpty": "Aucune conversation pour l'instant : ouvrez une boutique partenaire et utilisez « Message » (ou le lien du fil de discussion sur une commande).",
+    "inboxEmptyCta": "Ouvrir fournisseurs & commandes",
     "inboxOpenChat": "Ouvrir le chat",
     "sf1t": "1. Partenaire & commande B2B",
     "sf1": "Dans <0>Fournisseurs et commandes</0>, filtrez par lieu, ouvrez un <1>magasin partenaire</1> et passez une <2>commande directe</2>. Votre fournisseur met à jour le statut (par exemple, EN ATTENTE → CONFIRMÉ → FULFILLED) et vous pouvez utiliser le <3>Thread</3> pour les messages.",
@@ -1561,6 +1568,7 @@
     "plantingsSectionPlanting": "Plans de plantation",
     "plantingsSectionHarvest": "Plans de récolte",
     "plantingsEmpty": "Pas encore de plans de récolte. Enregistrez un plan ci-dessous ou depuis l'application de culture Bio Vera.",
+    "plantingsEmptyGoToForm": "Aller au formulaire ci-dessus",
     "plantingsFormTitle": "Enregistrer un plan de plantation",
     "plantingsFormParcel": "Colis (approuvé uniquement)",
     "plantingsFormCrop": "Culture / variété",
@@ -1661,6 +1669,8 @@
     "fieldDiarySelectParcel": "Filtrer par parcelle (facultatif)",
     "fieldDiaryAllParcels": "Toutes les parcelles sur ce champ",
     "fieldDiaryNoLogs": "Aucune entrée pour ce filtre.",
+    "fieldDiaryEmptyCtaCapture": "Saisie terrain (PWA / mobile)",
+    "fieldDiaryEmptyCtaPlans": "Plans de culture",
     "fieldDiaryColWhen": "Enregistré",
     "fieldDiaryColParcel": "Colis",
     "fieldDiaryColPlan": "Plan de culture",
@@ -1764,6 +1774,7 @@
       "placeholderReply": "Répondre…",
       "send": "Envoyer",
       "empty": "Pas encore de messages.",
+      "emptyCta": "Voir les commandes entrantes",
       "errThreads": "Échec du chargement des conversations",
       "errOpen": "Échec du chargement des messages",
       "errSend": "Échec de l’envoi"
@@ -1782,7 +1793,17 @@
       "statusLabel": "Statut",
       "itemFallback": "Article",
       "errLoad": "Échec du chargement",
-      "errUpdate": "Échec de la mise à jour"
+      "errUpdate": "Échec de la mise à jour",
+      "emptyTitle": "Pas encore de commandes entrantes",
+      "emptyBody": "Les producteurs envoient des demandes B2B depuis votre boutique publique lorsque des lignes catalogue existent et que le partenariat est actif.",
+      "emptyCtaCatalog": "Gérer le catalogue",
+      "emptyCtaMessages": "Ouvrir les messages"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Lignes actuelles",
+      "loading": "Chargement…",
+      "emptyList": "Pas encore de lignes catalogue. Ajoutez votre premier produit dans le formulaire ci-dessus — visible dans la boutique publique.",
+      "emptyListCta": "Aller au formulaire produit"
     },
     "orderStatusB2B": {
       "PENDING": "En attente",

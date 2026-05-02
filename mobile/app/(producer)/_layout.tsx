@@ -58,6 +58,14 @@ export default function ProducerLayout() {
         <Stack.Screen name="packing-flow" options={{ title: i18n.t('navigation.packingFlow') }} />
         <Stack.Screen name="package-badges" options={{ title: i18n.t('navigation.packageBadges') }} />
         <Stack.Screen name="package-badges-print-order" />
+        <Stack.Screen
+          name="farm-tools"
+          options={{
+            headerShown: true,
+            title: i18n.t('producer.dashboard.farmToolsTitle'),
+            headerBackTitle: i18n.t('common.back'),
+          }}
+        />
       </Stack>
       </View>
       </NetworkProvider>

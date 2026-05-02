@@ -5,29 +5,27 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { GeometryUtil } from '../common/utils/geometry.util';
 import * as crypto from 'crypto';
 
 const MAX_OFFLINE_HOURS = 24;
-const MAX_TIMESTAMP_DELTA_MINUTES = 15;
 
 @Injectable()
 export class TreatmentLogsService {
   constructor(private prisma: PrismaService) {}
 
-  private isPointInPolygon(point: { lat: number; lng: number }, polygon: any[]): boolean {
-    if (!polygon || polygon.length < 3) return true; // Skip check if no polygon
-    let inside = false;
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      const xi = polygon[i].lng ?? polygon[i][0];
-      const yi = polygon[i].lat ?? polygon[i][1];
-      const xj = polygon[j].lng ?? polygon[j][0];
-      const yj = polygon[j].lat ?? polygon[j][1];
-      const intersect =
-        yi > point.lat !== yj > point.lat &&
-        point.lng < ((xj - xi) * (point.lat - yi)) / (yj - yi) + xi;
-      if (intersect) inside = !inside;
-    }
-    return inside;
+  /** Same rule as field-entries: base from env + device accuracy (m). */
+  private effectiveGpsToleranceMeters(deviceAccuracy?: number): number {
+    const raw = process.env.GPS_BOUNDARY_TOLERANCE_METERS;
+    const parsed = raw != null && raw !== '' ? Number(raw) : NaN;
+    const base = Number.isFinite(parsed) && parsed >= 0 ? parsed : 80;
+    const acc =
+      typeof deviceAccuracy === 'number' &&
+      Number.isFinite(deviceAccuracy) &&
+      deviceAccuracy > 0
+        ? deviceAccuracy
+        : 0;
+    return Math.max(base, acc + 30);
   }
 
   async create(userId: string, dto: {
@@ -69,11 +67,17 @@ export class TreatmentLogsService {
     const hoursDiff = (now.getTime() - deviceTs.getTime()) / (1000 * 60 * 60);
     const needsAudit = hoursDiff > MAX_OFFLINE_HOURS;
 
-    const polygon = (parcel.polygonCoordinates || parcel.estates?.polygonCoordinates) as any;
-    const coords = Array.isArray(polygon) ? polygon : polygon?.coordinates || [];
+    const polygonRaw = (parcel.polygonCoordinates || parcel.estates?.polygonCoordinates) as unknown;
+    const ring = GeometryUtil.polygonFromJson(polygonRaw);
     const point = { lat: dto.gpsLatitude, lng: dto.gpsLongitude };
-    if (coords.length >= 3 && !this.isPointInPolygon(point, coords)) {
-      throw new ForbiddenException('GPS location is not within parcel boundaries');
+    const tol = this.effectiveGpsToleranceMeters(dto.gpsAccuracy);
+    if (
+      ring.length >= 3 &&
+      !GeometryUtil.isPointInPolygonOrWithinBoundaryMeters(point, ring, tol)
+    ) {
+      throw new ForbiddenException(
+        'GPS is outside the saved parcel/farm boundary (within normal GPS error). Move closer, redraw the parcel to include this point, or check that coordinates are not swapped.',
+      );
     }
 
     return this.prisma.treatment_logs.create({

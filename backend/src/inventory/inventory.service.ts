@@ -2,6 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
 
+function hubJsonToCoords(location: unknown): { lat: number; lng: number } | null {
+  if (!location || typeof location !== 'object') return null;
+  const o = location as Record<string, unknown>;
+  let latRaw: unknown = o.lat;
+  let lngRaw: unknown = o.lng;
+  const coords = o.coordinates;
+  if (Array.isArray(coords) && coords[0] && typeof coords[0] === 'object' && coords[0] !== null) {
+    const c0 = coords[0] as Record<string, unknown>;
+    latRaw = latRaw ?? c0.lat;
+    lngRaw = lngRaw ?? c0.lng;
+  }
+  const lat = typeof latRaw === 'number' ? latRaw : Number(latRaw);
+  const lng = typeof lngRaw === 'number' ? lngRaw : Number(lngRaw);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
 /**
  * Dynamic Inventory Service
  * Location-based availability calculation
@@ -349,15 +366,15 @@ export class InventoryService {
         item.category = this.categorizeProduct(item.productName);
       }
       
-      const hubLocation = item.hub?.location as any;
+      const hubCoords = hubJsonToCoords(item.hub?.location);
       let estimatedDays = null;
       let isAvailable = true;
 
-      if (buyerLocation && hubLocation) {
+      if (buyerLocation && hubCoords) {
         // Calculate distance
         const distance = GeometryUtil.calculateDistance(
           { lat: buyerLocation.lat, lng: buyerLocation.lng },
-          { lat: hubLocation.lat || hubLocation.coordinates?.[0]?.lat, lng: hubLocation.lng || hubLocation.coordinates?.[0]?.lng },
+          { lat: hubCoords.lat, lng: hubCoords.lng },
         );
 
         // Estimate delivery days (rough calculation: 100km = 1 day)

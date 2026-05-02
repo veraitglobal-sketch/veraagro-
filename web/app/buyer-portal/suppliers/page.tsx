@@ -19,6 +19,7 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function SuppliersPage() {
@@ -224,10 +225,18 @@ export default function SuppliersPage() {
           {filteredPartners.length === 0 && (
             <div className="text-center py-12 border-b border-green-200/50">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={1} />
-              <p className="text-gray-600 mb-2 font-light">No Vera Partners found</p>
+              <p className="text-gray-600 mb-2 font-light">{t('buyerPortalSuppliers.emptyTitle')}</p>
               <p className="text-sm text-gray-500 font-light">
-                {searchTerm ? 'Try adjusting your search terms' : 'No active Vera Partners available at the moment'}
+                {searchTerm ? t('buyerPortalSuppliers.emptyHintSearch') : t('buyerPortalSuppliers.emptyHintNone')}
               </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/buyer-portal/trade-panel"
+                  className="inline-flex min-h-[44px] items-center rounded-md bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f]"
+                >
+                  {t('buyerPortalSuppliers.emptyCtaTrade')}
+                </Link>
+              </div>
             </div>
           )}
 

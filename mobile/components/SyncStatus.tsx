@@ -4,6 +4,7 @@ import { Cloud, CloudOff, RefreshCw } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { syncService, SyncStatus as SyncStatusType } from '../lib/sync-service';
 import { colors } from '../lib/colors';
+import { tString } from '../lib/i18n-strings';
 
 interface SyncStatusProps {
   className?: string;
@@ -84,7 +85,7 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
         <>
           <CloudOff size={16} color="#F59E0B" strokeWidth={1} />
           <Text className="text-[13px] ml-2" style={{ color: '#92400E' }}>
-            {t('producer.sync.savedOnDevice', { count: syncStatus.pendingCount })}
+            {tString(t, 'producer.sync.savedOnDevice', { count: syncStatus.pendingCount })}
           </Text>
         </>
       ) : (

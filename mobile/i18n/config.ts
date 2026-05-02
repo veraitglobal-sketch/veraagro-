@@ -1,3 +1,8 @@
+/** Intl.PluralRules is incomplete on some JSC/Hermes builds — required for i18next JSON v4 plurals. */
+import '@formatjs/intl-pluralrules/polyfill';
+import '@formatjs/intl-pluralrules/locale-data/en';
+import '@formatjs/intl-pluralrules/locale-data/sr';
+
 import * as Localization from 'expo-localization';
 import deepmerge from 'deepmerge';
 import i18n from 'i18next';
@@ -36,7 +41,7 @@ const deviceIsSerbian = deviceCode === 'sr';
 const initialLng = deviceIsSerbian ? 'sr' : 'en';
 
 i18n.use(initReactI18next).init({
-  compatibilityJSON: 'v3',
+  compatibilityJSON: 'v4',
   resources: {
     en: {
       translation: translationEn,

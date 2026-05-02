@@ -18,7 +18,7 @@ import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI, missionsAPI } from '../../lib/api';
-import { apiErrorMessage } from '../../lib/api-error';
+import { apiErrorMessage, axiosResponseStatus } from '../../lib/api-error';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
 type BatchRow = { id: string; batchId?: string; productName?: string; quantity?: number; unit?: string; status?: string };
@@ -157,7 +157,16 @@ export default function MissionsCreateScreen() {
         { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
       ]);
     } catch (e: unknown) {
-      const msg = apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
+      const status = axiosResponseStatus(e);
+      const raw = apiErrorMessage(e, '');
+      const looksInternal =
+        status === 500 ||
+        status === 502 ||
+        status === 503 ||
+        /internal server error/i.test(raw);
+      const msg = looksInternal
+        ? t('producer.missionsCreate.serverError')
+        : apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
       Alert.alert(t('producer.missionsCreate.alerts.cannotStart'), msg);
     } finally {
       setSubmitting(false);
@@ -358,6 +367,17 @@ export default function MissionsCreateScreen() {
           {locationHint ? (
             <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: theme.spacing.sm, lineHeight: 22 }}>{locationHint}</Text>
           ) : null}
+          <Text
+            style={{
+              fontSize: 14,
+              color: theme.colors.text.secondary,
+              marginTop: theme.spacing.sm,
+              lineHeight: 20,
+              opacity: 0.95,
+            }}
+          >
+            {t('producer.missionsCreate.pickupCoordsFreedomNote')}
+          </Text>
         </View>
 
         <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>

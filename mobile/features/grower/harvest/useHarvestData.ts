@@ -14,7 +14,7 @@ import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
-import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
+import { apiErrorMessage, isLikelyNetworkError, axiosResponseStatus } from '../../../lib/api-error';
 
 export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce', 'Other'];
 
@@ -187,7 +187,15 @@ export function useHarvestData() {
             // fall through
           }
         }
-        Alert.alert(t('error'), apiErrorMessage(e, t('producer.harvest.saveFailed')));
+        const raw = apiErrorMessage(e, t('producer.harvest.saveFailed'));
+        const st = axiosResponseStatus(e);
+        const looksInternal =
+          st === 500 ||
+          st === 502 ||
+          st === 503 ||
+          /internal\s*server\s*error/i.test(raw);
+        const msg = looksInternal ? t('producer.harvest.serverError') : raw;
+        Alert.alert(t('error'), msg);
       } finally {
         setLoading(false);
       }

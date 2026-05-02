@@ -5,6 +5,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import { ImageUp, Plus, Pencil, Trash2, X, Barcode, Package } from 'lucide-react';
 
 type Item = Awaited<ReturnType<typeof b2bSupplierPortalAPI.getMyCatalog>>[number];
@@ -352,8 +353,9 @@ export default function SupplierCatalogPage() {
         )}
 
         <form
+          id="supplier-catalog-line-form"
           onSubmit={onSubmit}
-          className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 shadow-sm mb-8"
+          className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 shadow-sm mb-8 scroll-mt-8"
         >
           <h2 className="text-sm font-medium text-gray-800 mb-3 flex items-center gap-2">
             <Plus className="h-4 w-4 text-[#2D5A27]" />
@@ -477,13 +479,21 @@ export default function SupplierCatalogPage() {
           </div>
         </form>
 
-        <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Current lines</h2>
+        <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+          {t('supplier.catalogPage.currentLinesTitle')}
+        </h2>
         {loading ? (
-          <p className="text-sm text-gray-500 font-light">Loading…</p>
+          <p className="text-sm text-gray-500 font-light">{t('supplier.catalogPage.loading')}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-gray-500 font-light border border-dashed border-gray-200 rounded-lg p-6 text-center">
-            No products yet. Add your first line above.
-          </p>
+          <div className="text-sm text-gray-600 font-light border border-dashed border-gray-200 rounded-lg p-6 text-center space-y-3">
+            <p>{t('supplier.catalogPage.emptyList')}</p>
+            <Link
+              href="#supplier-catalog-line-form"
+              className="inline-flex min-h-[44px] items-center justify-center font-medium text-[#2D5A27] underline"
+            >
+              {t('supplier.catalogPage.emptyListCta')}
+            </Link>
+          </div>
         ) : (
           <ul className="space-y-2">
             {items.map((it) => (

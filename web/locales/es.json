@@ -1025,7 +1025,12 @@
     "missionCreate": {
       "submitCta": "Solicitar transporte",
       "creating": "Creando...",
-      "errSubmitFailed": "No se pudo crear la solicitud de transporte. Inténtelo de nuevo o revise el cumplimiento y el estado del lote."
+      "errSubmitFailed": "No se pudo crear la solicitud de transporte. Inténtelo de nuevo o revise el cumplimiento y el estado del lote.",
+      "needPackedOrVerified": "Necesita lotes en estado PACKED o QUALITY_VERIFIED para solicitar transporte.",
+      "emptyBatchNextSteps": "Pasos siguientes:",
+      "emptyBatchLinkBatches": "Mis lotes (empaquetar)",
+      "emptyBatchLinkQuality": "Entrada de calidad",
+      "emptyBatchLinkCompliance": "Fotos de cumplimiento"
     }
   },
   "adminNav": {
@@ -1497,6 +1502,7 @@
     "locationsHint": "Tienda asociada: catálogo y pedido directo. Comercio minorista: recogida en el centro.",
     "emptyDirectoryTitle": "Aún no hay ubicaciones en el directorio público",
     "emptyDirectoryBody": "Pídale a un administrador de Bio Vera que apruebe socios o agregue datos minoristas. Los listados aparecerán por país cuando estén disponibles.",
+    "emptyDirectoryContact": "Contactar soporte",
     "retry": "Intentar otra vez",
     "directoryLoadError": "No se pudo cargar el directorio. Verifique que la API se esté ejecutando y que NEXT_PUBLIC_API_URL esté configurado en el sitio.",
     "loadFailed": "Error de carga",
@@ -1528,6 +1534,7 @@
     "partner": "Pareja",
     "inboxBack": "Volver a proveedores y pedidos",
     "inboxEmpty": "Aún no hay conversaciones: abra una tienda asociada y use \"Mensaje\" (o el enlace del hilo en un pedido).",
+    "inboxEmptyCta": "Abrir proveedores y pedidos",
     "inboxOpenChat": "abrir chat",
     "sf1t": "1. Pedido de socio y B2B",
     "sf1": "En <0>Proveedores y pedidos</0>, filtre por lugar, abra una <1>tienda asociada</1> y realice un <2>pedido directo</2>. Su proveedor actualiza el estado (por ejemplo, PENDIENTE → CONFIRMADO → CUMPLIDO) y puede usar <3>Hilo</3> para mensajes.",
@@ -1561,6 +1568,7 @@
     "plantingsSectionPlanting": "Planes de plantación",
     "plantingsSectionHarvest": "Planes de cosecha",
     "plantingsEmpty": "Aún no hay planes de cultivo. Registre un plan a continuación o desde la aplicación para productores de Bio Vera.",
+    "plantingsEmptyGoToForm": "Ir al formulario de arriba",
     "plantingsFormTitle": "Registrar un plan de plantación",
     "plantingsFormParcel": "Paquete (solo aprobado)",
     "plantingsFormCrop": "Cultivo/variedad",
@@ -1661,6 +1669,8 @@
     "fieldDiarySelectParcel": "Filtrar por paquete (opcional)",
     "fieldDiaryAllParcels": "Todas las parcelas en este campo",
     "fieldDiaryNoLogs": "No hay entradas para este filtro.",
+    "fieldDiaryEmptyCtaCapture": "Captura de campo (PWA / móvil)",
+    "fieldDiaryEmptyCtaPlans": "Planes de cultivo",
     "fieldDiaryColWhen": "Grabado",
     "fieldDiaryColParcel": "Parcela",
     "fieldDiaryColPlan": "Plan de cultivo",
@@ -1764,6 +1774,7 @@
       "placeholderReply": "Responder…",
       "send": "Enviar",
       "empty": "Aún no hay mensajes.",
+      "emptyCta": "Ver pedidos entrantes",
       "errThreads": "No se pudieron cargar las conversaciones",
       "errOpen": "No se pudieron cargar los mensajes",
       "errSend": "Error al enviar"
@@ -1782,7 +1793,17 @@
       "statusLabel": "Estado",
       "itemFallback": "Artículo",
       "errLoad": "Error al cargar",
-      "errUpdate": "Error al actualizar"
+      "errUpdate": "Error al actualizar",
+      "emptyTitle": "Aún no hay pedidos entrantes",
+      "emptyBody": "Los productores envían solicitudes B2B desde su tienda pública cuando hay líneas de catálogo y el flujo de socios está activo.",
+      "emptyCtaCatalog": "Gestionar catálogo",
+      "emptyCtaMessages": "Abrir mensajes"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Líneas actuales",
+      "loading": "Cargando…",
+      "emptyList": "Aún no hay líneas en el catálogo. Añada su primer producto en el formulario de arriba; los productores lo verán en la tienda pública.",
+      "emptyListCta": "Ir al formulario de producto"
     },
     "orderStatusB2B": {
       "PENDING": "Pendiente",

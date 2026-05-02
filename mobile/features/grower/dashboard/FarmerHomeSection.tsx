@@ -76,14 +76,22 @@ type Essential = {
   accent: string;
 };
 
+export type FarmerHomeVariant = 'dashboard' | 'farmTools';
+
 /**
  * Ordered flow: instructions → parcels → plantings → diary → materials → allowed → banned → certificates.
- * Copy comes from i18n (short, plain language).
+ * On the dedicated Farm tools screen, `farmTools` hides the instructions row (same content as the Uputstva tab).
  */
-export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHandlers }) {
+export default function FarmerHomeSection({
+  handlers,
+  variant = 'dashboard',
+}: {
+  handlers: FarmerHomeHandlers;
+  variant?: FarmerHomeVariant;
+}) {
   const { t } = useTranslation();
 
-  const essentials: Essential[] = [
+  const essentialsAll: Essential[] = [
     {
       key: 'instructions',
       onPress: handlers.onPlantingSteps,
@@ -150,6 +158,18 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     },
   ];
 
+  const essentials =
+    variant === 'farmTools' ? essentialsAll.filter((e) => e.key !== 'instructions') : essentialsAll;
+
+  const blockTitleKey =
+    variant === 'farmTools'
+      ? 'producer.dashboard.farmer.blockTitleFarmTools'
+      : 'producer.dashboard.farmer.blockTitle';
+  const blockHintKey =
+    variant === 'farmTools'
+      ? 'producer.dashboard.farmer.blockHintFarmTools'
+      : 'producer.dashboard.farmer.blockHint';
+
   const also: { key: string; onPress: () => void; icon: React.ReactNode; titleKey: string }[] = [
     { key: 'b2b', onPress: handlers.onPartnerOrders, icon: <ShoppingBag size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoPartnerOrders' },
     { key: 'prod', onPress: handlers.onMyProducts, icon: <Package size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />, titleKey: 'producer.dashboard.farmer.alsoProducts' },
@@ -170,7 +190,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
             marginBottom: 2,
           }}
         >
-          {t('producer.dashboard.farmer.blockTitle')}
+          {t(blockTitleKey)}
         </Text>
         <Text
           style={{
@@ -181,7 +201,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
             marginBottom: theme.spacing.sm,
           }}
         >
-          {t('producer.dashboard.farmer.blockHint')}
+          {t(blockHintKey)}
         </Text>
         <View style={{ gap: theme.spacing.sm }}>
           {essentials.map((item) => (

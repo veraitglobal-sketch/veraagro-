@@ -1025,7 +1025,12 @@
     "missionCreate": {
       "submitCta": "Transport anfordern",
       "creating": "Erstellen...",
-      "errSubmitFailed": "Transportanfrage konnte nicht erstellt werden. Bitte erneut versuchen oder Konformität und Chargenstatus prüfen."
+      "errSubmitFailed": "Transportanfrage konnte nicht erstellt werden. Bitte erneut versuchen oder Konformität und Chargenstatus prüfen.",
+      "needPackedOrVerified": "Für eine Transportanfrage benötigen Sie Chargen mit Status PACKED oder QUALITY_VERIFIED.",
+      "emptyBatchNextSteps": "Nächste Schritte:",
+      "emptyBatchLinkBatches": "Meine Chargen (verpacken)",
+      "emptyBatchLinkQuality": "Qualitätseintrag",
+      "emptyBatchLinkCompliance": "Compliance-Fotos"
     }
   },
   "adminNav": {
@@ -1497,6 +1502,7 @@
     "locationsHint": "Partnershop – Katalog und Direktbestellung. Einzelhandel – Abholung am Hub.",
     "emptyDirectoryTitle": "Noch keine Standorte im öffentlichen Verzeichnis",
     "emptyDirectoryBody": "Bitten Sie einen Bio Vera-Administrator, Partner zu genehmigen oder Einzelhandelsdaten hinzuzufügen. Sofern verfügbar, werden die Einträge nach Land angezeigt.",
+    "emptyDirectoryContact": "Support kontaktieren",
     "retry": "Versuchen Sie es erneut",
     "directoryLoadError": "Das Verzeichnis konnte nicht geladen werden. Überprüfen Sie, ob die API ausgeführt wird und NEXT_PUBLIC_API_URL auf der Site festgelegt ist.",
     "loadFailed": "Das Laden ist fehlgeschlagen",
@@ -1528,6 +1534,7 @@
     "partner": "Partner",
     "inboxBack": "Zurück zu Lieferanten & Bestellungen",
     "inboxEmpty": "Noch keine Gespräche – öffnen Sie einen Partnershop und verwenden Sie „Nachricht“ (oder den Thread-Link bei einer Bestellung).",
+    "inboxEmptyCta": "Lieferanten & Bestellungen öffnen",
     "inboxOpenChat": "Chat öffnen",
     "sf1t": "1. Partner- und B2B-Bestellung",
     "sf1": "Filtern Sie unter <0>Lieferanten & Bestellungen</0> nach Ort, eröffnen Sie einen <1>Partnershop</1> und geben Sie eine <2>Direktbestellung</2> auf. Ihr Lieferant aktualisiert den Status (z. B. AUSSTEHEND → BESTÄTIGT → ERFÜLLT) und Sie können <3>Thread</3> für Nachrichten verwenden.",
@@ -1561,6 +1568,7 @@
     "plantingsSectionPlanting": "Pflanzpläne",
     "plantingsSectionHarvest": "Erntepläne",
     "plantingsEmpty": "Noch keine Erntepläne. Registrieren Sie unten oder über die Bio Vera-Züchter-App einen Plan.",
+    "plantingsEmptyGoToForm": "Zum Formular oben",
     "plantingsFormTitle": "Registrieren Sie einen Pflanzplan",
     "plantingsFormParcel": "Paket (nur genehmigt)",
     "plantingsFormCrop": "Ernte / Sorte",
@@ -1661,6 +1669,8 @@
     "fieldDiarySelectParcel": "Nach Parzelle filtern (optional)",
     "fieldDiaryAllParcels": "Alle Parzellen auf diesem Feld",
     "fieldDiaryNoLogs": "Keine Einträge für diesen Filter.",
+    "fieldDiaryEmptyCtaCapture": "Felderfassung (PWA / mobil)",
+    "fieldDiaryEmptyCtaPlans": "Anbaupläne",
     "fieldDiaryColWhen": "Aufgezeichnet",
     "fieldDiaryColParcel": "Paket",
     "fieldDiaryColPlan": "Ernteplan",
@@ -1764,6 +1774,7 @@
       "placeholderReply": "Antwort…",
       "send": "Senden",
       "empty": "Noch keine Nachrichten.",
+      "emptyCta": "Eingehende Bestellungen anzeigen",
       "errThreads": "Unterhaltungen konnten nicht geladen werden",
       "errOpen": "Nachrichten konnten nicht geladen werden",
       "errSend": "Senden fehlgeschlagen"
@@ -1782,7 +1793,17 @@
       "statusLabel": "Status",
       "itemFallback": "Artikel",
       "errLoad": "Laden fehlgeschlagen",
-      "errUpdate": "Aktualisierung fehlgeschlagen"
+      "errUpdate": "Aktualisierung fehlgeschlagen",
+      "emptyTitle": "Noch keine eingehenden Bestellungen",
+      "emptyBody": "Erzeuger stellen B2B-Anfragen über Ihren öffentlichen Shop, wenn Katalogzeilen und der Partnerprozess aktiv sind.",
+      "emptyCtaCatalog": "Katalog verwalten",
+      "emptyCtaMessages": "Nachrichten öffnen"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Aktuelle Zeilen",
+      "loading": "Wird geladen…",
+      "emptyList": "Noch keine Katalogzeilen. Fügen Sie oben die erste Produktzeile hinzu — Erzeuger sehen diese im öffentlichen Shop.",
+      "emptyListCta": "Zum Produktformular springen"
     },
     "orderStatusB2B": {
       "PENDING": "Ausstehend",

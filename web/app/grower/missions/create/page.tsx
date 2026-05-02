@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Package, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { useGrowerHref } from '@/hooks/useGrowerHref';
 
 /** POST /missions — API message when present; short network hint; localized fallback */
 function formatMissionCreateError(error: unknown, t: TFunction): string {
@@ -49,6 +50,7 @@ const inputFocus = 'focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]'
 
 export default function CreateMissionPage() {
   const { t } = useTranslation();
+  const growerHref = useGrowerHref();
   const navItems = useGrowerNavItems();
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [batchLoadError, setBatchLoadError] = useState<string | null>(null);
@@ -453,7 +455,30 @@ export default function CreateMissionPage() {
               </select>
               {errors.batchId && <p className="text-red-500 text-xs mt-1">{errors.batchId}</p>}
               {batches.length === 0 && (
-                <p className="text-base text-gray-500 mt-2">{t('grower.missionCreate.needPackedOrVerified')}</p>
+                <div className="mt-3 space-y-3 rounded-lg border border-gray-200 bg-gray-50/80 px-3 py-3">
+                  <p className="text-base text-gray-700">{t('grower.missionCreate.needPackedOrVerified')}</p>
+                  <p className="text-sm font-medium text-gray-800">{t('grower.missionCreate.emptyBatchNextSteps')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href={growerHref('/grower/batches')}
+                      className="inline-flex min-h-[44px] items-center rounded-md border border-[#2D5A27]/30 bg-white px-3 py-2 text-sm font-medium text-[#23471f] hover:bg-[#f7faf6]"
+                    >
+                      {t('grower.missionCreate.emptyBatchLinkBatches')}
+                    </Link>
+                    <Link
+                      href={growerHref('/grower/quality-entry')}
+                      className="inline-flex min-h-[44px] items-center rounded-md border border-[#2D5A27]/30 bg-white px-3 py-2 text-sm font-medium text-[#23471f] hover:bg-[#f7faf6]"
+                    >
+                      {t('grower.missionCreate.emptyBatchLinkQuality')}
+                    </Link>
+                    <Link
+                      href={growerHref('/grower/compliance-photos')}
+                      className="inline-flex min-h-[44px] items-center rounded-md border border-[#2D5A27]/30 bg-white px-3 py-2 text-sm font-medium text-[#23471f] hover:bg-[#f7faf6]"
+                    >
+                      {t('grower.missionCreate.emptyBatchLinkCompliance')}
+                    </Link>
+                  </div>
+                </div>
               )}
               {formData.batchId && (
                 <div className="mt-3 rounded-lg border px-3 py-2 text-base">

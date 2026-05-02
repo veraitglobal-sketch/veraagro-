@@ -27,6 +27,7 @@ import {
   cropTypeForLocale,
   formatArea,
 } from './crop-catalog';
+import { mapPlantingSaveError } from './map-planting-save-error';
 
 type EstateRow = { id: string; name: string };
 type ParcelAug = {
@@ -218,6 +219,11 @@ export default function PlantingsScreen() {
       setAddFormErr(t('producer.plantings.validationParcel'));
       return;
     }
+    if (!parcelList.some((p) => p.id === formParcelId)) {
+      setAddFormErr(t('producer.plantings.errSaveAccess'));
+      void load();
+      return;
+    }
     if (!crop) {
       setAddFormErr(t('producer.plantings.validationCrop'));
       return;
@@ -243,9 +249,9 @@ export default function PlantingsScreen() {
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
       const text = Array.isArray(msg) ? msg.join(' ') : msg;
-      const fallback = text || (e instanceof Error ? e.message : t('producer.plantings.loadError'));
-      setAddFormErr(fallback);
-      setErr(fallback);
+      const fromApi = text || (e instanceof Error ? e.message : '');
+      const friendly = mapPlantingSaveError(fromApi, t);
+      setAddFormErr(friendly);
     } finally {
       setSaving(false);
     }

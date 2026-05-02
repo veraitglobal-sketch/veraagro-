@@ -31,18 +31,18 @@ export function computeNextStep(p: {
   if (p.totalParcels === 0) {
     return { kind: 'add_parcel' };
   }
-  if (p.activeMissions > 0) {
-    return { kind: 'missions' };
+  if (p.pendingApproval > 0) {
+    return { kind: 'pending_approval', pendingCount: p.pendingApproval };
+  }
+  /* Daily farm work before logistics — transport stays discoverable via alerts / missions screen. */
+  if (p.approved > 0) {
+    return { kind: 'log_work' };
   }
   if (p.batchesReadyForTransport > 0) {
     return { kind: 'request_transport' };
   }
-  if (p.pendingApproval > 0) {
-    return { kind: 'pending_approval', pendingCount: p.pendingApproval };
-  }
-  /* Offline queue is shown only in SyncQueueStrip — avoids duplicating “N items on device” here. */
-  if (p.approved > 0) {
-    return { kind: 'log_work' };
+  if (p.activeMissions > 0) {
+    return { kind: 'missions' };
   }
   return { kind: 'default_steps' };
 }

@@ -11,6 +11,7 @@ import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
+import type { ReactNode } from 'react';
 import { Leaf, Loader2, Sprout, Wheat } from 'lucide-react';
 
 type EstateRow = { id: string; name: string };
@@ -168,15 +169,23 @@ export default function GrowerPlantingsPage() {
             </div>
           ) : (
             <>
-              <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+              <section id="grower-plan-form" className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm scroll-mt-24">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
                   <Sprout className="h-5 w-5 text-[#2D5A27]" />
                   {t('growerPages.plantingsFormTitle')}
                 </h2>
                 {approvedParcels.length === 0 ? (
-                  <p className="text-base text-amber-900 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 leading-relaxed">
-                    {t('growerPages.plantingsApprovedOnly')}
-                  </p>
+                  <div className="text-base text-amber-900 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 leading-relaxed space-y-3">
+                    <p>{t('growerPages.plantingsApprovedOnly')}</p>
+                    <p>
+                      <Link
+                        href={loc('/grower/fields')}
+                        className="inline-flex min-h-[44px] items-center font-semibold text-[#2D5A27] underline underline-offset-2"
+                      >
+                        {t('grower.placeholders.openParcels')}
+                      </Link>
+                    </p>
+                  </div>
                 ) : (
                   <form onSubmit={submitPlanting} className="space-y-4 max-w-lg">
                     <div>
@@ -241,6 +250,14 @@ export default function GrowerPlantingsPage() {
                 icon={Sprout}
                 rows={plantings}
                 empty={t('growerPages.plantingsEmpty')}
+                emptyAction={
+                  <Link
+                    href="#grower-plan-form"
+                    className="inline-flex min-h-[44px] items-center font-medium text-[#2D5A27] underline underline-offset-2"
+                  >
+                    {t('growerPages.plantingsEmptyGoToForm')}
+                  </Link>
+                }
                 t={t}
                 formatDate={formatDate}
                 haStatus={haStatus}
@@ -252,6 +269,14 @@ export default function GrowerPlantingsPage() {
                 icon={Wheat}
                 rows={harvests}
                 empty={t('growerPages.plantingsEmpty')}
+                emptyAction={
+                  <Link
+                    href="#grower-plan-form"
+                    className="inline-flex min-h-[44px] items-center font-medium text-[#2D5A27] underline underline-offset-2"
+                  >
+                    {t('growerPages.plantingsEmptyGoToForm')}
+                  </Link>
+                }
                 t={t}
                 formatDate={formatDate}
                 haStatus={haStatus}
@@ -269,6 +294,7 @@ function AnnouncementsTable({
   icon: Icon,
   rows,
   empty,
+  emptyAction,
   t,
   formatDate,
   haStatus,
@@ -279,6 +305,7 @@ function AnnouncementsTable({
   icon: React.ComponentType<{ className?: string }>;
   rows: HaRow[];
   empty: string;
+  emptyAction?: ReactNode;
   t: (k: string, o?: Record<string, string>) => string;
   formatDate: (iso: string) => string;
   haStatus: (s: string) => string;
@@ -301,6 +328,7 @@ function AnnouncementsTable({
           {title}
         </h2>
         <p className="text-base text-gray-600 font-light leading-relaxed">{empty}</p>
+        {emptyAction ? <div className="mt-4">{emptyAction}</div> : null}
       </section>
     );
   }

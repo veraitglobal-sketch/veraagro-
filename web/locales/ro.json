@@ -1025,7 +1025,12 @@
     "missionCreate": {
       "submitCta": "Solicita transport",
       "creating": "Se creează...",
-      "errSubmitFailed": "Nu s-a putut crea cererea de transport. Încercați din nou sau verificați conformitatea și starea lotului."
+      "errSubmitFailed": "Nu s-a putut crea cererea de transport. Încercați din nou sau verificați conformitatea și starea lotului.",
+      "needPackedOrVerified": "Aveți nevoie de loturi în starea PACKED sau QUALITY_VERIFIED pentru a solicita transportul.",
+      "emptyBatchNextSteps": "Pașii următori:",
+      "emptyBatchLinkBatches": "Loturile mele (ambalare)",
+      "emptyBatchLinkQuality": "Înregistrare calitate",
+      "emptyBatchLinkCompliance": "Fotografii conformitate"
     }
   },
   "adminNav": {
@@ -1497,6 +1502,7 @@
     "locationsHint": "Magazin partener — catalog și comandă directă. Comerț cu amănuntul — ridicare în hub.",
     "emptyDirectoryTitle": "Încă nu există locații în directorul public",
     "emptyDirectoryBody": "Solicitați unui administrator Bio Vera să aprobe parteneri sau să adauge date de vânzare cu amănuntul. Listările vor apărea în funcție de țară atunci când sunt disponibile.",
+    "emptyDirectoryContact": "Contactați asistența",
     "retry": "Încearcă din nou",
     "directoryLoadError": "Directorul nu a putut fi încărcat. Verificați dacă API-ul rulează și NEXT_PUBLIC_API_URL este setat pe site.",
     "loadFailed": "Încărcarea a eșuat",
@@ -1528,6 +1534,7 @@
     "partner": "Partener",
     "inboxBack": "Înapoi la furnizori și comenzi",
     "inboxEmpty": "Nicio conversație încă - deschideți un magazin partener și utilizați „Mesaj” (sau linkul firului de discuție la o comandă).",
+    "inboxEmptyCta": "Deschide furnizori și comenzi",
     "inboxOpenChat": "Deschide chatul",
     "sf1t": "1. Comandă partener și B2B",
     "sf1": "Pe <0>Furnizori și comenzi</0>, filtrați după locație, deschideți un <1>magazin partener</1> și plasați o <2>comandă directă</2>. Furnizorul dvs. actualizează starea (de ex., ÎN AȘTEPTARE → CONFIRMAT → ÎNDEPLINIT) și puteți utiliza <3>Thread</3> pentru mesaje.",
@@ -1561,6 +1568,7 @@
     "plantingsSectionPlanting": "Planuri de plantare",
     "plantingsSectionHarvest": "Planuri de recoltare",
     "plantingsEmpty": "Încă nu există planuri de recoltă. Înregistrați un plan de mai jos sau din aplicația pentru cultivatori Bio Vera.",
+    "plantingsEmptyGoToForm": "Mergi la formularul de mai sus",
     "plantingsFormTitle": "Înregistrați un plan de plantare",
     "plantingsFormParcel": "Colet (doar aprobat)",
     "plantingsFormCrop": "Cultură / varietate",
@@ -1661,6 +1669,8 @@
     "fieldDiarySelectParcel": "Filtrați după colet (opțional)",
     "fieldDiaryAllParcels": "Toate coletele de pe acest câmp",
     "fieldDiaryNoLogs": "Nu există intrări pentru acest filtru.",
+    "fieldDiaryEmptyCtaCapture": "Înregistrare pe teren (PWA / mobil)",
+    "fieldDiaryEmptyCtaPlans": "Planuri de cultură",
     "fieldDiaryColWhen": "Înregistrat",
     "fieldDiaryColParcel": "Pachet",
     "fieldDiaryColPlan": "Planul de recoltă",
@@ -1764,6 +1774,7 @@
       "placeholderReply": "Răspundeți…",
       "send": "Trimiteți",
       "empty": "Încă nu există mesaje.",
+      "emptyCta": "Vezi comenzile primite",
       "errThreads": "Conversațiile nu au putut fi încărcate",
       "errOpen": "Mesajele nu au putut fi încărcate",
       "errSend": "Trimiterea a eșuat"
@@ -1782,7 +1793,17 @@
       "statusLabel": "Stare",
       "itemFallback": "Articol",
       "errLoad": "Încărcarea a eșuat",
-      "errUpdate": "Actualizarea a eșuat"
+      "errUpdate": "Actualizarea a eșuat",
+      "emptyTitle": "Încă nu există comenzi primite",
+      "emptyBody": "Cultivatorii trimit cereri B2B din magazinul dvs. public când aveți linii în catalog și fluxul de parteneriat este activ.",
+      "emptyCtaCatalog": "Gestionează catalogul",
+      "emptyCtaMessages": "Deschide mesajele"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Linii curente",
+      "loading": "Se încarcă…",
+      "emptyList": "Încă nu există linii în catalog. Adăugați primul produs în formularul de mai sus — vizibil în magazinul public.",
+      "emptyListCta": "Salt la formularul de produs"
     },
     "orderStatusB2B": {
       "PENDING": "În așteptare",

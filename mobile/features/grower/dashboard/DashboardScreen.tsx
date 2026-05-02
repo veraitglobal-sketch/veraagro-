@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView, RefreshControl, TouchableOpacity, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { ChevronRight, LayoutGrid } from 'lucide-react-native';
 import { useAuth } from '../../../hooks/useAuth';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -9,8 +10,7 @@ import { useDashboardData } from './useDashboardData';
 import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
 import SyncQueueStrip from './SyncQueueStrip';
-import FarmerHomeSection from './FarmerHomeSection';
-import GrowerOrdersFinancialSection from './GrowerOrdersFinancialSection';
+import DashboardHomeFinanceTeaser from './DashboardHomeFinanceTeaser';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -23,27 +23,6 @@ export default function DashboardScreen() {
 
   const estateCount = data.estates.length;
   const ps = data.parcelSteps;
-
-  const farmerHandlers = {
-    onParcels: () => router.push('/(producer)/estates'),
-    onPlantingSteps: () => router.push('/(producer)/(tabs)/steps'),
-    onPlantings: () => router.push('/(producer)/plantings'),
-    onFieldDiary: () => router.push('/(producer)/(tabs)/field-log'),
-    onAllowedMaterials: () => router.push('/(producer)/materials'),
-    onBanned: () => router.push('/(producer)/(tabs)/banned-substances'),
-    onCertificates: () => router.push('/(producer)/(tabs)/certifications'),
-    onMyProducts: () => router.push('/(producer)/(tabs)/products'),
-    onScan: () => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } }),
-    onHarvest: () => router.push('/(producer)/(tabs)/harvest'),
-    onCompliancePhotos: () => router.push('/(producer)/compliance-photos'),
-    onQuality: () => router.push('/(producer)/quality-entry'),
-    onPartnerOrders: () => router.push('/(producer)/partner-orders'),
-    onBatches: () => router.push('/(producer)/batches'),
-    onMaterials: () => router.push('/(producer)/materials'),
-    onRequestTransport: () => router.push('/(producer)/missions-create'),
-    onMissions: () => router.push('/(producer)/missions'),
-    onPackageBadges: () => router.push('/(producer)/package-badges'),
-  };
 
   const hasAlerts =
     data.unreadCount > 0 || data.activeMissions.length > 0 || data.activeBatches.length > 0;
@@ -90,6 +69,14 @@ export default function DashboardScreen() {
           paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
         }}
       >
+        <SyncQueueStrip
+          pendingCount={data.offlinePending}
+          syncing={data.offlineSyncing}
+          lastError={data.offlineSyncLastError}
+          onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
+          onSyncNow={() => void data.onRefresh()}
+          compact
+        />
         <NextStepCard
           ready={ps.loaded}
           estateCount={estateCount}
@@ -106,14 +93,49 @@ export default function DashboardScreen() {
           onSteps={() => router.push('/(producer)/(tabs)/steps')}
           onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
         />
-        <SyncQueueStrip
-          pendingCount={data.offlinePending}
-          syncing={data.offlineSyncing}
-          lastError={data.offlineSyncLastError}
-          onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
-          onSyncNow={() => void data.onRefresh()}
+        <DashboardHomeFinanceTeaser
+          data={data.ordersFinancial}
+          onPress={() => router.push('/(producer)/(tabs)/wallet')}
         />
-        <GrowerOrdersFinancialSection data={data.ordersFinancial} />
+        <TouchableOpacity
+          onPress={() => router.push('/(producer)/farm-tools')}
+          activeOpacity={0.75}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: theme.colors.surfaceElevated,
+            borderRadius: theme.borderRadius.md,
+            paddingVertical: theme.spacing.sm,
+            paddingHorizontal: theme.spacing.md,
+            marginBottom: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            minHeight: 52,
+          }}
+        >
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: theme.borderRadius.md,
+              backgroundColor: theme.colors.primaryLight,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: theme.spacing.sm,
+            }}
+          >
+            <LayoutGrid size={22} color={theme.colors.primary} strokeWidth={1.75} />
+          </View>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
+              {t('producer.dashboard.farmToolsCardTitle')}
+            </Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }} numberOfLines={2}>
+              {t('producer.dashboard.farmToolsCardSubtitle')}
+            </Text>
+          </View>
+          <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />
+        </TouchableOpacity>
         {hasAlerts ? (
           <TouchableOpacity
             onPress={() => {
@@ -144,10 +166,6 @@ export default function DashboardScreen() {
             </Text>
           </TouchableOpacity>
         ) : null}
-        <FarmerHomeSection handlers={farmerHandlers} />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, lineHeight: 17, marginTop: theme.spacing.xs }}>
-          {t('producer.dashboard.farmer.profileMore')}
-        </Text>
       </View>
     </ScrollView>
   );

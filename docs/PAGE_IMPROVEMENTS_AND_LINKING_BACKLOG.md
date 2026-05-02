@@ -53,7 +53,7 @@
 
 | # | Problem | Predlog | Status |
 |---|---------|---------|--------|
-| P4.1 | Lista ili detalj učitavaju podatke, ali **prazan state** nema CTA ka sledećem koraku (npr. nema narudžbina → link ka shopu ili partner porudžbinama). | Po jedan primarni CTA po ulozi u glavnim listama. | 🔴 |
+| P4.1 | Lista ili detalj učitavaju podatke, ali **prazan state** nema CTA ka sledećem koraku (npr. nema narudžbina → link ka shopu ili partner porudžbinama). | Po jedan primarni CTA po ulozi u glavnim listama. | 🟡 · *2026-05:* grower web (plantings, mission create, field diary, where-to-buy, inbox) + **supplier** web (`/supplier/orders`, `messages`, `catalog` prazni state + i18n za katalog listu). |
 | P4.2 | **API greške** prikazane kao sirovi string sa backenda — korisnik nema „šta dalje“. | **Grower web (2026-05):** `growerApiErrorOrT` + lokalizovani fallback na ključnim stranicama; misija „create“ više ne ispisuje HTTP+JSON telo; modal detalja partije prikazuje grešku učitavanja. Ostale uloge / kanali — nastaviti po istom obrascu. | 🟡 |
 | P4.3 | **Plot / batch / passport / farmer** — jedan kanon za QR, grower fields i copy. | **Referenca:** § *Javni URL šabloni* ispod; smoke: `/plot/{publicCode}`, `/passport/{batchId}`. | 🟡 |
 

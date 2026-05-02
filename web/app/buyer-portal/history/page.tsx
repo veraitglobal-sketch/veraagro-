@@ -7,6 +7,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { Clock, Package, CheckCircle, XCircle } from 'lucide-react';
+import Link from 'next/link';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 export default function OrderHistoryPage() {
@@ -154,12 +155,24 @@ export default function OrderHistoryPage() {
           {!loading && filteredOrders.length === 0 && (
             <div className="text-center py-12 border-b border-green-200/50">
               <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={1} />
-              <p className="text-gray-500 font-light">No order history found</p>
+              <p className="text-gray-500 font-light">{t('buyerPortalHistory.emptyTitle')}</p>
               <p className="text-sm text-gray-400 mt-2 font-light">
-                {filter === 'all' 
-                  ? 'You haven\'t completed or cancelled any orders yet'
-                  : `No ${filter.toLowerCase()} orders found`}
+                {filter === 'all' ? t('buyerPortalHistory.emptyHintAll') : t('buyerPortalHistory.emptyHintFilter')}
               </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/buyer-portal/orders"
+                  className="inline-flex min-h-[44px] items-center rounded-md bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f]"
+                >
+                  {t('buyerPortalHistory.emptyCtaOrders')}
+                </Link>
+                <Link
+                  href="/buyer-portal/trade-panel"
+                  className="inline-flex min-h-[44px] items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                >
+                  {t('buyerPortalHistory.emptyCtaTrade')}
+                </Link>
+              </div>
             </div>
           )}
         </div>

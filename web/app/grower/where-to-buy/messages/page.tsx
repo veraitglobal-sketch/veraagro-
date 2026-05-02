@@ -9,6 +9,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI } from '@/lib/api';
 import { ArrowLeft, MessageCircle, Loader2, ChevronRight } from 'lucide-react';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { useGrowerHref } from '@/hooks/useGrowerHref';
 
 type ThreadRow = Awaited<ReturnType<typeof growerSupplierB2bAPI.getMyThreads>>[number];
 
@@ -22,6 +23,7 @@ function threadLabel(row: ThreadRow, t: (k: string) => string) {
 export default function GrowerSupplierMessagesInboxPage() {
   const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
+  const growerHref = useGrowerHref();
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
@@ -74,8 +76,14 @@ export default function GrowerSupplierMessagesInboxPage() {
           {err && <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">{err}</div>}
 
           {!loading && !err && threads.length === 0 && (
-            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/80 p-8 text-center text-sm text-gray-600">
-              {t('growerPages.inboxEmpty')}
+            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/80 p-8 text-center text-sm text-gray-600 space-y-4">
+              <p>{t('growerPages.inboxEmpty')}</p>
+              <Link
+                href={growerHref('/grower/where-to-buy')}
+                className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-[#2D5A27] px-4 py-2 text-base font-medium text-white hover:bg-[#23471f]"
+              >
+                {t('growerPages.inboxEmptyCta')}
+              </Link>
             </div>
           )}
 

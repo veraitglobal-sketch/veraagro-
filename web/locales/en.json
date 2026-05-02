@@ -1107,6 +1107,10 @@
       "noReadyBatches": "(No ready batches available)",
       "selectBatchPlaceholder": "-- Select batch --",
       "needPackedOrVerified": "You need batches with status PACKED or QUALITY_VERIFIED to request transport.",
+      "emptyBatchNextSteps": "Typical next steps:",
+      "emptyBatchLinkBatches": "My batches (pack a lot)",
+      "emptyBatchLinkQuality": "Quality entry",
+      "emptyBatchLinkCompliance": "Compliance photos",
       "complianceChecking": "Checking compliance for this lot…",
       "complianceOk": "Compliance and label roll are on file for this lot",
       "complianceIncomplete": "Compliance not complete for this lot",
@@ -1721,6 +1725,34 @@
     "analytics": "Analytics & reports",
     "veraStandard": "Bio Vera Standard"
   },
+  "buyerPortalOrders": {
+    "emptyTitle": "No orders found",
+    "emptyHintFiltered": "Try adjusting your filters.",
+    "emptyHintShop": "Place an order from Vera Trade or browse the product shop.",
+    "emptyCtaTrade": "Open Vera Trade",
+    "emptyCtaShop": "Browse shop",
+    "emptyCtaDashboard": "Dashboard"
+  },
+  "buyerPortalHistory": {
+    "emptyTitle": "No order history found",
+    "emptyHintAll": "You have not completed or cancelled any orders yet.",
+    "emptyHintFilter": "No orders match the selected filter.",
+    "emptyCtaOrders": "View current orders",
+    "emptyCtaTrade": "Open Vera Trade"
+  },
+  "buyerPortalDeliveries": {
+    "emptyTitle": "No deliveries found",
+    "emptyHintSearch": "Try adjusting your search.",
+    "emptyHintNone": "Deliveries appear after you place orders and logistics assigns transport.",
+    "emptyCtaOrders": "My orders",
+    "emptyCtaTrade": "Open Vera Trade"
+  },
+  "buyerPortalSuppliers": {
+    "emptyTitle": "No Vera partners found",
+    "emptyHintSearch": "Try adjusting your search.",
+    "emptyHintNone": "Partner farms appear when they are active in the network.",
+    "emptyCtaTrade": "Browse Vera Trade"
+  },
   "buyerPortalVeraStandard": {
     "title": "Bio Vera Standard",
     "description": "Our standard guarantees indisputable digital proof for every product.",
@@ -1859,7 +1891,17 @@
     "missionBadgeLoading": "At farm / loading",
     "missionBadgePickedUp": "Left farm",
     "missionBadgeInTransit": "In transit",
-    "missionBadgeDone": "Delivered"
+    "missionBadgeDone": "Delivered",
+    "missionsPageActiveTitle": "Active missions",
+    "missionsPageActiveLoading": "Loading…",
+    "missionsPageActiveEmpty": "No active missions right now.",
+    "missionsPageActiveEmptyCtaPool": "Claim a run below",
+    "missionsPageActiveEmptyCtaVehicles": "Fleet: Vehicles",
+    "missionsPageAvailableTitle": "Available missions",
+    "missionsPageAvailableEmpty": "No missions available right now.",
+    "missionsPageAvailableEmptyHint": "When growers request pickup or operations opens a run, loads appear here. Keep refrigerated vehicles registered.",
+    "missionsPageAvailableEmptyCtaVehicles": "Manage vehicles",
+    "missionsPageLoadError": "Failed to load missions"
   },
   "growerPages": {
     "partnerStore": "Partner store",
@@ -2101,6 +2143,7 @@
     "locationsHint": "Partner store — catalog and direct order. Retail — hub pickup.",
     "emptyDirectoryTitle": "No locations in the public directory yet",
     "emptyDirectoryBody": "Ask a Bio Vera admin to approve partners or add retail data. Listings will appear by country when available.",
+    "emptyDirectoryContact": "Contact support",
     "retry": "Try again",
     "directoryLoadError": "Could not load the directory. Check that the API is running and NEXT_PUBLIC_API_URL is set on the site.",
     "loadFailed": "Load failed",
@@ -2132,6 +2175,7 @@
     "partner": "Partner",
     "inboxBack": "Back to suppliers & orders",
     "inboxEmpty": "No conversations yet — open a partner store and use “Message” (or the thread link on an order).",
+    "inboxEmptyCta": "Open suppliers & orders",
     "inboxOpenChat": "Open chat",
     "sf1t": "1. Partner & B2B order",
     "sf1": "On <0>Suppliers & orders</0>, filter by place, open a <1>Partner store</1>, and place a <2>direct order</2>. Your supplier updates status (e.g. PENDING → CONFIRMED → FULFILLED) and you can use <3>Thread</3> for messages.",
@@ -2170,6 +2214,7 @@
     "plantingsSectionPlanting": "Planting plans",
     "plantingsSectionHarvest": "Harvest plans",
     "plantingsEmpty": "No crop plans yet. Register a plan below, or from the Bio Vera grower app.",
+    "plantingsEmptyGoToForm": "Go to the registration form above",
     "plantingsFormTitle": "Register a planting plan",
     "plantingsFormParcel": "Parcel (approved only)",
     "plantingsFormCrop": "Crop / variety",
@@ -2270,6 +2315,8 @@
     "fieldDiarySelectParcel": "Filter by parcel (optional)",
     "fieldDiaryAllParcels": "All parcels on this field",
     "fieldDiaryNoLogs": "No entries for this filter.",
+    "fieldDiaryEmptyCtaCapture": "Field capture (PWA / mobile)",
+    "fieldDiaryEmptyCtaPlans": "Crop plans",
     "fieldDiaryColWhen": "Recorded",
     "fieldDiaryColParcel": "Parcel",
     "fieldDiaryColPlan": "Crop plan",
@@ -2387,6 +2434,7 @@
       "placeholderReply": "Reply…",
       "send": "Send",
       "empty": "No messages yet.",
+      "emptyCta": "View incoming orders",
       "errThreads": "Failed to load conversations",
       "errOpen": "Failed to load messages",
       "errSend": "Send failed"
@@ -2405,7 +2453,17 @@
       "statusLabel": "Status",
       "itemFallback": "Item",
       "errLoad": "Failed to load",
-      "errUpdate": "Update failed"
+      "errUpdate": "Update failed",
+      "emptyTitle": "No incoming orders yet",
+      "emptyBody": "Growers place B2B requests from your public store when you have catalog lines and an active partnership flow.",
+      "emptyCtaCatalog": "Manage catalog",
+      "emptyCtaMessages": "Open messages"
+    },
+    "catalogPage": {
+      "currentLinesTitle": "Current lines",
+      "loading": "Loading…",
+      "emptyList": "No catalog lines yet. Add your first product in the form above — growers see these on your public store.",
+      "emptyListCta": "Jump to add product form"
     },
     "orderStatusB2B": {
       "PENDING": "Pending",
