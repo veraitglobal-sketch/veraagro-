@@ -204,8 +204,18 @@ export const missionsAPI = {
     });
     return response.data;
   },
-  claimMission: async (missionId: string, body?: { vehicleId?: string }) => {
+  claimMission: async (
+    missionId: string,
+    body?: { vehicleId?: string; logisticsDriverId?: string },
+  ) => {
     const response = await api.post(`/missions/${encodeURIComponent(missionId)}/claim`, body || {});
+    return response.data;
+  },
+  setMissionLogisticsDriver: async (missionId: string, logisticsDriverId: string | null) => {
+    const response = await api.patch(
+      `/missions/${encodeURIComponent(missionId)}/assigned-logistics-driver`,
+      { logisticsDriverId },
+    );
     return response.data;
   },
   create: async (data: {
@@ -299,6 +309,37 @@ export const logisticsVehiclesAPI = {
       throw err;
     }
     return data;
+  },
+};
+
+export const logisticsDriversAPI = {
+  list: async () => {
+    const response = await api.get('/logistics-partner/drivers');
+    return response.data;
+  },
+  create: async (body: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+    photoDataUrl?: string;
+  }) => {
+    const response = await api.post('/logistics-partner/drivers', body);
+    return response.data;
+  },
+  update: async (
+    id: string,
+    body: Partial<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      isActive: boolean;
+      photoDataUrl: string;
+    }>,
+  ) => {
+    const response = await api.patch(`/logistics-partner/drivers/${encodeURIComponent(id)}`, body);
+    return response.data;
   },
 };
 

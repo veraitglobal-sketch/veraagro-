@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
-import { missionsAPI } from '@/lib/api';
+import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
@@ -17,6 +17,8 @@ const PENDING_HANDOVER_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const MAX_PHOTOS_PER_GROUP = 20;
+const SIG_W = 480;
+const SIG_H = 160;
 
 function readFileAsDataUrl(file: File, readFailedMessage: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -33,6 +35,36 @@ interface Mission {
   status: string;
   batchId?: string | null;
   batches?: { batchId?: string } | null;
+  assigned_logistics_driver?: { id: string } | null;
+}
+
+type LogisticsDriverRow = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  phone?: string | null;
+  isActive: boolean;
+};
+
+function getSigPos(
+  e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>,
+  canvas: HTMLCanvasElement,
+) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  if ('touches' in e && e.touches[0]) {
+    return {
+      x: (e.touches[0].clientX - rect.left) * scaleX,
+      y: (e.touches[0].clientY - rect.top) * scaleY,
+    };
+  }
+  const me = e as React.MouseEvent<HTMLCanvasElement>;
+  return {
+    x: (me.clientX - rect.left) * scaleX,
+    y: (me.clientY - rect.top) * scaleY,
+  };
 }
 
 export default function LogisticsHandoverPage() {
@@ -52,6 +84,14 @@ export default function LogisticsHandoverPage() {
   const [palletPhotos, setPalletPhotos] = useState<string[]>([]);
   const [truckInteriorPhotos, setTruckInteriorPhotos] = useState<string[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [drivers, setDrivers] = useState<LogisticsDriverRow[]>([]);
+  const [driversLoading, setDriversLoading] = useState(false);
+  const [selectedPickupDriverId, setSelectedPickupDriverId] = useState('');
+  const [badgePhotoDataUrl, setBadgePhotoDataUrl] = useState<string | null>(null);
+  const [signatureDirty, setSignatureDirty] = useState(false);
+  const sigCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const sigDrawing = useRef(false);
+  const sigHasInk = useRef(false);
 
   useEffect(() => {
     if (isLoading) return;
@@ -101,6 +141,58 @@ export default function LogisticsHandoverPage() {
       });
     return () => { cancelled = true; };
   }, [isAuthenticated, user?.roles]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    let cancelled = false;
+    setDriversLoading(true);
+    logisticsDriversAPI
+      .list()
+      .then((data: LogisticsDriverRow[]) => {
+        if (!cancelled) setDrivers(Array.isArray(data) ? data.filter((d) => d.isActive) : []);
+      })
+      .catch(() => {
+        if (!cancelled) setDrivers([]);
+      })
+      .finally(() => {
+        if (!cancelled) setDriversLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, user?.roles]);
+
+  const initSigCanvas = () => {
+    const c = sigCanvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, SIG_W, SIG_H);
+    ctx.strokeStyle = '#111827';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  };
+
+  useEffect(() => {
+    initSigCanvas();
+  }, [success, selectedMission]);
+
+  useEffect(() => {
+    if (!selectedMission) {
+      setSelectedPickupDriverId('');
+      return;
+    }
+    const m = missions.find((x) => x.id === selectedMission);
+    setSelectedPickupDriverId(m?.assigned_logistics_driver?.id ?? '');
+  }, [selectedMission, missions]);
+
+  useEffect(() => {
+    setBadgePhotoDataUrl(null);
+    setSignatureDirty(false);
+    sigHasInk.current = false;
+  }, [selectedMission]);
 
   const STANDARD_TEMP_MIN = 2; // °C
   const STANDARD_TEMP_MAX = 8; // °C
@@ -161,8 +253,71 @@ export default function LogisticsHandoverPage() {
     setFn((prev) => prev.filter((_, j) => j !== index));
   };
 
+  const onBadgeFile = async (files: FileList | null) => {
+    setPhotoError(null);
+    const f = files?.[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) {
+      setPhotoError(t('logisticsPages.handoverPhotoOnlyImages'));
+      return;
+    }
+    try {
+      const compressed = await compressImage(f, {
+        maxWidth: 1920,
+        maxHeight: 1920,
+        maxSizeMB: 1.75,
+        useWebWorker: true,
+      });
+      const dataUrl = await readFileAsDataUrl(compressed, t('logisticsPages.handoverPhotoReadFailed'));
+      setBadgePhotoDataUrl(dataUrl);
+    } catch {
+      setPhotoError(t('logisticsPages.handoverPhotoReadFailed'));
+    }
+  };
+
+  const startSig = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const c = sigCanvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    sigDrawing.current = true;
+    sigHasInk.current = true;
+    setSignatureDirty(true);
+    const p = getSigPos(e, c);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  };
+
+  const moveSig = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!sigDrawing.current) return;
+    const c = sigCanvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    const p = getSigPos(e, c);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  };
+
+  const endSig = () => {
+    sigDrawing.current = false;
+  };
+
+  const clearSignature = () => {
+    sigHasInk.current = false;
+    setSignatureDirty(false);
+    initSigCanvas();
+  };
+
   const handoverComplete =
-    temperatureStatus === 'valid' && palletPhotos.length >= 1 && truckInteriorPhotos.length >= 1;
+    temperatureStatus === 'valid' &&
+    palletPhotos.length >= 1 &&
+    truckInteriorPhotos.length >= 1 &&
+    Boolean(selectedPickupDriverId) &&
+    Boolean(badgePhotoDataUrl) &&
+    signatureDirty;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,6 +354,31 @@ export default function LogisticsHandoverPage() {
       return;
     }
 
+    if (!selectedPickupDriverId?.trim()) {
+      setError(t('logisticsPages.handoverErrPickupDriver'));
+      setSubmitting(false);
+      return;
+    }
+    if (!badgePhotoDataUrl?.trim()) {
+      setError(t('logisticsPages.handoverErrBadge'));
+      setSubmitting(false);
+      return;
+    }
+    const sigCanvas = sigCanvasRef.current;
+    if (!sigCanvas || !signatureDirty) {
+      setError(t('logisticsPages.handoverErrDriverSignature'));
+      setSubmitting(false);
+      return;
+    }
+    let pickupDriverSignatureDataUrl: string;
+    try {
+      pickupDriverSignatureDataUrl = sigCanvas.toDataURL('image/png');
+    } catch {
+      setError(t('logisticsPages.handoverErrDriverSignature'));
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${WEB_API_BASE}/quality-entry/handover`, {
@@ -213,6 +393,9 @@ export default function LogisticsHandoverPage() {
           palletPhotos,
           truckInteriorPhotos,
           notes: notes || undefined,
+          pickupDriverId: selectedPickupDriverId.trim(),
+          pickupBadgePhoto: badgePhotoDataUrl,
+          pickupDriverSignatureDataUrl,
         }),
       });
 
@@ -232,10 +415,14 @@ export default function LogisticsHandoverPage() {
       setSuccess(true);
       setPalletPhotos([]);
       setTruckInteriorPhotos([]);
+      setBadgePhotoDataUrl(null);
+      setSignatureDirty(false);
+      sigHasInk.current = false;
       setTimeout(() => {
         setSelectedMission('');
         setTruckTemperature('');
         setNotes('');
+        setSelectedPickupDriverId('');
         setSuccess(false);
         refreshMissions();
       }, 3000);
@@ -448,6 +635,108 @@ export default function LogisticsHandoverPage() {
               )}
             </div>
 
+            {/* Pickup driver, badge, signature */}
+            <div className="border-t border-gray-200 pt-6 space-y-6">
+              <h3 className="text-base font-semibold text-gray-900">
+                {t('logisticsPages.handoverPickupSectionTitle')}
+              </h3>
+              <p className="text-xs text-gray-500">{t('logisticsPages.handoverPickupSectionLead')}</p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverPickupDriverLabel')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverPickupDriverHint')}</p>
+                <select
+                  value={selectedPickupDriverId}
+                  onChange={(e) => setSelectedPickupDriverId(e.target.value)}
+                  required
+                  disabled={driversLoading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent"
+                >
+                  <option value="">
+                    {driversLoading
+                      ? t('logisticsPages.driversLoading')
+                      : drivers.length === 0
+                        ? t('logisticsPages.handoverPickupDriverNoDrivers')
+                        : t('logisticsPages.handoverPickupDriverPlaceholder')}
+                  </option>
+                  {drivers.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {[d.firstName, d.lastName].filter(Boolean).join(' ')}
+                      {d.phone ? ` · ${d.phone}` : ''}
+                    </option>
+                  ))}
+                </select>
+                {drivers.length === 0 && !driversLoading && (
+                  <p className="mt-2 text-sm text-amber-800">
+                    <a href="/logistics-partner/drivers" className="font-medium text-[#2D5A27] underline">
+                      {t('logisticsPages.handoverPickupDriverAddLink')}
+                    </a>
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverBadgeTitle')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverBadgeHint')}</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#2D5A27] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#23471f]"
+                  onChange={(e) => void onBadgeFile(e.target.files)}
+                />
+                {badgePhotoDataUrl && (
+                  <div className="mt-3">
+                    <img
+                      src={badgePhotoDataUrl}
+                      alt=""
+                      className="max-h-40 rounded-lg border border-gray-200 object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setBadgePhotoDataUrl(null)}
+                      className="mt-2 text-sm text-red-700 underline"
+                    >
+                      {t('logisticsPages.handoverBadgeRemove')}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('logisticsPages.handoverDriverSigTitle')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">{t('logisticsPages.handoverDriverSigHint')}</p>
+                <div className="rounded-lg border border-gray-300 bg-white overflow-hidden touch-none max-w-lg">
+                  <canvas
+                    ref={sigCanvasRef}
+                    width={SIG_W}
+                    height={SIG_H}
+                    className="w-full h-[120px] cursor-crosshair"
+                    onMouseDown={startSig}
+                    onMouseMove={moveSig}
+                    onMouseUp={endSig}
+                    onMouseLeave={endSig}
+                    onTouchStart={startSig}
+                    onTouchMove={moveSig}
+                    onTouchEnd={endSig}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={clearSignature}
+                  className="mt-2 text-sm text-gray-700 underline"
+                >
+                  {t('logisticsPages.handoverDriverSigClear')}
+                </button>
+              </div>
+            </div>
+
             {photoError && <p className="text-sm text-amber-700">{photoError}</p>}
 
             {/* Notes */}
@@ -478,9 +767,16 @@ export default function LogisticsHandoverPage() {
                   {t('logisticsPages.handoverBlockedByTemp')}
                 </p>
               )}
-              {temperatureStatus === 'valid' && (palletPhotos.length < 1 || truckInteriorPhotos.length < 1) && (
+              {temperatureStatus === 'valid' &&
+                (palletPhotos.length < 1 ||
+                  truckInteriorPhotos.length < 1 ||
+                  !selectedPickupDriverId ||
+                  !badgePhotoDataUrl ||
+                  !signatureDirty) && (
                 <p className="text-sm text-gray-600 mt-2 text-center">
-                  {t('logisticsPages.handoverNeedPhotos')}
+                  {palletPhotos.length < 1 || truckInteriorPhotos.length < 1
+                    ? t('logisticsPages.handoverNeedPhotos')
+                    : t('logisticsPages.handoverNeedPickupProof')}
                 </p>
               )}
             </div>

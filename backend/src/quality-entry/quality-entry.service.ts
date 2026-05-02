@@ -479,12 +479,19 @@ export class QualityEntryService {
             notes: dto.notes?.trim() || null,
             status: 'APPROVED',
             timestamp: new Date(),
+            pickupDriverId: pickupDriver.id,
+            pickupDriverSnapshot: pickupDriverSnapshot as Prisma.InputJsonValue,
+            pickupBadgePhotoUrl: badgeUrl,
+            pickupDriverSignatureUrl: signatureUrl,
           },
         });
 
         await tx.missions.update({
           where: { id: dto.missionId },
-          data: { status: 'READY_FOR_LOADING' },
+          data: {
+            status: 'READY_FOR_LOADING',
+            assignedLogisticsDriverId: pickupDriver.id,
+          },
         });
 
         await tx.temperature_logs.create({
@@ -517,6 +524,7 @@ export class QualityEntryService {
               insideTruckTemperature: tempC,
               palletPhotoCount: dto.palletPhotos.length,
               truckInteriorPhotoCount: dto.truckInteriorPhotos.length,
+              pickupDriverId: pickupDriver.id,
             } as Prisma.InputJsonValue,
             changeReason:
               'Driver completed loading handover: temperature, pallet photos, and inside-truck photos',

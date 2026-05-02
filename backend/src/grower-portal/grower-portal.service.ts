@@ -232,6 +232,31 @@ export class GrowerPortalService {
           mission.users_missions_logisticsPartnerIdTousers.lastName,
         )}`) || 'Not assigned'
       : 'Not assigned';
+    const assigned = mission.assigned_logistics_driver;
+    const pickupDriverPerson =
+      assigned && !mission.logistics_handovers?.pickupDriverSnapshot
+        ? {
+            firstName: assigned.firstName,
+            lastName: assigned.lastName,
+            email: assigned.email ?? null,
+            phone: assigned.phone ?? null,
+            photoUrl: assigned.photoUrl ?? null,
+          }
+        : null;
+    const h = mission.logistics_handovers;
+    const pickupAtFarm = h?.pickupBadgePhotoUrl && h?.pickupDriverSignatureUrl && h?.pickupDriverSnapshot
+      ? {
+          recorded: true,
+          recordedAt: h.timestamp ? new Date(h.timestamp).toISOString() : null,
+          badgePhotoUrl: h.pickupBadgePhotoUrl ?? null,
+          driverSignatureUrl: h.pickupDriverSignatureUrl ?? null,
+        }
+      : {
+          recorded: false,
+          recordedAt: null,
+          badgePhotoUrl: null,
+          driverSignatureUrl: null,
+        };
     return {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
@@ -248,6 +273,8 @@ export class GrowerPortalService {
       currentMilestone: '—',
       milestones: [],
       driver,
+      pickupDriverPerson,
+      pickupAtFarm,
       vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
       requestedAt: mission.requestedAt,
       pickedUpAt: mission.pickedUpAt,
@@ -506,6 +533,46 @@ export class GrowerPortalService {
     const currentMilestone = milestones.find((m) => m.isCurrent) || milestones[0];
 
     const qty = mission.batches?.quantity;
+    const handover = mission.logistics_handovers;
+    const snap = handover?.pickupDriverSnapshot as Record<string, unknown> | null | undefined;
+    const assigned = mission.assigned_logistics_driver;
+
+    let pickupDriverPerson: Record<string, unknown> | null = null;
+    if (snap && typeof snap === 'object') {
+      pickupDriverPerson = {
+        firstName: snap.firstName,
+        lastName: snap.lastName,
+        email: snap.email ?? null,
+        phone: snap.phone ?? null,
+        photoUrl: snap.photoUrl ?? null,
+      };
+    } else if (assigned) {
+      pickupDriverPerson = {
+        firstName: assigned.firstName,
+        lastName: assigned.lastName,
+        email: assigned.email ?? null,
+        phone: assigned.phone ?? null,
+        photoUrl: assigned.photoUrl ?? null,
+      };
+    }
+
+    const pickupAtFarm =
+      handover?.pickupBadgePhotoUrl &&
+      handover?.pickupDriverSignatureUrl &&
+      handover?.pickupDriverSnapshot
+        ? {
+            recorded: true,
+            recordedAt: handover.timestamp ? new Date(handover.timestamp).toISOString() : null,
+            badgePhotoUrl: handover.pickupBadgePhotoUrl ?? null,
+            driverSignatureUrl: handover.pickupDriverSignatureUrl ?? null,
+          }
+        : {
+            recorded: false,
+            recordedAt: null,
+            badgePhotoUrl: null,
+            driverSignatureUrl: null,
+          };
+
     return {
       missionId: mission.id,
       missionNumber: mission.missionNumber,
@@ -522,6 +589,8 @@ export class GrowerPortalService {
             .join(' ')
             .trim() || 'Not assigned'
         : 'Not assigned',
+      pickupDriverPerson,
+      pickupAtFarm,
       vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
       requestedAt: mission.requestedAt,
       pickedUpAt: mission.pickedUpAt,

@@ -7,7 +7,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { missionsAPI } from '@/lib/api';
+import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
 const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
@@ -48,7 +48,23 @@ interface Mission {
   optimalRoute?: OptimalRoute | null;
   batches?: MissionBatch | null;
   harvest_announcement?: HarvestHint | null;
+  assigned_logistics_driver?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email?: string | null;
+    phone?: string | null;
+  } | null;
 }
+
+type LogisticsDriverRow = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  phone?: string | null;
+  isActive: boolean;
+};
 
 function formatUnit(u: string) {
   if (!u) return '';
@@ -108,6 +124,12 @@ export default function LogisticsMissionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [claiming, setClaiming] = useState<string | null>(null);
+  const [drivers, setDrivers] = useState<LogisticsDriverRow[]>([]);
+  const [driversLoading, setDriversLoading] = useState(false);
+  const [claimDriverForMission, setClaimDriverForMission] = useState<Record<string, string>>({});
+  const [activeDriverDraft, setActiveDriverDraft] = useState<Record<string, string>>({});
+  const [savingDriverForMission, setSavingDriverForMission] = useState<string | null>(null);
+  const [driverFeedback, setDriverFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -142,6 +164,26 @@ export default function LogisticsMissionsPage() {
     return () => { cancelled = true; };
   }, [isAuthenticated, user?.roles]);
 
+  useEffect(() => {
+    if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    let cancelled = false;
+    setDriversLoading(true);
+    logisticsDriversAPI
+      .list()
+      .then((data: LogisticsDriverRow[]) => {
+        if (!cancelled) setDrivers(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setDrivers([]);
+      })
+      .finally(() => {
+        if (!cancelled) setDriversLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, user?.roles]);
+
   const reloadMissions = () => {
     missionsAPI
       .getMyMissions('logistics')
@@ -153,7 +195,11 @@ export default function LogisticsMissionsPage() {
     setClaiming(missionId);
     setError(null);
     try {
-      await missionsAPI.claimMission(missionId);
+      const logisticsDriverId = claimDriverForMission[missionId]?.trim();
+      await missionsAPI.claimMission(
+        missionId,
+        logisticsDriverId ? { logisticsDriverId } : undefined,
+      );
       await reloadMissions();
     } catch (e: unknown) {
       const msg =
@@ -164,10 +210,34 @@ export default function LogisticsMissionsPage() {
     }
   };
 
+  const saveMissionDriver = async (mission: Mission) => {
+    const fromDraft = activeDriverDraft[mission.id];
+    const currentId = mission.assigned_logistics_driver?.id ?? '';
+    const nextId = (fromDraft !== undefined ? fromDraft : currentId).trim();
+    setSavingDriverForMission(mission.id);
+    setDriverFeedback(null);
+    setError(null);
+    try {
+      await missionsAPI.setMissionLogisticsDriver(mission.id, nextId || null);
+      setDriverFeedback(t('logisticsPages.missionsAssignDriverUpdated'));
+      await reloadMissions();
+    } catch (e: unknown) {
+      const msg =
+        (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
+      setError(
+        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logisticsPages.missionsAssignDriverErr'),
+      );
+    } finally {
+      setSavingDriverForMission(null);
+    }
+  };
+
   const acceptedMissions = missions.filter((m) => ACTIVE_STATUSES.includes(m.status));
   const availableMissions = missions.filter((m) => m.status === 'PENDING');
 
   const isLoadingStatus = (s: string) => LOADING_STATUSES.includes(s);
+
+  const activeDrivers = drivers.filter((d) => d.isActive);
 
   const showVehicleCta = error && /refrigerat|vehicle|vozil/i.test(error);
 
@@ -182,6 +252,11 @@ export default function LogisticsMissionsPage() {
   return (
     <SidebarLayout title={t('logisticsPartnerNav.missions')} navItems={logisticsPartnerNavItems}>
       <div className="space-y-6">
+        {driverFeedback && (
+          <div className="p-3 bg-[#f7faf6] text-[#23471f] text-sm rounded-lg border border-[#2D5A27]/25">
+            {driverFeedback}
+          </div>
+        )}
         {error && (
           <div className="p-3 bg-red-50 text-red-800 text-sm rounded-lg border border-red-100">
             <p>{error}</p>
@@ -272,6 +347,52 @@ export default function LogisticsMissionsPage() {
                             </span>
                           )}
                         </p>
+                      )}
+                      {isLoadingStatus(mission.status) && (
+                        <div className="mt-3 rounded-lg border border-[#2D5A27]/15 bg-[#f7faf6]/60 p-3">
+                          <label className="block text-xs font-medium text-gray-800">
+                            {t('logisticsPages.missionsAssignDriverLabel')}
+                          </label>
+                          <p className="text-xs text-gray-600 mt-0.5 mb-2">
+                            <Link
+                              href="/logistics-partner/drivers"
+                              className="text-[#2D5A27] font-medium underline underline-offset-2"
+                            >
+                              {t('logisticsPages.driversMissionsLink')}
+                            </Link>
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+                            <select
+                              className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                              disabled={driversLoading}
+                              value={
+                                activeDriverDraft[mission.id] ??
+                                mission.assigned_logistics_driver?.id ??
+                                ''
+                              }
+                              onChange={(e) =>
+                                setActiveDriverDraft((d) => ({ ...d, [mission.id]: e.target.value }))
+                              }
+                            >
+                              <option value="">—</option>
+                              {activeDrivers.map((d) => (
+                                <option key={d.id} value={d.id}>
+                                  {[d.firstName, d.lastName].filter(Boolean).join(' ')}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              disabled={savingDriverForMission === mission.id}
+                              onClick={() => void saveMissionDriver(mission)}
+                              className="rounded-lg bg-[#2D5A27] px-3 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                            >
+                              {savingDriverForMission === mission.id
+                                ? t('logisticsPages.missionsAssignDriverSaving')
+                                : t('logisticsPages.missionsAssignDriverSave')}
+                            </button>
+                          </div>
+                        </div>
                       )}
                       {siblingsByCity(missions, mission).length > 0 && (
                         <div className="mt-3 pt-2 border-t border-dashed border-gray-200 text-xs text-gray-600">
@@ -397,12 +518,33 @@ export default function LogisticsMissionsPage() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 shrink-0">
+                      <div className="flex flex-col gap-2 shrink-0 w-full lg:w-auto lg:min-w-[220px]">
+                        <label className="text-xs font-medium text-gray-700">
+                          {t('logisticsPages.missionsClaimDriverLabel')}
+                        </label>
+                        <select
+                          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm w-full"
+                          value={claimDriverForMission[mission.id] ?? ''}
+                          onChange={(e) =>
+                            setClaimDriverForMission((d) => ({ ...d, [mission.id]: e.target.value }))
+                          }
+                          disabled={driversLoading || claiming === mission.id}
+                        >
+                          <option value="">{t('logisticsPages.missionsClaimDriverPlaceholder')}</option>
+                          {activeDrivers.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {[d.firstName, d.lastName].filter(Boolean).join(' ')}
+                            </option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-500 leading-snug">
+                          {t('logisticsPages.missionsClaimDriverHint')}
+                        </p>
                         <button
                           type="button"
                           disabled={claiming === mission.id}
                           onClick={() => void claimMission(mission.id)}
-                          className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-60"
+                          className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] disabled:opacity-60 w-full sm:w-auto"
                         >
                           {claiming === mission.id ? 'Claiming…' : 'Claim mission'}
                         </button>

@@ -42,11 +42,23 @@ const handSignature = (
   </svg>
 );
 
+const driverPerson = (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+    />
+  </svg>
+);
+
 export function buildLogisticsPartnerNavItems(t: TFunction): { href: string; label: string; icon: ReactNode }[] {
   return [
     { href: '/logistics-partner/dashboard', label: t('logisticsPartnerNav.dashboard'), icon: dash },
     { href: '/logistics-partner/missions', label: t('logisticsPartnerNav.missions'), icon: mission },
     { href: '/logistics-partner/vehicles', label: t('logisticsPartnerNav.vehicles'), icon: truck },
+    { href: '/logistics-partner/drivers', label: t('logisticsPartnerNav.drivers'), icon: driverPerson },
     { href: '/logistics-partner/handover', label: t('logisticsPartnerNav.loadingHandover'), icon: handover },
     { href: '/logistics-partner/handover-receiver', label: t('logisticsPartnerNav.receiverProof'), icon: handSignature },
   ];

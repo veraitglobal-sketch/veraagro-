@@ -49,6 +49,19 @@ interface MissionTracker {
   requestedAt: string;
   pickedUpAt: string | null;
   completedAt: string | null;
+  pickupDriverPerson?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string | null;
+    phone?: string | null;
+    photoUrl?: string | null;
+  } | null;
+  pickupAtFarm?: {
+    recorded: boolean;
+    recordedAt: string | null;
+    badgePhotoUrl: string | null;
+    driverSignatureUrl: string | null;
+  };
 }
 
 interface JourneyMap {
@@ -152,6 +165,7 @@ export default function GrowerPortalPage() {
   const deepLinkApplied = useRef(false);
   const [assignedAgent, setAssignedAgent] = useState<CommercialAgentPublic | null | undefined>(undefined);
   const [selectedBatch, setSelectedBatch] = useState<string>('');
+  const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
   const [missions, setMissions] = useState<MissionTracker[]>([]);
   const [journeyMap, setJourneyMap] = useState<JourneyMap | null>(null);
   const [consumerFeedback, setConsumerFeedback] = useState<ConsumerFeedback | null>(null);
@@ -237,6 +251,7 @@ export default function GrowerPortalPage() {
   }, [selectedBatch, t]);
 
   const handleMissionSelect = useCallback(async (missionId: string) => {
+    setSelectedMissionId(missionId);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
@@ -262,6 +277,7 @@ export default function GrowerPortalPage() {
     if (!mid) return;
     if (!missions.some((m) => m.missionId === mid)) return;
     deepLinkApplied.current = true;
+    setSelectedMissionId(mid);
     void handleMissionSelect(mid);
     window.history.replaceState(null, '', loc('/grower/portal'));
   }, [missions, handleMissionSelect, loc]);
@@ -333,9 +349,9 @@ export default function GrowerPortalPage() {
                 <button
                   key={mission.missionId}
                   type="button"
-                  onClick={() => handleMissionSelect(mission.missionId)}
+                  onClick={() => void handleMissionSelect(mission.missionId)}
                   className={`w-full text-left p-4 rounded-lg border transition-colors ${
-                    selectedBatch === mission.batchId
+                    selectedMissionId === mission.missionId
                       ? 'border-[#2D5A27] bg-[#f7faf6]'
                       : 'border-gray-200 hover:border-[#2D5A27]/35'
                   }`}
@@ -387,6 +403,122 @@ export default function GrowerPortalPage() {
             ) : null}
           </div>
         </motion.div>
+
+        {selectedMissionId &&
+          (() => {
+            const sm = missions.find((m) => m.missionId === selectedMissionId);
+            if (!sm) return null;
+            const person = sm.pickupDriverPerson;
+            const proof = sm.pickupAtFarm;
+            const name =
+              person &&
+              [person.firstName, person.lastName].filter(Boolean).join(' ').trim();
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6"
+              >
+                <h2 className="text-lg font-semibold text-gray-900">{t('growerPages.portalPickupTitle')}</h2>
+                <p className="mt-1 text-base text-gray-600 font-light">{t('growerPages.portalPickupIntro')}</p>
+
+                <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                      {t('growerPages.portalPickupLogisticsCompany')}
+                    </p>
+                    <p className="mt-1 text-base text-gray-900">{sm.driver}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                      {t('growerPages.portalPickupDriverHeading')}
+                    </p>
+                    {!name ? (
+                      <p className="mt-1 text-sm text-amber-900">{t('growerPages.portalPickupNoDriver')}</p>
+                    ) : (
+                      <div className="mt-2 flex gap-3">
+                        {person?.photoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={person.photoUrl}
+                            alt=""
+                            className="h-16 w-16 shrink-0 rounded-full border border-gray-200 object-cover"
+                          />
+                        ) : null}
+                        <div className="min-w-0 text-sm text-gray-800">
+                          <p className="font-semibold text-gray-900">{name}</p>
+                          {person?.email ? (
+                            <p className="mt-0.5 truncate">
+                              <a
+                                href={`mailto:${person.email}`}
+                                className="text-[#2D5A27] underline underline-offset-2"
+                              >
+                                {person.email}
+                              </a>
+                            </p>
+                          ) : null}
+                          {person?.phone ? <p className="mt-0.5">{person.phone}</p> : null}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-6 border-t border-gray-100 pt-5">
+                  <p className="text-sm font-semibold text-gray-900">{t('growerPages.portalPickupProofTitle')}</p>
+                  {!proof?.recorded ? (
+                    <p className="mt-2 text-base text-gray-600 font-light">
+                      {t('growerPages.portalPickupProofPending')}
+                    </p>
+                  ) : (
+                    <div className="mt-3 space-y-3">
+                      {proof.recordedAt ? (
+                        <p className="text-xs text-gray-500">{formatLocale(proof.recordedAt)}</p>
+                      ) : null}
+                      <div className="flex flex-wrap gap-6">
+                        {proof.badgePhotoUrl ? (
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">{t('growerPages.portalPickupBadge')}</p>
+                            <a
+                              href={proof.badgePhotoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={proof.badgePhotoUrl}
+                                alt=""
+                                className="max-h-40 max-w-full rounded-lg border border-gray-200 object-contain"
+                              />
+                            </a>
+                          </div>
+                        ) : null}
+                        {proof.driverSignatureUrl ? (
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">{t('growerPages.portalPickupSignature')}</p>
+                            <a
+                              href={proof.driverSignatureUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={proof.driverSignatureUrl}
+                                alt=""
+                                className="max-h-28 max-w-full rounded-lg border border-gray-200 bg-white object-contain"
+                              />
+                            </a>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })()}
 
         {/* Journey Map */}
         {journeyMap && (
