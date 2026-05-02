@@ -22,8 +22,92 @@ export class QualityEntryService {
   private readonly STANDARD_TRUCK_TEMP_MAX = 8; // °C
   /** Per-image cap for data URLs / long URL strings (bytes as sent in JSON). */
   private readonly MAX_PHOTO_STRING_LENGTH = 5 * 1024 * 1024;
+  /** Decoded image bytes cap before blob upload (matches client “max file” guidance). */
+  private readonly MAX_HANDOVER_PHOTO_BYTES = 5 * 1024 * 1024;
 
   constructor(private prisma: PrismaService) {}
+
+  private stripDataUrlBase64(input: string): string {
+    const m = input.trim().match(/^data:image\/\w+;base64,(.+)$/is);
+    return m ? m[1] : input.replace(/\s/g, '');
+  }
+
+  private static guessHandoverImageExt(buf: Buffer): 'jpg' | 'png' | 'webp' {
+    if (buf[0] === 0xff && buf[1] === 0xd8) return 'jpg';
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'png';
+    if (
+      buf[0] === 0x52 &&
+      buf[1] === 0x49 &&
+      buf[2] === 0x46 &&
+      buf[3] === 0x46 &&
+      buf[8] === 0x57 &&
+      buf[9] === 0x45 &&
+      buf[10] === 0x42 &&
+      buf[11] === 0x50
+    ) {
+      return 'webp';
+    }
+    return 'jpg';
+  }
+
+  /**
+   * Replace data-URL images with public blob URLs when BLOB_READ_WRITE_TOKEN is set so JSON rows
+   * stay small (avoids DB / pooler failures on multi-megabyte base64 payloads).
+   */
+  private async normalizeHandoverPhotosForStorage(
+    photos: string[],
+    missionId: string,
+    group: 'pallet' | 'truck',
+  ): Promise<string[]> {
+    const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
+    const out: string[] = [];
+
+    for (let i = 0; i < photos.length; i += 1) {
+      const p = photos[i];
+      if (p.startsWith('https://') || p.startsWith('http://')) {
+        out.push(p);
+        continue;
+      }
+      if (!p.startsWith('data:image/')) {
+        throw new BadRequestException(
+          `${group} photos: expected data:image URLs or http(s) links (entry ${i + 1})`,
+        );
+      }
+
+      if (!token) {
+        out.push(p);
+        continue;
+      }
+
+      const raw = this.stripDataUrlBase64(p);
+      const buf = Buffer.from(raw, 'base64');
+      if (buf.length === 0) {
+        throw new BadRequestException(`${group} photos: invalid image data (entry ${i + 1})`);
+      }
+      if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
+        throw new BadRequestException(
+          `${group}: each image must be at most ${this.MAX_HANDOVER_PHOTO_BYTES} bytes after decoding`,
+        );
+      }
+
+      const ext = QualityEntryService.guessHandoverImageExt(buf);
+      const key = `logistics-handover/${missionId}/${group}-${crypto.randomUUID()}.${ext}`;
+
+      try {
+        const { put } = await import('@vercel/blob');
+        const uploaded = await put(key, buf, { access: 'public', token });
+        out.push(uploaded.url);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Handover blob upload failed (${group} #${i + 1}): ${msg}`);
+        throw new BadRequestException(
+          'Could not upload handover photos to storage. Try smaller images or fewer photos, then retry.',
+        );
+      }
+    }
+
+    return out;
+  }
 
   private assertHandoverPhotos(photos: string[], label: string) {
     for (const p of photos) {
@@ -280,8 +364,18 @@ export class QualityEntryService {
       }
     }
 
-    const palletJson = JSON.parse(JSON.stringify(dto.palletPhotos)) as Prisma.InputJsonValue;
-    const truckJson = JSON.parse(JSON.stringify(dto.truckInteriorPhotos)) as Prisma.InputJsonValue;
+    const palletStored = await this.normalizeHandoverPhotosForStorage(
+      dto.palletPhotos,
+      dto.missionId,
+      'pallet',
+    );
+    const truckStored = await this.normalizeHandoverPhotosForStorage(
+      dto.truckInteriorPhotos,
+      dto.missionId,
+      'truck',
+    );
+    const palletJson = JSON.parse(JSON.stringify(palletStored)) as Prisma.InputJsonValue;
+    const truckJson = JSON.parse(JSON.stringify(truckStored)) as Prisma.InputJsonValue;
 
     try {
       return await this.prisma.$transaction(async (tx) => {
@@ -363,7 +457,10 @@ export class QualityEntryService {
         );
       }
       if (e instanceof Prisma.PrismaClientUnknownRequestError) {
-        this.logger.error(`logisticsHandover PrismaClientUnknownRequestError: ${e.message}`);
+        const cause = (e as { cause?: unknown }).cause;
+        this.logger.error(
+          `logisticsHandover PrismaClientUnknownRequestError: ${e.message}${cause != null ? ` | cause=${String(cause)}` : ''}`,
+        );
         throw new BadRequestException(
           'Could not write handover to the database. Try again with smaller or fewer images, or contact support.',
         );

@@ -10,6 +10,7 @@ import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useGrowerHref } from '@/hooks/useGrowerHref';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 
 const CRATE_KEYS = ['crateTop', 'crateMiddle', 'crateBottom'] as const;
@@ -179,8 +180,8 @@ export default function QualityEntryPage() {
         setSelectedBatch('');
         setSuccess(false);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || fk('errSubmitFailed'));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'growerPages.qualityEntryForm.errSubmitFailed'));
     } finally {
       setSubmitting(false);
     }

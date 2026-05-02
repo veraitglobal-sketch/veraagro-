@@ -10,6 +10,7 @@ import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 function messageFromApiPayload(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
@@ -290,7 +291,9 @@ export default function GrowerMaterialsPage() {
       setQuantity('');
       void loadLabelRolls();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('growerPages.materialsErrFetchFailed'));
+      setError(
+        err instanceof Error ? err.message : growerApiErrorOrT(err, t, 'growerPages.materialsErrFetchFailed'),
+      );
     } finally {
       setPurchasing(false);
     }

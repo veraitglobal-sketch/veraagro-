@@ -10,6 +10,7 @@ import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPag
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { WEB_API_BASE } from '@/lib/api-base';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 function parseChildSerials(raw: string): string[] {
   return [
@@ -112,7 +113,7 @@ export default function GrowerPackageBadgesPage() {
     setSuccessSerial(null);
     const p = parentSerial.trim();
     if (!p) {
-      setError('Parent serial is required');
+      setError(t('grower.packageBadges.parentSerialRequired'));
       return;
     }
     setSubmitting(true);
@@ -142,12 +143,7 @@ export default function GrowerPackageBadgesPage() {
           })),
       );
     } catch (err: unknown) {
-      const raw =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: unknown } } }).response?.data?.message
-          : null;
-      const msg = Array.isArray(raw) ? raw.join(' ') : raw;
-      setError(typeof msg === 'string' && msg.trim() ? msg : t('grower.packageBadges.errGeneric'));
+      setError(growerApiErrorOrT(err, t, 'grower.packageBadges.errGeneric'));
     } finally {
       setSubmitting(false);
     }

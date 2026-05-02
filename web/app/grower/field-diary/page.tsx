@@ -94,8 +94,8 @@ export default function GrowerFieldDiaryPage() {
         const data = (await growthLogsAPI.listByEstate(estateId)) as GrowthLogRow[];
         setLogs(Array.isArray(data) ? data : []);
       }
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('growerPages.loadFailed'));
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.loadFailed'));
       setLogs([]);
     } finally {
       setLoading(false);

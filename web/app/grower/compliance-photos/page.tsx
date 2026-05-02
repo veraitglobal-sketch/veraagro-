@@ -9,6 +9,7 @@ import { batchesAPI } from '@/lib/api';
 import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 const PHOTO_ORDER = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
 
@@ -236,7 +237,7 @@ export default function CompliancePhotosPage() {
       setSuccess(t('grower.compliancePhotos.feedback.stickerVerified'));
       setError(null);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('grower.compliancePhotos.errors.verificationFailed'));
+      setError(growerApiErrorOrT(err, t, 'grower.compliancePhotos.errors.verificationFailed'));
     }
   };
 
@@ -282,7 +283,7 @@ export default function CompliancePhotosPage() {
       setShowReplaceForm(false);
       await fetchComplianceStatus(selectedBatch);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('grower.compliancePhotos.errors.genericUploadError'));
+      setError(growerApiErrorOrT(err, t, 'grower.compliancePhotos.errors.genericUploadError'));
     } finally {
       setUploading(false);
     }

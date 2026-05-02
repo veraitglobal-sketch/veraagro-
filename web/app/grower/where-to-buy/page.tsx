@@ -12,6 +12,7 @@ import { List, MapPinned, MessageCircle, Store, Globe, ShoppingBag, ChevronLeft,
 import PartnerB2BPanel from '@/components/grower/PartnerB2BPanel';
 import GrowerSupplyFlowCard from '@/components/grower/GrowerSupplyFlowCard';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 const PAGE_SIZE = 8;
 
@@ -145,8 +146,8 @@ export default function GrowerWhereToBuyPage() {
           description: x.description,
         }));
       setItems([...retailM, ...supM]);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('growerPages.loadFailed'));
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.loadFailed'));
       setItems([]);
     } finally {
       setLoading(false);

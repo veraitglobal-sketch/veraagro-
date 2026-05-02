@@ -13,14 +13,7 @@ import {
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { ExternalLink, Loader2, Package, Boxes } from 'lucide-react';
-
-function errMessage(err: unknown, fallback: string): string {
-  const e = err as { response?: { data?: { message?: unknown } } };
-  const m = e.response?.data?.message;
-  if (Array.isArray(m)) return m.join(' ') || fallback;
-  if (typeof m === 'string' && m.trim()) return m;
-  return fallback;
-}
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function GrowerPackageBadgesScanPage() {
   const { t } = useTranslation();
@@ -51,8 +44,8 @@ export default function GrowerPackageBadgesScanPage() {
       if (pub.status === 'fulfilled') {
         setPublicInfo(pub.value);
       }
-    } catch (err) {
-      setError(errMessage(err, t('grower.packageBadges.scanErrGeneric')));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'grower.packageBadges.scanErrGeneric'));
     } finally {
       setLoading(false);
     }

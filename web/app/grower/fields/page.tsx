@@ -9,6 +9,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { MapPin, Plus, Clock, CheckCircle, Loader2, QrCode } from 'lucide-react';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 const DEFAULT_POLYGON = [
   { lat: 44.7866, lng: 20.4489 },
@@ -85,8 +86,8 @@ export default function GrowerFieldsPage() {
         })
       );
       setEstates(estatesWithParcels);
-    } catch (err: any) {
-      setError(err.message || t('growerPages.loadFieldsFailed'));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'growerPages.loadFieldsFailed'));
     } finally {
       setLoading(false);
     }
@@ -101,8 +102,8 @@ export default function GrowerFieldsPage() {
       await estatesAPI.create({ name: newEstateName.trim(), polygonCoordinates: DEFAULT_POLYGON });
       setNewEstateName('');
       await loadEstates();
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || t('growerPages.addFieldError'));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'growerPages.addFieldError'));
     } finally {
       setAddingEstate(false);
     }
@@ -118,8 +119,8 @@ export default function GrowerFieldsPage() {
       });
       setNewParcelCrop('');
       await loadEstates();
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || t('growerPages.addParcelError'));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'growerPages.addParcelError'));
     } finally {
       setAddingParcel(null);
     }
@@ -138,8 +139,8 @@ export default function GrowerFieldsPage() {
       const data = await parcelsAPI.getPlotQr(parcelId);
       setPlotQr({ parcelId, ...data });
       await loadEstates();
-    } catch (err: any) {
-      setPlotQrErr(err?.response?.data?.message || err?.message || t('growerPages.plotQrError'));
+    } catch (err: unknown) {
+      setPlotQrErr(growerApiErrorOrT(err, t, 'growerPages.plotQrError'));
     } finally {
       setPlotQrLoading(false);
     }
@@ -161,8 +162,8 @@ export default function GrowerFieldsPage() {
       });
       setFormBatchParcel(null);
       window.location.href = `/grower/batches`;
-    } catch (err: any) {
-      setBatchError(err.response?.data?.message || err.message || t('growerPages.createBatchError'));
+    } catch (err: unknown) {
+      setBatchError(growerApiErrorOrT(err, t, 'growerPages.createBatchError'));
     } finally {
       setSubmittingBatch(false);
     }

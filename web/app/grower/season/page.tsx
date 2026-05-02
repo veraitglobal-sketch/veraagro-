@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import GrowerSeasonJourney, { GrowerSeasonMetaChip } from '@/components/grower/GrowerSeasonJourney';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function GrowerFieldSeasonPage() {
   const { t } = useTranslation();
@@ -39,8 +40,8 @@ export default function GrowerFieldSeasonPage() {
       setHasParcel(parcelsTotal > 0);
       setHasApprovedParcel(approved > 0);
       setPendingCount(pending);
-    } catch (err: any) {
-      setError(err.message || t('grower.season.errorLoad'));
+    } catch (err: unknown) {
+      setError(growerApiErrorOrT(err, t, 'grower.season.errorLoad'));
     } finally {
       setLoading(false);
     }

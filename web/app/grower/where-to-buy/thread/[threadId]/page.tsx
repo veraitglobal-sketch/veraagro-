@@ -9,6 +9,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI, usersAPI } from '@/lib/api';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function GrowerSupplierThreadPage() {
   const { t } = useTranslation();
@@ -52,13 +53,8 @@ export default function GrowerSupplierThreadPage() {
       } else {
         setHeaderTitle(t('growerPages.partner'));
       }
-    } catch (e) {
-      setErr(
-        String(
-          (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            (e instanceof Error ? e.message : t('growerPages.threadLoadFailed')),
-        ),
-      );
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.threadLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -77,9 +73,8 @@ export default function GrowerSupplierThreadPage() {
       await growerSupplierB2bAPI.postThreadMessage(threadId, text.trim());
       setText('');
       setMessages(await growerSupplierB2bAPI.getThreadMessages(threadId));
-    } catch (err) {
-      const m = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setErr(String(m || (err instanceof Error ? err.message : t('growerPages.loadFailed'))));
+    } catch (err: unknown) {
+      setErr(growerApiErrorOrT(err, t, 'growerPages.loadFailed'));
     } finally {
       setSending(false);
     }

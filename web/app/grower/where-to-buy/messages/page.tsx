@@ -8,6 +8,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { growerSupplierB2bAPI } from '@/lib/api';
 import { ArrowLeft, MessageCircle, Loader2, ChevronRight } from 'lucide-react';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 type ThreadRow = Awaited<ReturnType<typeof growerSupplierB2bAPI.getMyThreads>>[number];
 
@@ -31,13 +32,8 @@ export default function GrowerSupplierMessagesInboxPage() {
     try {
       const th = await growerSupplierB2bAPI.getMyThreads();
       setThreads(th);
-    } catch (e) {
-      setErr(
-        String(
-          (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            (e instanceof Error ? e.message : t('growerPages.loadFailed')),
-        ),
-      );
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.loadFailed'));
     } finally {
       setLoading(false);
     }

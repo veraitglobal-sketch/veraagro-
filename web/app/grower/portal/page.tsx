@@ -18,6 +18,7 @@ import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPag
 import type { CommercialAgentPublic } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
 import ToastContainer from '@/components/Toast';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -117,6 +118,22 @@ function missionStatusLabel(t: (k: string) => string, raw: string) {
   return raw.replace(/_/g, ' ');
 }
 
+/** User-facing text from JSON error bodies (string or NestJS validation array). */
+function portalJsonErrorMessage(data: unknown, fallback: string): string {
+  if (!data || typeof data !== 'object') return fallback;
+  const m = (data as { message?: unknown }).message;
+  if (typeof m === 'string' && m.trim()) return m.trim();
+  if (Array.isArray(m)) {
+    const joined = m
+      .filter((x): x is string => typeof x === 'string')
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .join(' ');
+    if (joined) return joined;
+  }
+  return fallback;
+}
+
 export default function GrowerPortalPage() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
@@ -188,9 +205,10 @@ export default function GrowerPortalPage() {
 
         const missionsData = await missionsRes.json();
         if (!missionsRes.ok) {
-          const msg =
-            (missionsData && typeof missionsData.message === 'string' && missionsData.message) ||
-            t('growerPages.portalCouldNotLoadMissions', { status: String(missionsRes.status) });
+          const msg = portalJsonErrorMessage(
+            missionsData,
+            t('growerPages.portalCouldNotLoadMissions', { status: String(missionsRes.status) }),
+          );
           setListError(msg);
           setMissions([]);
         } else {
@@ -206,9 +224,9 @@ export default function GrowerPortalPage() {
           const financialData = await financialRes.json();
           setFinancialStatus(financialData);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error fetching data:', err);
-        setListError(t('growerPages.portalNetworkError'));
+        setListError(growerApiErrorOrT(err, t, 'growerPages.portalNetworkError'));
         setMissions([]);
       } finally {
         setLoading(false);

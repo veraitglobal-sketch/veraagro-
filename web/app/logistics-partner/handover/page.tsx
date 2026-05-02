@@ -10,6 +10,7 @@ import { WEB_API_BASE } from '@/lib/api-base';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2 } from 'lucide-react';
+import { compressImage } from '@/lib/image-compression';
 
 /** Statuses where handover (temp + photos) is not done yet. After handover, mission is READY_FOR_LOADING and leaves this list. */
 const PENDING_HANDOVER_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
@@ -138,7 +139,14 @@ export default function LogisticsHandoverPage() {
         return;
       }
       try {
-        const dataUrl = await readFileAsDataUrl(f, t('logisticsPages.handoverPhotoReadFailed'));
+        const compressed = await compressImage(f, {
+          maxWidth: 1920,
+          maxHeight: 1920,
+          maxSizeMB: 1.75,
+          quality: 0.82,
+          useWebWorker: true,
+        });
+        const dataUrl = await readFileAsDataUrl(compressed, t('logisticsPages.handoverPhotoReadFailed'));
         next.push(dataUrl);
       } catch {
         setPhotoError(t('logisticsPages.handoverPhotoReadFailed'));
