@@ -37,16 +37,14 @@ function FieldEntryWorkspace({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-4">
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-          <label className="block text-base font-medium text-gray-800 mb-2">
-            {t('growerPages.fieldEntryEstateLabel')}
-          </label>
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="space-y-6 lg:col-span-2">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <label className="mb-2 block text-sm font-medium text-gray-800">{t('growerPages.fieldEntryEstateLabel')}</label>
           <select
             value={selectedFarmId}
             onChange={(e) => onEstateChange(e.target.value)}
-            className="w-full max-w-md px-3 py-3 border border-gray-300 rounded-md text-base focus:ring-2 focus:ring-[#2D5A27]/30 focus:border-[#2D5A27]"
+            className="w-full max-w-xl rounded-lg border border-gray-300 bg-white px-3 py-3 text-base shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25"
           >
             {estates.map((e) => (
               <option key={e.id} value={e.id}>
@@ -54,7 +52,7 @@ function FieldEntryWorkspace({
               </option>
             ))}
           </select>
-          <p className="text-sm text-gray-600 mt-2 leading-relaxed">{t('growerPages.fieldEntryEstateHint')}</p>
+          <p className="mt-2 text-sm leading-relaxed text-gray-600">{t('growerPages.fieldEntryEstateHint')}</p>
         </div>
         <OfflineEntryForm
           farmId={selectedFarmId}
@@ -64,9 +62,9 @@ function FieldEntryWorkspace({
         />
       </div>
 
-      <div className="space-y-4">
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-          <h3 className="font-semibold text-lg text-gray-800 mb-3">{t('growerPages.fieldEntryStatusTitle')}</h3>
+      <div className="space-y-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <h3 className="mb-3 text-base font-semibold text-gray-900">{t('growerPages.fieldEntryStatusTitle')}</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
               <span className="text-base text-gray-700">{t('growerPages.fieldEntryConnection')}</span>
@@ -90,7 +88,7 @@ function FieldEntryWorkspace({
               <button
                 type="button"
                 onClick={syncNow}
-                className="w-full mt-1 min-h-[48px] px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className="mt-1 inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-[#1d4ed8] px-4 py-3 text-base font-medium text-white transition-colors hover:bg-[#1e40af] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               >
                 {t('growerPages.fieldEntrySyncNow')}
               </button>
@@ -98,14 +96,17 @@ function FieldEntryWorkspace({
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-          <h3 className="font-semibold text-lg text-gray-800 mb-3">{t('growerPages.fieldEntryRecentTitle')}</h3>
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <h3 className="mb-3 text-base font-semibold text-gray-900">{t('growerPages.fieldEntryRecentTitle')}</h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {entries.length === 0 ? (
               <p className="text-base text-gray-600">{t('growerPages.fieldEntryNoEntriesYet')}</p>
             ) : (
               entries.slice(0, 10).map((entry) => (
-                <div key={entry.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-base">
+                <div
+                  key={entry.id}
+                  className="rounded-lg border border-gray-100 bg-gray-50/90 p-3 text-base"
+                >
                   <div className="flex items-center justify-between mb-1 gap-2">
                     <span className="font-semibold text-gray-900">{activityLabel(entry.type)}</span>
                     <span className={`text-sm font-medium shrink-0 ${entry.synced ? 'text-[#2D5A27]' : 'text-amber-700'}`}>

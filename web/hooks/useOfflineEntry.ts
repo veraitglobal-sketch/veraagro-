@@ -40,7 +40,7 @@ interface UseOfflineEntryReturn {
   addEntry: (
     type: EntryType,
     data: FieldEntry['data'],
-    options?: { seedSerialNumber?: string; packagingBarcode?: string }
+    options?: { seedSerialNumber?: string; packagingBarcode?: string; fertilizerBarcode?: string }
   ) => Promise<{ success: boolean; error?: string; entryId?: string }>;
   deleteEntry: (id: string) => Promise<void>;
   syncNow: () => Promise<{ synced: number; failed: number }>;

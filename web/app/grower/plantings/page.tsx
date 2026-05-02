@@ -27,6 +27,13 @@ type HaRow = {
     cropType?: string | null;
     estates?: { name: string } | null;
   } | null;
+  plantingProgress?: {
+    intervalDays: number;
+    lastGrowthLogAt: string | null;
+    nextDueAt: string;
+    isOverdue: boolean;
+    daysOverdue: number;
+  } | null;
 };
 
 export default function GrowerPlantingsPage() {
@@ -139,6 +146,10 @@ export default function GrowerPlantingsPage() {
             description={t('growerPages.plantingsPageLead')}
           />
 
+          <p className="text-base leading-relaxed text-[#23471f] bg-[#2D5A27]/10 border border-[#2D5A27]/25 rounded-lg px-4 py-3">
+            {t('growerPages.plantingsProgressObligation')}
+          </p>
+
           {err && (
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">{err}</div>
           )}
@@ -235,6 +246,8 @@ export default function GrowerPlantingsPage() {
                 t={t}
                 formatDate={formatDate}
                 haStatus={haStatus}
+                showPlantingProgress
+                i18nLanguage={i18n.language}
               />
               <AnnouncementsTable
                 title={t('growerPages.plantingsSectionHarvest')}
@@ -261,6 +274,8 @@ function AnnouncementsTable({
   t,
   formatDate,
   haStatus,
+  showPlantingProgress = false,
+  i18nLanguage = 'en',
 }: {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -269,7 +284,17 @@ function AnnouncementsTable({
   t: (k: string, o?: Record<string, string>) => string;
   formatDate: (iso: string) => string;
   haStatus: (s: string) => string;
+  showPlantingProgress?: boolean;
+  i18nLanguage?: string;
 }) {
+  const dateTag = i18nLanguage.startsWith('sr') ? 'sr-Latn' : 'en-GB';
+  const formatShortDate = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleDateString(dateTag, { dateStyle: 'medium' });
+    } catch {
+      return iso;
+    }
+  };
   if (rows.length === 0) {
     return (
       <section className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 p-5">
@@ -296,6 +321,9 @@ function AnnouncementsTable({
               <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableType')}</th>
               <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableCrop')}</th>
               <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableDate')}</th>
+              {showPlantingProgress ? (
+                <th className="px-4 py-3 font-medium">{t('growerPages.plantingsProgressCol')}</th>
+              ) : null}
               <th className="px-4 py-3 font-medium">{t('growerPages.plantingsTableStatus')}</th>
             </tr>
           </thead>
@@ -311,6 +339,27 @@ function AnnouncementsTable({
                 </td>
                 <td className="px-4 py-3 font-medium text-gray-900">{a.cropType}</td>
                 <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatDate(a.estimatedDate)}</td>
+                {showPlantingProgress ? (
+                  <td className="px-4 py-3 text-sm">
+                    {a.plantingProgress ? (
+                      a.plantingProgress.isOverdue ? (
+                        <span className="font-medium text-red-700">
+                          {t('growerPages.plantingsProgressOverdue', {
+                            days: String(a.plantingProgress.daysOverdue),
+                          })}
+                        </span>
+                      ) : (
+                        <span className="text-gray-700">
+                          {t('growerPages.plantingsProgressOk', {
+                            date: formatShortDate(a.plantingProgress.nextDueAt),
+                          })}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-gray-400">{t('growerPages.plantingsProgressNone')}</span>
+                    )}
+                  </td>
+                ) : null}
                 <td className="px-4 py-3">
                   <span className="text-sm font-medium rounded-full bg-gray-100 px-2.5 py-1">{haStatus(a.status)}</span>
                 </td>
