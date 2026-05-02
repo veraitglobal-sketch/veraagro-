@@ -105,6 +105,7 @@ function slideShell(variant: DeckVariant): string {
     case "split":
       return [
         base,
+        "pitch-slide-split",
         "py-12 sm:py-16 lg:py-20",
         `bg-[linear-gradient(90deg,#fafcfa_0%,#fafcfa_52%,white_52%,white_100%)]`,
         "border border-gray-200/70 rounded-none sm:rounded-2xl",
@@ -326,6 +327,30 @@ export default function PitchDeckPage() {
           }
           .pitch-appendix-intro + .pitch-slide {
             margin-top: 0 !important;
+          }
+          /* Split “advantages” slide: Chrome often orphans the eyebrow+H2 above a 2‑col grid in PDF — keep heading with body, flatten grid while printing */
+          .pitch-slide-split {
+            overflow: visible !important;
+          }
+          .pitch-slide-split > .pitch-print-keep-with-next {
+            margin-bottom: 0.85rem !important;
+            padding-bottom: 0 !important;
+            page-break-after: avoid !important;
+            break-after: avoid-page !important;
+          }
+          .pitch-slide-split > .pitch-advantages-grid {
+            display: block !important;
+          }
+          .pitch-slide-split > .pitch-advantages-grid > * {
+            padding-top: 0.35rem !important;
+            padding-bottom: 1rem !important;
+            margin-bottom: 0.25rem !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+          .pitch-slide-split > .pitch-advantages-grid > *:last-child {
+            border-bottom: none !important;
           }
           body {
             background: white !important;
@@ -555,12 +580,12 @@ export default function PitchDeckPage() {
 
         {/* Value */}
         <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`${slideShell("split")}`}>
-          <div className="mb-14 max-w-[40ch]">
+          <div className="pitch-print-keep-with-next mb-14 max-w-[40ch] print:mb-4">
             <SlideKicker>{t("pitchDeck.advantagesEyebrow")}</SlideKicker>
             <div className="mb-6 h-px w-12 bg-[#2D5A27]" aria-hidden />
             <h2 className="text-[1.5rem] sm:text-[1.75rem] font-semibold tracking-tight text-gray-900 leading-snug">{t("pitchDeck.advantagesTitle")}</h2>
           </div>
-          <div className="grid gap-x-14 gap-y-12 sm:grid-cols-2">
+          <div className="pitch-advantages-grid grid gap-x-14 gap-y-12 sm:grid-cols-2">
             {advantages.map((item, index) => {
               const Icon = ADV_ICONS[index % ADV_ICONS.length];
               return (
