@@ -57,31 +57,32 @@ export class QualityEntryService {
    * Uses tolerant decode + fallbacks because some PNG/WebP files fail strict metadata checks.
    */
   private async shrinkHandoverImageToJpegDataUrl(buf: Buffer, context: string): Promise<string> {
-    const attempts: Array<{
+    type LooseSharpInput = { failOn?: 'none'; limitInputPixels?: boolean; sequentialRead?: boolean };
+
+    const jpegAttempts: Array<{
       edge: number;
       quality: number;
       flatten: boolean;
       mozjpeg: boolean;
+      input: LooseSharpInput;
     }> = [
-      { edge: 1024, quality: 68, flatten: true, mozjpeg: true },
-      { edge: 1024, quality: 62, flatten: false, mozjpeg: false },
-      { edge: 800, quality: 56, flatten: false, mozjpeg: false },
+      { edge: 1024, quality: 68, flatten: true, mozjpeg: true, input: {} },
+      { edge: 1024, quality: 62, flatten: false, mozjpeg: false, input: { limitInputPixels: false } },
+      { edge: 800, quality: 56, flatten: false, mozjpeg: false, input: { limitInputPixels: false, sequentialRead: true } },
+      { edge: 640, quality: 48, flatten: false, mozjpeg: false, input: { limitInputPixels: false } },
+      { edge: 480, quality: 42, flatten: true, mozjpeg: false, input: { limitInputPixels: false } },
     ];
 
     let lastMessage = '';
-    for (const a of attempts) {
+    for (const a of jpegAttempts) {
       try {
-        let img = sharp(buf, { failOn: 'none' }).rotate();
+        const inputs = { failOn: 'none' as const, ...a.input };
+        let img = sharp(buf, inputs).rotate();
         if (a.flatten) {
           img = img.flatten({ background: { r: 255, g: 255, b: 255 } });
         }
         const out = await img
-          .resize({
-            width: a.edge,
-            height: a.edge,
-            fit: 'inside',
-            withoutEnlargement: true,
-          })
+          .resize(a.edge, a.edge, { fit: 'inside', withoutEnlargement: true })
           .jpeg(
             a.mozjpeg
               ? { quality: a.quality, mozjpeg: true, chromaSubsampling: '4:4:4' }
@@ -94,8 +95,25 @@ export class QualityEntryService {
       } catch (e) {
         lastMessage = e instanceof Error ? e.message : String(e);
         this.logger.warn(
-          `shrinkHandoverImageToJpegDataUrl (${context}) edge=${a.edge} q=${a.quality}: ${lastMessage}`,
+          `shrinkHandoverImageToJpegDataUrl (${context}) jpeg ${a.edge}px q=${a.quality}: ${lastMessage}`,
         );
+      }
+    }
+
+    for (const edge of [800, 640, 480]) {
+      try {
+        const out = await sharp(buf, { failOn: 'none', limitInputPixels: false })
+          .rotate()
+          .flatten({ background: { r: 255, g: 255, b: 255 } })
+          .resize(edge, edge, { fit: 'inside', withoutEnlargement: true })
+          .png({ compressionLevel: 9, adaptiveFiltering: true })
+          .toBuffer();
+        if (out.length > 0) {
+          return `data:image/png;base64,${out.toString('base64')}`;
+        }
+      } catch (e) {
+        lastMessage = e instanceof Error ? e.message : String(e);
+        this.logger.warn(`shrinkHandoverImageToJpegDataUrl (${context}) png ${edge}px: ${lastMessage}`);
       }
     }
 
@@ -104,7 +122,7 @@ export class QualityEntryService {
     const mime =
       ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
     const passthrough = `data:${mime};base64,${buf.toString('base64')}`;
-    const maxPassthroughChars = 650_000;
+    const maxPassthroughChars = 950_000;
     if (passthrough.length <= maxPassthroughChars) {
       this.logger.warn(
         `shrinkHandoverImageToJpegDataUrl (${context}): passthrough original (${passthrough.length} chars)`,
@@ -113,7 +131,7 @@ export class QualityEntryService {
     }
 
     throw new BadRequestException(
-      `${context}: could not compress this image. Try another JPG or PNG, a smaller file, or set BLOB_READ_WRITE_TOKEN on the API.`,
+      `${context}: could not shrink this image on the server (try a smaller JPG/PNG under ~700KB, or set BLOB_READ_WRITE_TOKEN on the API).`,
     );
   }
 

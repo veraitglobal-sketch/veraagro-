@@ -271,10 +271,10 @@ export default function LogisticsHandoverPage() {
     }
     try {
       const compressed = await compressImage(f, {
-        maxWidth: 1600,
-        maxHeight: 1600,
-        maxSizeMB: 1.1,
-        quality: 0.8,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        maxSizeMB: 0.55,
+        quality: 0.75,
         useWebWorker: true,
       });
       const dataUrl = await readFileAsDataUrl(compressed, t('logisticsPages.handoverPhotoReadFailed'));
