@@ -25,6 +25,7 @@ const localizedPaths = [
   'investors',
   'investor-deck',
   'project-overview',
+  'technical-proposal',
 ] as const;
 
 function localizedUrls(): MetadataRoute.Sitemap {

@@ -18,6 +18,7 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "investors",
   "investor-deck",
   "project-overview",
+  "technical-proposal",
   "help-center",
   "security",
   "language",
