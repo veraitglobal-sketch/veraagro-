@@ -3953,7 +3953,7 @@
     "contentsNav": "Skok na poglavlje",
     "skipToContent": "Preskoči na dokument",
     "introNote": "Devet narativnih poglavlja plus osnivač — prilagođeno PDF‑u (~5 str). Koristite sadržaj ispod za skok na sekciju ili Štampa → Sačuvaj kao PDF.",
-    "pdfLimitHint": "Za portret dodajte fajl u `web/public/` (npr. `project-overview-founder.jpg`) i opciono postavite NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC (npr. `/project-overview-founder.jpg`). Pozivi često granice brojem strana.",
+    "pdfLimitHint": "Namerno zbijen tekst radi limita od ~5 strana. Podrazumevana baner slika: `/project-overview-founder.png`. Zamena opcionim NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
     "coverEyebrow": "Pregled projekta",
     "coverTitle": "Bio Vera — pregled projekta",
     "coverSubtitle": "Vertikalno povezana agrifood mreža pod Bio-Ready pravilima: jedan trag dokaza od parcela i odobrenih ulaza preko pakovanja i hladnog lanca do maloprodajnog pasoša.",
@@ -3995,14 +3995,17 @@
         "body": "Struktuirana sledljivost spušta trošak revizije, daje uzgajivaču ferije šanse kada dokumentacija radi za njega i štiti saglasnost između police i istorije robe."
       }
     ],
-    "founderTitle": "Osnivač (Founder)",
-    "founderPhotoPlaceholder": "Portret osnivača",
-    "founderPhotoHint": "Dodajte sliku pod web/public/, npr. project-overview-founder.jpg, pa po želji NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC=/project-overview-founder.jpg.",
-    "founderBullets": [
-      "Ime — dopišite.",
-      "Uloga — osnivač · Bio Vera.",
-      "Biografija — relevantno agrifood, operacije ili proizvod (kratko).",
-      "Kontakt — e-pošta ili profilni link."
+    "founderTitle": "Osnivač",
+    "founderPhotoPlaceholder": "Baner osnivača",
+    "founderPhotoAlt": "Jovica Mihajlović, osnivač Bio Vere, u kancelariji Vere",
+    "founderPhotoCaption": "Jovica Mihajlović · Osnivač · Bio Vera",
+    "founderPhotoHint": "Široki baner (oko 4–5∶1): podrazumevano `project-overview-founder.png` u `web/public/`. Drugu putanju podešavanjem NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "founderParagraphs": [
+      "Bio Vera je osnovao Jovica Mihajlović, državljanin Republike Srbije sa sedištem u Hamburgu, Nemačka, gde živi i radi poslednjih pet godina.",
+      "Diplomirao je na Univerzitetu u Nišu, smer Komunikacije i odnosi sa javnošću, što mu je oblikovalo razumevanje komunikacije, pozicioniranja na tržištu i korisnički orijentisanog razmišljanja.",
+      "Poslednjih godina gradi Vera brend u IT sektoru i stiče iskustvo u digitalnim uslugama i platformskim rešenjima.",
+      "Sa Bio Verom iskustvo prenosi u agrarni domen, sa ciljem transparentne i skalabilne digitalne infrastrukture za lance snabdevanja hranom.",
+      "Raduje ga dugoročna vizija: rešenja koja povezuju industrije kroz poverenje, efikasnost i digitalnu inovaciju i planovi da Vera ekosistem vremenom proširi i na druge sektore."
     ],
 
     "seeAlsoEyebrow": "Povezano",

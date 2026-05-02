@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 
 const ACCENT = "#2D5A27";
 const FOUNDER_ANCHOR = "po-founder";
+const DEFAULT_FOUNDER_BANNER = "/project-overview-founder.png";
 
 function sectionSlug(title: string, index: number): string {
   const ascii = title
@@ -50,13 +51,13 @@ export default function ProjectOverviewPage() {
     [sections],
   );
 
-  const founderBulletsRaw = t("projectOverview.founderBullets", { returnObjects: true });
-  const founderBullets = isStringList(founderBulletsRaw) ? founderBulletsRaw : [];
+  const founderParagraphsRaw = t("projectOverview.founderParagraphs", { returnObjects: true });
+  const founderParagraphs = isStringList(founderParagraphsRaw) ? founderParagraphsRaw : [];
 
-  const founderSrc = useMemo(
-    () => process.env.NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC?.trim() || "",
-    [],
-  );
+  const founderImageSrc = useMemo(() => {
+    const fromEnv = process.env.NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC?.trim();
+    return fromEnv && fromEnv.length > 0 ? fromEnv : DEFAULT_FOUNDER_BANNER;
+  }, []);
 
   const copyPublicUrl = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -85,6 +86,10 @@ export default function ProjectOverviewPage() {
             page-break-inside: auto;
           }
           .project-overview-doc .po-founder {
+            break-inside: auto;
+            page-break-inside: auto;
+          }
+          .project-overview-doc .po-founder-photo-wrap {
             break-inside: avoid;
             page-break-inside: avoid;
           }
@@ -269,52 +274,37 @@ export default function ProjectOverviewPage() {
             <div className="rounded-[calc(1rem-2px)] px-4 py-4 sm:px-5 sm:py-5 print:border-t print:border-gray-200 print:px-0 print:pb-4 print:pt-4">
               <h2
                 id="po-founder-heading"
-                className="po-heading mb-4 flex flex-wrap items-center gap-2 text-[1.0725rem] font-semibold tracking-tight text-gray-900"
+                className="po-heading mb-3 flex flex-wrap items-center gap-2 text-[1.0725rem] font-semibold tracking-tight text-gray-900"
               >
                 <Sparkles className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
                 <span>{t("projectOverview.founderTitle")}</span>
               </h2>
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-start print:flex-row">
-                <div className="relative mx-auto shrink-0 sm:mx-0 print:mx-0">
-                  <div
-                    className={`relative aspect-[4/5] h-48 w-40 overflow-hidden rounded-2xl shadow-md print:h-40 print:w-32 ${
-                      founderSrc
-                        ? "border-2 border-white ring-2 ring-[#2D5A27]/25"
-                        : "border-2 border-dashed border-gray-300/95 bg-[repeating-linear-gradient(-45deg,transparent,transparent_6px,#f4f7f5_6px,#f4f7f5_12px)]"
-                    }`}
-                    aria-label={t("projectOverview.founderPhotoPlaceholder")}
-                  >
-                    {founderSrc ? (
-                      <Image
-                        src={founderSrc}
-                        alt={t("projectOverview.founderPhotoPlaceholder")}
-                        fill
-                        className="object-cover"
-                        sizes="160px"
-                        priority={false}
-                      />
-                    ) : (
-                      <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-3 text-center">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400">
-                          {t("projectOverview.founderPhotoPlaceholder")}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <p className="po-no-print mt-2 max-w-[10rem] text-[10px] leading-snug text-gray-500">
-                    {t("projectOverview.founderPhotoHint")}
-                  </p>
+
+              <figure className="po-founder-photo-wrap mb-5">
+                <div className="relative aspect-[20/9] max-h-[200px] w-full overflow-hidden rounded-2xl border border-gray-200/95 bg-neutral-100 shadow-md ring-1 ring-black/[0.05] min-[480px]:aspect-[22/9] sm:aspect-[18/5] sm:max-h-[260px] print:aspect-[18/5] print:max-h-[200px]">
+                  <Image
+                    src={founderImageSrc}
+                    alt={t("projectOverview.founderPhotoAlt")}
+                    fill
+                    className="object-cover object-[58%_42%] sm:object-[62%_40%]"
+                    sizes="(max-width:768px) 100vw, 736px"
+                    priority={false}
+                  />
                 </div>
-                <ul
-                  className="min-w-0 flex-1 space-y-2.5 text-[14px] leading-relaxed text-gray-600 print:text-[10pt]"
-                  aria-labelledby="po-founder-heading"
-                >
-                  {founderBullets.map((line) => (
-                    <li key={line} className="relative pl-4 before:absolute before:left-0 before:top-[0.55em] before:size-1.5 before:rounded-full before:bg-[#2D5A27]/55">
-                      {line}
-                    </li>
-                  ))}
-                </ul>
+                <figcaption className="mt-2 text-[12px] font-medium leading-snug tracking-tight text-gray-600 print:text-[9pt]">
+                  {t("projectOverview.founderPhotoCaption")}
+                </figcaption>
+              </figure>
+
+              <p className="po-no-print mb-5 text-[10px] leading-snug text-gray-500">{t("projectOverview.founderPhotoHint")}</p>
+
+              <div
+                className="space-y-3.5 border-t border-gray-100 pt-5 text-[14px] leading-[1.65] text-gray-600 print:space-y-2.5 print:border-gray-200 print:pt-4 print:text-[10pt]"
+                aria-labelledby="po-founder-heading"
+              >
+                {founderParagraphs.map((paragraph, pi) => (
+                  <p key={pi}>{paragraph}</p>
+                ))}
               </div>
             </div>
           </section>
