@@ -6,8 +6,10 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Camera, Check } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
@@ -28,6 +30,7 @@ export function MaterialComplianceForm() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const c = useMaterialCompliance();
+  const [pullRefreshing, setPullRefreshing] = useState(false);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
@@ -41,6 +44,21 @@ export function MaterialComplianceForm() {
           paddingBottom: Math.max(p.bottomInset, theme.spacing['2xl']),
         }}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={pullRefreshing}
+            onRefresh={async () => {
+              setPullRefreshing(true);
+              try {
+                await c.refreshAll();
+              } finally {
+                setPullRefreshing(false);
+              }
+            }}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
       >
         <Text
           style={{

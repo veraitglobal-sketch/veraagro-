@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI } from '@/lib/api';
@@ -58,6 +59,7 @@ export default function LogisticsHandoverReceiverPage() {
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [missionsLoading, setMissionsLoading] = useState(true);
+  const [missionsFetchError, setMissionsFetchError] = useState<string | null>(null);
   const [selectedMission, setSelectedMission] = useState<string>('');
   const [receiverName, setReceiverName] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -95,6 +97,7 @@ export default function LogisticsHandoverReceiverPage() {
 
   const refreshMissions = () => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    setMissionsFetchError(null);
     missionsAPI
       .getMyMissions('logistics')
       .then((data: Mission[]) => {
@@ -102,14 +105,19 @@ export default function LogisticsHandoverReceiverPage() {
           AFTER_LOADING_HANDOVER.includes(m.status),
         );
         setMissions(list);
+        setMissionsFetchError(null);
       })
-      .catch(() => setMissions([]));
+      .catch((err: unknown) => {
+        setMissions([]);
+        setMissionsFetchError(apiErrorOrT(err, t, 'logisticsPages.missionsPageLoadError'));
+      });
   };
 
   useEffect(() => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     let cancelled = false;
     setMissionsLoading(true);
+    setMissionsFetchError(null);
     missionsAPI
       .getMyMissions('logistics')
       .then((data: Mission[]) => {
@@ -118,10 +126,14 @@ export default function LogisticsHandoverReceiverPage() {
             AFTER_LOADING_HANDOVER.includes(m.status),
           );
           setMissions(list);
+          setMissionsFetchError(null);
         }
       })
-      .catch(() => {
-        if (!cancelled) setMissions([]);
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setMissions([]);
+          setMissionsFetchError(apiErrorOrT(err, t, 'logisticsPages.missionsPageLoadError'));
+        }
       })
       .finally(() => {
         if (!cancelled) setMissionsLoading(false);
@@ -129,7 +141,7 @@ export default function LogisticsHandoverReceiverPage() {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, user?.roles]);
+  }, [isAuthenticated, user?.roles, t]);
 
   useEffect(() => {
     initCanvas();
@@ -354,6 +366,34 @@ export default function LogisticsHandoverReceiverPage() {
                   </option>
                 ))}
               </select>
+              {missionsFetchError && (
+                <p className="mt-2 text-sm text-red-700">{missionsFetchError}</p>
+              )}
+              {!missionsLoading && missions.length === 0 && !missionsFetchError && (
+                <div className="mt-3 rounded-lg border border-emerald-100 bg-emerald-50/80 p-3 text-sm text-emerald-950 space-y-2">
+                  <p>{t('logisticsPages.receiverMissionsEmptyHint')}</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1">
+                    <Link
+                      href="/logistics-partner/handover"
+                      className="font-medium text-[#2D5A27] underline underline-offset-2"
+                    >
+                      {t('logisticsPages.receiverMissionsEmptyCtaHandover')}
+                    </Link>
+                    <Link
+                      href="/logistics-partner/missions"
+                      className="font-medium text-[#2D5A27] underline underline-offset-2"
+                    >
+                      {t('logisticsPages.receiverMissionsEmptyCtaMissions')}
+                    </Link>
+                    <Link
+                      href="/logistics-partner/dashboard"
+                      className="font-medium text-[#2D5A27] underline underline-offset-2"
+                    >
+                      {t('logisticsPages.receiverMissionsEmptyCtaDashboard')}
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

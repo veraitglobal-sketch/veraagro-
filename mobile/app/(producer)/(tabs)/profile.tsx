@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
 import { Wallet, Settings, LogOut, MapPin, Map, Package, Truck, Bell, Image as ImageIcon, CheckCircle, FileText, Camera } from 'lucide-react-native';
@@ -6,9 +6,10 @@ import { theme } from '../../../lib/theme';
 import { tString } from '../../../lib/i18n-strings';
 import { useRouter } from 'expo-router';
 import { offlineStorage } from '../../../lib/offline-storage';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { estatesAPI, Estate } from '../../../lib/api';
 import { partnerSignInHref } from '../../../lib/post-login-redirect';
+import { HubSummaryMetrics } from '../../../features/grower/hubs/HubSummaryMetrics';
 
 /**
  * Profile / Settings Screen
@@ -21,18 +22,11 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [pendingCount, setPendingCount] = useState(0);
   const [estates, setEstates] = useState<Estate[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadPendingCount();
-    loadEstates();
-  }, []);
-
-  const loadPendingCount = async () => {
+  const refreshProfileData = useCallback(async () => {
     const entries = await offlineStorage.getPendingEntries();
-    setPendingCount(entries.filter(e => e.status === 'pending').length);
-  };
-
-  const loadEstates = async () => {
+    setPendingCount(entries.filter((e) => e.status === 'pending').length);
     try {
       const data = await estatesAPI.getAll();
       setEstates(Array.isArray(data) ? data : []);
@@ -40,7 +34,36 @@ export default function ProfileScreen() {
       console.error('Error loading estates:', error);
       setEstates([]);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void refreshProfileData();
+  }, [refreshProfileData]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refreshProfileData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshProfileData]);
+
+  const profileMetricRows = useMemo(
+    () => [
+      { key: 'estates', label: t('producer.hubs.metrics.estates'), value: String(estates.length) },
+      ...(pendingCount > 0
+        ? [
+            {
+              key: 'pending',
+              label: t('producer.profile.offlineQueueLabel'),
+              value: String(pendingCount),
+            },
+          ]
+        : []),
+    ],
+    [t, estates.length, pendingCount],
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -49,8 +72,19 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.colors.primary}
+          colors={[theme.colors.primary]}
+        />
+      }
+    >
       <View style={{ padding: theme.spacing.md }}>
+        <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={profileMetricRows} />
         {/* User Info */}
         <View style={{
           backgroundColor: theme.colors.surface,

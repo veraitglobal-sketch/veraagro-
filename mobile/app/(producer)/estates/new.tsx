@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  RefreshControl,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Save, ChevronRight } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import MapView, { Polygon, Marker } from 'react-native-maps';
@@ -42,6 +43,7 @@ export default function NewEstateScreen() {
   });
   const [loading, setLoading] = useState(false);
   const [drawing, setDrawing] = useState(false);
+  const [locationRefreshing, setLocationRefreshing] = useState(false);
   const [plantingType, setPlantingType] = useState<PlantingType | null>(null);
   const [category, setCategory] = useState<CategoryKey | null>(null);
   const [cropId, setCropId] = useState<string | null>(null);
@@ -61,6 +63,28 @@ export default function NewEstateScreen() {
       }
     })();
   }, []);
+
+  const refreshDeviceLocation = useCallback(async () => {
+    if (step !== 1) return;
+    setLocationRefreshing(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      setCurrentLocation(userLocation);
+      setRegion({
+        latitude: userLocation.lat,
+        longitude: userLocation.lng,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    } catch {
+      // ignore
+    } finally {
+      setLocationRefreshing(false);
+    }
+  }, [step]);
 
   const handleMapPress = (event: any) => {
     if (!drawing) return;
@@ -134,7 +158,19 @@ export default function NewEstateScreen() {
         )}
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          step === 1 ? (
+            <RefreshControl
+              refreshing={locationRefreshing}
+              onRefresh={refreshDeviceLocation}
+              tintColor={colors.primary}
+              colors={[colors.primary]}
+            />
+          ) : undefined
+        }
+      >
         <View style={{ padding: theme.spacing.md }}>
           {/* Step 1: Name, location, map */}
           {step === 1 && (

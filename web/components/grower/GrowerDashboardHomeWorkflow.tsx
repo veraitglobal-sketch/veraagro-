@@ -115,6 +115,16 @@ export default function GrowerDashboardHomeWorkflow() {
       icon: Package,
     },
     {
+      href: loc('/grower/quality-entry'),
+      titleKey: 'grower.dashboard.workflow.logisticsQuality',
+      icon: ClipboardCheck,
+    },
+    {
+      href: loc('/grower/compliance-photos'),
+      titleKey: 'grower.dashboard.workflow.logisticsCompliance',
+      icon: Camera,
+    },
+    {
       href: loc('/grower/missions/create'),
       titleKey: 'grower.dashboard.workflow.logisticsTransport',
       icon: Truck,

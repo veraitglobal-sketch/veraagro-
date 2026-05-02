@@ -1,5 +1,6 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -10,7 +11,17 @@ import InsightCard from './InsightCard';
 export default function VeraInsightsScreen() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
-  const { insights, loading } = useVeraInsightsData();
+  const { insights, loading, loadInsights } = useVeraInsightsData();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadInsights();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadInsights]);
 
   const handleAcceptRecommendation = () => {
     router.push('/(producer)/(tabs)/products');
@@ -65,7 +76,17 @@ export default function VeraInsightsScreen() {
         </Text>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
         <View
           style={{
             paddingTop: theme.spacing.lg,

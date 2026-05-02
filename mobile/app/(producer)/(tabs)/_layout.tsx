@@ -1,11 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Home, ListOrdered, Package, User } from 'lucide-react-native';
+import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Producer: Home → Steps (season manual) → Products → Profile. Rest via dashboard.
+ * Grower tabs: Home → Field (parcels & diary) → Chain (lots & transport) → Supplies → Profile.
+ * @see docs/GROWER_MOBILE_IA_REDESIGN.md
  */
 export default function ProducerTabsLayout() {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export default function ProducerTabsLayout() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontSize: 13,
+          fontSize: 11,
           fontWeight: '500',
           letterSpacing: -0.2,
           marginTop: 2,
@@ -53,19 +54,27 @@ export default function ProducerTabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="steps"
+        name="field"
         options={{
-          title: t('producer.tabs.steps'),
-          tabBarLabel: t('producer.tabs.steps'),
-          tabBarIcon: ({ color, size }) => <ListOrdered size={size || 22} color={color} strokeWidth={1.5} />,
+          title: t('producer.tabs.fieldHub'),
+          tabBarLabel: t('producer.tabs.field'),
+          tabBarIcon: ({ color, size }) => <MapPin size={size || 22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tabs.Screen
-        name="products"
+        name="chain"
         options={{
-          title: t('producer.tabs.products'),
-          tabBarLabel: t('producer.tabs.products'),
+          title: t('producer.tabs.chainHub'),
+          tabBarLabel: t('producer.tabs.chain'),
           tabBarIcon: ({ color, size }) => <Package size={size || 22} color={color} strokeWidth={1.5} />,
+        }}
+      />
+      <Tabs.Screen
+        name="supplies"
+        options={{
+          title: t('producer.tabs.suppliesHub'),
+          tabBarLabel: t('producer.tabs.supplies'),
+          tabBarIcon: ({ color, size }) => <ShoppingBag size={size || 22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tabs.Screen
@@ -76,6 +85,8 @@ export default function ProducerTabsLayout() {
           tabBarIcon: ({ color, size }) => <User size={size || 22} color={color} strokeWidth={1.5} />,
         }}
       />
+      <Tabs.Screen name="steps" options={{ title: t('producer.tabs.steps'), href: null }} />
+      <Tabs.Screen name="products" options={{ title: t('producer.tabs.products'), href: null }} />
       <Tabs.Screen name="cost-calculator" options={{ title: t('producer.tabs.costCalculator'), href: null }} />
       <Tabs.Screen name="certifications" options={{ title: t('producer.tabs.certifications'), href: null }} />
       <Tabs.Screen name="banned-substances" options={{ title: t('producer.tabs.bannedSubstances'), href: null }} />

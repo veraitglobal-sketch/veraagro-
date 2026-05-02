@@ -48,6 +48,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [offlineSyncing, setOfflineSyncing] = useState(false);
   const [offlineSyncLastError, setOfflineSyncLastError] = useState<string | null>(null);
   const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
+  const [batchTotalCount, setBatchTotalCount] = useState(0);
   const appStateRef = useRef(AppState.currentState);
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSyncTriggerRef = useRef(0);
@@ -143,9 +144,19 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const loadMissions = useCallback(async () => {
     try {
       const missions = await missionsAPI.getAll();
-      const active = (Array.isArray(missions) ? missions : []).filter(
-        (m: any) => m?.status === 'PENDING' || m?.status === 'ASSIGNED' || m?.status === 'IN_TRANSIT'
-      );
+      const active = (Array.isArray(missions) ? missions : []).filter((m: any) => {
+        const s = String(m?.status || '').toUpperCase().replace(/\s+/g, '_');
+        return (
+          s === 'PENDING' ||
+          s === 'PENDING_VERIFICATION' ||
+          s === 'ASSIGNED' ||
+          s === 'ACCEPTED' ||
+          s === 'IN_PROGRESS' ||
+          s === 'READY_FOR_LOADING' ||
+          s === 'PICKED_UP' ||
+          s === 'IN_TRANSIT'
+        );
+      });
       setActiveMissions(active);
     } catch {
       setActiveMissions([]);
@@ -157,6 +168,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       const batches = await batchesAPI.getAll();
       const arr = Array.isArray(batches) ? batches : [];
       await growerOfflineCache.saveBatches(arr);
+      setBatchTotalCount(arr.length);
       setBatchesReadyForTransport(
         arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
       );
@@ -167,6 +179,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     } catch {
       const cached = await growerOfflineCache.loadBatches();
       const arr = cached ?? [];
+      setBatchTotalCount(arr.length);
       setBatchesReadyForTransport(
         arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
       );
@@ -315,5 +328,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     loadData,
     loadLiveData,
     batchesReadyForTransport,
+    batchTotalCount,
   };
 }

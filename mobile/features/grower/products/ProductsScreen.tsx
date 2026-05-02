@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -8,11 +8,12 @@ import { useProductsData } from './useProductsData';
 import ProductEntryForm from './ProductEntryForm';
 import ProductList from './ProductList';
 import { theme } from '../../../lib/theme';
+import { HubSummaryMetrics } from '../hubs/HubSummaryMetrics';
 
 export default function ProductsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { products, loading, load, addProduct } = useProductsData();
+  const { products, loading, listRefreshing, load, addProduct } = useProductsData();
   const [showForm, setShowForm] = useState(false);
   const [scannedQr, setScannedQr] = useState<string | null>(null);
 
@@ -41,6 +42,15 @@ export default function ProductsScreen() {
     [addProduct]
   );
 
+  const productMetricRows = useMemo(
+    () => [{ key: 'lines', label: t('producer.products.deviceLinesMetric'), value: String(products.length) }],
+    [t, products.length],
+  );
+
+  const refreshList = useCallback(async () => {
+    await load({ silent: true });
+  }, [load]);
+
   const openScanner = () => {
     setScannedQr(null);
     router.push({ pathname: '../scanner', params: { returnTo: 'products' } });
@@ -51,6 +61,10 @@ export default function ProductsScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>{t('producer.dashboard.myProducts')}</Text>
         <Text style={styles.subtitle}>{t('producer.dashboard.myProductsDesc')}</Text>
+      </View>
+
+      <View style={styles.metricsWrap}>
+        <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={productMetricRows} />
       </View>
 
       <View style={styles.actions}>
@@ -82,7 +96,12 @@ export default function ProductsScreen() {
         <Package size={20} color={theme.colors.text.secondary} strokeWidth={1} />
         <Text style={styles.listTitle}>{t('producer.products.enteredListTitle')}</Text>
       </View>
-      <ProductList products={products} loading={loading} onRefresh={load} />
+      <ProductList
+        products={products}
+        loading={loading}
+        listRefreshing={listRefreshing}
+        onRefresh={refreshList}
+      />
     </View>
   );
 }
@@ -90,6 +109,7 @@ export default function ProductsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm, paddingBottom: theme.spacing.md },
+  metricsWrap: { paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.sm },
   title: { ...theme.typography.h3, color: theme.colors.text.primary },
   subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: 4 },
   actions: { flexDirection: 'row', gap: 12, paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.md },

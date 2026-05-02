@@ -1,22 +1,38 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { PendingProduct } from '../../../lib/offline-storage';
 import { theme } from '../../../lib/theme';
 
 interface ProductListProps {
   products: PendingProduct[];
   loading: boolean;
+  listRefreshing: boolean;
   onRefresh: () => Promise<void>;
 }
 
 function ProductItem({ item }: { item: PendingProduct }) {
-  const statusLabel = item.status === 'pending' ? 'Saved on device' : item.status === 'syncing' ? 'Uploading…' : item.status;
+  const { t } = useTranslation();
+  const statusLabel =
+    item.status === 'pending'
+      ? t('producer.products.savedOnDevice')
+      : item.status === 'syncing'
+        ? t('producer.products.syncing')
+        : item.status;
   return (
     <View style={styles.item}>
-      <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
-      {item.contents ? <Text style={styles.contents} numberOfLines={2}>{item.contents}</Text> : null}
+      <Text style={styles.name} numberOfLines={1}>
+        {item.name}
+      </Text>
+      {item.contents ? (
+        <Text style={styles.contents} numberOfLines={2}>
+          {item.contents}
+        </Text>
+      ) : null}
       <View style={styles.meta}>
-        <Text style={styles.metaText}>{item.quantity} {item.unit}</Text>
+        <Text style={styles.metaText}>
+          {item.quantity} {item.unit}
+        </Text>
         {item.parcelOrEstate ? <Text style={styles.metaText}> • {item.parcelOrEstate}</Text> : null}
       </View>
       <Text style={styles.status}>{statusLabel}</Text>
@@ -24,11 +40,13 @@ function ProductItem({ item }: { item: PendingProduct }) {
   );
 }
 
-export default function ProductList({ products, loading, onRefresh }: ProductListProps) {
+export default function ProductList({ products, loading, listRefreshing, onRefresh }: ProductListProps) {
+  const { t } = useTranslation();
+
   if (loading && products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.secondary}>Loading…</Text>
+        <Text style={styles.secondary}>{t('producer.products.loading')}</Text>
       </View>
     );
   }
@@ -36,7 +54,7 @@ export default function ProductList({ products, loading, onRefresh }: ProductLis
   if (products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.secondary}>No products yet. Add via QR or manual entry.</Text>
+        <Text style={styles.secondary}>{t('producer.products.noProducts')}</Text>
       </View>
     );
   }
@@ -47,7 +65,7 @@ export default function ProductList({ products, loading, onRefresh }: ProductLis
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <ProductItem item={item} />}
       onRefresh={onRefresh}
-      refreshing={loading}
+      refreshing={listRefreshing}
       contentContainerStyle={styles.list}
       style={styles.flatList}
     />

@@ -256,6 +256,12 @@ export function useMaterialCompliance() {
     (complianceStatus == null || !complianceStatus.complete || showReplaceForm) &&
     !statusLoading;
 
+  const refreshAll = useCallback(async () => {
+    await loadBatches();
+    await loadLabelRolls();
+    if (selectedBatchId) await fetchStatus(selectedBatchId);
+  }, [loadBatches, loadLabelRolls, selectedBatchId, fetchStatus]);
+
   return {
     batches,
     batchesLoading,
@@ -283,6 +289,7 @@ export function useMaterialCompliance() {
     onSave,
     refetchBatches: loadBatches,
     refetchStatus: () => (selectedBatchId ? fetchStatus(selectedBatchId) : undefined),
+    refreshAll,
     selectedBatch,
     showForm,
   };

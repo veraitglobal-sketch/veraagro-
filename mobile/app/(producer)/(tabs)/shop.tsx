@@ -9,7 +9,7 @@ export default function ShopRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/(producer)/(tabs)/products');
+    router.replace('/(producer)/(tabs)/supplies');
   }, [router]);
 
   return null;

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
@@ -11,7 +11,17 @@ export default function HarvestForm() {
   const canSubmit = !h.parcelsLoading && h.parcelId && h.cropType && h.estimatedQuantity && !h.loading;
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.surface }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.surface }}
+      refreshControl={
+        <RefreshControl
+          refreshing={h.parcelsRefreshing}
+          onRefresh={h.refreshParcels}
+          tintColor={colors.accent}
+          colors={[colors.accent]}
+        />
+      }
+    >
       <View style={{ padding: 16 }}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
           <TouchableOpacity

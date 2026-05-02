@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
@@ -24,11 +24,11 @@ function mapMissionToUiStatus(status: string): 'loading' | 'in_transit' | 'at_de
   return status;
 }
 
-function getStatusLabel(status: string): string {
+function getStatusLabel(status: string, t: (key: string) => string): string {
   const ui = mapMissionToUiStatus(status);
-  if (ui === 'loading') return 'Loading';
-  if (ui === 'in_transit') return 'In transit';
-  if (ui === 'at_delivery') return 'Delivery';
+  if (ui === 'loading') return t('logisticsPages.dashboardUiStatusLoading');
+  if (ui === 'in_transit') return t('logisticsPages.dashboardUiStatusInTransit');
+  if (ui === 'at_delivery') return t('logisticsPages.dashboardUiStatusDelivery');
   return status.replace(/_/g, ' ');
 }
 
@@ -107,7 +107,7 @@ export default function LogisticsDashboardPage() {
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
+          setError(apiErrorOrT(err, t, 'logisticsPages.missionsPageLoadError'));
           setMissions([]);
         }
       })
@@ -115,7 +115,7 @@ export default function LogisticsDashboardPage() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [isAuthenticated, user?.roles]);
+  }, [isAuthenticated, user?.roles, t]);
 
   const activeMissions = missions.filter((m) => isActiveMission(m.status));
   const now = new Date();
@@ -126,7 +126,9 @@ export default function LogisticsDashboardPage() {
     (m) => m.status === 'COMPLETED' && m.completedAt && new Date(m.completedAt) >= weekStart
   ).length;
 
-  const partnerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Logistics Partner' : 'Logistics Partner';
+  const partnerName = user
+    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || t('logisticsPages.dashboardPartnerFallback')
+    : t('logisticsPages.dashboardPartnerFallback');
 
   const getStatusStyles = (status: string) => {
     const ui = mapMissionToUiStatus(status);
@@ -150,7 +152,7 @@ export default function LogisticsDashboardPage() {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+        <div className="animate-pulse text-gray-500">{t('logisticsPages.dashboardShellLoading')}</div>
       </div>
     );
   }
@@ -169,9 +171,11 @@ export default function LogisticsDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-1">{partnerName}</h2>
-              <p className="text-gray-700">Cold chain transport</p>
+              <p className="text-gray-700">{t('logisticsPages.dashboardPartnerTagline')}</p>
             </div>
-            <span className="px-3 py-1 bg-[#2D5A27] text-white text-sm font-medium rounded-full">Active</span>
+            <span className="px-3 py-1 bg-[#2D5A27] text-white text-sm font-medium rounded-full">
+              {t('logisticsPages.dashboardPartnerActiveBadge')}
+            </span>
           </div>
         </motion.div>
 
@@ -180,11 +184,20 @@ export default function LogisticsDashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-lg border border-gray-200 bg-gray-50/90 p-4 text-sm text-gray-800"
         >
-          <p className="font-medium text-gray-900">Typical flow</p>
+          <p className="font-medium text-gray-900">{t('logisticsPages.dashboardTypicalFlowTitle')}</p>
           <p className="mt-1 leading-relaxed text-gray-700">
-            <strong>Missions</strong> — accept / assign the run → <Link href="/logistics-partner/handover" className="font-semibold text-[#2D5A27] underline">Loading handover</Link> at the farm
-            (after grower quality: truck temp + photos, then <strong>READY FOR LOADING</strong>) → pickup and{' '}
-            <strong>in transit</strong> to hub or buyer. <strong>Vehicles</strong> must stay cold-chain ready.
+            <Trans
+              i18nKey="logisticsPages.dashboardTypicalFlow"
+              components={{
+                strong: <strong className="font-semibold text-gray-900" />,
+                handoverLink: (
+                  <Link
+                    href="/logistics-partner/handover"
+                    className="font-semibold text-[#2D5A27] underline"
+                  />
+                ),
+              }}
+            />
           </p>
         </motion.div>
 
@@ -196,7 +209,7 @@ export default function LogisticsDashboardPage() {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
           >
-            <p className="text-sm text-gray-500 mb-1">Ongoing missions</p>
+            <p className="text-sm text-gray-500 mb-1">{t('logisticsPages.dashboardStatOngoing')}</p>
             <p className="text-2xl font-semibold text-[#2D5A27]">{loading ? '—' : activeMissions.length}</p>
           </motion.div>
           <motion.div
@@ -205,7 +218,7 @@ export default function LogisticsDashboardPage() {
             transition={{ delay: 0.15 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
           >
-            <p className="text-sm text-gray-500 mb-1">Completed this week</p>
+            <p className="text-sm text-gray-500 mb-1">{t('logisticsPages.dashboardStatCompletedWeek')}</p>
             <p className="text-2xl font-semibold text-gray-900">{loading ? '—' : completedThisWeek}</p>
           </motion.div>
           <motion.div
@@ -214,7 +227,7 @@ export default function LogisticsDashboardPage() {
             transition={{ delay: 0.2 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
           >
-            <p className="text-sm text-gray-500 mb-1">Total missions</p>
+            <p className="text-sm text-gray-500 mb-1">{t('logisticsPages.dashboardStatTotal')}</p>
             <p className="text-2xl font-semibold text-gray-900">{loading ? '—' : missions.length}</p>
           </motion.div>
         </div>
@@ -227,12 +240,12 @@ export default function LogisticsDashboardPage() {
           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Ongoing missions</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('logisticsPages.dashboardOngoingTitle')}</h2>
             <Link
               href="/logistics-partner/missions"
               className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium"
             >
-              All missions →
+              {t('logisticsPages.dashboardAllMissionsLink')}
             </Link>
           </div>
 
@@ -241,14 +254,34 @@ export default function LogisticsDashboardPage() {
           )}
 
           {loading ? (
-            <div className="py-12 text-center text-gray-500">Loading missions...</div>
+            <div className="py-12 text-center text-gray-500">{t('logisticsPages.dashboardOngoingLoadingMissions')}</div>
           ) : activeMissions.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 space-y-3">
               <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <p className="font-medium">No ongoing missions</p>
-              <p className="text-sm mt-1">New missions will show in the Missions tab</p>
+              <p className="font-medium text-gray-800">{t('logisticsPages.dashboardOngoingEmptyTitle')}</p>
+              <p className="text-sm max-w-md mx-auto">{t('logisticsPages.dashboardOngoingEmptyHint')}</p>
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 pt-2">
+                <Link
+                  href="/logistics-partner/missions"
+                  className="text-sm font-medium text-[#2D5A27] underline underline-offset-2"
+                >
+                  {t('logisticsPages.dashboardOngoingEmptyCtaAllMissions')}
+                </Link>
+                <Link
+                  href="/logistics-partner/missions#logistics-available-missions"
+                  className="text-sm font-medium text-[#2D5A27] underline underline-offset-2"
+                >
+                  {t('logisticsPages.dashboardOngoingEmptyCtaAvailable')}
+                </Link>
+                <Link
+                  href="/logistics-partner/vehicles"
+                  className="text-sm font-medium text-[#2D5A27] underline underline-offset-2"
+                >
+                  {t('logisticsPages.dashboardOngoingEmptyCtaVehicles')}
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -265,7 +298,7 @@ export default function LogisticsDashboardPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-sm font-semibold text-gray-900">{mission.missionNumber}</span>
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusStyles(mission.status)}`}>
-                            {getStatusLabel(mission.status)}
+                            {getStatusLabel(mission.status, t)}
                           </span>
                           <span className="text-xs text-gray-500">Batch {batchId}</span>
                         </div>
@@ -276,7 +309,7 @@ export default function LogisticsDashboardPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                             <div>
-                              <p className="text-xs text-gray-500">Pickup</p>
+                              <p className="text-xs text-gray-500">{t('logisticsPages.dashboardLabelPickup')}</p>
                               <p className="text-gray-800">{mission.pickupAddress}</p>
                             </div>
                           </div>
@@ -285,7 +318,7 @@ export default function LogisticsDashboardPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
                             <div>
-                              <p className="text-xs text-gray-500">Destination</p>
+                              <p className="text-xs text-gray-500">{t('logisticsPages.dashboardLabelDestination')}</p>
                               <p className="text-gray-800">Hamburg</p>
                             </div>
                           </div>
@@ -294,7 +327,7 @@ export default function LogisticsDashboardPage() {
                         {(uiStatus === 'in_transit' || uiStatus === 'at_delivery') && (
                           <div className="pt-2">
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Progress</span>
+                              <span>{t('logisticsPages.dashboardLabelProgress')}</span>
                               <span>{getProgress(mission.status)}%</span>
                             </div>
                             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -309,7 +342,7 @@ export default function LogisticsDashboardPage() {
 
                       <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-end lg:text-right">
                         <div>
-                          <p className="text-xs text-gray-500">ETA</p>
+                          <p className="text-xs text-gray-500">{t('logisticsPages.dashboardLabelEta')}</p>
                           <p className="font-medium text-gray-900">{formatEta(mission.estimatedPickupTime)}</p>
                         </div>
                         {uiStatus === 'loading' ? (
@@ -317,14 +350,14 @@ export default function LogisticsDashboardPage() {
                             href="/logistics-partner/handover"
                             className="px-4 py-2 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors text-center"
                           >
-                            Loading Handover
+                            {t('logisticsPages.loadingHandover')}
                           </Link>
                         ) : (
                           <Link
                             href={`/track/${batchId}`}
                             className="px-4 py-2 border border-[#2D5A27] text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/10 transition-colors text-center"
                           >
-                            Track
+                            {t('logisticsPages.dashboardTrackCta')}
                           </Link>
                         )}
                       </div>
@@ -348,15 +381,15 @@ export default function LogisticsDashboardPage() {
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clipRule="evenodd" />
               </svg>
               <div>
-                <p className="text-sm font-medium text-amber-800">Loading in progress</p>
+                <p className="text-sm font-medium text-amber-800">{t('logisticsPages.dashboardHandoverReminderTitle')}</p>
                 <p className="text-sm text-amber-700 mt-1">
-                  One or more missions need temperature verification. Check the truck temperature and complete Loading Handover.
+                  {t('logisticsPages.dashboardHandoverReminderBody')}
                 </p>
                 <Link
                   href="/logistics-partner/handover"
                   className="inline-block mt-2 text-sm font-medium text-amber-800 hover:text-amber-900"
                 >
-                  Go to Loading Handover →
+                  {t('logisticsPages.dashboardHandoverReminderCta')}
                 </Link>
               </div>
             </div>

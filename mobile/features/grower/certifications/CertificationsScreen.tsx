@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Award, Camera, Check, Clock } from 'lucide-react-native';
 import { useCertificationsData, CertStatus } from './useCertificationsData';
@@ -51,8 +51,13 @@ function CertRow({
 
 export default function CertificationsScreen() {
   const { t } = useTranslation();
-  const { requiredCerts, pendingPhotos, loading, load, getStatusForCert, addPhoto } = useCertificationsData();
+  const { requiredCerts, pendingPhotos, loading, listRefreshing, load, getStatusForCert, addPhoto } =
+    useCertificationsData();
   const [uploadingCert, setUploadingCert] = useState<RequiredCert | null>(null);
+
+  const refreshList = useCallback(async () => {
+    await load({ silent: true });
+  }, [load]);
 
   const handleSavePhoto = useCallback(
     async (entry: Parameters<typeof addPhoto>[0]) => {
@@ -85,8 +90,13 @@ export default function CertificationsScreen() {
       <FlatList
         data={requiredCerts}
         keyExtractor={(item) => item.id}
-        onRefresh={load}
-        refreshing={loading}
+        onRefresh={refreshList}
+        refreshing={listRefreshing}
+        ListHeaderComponent={
+          loading && !listRefreshing ? (
+            <ActivityIndicator style={{ paddingVertical: 12 }} color={theme.colors.primary} />
+          ) : null
+        }
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <CertRow

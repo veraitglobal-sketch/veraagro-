@@ -44,10 +44,15 @@ export function useFieldLogData() {
   const [gpsWarning, setGpsWarning] = useState(false);
   const [materialValid, setMaterialValid] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
+  const [referenceRefreshing, setReferenceRefreshing] = useState(false);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
   const [parcelsForGps, setParcelsForGps] = useState<Parcel[]>([]);
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
+  const currentEstateRef = useRef<Estate | null>(null);
+  useEffect(() => {
+    currentEstateRef.current = currentEstate;
+  }, [currentEstate]);
   useEffect(() => {
     locationRef.current = location;
   }, [location]);
@@ -57,10 +62,18 @@ export function useFieldLogData() {
       const data = await estatesAPI.getAll();
       const list = Array.isArray(data) ? data : [];
       setEstates(list);
-      if (list.length > 0) setCurrentEstate(list[0]);
+      setCurrentEstate((prev) => {
+        if (list.length === 0) return null;
+        if (prev) {
+          const n = list.find((e) => e.id === prev.id);
+          if (n) return n;
+        }
+        return list[0];
+      });
     } catch (error) {
       console.error('Error loading estates:', error);
       setEstates([]);
+      setCurrentEstate(null);
     }
   }, []);
 
@@ -107,6 +120,35 @@ export function useFieldLogData() {
     loadEstates();
     requestPermissions();
   }, [loadEstates, requestPermissions]);
+
+  const refreshReferenceData = useCallback(async () => {
+    setReferenceRefreshing(true);
+    try {
+      const data = await estatesAPI.getAll();
+      const list = Array.isArray(data) ? data : [];
+      setEstates(list);
+      const prevId = currentEstateRef.current?.id;
+      const next =
+        list.length === 0 ? null : prevId ? (list.find((e) => e.id === prevId) ?? list[0]) : list[0];
+      setCurrentEstate(next);
+      if (next?.id) {
+        try {
+          const pl = await parcelsAPI.getByEstate(next.id);
+          setParcelsForGps(Array.isArray(pl) ? pl : []);
+        } catch {
+          setParcelsForGps([]);
+        }
+      } else {
+        setParcelsForGps([]);
+      }
+    } catch (error) {
+      console.error('Error loading estates:', error);
+      setEstates([]);
+      setParcelsForGps([]);
+    } finally {
+      setReferenceRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (activityType === 'HARVEST') {
@@ -303,5 +345,7 @@ export function useFieldLogData() {
     getCurrentLocation,
     takePhoto,
     handleSubmit,
+    referenceRefreshing,
+    refreshReferenceData,
   };
 }

@@ -23,6 +23,7 @@ const localizedPaths = [
   'privacy',
   'cookies',
   'investors',
+  'pitch-deck',
 ] as const;
 
 function localizedUrls(): MetadataRoute.Sitemap {

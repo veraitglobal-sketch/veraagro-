@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Save, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import MapView, { Polygon, Marker } from 'react-native-maps';
@@ -31,44 +31,51 @@ export default function EditEstateScreen() {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [drawing, setDrawing] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      loadEstate();
-    }
-  }, [id]);
-
-  const loadEstate = async () => {
-    if (!id) return;
-    try {
-      setLoading(true);
-      const data = await estatesAPI.getOne(id);
-      setEstate(data);
-      setName(data.name);
-      setLocation(data.location || '');
-      if (data.polygonCoordinates) {
-        const coords = data.polygonCoordinates as Array<{ lat: number; lng: number }>;
-        setPolygonCoordinates(coords);
-        if (coords.length > 0) {
-          const centerLat = coords.reduce((sum, p) => sum + p.lat, 0) / coords.length;
-          const centerLng = coords.reduce((sum, p) => sum + p.lng, 0) / coords.length;
-          setRegion({
-            latitude: centerLat,
-            longitude: centerLng,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          });
+  const loadEstate = useCallback(
+    async (mode: 'initial' | 'refresh') => {
+      if (!id) return;
+      if (mode === 'refresh') setRefreshing(true);
+      else setInitialLoad(true);
+      try {
+        const data = await estatesAPI.getOne(id);
+        setEstate(data);
+        setName(data.name);
+        setLocation(data.location || '');
+        if (data.polygonCoordinates) {
+          const coords = data.polygonCoordinates as Array<{ lat: number; lng: number }>;
+          setPolygonCoordinates(coords);
+          if (coords.length > 0) {
+            const centerLat = coords.reduce((sum, p) => sum + p.lat, 0) / coords.length;
+            const centerLng = coords.reduce((sum, p) => sum + p.lng, 0) / coords.length;
+            setRegion({
+              latitude: centerLat,
+              longitude: centerLng,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            });
+          }
+        } else {
+          setPolygonCoordinates([]);
         }
+      } catch (error) {
+        console.error('Error loading estate:', error);
+        Alert.alert(t('error'), t('producer.estates.loadFailed'));
+      } finally {
+        if (mode === 'refresh') setRefreshing(false);
+        else setInitialLoad(false);
       }
-    } catch (error) {
-      console.error('Error loading estate:', error);
-      Alert.alert(t('error'), t('producer.estates.loadFailed'));
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [id, t],
+  );
+
+  useEffect(() => {
+    if (id) void loadEstate('initial');
+  }, [id, loadEstate]);
 
   const handleMapPress = (event: any) => {
     if (!drawing) return;
@@ -86,7 +93,7 @@ export default function EditEstateScreen() {
     if (!id) return;
 
     try {
-      setLoading(true);
+      setSaving(true);
       await estatesAPI.update(id, {
         name: name.trim(),
         polygonCoordinates: polygonCoordinates.length > 0 ? polygonCoordinates : undefined,
@@ -96,7 +103,7 @@ export default function EditEstateScreen() {
       Alert.alert(t('error'), apiErrorMessage(error, t('producer.estates.updateFailed')));
       console.error('Error updating estate:', error);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -104,7 +111,7 @@ export default function EditEstateScreen() {
     setPolygonCoordinates([]);
   };
 
-  if (loading && !estate) {
+  if (initialLoad && !estate) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -118,8 +125,8 @@ export default function EditEstateScreen() {
         title={t('producer.estates.editEstateTitle')}
         left="back"
         right={
-          <TouchableOpacity onPress={handleSave} disabled={loading} hitSlop={8}>
-            {loading ? (
+          <TouchableOpacity onPress={handleSave} disabled={saving} hitSlop={8}>
+            {saving ? (
               <ActivityIndicator size="small" color={colors.primary} />
             ) : (
               <Save size={24} color={colors.primary} strokeWidth={1.5} />
@@ -128,7 +135,17 @@ export default function EditEstateScreen() {
         }
       />
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void loadEstate('refresh')}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
         <View
           style={{
             paddingTop: theme.spacing.md,

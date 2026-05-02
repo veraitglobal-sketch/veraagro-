@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Camera, MapPin, Check, X } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
@@ -37,10 +37,22 @@ export default function EntryForm() {
     getCurrentLocation,
     takePhoto,
     handleSubmit,
+    referenceRefreshing,
+    refreshReferenceData,
   } = useFieldLogData();
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      refreshControl={
+        <RefreshControl
+          refreshing={referenceRefreshing}
+          onRefresh={refreshReferenceData}
+          tintColor={theme.colors.primary}
+          colors={[theme.colors.primary]}
+        />
+      }
+    >
       <View style={{ padding: theme.spacing.md }}>
         {gpsWarning && (
           <View

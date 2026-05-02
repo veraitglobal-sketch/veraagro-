@@ -9,8 +9,12 @@ import { theme } from '../../../lib/theme';
 
 export default function CostCalculatorScreen() {
   const { t } = useTranslation();
-  const { costs, products, loading, load, addCost } = useCostCalculatorData();
+  const { costs, products, loading, listRefreshing, load, addCost } = useCostCalculatorData();
   const [showForm, setShowForm] = useState(false);
+
+  const refreshList = useCallback(async () => {
+    await load({ silent: true });
+  }, [load]);
 
   const handleAddCost = useCallback(
     async (entry: Parameters<typeof addCost>[0]) => {
@@ -56,7 +60,7 @@ export default function CostCalculatorScreen() {
         <Calculator size={20} color={theme.colors.text.secondary} strokeWidth={1} />
         <Text style={styles.listTitle}>{t('producer.costCalculator.costListTitle')}</Text>
       </View>
-      <CostList costs={costs} loading={loading} onRefresh={load} />
+      <CostList costs={costs} loading={loading} listRefreshing={listRefreshing} onRefresh={refreshList} />
     </View>
   );
 }

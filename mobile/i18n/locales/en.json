@@ -233,10 +233,82 @@
       "settings": "Settings",
       "harvest": "Harvest",
       "wallet": "Wallet",
-      "missions": "Transport"
+      "missions": "Transport",
+      "field": "Field",
+      "fieldHub": "Field",
+      "chain": "Lots",
+      "chainHub": "Lots & delivery",
+      "supplies": "Supplies",
+      "suppliesHub": "Supplies"
+    },
+    "hubs": {
+      "field": {
+        "title": "Field & diary",
+        "lead": "Parcels, season plans, harvest, and synced entries live here — the same order as on the web grower area.",
+        "sectionFarm": "Farm & boundaries",
+        "estatesTitle": "My fields & parcels",
+        "estatesDesc": "Estates, blocks, approval status.",
+        "plotMapperTitle": "Draw / edit parcels",
+        "plotMapperDesc": "Map parcel polygons on your farm.",
+        "sectionSeason": "Season",
+        "plantingsTitle": "Plantings & plans",
+        "plantingsDesc": "Per approved parcel — planting or expected harvest.",
+        "harvestDesc": "Harvest announcements and PHI-related checks.",
+        "growthJournalTitle": "Growth journal",
+        "growthJournalDesc": "Notes tied to a plan and parcel (mobile-first).",
+        "sectionRecords": "Daily log",
+        "fieldLogDesc": "Spray, plant, harvest with photo + GPS — offline queue when needed.",
+        "sectionGuide": "Guide",
+        "stepsDesc": "Full chain on one page (how it works)."
+      },
+      "chain": {
+        "title": "Lots & delivery",
+        "lead": "From packed batch to pickup request and mission tracking — aligned with Bio Vera operations.",
+        "sectionLots": "Lots & packing",
+        "batchesDesc": "Create and review batches (lots).",
+        "packingDesc": "GPS + crate/quality photos for audit.",
+        "sectionQuality": "Quality & compliance",
+        "qualityTitle": "Quality entry",
+        "qualityDesc": "Weather, pre-cool, one entry per lot.",
+        "complianceTitle": "Compliance photos",
+        "complianceDesc": "Label roll + required photo types before transport.",
+        "sectionTransport": "Transport",
+        "transportDesc": "Pickup coordinates — operations assigns the carrier.",
+        "missionsTitle": "Mission list & detail",
+        "missionsDesc": "Track status, handover, cold chain (no buyer address).",
+        "sectionBadges": "Packaging IDs",
+        "badgesDesc": "Register pallet / roll serials and link a lot.",
+        "scanDesc": "QR or barcode scanner."
+      },
+      "supplies": {
+        "title": "Supplies & catalogue",
+        "lead": "Inputs: what you sell on the passport, compliant materials, and partner orders.",
+        "sectionCatalog": "Catalogue",
+        "productsDesc": "Your product lines for transparency / passport.",
+        "sectionCompliance": "Materials",
+        "materialsDesc": "Whitelist barcodes and stock aligned with treatments.",
+        "sectionPartners": "Partners",
+        "partnerDesc": "B2B threads and input orders.",
+        "openNotifications": "Open notifications ({{count}})"
+      },
+      "metrics": {
+        "summaryTitle": "Snapshot",
+        "estates": "Estates",
+        "parcelsApproved": "Parcels (approved / total)",
+        "parcelsRatio": "{{approved}} / {{total}}",
+        "loading": "…",
+        "outboxPending": "Entry log — pending upload",
+        "lotsTotal": "Lots total",
+        "lotsReady": "Ready for transport",
+        "missionsActive": "Active transport runs",
+        "unreadNotifications": "Unread notifications"
+      }
     },
     "offline": {
       "banner": "You're offline. Lists show the last sync; new work is saved and sent when you're back online."
+    },
+    "profile": {
+      "offlineQueueLabel": "Pending uploads (device)"
     },
     "packageBadges": {
       "title": "Package badges",
@@ -346,6 +418,10 @@
       "farmToolsTitle": "Farm tools",
       "farmToolsCardTitle": "All farm tools",
       "farmToolsCardSubtitle": "Parcels, diary, materials, transport, batches — organized in one screen.",
+      "legacyFarmToolsTitle": "Tools are now in the tab bar",
+      "legacyFarmToolsBody": "Open Field for parcels and diary, Lots for batches and transport, Supplies for materials and partner orders. You can close this screen after you jump to the right tab.",
+      "seasonGuideTitle": "Season instructions",
+      "seasonGuideSubtitle": "Step-by-step: parcels, approval, harvest chain, and transport.",
       "farmer": {
         "blockTitle": "On the farm — follow this order",
         "blockHint": "1–3: steps, parcels, plantings · 4 Field log · 5 Materials · 6–8: allowed, banned, certificates.",
@@ -1021,6 +1097,7 @@
       "removePhoto": "Remove"
     },
     "products": {
+      "deviceLinesMetric": "Lines on device",
       "savedOnDevice": "Saved on device",
       "syncing": "Syncing…",
       "loading": "Loading…",

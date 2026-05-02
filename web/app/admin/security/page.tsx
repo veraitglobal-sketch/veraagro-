@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { securityAlertsAPI } from '@/lib/api';
@@ -101,8 +102,8 @@ export default function SecurityAlertsPage() {
           {/* Header */}
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">Security Alerts</h1>
-              <p className="text-sm text-gray-600 mt-1">Monitor and resolve security violations</p>
+              <h1 className="text-2xl font-light text-gray-900">{t('adminPages.securityPage.title')}</h1>
+              <p className="text-sm text-gray-600 mt-1">{t('adminPages.securityPage.subtitle')}</p>
             </div>
           </div>
 
@@ -156,7 +157,7 @@ export default function SecurityAlertsPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading alerts...</p>
+                <p className="mt-4 text-gray-600">{t('adminPages.securityPage.loading')}</p>
               </div>
             </div>
           ) : (
@@ -235,9 +236,29 @@ export default function SecurityAlertsPage() {
                 </motion.div>
               ))}
               {alerts.length === 0 && (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <div className="text-center py-12 bg-white rounded-lg border border-gray-200 space-y-4">
                   <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No security alerts found</p>
+                  <p className="text-gray-700 font-medium">{t('adminPages.securityPage.emptyTitle')}</p>
+                  <p className="text-gray-500 text-sm max-w-md mx-auto">{t('adminPages.securityPage.emptyHint')}</p>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTypeFilter('');
+                        setSeverityFilter('');
+                        setStatusFilter('');
+                      }}
+                      className="text-sm font-medium text-green-700 hover:text-green-900 underline underline-offset-2"
+                    >
+                      {t('adminPages.securityPage.emptyCtaResetFilters')}
+                    </button>
+                    <Link
+                      href="/admin"
+                      className="text-sm font-medium text-green-700 hover:text-green-900 underline underline-offset-2"
+                    >
+                      {t('adminPages.securityPage.emptyCtaDashboard')}
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

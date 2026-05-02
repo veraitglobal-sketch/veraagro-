@@ -9,6 +9,7 @@ import {
   Alert,
   Share,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +56,7 @@ export default function PackageBadgesScreen() {
   const [printOrdersLoading, setPrintOrdersLoading] = useState(true);
   const [selectedPrintOrderId, setSelectedPrintOrderId] = useState<string | null>(null);
   const [openPrintPicker, setOpenPrintPicker] = useState(false);
+  const [listRefreshing, setListRefreshing] = useState(false);
 
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
@@ -101,6 +103,15 @@ export default function PackageBadgesScreen() {
   useEffect(() => {
     void loadPrintOrders();
   }, [loadPrintOrders]);
+
+  const onListRefresh = useCallback(async () => {
+    setListRefreshing(true);
+    try {
+      await Promise.all([loadBatches(), loadPrintOrders()]);
+    } finally {
+      setListRefreshing(false);
+    }
+  }, [loadBatches, loadPrintOrders]);
 
   const selectedBatchLabel = batchInternalId
     ? (() => {
@@ -202,6 +213,14 @@ export default function PackageBadgesScreen() {
           paddingBottom: Math.max(insets.bottom, 24),
         }}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={listRefreshing}
+            onRefresh={onListRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
       >
         <Text style={labelStyle}>{t('producer.packageBadges.parentLabel')}</Text>
         <Text style={hintStyle}>{t('producer.packageBadges.parentHint')}</Text>

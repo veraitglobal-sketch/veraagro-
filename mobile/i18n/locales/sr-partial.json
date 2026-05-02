@@ -234,10 +234,82 @@
       "settings": "Podešavanja",
       "harvest": "Žetva",
       "wallet": "Novčanik",
-      "missions": "Prevoz"
+      "missions": "Prevoz",
+      "field": "Polje",
+      "fieldHub": "Polje",
+      "chain": "Lot",
+      "chainHub": "Lot i prevoz",
+      "supplies": "Nabavka",
+      "suppliesHub": "Nabavka"
+    },
+    "hubs": {
+      "field": {
+        "title": "Polje i dnevnik",
+        "lead": "Parcele, planovi sezone, žetva i sinhronizovani unosi — isti red kao na web proizvođaču.",
+        "sectionFarm": "Gazdinstvo i granice",
+        "estatesTitle": "Moja polja i parcele",
+        "estatesDesc": "Gazdinstva, blokovi, status odobrenja.",
+        "plotMapperTitle": "Crtaj / izmeni parcele",
+        "plotMapperDesc": "Poligoni parcela na karti.",
+        "sectionSeason": "Sezona",
+        "plantingsTitle": "Zasadi i planovi",
+        "plantingsDesc": "Po odobrenoj parceli — zasad ili očekivana žetva.",
+        "harvestDesc": "Plan berbe i PHI pravila.",
+        "growthJournalTitle": "Dnevnik rasta",
+        "growthJournalDesc": "Beleške uz plan i parcelu.",
+        "sectionRecords": "Dnevni unos",
+        "fieldLogDesc": "Prskanje, setva, žetva uz fotografiju i GPS — offline red kada treba.",
+        "sectionGuide": "Uputstvo",
+        "stepsDesc": "Ceo lanac na jednoj stranici (kako funkcioniše)."
+      },
+      "chain": {
+        "title": "Lot i isporuka",
+        "lead": "Od upakovane partije do zahteva za prevoz i praćenja misija — usklađeno sa operativom BioVera.",
+        "sectionLots": "Partije i pakovanje",
+        "batchesDesc": "Kreiranje i pregled serija.",
+        "packingDesc": "GPS i fotografije gajbe/kvaliteta za reviziju.",
+        "sectionQuality": "Kvalitet i usklađenost",
+        "qualityTitle": "Unos kvaliteta",
+        "qualityDesc": "Vreme, predhladjenje, jedan unos po seriji.",
+        "complianceTitle": "Fotografije usklađenosti",
+        "complianceDesc": "Rolna etiketa i obavezni tipovi fotki pre transporta.",
+        "sectionTransport": "Transport",
+        "transportDesc": "Koordinate preuzimanja — operativa dodeljuje prevoznika.",
+        "missionsTitle": "Lista misija i detalj",
+        "missionsDesc": "Status, predaja, hladni lanac (bez adrese kupca).",
+        "sectionBadges": "Identifikacija pakovanja",
+        "badgesDesc": "Registracija paleta / roli i veza sa serijom.",
+        "scanDesc": "QR ili barkod skener."
+      },
+      "supplies": {
+        "title": "Nabavka i katalog",
+        "lead": "Inputi: šta prodaješ u pasošu, usklađeni materijali i porudžbine partnera.",
+        "sectionCatalog": "Katalog",
+        "productsDesc": "Proizvodi za transparentnost / pasoš.",
+        "sectionCompliance": "Materijal",
+        "materialsDesc": "Bela lista barkodova i zalihe uz tretmane.",
+        "sectionPartners": "Partneri",
+        "partnerDesc": "B2B poruke i porudžbine inputa.",
+        "openNotifications": "Otvori notifikacije ({{count}})"
+      },
+      "metrics": {
+        "summaryTitle": "Pregled",
+        "estates": "Gazdinstva",
+        "parcelsApproved": "Parcele (odobrene / ukupno)",
+        "parcelsRatio": "{{approved}} / {{total}}",
+        "loading": "…",
+        "outboxPending": "Dnevnik — čeka slanje",
+        "lotsTotal": "Partije ukupno",
+        "lotsReady": "Spremno za prevoz",
+        "missionsActive": "Aktivne vožnje",
+        "unreadNotifications": "Nepročitane notifikacije"
+      }
     },
     "offline": {
       "banner": "Niste na mreži. Liste pokazuju poslednji sinhronizovani sadržaj; novi unosi se čuvaju i šalju kada ste ponovo onlajn."
+    },
+    "profile": {
+      "offlineQueueLabel": "Čeka slanje (uređaj)"
     },
     "packageBadges": {
       "title": "Nalepnice / serijski brojevi",
@@ -348,6 +420,10 @@
       "farmToolsTitle": "Alati na farmi",
       "farmToolsCardTitle": "Svi alati na farmi",
       "farmToolsCardSubtitle": "Parcele, dnevnik, materijali, transport, partije — sve na jednom mestu.",
+      "legacyFarmToolsTitle": "Alati su sada u donjem meniju",
+      "legacyFarmToolsBody": "Otvori Polje za parcele i dnevnik, Lot za partije i prevoz, Nabavka za materijal i porudžbine partnera. Posle prelaska možeš da zatvoriš ovaj ekran.",
+      "seasonGuideTitle": "Uputstvo za sezonu",
+      "seasonGuideSubtitle": "Koraci: parcele, odobrenje, lanac žetve i transport.",
       "farmer": {
         "blockTitle": "Na farmi — redosled",
         "blockHint": "1–3: koraci, parcele, zasadi · 4 Dnevnik · 5 Materijali · 6–8: dozvoljeno, zabranjeno, sertifikati.",
@@ -1025,6 +1101,7 @@
       "removePhoto": "Ukloni"
     },
     "products": {
+      "deviceLinesMetric": "Stavke na uređaju",
       "savedOnDevice": "Sačuvano na uređaju",
       "syncing": "Sinhronizacija…",
       "loading": "Učitavanje…",

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useAuth } from '@/lib/auth';
 import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
@@ -81,6 +82,7 @@ export default function LogisticsHandoverPage() {
   const router = useRouter();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [missionsLoading, setMissionsLoading] = useState(true);
+  const [missionsFetchError, setMissionsFetchError] = useState<string | null>(null);
   const [selectedMission, setSelectedMission] = useState<string>('');
   const [truckTemperature, setTruckTemperature] = useState<string>('');
   const [notes, setNotes] = useState('');
@@ -115,21 +117,27 @@ export default function LogisticsHandoverPage() {
 
   const refreshMissions = () => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
+    setMissionsFetchError(null);
     missionsAPI
       .getMyMissions('logistics')
       .then((data: Mission[]) => {
         const needHandover = (Array.isArray(data) ? data : []).filter((m) =>
-          PENDING_HANDOVER_STATUSES.includes(m.status)
+          PENDING_HANDOVER_STATUSES.includes(m.status),
         );
         setMissions(needHandover);
+        setMissionsFetchError(null);
       })
-      .catch(() => setMissions([]));
+      .catch((err: unknown) => {
+        setMissions([]);
+        setMissionsFetchError(apiErrorOrT(err, t, 'logisticsPages.missionsPageLoadError'));
+      });
   };
 
   useEffect(() => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
     let cancelled = false;
     setMissionsLoading(true);
+    setMissionsFetchError(null);
     missionsAPI
       .getMyMissions('logistics')
       .then((data: Mission[]) => {
@@ -138,16 +146,20 @@ export default function LogisticsHandoverPage() {
             PENDING_HANDOVER_STATUSES.includes(m.status)
           );
           setMissions(needHandover);
+          setMissionsFetchError(null);
         }
       })
-      .catch(() => {
-        if (!cancelled) setMissions([]);
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setMissions([]);
+          setMissionsFetchError(apiErrorOrT(err, t, 'logisticsPages.missionsPageLoadError'));
+        }
       })
       .finally(() => {
         if (!cancelled) setMissionsLoading(false);
       });
     return () => { cancelled = true; };
-  }, [isAuthenticated, user?.roles]);
+  }, [isAuthenticated, user?.roles, t]);
 
   useEffect(() => {
     if (!isAuthenticated || !user?.roles?.includes('LOGISTICS_PARTNER')) return;
@@ -520,6 +532,28 @@ export default function LogisticsHandoverPage() {
                   </option>
                 ))}
               </select>
+              {missionsFetchError && (
+                <p className="mt-2 text-sm text-red-700">{missionsFetchError}</p>
+              )}
+              {!missionsLoading && missions.length === 0 && !missionsFetchError && (
+                <div className="mt-3 rounded-lg border border-amber-100 bg-amber-50/80 p-3 text-sm text-amber-950 space-y-2">
+                  <p>{t('logisticsPages.handoverMissionsEmptyHint')}</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1">
+                    <Link
+                      href="/logistics-partner/missions"
+                      className="font-medium text-[#2D5A27] underline underline-offset-2"
+                    >
+                      {t('logisticsPages.handoverMissionsEmptyCtaMissions')}
+                    </Link>
+                    <Link
+                      href="/logistics-partner/dashboard"
+                      className="font-medium text-[#2D5A27] underline underline-offset-2"
+                    >
+                      {t('logisticsPages.handoverMissionsEmptyCtaDashboard')}
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Pickup driver, badge, signature — before photos so it is not missed */}

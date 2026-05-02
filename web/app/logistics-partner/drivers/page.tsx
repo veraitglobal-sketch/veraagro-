@@ -204,7 +204,15 @@ export default function LogisticsDriversPage() {
           {loading ? (
             <p className="p-6 text-sm text-gray-500">{t('logisticsPages.driversLoading')}</p>
           ) : list.length === 0 ? (
-            <p className="p-6 text-sm text-gray-500">{t('logisticsPages.driversEmpty')}</p>
+            <div className="p-6 text-sm text-gray-600 space-y-3">
+              <p>{t('logisticsPages.driversEmpty')}</p>
+              <Link
+                href="/logistics-partner/missions"
+                className="inline-flex font-medium text-[#2D5A27] underline underline-offset-2"
+              >
+                {t('logisticsPages.driversEmptyCtaMissions')}
+              </Link>
+            </div>
           ) : (
             <ul className="divide-y divide-gray-100">
               {list.map((d) => (

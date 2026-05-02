@@ -13,6 +13,7 @@ import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBanner';
 import GrowerDashboardHomeWorkflow from '@/components/grower/GrowerDashboardHomeWorkflow';
+import GrowerJourneyProgress from '@/components/grower/GrowerJourneyProgress';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 export default function GrowerDashboardPage() {
@@ -182,6 +183,8 @@ export default function GrowerDashboardPage() {
           />
 
           <GrowerOfflineOutboxBanner />
+
+          <GrowerJourneyProgress />
 
           <GrowerDashboardHomeWorkflow />
 

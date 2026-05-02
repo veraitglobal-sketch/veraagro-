@@ -290,7 +290,7 @@ export default function CreateMissionPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        window.location.href = '/grower/portal';
+        window.location.href = growerHref('/grower/portal');
       }, 2000);
     } catch (error: unknown) {
       console.error('Error creating mission:', error);
@@ -332,7 +332,11 @@ export default function CreateMissionPage() {
               <Trans
                 i18nKey="grower.missionCreate.successRedirect"
                 components={[
-                  <Link key="portal" href="/grower/portal" className="font-semibold text-[#2D5A27] underline" />,
+                  <Link
+                    key="portal"
+                    href={growerHref('/grower/portal')}
+                    className="font-semibold text-[#2D5A27] underline"
+                  />,
                 ]}
               />
             </p>
@@ -373,29 +377,29 @@ export default function CreateMissionPage() {
           <p className="text-base text-gray-600 mb-3 leading-relaxed">
             <strong>{t('grower.missionCreate.introBeforeLabel')}</strong> {t('grower.missionCreate.introBeforeStatuses')}{' '}
             (
-            <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
+            <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
               {t('grower.nav.myBatches')}
             </Link>
             ) →{' '}
-            <Link href="/grower/quality-entry" className="text-[#2D5A27] font-medium underline">
+            <Link href={growerHref('/grower/quality-entry')} className="text-[#2D5A27] font-medium underline">
               {t('grower.nav.qualityEntry')}
             </Link>{' '}
             {t('grower.missionCreate.introIfRequired')} →{' '}
-            <Link href="/grower/compliance-photos" className="text-[#2D5A27] font-medium underline">
+            <Link href={growerHref('/grower/compliance-photos')} className="text-[#2D5A27] font-medium underline">
               {t('grower.nav.compliancePhotos')}
             </Link>{' '}
             {t('grower.missionCreate.introAfterCompliance')}
           </p>
           <p className="text-base text-gray-600 mb-6 leading-relaxed">
             {t('grower.missionCreate.introChooseLead')}{' '}
-            <Link href="/grower/materials" className="text-[#2D5A27] font-medium underline">
+            <Link href={growerHref('/grower/materials')} className="text-[#2D5A27] font-medium underline">
               {t('grower.nav.materials')}
             </Link>{' '}
             {t('grower.missionCreate.introIfNeedSupplies')}
           </p>
           <p className="text-base text-gray-500 mb-6 border-l-2 border-gray-200 pl-3">
             <strong>{t('grower.missionCreate.introAfterLabel')}</strong> {t('grower.missionCreate.introAfterBody')}{' '}
-            <Link href="/grower/portal" className="text-[#2D5A27] font-medium underline">
+            <Link href={growerHref('/grower/portal')} className="text-[#2D5A27] font-medium underline">
               {t('grower.nav.missionTracker')}
             </Link>{' '}
             {t('grower.missionCreate.introAfterTail')}
@@ -420,9 +424,15 @@ export default function CreateMissionPage() {
                   <Trans
                     i18nKey="grower.missionCreate.submitErrorFooter"
                     components={{
-                      compliance: <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline" />,
-                      materials: <Link href="/grower/materials" className="font-semibold text-[#2D5A27] underline" />,
-                      suppliers: <Link href="/grower/where-to-buy" className="font-semibold text-[#2D5A27] underline" />,
+                      compliance: (
+                        <Link href={growerHref('/grower/compliance-photos')} className="font-semibold text-[#2D5A27] underline" />
+                      ),
+                      materials: (
+                        <Link href={growerHref('/grower/materials')} className="font-semibold text-[#2D5A27] underline" />
+                      ),
+                      suppliers: (
+                        <Link href={growerHref('/grower/where-to-buy')} className="font-semibold text-[#2D5A27] underline" />
+                      ),
                       contact: <Link href="/contact" className="font-semibold text-[#2D5A27] underline" />,
                     }}
                   />
@@ -512,7 +522,7 @@ export default function CreateMissionPage() {
                           <p className="mt-1">{t('grower.missionCreate.complianceNoRoll')}</p>
                         )}
                       <p className="mt-2">
-                        <Link href="/grower/compliance-photos" className="font-semibold text-[#2D5A27] underline">
+                        <Link href={growerHref('/grower/compliance-photos')} className="font-semibold text-[#2D5A27] underline">
                           {t('grower.missionCreate.complianceOpenLink')}
                         </Link>{' '}
                         {t('grower.missionCreate.complianceOpenTail')}

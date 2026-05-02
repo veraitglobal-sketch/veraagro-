@@ -11,6 +11,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
@@ -36,7 +37,8 @@ export default function MissionsCreateScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [keyboardPad, setKeyboardPad] = useState(0);
   const [batches, setBatches] = useState<BatchRow[]>([]);
-  const [batchesLoading, setBatchesLoading] = useState(true);
+  const [initialBatchesLoading, setInitialBatchesLoading] = useState(true);
+  const [listRefreshing, setListRefreshing] = useState(false);
   const [locLoading, setLocLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
@@ -45,8 +47,9 @@ export default function MissionsCreateScreen() {
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
 
-  const loadBatches = useCallback(async () => {
-    setBatchesLoading(true);
+  const loadBatches = useCallback(async (mode: 'initial' | 'refresh' = 'initial') => {
+    if (mode === 'refresh') setListRefreshing(true);
+    else setInitialBatchesLoading(true);
     try {
       const all = await batchesAPI.getAll();
       const arr = Array.isArray(all) ? all : [];
@@ -54,12 +57,13 @@ export default function MissionsCreateScreen() {
     } catch {
       setBatches([]);
     } finally {
-      setBatchesLoading(false);
+      if (mode === 'refresh') setListRefreshing(false);
+      else setInitialBatchesLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void loadBatches();
+    void loadBatches('initial');
   }, [loadBatches]);
 
   useEffect(() => {
@@ -173,7 +177,7 @@ export default function MissionsCreateScreen() {
     }
   };
 
-  if (batchesLoading) {
+  if (initialBatchesLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -235,6 +239,14 @@ export default function MissionsCreateScreen() {
           }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
+          refreshControl={
+            <RefreshControl
+              refreshing={listRefreshing}
+              onRefresh={() => void loadBatches('refresh')}
+              tintColor={theme.colors.primary}
+              colors={[theme.colors.primary]}
+            />
+          }
         >
         <View
           style={{

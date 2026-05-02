@@ -8,13 +8,13 @@ import {
   parcelsAPI,
   type CreateHarvestPlanBody,
 } from '../../../lib/api';
-
-export type HarvestPlanMode = 'PLANTING' | 'HARVEST';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
 import { apiErrorMessage, isLikelyNetworkError, axiosResponseStatus } from '../../../lib/api-error';
+
+export type HarvestPlanMode = 'PLANTING' | 'HARVEST';
 
 export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce', 'Other'];
 
@@ -24,6 +24,7 @@ export function useHarvestData() {
   const { t } = useTranslation();
   const [approvedParcels, setApprovedParcels] = useState<ParcelOption[]>([]);
   const [parcelsLoading, setParcelsLoading] = useState(true);
+  const [parcelsRefreshing, setParcelsRefreshing] = useState(false);
   const [parcelId, setParcelId] = useState('');
 
   const [cropType, setCropType] = useState('');
@@ -41,48 +42,56 @@ export function useHarvestData() {
   const [loading, setLoading] = useState(false);
   const [planMode, setPlanMode] = useState<HarvestPlanMode>('HARVEST');
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const loadApprovedParcels = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent === true;
+    if (silent) setParcelsRefreshing(true);
+    else setParcelsLoading(true);
+    try {
+      let estates: Awaited<ReturnType<typeof estatesAPI.getAll>> = [];
       try {
-        setParcelsLoading(true);
-        let estates: Awaited<ReturnType<typeof estatesAPI.getAll>> = [];
-        try {
-          const raw = await estatesAPI.getAll();
-          estates = Array.isArray(raw) ? raw : [];
-          await growerOfflineCache.saveEstates(estates);
-        } catch {
-          estates = (await growerOfflineCache.loadEstates()) ?? [];
-        }
-        const out: ParcelOption[] = [];
-        for (const e of estates) {
-          let ps: Awaited<ReturnType<typeof parcelsAPI.getByEstate>> = [];
-          try {
-            ps = await parcelsAPI.getByEstate(e.id);
-            await growerOfflineCache.saveParcels(e.id, ps);
-          } catch {
-            ps = (await growerOfflineCache.loadParcels(e.id)) ?? [];
-          }
-          for (const p of ps || []) {
-            if (p.approvedAt) {
-              out.push({ id: p.id, label: `${e.name} — ${p.cropType || 'Parcel'}` });
-            }
-          }
-        }
-        if (cancelled) return;
-        setApprovedParcels(out);
-        if (out.length === 1) setParcelId(out[0].id);
-      } catch (e) {
-        console.error(e);
-        setApprovedParcels([]);
-      } finally {
-        if (!cancelled) setParcelsLoading(false);
+        const raw = await estatesAPI.getAll();
+        estates = Array.isArray(raw) ? raw : [];
+        await growerOfflineCache.saveEstates(estates);
+      } catch {
+        estates = (await growerOfflineCache.loadEstates()) ?? [];
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+      const out: ParcelOption[] = [];
+      for (const e of estates) {
+        let ps: Awaited<ReturnType<typeof parcelsAPI.getByEstate>> = [];
+        try {
+          ps = await parcelsAPI.getByEstate(e.id);
+          await growerOfflineCache.saveParcels(e.id, ps);
+        } catch {
+          ps = (await growerOfflineCache.loadParcels(e.id)) ?? [];
+        }
+        for (const p of ps || []) {
+          if (p.approvedAt) {
+            out.push({ id: p.id, label: `${e.name} — ${p.cropType || 'Parcel'}` });
+          }
+        }
+      }
+      setApprovedParcels(out);
+      setParcelId((prev) => {
+        if (out.some((p) => p.id === prev)) return prev;
+        if (out.length === 1) return out[0].id;
+        return '';
+      });
+    } catch (e) {
+      console.error(e);
+      setApprovedParcels([]);
+    } finally {
+      if (silent) setParcelsRefreshing(false);
+      else setParcelsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadApprovedParcels();
+  }, [loadApprovedParcels]);
+
+  const refreshParcels = useCallback(() => {
+    void loadApprovedParcels({ silent: true });
+  }, [loadApprovedParcels]);
 
   useEffect(() => {
     Location.requestForegroundPermissionsAsync().then(({ status }) => {
@@ -223,6 +232,8 @@ export function useHarvestData() {
     setPlanMode,
     approvedParcels,
     parcelsLoading,
+    parcelsRefreshing,
+    refreshParcels,
     parcelId,
     setParcelId,
     cropType,

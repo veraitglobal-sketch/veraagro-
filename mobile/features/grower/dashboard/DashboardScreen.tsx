@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, RefreshControl, TouchableOpacity, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, LayoutGrid } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
 import { useAuth } from '../../../hooks/useAuth';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -97,8 +97,45 @@ export default function DashboardScreen() {
           data={data.ordersFinancial}
           onPress={() => router.push('/(producer)/(tabs)/wallet')}
         />
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: theme.spacing.sm,
+            marginBottom: theme.spacing.sm,
+          }}
+        >
+          {(
+            [
+              { key: 'field', label: t('producer.tabs.field'), path: '/(producer)/(tabs)/field' as const },
+              { key: 'chain', label: t('producer.tabs.chain'), path: '/(producer)/(tabs)/chain' as const },
+              { key: 'sup', label: t('producer.tabs.supplies'), path: '/(producer)/(tabs)/supplies' as const },
+            ] as const
+          ).map((item) => (
+            <TouchableOpacity
+              key={item.key}
+              onPress={() => router.push(item.path)}
+              activeOpacity={0.75}
+              style={{
+                flexGrow: 1,
+                minWidth: '28%',
+                backgroundColor: theme.colors.surfaceElevated,
+                borderRadius: theme.borderRadius.md,
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.sm,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.primary, textAlign: 'center' }}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         <TouchableOpacity
-          onPress={() => router.push('/(producer)/farm-tools')}
+          onPress={() => router.push('/(producer)/(tabs)/steps')}
           activeOpacity={0.75}
           style={{
             flexDirection: 'row',
@@ -110,28 +147,15 @@ export default function DashboardScreen() {
             marginBottom: theme.spacing.sm,
             borderWidth: 1,
             borderColor: theme.colors.border,
-            minHeight: 52,
+            minHeight: 48,
           }}
         >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: theme.borderRadius.md,
-              backgroundColor: theme.colors.primaryLight,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: theme.spacing.sm,
-            }}
-          >
-            <LayoutGrid size={22} color={theme.colors.primary} strokeWidth={1.75} />
-          </View>
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
-              {t('producer.dashboard.farmToolsCardTitle')}
+              {t('producer.dashboard.seasonGuideTitle')}
             </Text>
             <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }} numberOfLines={2}>
-              {t('producer.dashboard.farmToolsCardSubtitle')}
+              {t('producer.dashboard.seasonGuideSubtitle')}
             </Text>
           </View>
           <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />

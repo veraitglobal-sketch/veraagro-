@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -21,9 +21,30 @@ export function usePlotMapperData(parcelId: string | undefined) {
 
   const calculateArea = (l: number, w: number) => l * w;
 
+  const loadBlueprint = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      if (!parcelId) return;
+      if (!opts?.silent) setLoading(true);
+      try {
+        const blueprint = await plotMapperAPI.getByParcel(parcelId);
+        if (blueprint) {
+          setLength(blueprint.length.toString());
+          setWidth(blueprint.width.toString());
+          setZones((blueprint.blueprintData.zones || []) as Zone[]);
+          setPartitions(blueprint.blueprintData.partitions || []);
+        }
+      } catch (e) {
+        console.error('Error loading blueprint:', e);
+      } finally {
+        if (!opts?.silent) setLoading(false);
+      }
+    },
+    [parcelId],
+  );
+
   useEffect(() => {
-    if (parcelId) loadBlueprint();
-  }, [parcelId]);
+    if (parcelId) void loadBlueprint();
+  }, [parcelId, loadBlueprint]);
 
   useEffect(() => {
     if (length && width && partitions.length > 0) {
@@ -46,24 +67,6 @@ export function usePlotMapperData(parcelId: string | undefined) {
       }
     }
   }, [length, width, partitions.length]);
-
-  const loadBlueprint = async () => {
-    if (!parcelId) return;
-    setLoading(true);
-    try {
-      const blueprint = await plotMapperAPI.getByParcel(parcelId);
-      if (blueprint) {
-        setLength(blueprint.length.toString());
-        setWidth(blueprint.width.toString());
-        setZones((blueprint.blueprintData.zones || []) as Zone[]);
-        setPartitions(blueprint.blueprintData.partitions || []);
-      }
-    } catch (e) {
-      console.error('Error loading blueprint:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddPartition = () => setPartitionMode(true);
 
@@ -217,5 +220,6 @@ export function usePlotMapperData(parcelId: string | undefined) {
     handleZonePress,
     handleSaveZone,
     handleSaveBlueprint,
+    loadBlueprint,
   };
 }

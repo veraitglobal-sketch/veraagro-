@@ -4,9 +4,11 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
+import { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useAppLocaleTag } from '../../../lib/date-locale';
@@ -25,7 +27,17 @@ export default function WalletScreen() {
   const dateLocale = useAppLocaleTag();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
-  const { wallet, transactions, ordersFinancial, loading } = useWalletData();
+  const { wallet, transactions, ordersFinancial, loading, reload } = useWalletData();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await reload();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [reload]);
 
   if (loading) {
     return (
@@ -80,7 +92,17 @@ export default function WalletScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
         <View
           style={{
             paddingTop: theme.spacing.lg,

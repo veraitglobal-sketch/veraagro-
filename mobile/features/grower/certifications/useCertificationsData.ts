@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { growerPortalAPI, type RequiredCertification } from '../../../lib/api';
 import { offlineStorage, PendingCertificatePhoto } from '../../../lib/offline-storage';
 
@@ -17,9 +17,12 @@ export function useCertificationsData() {
   const [requiredCerts, setRequiredCerts] = useState<RequiredCert[]>(FALLBACK_REQUIRED);
   const [pendingPhotos, setPendingPhotos] = useState<PendingCertificatePhoto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [listRefreshing, setListRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent === true;
+    if (silent) setListRefreshing(true);
+    else setLoading(true);
     try {
       const list = await offlineStorage.getPendingCertificatePhotos();
       setPendingPhotos(list);
@@ -34,9 +37,14 @@ export function useCertificationsData() {
       console.error('Error loading certifications:', error);
       setPendingPhotos([]);
     } finally {
-      setLoading(false);
+      if (silent) setListRefreshing(false);
+      else setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const getStatusForCert = useCallback(
     (certId: string): CertStatus => {
@@ -53,10 +61,10 @@ export function useCertificationsData() {
   const addPhoto = useCallback(
     async (entry: Omit<PendingCertificatePhoto, 'id' | 'timestamp' | 'status'>) => {
       await offlineStorage.savePendingCertificatePhoto(entry);
-      await load();
+      await load({ silent: true });
     },
     [load]
   );
 
-  return { requiredCerts, pendingPhotos, loading, load, getStatusForCert, addPhoto };
+  return { requiredCerts, pendingPhotos, loading, listRefreshing, load, getStatusForCert, addPhoto };
 }

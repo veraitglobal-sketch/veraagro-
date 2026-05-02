@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Alert, RefreshControl } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -28,26 +28,36 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
   const [gpsAlways, setGpsAlways] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
-  // Load settings on mount
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       const notif = await AsyncStorage.getItem(SETTINGS_KEYS.NOTIFICATIONS);
       const sync = await AsyncStorage.getItem(SETTINGS_KEYS.AUTO_SYNC);
       const gps = await AsyncStorage.getItem(SETTINGS_KEYS.GPS_ALWAYS);
-      
+
       setNotifications(notif !== 'false');
       setAutoSync(sync !== 'false');
       setGpsAlways(gps === 'true');
     } catch (error) {
       console.error('Error loading settings:', error);
     }
-  };
+  }, []);
+
+  // Load settings on mount
+  useEffect(() => {
+    void loadSettings();
+  }, [loadSettings]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadSettings();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadSettings]);
 
   const saveSetting = useCallback(async (key: string, value: boolean) => {
     try {
@@ -102,7 +112,17 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
         <View
           style={{
             paddingTop: theme.spacing.lg,

@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams } from 'expo-router';
 import { Save } from 'lucide-react-native';
@@ -16,6 +17,7 @@ import { ZoneModal } from './ZoneModal';
 export default function PlotMapperScreen() {
   const { t } = useTranslation();
   const { parcelId } = useLocalSearchParams<{ parcelId: string }>();
+  const [pullRefreshing, setPullRefreshing] = useState(false);
   const {
     length,
     setLength,
@@ -36,6 +38,7 @@ export default function PlotMapperScreen() {
     handleZonePress,
     handleSaveZone,
     handleSaveBlueprint,
+    loadBlueprint,
   } = usePlotMapperData(parcelId);
 
   if (loading) {
@@ -112,7 +115,24 @@ export default function PlotMapperScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={pullRefreshing}
+            onRefresh={async () => {
+              setPullRefreshing(true);
+              try {
+                await loadBlueprint({ silent: true });
+              } finally {
+                setPullRefreshing(false);
+              }
+            }}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
         <View style={{ padding: 20 }}>
           <DimensionsForm
             length={length}

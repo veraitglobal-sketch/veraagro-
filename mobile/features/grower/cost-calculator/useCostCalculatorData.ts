@@ -1,13 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { offlineStorage, PendingCost, PendingProduct } from '../../../lib/offline-storage';
 
 export function useCostCalculatorData() {
   const [costs, setCosts] = useState<PendingCost[]>([]);
   const [products, setProducts] = useState<PendingProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [listRefreshing, setListRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent === true;
+    if (silent) setListRefreshing(true);
+    else setLoading(true);
     try {
       const [costList, productList] = await Promise.all([
         offlineStorage.getPendingCosts(),
@@ -20,14 +23,19 @@ export function useCostCalculatorData() {
       setCosts([]);
       setProducts([]);
     } finally {
-      setLoading(false);
+      if (silent) setListRefreshing(false);
+      else setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const addCost = useCallback(
     async (entry: Omit<PendingCost, 'id' | 'timestamp' | 'status'>) => {
       await offlineStorage.savePendingCost(entry);
-      await load();
+      await load({ silent: true });
     },
     [load]
   );
@@ -41,10 +49,10 @@ export function useCostCalculatorData() {
         amount,
         currency: 'EUR',
       });
-      await load();
+      await load({ silent: true });
     },
     [load]
   );
 
-  return { costs, products, loading, load, addCost, transferProductAsCost };
+  return { costs, products, loading, listRefreshing, load, addCost, transferProductAsCost };
 }

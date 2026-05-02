@@ -7,6 +7,7 @@ import { theme } from '../../../lib/theme';
 interface CostListProps {
   costs: PendingCost[];
   loading: boolean;
+  listRefreshing: boolean;
   onRefresh: () => Promise<void>;
 }
 
@@ -23,7 +24,7 @@ function CostItem({ item, t }: { item: PendingCost; t: (k: string) => string }) 
   );
 }
 
-export default function CostList({ costs, loading, onRefresh }: CostListProps) {
+export default function CostList({ costs, loading, listRefreshing, onRefresh }: CostListProps) {
   const { t } = useTranslation();
   const total = costs.reduce((sum, c) => sum + c.amount, 0);
 
@@ -48,7 +49,7 @@ export default function CostList({ costs, loading, onRefresh }: CostListProps) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <CostItem item={item} t={t} />}
         onRefresh={onRefresh}
-        refreshing={loading}
+        refreshing={listRefreshing}
         contentContainerStyle={styles.list}
         style={styles.flatList}
         ListEmptyComponent={

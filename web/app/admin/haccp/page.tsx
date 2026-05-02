@@ -86,20 +86,20 @@ export default function HaccpMonitoringPage() {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle className="w-3.5 h-3.5" />
-          Verified
+          {t('adminPages.haccpMonitoring.statusVerified')}
         </span>
       );
     if (status === 'FAIL')
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <XCircle className="w-3.5 h-3.5" />
-          Fail
+          {t('adminPages.haccpMonitoring.statusFail')}
         </span>
       );
     return (
       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
         <Clock className="w-3.5 h-3.5" />
-        Pending
+        {t('adminPages.haccpMonitoring.statusPending')}
       </span>
     );
   };
@@ -110,9 +110,9 @@ export default function HaccpMonitoringPage() {
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">HACCP Monitoring</h1>
+              <h1 className="text-2xl font-light text-gray-900">{t('adminPages.haccpMonitoring.title')}</h1>
               <p className="text-sm text-gray-500 mt-1">
-                Real-time compliance: load temperature, hygiene photos
+                {t('adminPages.haccpMonitoring.subtitle')}
               </p>
             </div>
             <button
@@ -121,7 +121,7 @@ export default function HaccpMonitoringPage() {
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#2D5A27] bg-[#2D5A27]/10 rounded-lg hover:bg-[#2D5A27]/20 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              {t('adminPages.haccpMonitoring.refresh')}
             </button>
           </div>
 
@@ -135,13 +135,28 @@ export default function HaccpMonitoringPage() {
             <div className="flex items-center justify-center py-24">
               <div className="text-center">
                 <RefreshCw className="w-10 h-10 text-gray-300 animate-spin mx-auto mb-4" />
-                <p className="text-gray-500">Loading HACCP data…</p>
+                <p className="text-gray-500">{t('adminPages.haccpMonitoring.loading')}</p>
               </div>
             </div>
           ) : rows.length === 0 ? (
-            <div className="text-center py-24 text-gray-500">
+            <div className="text-center py-24 text-gray-500 space-y-4">
               <Shield className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No batches for HACCP monitoring yet.</p>
+              <p className="text-gray-700 font-medium">{t('adminPages.haccpMonitoring.emptyTitle')}</p>
+              <p className="text-sm max-w-md mx-auto">{t('adminPages.haccpMonitoring.emptyHint')}</p>
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 pt-2">
+                <Link
+                  href="/admin"
+                  className="text-sm font-medium text-[#2D5A27] underline underline-offset-2"
+                >
+                  {t('adminPages.haccpMonitoring.emptyCtaDashboard')}
+                </Link>
+                <Link
+                  href="/admin/command-control"
+                  className="text-sm font-medium text-[#2D5A27] underline underline-offset-2"
+                >
+                  {t('adminPages.haccpMonitoring.emptyCtaCommandControl')}
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -150,28 +165,28 @@ export default function HaccpMonitoringPage() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Farmer
+                        {t('adminPages.haccpMonitoring.colFarmer')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Batch
+                        {t('adminPages.haccpMonitoring.colBatch')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Product
+                        {t('adminPages.haccpMonitoring.colProduct')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Load temp
+                        {t('adminPages.haccpMonitoring.colLoadTemp')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Photos
+                        {t('adminPages.haccpMonitoring.colPhotos')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        HACCP status
+                        {t('adminPages.haccpMonitoring.colHaccpStatus')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Last updated
+                        {t('adminPages.haccpMonitoring.colLastUpdated')}
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Track
+                        {t('adminPages.haccpMonitoring.colTrack')}
                       </th>
                     </tr>
                   </thead>
@@ -220,7 +235,7 @@ export default function HaccpMonitoringPage() {
                             href={`/track/${r.batchId}`}
                             className="text-sm font-medium text-[#2D5A27] hover:underline"
                           >
-                            View
+                            {t('adminPages.haccpMonitoring.trackView')}
                           </Link>
                         </td>
                       </tr>
