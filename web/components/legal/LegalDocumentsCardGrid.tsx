@@ -37,4 +37,4 @@ export function LegalDocumentsCardGrid({ className = "" }: Props) {
       <LegalLanguageCard />
     </div>
   );
-});
+}

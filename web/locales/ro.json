@@ -2414,6 +2414,14 @@
     "cardCookiesTitle": "Politica de cookie-uri",
     "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre."
   },
+  "investorDeckPage": {
+    "documentsEyebrow": "Documentation",
+    "documentsTitle": "Investor materials on this page",
+    "documentsLead": "Open the project overview and technical proposal from the cards, or jump to the pitch deck below. Legal policies and language settings are here so reviewers can start from one place.",
+    "cardPitchDesc": "Slide-style narrative on this page — use the toolbar to print or save as PDF.",
+    "cardProjectDesc": "Structured project summary: scope, roadmap, markets, and current status.",
+    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators."
+  },
   "supplierStatusPage": {
     "title": "Starea aplicației",
     "lead": "Introdu codul de referință pe care l-ai primit după ce ai trimis formularul de furnizor sau distribuitor pe site-ul Bio Vera.",
