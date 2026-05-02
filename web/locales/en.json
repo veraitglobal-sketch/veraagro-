@@ -1880,6 +1880,8 @@
     "sfDefaultIntro": "Suppliers & orders and Materials are two sides of the same process: the first finds your partner and tracks B2B lines; the second holds your official balances and label roll serials the app uses for compliance and transport rules.",
     "sfDefaultTip": "Tip: open the other page in a new tab if you are switching between B2B orders and the in-app catalog the same day.",
     "plantingsPageLead": "Crop plans (planting or expected harvest) are stored here and match the mobile app. They require an admin-approved parcel — same as on “My fields”.",
+    "plantingsErrLoad": "Could not load your crop plans. Check your connection, refresh the page, or try again in a moment.",
+    "plantingsErrSave": "Could not save this plan. Check the form, refresh, or contact support if it continues.",
     "plantingsProgressObligation": "For each active planting plan, the mobile Growth journal is mandatory: about every 18 days (server setting), submit a field photo with GPS, growth stage, and notes on progress. Harvest plans follow the previous rules.",
     "plantingsProgressCol": "Planting progress",
     "plantingsProgressOverdue": "{{days}}d overdue",

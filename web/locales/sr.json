@@ -1881,6 +1881,8 @@
     "sfDefaultIntro": "Dobavljači i porudžbine i Materijali su dve strane istog procesa: prvo nalazite partnera i pratite B2B linije; drugo drži zvanična salda i serije rolova koje aplikacija koristi za pravila i transport.",
     "sfDefaultTip": "Savet: otvorite drugu stranicu u novom tabu ako isti dan menjate B2B porudžbine i katalog u aplikaciji.",
     "plantingsPageLead": "Planovi useva (sadnja ili očekivana berba) su ovde i isti su kao u mobilnoj aplikaciji. Treba vam odobrena parcela (admin) — isto kao na „Mojim poljima“.",
+    "plantingsErrLoad": "Ne mogu da se učitaju planovi. Proverite vezu, osvežite stranicu ili pokušajte za trenutak.",
+    "plantingsErrSave": "Plan nije sačuvan. Proverite unos, osvežite stranicu ili se javite podršci ako se ponavlja.",
     "plantingsProgressObligation": "Za svaki aktivan plan sadnje u mobilnoj aplikaciji je obavezan „Dnevnik porasta“: otprilike svakih 18 dana (podešava admin) fotografija na parceli, GPS, faza rasta i tekst kako napreduje. Unosi za plan berbe ostaju kao ranije.",
     "plantingsProgressCol": "Praćenje zasada",
     "plantingsProgressOverdue": "Kasni {{days}} d.",

@@ -160,4 +160,51 @@ rg "<Text[^>]*>\\s*[A-Z]" mobile/features/grower --glob '*.tsx' | head -40
 
 ---
 
+## 8. Grower web — audit skladnosti (maj 2026)
+
+Cilj: ista BioVera pravila (`.cursorrules`) — `#2D5A27`, `rounded-xl`, i18n na svim jezicima, nema „SR UI + EN poruka“, `growerApiErrorOrT` gde god API puca, manje `alert()`.
+
+### P0 — jezik i greške (najveći jaz)
+
+| Gde | Problem | Akcija |
+|-----|---------|--------|
+| `/grower/missions/create` | `GrowerPageHeader` hardcoded EN; success ekran i ceo blok uputstva (Before/After, split order); validacije (`Please select…`); `alert` za batches / geolocation; mnogo placeholdera na EN | Novi namespace `growerPages.requestTransport*` (ili `grower.missionsCreate.*`) za **sve** jezike; ukloniti `alert` → inline banner + `growerApiErrorOrT` |
+| `/grower/batches` | `alert` sa EN: approval check, success, failure | Ključevi u locale + opciono toast/inline |
+| `/grower/where-to-buy/store/[supplierUserId]` | EN: „Back to locations“, „Loading store…“, load/submit greške, invalid quantity string | Povezati na `growerPages.*`; fallback poruke kroz `t()`, ne literal |
+| Ostale `/grower/*` catch blokovi | Delimično još „sirovi“ API tekst | Nastavak L6: grep `catch` u `web/app/grower` |
+
+### P1 — vizuelni tokeni
+
+- Primarni CTA: zameniti `bg-green-600` / `focus:ring-green-500` gde je primarna akcija sa **`#2D5A27`** i usklađenim `focus-visible` (missions/create, dashboard, portal, batches, quality-entry, materials, profile, compliance — vidi grep u repo-u).
+- Sekundarne akcije (`bg-blue-600` na batches/compliance): eksplicitna odluka — zadržati kao „info“ ili preći na outline + jedna primarna zelena.
+
+### P2 — UX obrasci
+
+- **Profil**: više `alert()` za upload/sačuvaj — farmer-friendly **toast ili inline** (ne blokirajući dijalog).
+- **Portal**: kopiranje sertifikata već koristi `t()`; uklopiti u isti toast sistem kad profil pređe sa `alert`.
+
+### P3 — Stranica po stranici (brza kontrola stanja)
+
+| Ruta | Status (kratko) |
+|------|-----------------|
+| `/grower` (dashboard) | i18n header; outbox banner; proveriti još CTA tokene |
+| `/grower/plantings` | load/save kroz `growerApiErrorOrT` |
+| `/grower/field-diary`, `/grower/fields`, `/grower/season` | headeri preko `t()` |
+| `/grower/batches` | EN `alert`-i (P0) |
+| `/grower/quality-entry` | `fk()` + zeleni token |
+| `/grower/compliance-photos` | i18n; plavi sekundarni dugmići |
+| `/grower/missions/create` | kritično EN (P0) |
+| `/grower/portal` | i18n; mapa / fetch — periodično proveriti poruke |
+| `/grower/materials` | OK opis; input tokeni |
+| `/grower/package-badges` (+ scan, print-order) | i18n u headerima |
+| `/grower/profile` | `alert` obrasci (P2) |
+| `/grower/where-to-buy` (+ messages, thread) | uglavnom `t()`; **store** podstranica EN (P0) |
+| `/grower/partner-orders` (+ thread) | ponovo pokrenuti grep posle izmena drugih modula |
+
+### Tehnička regresija (pri svakoj iteraciji)
+
+- `npx tsc --noEmit` u `web`; po potrebi smoke na: plantings, transport create, batches approve, B2B store order.
+
+---
+
 *Kreiran za fokus na grower web + mobilni; ažurirati po sprintovima.*

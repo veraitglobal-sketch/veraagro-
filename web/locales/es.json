@@ -1508,6 +1508,8 @@
     "sfDefaultIntro": "Proveedores, pedidos y Materiales son dos caras de un mismo proceso: la primera encuentra a su socio y rastrea las líneas B2B; el segundo contiene sus saldos oficiales y las series de rollos de etiquetas que la aplicación utiliza para cumplir con las reglas de transporte.",
     "sfDefaultTip": "Consejo: abre la otra página en una pestaña nueva si cambias entre pedidos B2B y el catálogo en la aplicación el mismo día.",
     "plantingsPageLead": "Los planes de cultivo (siembra o cosecha esperada) se almacenan aquí y coinciden con la aplicación móvil. Requieren un paquete aprobado por el administrador, igual que en \"Mis campos\".",
+    "plantingsErrLoad": "No se pudieron cargar los planes. Compruebe la conexión y actualice la página.",
+    "plantingsErrSave": "No se pudo guardar el plan. Revise el formulario o contacte con soporte.",
     "plantingsSectionPlanting": "Planes de plantación",
     "plantingsSectionHarvest": "Planes de cosecha",
     "plantingsEmpty": "Aún no hay planes de cultivo. Registre un plan a continuación o desde la aplicación para productores de Bio Vera.",

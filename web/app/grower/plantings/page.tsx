@@ -7,6 +7,7 @@ import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '@/lib/api';
+import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
@@ -70,8 +71,8 @@ export default function GrowerPlantingsPage() {
         }
       }
       setApprovedParcels(rows);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('growerPages.loadFailed'));
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.plantingsErrLoad'));
       setAnnouncements([]);
       setApprovedParcels([]);
     } finally {
@@ -128,10 +129,7 @@ export default function GrowerPlantingsPage() {
       setFormNotes('');
       await load();
     } catch (er: unknown) {
-      const msg =
-        (er as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
-      const text = Array.isArray(msg) ? msg.join(' ') : msg;
-      setErr(text || (er instanceof Error ? er.message : t('growerPages.loadFailed')));
+      setErr(growerApiErrorOrT(er, t, 'growerPages.plantingsErrSave'));
     } finally {
       setSaving(false);
     }

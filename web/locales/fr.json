@@ -1508,6 +1508,8 @@
     "sfDefaultIntro": "Les fournisseurs et commandes et les matériaux sont les deux faces d'un même processus : la première trouve votre partenaire et suit les lignes B2B ; le second contient vos soldes officiels et les séries de rouleaux d'étiquettes que l'application utilise pour les règles de conformité et de transport.",
     "sfDefaultTip": "Astuce : ouvrez l'autre page dans un nouvel onglet si vous basculez entre les commandes B2B et le catalogue in-app le même jour.",
     "plantingsPageLead": "Les plans de culture (plantation ou récolte prévue) sont stockés ici et correspondent à l'application mobile. Ils nécessitent un colis approuvé par l'administrateur, comme dans « Mes champs ».",
+    "plantingsErrLoad": "Impossible de charger vos plans de culture. Vérifiez la connexion, actualisez la page ou réessayez plus tard.",
+    "plantingsErrSave": "Impossible d'enregistrer ce plan. Vérifiez le formulaire, actualisez ou contactez l'assistance.",
     "plantingsSectionPlanting": "Plans de plantation",
     "plantingsSectionHarvest": "Plans de récolte",
     "plantingsEmpty": "Pas encore de plans de récolte. Enregistrez un plan ci-dessous ou depuis l'application de culture Bio Vera.",

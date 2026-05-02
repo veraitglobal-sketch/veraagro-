@@ -225,13 +225,13 @@ export class HarvestAnnouncementsService {
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2003') {
-          throw new BadRequestException(
-            'Could not save this plan: parcel or account link is invalid. Refresh the app and try again.',
-          );
+        throw new BadRequestException(
+          'Could not save this plan: parcel was removed or your session does not match the farm. Open My fields, refresh, and try again.',
+        );
         }
         this.logger.error(`harvest_announcements.create Prisma ${e.code}: ${e.message}`);
         throw new BadRequestException(
-          'Could not save this plan. Please refresh and try again, or contact support if it continues.',
+          'Could not save this plan. Please refresh the page and try again. If it keeps happening, contact support.',
         );
       }
       if (e instanceof Prisma.PrismaClientValidationError) {
@@ -298,34 +298,36 @@ export class HarvestAnnouncementsService {
 
   /**
    * Get all announcements for a farmer (includes planting progress tracking for active PLANTING plans).
+   * DB errors from the main query propagate (so the client is not misled with an empty list).
+   * Growth-log aggregation is best-effort only.
    */
   async getFarmerAnnouncements(userId: string) {
-    try {
-      const list = await this.prisma.harvest_announcements.findMany({
-        where: { userId },
-        include: {
-          parcel: {
-            include: {
-              estates: true,
-            },
+    const list = await this.prisma.harvest_announcements.findMany({
+      where: { userId },
+      include: {
+        parcel: {
+          include: {
+            estates: true,
           },
         },
-        orderBy: {
-          estimatedDate: 'desc',
-        },
-      });
+      },
+      orderBy: {
+        estimatedDate: 'desc',
+      },
+    });
 
-      const plantingIds = list
-        .filter(
-          (a) =>
-            a.announcementType === 'PLANTING' &&
-            a.status !== 'CANCELLED' &&
-            a.status !== 'COMPLETED',
-        )
-        .map((a) => a.id);
+    const plantingIds = list
+      .filter(
+        (a) =>
+          a.announcementType === 'PLANTING' &&
+          a.status !== 'CANCELLED' &&
+          a.status !== 'COMPLETED',
+      )
+      .map((a) => a.id);
 
-      const lastLogByPlan = new Map<string, Date>();
-      if (plantingIds.length > 0) {
+    const lastLogByPlan = new Map<string, Date>();
+    if (plantingIds.length > 0) {
+      try {
         const agg = await this.prisma.growth_logs.groupBy({
           by: ['harvestAnnouncementId'],
           where: {
@@ -340,31 +342,34 @@ export class HarvestAnnouncementsService {
             lastLogByPlan.set(id, maxTs);
           }
         }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`growth_logs groupBy for planting progress failed (userId=${userId}): ${msg}`);
       }
-
-      const intervalDays = getPlantingProgressIntervalDays();
-      const now = new Date();
-
-      return list.map((a) => {
-        const shouldTrack =
-          a.announcementType === 'PLANTING' &&
-          a.status !== 'CANCELLED' &&
-          a.status !== 'COMPLETED';
-        const plantingProgress = shouldTrack
-          ? computePlantingProgress(
-              a.createdAt,
-              lastLogByPlan.get(a.id) ?? null,
-              now,
-              intervalDays,
-            )
-          : null;
-        return { ...a, plantingProgress };
-      });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.logger.error(`getFarmerAnnouncements failed for userId=${userId}: ${msg}`);
-      return [];
     }
+
+    const intervalDays = getPlantingProgressIntervalDays();
+    const now = new Date();
+
+    return list.map((a) => {
+      const shouldTrack =
+        a.announcementType === 'PLANTING' && a.status !== 'CANCELLED' && a.status !== 'COMPLETED';
+      let plantingProgress: ReturnType<typeof computePlantingProgress> | null = null;
+      if (shouldTrack && !Number.isNaN(a.createdAt.getTime())) {
+        try {
+          plantingProgress = computePlantingProgress(
+            a.createdAt,
+            lastLogByPlan.get(a.id) ?? null,
+            now,
+            intervalDays,
+          );
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          this.logger.warn(`computePlantingProgress failed for plan ${a.id}: ${msg}`);
+        }
+      }
+      return { ...a, plantingProgress };
+    });
   }
 
   /**

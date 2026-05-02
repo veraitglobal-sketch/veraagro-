@@ -1508,6 +1508,8 @@
     "sfDefaultIntro": "Furnizorii și comenzile și Materialele sunt două părți ale aceluiași proces: prima vă găsește partenerul și urmărește liniile B2B; al doilea deține soldurile oficiale și serialele de etichete pe care aplicația le folosește pentru regulile de conformitate și transport.",
     "sfDefaultTip": "Sfat: deschideți cealaltă pagină într-o filă nouă dacă comutați între comenzile B2B și catalogul în aplicație în aceeași zi.",
     "plantingsPageLead": "Planurile de recoltă (plantare sau recolta așteptată) sunt stocate aici și se potrivesc cu aplicația mobilă. Acestea necesită un pachet aprobat de administrator - la fel ca în „Câmpurile mele”.",
+    "plantingsErrLoad": "Nu s-au putut încărca planurile. Verificați conexiunea, reîmprospătați pagina sau încercați din nou.",
+    "plantingsErrSave": "Planul nu a putut fi salvat. Verificați formularul sau contactați asistența.",
     "plantingsSectionPlanting": "Planuri de plantare",
     "plantingsSectionHarvest": "Planuri de recoltare",
     "plantingsEmpty": "Încă nu există planuri de recoltă. Înregistrați un plan de mai jos sau din aplicația pentru cultivatori Bio Vera.",

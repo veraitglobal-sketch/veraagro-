@@ -1508,6 +1508,8 @@
     "sfDefaultIntro": "Lieferanten & Bestellungen und Materialien sind zwei Seiten desselben Prozesses: Die erste findet Ihren Partner und verfolgt B2B-Linien; Die zweite enthält Ihre offiziellen Salden und Etikettenrollenserien, die die App für Compliance- und Transportvorschriften verwendet.",
     "sfDefaultTip": "Tipp: Öffnen Sie die andere Seite in einem neuen Tab, wenn Sie am selben Tag zwischen B2B-Bestellungen und dem In-App-Katalog wechseln.",
     "plantingsPageLead": "Anbaupläne (Aussaat oder erwartete Ernte) werden hier gespeichert und passen zur mobilen App. Sie benötigen ein vom Administrator genehmigtes Paket – genau wie unter „Meine Felder“.",
+    "plantingsErrLoad": "Ihre Anbaupläne konnten nicht geladen werden. Verbindung prüfen, Seite aktualisieren oder später erneut versuchen.",
+    "plantingsErrSave": "Plan konnte nicht gespeichert werden. Eingaben prüfen, Seite aktualisieren oder Support kontaktieren.",
     "plantingsSectionPlanting": "Pflanzpläne",
     "plantingsSectionHarvest": "Erntepläne",
     "plantingsEmpty": "Noch keine Erntepläne. Registrieren Sie unten oder über die Bio Vera-Züchter-App einen Plan.",
