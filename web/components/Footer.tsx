@@ -128,8 +128,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={loc('/pitch-deck')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
-                  {t('footer.pitchDeck')}
+                <Link href={loc('/investor-deck')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('footer.investorDeck')}
+                </Link>
+              </li>
+              <li>
+                <Link href={loc('/project-overview')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('footer.projectOverview')}
                 </Link>
               </li>
               <li>

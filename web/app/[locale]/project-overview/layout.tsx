@@ -6,11 +6,15 @@ const OG_LOCALE: Record<
 > = {
   sr: {
     description:
-      "Bio Vera: jedinstven vertikalni operativni model za uzgajivače, kupce i logistiku širom sveta koji prihvate Bio-Ready standarde. Delite prezentacionu stranu ili izvezite PDF.",
+      "Strukturisan pregled projekta Bio Vera za podnošenje kao PDF (npr. Projektbeschreibung): sažeto, do pet stranica, štampa i PDF.",
   },
   en: {
     description:
-      "Bio Vera: one vertical operating model for growers, buyers and logistics partners worldwide who adopt Bio-Ready standards. Share this deck or export PDF.",
+      "Structured Bio Vera project overview for grant-style PDF uploads (e.g. Projektbeschreibung): concise narrative, print and save as PDF.",
+  },
+  de: {
+    description:
+      "Strukturierter Bio-Vera-Projektüberblick für Förderunterlagen (Projektbeschreibung als PDF, oft max. fünf Seiten) — drucken oder als PDF speichern.",
   },
 };
 
@@ -19,7 +23,7 @@ export async function generateMetadata({
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   const { locale } = await params;
   const og = OG_LOCALE[locale] ?? OG_LOCALE.en;
-  const title = "Pitch deck | Bio Vera";
+  const title = "Project overview | Bio Vera";
   return {
     title,
     description: og.description,
@@ -36,7 +40,7 @@ export async function generateMetadata({
   };
 }
 
-export default function PitchDeckLayout({
+export default function ProjectOverviewLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return children;

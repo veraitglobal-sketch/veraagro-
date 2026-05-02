@@ -31,6 +31,8 @@
     "about": "Über uns",
     "careers": "Karrieren",
     "pressKit": "Pressemappe",
+    "investorDeck": "Investor Deck",
+    "projectOverview": "Projektübersicht",
     "vision": "Vision",
     "roadmap": "Roadmap",
     "faq": "FAQ",
@@ -2824,5 +2826,555 @@
     "termsUpdated": "Letzte Aktualisierung: Januar 2026",
     "cookiesTitle": "Cookie-Richtlinie",
     "cookiesUpdated": "Letzte Aktualisierung: Januar 2026"
+  },
+  "pitchDeck": {
+    "toolbarCopyLink": "Link kopieren",
+    "toolbarCopied": "Kopiert",
+    "toolbarPrintPdf": "Als PDF speichern",
+    "toolbarPrintAria": "Druckdialog öffnen — PDF speichern",
+    "toolbarHint": "Tipp für PDFs: Im Druckdialog „Als PDF speichern“ wählen — praktisch für Kolleginnen und Kollegen, die ein Anhang bevorzugen.",
+    "introNote": "Zuerst lesbarer Kontext — wie Nahrungsmittel heute in Europa fließen und wo Bio Vera hineinpasst — dann, wie die Plattform in der Praxis arbeitet. Link fürs Gremium teilen oder ein PDF beigelegen.",
+    "heroTechPill": "Protocol 360 · Integrity Guard · QR-Reisepass",
+    "narrativeEyebrow": "Ausgangsbild",
+    "narrativeTitle": "Europas Ernährungswirtschaft braucht weiter klarere Wege zum Vertrauen",
+    "narrativeParagraphs": [
+      "Wenn man Europa heute betrachtet, ist Landwirtschaft nach wie vor einer der wichtigsten Pfeiler der Wirtschaft.",
+      "Aber der Weg von Lebensmitteln über Märkte… ist oft nicht so klar wie er sein sollte.",
+      "Produkte werden täglich über Regionen und Grenzen hinweg gehandelt — und doch fällt es in vielen Fällen schwer nachzuvollziehen, wo sie wirklich herkommen, wie sie erzeugt wurden und wer dahintersteht.",
+      "Gleichzeitig bleiben viele kleinere Produzentinnen und Produzenten außen vor.",
+      "Nicht, weil sie nicht mehr liefern könnten — sondern weil ihnen ein zuverlässiger Marktzugang fehlt.",
+      "Und ohne diese Sicherheit wird Wachstum zum Risiko.",
+      "So bleibt das System zerfasert.\nUnd Vertrauen wächst nur begrenzt.",
+      "Hier kommt Bio Vera ins Spiel.",
+      "Bio Vera verbindet Landwirtinnen, Landwirte und Einkäufer über eine digitale Plattform, auf der jedes Produkt nachvollziehbar, verifizierbar und verständlich wird.",
+      "Kein Rätselraten. Keine unnötigen Zwischenlagen.",
+      "Sondern direkter, transparenter Handel — gestützt durch echte Daten.",
+      "Für Erzeuger heißt das: Zuversicht, weiter zu investieren und zu wachsen.\nFür Einkäufer: genau zu wissen, was sie beziehen.",
+      "Und für das System insgesamt: sich auf etwas zuzubewegen, das offener, zuverlässiger und fairer ist.",
+      "Das bauen wir mit Bio Vera."
+    ],
+    "plainLanguageEyebrow": "In wenigen Worten",
+    "plainLanguageTitle": "Was wir sind — wie Geschäfte laufen — welchen Nutzen das bringt",
+    "plainLanguageIntro": "Bevor jemand in den Anhang eintaucht, müssen meist drei Dinge sitzen: was das Ganze ist, wie eine normale Handelswoche sich anfühlt, und welche Ergebnisse Partner wirklich interessieren — die nächsten drei Karten sind dafür.",
+    "plainLanguageCards": [
+      {
+        "title": "Was Bio Vera ist",
+        "body": "Bio Vera ist eine vernetzte Ernährungskette mit gemeinsamen Bio‑Ready‑Regeln und einem gemeinsamen Technologie-Rückgrat für das „langweilige“ Vertrauen. Betriebe, Verpackung, Spedition, Lieferanten und Einzelhandel schreiben dieselbe Geschichte: Parzellen, Inputs, Feldtagebücher, Chargen, Lieferungen, Gelder und schließlich der QR-Code am Regal. Weniger zählt der glänzende PDF-Bericht — mehr zählen Spuren, die standhalten: Barcode, Parzellengrenze, Zeitstempel, wer die Kiste hielt, als es warm wurde."
+      },
+      {
+        "title": "Wie der Handel auf der Plattform läuft",
+        "body": "Das kommerzielle Leben folgt einem Kreislauf, den die meisten Teams instinktiv kennen: zugelassene Inputs kaufen (inkl. programmpreisiertes Saatgut und optionaler Versicherung), im Feld mit GPS innerhalb der Parzelle belegen, Chargen nach Protocol 360 erzeugen, sie per Missionen versenden, in denen die Verantwortung wirklich wechselt, und beim Käufer abschließen. Geld fällt nicht als eine undurchsichtige Summe an — Freigaben sind gestaffelt, damit Betrieb, Transport, Programme (inkl. Vera‑Arbeitsboni, wo vorgesehen) und die steuerlichen Beine über Grenzen hinweg für Finanzen lesbar bleiben."
+      },
+      {
+        "title": "Worauf wir optimieren",
+        "body": "Beim Audit reicht eine Chargen-ID und ein chronologischer Strahl statt drei Abteilungen um Anhänge zu betteln. Am Regal muss das, was der QR sagt, mit dem stehen, was im Backoffice liegt. Betriebe bekommen Werkzeuge, die schwache LTE überstehen, und Auszahlungen, die nicht nachträglich improvisiert werden. Wenn die Kühlkette kippt, bleibt die Verantwortung dokumentiert statt in Chatverläufen. Und wenn die Führung fragt „was ist wirklich passiert?“, gibt es eine gemeinsame Zeitachse für Qualität, Logistik und Finanzen."
+      }
+    ],
+    "videoTitle": "Bio Vera — kurzer Pitch-Überblick",
+    "videoCaption": "Ein kurzer Begleiter zu dieser Seite: die Idee hinter Bio Vera, warum transparenter Handel für Betriebe und Einkäufer zählt und wie eine Plattform rückverfolgbare, verifizierte Produkte von Anfang bis Ende trägt.",
+    "videoPlaceholderTitle": "Video hier einbinden",
+    "videoPlaceholderBody": "Auf YouTube oder Vimeo veröffentlichen (öffentlich oder „nicht gelistet“), NEXT_PUBLIC_PITCH_DECK_VIDEO_URL in Ihrer Deployment-Umgebung setzen, neu deployen — dieser Bereich zeigt den eingebetteten Player.",
+    "howItWorksEyebrow": "So läuft es in der Praxis",
+    "howItWorksTitle": "Vom Betriebspolygon bis zum QR im Regal — ein durchgängiger Faden",
+    "howItWorksLead": "Niemand liest bei lauwarmem Kaffee siebzehn Architekturbilder — deshalb die Reihenfolge, wie Teams sie tagtäglich erleben: Inputs und Grenzen, verlässliche Feldtagebücher, überprüfbare Paletten, Lkw, die Übergaben so dokumentieren, dass Finanz mitbekommt — erst dann digitale Reisepässe und Auszahlungssplits, die Bücher schließen. Rollen unterscheiden sich, Fakten teilen denselben Strom. Jede Kontrollschraube im Detail gewünscht? Im Anhang: vierzehn tragfähige Säulen.",
+    "howItWorksPhases": [
+      {
+        "title": "Betriebe, Saatgutlogik und Schutz vor unzulässigen Aufwendungen",
+        "body": "Jeder Betrieb sitzt auf einem GIS-Polygon, das sich dokumentieren lässt. Vera-Partner-Konditionen passen sich an, wenn Programmzuordnungen wechseln; Saatgutflüsse können bei passenden Programmen optional Versicherung mitnehmen. Alles, was wie chemischer Input wirkt, prüft zuerst die Weißliste — einen zweifelhaften Barcode einmal zu stoppen ist günstiger, als später Monatenlang Fakten zu rekonstruieren."
+      },
+      {
+        "title": "Feldfahrten sind offline tragfähig — GPS bleibt auf der Parzelle",
+        "body": "Techniker führen Tagebuch ohne Netz; sobald Funk wieder da ist, synchronisiert das Gerät. Koordinaten müssen im Polygon liegen — später zählen Satellitenmessungen, nicht die lauteste Erinnerung beim Obststreifen."
+      },
+      {
+        "title": "Verpackung erzeugt beschriftete Chargen mit Protocol‑360‑Tiefe",
+        "body": "Die Packstraße ist kein Bühnenstück fürs Audit — sie gibt Chargen-IDs weiter, von denen alle darunterliegenden Etappen profitieren. Wo Biologie zählt, bleiben Spuren dort; beim Material schauen Einkauf und Qualität konkret hin. Wer Vera-Material-Anforderungen erfüllt, bekommt keinen „Spendeneffekt“, sondern ökonomisch saubere Vera-Boni, die mit Belegen stehen, die auch vor skeptischem QA haltbar sind."
+      },
+      {
+        "title": "Lkw folgen Missionen — nicht Gerüchten",
+        "body": "Abholungen, Zwischenstopps und Unterschriften sind festgelegt — wer welche Palette wann in der Hand hatte, bleibt beantwortbar, besonders wenn die Kühlkette ins Schlingern gerät. Telemetrie sitzt in derselben Missionsstory, die Kategorieverantwortliche ohnehin lesen — weniger Anhang-Dschungel im Postfach."
+      },
+      {
+        "title": "Kundinnen scannen QR; Finanzen folgen demselben Ablauf",
+        "body": "Regal-QR bündelt Herkunft, Zertifikate, Transportkorridore und Kühlmomente ohne erfundene Finanzmetaphern. Auszahlungen sind bewusst gestaffelt — Betrieb, Transport, Vera-Boni wo vorgesehen, Saatgutmargen und Versicherungsanteile behalten ihre Belege. Steuerliche Unterschiede zwischen Export und EU-Regal bleiben im Modell statt Erklärungsnot am Quartalsende."
+      }
+    ],
+    "coverEyebrow": "Investor-Deck",
+    "coverTitle": "Eine Betriebsschiene für Erzeuger, Einkauf und Logistikpartner",
+    "coverSubtitle": "Bio Vera ist der Ort, an dem Erzeuger und Einkäufer mit den gleichen Bio‑Ready‑Regeln arbeiten — Sitzplatz am Tisch verdient Verhalten entlang der Daten, nicht nur eine Markierung auf der Karte. Ein Stack hält Karten, Feldnotizen, Kartonprüfungen, Lkw-Übergaben und Retail-QR-Pässe stimmig zueinander.Vera-Partner-Saatgutpreise, optionale Versicherung zu qualifizierten Käufen und Vera-Verpackungsboni hängen an Nachweisen, nicht an Wunschdenken.Zugelassene Inputs, GPS innerhalb der Parzelle, Palettenidentität, Kühlverläufe und Auszahlungslinien sind weniger Lagerfeuergeschichten in Tabellen und Chats — sondern eine gemeinsame Datenachse.",
+    "whyTitle": "Warum Rückverfolgbarkeit mit dem Audit härter wird — und warum das gut ist",
+    "whyLead": "Niemand gewinnt, wenn Einkauf heldenhafte PDF-Jagd spielt, Agronomie widersprüchliche Wahrheiten offline führt und keine Verbindung gibt. Bio Vera existiert, weil schlechtes Netz kein Verdikt über sorgfältige Feldbücher sein darf — und weil jede Sendung mit Geisterdaten zu rekonstruieren nur operatives Tempo verschleiert.",
+    "whyBullets": [
+      "Gebrochene Ordner heilen nicht von selbst vor Zertifikatserneuerung — sie rotten unbemerkt weiter, bis sie jemand teuer bemerkt.",
+      "Der Handel erwartet eine Barcode-Story, die ein zynischer Scan übersteht; leere Phrase bricht schneller als reifes Gemüse auf.",
+      "Wenn Verantwortung, Qualität und Finanzen sich nur einmal pro Quartal die Hand geben, wittern Prüferinnen den Bruch bevor KPI-Folien gedruckt werden.",
+      "Drei halbe Wahrheiten über dieselbe Palette explodieren Finance-Bürokraft — eine gemeinsame Datenachse amortisiert Fleißarbeit."
+    ],
+    "solutionTitle": "Mehr als Listings — Feld, Fracht und Treasury in einem Band",
+    "solutionLead": "Wir verbinden Agronomie, Kühlkosten-Einbindung und gestaffelte Abwicklung, damit Vertrieb, Compliance und Finanzen über einen kohärenten Datensatz vom Anbau bis zum Scan am Regal diskutieren. Feldtelefon und Lager-Dashboard ziehen dieselben APIs — keine parallelen Geschichten mehr.",
+    "chainTitle": "Die vertikale Schleife von Anfang bis Ende",
+    "chainSteps": [
+      "Saatgutökonomie — differenzierte Vera-Partner-Konditionen für registrierte Betriebe",
+      "Versicherung — optional bei qualifizierten Saatgutkäufen wo Programme es zulassen",
+      "Anbau — Tagebücher im Betriebspolygon; disziplinierte Barcodes",
+      "Verpackung — Protocol‑360‑Tiefe plus Vera‑Arbeitsboni mit haltbaren Nachweisen",
+      "Logistik — Missionen, Übergaben, Paletten ohne erzählerische Waisen",
+      "Handel — QR am Regal mit Herkunftszertifikaten und Kühlmomente"
+    ],
+    "advantagesEyebrow": "Nutzen hängt von der Rolle ab",
+    "advantagesTitle": "Wer profitiert",
+    "advantages": [
+      {
+        "title": "Erzeuger & Betriebe",
+        "body": "Geräte puffern bei schwachem LTE weiter alles lokal; später fühlt sich Sync wie Ebbe statt Beichte an. Kritische Inputs lehnen zweifelhafte Barcodes ab, Parzellen-GPS verwirft Fotos vom falschen Hang."
+      },
+      {
+        "title": "Handel & Einkauf",
+        "body": "Kategoriegespräche entwachsen Screenshot-Graberei — digitale Pässe zeigen Kühlverlauf, Zertifikate und Geografie ruhig in einem Bild, wenn Geduld am Käufer dünn wird."
+      },
+      {
+        "title": "Spedition & Logistikpartner",
+        "body": "Missionen wirken wie Regieanweisung: Wer unterschreibt welche Palette, wenn Kühlaggregat hustet — ohne nachträglich neue Begriffe am Lkw-Stau zu erfinden."
+      },
+      {
+        "title": "Einnahmenteilung",
+        "body": "Saatgut, Versicherung, Fracht, Plattform und Vera-Boni sitzen sauber getrennt — niemand verwandelt Fremdmarge zur Geisterbuchung."
+      },
+      {
+        "title": "Compliance & Assurance",
+        "body": "Anhängsel sind weniger jährliche Schatzsuche weil Estate-IDs und Charge-IDs der Wahrheit verankern — Auditors scrollen Chronologie statt Slack-Verhandlung."
+      },
+      {
+        "title": "Marke & Ursprung",
+        "body": "Regalstorys hören auf zu kokettieren — Herkunft, Zertifikate und Transport teilen dasselbe Nervensystem, mit dem Compliance prahlt."
+      }
+    ],
+    "techTitle": "Technik, die mit dem Feld mitgeht — nicht dagegen arbeitet",
+    "techLead": "Betrieb und Lager schauen wenigstens einmal dieselben Ansichten — Offline-Robustheit ist kein Folienversprechen, sondern Notwendigkeit wenn Erntewochen ohne verlässliches WLAN laufen.",
+    "techItems": [
+      {
+        "title": "Offline-first Feldaufnahme",
+        "body": "Kritische Augenblicke liegen erst auf dem Gerät, bis das Signal zurückkommt — kein neurotisches Zweittippen mehr, sobald Drescher unter dem Hügel verschwindet."
+      },
+      {
+        "title": "Integrity Guard",
+        "body": "Weißlisten-Barcodes und GPS innerhalb der Parzellen fangen kreative Erfassung, bevor sie zu CFO-Entschuldigungen eskaliert."
+      },
+      {
+        "title": "Protocol 360",
+        "body": "Strukturierte Prüfen vom Boden über die Packstraße bis kühlgeführt geben Qualitätsteams eine Story, die sich vor den Kunden verteidigen lässt."
+      },
+      {
+        "title": "Sicherheit & Zugriffssteuerung",
+        "body": "Rollen, gesunde Limits und durchsuchbare Protokolle halten mehrparteiliches Netze lesbar, wenn Schnittstellen spinnt."
+      },
+      {
+        "title": "Analytik ohne Schatten-Tabellen",
+        "body": "Weil Missionen, Chargen und Abwicklung gemeinsame IDs haben, mutieren Liege- oder Driftmaße nicht je Abteilung — Finanz nickt, Betrieb nickt, weniger Pivot-Horror."
+      }
+    ],
+    "transparencyTitle": "Wofür Einzelhandelskunden guten Gewissens ankaufen sollten",
+    "transparencyBullets": [
+      "Der QR-Code zeigt konkret Gesichter, Zertifikate und Routenschritte auf — knapp faktenbezogen und verlässlich verlinkbar.",
+      "Kühlketten-Verlauf und Verantwortung stehen bei der Geografie auf derselben Seite — statt höflicher Ignorierung in zwei getrennten Präsentationen.",
+      "Bio‑Ready‑Formulierung auf der Verpackung hängt nicht losgelöst von dem, was der Betrieb dokumentiert.",
+      "Großwortige Claims ohne Belege fallen weg — Ruf weiter unten in der Lieferkette verdient ebenfalls Schutz."
+    ],
+    "financeTitle": "Geldflüsse ohne monolithische Vernebelung",
+    "financeLead": "Gestaffelte Eskro-Phasen erlauben es der Finanz klar darzulegen wer welchen Teil verdient hat — ohne freitagnachts Held zu spielen indem unzusammenhängende Zeilen künstlich verheiratet werden.",
+    "financeBullets": [
+      "Vera‑Partner‑Saatkalkulation liegt ab Kauftag einen — Überraschungsfußnoten entfallen bei Auszahlungen.",
+      "Versicherungsprogramme weisen ihre Plattform-Provision dort transparent aus, wo sie aktiv werden.",
+      "Grenzüberschreitende Umsatzsteuer-Verläufe bekommen die Zuordnung die sie brauchen — Reporting-Teams sind still dankbar.",
+      "Fahrerhonorare und Plattformmarge bleiben sauber getrennt, damit Abgleich kein Theater wird."
+    ],
+    "detailSpecEyebrow": "Wenn jedes Detail zählt",
+    "appendixWatermark": "Anhang — Tiefe für Operatorinnen",
+    "detailSpecTitle": "Erweiterter Programmüberblick — alle vierzehn Säulen",
+    "detailSpecLead": "Sie haben die Erzählung gelesen; das ist die Werkstatt-Anleitung. Wir schrieben sie wie Partner Onboarding, Audit-Überleben und die Weiterentwicklung der Plattform: Inputs, Karten, Integrity Guard, Protocol 360, Offline-Erfassung, Missionen, Pässe, Abwicklung, Lieferanten-Kataloge, Sicherheitslage, Engineering und Arbeitslayouts pro Rolle. Blättern oder drucken — praktisch gedacht, nicht dekorativ.",
+    "detailSections": [
+      {
+        "title": "1. Saatgut, Versicherung und kontrollierte Inputs",
+        "items": [
+          {
+            "heading": "Vera-Partner-Saatgutkonditionen",
+            "body": "Teilnehmer am Programm bezahlen Konditionen abweichend vom Standardkatalog-Saatgut. Die Differenz speist Modelle, die Auszahlungen an Betriebe und Margen beim Saatgut transparent zusammenhalten."
+          },
+          {
+            "heading": "Versicherung zusammen mit Saatkäufen",
+            "body": "Wählen Betriebe Absicherung kann eine Police qualifizierte Saatkäufe begleiten; Provision wird als der Plattform zuordenbare Einnahme ausgewiesen."
+          },
+          {
+            "heading": "Input-Integrität vor Feldeinsatz",
+            "body": "Dünge- und Pflanzenschutzmittel validieren gegen Weißlisten. Fehlende Barcodes lösen Blocks statt stille Aktenführung."
+          },
+          {
+            "heading": "Globale Partnerschaft, einheitliches Regelwerk",
+            "body": "Geografie ist offen; Onboarding behält Vera-Partner-Logik, Weißlisten-Durchsetzung und Audit Disziplin bei."
+          },
+          {
+            "heading": "Saatgut-Kohorten-Nachverfolgung",
+            "body": "Qualifizierende Prozesse binden gekauftes Saatgut an Kohorten-IDs damit Revisoren Sorte, Tarife und versicherte Lose ohne Lieferung-für-Lieferung Papierjagd verbinden."
+          }
+        ]
+      },
+      {
+        "title": "2. Betriebe, Kultivierungs-Berichte und Grenzen",
+        "items": [
+          {
+            "heading": "Polygon-basierte Validierung",
+            "body": "Betriebspolygone definieren GPS-Checks; Feldnachweise beziehen sich nur auf Parzellen mit Vertrag – nicht Nachbarflächen."
+          },
+          {
+            "heading": "Feld-Chronologie statt Schnappschuss-Compliance",
+            "body": "Tagesbücher sammeln Wachstumshinweise, Kontrollen und Fotos chronologisch – für kontinuierliche Assurance statt hektischer Jahressammlungen."
+          },
+          {
+            "heading": "Verantwortung auf Geräte-Ebene",
+            "body": "Gerät-Fingerprints ergänzen Richtlinien damit Teams wissen welches Mobilgerät welchen Nachweis trug."
+          },
+          {
+            "heading": "Grenzführung",
+            "body": "Polygon-Änderungen folgen geführtem Onboarding – nur aktive Parzellen berechtigen saisonlang GPS-Spuren."
+          },
+          {
+            "heading": "Zertifikat-Metadaten an Quelle",
+            "body": "Betriebsdokumentation fließt ohne Doppelarbeit in Käuferdossiers neben Feldnotizen."
+          }
+        ]
+      },
+      {
+        "title": "3. Integrity Guard — Enforcement Leitplan",
+        "items": [
+          {
+            "heading": "Weißliste ↔ Barcode-Parität",
+            "body": "Biologische Chemie-SKUs matchen Weißlisten; unzulässige Chemie wird nicht zu konformen Events gewaschen."
+          },
+          {
+            "heading": "Koordinaten-Treue",
+            "body": "Feldeinträge respektieren Betriebspolygone; fehlerhafte GPS-Daten gelten nicht als verifizierter Nachweis."
+          },
+          {
+            "heading": "Sperre mit Rückverfolgung",
+            "body": "Ablehnungen gehen in strukturiertes Review über – die Lücke zwischen „blockiert“ und konsequenter Nacharbeit schließt sich."
+          },
+          {
+            "heading": "Saatgut- und Verpackungs-Barcodes",
+            "body": "Saatgut und zugelassene Verpackungs-SKUs referenzieren Autoritätskatalog; unauflösbare Scans stoppen vor Compliance-Narrative."
+          },
+          {
+            "heading": "Admin-Oberflächen für Ausnahmen",
+            "body": "Policy-Teams sehen blockierte Versuche mit Zeitstempel, Identität und SKU – Ausnahmen bleiben selten, klar, zuordenbar."
+          }
+        ]
+      },
+      {
+        "title": "4. Protocol 360 — gestufte Qualitätssicherung",
+        "items": [
+          {
+            "heading": "Feld- und Bodenfürsorge",
+            "body": "Erste Schicht zeigt Pflege (Boden, Monitoring) passend zu Käuferspezifikationen."
+          },
+          {
+            "heading": "Packhaus-Biometrie",
+            "body": "Zweite Schicht prüft Kaliber, visuelle Konformität und Folienintaktheit bevor Paletten die Anbauregion verlassen."
+          },
+          {
+            "heading": "Kühlketten-Narrativ",
+            "body": "Dritte Schicht verfolgt Kühlverpflichtungen Ende-zu-Ende – Telemetrie plus Übergaben entlang der Korridore."
+          },
+          {
+            "heading": "Abweichungen und Nacharbeit sichtbar",
+            "body": "Bei Fehlpass bleiben Abweichungen an Chargen und Checkpunkten verknüpft – Käufer sehen Auflösung statt Lücken."
+          }
+        ]
+      },
+      {
+        "title": "5. Verpackung, Chargen und Vera-Arbeitsbonus",
+        "items": [
+          {
+            "heading": "Chargen-IDs verbinden Finanz und Sichtbarkeit",
+            "body": "Jede Charge trägt Kennungen durch Materialkontrolle, Transport und Pässe – kein Schatten-SKU."
+          },
+          {
+            "heading": "Vera-Bonus-Bedingungen",
+            "body": "Arbeitsboni honoriieren materiell konforme Durchsätze und Verpackungsnachweise – Anreize folgen Prüfung statt Willkür."
+          },
+          {
+            "heading": "MaterialControl-Spur",
+            "body": "Lieferanten, Zertifikate und Konformitätserklärungen laufen für Käufernachweis zusammen."
+          },
+          {
+            "heading": "Ernte-zu-Charge-Kontinuität",
+            "body": "Erntefenster und Felderträge füttern Chargenidentitäten – Regal-Pässe erben Agronomie-Chronologie nicht nur Packzeitstempel."
+          },
+          {
+            "heading": "Bonus-Governance",
+            "body": "Vera-Bonus-Trigger referenzieren verifizierte Materialnachweise; Reviews können Logik nachspielen ohne Ermessen."
+          }
+        ]
+      },
+      {
+        "title": "6. Offline-first Felderfassung",
+        "items": [
+          {
+            "heading": "Lokale Persistenz",
+            "body": "Web nutzt ausdauernde Browser-DB; Expo/SQLite hält Spitzen ohne WAN."
+          },
+          {
+            "heading": "Sync-Orchestrierung",
+            "body": "Automatische Sync sobald Transport da; Konflikte landen bei Bedienern statt stiller Überschreibung."
+          },
+          {
+            "heading": "Resilienz",
+            "body": "SLAs erwarten ländlichen Funkausfall; Verfügbarkeit sinngemäß auch bei intermittierenden Teams."
+          },
+          {
+            "heading": "Idempotente Ingestion",
+            "body": "Retries und Doppeluploads konvergieren deterministisch – fragiles Netz forkt keine Chargenhistorie."
+          }
+        ]
+      },
+      {
+        "title": "7. Logistikmissionen, Custody-Kontrolle",
+        "items": [
+          {
+            "heading": "Missionenschema",
+            "body": "Missionen bündeln Routen, Abholungen, Manifeste, Checkpoints und Eskalation – wer wann Custody hatte bleibt ohne Grabung beantwortbar."
+          },
+          {
+            "heading": "Übergabe-Bestätigungen",
+            "body": "Digitale Abnahmen markieren Haftungswechsel zwischen Betrieb, Hubs, Flotten und Handover nahe Handel."
+          },
+          {
+            "heading": "Standortintelligenz",
+            "body": "Positionsprotokolle orientieren Dispatch zu Verspätung, Abweichung und Kühl-Drift bevor Käufer alarmieren."
+          },
+          {
+            "heading": "Mehrbeinige Partnerarbeitsräume",
+            "body": "Dispatcher, Flotten, Zwischenempfänger und letzte Meile teilen rollenspezifische Oberflächen mit identischen Missions-IDs."
+          },
+          {
+            "heading": "Ausnahme-Runbooks in Missionen",
+            "body": "Temperatur oder verpasste Übergaben erzeugen strukturierte Eskalation an Chargen gekoppelt – QA reagiert mit Evidenz statt Screenshots."
+          }
+        ]
+      },
+      {
+        "title": "8. QR-Pass und transparenter Käuferblick",
+        "items": [
+          {
+            "heading": "Pass-Schema",
+            "body": "Pässe verdichten Betriebsidentität, Zertifikate Kühlsegmente und Narrative passend für gehobene Einzelhandels-QA bei Wahrhaftigkeit gegenüber jedem globalen Käufer."
+          },
+          {
+            "heading": "Kategorie-Material",
+            "body": "Ein-Link-Zusammenfassungen beschleunigen Due-Diligence-Pakete für Supermärkte, Foodservice und Spezialhandel."
+          },
+          {
+            "heading": "Öffentliche Integrität",
+            "body": "Nur maschinengestützte Aussagen dominieren – übertriebene Farm-to-Fork-Worte ohne Belege scheitern."
+          },
+          {
+            "heading": "Live-Kontext wenn aktiv",
+            "body": "Mit Telemetrie können Pässe Frische oder ETA-ähnliche Hinweise an Custody-Protokolle knüpfen – dennoch nur innerhalb faktischer Daten."
+          }
+        ]
+      },
+      {
+        "title": "9. Eskro, Auszahlungssplits und Mehrparteien-Finanzen",
+        "items": [
+          {
+            "heading": "Eskro-Stufen",
+            "body": "Käuferzahlungen landen vor Wasserfall-Auszahlungen in Zwischenstaaten – enterprise-taugliche Kontrollen."
+          },
+          {
+            "heading": "Wasserfall-Bestandteile",
+            "body": "Betriebsauszahlungen, Vera-Bonus-Pools, Fracht, Saatgutmargen, Versicherungsprovisionen und Plattformumschläge tragen je nachvollziehbare Konten im steuerlogiknahen Modell."
+          },
+          {
+            "heading": "Fahrerökonomie einbezogen",
+            "body": "Fahrerhonorare bleiben bei Reviews explizit neben Betriebs- und Plattformanteilen."
+          },
+          {
+            "heading": "Order-zu-Charge-Abgleich",
+            "body": "Orders referenzieren Chargen damit Rechnung, Gutschrift und Freigabe dieselben Bestandsobjekte treffen die Finanzanalyse."
+          },
+          {
+            "heading": "Periodenlesbarkeit",
+            "body": "Weil Komponenten früh separiert werden reconciliert CFO-Saisonprogramme ohne Umkehr-Mixed-Line-Rechnungen."
+          }
+        ]
+      },
+      {
+        "title": "10. Lieferanten-Storefronts entlang der Weißliste",
+        "items": [
+          {
+            "heading": "Kontrolliertes Merchandising",
+            "body": "Kataloge folgen denselben Integritätsregeln wie Feldinputs – Graumarkt-Chemie landet nicht in Vera-qualifizierten Warenkörben."
+          },
+          {
+            "heading": "Beschaffung für Betriebe",
+            "body": "Verknüpfte Journeys erlauben Verpackung, Jungpflanzen und zugelassene Inputs ohne Programmverstöße."
+          },
+          {
+            "heading": "SKU-Auslauf und Substitution",
+            "body": "Wenn Chemie- oder Verpackungszeilen auslaufen, respektieren Storefronts Supersession statt veraltete Kataloglinien leise zu verkaufen."
+          },
+          {
+            "heading": "Preis- und Partner-Overlays",
+            "body": "Vera-Partner sehen anspruchsbewusstes Merchandising auf Weißlisten-Wahrheit – ohne Widerspruch zwischen Shop und Abrechnung."
+          },
+          {
+            "heading": "Rechnungsabgleich",
+            "body": "Lieferantenrechnungen können dieselben Artikel-IDs nutzen die Integrity Guard im Feld erkennt – Lücke zwischen Einkauf und Compliance schließt sich."
+          }
+        ]
+      },
+      {
+        "title": "11. Identität, RBAC, API-Sicherheit und Observability",
+        "items": [
+          {
+            "heading": "Mehrrollen-Mandantenfähigkeit",
+            "body": "Nutzer wandern zwischen Erzeuger, Einkauf, Logistik, Lieferanten und Administrator-Kontexten mit Policies und strikter Trennung."
+          },
+          {
+            "heading": "JWT plus Rate Limits",
+            "body": "REST profitiert von JWT-Schutz und gedrosselten Endpunkten gegen Skriptabus."
+          },
+          {
+            "heading": "Logging und Incident-Lineage",
+            "body": "Server-Logs unterstützen Trace-IDs und Prisma-Diagnostik, sodass Incident-Teams Zeitachsen rasch rekonstruieren."
+          },
+          {
+            "heading": "Eingabevalidierung überall",
+            "body": "Controller prüfen zentral, sodass keine Alternativpfade die Integrity-Guard-Semantik umgehen."
+          },
+          {
+            "heading": "Gehärtete Sessions, optional MFA",
+            "body": "Authentifizierung entspricht Multi-Tenant-SaaS-Erwartungen; privilegierte Rollen erhalten strengere Hürden, wo das Deployment MFA aktiviert."
+          }
+        ]
+      },
+      {
+        "title": "12. Engineering-Fundament und Kanalparität",
+        "items": [
+          {
+            "heading": "Datenebene",
+            "body": "PostgreSQL sichert den maßgeblichen Systemzustand; Prisma-Migrationen sind idempotent, falls sich historisch Umgebungen auseinanderentwickelt haben."
+          },
+          {
+            "heading": "Modulare NestJS-Services",
+            "body": "Controller und Services respektieren Domänengrenzen (Finanzen, Betriebe, Chargen, Missionen) mit klaren Grenzen und Health-Probes."
+          },
+          {
+            "heading": "Web- und Expo-Parität",
+            "body": "Next.js zeigt Marketing sowie Dashboards; Expo (RN) spiegelt Grower-Ergonomie mit Übersetzungspflicht gemäß den Workspace-Vorgaben."
+          },
+          {
+            "heading": "Locale-Routing",
+            "body": "Lokalisierte Marketing-Routen arbeiten mit Middleware und Cookies, damit mehrsprachige Partner konsistente URLs bookmarken ohne locale-neutrale Apps zu brechen."
+          },
+          {
+            "heading": "API-Verträge",
+            "body": "Domänenmodule stellen stabile REST-Schnittstellen für Betriebe, Chargen, Missionen und Finanzkonsumenten bereit; additive Änderungen bewahren Mobile-Web-Parität über Releases."
+          }
+        ]
+      },
+      {
+        "title": "13. Operationale Rollen und Arbeitsräume",
+        "items": [
+          {
+            "heading": "Erzeuger- und Packhaus-Bedienstete",
+            "body": "Expo (RN) priorisiert haptische, offline-sichere Abläufe für Betriebe, Tagebücher, Parzellennachweise, Ernte und Verpackungsübergänge — parallel zur Anspruchslogik auf responsiven Grower-Dashboards."
+          },
+          {
+            "heading": "Logistik, Fuhrpartner und Empfänger",
+            "body": "Spezialdashboards für Missionen, Fahrerzuweisungen, Checkpoints, Übergaben und Eskalation — ohne Daten fremder Betriebe mandantenübergreifend zu leaken."
+          },
+          {
+            "heading": "Händler und Kategoriemanagement",
+            "body": "Einkaufstools zeigen Pässe, Dossiers und Auftragsstatus entlang autoritativer Chargenchroniken statt Mikrosites ohne Ausführungswahrheit."
+          },
+          {
+            "heading": "Programm-Administratorinnen",
+            "body": "Interne Teams moderieren mit Katalog-Governance und Ausnahmen; Audit-Spuren gewährleisten, dass Richtlinienänderungen kanalübergreifend vorhersehbar ausrollen."
+          }
+        ]
+      },
+      {
+        "title": "14. Evidence-Pakete, QA-Kontingenz",
+        "items": [
+          {
+            "heading": "Strukturierte Qualitäts- und Compliance-Artefakte",
+            "body": "Qualitätsnarrative, Fotos wo Programme es verlangen, GPS-Stempel und Checkpoints ordnen sich chronologischen Dossiers (Betrieb und Charge) zu — ohne handgefertigte Tabellen pro Einzelhändler."
+          },
+          {
+            "heading": "Gezielte Eindämmung",
+            "body": "Unveränderliche Chargenlinie ermöglicht enge Holds: Teams korrelieren Verdachtsmengen über IDs, die Logistik und Finanz teilen, statt unbestimmte SKUs pauschal abzuschalten."
+          },
+          {
+            "heading": "Querschnittsreviews",
+            "body": "Weil Finanzen, QA und Missionen denselben ID-Satz nutzen, quantifizieren Quartalsreviews Leckagen, Abweichungen und Bonuseffekte aus demselben Datenbestand, dem die Geschäftsleitung für regulatorische Verteidigung vertraut."
+          }
+        ]
+      }
+    ],
+    "ctaClosingTitle": "Sprechen wir über Ihre Rolle in dieser Schleife",
+    "ctaClosingEyebrow": "Nächste Schritte",
+    "ctaClosingBody": "Sie haben die Geschichte und den technischen Anhang. Teilen Sie den Live-Link mit Ihrem Gremium oder exportieren Sie ein PDF für alle, die lieber drucken. Weiter zu Erzeuger-, Einkäufer-, Logistik- oder Investorenseiten — je nach Rolle heute.",
+    "ctaClosingBodyPrint": "Sie haben die Unternehmensdarstellung und den technischen Anhang gelesen. Nutzen Sie die Kontakte und Programmlinks unten oder teilen Sie die kanonische Deck-URL separat mit Personen, die die Live-Version bevorzugen.",
+    "ctaContact": "Bio Vera kontaktieren",
+    "ctaGrowers": "Programm für Erzeuger",
+    "ctaBuyers": "Information für Einkauf",
+    "ctaInvestors": "Material für Investoren"
+  },
+  "projectOverview": {
+    "toolbarCopyLink": "Link kopieren",
+    "toolbarCopied": "Kopiert",
+    "toolbarPrintPdf": "Als PDF speichern",
+    "toolbarPrintAria": "Druckdialog öffnen (PDF speichern)",
+    "introNote": "Diese Seite strukturiert Ihre Projektbeschreibung kurz nach üblichem Förderaufbau — anpassbare Abschnitte, dann als PDF für das Portal exportieren.",
+    "pdfLimitHint": "Einige Ausschreibungen verlangen die Projektbeschreibung ausschließlich als PDF und begrenzen die Seitenzahl (oft höchstens fünf). Bitte nach dem Export gegenprüfen.",
+    "coverEyebrow": "Projektbeschreibung",
+    "coverTitle": "Bio Vera — Projektüberblick",
+    "coverSubtitle": "Bio-Ready-Vertikal­modell: GIS-Gehöftgrenzen, Integrity Guard (Barcode + GPS polygon-konform), Offline-Erfassung im Feld, Protocol-360‑Chargen, kühlketten-geführte Missionen mit Übergaben, QR-Pässe für den Handel sowie ausgewiesene Settlement-Fächer und Vera-Arbeitsboni geknüpft an Materialnachweise.",
+    "sections": [
+      {
+        "title": "1. Kurzfassung",
+        "body": "Bio Vera betreibt ein plattformvermitteltes Netzwerk zwischen Erzeugern unter gemeinsamen Bio-Ready‑Regeln, Einkaufsteams für EU-/Exportkorridoren, Logistikpartnern und zertifizierten Lieferanten. Kennungen bleiben von Saatgut- oder Inputkauf bis zum Handels-QR zusammenhängend, damit operative, QS- und Finanzorganisationen keine parallelen Wahrheitsebenen pflegen müssen."
+      },
+      {
+        "title": "2. Zielsetzung",
+        "body": "Demokratisierung des Marktzugangs für dokumentationsfähige Erzeuger; Verringerung des Audit-Schmerzes für Einkauf durch ladungsfähige Chargenhistorien; Aufrechterhaltung der Produktivität unter intermittierenden Netzen mit Offline-First; Ausrichtung ökonomischer Hebel — Vera-Partner‑Saatprogramme mit optionaler Versicherung wo zulässig, Vera-Paketier‑Boni anhand messbarer Konformitätsnachweise."
+      },
+      {
+        "title": "3. Vorgehensweise / Intervention",
+        "body": "Polygone begrenzen zulässige GPS-Spuren; Whitelist-Barcodes verhindern chemische Außenseiterrollen; Web und Mobile puffern lokal, synchronisieren deterministisch; Packlinien werden zu Protocol-360‑geeigneten Fingerprint-Chargen; Logistik entspricht dokumentierten Missionen samt Kühlüberwachung; öffentlicher QR-Spiegel bildet Ursprungs-, Zertifikats- und Kühlketten‑Kapitel ohne Marketing-Spreizung gegenüber Kernsystem."
+      },
+      {
+        "title": "4. Zielgruppen und geographischer Fokus",
+        "body": "Kernteams: Agrarbetriebe, Packstätten und Cross-Dock‑Knoten, Spediteursflotten, QS-Einkauf, AdministratorInnen eines Programmzentrums. Schwerpunkt Storyline Südosteuropa gegen EU-Anforderungen inklusive transparenzaffiner Großhandels-Kommunikation (u. a. Norddeutschland‑Bezüge), ohne die Softwarearchitektur an einen einzelnen Endmarkt zu härten."
+      },
+      {
+        "title": "5. Phasenplan (indikativ)",
+        "body": "Phase A — Betriebsregistrierung, Parzellenwahrheit, Artikelkataloge. Phase B — Feldsaison mit Integrity Guard‑Regeln in Produktion. Phase C — skalierte Packeinheiten plus Mission-/Kühllogistik. Phase D — Passport-Härtung und Buyer-Workbench. Phase E — Auszahlungs-/Steuerlage-Transparenz und Partnerprogrammfine-Tuning — Kalibrierung erfolgt zusammen mit Förder- und Pilot-Cohort-Verpflichtungen."
+      },
+      {
+        "title": "6. Rollen & Governance",
+        "body": "Bio Vera liefert Softwarekerne, Regelbuch und SOC-orientierte Zugriffsarchitekturen; Produzenten sowie Logistik führen Eingaben dort aus, wo Arbeitsplätze bereits stehen; Einkauf liest strukturierte Pässe; Admin-Queues behandeln Sperrfälle oder Temperatur-Exessen mit revisierbarem Aktivitätsprotokoll."
+      },
+      {
+        "title": "7. Risiken & Gegensteuer (Kurzfassung)",
+        "body": "Netzstabilität — lokale Persistenz + idempotent replizierbare Sync-Protokolle. Nachweisbürokratie — harte Kombination Polygon + Barcode ohne Admin-Faustrecht. Adoption — ergonomische Offline-Pfade sowie bonusrelevantes Materialrouting. Mehrländer-Steuerszenarien — früh modellierte Schnittstellenzonen statt späterer Rechnungs-Not-/Korrekturwellen."
+      },
+      {
+        "title": "8. Mittel-/Ressourcenübersicht (Platzhalter)",
+        "body": "Detaillierte Kosten-/Kofinanzierungsraster gehören in den Annex der jeweiligen Förderstelle. Dieser Überblick bleibt narrative Schicht, sodass oft geforderte fünf Druckseiten eingehalten werden — Tabellenblätter bitte dort anhängen, wo Ausschreibung explizite Excel-/PDF-Nebenakte erwartet."
+      }
+    ],
+    "seeAlsoEyebrow": "Verwandtes",
+    "seeAlsoBody": "Für einen ausführlicheren Investor-Storyline-Deck samt Annex-Tiefgang und optionalem Videoblock öffnen Sie das Investor Deck.",
+    "seeAlsoLink": "Investor Deck öffnen"
   }
 }

@@ -421,7 +421,7 @@ export default function PitchDeckPage() {
           >
             <Image src="/logo1.png" alt={t("footer.logoAlt")} width={64} height={24} className="h-6 w-auto" priority />
             <span className="hidden sm:inline border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">
-              {t("footer.pitchDeck")}
+              {t("footer.investorDeck")}
             </span>
           </Link>
           <nav className="flex gap-7 text-[13px] font-medium text-gray-600">

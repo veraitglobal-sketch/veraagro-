@@ -126,6 +126,12 @@ const nextConfig: NextConfig = {
         destination: "/producer/field-entry",
         permanent: true,
       },
+      /** Canonical public URL: Investor deck (replaces Pitch deck). */
+      {
+        source: "/:locale/pitch-deck",
+        destination: "/:locale/investor-deck",
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -31,7 +31,8 @@
     "about": "O nama",
     "careers": "Karijere",
     "pressKit": "Medijski komplet",
-    "pitchDeck": "Pitch deck",
+    "investorDeck": "Investitor deck",
+    "projectOverview": "Pregled projekta",
     "vision": "Vizija",
     "roadmap": "Plan razvoja",
     "faq": "ČPP",
@@ -3513,7 +3514,7 @@
         "body": "Maloprodajni QR skupi lice proizvodnje, sertifikate, put i rashladne epizode u jednoj priči koja se meri uz eskro otpuštanje bez crvenila. Novac ostaje faziran tako da proizvođač, prevoznik, Vera bonus gde ima mesta, marža na semenu i učešće osiguravača i dalje mogu pomiriti u glavi bez mešanja stavki. Različiti PDV slojevi između izvoznog grla i evropskih poštanskih kodova žive u modelu tako da na kraju kvartala ne vadimo arheologiju iz prazne fioke."
       }
     ],
-    "coverEyebrow": "Komplet za partnere",
+    "coverEyebrow": "Investitorski deck",
     "coverTitle": "Jedna operativna kičma za proizvođače, kupce i logističke partnere",
     "coverSubtitle": "Bio Vera spaja nabavku i proizvodnju oko istih Bio-Ready pravila. Označena zemlja na karti još uvek sama ne kupuje poverenje kod kupca — kupuje ga jedinstven trag od parcele do police kad ceo lanac zajedno prolazi pregled. Jedna aplikacija drži poligon, belešnice sa parcela, serije iz pakovanja, dokumentovanu predaju kutije u kamionu i QR u radnji, tako da se istorija ređe vuče iz tri paralelne fascikle. Vera Partner cenovnik za seme, opciona polisa osiguranja uz nabavku koju program smatra kvalifikovanom i Vera bonus kad dokumentacija ambalaže ostane proverljiva i dalje daju pobude koje obračuni mogu mirno zaključiti u EUR posle zaključanja meseca. Odobreni ulazi, GPS unutra ugovorne parcele, identitet serije, beleška o rashladi i fazirani eskrov više nisu folklore zarobljen u Excel listama i aplikacijama za poruke.",
     "whyTitle": "Zašto sledljivost prestaje da bude ljubazan savet kad revizija pritisne",
@@ -3942,6 +3943,54 @@
     "ctaGrowers": "Program za proizvođače",
     "ctaBuyers": "Informacije za kupce",
     "ctaInvestors": "Materijali za investitore"
+  },
+  "projectOverview": {
+    "toolbarCopyLink": "Kopiraj link",
+    "toolbarCopied": "Kopirano",
+    "toolbarPrintPdf": "Sačuvaj kao PDF",
+    "toolbarPrintAria": "Otvori dijalog za štampu / PDF",
+    "introNote": "Struktura kao šablon Projektbeschreibung / opisa projekta: kratke sekcije koje možete prilagoditi, pa izvezite u PDF kad traže zvaničan prilog.",
+    "pdfLimitHint": "Često traže Projektbeschreibung isključivo kao PDF sa ograničenom dužinom (npr. do pet strana). Posle eksporta proverite broj strana pre otpreme.",
+    "coverEyebrow": "Opis projekta",
+    "coverTitle": "Bio Vera — pregled projekta",
+    "coverSubtitle": "Vertikalni Bio-Ready operativni model: parcele na mapi (GIS), Integrity Guard (barkod i GPS), rad u polju uz offline sinhronizaciju, Protocol 360 i batch‑evi, misije u hladnom lanacu, QR pasoši za maloprodaju i obračuni u escrow duhu sa Vera bonusima vezanim za dokumentovane materijale.",
+    "sections": [
+      {
+        "title": "1. Rezime projekta",
+        "body": "Bio Vera je mreža vođena platformom koja povezuje proizvođače koji ispunjavaju Bio-Ready pravila sa kupcima ka EU‑tržištima, partnerskom logistikom i snabdevačima pod istim trajnim tragom dokaza. Istim identifikatorima pratimo nabavku ulaza, evidencije u polju, pakovanje i skladišta, ustupanje robe u kamionu kao i materijale koje kupac vidi pasošem i štafetnom dokumentacijom — bez paralelnih Excel tablica."
+      },
+      {
+        "title": "2. Ciljevi",
+        "body": "Jači pristup tržištu i poverenje za uzgajivače koji se drže standarda; manje zamke pri revizijama jer količinski trag postoji za svaki batch; produktivan rad kad je slab signal kroz offline prvo beleženje pa sinhronizaciju; usklađene podsticaje — Vera Partner cene semena gde sleduje, vezano osiguranje gde program dozvoljava, Vera pakovanje‑bonus ako postoje verifikovani dokazi umesto golih priča."
+      },
+      {
+        "title": "3. Pristup / intervencija",
+        "body": "Poligon određuje da li je GPS evidencija validna; bela lista spreča nedozvoljenu hemiju uz kontrolu barkoda; mobilni i veb klijenti beleže lokalno pa šalju u oblak; pakovanje formira batch kroz Protocol 360; logistiku opisuju formalne misije sa predajama umesto verbalnih tragova; javni sloj QR koda nosi ime farme, sertifikate i hladni lanac; porezi i VAT ostaju razdvojivi u obračunu."
+      },
+      {
+        "title": "4. Ciljne grupe i geografija",
+        "body": "Operateri na terenu: gazdinstva, pak‑hau­sevi i magacini prevoz koji preuzima, distributeri i primalci, nabavni timovi kupeča, administracije programa. Poseban narativ je koridor Zapadni Balkan ka EU‑zahtevima za kvalitetom i tragom (uz maloprodajne QA priče uključujući Hamburg‑tradiciju), dizajn softvera dopuštava još lanaca kasnije."
+      },
+      {
+        "title": "5. Plan rada (orijentacija po fazama)",
+        "body": "Faza A — registracija gazdinstava, definisanje granica parcela i nomenklatura materijala. Faza B — rad u polju sa pravili­ma Integrity Guard‑a u punoj produkciji. Faza C — industrijski obimi pakovanja i batch‑evi, misije za hladni lanac. Faza D — javni pasoši i poboljšanje iskustva nabavnog tima u radnom prostoru. Faza E — obračuni, izveštaji i konsolidacija programa za partnere. Ritam faznih ciljeva sledi dostupno finansiranje i scope pilota."
+      },
+      {
+        "title": "6. Uloge i upravljanje",
+        "body": "Bio Vera snabdeva zajednički softver, pravila programa i sigurnosnu osnovu. Gazdinstva i logisti­čari unose dokumentaciju u svojim ulogama; kupci i revizija čitaju pasoše zasnovane na tragovima sistema, bez naknadnog sklapanja izveštaja u Word‑u. Administratori obrađuju blokirane barkodove, sporove parcela ili odstupanje temperature uz ostavljen istorijski zapis pogodan za eksterni audit."
+      },
+      {
+        "title": "7. Rizici i ublažavanja (kratko)",
+        "body": "Povremena konekcija — lokalni zapis i idempotentna sinhronizacija smanjuju gubitak podataka. Poverenje — kombinacija GPS pravila i belih lista na ulazu. Usvajanje u terenu — ulogama prilagođeni interfejs i bonus koji nagrađuje dokumentaciju a ne verbalne izjave. Porezi preko granica — slojevi obračuna rani u modelu, bez krpanja tek na fakturi."
+      },
+      {
+        "title": "8. Budžet i resursi (placeholder)",
+        "body": "Stavku po stavci budžet, ko‑finansiranje i nabavna dokumentacija uglavnom se prilažu kao poseban tehnički prilog ako konkurs tako traži. Ovaj dokument namerno ostaje sažeto narativan kako bi PDF držao često traženi limit od do pet stranica; široke tabele zakačiti kao dopunski dokument kada je dozvoljeno."
+      }
+    ],
+    "seeAlsoEyebrow": "Povezano",
+    "seeAlsoBody": "Za širu investitorsku priču, tehnički dubok prilog i opcioni video, otvorite stranicu Investitor deck.",
+    "seeAlsoLink": "Investitor deck"
   },
   "helpCenterPage": {
     "title": "Centar za pomoć",
