@@ -36,11 +36,11 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
     >
       <Text
         style={{
-          fontSize: 15,
-          fontWeight: '300',
+          fontSize: 17,
+          fontWeight: '600',
           color: colors.text.primary,
           marginBottom: theme.spacing.md,
-          letterSpacing: 0.3,
+          letterSpacing: 0.2,
         }}
       >
         {t('producer.missions.timelineTitle')}
@@ -57,15 +57,15 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
           />
           <View style={{ flex: 1 }}>
             <Text
-              style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
+              style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary }}
             >
               {t('producer.missions.created')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-              <Calendar size={11} color={colors.text.secondary} strokeWidth={1} />
+              <Calendar size={14} color={colors.text.secondary} strokeWidth={1} />
               <Text
                 style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   fontWeight: '300',
                   color: colors.text.secondary,
                   marginLeft: 4,
@@ -88,16 +88,16 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
             />
             <View style={{ flex: 1 }}>
               <Text
-                style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
+                style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary }}
               >
                 {t('producer.missions.assignedToDriver')}
               </Text>
               {driver && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                  <User size={11} color={colors.text.secondary} strokeWidth={1} />
+                  <User size={14} color={colors.text.secondary} strokeWidth={1} />
                   <Text
                     style={{
-                      fontSize: 11,
+                      fontSize: 14,
                       fontWeight: '300',
                       color: colors.text.secondary,
                       marginLeft: 4,
@@ -122,15 +122,15 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
             />
             <View style={{ flex: 1 }}>
               <Text
-                style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
+                style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary }}
               >
                 {t('producer.missions.inTransit')}
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                <Truck size={11} color={colors.text.secondary} strokeWidth={1} />
+                <Truck size={14} color={colors.text.secondary} strokeWidth={1} />
                 <Text
                   style={{
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: '300',
                     color: colors.text.secondary,
                     marginLeft: 4,
@@ -154,16 +154,16 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
             />
             <View style={{ flex: 1 }}>
               <Text
-                style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}
+                style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary }}
               >
                 {t('producer.missions.delivered')}
               </Text>
               {mission.updatedAt && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                  <Clock size={11} color={colors.text.secondary} strokeWidth={1} />
+                  <Clock size={14} color={colors.text.secondary} strokeWidth={1} />
                   <Text
                     style={{
-                      fontSize: 11,
+                      fontSize: 14,
                       fontWeight: '300',
                       color: colors.text.secondary,
                       marginLeft: 4,

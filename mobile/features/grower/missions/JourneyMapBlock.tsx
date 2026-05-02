@@ -25,7 +25,7 @@ export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
     >
       <Text
         style={{
-          fontSize: 15,
+          fontSize: 17,
           fontWeight: '300',
           color: colors.text.primary,
           marginBottom: theme.spacing.md,

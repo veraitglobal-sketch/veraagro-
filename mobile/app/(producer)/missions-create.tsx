@@ -206,16 +206,23 @@ export default function MissionsCreateScreen() {
           alignItems: 'center',
         }}
       >
-        <TouchableOpacity onPress={() => router.back()} style={{ marginRight: theme.spacing.md }} activeOpacity={0.7}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ marginRight: theme.spacing.md, minWidth: 44, minHeight: 44, justifyContent: 'center' }}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.back')}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
         </TouchableOpacity>
         <Text
           style={{
-            fontSize: 18,
-            fontWeight: '300',
+            fontSize: 20,
+            fontWeight: '600',
             color: theme.colors.text.primary,
             flex: 1,
-            letterSpacing: 0.5,
+            letterSpacing: 0.2,
           }}
         >
           {t('producer.missionsCreate.title')}
@@ -250,7 +257,7 @@ export default function MissionsCreateScreen() {
             marginBottom: theme.spacing.md,
           }}
         >
-          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
+          <Text style={{ fontSize: 16, color: theme.colors.text.secondary, lineHeight: 24, marginBottom: theme.spacing.sm }}>
             {t('producer.missionsCreate.intro')}
           </Text>
         </View>
@@ -265,16 +272,16 @@ export default function MissionsCreateScreen() {
             marginBottom: theme.spacing.md,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 10 }}>
             {t('producer.missionsCreate.workflowTitle')}
           </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: 6 }}>
+          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: 8 }}>
             {t('producer.missionsCreate.workflowStep1')}
           </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: 6 }}>
+          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: 8 }}>
             {t('producer.missionsCreate.workflowStep2')}
           </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18 }}>
+          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
             {t('producer.missionsCreate.workflowStep3')}
           </Text>
         </View>
@@ -289,31 +296,31 @@ export default function MissionsCreateScreen() {
             marginBottom: theme.spacing.md,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 6 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
             {t('producer.missionsCreate.multiFarmTitle')}
           </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, lineHeight: 18 }}>
+          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
             {t('producer.missionsCreate.multiFarmBody')}
           </Text>
         </View>
 
         {batches.length === 0 ? (
           <View style={{ marginBottom: theme.spacing.lg }}>
-            <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20 }}>
+            <Text style={{ fontSize: 16, color: theme.colors.text.secondary, lineHeight: 24 }}>
               {t('producer.missionsCreate.noBatchesBody')}
             </Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batches')}
-              style={{ marginTop: theme.spacing.md }}
+              style={{ marginTop: theme.spacing.md, minHeight: 48, justifyContent: 'center' }}
             >
-              <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '600' }}>
+              <Text style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '600' }}>
                 {t('producer.missionsCreate.openBatchesCta')}
               </Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={{ marginBottom: theme.spacing.lg, gap: theme.spacing.xs }}>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, textTransform: 'uppercase', fontWeight: '600', letterSpacing: 0.6 }}>
               {t('producer.missionsCreate.batchLabel')}
             </Text>
             {batches.map((b) => {
@@ -331,10 +338,10 @@ export default function MissionsCreateScreen() {
                     backgroundColor: selected ? `${theme.colors.primary}12` : theme.colors.background,
                   }}
                 >
-                  <Text style={{ fontSize: 14, color: theme.colors.text.primary, fontWeight: '500' }}>
+                  <Text style={{ fontSize: 17, color: theme.colors.text.primary, fontWeight: '600' }}>
                     {b.productName || t('producer.missionsCreate.productFallback')} — {b.batchId || b.id.slice(0, 8)}…
                   </Text>
-                  <Text style={{ fontSize: 11, color: theme.colors.text.secondary, marginTop: 4 }}>
+                  <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 6 }}>
                     {b.quantity} {b.unit} · {b.status}
                   </Text>
                 </TouchableOpacity>
@@ -352,7 +359,8 @@ export default function MissionsCreateScreen() {
               flexDirection: 'row',
               alignItems: 'center',
               alignSelf: 'flex-start',
-              paddingVertical: theme.spacing.sm,
+              minHeight: 48,
+              paddingVertical: 12,
               paddingHorizontal: theme.spacing.md,
               borderRadius: theme.borderRadius.md,
               backgroundColor: `${theme.colors.primary}15`,
@@ -361,18 +369,18 @@ export default function MissionsCreateScreen() {
             {locLoading ? (
               <ActivityIndicator size="small" color={theme.colors.primary} style={{ marginRight: 8 }} />
             ) : (
-              <MapPin size={18} color={theme.colors.primary} style={{ marginRight: 8 }} />
+              <MapPin size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
             )}
-            <Text style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}>
+            <Text style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '600' }}>
               {t('producer.missionsCreate.useMyLocation')}
             </Text>
           </TouchableOpacity>
           {locationHint ? (
-            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: theme.spacing.xs }}>{locationHint}</Text>
+            <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: theme.spacing.sm, lineHeight: 22 }}>{locationHint}</Text>
           ) : null}
         </View>
 
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.latitude')}
         </Text>
         <TextInput
@@ -384,13 +392,13 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             marginBottom: theme.spacing.md,
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.longitude')}
         </Text>
         <TextInput
@@ -402,13 +410,13 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             marginBottom: theme.spacing.md,
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.pickupAddress')}
         </Text>
         <TextInput
@@ -421,8 +429,8 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             minHeight: 80,
             textAlignVertical: 'top',
             marginBottom: theme.spacing.lg,
@@ -432,15 +440,15 @@ export default function MissionsCreateScreen() {
 
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 15,
             color: theme.colors.text.secondary,
             marginBottom: theme.spacing.sm,
-            lineHeight: 18,
+            lineHeight: 22,
           }}
         >
           {t('producer.missionsCreate.whereItGoes')}
         </Text>
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.destinationCity')}
         </Text>
         <TextInput
@@ -452,13 +460,13 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             marginBottom: theme.spacing.md,
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.fullDelivery')}
         </Text>
         <TextInput
@@ -471,15 +479,15 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             minHeight: 72,
             textAlignVertical: 'top',
             marginBottom: theme.spacing.md,
             color: theme.colors.text.primary,
           }}
         />
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
           {t('producer.missionsCreate.loadingNotes')}
         </Text>
         <TextInput
@@ -492,8 +500,8 @@ export default function MissionsCreateScreen() {
             borderWidth: 0.5,
             borderColor: 'rgba(0,0,0,0.12)',
             borderRadius: theme.borderRadius.md,
-            padding: 12,
-            fontSize: 15,
+            padding: 14,
+            fontSize: 17,
             minHeight: 56,
             textAlignVertical: 'top',
             marginBottom: theme.spacing.lg,
@@ -512,16 +520,17 @@ export default function MissionsCreateScreen() {
             gap: 8,
             backgroundColor: theme.colors.primary,
             borderRadius: theme.borderRadius.md,
-            paddingVertical: 14,
+            paddingVertical: 17,
             opacity: submitting || batches.length === 0 ? 0.5 : 1,
+            minHeight: 54,
           }}
         >
           {submitting ? (
             <ActivityIndicator color={theme.colors.text.inverse} />
           ) : (
             <>
-              <Truck size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
-              <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
+              <Truck size={22} color={theme.colors.text.inverse} strokeWidth={1.75} />
+              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.inverse }}>
                 {t('producer.missionsCreate.title')}
               </Text>
             </>

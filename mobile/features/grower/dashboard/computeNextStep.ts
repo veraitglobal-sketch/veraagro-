@@ -7,14 +7,12 @@ export type NextStepKind =
   | 'missions'
   | 'request_transport'
   | 'pending_approval'
-  | 'offline_sync'
   | 'log_work'
   | 'default_steps';
 
 export interface NextStep {
   kind: NextStepKind;
   pendingCount?: number;
-  syncPending?: number;
 }
 
 export function computeNextStep(p: {
@@ -23,7 +21,7 @@ export function computeNextStep(p: {
   pendingApproval: number;
   approved: number;
   activeMissions: number;
-  offlinePending: number;
+  offlinePending: number; // used only for tie-breaks elsewhere; queue UI = SyncQueueStrip
   /** Batches in PACKED or QUALITY_VERIFIED — ready to book pickup when prerequisites are met */
   batchesReadyForTransport: number;
 }): NextStep | null {
@@ -42,9 +40,7 @@ export function computeNextStep(p: {
   if (p.pendingApproval > 0) {
     return { kind: 'pending_approval', pendingCount: p.pendingApproval };
   }
-  if (p.offlinePending > 0) {
-    return { kind: 'offline_sync', syncPending: p.offlinePending };
-  }
+  /* Offline queue is shown only in SyncQueueStrip — avoids duplicating “N items on device” here. */
   if (p.approved > 0) {
     return { kind: 'log_work' };
   }

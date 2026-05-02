@@ -1,4 +1,5 @@
-import { Injectable, ForbiddenException, BadRequestException, Logger, Inject } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger, Inject } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -30,6 +31,14 @@ export class ComplianceService {
     private notificationsService: NotificationsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  private async invalidateWhitelistCache(barcode: string): Promise<void> {
+    try {
+      await this.cacheManager.del(`${this.WHITE_LIST_CACHE_KEY}:${barcode}`);
+    } catch (e) {
+      this.logger.warn(`Whitelist cache invalidate failed for ${barcode}`, e);
+    }
+  }
 
   /**
    * Main compliance check middleware function
@@ -296,7 +305,7 @@ export class ComplianceService {
         updatedAt: new Date(),
       },
     });
-    await this.cacheManager.del(`${this.WHITE_LIST_CACHE_KEY}:${data.barcode.trim()}`);
+    await this.invalidateWhitelistCache(data.barcode.trim());
     return row;
   }
 
@@ -328,20 +337,35 @@ export class ComplianceService {
         'This barcode is already on the list. Search for it or ask operations if it should be updated.',
       );
     }
-    const row = await this.prisma.bio_white_list.create({
-      data: {
-        id: crypto.randomUUID(),
-        barcode,
-        productName: name,
-        manufacturer: (data.manufacturer || '—').trim() || '—',
-        materialType: this.normalizeMaterialType(data.materialType),
-        description: data.description?.trim() || null,
-        addedBy: data.userId,
-        isActive: true,
-        updatedAt: new Date(),
-      },
-    });
-    await this.cacheManager.del(`${this.WHITE_LIST_CACHE_KEY}:${barcode}`);
+    let row;
+    try {
+      row = await this.prisma.bio_white_list.create({
+        data: {
+          id: crypto.randomUUID(),
+          barcode,
+          productName: name,
+          manufacturer: (data.manufacturer || '—').trim() || '—',
+          materialType: this.normalizeMaterialType(data.materialType),
+          description: data.description?.trim() || null,
+          addedBy: data.userId,
+          isActive: true,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new BadRequestException(
+          'This barcode is already on the list. Search for it or ask operations if it should be updated.',
+        );
+      }
+      if (e instanceof Prisma.PrismaClientValidationError) {
+        this.logger.error(`submitGrowerMaterial validation: ${e.message}`);
+        throw new BadRequestException('Invalid material data. Check the fields and try again.');
+      }
+      this.logger.error('submitGrowerMaterial: create failed', e instanceof Error ? e.stack : e);
+      throw e;
+    }
+    await this.invalidateWhitelistCache(barcode);
     return row;
   }
 
@@ -355,8 +379,7 @@ export class ComplianceService {
     });
 
     // PERFORMANCE: Invalidate cache for this barcode
-    const cacheKey = `${this.WHITE_LIST_CACHE_KEY}:${barcode}`;
-    await this.cacheManager.del(cacheKey);
+    await this.invalidateWhitelistCache(barcode);
 
     return result;
   }

@@ -268,13 +268,15 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    setOfflineSyncing(true);
     try {
       await syncService.syncAll();
       await loadData();
     } finally {
       setRefreshing(false);
+      await loadOfflinePending();
     }
-  }, [loadData]);
+  }, [loadData, loadOfflinePending]);
 
   return {
     connected,

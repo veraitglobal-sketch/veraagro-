@@ -13,6 +13,36 @@ import { isSystemEstateId, VERA_PLATFORM_ESTATE_ID, PRE_ORDER_ESTATE_ID } from '
 export class EstatesService {
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * If parcels are already admin-approved but the estate row stayed PENDING_SETUP (older approvals,
+   * or before parcel-approval auto-activation), promote to ACTIVE on read so grower apps show the right state.
+   */
+  private async promotePendingEstatesWithApprovedParcels(
+    estates: Array<{ id: string; status: string }>,
+  ): Promise<Set<string>> {
+    const pendingIds = estates.filter((e) => e.status === 'PENDING_SETUP').map((e) => e.id);
+    if (pendingIds.length === 0) {
+      return new Set();
+    }
+    const grouped = await this.prisma.parcels.groupBy({
+      by: ['estateId'],
+      where: {
+        estateId: { in: pendingIds },
+        approvedAt: { not: null },
+      },
+      _count: { _all: true },
+    });
+    const toActivate = grouped.map((g) => g.estateId);
+    if (toActivate.length === 0) {
+      return new Set();
+    }
+    await this.prisma.estates.updateMany({
+      where: { id: { in: toActivate }, status: 'PENDING_SETUP' },
+      data: { status: 'ACTIVE', updatedAt: new Date() },
+    });
+    return new Set(toActivate);
+  }
+
   async create(userId: string, data: {
     name: string;
     polygonCoordinates: any;
@@ -45,7 +75,7 @@ export class EstatesService {
 
   async findAllByUser(userId: string) {
     try {
-      return await this.prisma.estates.findMany({
+      const rows = await this.prisma.estates.findMany({
         where: { ownerId: userId },
         include: {
           parcels: {
@@ -66,6 +96,15 @@ export class EstatesService {
         },
         orderBy: { createdAt: 'desc' },
       });
+      const activated = await this.promotePendingEstatesWithApprovedParcels(
+        rows.map((r) => ({ id: r.id, status: r.status })),
+      );
+      if (activated.size === 0) {
+        return rows;
+      }
+      return rows.map((r) =>
+        activated.has(r.id) ? { ...r, status: 'ACTIVE' as (typeof r)['status'] } : r,
+      );
     } catch (error) {
       console.error('Error in findAllByUser:', error);
       throw error;
@@ -135,6 +174,13 @@ export class EstatesService {
 
     if (estate.ownerId !== userId) {
       throw new ForbiddenException('Access denied');
+    }
+
+    const activated = await this.promotePendingEstatesWithApprovedParcels([
+      { id: estate.id, status: estate.status },
+    ]);
+    if (activated.has(estate.id)) {
+      estate.status = 'ACTIVE';
     }
 
     // Calculate days remaining for Bio-Ready certification

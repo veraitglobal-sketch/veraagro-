@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException 
 import { PrismaService } from '../prisma/prisma.service';
 import { ComplianceService } from '../compliance/compliance.service';
 import { ImageResizeService } from '../common/image/image-resize.service';
+import { GeometryUtil } from '../common/utils/geometry.util';
 
 export type EntryType = 'PRSKANJE' | 'SETVA' | 'BERBA';
 
@@ -28,22 +29,27 @@ export class FieldEntriesService {
   ) {}
 
   /**
-   * SECURITY FIX: Validate GPS location against farm boundaries
+   * GPS must be inside the estate boundary and/or an admin-approved parcel.
+   * Parcel check fixes common case: estate polygon still default (e.g. template) while real work follows parcel maps.
    */
   private async validateGPSLocation(
     location: { lat: number; lng: number },
-    farmId: string
+    farmId: string,
   ): Promise<{ valid: boolean; reason?: string }> {
-    if (!location || !location.lat || !location.lng) {
+    if (
+      location == null ||
+      typeof location.lat !== 'number' ||
+      typeof location.lng !== 'number' ||
+      !Number.isFinite(location.lat) ||
+      !Number.isFinite(location.lng)
+    ) {
       return { valid: false, reason: 'GPS location is required' };
     }
 
-    // Validate GPS coordinates range
     if (location.lat < -90 || location.lat > 90 || location.lng < -180 || location.lng > 180) {
       return { valid: false, reason: 'Invalid GPS coordinates' };
     }
 
-    // Get farm with coordinates (using Estate model)
     const farm = await this.prisma.estates.findUnique({
       where: { id: farmId },
       select: { polygonCoordinates: true },
@@ -53,75 +59,58 @@ export class FieldEntriesService {
       return { valid: false, reason: 'Farm not found' };
     }
 
-    const farmCoords = farm.polygonCoordinates as any;
+    const estatePts = GeometryUtil.polygonFromJson(farm.polygonCoordinates as unknown);
 
-    // If farm has polygon coordinates, check if point is inside
-    if (Array.isArray(farmCoords) && farmCoords.length > 0) {
-      const isInside = this.isPointInPolygon({ lat: location.lat, lng: location.lng }, farmCoords);
-      if (!isInside) {
-        return {
-          valid: false,
-          reason: 'GPS location is outside your farm boundaries. Entry blocked for security.',
-        };
-      }
-    } else if (farmCoords?.lat && farmCoords?.lng) {
-      // Single point farm - check distance (allow 100m radius)
-      const distance = this.calculateDistance(
-        location.lat,
-        location.lng,
-        farmCoords.lat,
-        farmCoords.lng
+    let insideEstate = false;
+    if (estatePts.length === 1) {
+      insideEstate =
+        GeometryUtil.calculateDistance({ lat: location.lat, lng: location.lng }, estatePts[0]) <= 100;
+    } else if (estatePts.length >= 3) {
+      insideEstate = GeometryUtil.isPointInPolygon(
+        { lat: location.lat, lng: location.lng },
+        estatePts,
       );
-      if (distance > 100) {
-        return {
-          valid: false,
-          reason: `GPS location is ${distance.toFixed(0)}m from the farm. Maximum allowed distance: 100m.`,
-        };
+    }
+    if (insideEstate) {
+      return { valid: true };
+    }
+
+    const parcels = await this.prisma.parcels.findMany({
+      where: { estateId: farmId, approvedAt: { not: null } },
+      select: { polygonCoordinates: true },
+    });
+
+    const pt = { lat: location.lat, lng: location.lng };
+    for (const p of parcels) {
+      const pPts = GeometryUtil.polygonFromJson(p.polygonCoordinates as unknown);
+      if (pPts.length === 1) {
+        if (GeometryUtil.calculateDistance(pt, pPts[0]) <= 100) {
+          return { valid: true };
+        }
+        continue;
+      }
+      if (pPts.length >= 3 && GeometryUtil.isPointInPolygon(pt, pPts)) {
+        return { valid: true };
       }
     }
 
-    return { valid: true };
-  }
-
-  /**
-   * Check if point is inside polygon (Ray casting algorithm)
-   */
-  private isPointInPolygon(point: { lat: number; lng: number }, polygon: any[]): boolean {
-    let inside = false;
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      const xi = polygon[i].lng ?? polygon[i][0];
-      const yi = polygon[i].lat ?? polygon[i][1];
-      const xj = polygon[j].lng ?? polygon[j][0];
-      const yj = polygon[j].lat ?? polygon[j][1];
-
-      const intersect =
-        yi > point.lat !== yj > point.lat &&
-        point.lng < ((xj - xi) * (point.lat - yi)) / (yj - yi) + xi;
-
-      if (intersect) inside = !inside;
+    const hadEstateBoundary = estatePts.length === 1 || estatePts.length >= 3;
+    if (!hadEstateBoundary && parcels.length === 0) {
+      return { valid: true };
     }
-    return inside;
-  }
 
-  /**
-   * Calculate distance between two GPS points (Haversine formula)
-   */
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371000; // Earth radius in meters
-    const dLat = this.toRad(lat2 - lat1);
-    const dLon = this.toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRad(lat1)) *
-        Math.cos(this.toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  }
+    if (parcels.length > 0) {
+      return {
+        valid: false,
+        reason:
+          'GPS location is outside your approved parcel boundaries. If parcels are correct in Grower → Fields, ask an admin to update the estate boundary; then try sync again.',
+      };
+    }
 
-  private toRad(degrees: number): number {
-    return (degrees * Math.PI) / 180;
+    return {
+      valid: false,
+      reason: 'GPS location is outside your farm boundaries. Entry blocked for security.',
+    };
   }
 
   /**

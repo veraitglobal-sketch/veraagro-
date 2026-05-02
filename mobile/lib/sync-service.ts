@@ -20,6 +20,11 @@ const syncApi = axios.create({
 
 const SYNC_STATUS_KEY = 'sync_status';
 
+/** Queue items that still need upload (pending, failed retry, or stuck mid-sync after crash). */
+function needsSync(status: string | undefined): boolean {
+  return status === 'pending' || status === 'error' || status === 'syncing';
+}
+
 /** NestJS / axios: surface `message` so 403 shows real reason (GPS, whitelist, parcel approval). */
 function getApiErrorMessage(error: unknown, fallback: string): string {
   if (error && typeof error === 'object' && 'response' in error) {
@@ -55,13 +60,11 @@ export const syncService = {
         offlineStorage.getPendingCertificatePhotos(),
         offlineStorage.getPendingHarvestPlans(),
       ]);
-      const pendingEntries = entries.filter(
-        (e) => e.status === 'pending' || e.status === 'error' || e.status === 'syncing',
-      ).length;
-      const pendingProducts = products.filter((p) => p.status === 'pending').length;
-      const pendingCosts = costs.filter((c) => c.status === 'pending').length;
-      const pendingCertPhotos = certPhotos.filter((c) => c.status === 'pending').length;
-      const pendingHarvests = harvests.filter((h) => h.status === 'pending').length;
+      const pendingEntries = entries.filter((e) => needsSync(e.status)).length;
+      const pendingProducts = products.filter((p) => needsSync(p.status)).length;
+      const pendingCosts = costs.filter((c) => needsSync(c.status)).length;
+      const pendingCertPhotos = certPhotos.filter((c) => needsSync(c.status)).length;
+      const pendingHarvests = harvests.filter((h) => needsSync(h.status)).length;
       const pendingCount =
         pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests;
 
@@ -90,7 +93,7 @@ export const syncService = {
    */
   async syncPendingEntries(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingEntries();
-    const pendingEntries = pending.filter(e => e.status === 'pending');
+    const pendingEntries = pending.filter((e) => needsSync(e.status));
 
     if (pendingEntries.length === 0) {
       return { success: 0, failed: 0 };
@@ -216,7 +219,7 @@ export const syncService = {
    */
   async syncPendingProducts(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingProducts();
-    const toSync = pending.filter((p) => p.status === 'pending');
+    const toSync = pending.filter((p) => needsSync(p.status));
     if (toSync.length === 0) return { success: 0, failed: 0 };
 
     const token = await AsyncStorage.getItem('auth_token');
@@ -261,7 +264,7 @@ export const syncService = {
    */
   async syncPendingCosts(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingCosts();
-    const toSync = pending.filter((c) => c.status === 'pending');
+    const toSync = pending.filter((c) => needsSync(c.status));
     if (toSync.length === 0) return { success: 0, failed: 0 };
 
     const token = await AsyncStorage.getItem('auth_token');
@@ -304,7 +307,7 @@ export const syncService = {
    */
   async syncPendingHarvestPlans(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingHarvestPlans();
-    const toSync = pending.filter((h) => h.status === 'pending');
+    const toSync = pending.filter((h) => needsSync(h.status));
     if (toSync.length === 0) return { success: 0, failed: 0 };
 
     const token = await AsyncStorage.getItem('auth_token');
@@ -330,7 +333,7 @@ export const syncService = {
 
   async syncPendingCertificatePhotos(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingCertificatePhotos();
-    const toSync = pending.filter((p) => p.status === 'pending');
+    const toSync = pending.filter((p) => needsSync(p.status));
     if (toSync.length === 0) return { success: 0, failed: 0 };
 
     const token = await AsyncStorage.getItem('auth_token');

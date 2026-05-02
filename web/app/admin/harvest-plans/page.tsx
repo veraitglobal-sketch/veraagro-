@@ -67,7 +67,7 @@ function HarvestPlansInner() {
     setSaving(id);
     setError(null);
     try {
-      await harvestAnnouncementsAPI.setStatus(id, status);
+      await harvestAnnouncementsAPI.updateAdmin(id, { status });
       await load();
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Update failed');

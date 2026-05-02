@@ -102,19 +102,23 @@ export function EstateList({
 
   return (
     <View style={{ gap: theme.spacing.sm }}>
-      {estates.map((estate) => (
-        <TouchableOpacity
-          key={estate.id}
-          onPress={() => onPressEstate(estate)}
-          activeOpacity={0.7}
-          style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.05)',
-          }}
-        >
+      {estates.map((estate) => {
+        const parcels = estate.parcels ?? [];
+        const parcelTotal = parcels.length;
+        const parcelApproved = parcels.filter((p) => Boolean(p.approvedAt)).length;
+        return (
+          <TouchableOpacity
+            key={estate.id}
+            onPress={() => onPressEstate(estate)}
+            activeOpacity={0.7}
+            style={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.md,
+              borderWidth: 0.5,
+              borderColor: 'rgba(0, 0, 0, 0.05)',
+            }}
+          >
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
             <View style={{
               width: 48,
@@ -177,17 +181,27 @@ export function EstateList({
                     {estate.calculatedArea.toFixed(2)} m²
                   </Text>
                 )}
-                {estate.parcels && estate.parcels.length > 0 && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Package size={11} color={theme.colors.text.secondary} strokeWidth={1} />
+                {parcelTotal > 0 && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Package size={11} color={theme.colors.text.secondary} strokeWidth={1} />
+                      <Text style={{
+                        fontSize: 9,
+                        fontWeight: '300',
+                        color: theme.colors.text.secondary,
+                        marginLeft: 4,
+                        letterSpacing: 0.2,
+                      }}>
+                        {t('producer.estates.parcelsWithCount', { count: parcelTotal })}
+                      </Text>
+                    </View>
                     <Text style={{
                       fontSize: 9,
                       fontWeight: '300',
                       color: theme.colors.text.secondary,
-                      marginLeft: 4,
                       letterSpacing: 0.2,
                     }}>
-                      {t('producer.estates.parcelBadge', { count: estate.parcels.length })}
+                      {t('producer.estates.approvedParcelsOfTotal', { approved: parcelApproved, total: parcelTotal })}
                     </Text>
                   </View>
                 )}
@@ -224,8 +238,9 @@ export function EstateList({
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableOpacity>
-      ))}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }

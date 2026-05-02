@@ -49,6 +49,70 @@ export class GeometryUtil {
     return Math.abs(area) / 2;
   }
 
+/**
+ * Normalize estate/parcel `polygonCoordinates` JSON (Prisma Json) to points for point-in-polygon.
+ * Supports: [{lat,lng}], GeoJSON ring [[lng,lat],...], Polygon { type, coordinates }.
+ */
+  static polygonFromJson(coords: unknown): Point[] {
+    if (coords == null) return [];
+
+    if (typeof coords === 'object' && !Array.isArray(coords)) {
+      const o = coords as Record<string, unknown>;
+      if (o.type === 'Polygon' && Array.isArray(o.coordinates)) {
+        const rings = o.coordinates as number[][][];
+        const ring = rings[0];
+        if (Array.isArray(ring)) {
+          return ring
+            .map((pt) => {
+              if (Array.isArray(pt) && pt.length >= 2 && typeof pt[0] === 'number' && typeof pt[1] === 'number') {
+                return { lng: pt[0], lat: pt[1] };
+              }
+              return null;
+            })
+            .filter((x): x is Point => x !== null && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+        }
+      }
+      if (typeof o.lat === 'number' && typeof o.lng === 'number') {
+        return Number.isFinite(o.lat) && Number.isFinite(o.lng) ? [{ lat: o.lat, lng: o.lng }] : [];
+      }
+    }
+
+    if (!Array.isArray(coords) || coords.length === 0) return [];
+
+    const first = coords[0];
+    // Nested ring: [[lng,lat], [lng,lat], ...]
+    if (Array.isArray(first) && typeof first[0] === 'number') {
+      return (coords as number[][])
+        .map((pt) =>
+          Array.isArray(pt) && pt.length >= 2 ? { lng: pt[0], lat: pt[1] } : null,
+        )
+        .filter((x): x is Point => x !== null && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    }
+    // Double-nested: [[[lng,lat],...]] (some stored rings)
+    if (Array.isArray(first) && Array.isArray(first[0])) {
+      const ring = coords[0] as number[][];
+      return ring
+        .map((pt) =>
+          Array.isArray(pt) && pt.length >= 2 ? { lng: pt[0], lat: pt[1] } : null,
+        )
+        .filter((x): x is Point => x !== null && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    }
+
+    return (coords as unknown[])
+      .map((p: unknown) => {
+        const o = p as Record<string, unknown>;
+        if (typeof o?.lat === 'number' && typeof o?.lng === 'number') {
+          return { lat: o.lat, lng: o.lng };
+        }
+        const arr = p as number[];
+        if (Array.isArray(arr) && arr.length >= 2) {
+          return { lng: arr[0], lat: arr[1] };
+        }
+        return null;
+      })
+      .filter((x): x is Point => x !== null && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+  }
+
   /**
    * Check if a point is inside a polygon
    */

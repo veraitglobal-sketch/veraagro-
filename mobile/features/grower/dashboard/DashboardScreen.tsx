@@ -83,10 +83,10 @@ export default function DashboardScreen() {
       />
       <View
         style={{
-          paddingTop: theme.spacing.md,
+          paddingTop: theme.spacing.sm,
           paddingLeft: p.screenPaddingLeft,
           paddingRight: p.screenPaddingRight,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
+          paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
         }}
       >
         <NextStepCard
@@ -123,27 +123,27 @@ export default function DashboardScreen() {
             style={{
               backgroundColor: theme.colors.primaryLight,
               borderRadius: theme.borderRadius.md,
-              paddingVertical: theme.spacing.md,
+              paddingVertical: theme.spacing.sm,
               paddingHorizontal: theme.spacing.md,
-              marginBottom: theme.spacing.md,
+              marginBottom: theme.spacing.sm,
               borderWidth: 1,
               borderColor: theme.colors.border,
-              minHeight: 72,
+              minHeight: 0,
             }}
           >
-            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary, marginBottom: 6 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, marginBottom: 4 }}>
               {t('producer.dashboard.farmer.alertsTitle')}
             </Text>
-            <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
+            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, lineHeight: 18 }}>
               {alertLine}
             </Text>
-            <Text style={{ fontSize: 14, color: theme.colors.primary, marginTop: 8, fontWeight: '600' }}>
+            <Text style={{ fontSize: 13, color: theme.colors.primary, marginTop: 6, fontWeight: '600' }}>
               {t('producer.dashboard.farmer.alertsOpen')}
             </Text>
           </TouchableOpacity>
         ) : null}
         <FarmerHomeSection handlers={farmerHandlers} />
-        <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, lineHeight: 21, marginTop: theme.spacing.sm }}>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, lineHeight: 17, marginTop: theme.spacing.xs }}>
           {t('producer.dashboard.farmer.profileMore')}
         </Text>
       </View>

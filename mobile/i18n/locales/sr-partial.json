@@ -314,14 +314,16 @@
       },
       "syncStrip": {
         "title": "Čeka slanje",
-        "pendingLine": "{{count}} stavki čeka slanje (unosi, skenovi, dokumenti…).",
+        "pendingLine_one": "{{count}} stavka čeka slanje.",
+        "pendingLine_few": "{{count}} stavke čekaju slanje.",
+        "pendingLine_other": "{{count}} stavki čeka slanje.",
         "errorLine": "Poslednja greška",
         "syncNow": "Pošalji sad",
         "openLog": "Otvori Dnevnik unosa"
       },
       "farmer": {
         "blockTitle": "Na farmi — redosled",
-        "blockHint": "1 Uputstva · 2 Moje parcele · 3 Moji zasadi (više useva može na istoj parceli) · 4 Dnevnik unosa · 5 Materijali (bela lista) · 6–8 Dozvoljeno / zabranjeno / sertifikati.",
+        "blockHint": "1–3: koraci, parcele, zasadi · 4 Dnevnik · 5 Materijali · 6–8: dozvoljeno, zabranjeno, sertifikati.",
         "instructionsTitle": "Uputstva",
         "instructionsDesc": "Koraci u sezoni — isti smisao kao kartica Koraci/Uputstva u donjoj traci.",
         "parcelsTitle": "Moje parcele",
@@ -358,7 +360,7 @@
         "alertMissions": "{{count}} transportnih zadataka",
         "alertBatches": "{{count}} partija",
         "alertsOpen": "Otvori — poruke, zadaci, partije",
-        "profileMore": "Materijali su u gornjem numerisanom delu ispod „Dnevnik unosa”. Niže su prečica: partije → transport → misije → nalepnice (isto kao na webu). Kartica „Uputstva” u donjoj traci širi tekst koraka.",
+        "profileMore": "Detaljnije: kartica Uputstva. Novčanik: Profil.",
         "alsoPartnerOrders": "Porudžbine partnera (inputi)"
       },
       "partnerOrders": {
@@ -558,6 +560,8 @@
       "saveEstate": "Sačuvaj",
       "myFields": "Moje njive",
       "parcelsWithCount": "Parcele ({{count}})",
+      "approvedParcelsOfTotal": "{{approved}} / {{total}} odobreno",
+      "parcelBadge": "Parcele ({{count}})",
       "editEstateTitle": "Uredi njivu",
       "certStatusCertified": "Sertifikovan",
       "certStatusActive": "Aktivan",
@@ -1031,10 +1035,14 @@
     },
     "sync": {
       "syncing": "Sinhronizacija podataka…",
-      "savedOnDevice": "Sačuvano na uređaju: {{count}} stavka",
-      "savedOnDevice_plural": "Sačuvano na uređaju: {{count}} stavki",
+      "savedOnDevice_one": "Na uređaju: {{count}} stavka",
+      "savedOnDevice_few": "Na uređaju: {{count}} stavke",
+      "savedOnDevice_other": "Na uređaju: {{count}} stavki",
       "allSent": "Sve poslato",
-      "itemsNotSent": "Nije moguće poslati {{count}} stavke."
+      "itemsNotSent_one": "Nije poslata {{count}} stavka.",
+      "itemsNotSent_few": "Nije poslato {{count}} stavke.",
+      "itemsNotSent_other": "Nije poslato {{count}} stavki.",
+      "itemsNotSentHint": "Često: GPS na serveru nije unutar njive/parcele — ispravi mapu ili unesi na parceli; detalj greške kod svakog unosa u Dnevniku."
     },
     "fieldLogForm": {
       "introLead": "Unosite sve što radite na parceli (setva, đubrenje, prskanje, žetva). Barkod materijala je opciono kad koristite praćeni proizvod; fotografija i GPS su obavezni pri svakom unosu. Podaci grade tragabilnost i idu u pasoš.",
@@ -1097,7 +1105,7 @@
       "errNetwork": "Nije moguće dobiti server. Proveri mrežu i pokušaj ponovo.",
       "statusCertified": "Sertifikovano",
       "statusActive": "Aktivno",
-      "statusPendingSetup": "Čeka se podešavanje"
+      "statusPendingSetup": "Još nije aktivirano u sistemu"
     }
   },
   "buyer": {

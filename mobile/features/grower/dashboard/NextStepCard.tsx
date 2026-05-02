@@ -63,13 +63,6 @@ function labelAndCta(
         cta: t('producer.dashboard.nextStep.pendingCta'),
         onPress: props.onSteps,
       };
-    case 'offline_sync':
-      return {
-        title: t('producer.dashboard.nextStep.syncTitle', { count: step.syncPending ?? 0 }),
-        body: t('producer.dashboard.nextStep.syncBody'),
-        cta: t('producer.dashboard.nextStep.syncCta'),
-        onPress: props.onFieldLog,
-      };
     case 'log_work':
       return {
         title: t('producer.dashboard.nextStep.logWorkTitle'),
@@ -112,42 +105,43 @@ export default function NextStepCard(props: NextStepCardProps) {
   return (
     <View
       style={{
-        borderRadius: theme.borderRadius.lg,
+        borderRadius: theme.borderRadius.md,
         borderWidth: 1.5,
         borderColor: theme.colors.primary,
         backgroundColor: theme.colors.primaryLight,
-        padding: theme.spacing.md,
-        marginBottom: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        paddingHorizontal: theme.spacing.md,
+        marginBottom: theme.spacing.sm,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
         <View
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: theme.borderRadius.md,
+            width: 32,
+            height: 32,
+            borderRadius: theme.borderRadius.sm,
             backgroundColor: theme.colors.background,
             alignItems: 'center',
             justifyContent: 'center',
             marginRight: theme.spacing.sm,
           }}
         >
-          {step.kind === 'log_work' || step.kind === 'offline_sync' ? (
-            <Package size={20} color={theme.colors.primary} strokeWidth={1.5} />
+          {step.kind === 'log_work' ? (
+            <Package size={18} color={theme.colors.primary} strokeWidth={1.5} />
           ) : step.kind === 'request_transport' || step.kind === 'missions' ? (
-            <Truck size={20} color={theme.colors.primary} strokeWidth={1.5} />
+            <Truck size={18} color={theme.colors.primary} strokeWidth={1.5} />
           ) : (
-            <Sprout size={20} color={theme.colors.primary} strokeWidth={1.5} />
+            <Sprout size={18} color={theme.colors.primary} strokeWidth={1.5} />
           )}
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+          <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.6 }}>
             {t('producer.dashboard.nextStep.eyebrow')}
           </Text>
-          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>{title}</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>{title}</Text>
         </View>
       </View>
-      <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>{body}</Text>
+      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.sm }}>{body}</Text>
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.8}
@@ -157,13 +151,13 @@ export default function NextStepCard(props: NextStepCardProps) {
           justifyContent: 'space-between',
           backgroundColor: theme.colors.primary,
           borderRadius: theme.borderRadius.md,
-          paddingVertical: 16,
-          paddingHorizontal: 16,
-          minHeight: 52,
+          paddingVertical: 12,
+          paddingHorizontal: 14,
+          minHeight: 48,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>{cta}</Text>
-        <ChevronRight size={20} color={theme.colors.text.inverse} strokeWidth={2} />
+        <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>{cta}</Text>
+        <ChevronRight size={18} color={theme.colors.text.inverse} strokeWidth={2} />
       </TouchableOpacity>
     </View>
   );

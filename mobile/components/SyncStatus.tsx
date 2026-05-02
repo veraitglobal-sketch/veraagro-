@@ -55,10 +55,10 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
     try {
       setSyncStatus(prev => ({ ...prev, syncing: true }));
       await syncService.syncAll();
-      await loadSyncStatus();
-      
     } catch (error) {
       console.error('Error syncing:', error);
+    } finally {
+      await loadSyncStatus();
     }
   };
 

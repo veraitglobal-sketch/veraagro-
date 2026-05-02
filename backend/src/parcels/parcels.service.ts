@@ -103,7 +103,7 @@ export class ParcelsService {
         ? parcel.publicCode
         : await this.generateUniquePublicCode();
 
-    return this.prisma.parcels.update({
+    const updated = await this.prisma.parcels.update({
       where: { id: parcelId },
       data: {
         approvedAt: new Date(),
@@ -113,6 +113,21 @@ export class ParcelsService {
         updatedAt: new Date(),
       },
     });
+
+    // Grower "My fields" shows estate status (PENDING_SETUP = "pending setup"). Approving a parcel
+    // should unblock the farm in the app without a separate estate-approval step when parcels exist.
+    await this.prisma.estates.updateMany({
+      where: {
+        id: parcel.estateId,
+        status: 'PENDING_SETUP',
+      },
+      data: {
+        status: 'ACTIVE',
+        updatedAt: new Date(),
+      },
+    });
+
+    return updated;
   }
 
   /**

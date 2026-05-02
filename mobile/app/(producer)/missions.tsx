@@ -13,9 +13,7 @@ import {
 import { useAppLocaleTag } from '../../lib/date-locale';
 
 /**
- * Missions Screen
- * List of all missions with status tracking
- * Matches buyer dashboard styling
+ * Grower missions list — readable type and tap targets (aligned with batches list UX).
  */
 export default function MissionsScreen() {
   const { t } = useTranslation();
@@ -71,15 +69,18 @@ export default function MissionsScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           activeOpacity={0.7}
-          style={{ marginRight: theme.spacing.md }}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.back')}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={{ marginRight: theme.spacing.md, minWidth: 44, minHeight: 44, justifyContent: 'center' }}
         >
           <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
         </TouchableOpacity>
         <Text style={{
-          fontSize: 18,
-          fontWeight: '300',
+          fontSize: 20,
+          fontWeight: '600',
           color: theme.colors.text.primary,
-          letterSpacing: 0.5,
+          letterSpacing: 0.2,
           flex: 1,
         }}>
           {t('producer.tabs.missions')}
@@ -109,19 +110,21 @@ export default function MissionsScreen() {
                 onPress={() => setFilter(f.id)}
                 activeOpacity={0.7}
                 style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  minHeight: 44,
+                  justifyContent: 'center',
+                  borderRadius: theme.borderRadius.md,
                   borderWidth: 0.5,
                   borderColor: filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
                   backgroundColor: filter === f.id ? `${theme.colors.primary}10` : 'transparent',
                 }}
               >
                 <Text style={{
-                  fontSize: 11,
-                  fontWeight: '300',
+                  fontSize: 15,
+                  fontWeight: '600',
                   color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                  letterSpacing: 0.3,
+                  letterSpacing: 0.2,
                 }}>
                   {f.label}
                 </Text>
@@ -155,7 +158,8 @@ export default function MissionsScreen() {
             activeOpacity={0.8}
             style={{
               marginBottom: theme.spacing.md,
-              paddingVertical: theme.spacing.md,
+              minHeight: 52,
+              paddingVertical: 16,
               paddingHorizontal: theme.spacing.md,
               borderRadius: theme.borderRadius.md,
               backgroundColor: theme.colors.primary,
@@ -165,8 +169,8 @@ export default function MissionsScreen() {
               gap: 8,
             }}
           >
-            <Truck size={20} color={theme.colors.text.inverse} strokeWidth={1.5} />
-            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>
+            <Truck size={22} color={theme.colors.text.inverse} strokeWidth={1.75} />
+            <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.inverse }}>
               {t('producer.missionsCreate.title')}
             </Text>
           </TouchableOpacity>
@@ -174,9 +178,9 @@ export default function MissionsScreen() {
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
               <Text style={{
                 color: theme.colors.text.secondary,
-                fontSize: 11,
-                fontWeight: '300',
-                letterSpacing: 0.3,
+                fontSize: 16,
+                fontWeight: '500',
+                letterSpacing: 0.2,
               }}>
                 {t('producer.missions.loading')}
               </Text>
@@ -190,14 +194,16 @@ export default function MissionsScreen() {
               borderColor: 'rgba(0, 0, 0, 0.05)',
               alignItems: 'center',
             }}>
-              <Truck size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
+              <Truck size={40} color={theme.colors.text.tertiary} strokeWidth={1.25} />
               <Text style={{
-                fontSize: 11,
-                fontWeight: '300',
+                fontSize: 16,
+                fontWeight: '500',
                 color: theme.colors.text.secondary,
                 marginTop: theme.spacing.sm,
-                letterSpacing: 0.3,
+                letterSpacing: 0.2,
                 textAlign: 'center',
+                lineHeight: 24,
+                paddingHorizontal: theme.spacing.md,
               }}>
                 {t('producer.missions.listEmpty')}
               </Text>
@@ -212,56 +218,57 @@ export default function MissionsScreen() {
                   style={{
                     backgroundColor: theme.colors.surface,
                     borderRadius: theme.borderRadius.md,
-                    padding: theme.spacing.md,
+                    padding: theme.spacing.md + 2,
                     borderWidth: 0.5,
                     borderColor: 'rgba(0, 0, 0, 0.05)',
+                    minHeight: 88,
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
                     <View style={{
-                      width: 40,
-                      height: 40,
+                      width: 48,
+                      height: 48,
                       borderRadius: theme.borderRadius.sm,
                       backgroundColor: `${getMissionStatusColor(mission.status)}15`,
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginRight: theme.spacing.sm,
                     }}>
-                      <Truck size={20} color={getMissionStatusColor(mission.status)} strokeWidth={1} />
+                      <Truck size={22} color={getMissionStatusColor(mission.status)} strokeWidth={1.5} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={{
-                        fontSize: 12,
-                        fontWeight: '300',
+                        fontSize: 17,
+                        fontWeight: '600',
                         color: theme.colors.text.primary,
                         marginBottom: theme.spacing.xs,
-                        letterSpacing: 0.3,
+                        letterSpacing: 0.2,
                       }}>
                         {mission.missionNumber ||
                           t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
                       </Text>
                       {mission.batch && (
                         <Text style={{
-                          fontSize: 11,
-                          fontWeight: '300',
+                          fontSize: 15,
+                          fontWeight: '500',
                           color: theme.colors.text.secondary,
-                          letterSpacing: 0.2,
+                          letterSpacing: 0.1,
                         }}>
                           {t('producer.missionsCreate.batchLabel')}: {mission.batch.batchId || mission.batchId}
                         </Text>
                       )}
                     </View>
                     <View style={{
-                      paddingHorizontal: theme.spacing.sm,
-                      paddingVertical: theme.spacing.xs,
+                      paddingHorizontal: 12,
+                      paddingVertical: 8,
                       borderRadius: theme.borderRadius.sm,
                       backgroundColor: `${getMissionStatusColor(mission.status)}15`,
                     }}>
                       <Text style={{
-                        fontSize: 9,
-                        fontWeight: '300',
+                        fontSize: 13,
+                        fontWeight: '600',
                         color: getMissionStatusColor(mission.status),
-                        letterSpacing: 0.3,
+                        letterSpacing: 0.2,
                       }}>
                         {getMissionStatusLabelLocalized(mission.status, t)}
                       </Text>
@@ -275,26 +282,26 @@ export default function MissionsScreen() {
                     marginTop: theme.spacing.xs,
                   }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
+                      <Calendar size={16} color={theme.colors.text.secondary} strokeWidth={1.5} />
                       <Text style={{
-                        fontSize: 9,
-                        fontWeight: '300',
+                        fontSize: 14,
+                        fontWeight: '500',
                         color: theme.colors.text.secondary,
-                        marginLeft: 4,
-                        letterSpacing: 0.2,
+                        marginLeft: 6,
+                        letterSpacing: 0.1,
                       }}>
                         {new Date(mission.createdAt).toLocaleDateString(dateLocale)}
                       </Text>
                     </View>
                     {mission.updatedAt && (
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Clock size={11} color={theme.colors.text.secondary} strokeWidth={1} />
+                        <Clock size={16} color={theme.colors.text.secondary} strokeWidth={1.5} />
                         <Text style={{
-                          fontSize: 9,
-                          fontWeight: '300',
+                          fontSize: 14,
+                          fontWeight: '500',
                           color: theme.colors.text.secondary,
-                          marginLeft: 4,
-                          letterSpacing: 0.2,
+                          marginLeft: 6,
+                          letterSpacing: 0.1,
                         }}>
                           {new Date(mission.updatedAt).toLocaleDateString(dateLocale)}
                         </Text>

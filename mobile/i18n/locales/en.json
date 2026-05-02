@@ -313,15 +313,16 @@
         "defaultCta": "View steps"
       },
       "syncStrip": {
-        "title": "Waiting to sync",
-        "pendingLine": "{{count}} items waiting to upload (entries, scans, receipts…).",
+        "title": "Outbox",
+        "pendingLine_one": "{{count}} item waiting to upload.",
+        "pendingLine_other": "{{count}} items waiting to upload.",
         "errorLine": "Last error",
         "syncNow": "Send now",
         "openLog": "Open entry log"
       },
       "farmer": {
         "blockTitle": "On the farm — follow this order",
-        "blockHint": "1 Instructions · 2 Parcels · 3 Plantings (per parcel, several crops) · 4 Field log · 5 Materials whitelist · 6–8 Allowed products, forbidden list, certificates.",
+        "blockHint": "1–3: steps, parcels, plantings · 4 Field log · 5 Materials · 6–8: allowed, banned, certificates.",
         "instructionsTitle": "Instructions",
         "instructionsDesc": "Season steps — same ideas as on the website (Uputstva).",
         "parcelsTitle": "My parcels",
@@ -358,7 +359,7 @@
         "alertMissions": "{{count}} transport tasks",
         "alertBatches": "{{count}} batches",
         "alertsOpen": "Open — messages, tasks, batches",
-        "profileMore": "Materials are listed in the numbered block above. Below: batches → transport → missions → badges (web parity). The Instructions tab expands the story. Wallet and more — in Profile.",
+        "profileMore": "More detail: Instructions tab. Wallet: Profile.",
         "alsoPartnerOrders": "Partner orders (inputs)"
       },
         "partnerOrders": {
@@ -558,6 +559,8 @@
       "saveEstate": "Save",
       "myFields": "My fields",
       "parcelsWithCount": "Parcels ({{count}})",
+      "approvedParcelsOfTotal": "{{approved}} / {{total}} approved",
+      "parcelBadge": "Parcels ({{count}})",
       "editEstateTitle": "Edit field",
       "certStatusCertified": "Certified",
       "certStatusActive": "Active",
@@ -1030,10 +1033,12 @@
     },
     "sync": {
       "syncing": "Syncing data…",
-      "savedOnDevice": "Saved on device: {{count}} item",
-      "savedOnDevice_plural": "Saved on device: {{count}} items",
+      "savedOnDevice_one": "On device: {{count}} item",
+      "savedOnDevice_other": "On device: {{count}} items",
       "allSent": "All sent",
-      "itemsNotSent": "Could not send {{count}} item(s)."
+      "itemsNotSent_one": "Could not send {{count}} item.",
+      "itemsNotSent_other": "Could not send {{count}} items.",
+      "itemsNotSentHint": "Often: GPS outside the farm/parcel in the server — fix map or record on the plot; see errors on each pending entry."
     },
     "fieldLogForm": {
       "introLead": "Log everything you do on the parcel (planting, fertilizing, spraying, harvest). Material barcode is optional when you use a tracked product; photo and GPS are required every time. Records feed traceability and the passport.",
@@ -1096,7 +1101,7 @@
       "errNetwork": "Could not reach the server. Check your connection and try again.",
       "statusCertified": "Certified",
       "statusActive": "Active",
-      "statusPendingSetup": "Pending setup"
+      "statusPendingSetup": "Not activated yet"
     }
   },
   "buyer": {

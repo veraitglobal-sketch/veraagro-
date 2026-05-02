@@ -28,19 +28,20 @@ export default function SyncQueueStrip({
   return (
     <View
       style={{
-        borderRadius: theme.borderRadius.lg,
+        borderRadius: theme.borderRadius.md,
         borderWidth: 1,
         borderColor: pendingCount > 0 ? '#b45309' : theme.colors.border,
         backgroundColor: pendingCount > 0 ? 'rgba(180, 83, 9, 0.08)' : theme.colors.surfaceElevated,
-        padding: theme.spacing.md,
-        marginBottom: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        paddingHorizontal: theme.spacing.md,
+        marginBottom: theme.spacing.sm,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-        <CloudUpload size={22} color={pendingCount > 0 ? '#b45309' : theme.colors.text.secondary} strokeWidth={1.75} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+        <CloudUpload size={18} color={pendingCount > 0 ? '#b45309' : theme.colors.text.secondary} strokeWidth={1.75} />
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: '600',
             color: theme.colors.text.primary,
             marginLeft: theme.spacing.sm,
@@ -53,23 +54,35 @@ export default function SyncQueueStrip({
       </View>
 
       {pendingCount > 0 ? (
-        <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>
+        <Text style={{ fontSize: 13, color: theme.colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
           {t('producer.dashboard.syncStrip.pendingLine', { count: pendingCount })}
         </Text>
       ) : null}
 
       {lastError ? (
-        <Text
-          style={{
-            fontSize: 14,
-            color: '#b91c1c',
-            lineHeight: 20,
-            marginBottom: theme.spacing.sm,
-          }}
-          numberOfLines={3}
-        >
-          {t('producer.dashboard.syncStrip.errorLine')}: {lastError}
-        </Text>
+        <>
+          <Text
+            style={{
+              fontSize: 13,
+              color: '#b91c1c',
+              lineHeight: 18,
+              marginBottom: 6,
+            }}
+            numberOfLines={4}
+          >
+            {t('producer.dashboard.syncStrip.errorLine')}: {lastError}
+          </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              color: theme.colors.text.secondary,
+              lineHeight: 17,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            {t('producer.sync.itemsNotSentHint')}
+          </Text>
+        </>
       ) : null}
 
       <TouchableOpacity
@@ -79,16 +92,16 @@ export default function SyncQueueStrip({
         style={{
           backgroundColor: theme.colors.primary,
           borderRadius: theme.borderRadius.md,
-          paddingVertical: 15,
-          paddingHorizontal: 16,
-          minHeight: 48,
+          paddingVertical: 12,
+          paddingHorizontal: 14,
+          minHeight: 44,
           opacity: syncing ? 0.65 : 1,
-          marginBottom: theme.spacing.sm,
+          marginBottom: theme.spacing.xs,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>
           {t('producer.dashboard.syncStrip.syncNow')}
         </Text>
       </TouchableOpacity>
@@ -100,14 +113,14 @@ export default function SyncQueueStrip({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingVertical: 10,
-          minHeight: 44,
+          paddingVertical: 8,
+          minHeight: 40,
         }}
       >
-        <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.primary }}>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.primary }}>
           {t('producer.dashboard.syncStrip.openLog')}
         </Text>
-        <ChevronRight size={20} color={theme.colors.primary} strokeWidth={2} />
+        <ChevronRight size={18} color={theme.colors.primary} strokeWidth={2} />
       </TouchableOpacity>
     </View>
   );

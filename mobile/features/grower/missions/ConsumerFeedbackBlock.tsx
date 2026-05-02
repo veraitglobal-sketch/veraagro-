@@ -26,7 +26,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
         <MessageSquare size={18} color={colors.text.primary} strokeWidth={1} />
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: '300',
             color: colors.text.primary,
             marginLeft: theme.spacing.xs,
@@ -39,7 +39,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
       {feedback.rating != null && (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
             marginBottom: theme.spacing.xs,
@@ -51,7 +51,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
       {feedback.comment && (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.primary,
           }}

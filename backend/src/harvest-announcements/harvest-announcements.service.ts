@@ -1,4 +1,5 @@
 import { Injectable, ForbiddenException, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TreatmentLogsService } from '../treatment-logs/treatment-logs.service';
@@ -41,6 +42,16 @@ export interface AdminUpdateHarvestAnnouncementDto {
 export class HarvestAnnouncementsService {
   private readonly logger = new Logger(HarvestAnnouncementsService.name);
 
+  /** Exposed on API responses — never include passwordHash or other secrets. */
+  private static readonly growerUserSelect = {
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+    phone: true,
+    roles: true,
+  } as const;
+
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
@@ -75,6 +86,37 @@ export class HarvestAnnouncementsService {
       );
     }
 
+    if (dto.announcementType !== 'HARVEST' && dto.announcementType !== 'PLANTING') {
+      throw new BadRequestException('Invalid announcement type.');
+    }
+    if (!dto.cropType?.trim()) {
+      throw new BadRequestException('Crop / product type is required.');
+    }
+
+    const normalizedEstimatedQty =
+      dto.estimatedQuantity === null || dto.estimatedQuantity === undefined
+        ? undefined
+        : Number(dto.estimatedQuantity);
+    if (
+      normalizedEstimatedQty !== undefined &&
+      !Number.isFinite(normalizedEstimatedQty)
+    ) {
+      throw new BadRequestException('Invalid estimated quantity.');
+    }
+    const normalizedLoadQty =
+      dto.loadQuantityKg === null || dto.loadQuantityKg === undefined
+        ? undefined
+        : Number(dto.loadQuantityKg);
+    if (normalizedLoadQty !== undefined && !Number.isFinite(normalizedLoadQty)) {
+      throw new BadRequestException('Invalid load quantity (kg).');
+    }
+    if (
+      dto.announcementType === 'HARVEST' &&
+      (normalizedEstimatedQty === undefined || normalizedEstimatedQty <= 0)
+    ) {
+      throw new BadRequestException('Estimated harvest quantity (kg) is required.');
+    }
+
     if (dto.announcementType === 'HARVEST') {
       const activeHarvest = await this.prisma.harvest_announcements.findFirst({
         where: {
@@ -91,16 +133,34 @@ export class HarvestAnnouncementsService {
       }
     }
 
-    // 2. PHI Check: Block harvest if Pre-Harvest Interval not elapsed
-    const { date: earliestHarvest, reason } = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
     const harvestDate = new Date(dto.estimatedDate);
     if (Number.isNaN(harvestDate.getTime())) {
-      throw new BadRequestException('Invalid planned harvest date.');
-    }
-    if (earliestHarvest && harvestDate < earliestHarvest) {
       throw new BadRequestException(
-        `Harvest blocked: ${reason || 'Pre-harvest interval'}. Earliest harvest date: ${earliestHarvest.toISOString().split('T')[0]}`,
+        dto.announcementType === 'HARVEST'
+          ? 'Invalid planned harvest date.'
+          : 'Invalid planned date.',
       );
+    }
+
+    // PHI applies to planned harvest only — planting / "expected date" is not a harvest date
+    if (dto.announcementType === 'HARVEST') {
+      let earliestHarvest: Date | null = null;
+      let reason: string | undefined;
+      try {
+        const phi = await this.treatmentLogsService.getEarliestHarvestDate(dto.parcelId);
+        earliestHarvest = phi.date;
+        reason = phi.reason;
+      } catch (e) {
+        this.logger.error(`getEarliestHarvestDate failed for parcel ${dto.parcelId}`, e);
+        throw new BadRequestException(
+          'Could not verify chemical withdrawal period (PHI). Try again or contact support.',
+        );
+      }
+      if (earliestHarvest && harvestDate < earliestHarvest) {
+        throw new BadRequestException(
+          `Harvest blocked: ${reason || 'Pre-harvest interval'}. Earliest harvest date: ${earliestHarvest.toISOString().split('T')[0]}`,
+        );
+      }
     }
 
     const toValidDate = (iso: string | undefined, label: string): Date | undefined => {
@@ -113,30 +173,62 @@ export class HarvestAnnouncementsService {
     };
 
     // 3. Create announcement
-    const announcement = await this.prisma.harvest_announcements.create({
-      data: {
-        id: crypto.randomUUID(),
-        parcelId: dto.parcelId,
-        userId,
-        announcementType: dto.announcementType,
-        cropType: dto.cropType,
-        estimatedDate: harvestDate,
-        estimatedQuantity: dto.estimatedQuantity,
-        plannedLoadingStart: toValidDate(dto.plannedLoadingStart, 'planned loading start'),
-        plannedLoadingEnd: toValidDate(dto.plannedLoadingEnd, 'planned loading end'),
-        loadQuantityKg: dto.loadQuantityKg ?? undefined,
-        marketChannel: dto.marketChannel ?? undefined,
-        qualityGrade: dto.qualityGrade ?? undefined,
-        sortingSpec: dto.sortingSpec ?? undefined,
-        notes: dto.notes,
-        status: 'PENDING',
-        updatedAt: new Date(),
-      },
-      include: {
-        parcel: { include: { estates: true } },
-        user: true,
-      },
-    });
+    let announcement;
+    try {
+      announcement = await this.prisma.harvest_announcements.create({
+        data: {
+          id: crypto.randomUUID(),
+          parcelId: dto.parcelId,
+          userId,
+          announcementType: dto.announcementType,
+          cropType: dto.cropType.trim(),
+          estimatedDate: harvestDate,
+          estimatedQuantity: normalizedEstimatedQty,
+          plannedLoadingStart: toValidDate(dto.plannedLoadingStart, 'planned loading start'),
+          plannedLoadingEnd: toValidDate(dto.plannedLoadingEnd, 'planned loading end'),
+          loadQuantityKg: normalizedLoadQty ?? undefined,
+          marketChannel: dto.marketChannel?.trim() || undefined,
+          qualityGrade: dto.qualityGrade?.trim() || undefined,
+          sortingSpec: dto.sortingSpec?.trim() || undefined,
+          notes: dto.notes?.trim() || undefined,
+          status: 'PENDING',
+          updatedAt: new Date(),
+        },
+        include: {
+          parcel: {
+            select: {
+              id: true,
+              cropType: true,
+              estateId: true,
+              approvedAt: true,
+              estates: {
+                select: {
+                  id: true,
+                  name: true,
+                  status: true,
+                  ownerId: true,
+                },
+              },
+            },
+          },
+          user: { select: HarvestAnnouncementsService.growerUserSelect },
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2003') {
+          throw new BadRequestException(
+            'Could not save this plan: parcel or account link is invalid. Refresh the app and try again.',
+          );
+        }
+        this.logger.error(`harvest_announcements.create Prisma ${e.code}: ${e.message}`);
+      }
+      if (e instanceof Prisma.PrismaClientValidationError) {
+        this.logger.error(`harvest_announcements.create validation: ${e.message}`);
+        throw new BadRequestException('Invalid plan data. Check the form and try again.');
+      }
+      throw e;
+    }
 
     // 4. Notify admins (async, non-blocking)
     this.notifyAdmins(announcement).catch((err) => {
@@ -155,19 +247,11 @@ export class HarvestAnnouncementsService {
       }
     }
 
-    try {
-      return await this.prisma.harvest_announcements.findUnique({
-        where: { id: announcement.id },
-        include: {
-          parcel: { include: { estates: true } },
-          user: true,
-          mission: true,
-        },
-      });
-    } catch (e) {
-      this.logger.error(`findUnique after harvest create failed: ${(e as Error).message}`);
-      return announcement;
-    }
+    // Return the created row (PLANTING has no mission; second findUnique + mission include caused 500s on some DB/client combos)
+    return {
+      ...announcement,
+      mission: null,
+    };
   }
 
   /**
@@ -239,7 +323,7 @@ export class HarvestAnnouncementsService {
       where: { id: announcementId },
       data: {
         status,
-        confirmedAt: status === 'CONFIRMED' ? new Date() : announcement.confirmedAt,
+        confirmedAt: status === 'CONFIRMED' ? new Date() : null,
         updatedAt: new Date(),
       },
     });
@@ -267,7 +351,7 @@ export class HarvestAnnouncementsService {
         ...(dto.status != null
           ? {
               status: dto.status,
-              ...(dto.status === 'CONFIRMED' ? { confirmedAt: new Date() } : {}),
+              confirmedAt: dto.status === 'CONFIRMED' ? new Date() : null,
             }
           : {}),
         ...(dto.adminNotes !== undefined ? { adminNotes: dto.adminNotes } : {}),
@@ -313,13 +397,17 @@ export class HarvestAnnouncementsService {
       : '';
 
     for (const admin of admins) {
-      await this.notificationsService.create({
-        userId: admin.id,
-        type: 'ACTION_REQUIRED',
-        title: `New ${typeLabel.toLowerCase()}: ${estateName}`,
-        message: `${farmerName}: ${announcement.cropType} — ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (~${announcement.estimatedQuantity} kg)` : ''}${ch}. Review in Harvest plans.`,
-        actionUrl: `/admin/harvest-announcements?id=${announcement.id}`,
-      });
+      try {
+        await this.notificationsService.create({
+          userId: admin.id,
+          type: 'ACTION_REQUIRED',
+          title: `New ${typeLabel.toLowerCase()}: ${estateName}`,
+          message: `${farmerName}: ${announcement.cropType} — ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (~${announcement.estimatedQuantity} kg)` : ''}${ch}. Review in Harvest plans.`,
+          actionUrl: `/admin/harvest-plans?id=${announcement.id}`,
+        });
+      } catch (e) {
+        this.logger.warn(`notifyAdmins: failed for user ${admin.id}`, e);
+      }
     }
   }
 }

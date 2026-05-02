@@ -27,7 +27,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
         <Truck size={18} color={colors.text.primary} strokeWidth={1} />
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: '300',
             color: colors.text.primary,
             marginLeft: theme.spacing.xs,
@@ -40,7 +40,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
           }}
@@ -57,7 +57,7 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
         >
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 15,
               fontWeight: '300',
               color: getStatusColor(mission.status),
               letterSpacing: 0.3,

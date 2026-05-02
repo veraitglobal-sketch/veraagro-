@@ -27,7 +27,7 @@ export default function DashboardHeader({ farmName, partnerCode, connected }: Da
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.text.primary, letterSpacing: -0.2 }}>
+          <Text style={{ fontSize: 20, fontWeight: '600', color: theme.colors.text.primary, letterSpacing: -0.2 }}>
             {farmName}
           </Text>
           {partnerCode && (

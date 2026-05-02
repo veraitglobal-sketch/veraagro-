@@ -45,25 +45,24 @@ export type FarmerHomeHandlers = {
 
 const row = {
   backgroundColor: theme.colors.surfaceElevated,
-  borderRadius: theme.borderRadius.lg,
-  paddingVertical: theme.spacing.md,
+  borderRadius: theme.borderRadius.md,
+  paddingVertical: 12,
   paddingHorizontal: theme.spacing.md,
   borderWidth: 1,
   borderColor: theme.colors.border,
   flexDirection: 'row' as const,
   alignItems: 'center' as const,
-  /** Farmer-friendly tap target (see .cursorrules ~60px+) */
-  minHeight: 80,
+  minHeight: 64,
 };
 
 const iconBox = (bg: string, border?: string) => ({
-  width: 52,
-  height: 52,
+  width: 44,
+  height: 44,
   borderRadius: theme.borderRadius.md,
   backgroundColor: bg,
   alignItems: 'center' as const,
   justifyContent: 'center' as const,
-  marginRight: theme.spacing.md,
+  marginRight: theme.spacing.sm,
   borderWidth: border ? 1 : 0,
   borderColor: border || 'transparent',
 });
@@ -88,7 +87,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'instructions',
       onPress: handlers.onPlantingSteps,
-      icon: <ListOrdered size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      icon: <ListOrdered size={22} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.instructionsTitle',
       descKey: 'producer.dashboard.farmer.instructionsDesc',
       accent: theme.colors.primaryLight,
@@ -96,7 +95,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'parcels',
       onPress: handlers.onParcels,
-      icon: <MapPin size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      icon: <MapPin size={22} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.parcelsTitle',
       descKey: 'producer.dashboard.farmer.parcelsDesc',
       accent: theme.colors.primaryLight,
@@ -104,7 +103,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'plantings',
       onPress: handlers.onPlantings,
-      icon: <Leaf size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      icon: <Leaf size={22} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.plantingsTitle',
       descKey: 'producer.dashboard.farmer.plantingsDesc',
       accent: theme.colors.primaryLight,
@@ -112,7 +111,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'diary',
       onPress: handlers.onFieldDiary,
-      icon: <ClipboardList size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      icon: <ClipboardList size={22} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.diaryTitle',
       descKey: 'producer.dashboard.farmer.diaryDesc',
       accent: theme.colors.primaryLight,
@@ -120,7 +119,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'materials',
       onPress: handlers.onMaterials,
-      icon: <Box size={24} color={theme.colors.primary} strokeWidth={1.75} />,
+      icon: <Box size={22} color={theme.colors.primary} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.materialsTitle',
       descKey: 'producer.dashboard.farmer.materialsDesc',
       accent: theme.colors.primaryLight,
@@ -128,7 +127,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'allowed',
       onPress: handlers.onAllowedMaterials,
-      icon: <CheckCircle2 size={24} color={theme.colors.success} strokeWidth={1.75} />,
+      icon: <CheckCircle2 size={22} color={theme.colors.success} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.allowedTitle',
       descKey: 'producer.dashboard.farmer.allowedDesc',
       accent: theme.colors.successLight,
@@ -136,7 +135,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'banned',
       onPress: handlers.onBanned,
-      icon: <ShieldAlert size={24} color={theme.colors.error} strokeWidth={1.75} />,
+      icon: <ShieldAlert size={22} color={theme.colors.error} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.bannedTitle',
       descKey: 'producer.dashboard.farmer.bannedDesc',
       accent: theme.colors.errorLight,
@@ -144,7 +143,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
     {
       key: 'certs',
       onPress: handlers.onCertificates,
-      icon: <Award size={24} color={theme.colors.info} strokeWidth={1.75} />,
+      icon: <Award size={22} color={theme.colors.info} strokeWidth={1.75} />,
       titleKey: 'producer.dashboard.farmer.certsTitle',
       descKey: 'producer.dashboard.farmer.certsDesc',
       accent: theme.colors.infoLight,
@@ -162,24 +161,24 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
 
   return (
     <>
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: theme.spacing.md }}>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: '600',
             color: theme.colors.text.primary,
-            marginBottom: 4,
+            marginBottom: 2,
           }}
         >
           {t('producer.dashboard.farmer.blockTitle')}
         </Text>
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: '400',
             color: theme.colors.text.secondary,
-            lineHeight: 22,
-            marginBottom: theme.spacing.md,
+            lineHeight: 18,
+            marginBottom: theme.spacing.sm,
           }}
         >
           {t('producer.dashboard.farmer.blockHint')}
@@ -189,10 +188,10 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
             <TouchableOpacity key={item.key} onPress={item.onPress} activeOpacity={0.7} style={row}>
               <View style={iconBox(item.accent)}>{item.icon}</View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 2 }}>
                   {t(item.titleKey)}
                 </Text>
-                <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.secondary, lineHeight: 22 }}>
+                <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, lineHeight: 18 }}>
                   {t(item.descKey)}
                 </Text>
               </View>
@@ -201,24 +200,24 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
         </View>
       </View>
 
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: theme.spacing.md }}>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: '600',
             color: theme.colors.text.primary,
-            marginBottom: 4,
+            marginBottom: 2,
           }}
         >
           {t('producer.dashboard.farmer.logisticsBlockTitle')}
         </Text>
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: '400',
             color: theme.colors.text.secondary,
-            lineHeight: 22,
-            marginBottom: theme.spacing.md,
+            lineHeight: 18,
+            marginBottom: theme.spacing.sm,
           }}
         >
           {t('producer.dashboard.farmer.logisticsBlockHint')}
@@ -259,13 +258,13 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               style={{
                 backgroundColor: theme.colors.primaryLight,
                 borderRadius: theme.borderRadius.md,
-                paddingVertical: 16,
-                paddingHorizontal: 14,
+                paddingVertical: 12,
+                paddingHorizontal: 12,
                 borderWidth: 1,
                 borderColor: theme.colors.border,
                 flexDirection: 'row',
                 alignItems: 'center',
-                minHeight: 58,
+                minHeight: 52,
                 minWidth: '47%',
                 flexGrow: 1,
               }}
@@ -274,7 +273,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               <Text
                 style={{
                   marginLeft: 8,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: '600',
                   color: theme.colors.text.primary,
                   flex: 1,
@@ -288,10 +287,10 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
         </View>
       </View>
 
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: theme.spacing.md }}>
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: '600',
             color: theme.colors.text.secondary,
             marginBottom: theme.spacing.sm,
@@ -310,13 +309,13 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               style={{
                 backgroundColor: theme.colors.surface,
                 borderRadius: theme.borderRadius.md,
-                paddingVertical: 16,
-                paddingHorizontal: 14,
+                paddingVertical: 12,
+                paddingHorizontal: 12,
                 borderWidth: 1,
                 borderColor: theme.colors.border,
                 flexDirection: 'row',
                 alignItems: 'center',
-                minHeight: 58,
+                minHeight: 52,
                 minWidth: '47%',
                 flexGrow: 1,
               }}
@@ -325,7 +324,7 @@ export default function FarmerHomeSection({ handlers }: { handlers: FarmerHomeHa
               <Text
                 style={{
                   marginLeft: 8,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: '500',
                   color: theme.colors.text.primary,
                   flex: 1,

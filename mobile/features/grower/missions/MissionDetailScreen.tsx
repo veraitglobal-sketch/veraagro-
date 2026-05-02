@@ -44,7 +44,7 @@ export default function MissionDetailScreen({ missionId }: MissionDetailScreenPr
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.missions.loading')}</Text>
+        <Text style={{ color: colors.text.secondary, fontSize: 17, fontWeight: '500' }}>{t('producer.missions.loading')}</Text>
       </View>
     );
   }
@@ -59,7 +59,7 @@ export default function MissionDetailScreen({ missionId }: MissionDetailScreenPr
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
+        <Text style={{ color: colors.text.secondary, fontSize: 17, fontWeight: '500', textAlign: 'center', paddingHorizontal: 24 }}>
           {t('producer.missions.notFound')}
         </Text>
       </View>

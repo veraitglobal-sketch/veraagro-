@@ -28,7 +28,7 @@ export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
         <Package size={18} color={colors.text.primary} strokeWidth={1} />
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: '300',
             color: colors.text.primary,
             marginLeft: theme.spacing.xs,
@@ -40,7 +40,7 @@ export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
       </View>
       <Text
         style={{
-          fontSize: 13,
+          fontSize: 16,
           fontWeight: '300',
           color: colors.text.secondary,
         }}
@@ -50,7 +50,7 @@ export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
       {batch.productName && (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
             marginTop: theme.spacing.xs,

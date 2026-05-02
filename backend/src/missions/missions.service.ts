@@ -699,19 +699,26 @@ export class MissionsService {
       },
     });
 
-    await this.auditTrailService.createAuditTrail({
-      eventType: 'STATUS_CHANGE',
-      entityType: 'Mission',
-      entityId: mission.id,
-      performedByUserId: growerId,
-      newValue: {
-        status: mission.status,
-        missionNumber: mission.missionNumber,
-        fromHarvestPlan: true,
-        harvestAnnouncementId: ann.id,
-      },
-      location: pickup,
-    });
+    try {
+      await this.auditTrailService.createAuditTrail({
+        eventType: 'STATUS_CHANGE',
+        entityType: 'Mission',
+        entityId: mission.id,
+        performedByUserId: growerId,
+        newValue: {
+          status: mission.status,
+          missionNumber: mission.missionNumber,
+          fromHarvestPlan: true,
+          harvestAnnouncementId: ann.id,
+        },
+        location: pickup,
+      });
+    } catch (auditErr) {
+      this.logger.warn(
+        `createMissionFromHarvestAnnouncement: audit trail failed for mission ${mission.id}`,
+        auditErr instanceof Error ? auditErr.stack : auditErr,
+      );
+    }
 
     try {
       await this.notificationsGateway.notifyMissionUpdate(growerId, mission);
