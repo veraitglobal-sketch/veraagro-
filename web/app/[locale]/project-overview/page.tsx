@@ -103,6 +103,9 @@ export default function ProjectOverviewPage() {
     return fromEnv && fromEnv.length > 0 ? fromEnv : DEFAULT_FOUNDER_BANNER;
   }, []);
 
+  /** Paths under `/public` are authored assets; `unoptimized` skips Next’s second encode (JPEG/WebP), closer to brochure sites using `<img>`. */
+  const founderBannerUnoptimized = founderImageSrc.startsWith("/");
+
   const copyPublicUrl = useCallback(() => {
     if (typeof window === "undefined") return;
     void navigator.clipboard.writeText(window.location.href).then(() => {
@@ -401,6 +404,7 @@ export default function ProjectOverviewPage() {
                         className="object-cover object-[56%_40%]"
                         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 92vw, 1100px"
                         quality={92}
+                        unoptimized={founderBannerUnoptimized}
                         priority={false}
                       />
                     </div>
