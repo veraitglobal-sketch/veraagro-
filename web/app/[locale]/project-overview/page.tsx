@@ -8,9 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
 
-const ACCENT = "#2D5A27";
+const DEFAULT_FOUNDER_BANNER = "/project-overview-founder.jpg";
 const FOUNDER_ANCHOR = "po-founder";
-const DEFAULT_FOUNDER_BANNER = "/project-overview-founder.png";
 const STICKY_SIDEBAR_TOP = "top-[8.85rem]";
 
 function sectionSlug(title: string, index: number): string {
@@ -155,24 +154,54 @@ export default function ProjectOverviewPage() {
             display: none !important;
           }
           .project-overview-doc {
-            font-size: 10pt;
-            line-height: 1.43;
-            color: #111827;
+            font-family: Georgia, "Times New Roman", Times, serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #1a1a1a;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+          }
+          .project-overview-doc h1,
+          .project-overview-doc .po-heading,
+          .project-overview-doc .po-print-sans {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
           }
           .project-overview-doc h1 {
-            font-size: 15pt;
+            font-size: 16pt;
+            font-weight: 600;
+            letter-spacing: -0.01em;
           }
           .project-overview-doc .po-heading {
-            font-size: 10.5pt;
+            font-size: 11pt;
+            font-weight: 600;
+            break-after: avoid;
+            page-break-after: avoid;
+          }
+          .project-overview-doc .po-body-text p {
+            orphans: 3;
+            widows: 3;
+          }
+          .project-overview-doc .po-cover-print {
+            padding-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1pt solid #9ca3af;
           }
           .project-overview-doc .po-doc-panel {
             border: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
           }
+          .project-overview-doc .po-print-reference {
+            margin-top: 1.25rem;
+            padding-top: 0.75rem;
+            border-top: 0.5pt solid #d1d5db;
+            font-size: 9.5pt;
+            line-height: 1.45;
+            color: #374151;
+          }
           @page {
             size: A4;
-            margin: 12mm;
+            margin: 16mm 18mm;
           }
         }
       `}</style>
@@ -282,17 +311,16 @@ export default function ProjectOverviewPage() {
 
           <div className="lg:col-span-8 xl:col-span-9">
             <div className="po-doc-panel overflow-hidden rounded-none border border-gray-200/90 bg-white shadow-[0_20px_50px_-38px_rgba(0,0,0,0.35)] sm:rounded-2xl print:shadow-none">
-              <header className="border-b-[10px] border-b-[#2D5A27] bg-gradient-to-b from-[#fafcfa] to-white px-6 py-10 sm:px-10 sm:py-12 print:border-b-2 print:border-b-gray-300 print:bg-white">
-                <div className="mx-auto max-w-[720px]">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2D5A27]/90 sm:text-xs">
+              <header className="po-cover-print border-b-[10px] border-b-[#2D5A27] bg-gradient-to-b from-[#fafcfa] to-white px-6 py-10 sm:px-10 sm:py-12 print:border-b-0 print:bg-white print:px-0 print:py-0">
+                <div className="mx-auto max-w-[720px] print:max-w-none">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2D5A27]/90 sm:text-xs print:text-[9pt] print:tracking-[0.12em] print:text-gray-600">
                     {t("projectOverview.coverEyebrow")}
                   </p>
-                  <h1 className="po-heading mt-3 text-[1.85rem] font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-[2.2rem] lg:text-[clamp(2rem,2.8vw,2.55rem)] print:text-[15pt]">
+                  <h1 className="po-heading po-print-sans mt-3 text-[1.85rem] font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-[2.2rem] lg:text-[clamp(2rem,2.8vw,2.55rem)] print:mt-2 print:text-gray-900">
                     {t("projectOverview.coverTitle")}
                   </h1>
                   <p
-                    className="mt-5 max-w-2xl border-l-4 py-1 pl-5 text-[0.9625rem] leading-[1.62] text-gray-600 sm:text-[1.05rem]"
-                    style={{ borderColor: ACCENT }}
+                    className="po-print-sans mt-5 max-w-2xl border-l-4 border-[#2D5A27] py-1 pl-5 text-[0.9625rem] leading-[1.62] text-gray-600 sm:text-[1.05rem] print:mt-4 print:max-w-none print:border-gray-400 print:pl-4 print:text-gray-700"
                   >
                     {t("projectOverview.coverSubtitle")}
                   </p>
@@ -337,13 +365,13 @@ export default function ProjectOverviewPage() {
                         id={`${id}-heading`}
                         className="po-heading mb-3 flex flex-wrap items-baseline gap-x-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-[1.125rem]"
                       >
-                        <span className="text-[12px] font-bold tabular-nums text-[#2D5A27]">
+                        <span className="text-[12px] font-bold tabular-nums text-[#2D5A27] print:text-gray-600">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <span>{s.title}</span>
                       </h2>
                       <div
-                        className="max-w-[58rem] text-[15px] leading-[1.65] text-gray-600 print:text-[10pt]"
+                        className="po-body-text max-w-[58rem] text-[15px] leading-[1.65] text-gray-600 print:text-[inherit] print:leading-[inherit]"
                         aria-labelledby={`${id}-heading`}
                       >
                         {s.body
@@ -364,37 +392,37 @@ export default function ProjectOverviewPage() {
                   id={FOUNDER_ANCHOR}
                   className="po-founder po-section-inner scroll-mt-28 pb-10 pt-0 print:scroll-mt-0 print:pb-6"
                 >
-                  <figure className="po-founder-photo-wrap relative aspect-[21/9] w-full bg-gray-100 sm:aspect-[18/7] lg:aspect-[21/9] print:aspect-[18/7]">
-                    <Image
-                      src={founderImageSrc}
-                      alt={t("projectOverview.founderPhotoAlt")}
-                      fill
-                      className="object-cover object-[56%_40%]"
-                      sizes="(max-width: 1280px) 100vw, 900px"
-                      priority={false}
-                    />
-                    <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent px-5 pb-3 pt-12 text-left text-sm font-medium text-white sm:px-8 print:hidden">
+                  <figure className="po-founder-photo-wrap overflow-hidden border-b border-gray-200 bg-gray-100 print:border print:border-gray-400 print:bg-white">
+                    <div className="relative aspect-[21/9] w-full sm:aspect-[18/7] lg:aspect-[21/9] print:aspect-[18/7]">
+                      <Image
+                        src={founderImageSrc}
+                        alt={t("projectOverview.founderPhotoAlt")}
+                        fill
+                        className="object-cover object-[56%_40%]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 92vw, 1100px"
+                        quality={92}
+                        priority={false}
+                      />
+                    </div>
+                    <figcaption className="po-print-sans border-t border-gray-100 bg-gray-50/80 px-5 py-2.5 text-left text-sm font-medium text-gray-800 sm:px-9 print:border-gray-400 print:bg-white print:text-[10pt] print:text-gray-900">
                       {t("projectOverview.founderPhotoCaption")}
                     </figcaption>
                   </figure>
-                  <p className="hidden border-b border-gray-100 px-5 py-2 text-sm font-medium text-gray-700 sm:px-9 print:block">
-                    {t("projectOverview.founderPhotoCaption")}
-                  </p>
-                  <div className="px-5 pt-6 sm:px-9 sm:pt-8">
+                  <div className="px-5 pt-6 sm:px-9 sm:pt-8 print:px-0 print:pt-5">
                     <h2
                       id="po-founder-heading"
-                      className="po-heading mb-4 flex flex-wrap items-baseline gap-x-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-[1.125rem] print:text-[10.5pt]"
+                      className="po-heading mb-4 flex flex-wrap items-baseline gap-x-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-[1.125rem]"
                     >
-                      <span className="text-[12px] font-bold tabular-nums text-[#2D5A27]">
+                      <span className="text-[12px] font-bold tabular-nums text-[#2D5A27] print:text-gray-600">
                         {String(sections.length + 1).padStart(2, "0")}
                       </span>
                       <span>{founderTitle}</span>
                     </h2>
 
-                    <p className="po-no-print mb-6 text-xs leading-relaxed text-gray-500 print:hidden">{t("projectOverview.founderPhotoHint")}</p>
+                    <p className="po-no-print mb-6 text-xs leading-relaxed text-gray-500">{t("projectOverview.founderPhotoHint")}</p>
 
                     <div
-                      className="max-w-[58rem] space-y-3 border-t border-gray-100 pt-6 text-[15px] leading-[1.65] text-gray-600 print:space-y-2.5 print:border-gray-200 print:pt-4 print:text-[10pt]"
+                      className="po-body-text max-w-[58rem] space-y-3 border-t border-gray-100 pt-6 text-[15px] leading-[1.65] text-gray-600 print:space-y-2.5 print:border-gray-200 print:pt-4 print:text-[inherit] print:leading-[inherit]"
                       aria-labelledby="po-founder-heading"
                     >
                       {founderParagraphs.map((paragraph, pi) => (
@@ -421,9 +449,9 @@ export default function ProjectOverviewPage() {
               </Link>
             </section>
 
-            <div className="mt-6 hidden border-t border-gray-200 pt-5 text-xs leading-relaxed text-gray-600 print:block sm:text-[11px]">
-              <p className="font-semibold text-gray-800">{t("projectOverview.seeAlsoEyebrow")}</p>
-              <p className="mt-2">{t("projectOverview.seeAlsoBody")}</p>
+            <div className="po-print-reference po-print-sans mt-6 hidden print:block">
+              <p className="font-semibold text-gray-800">{t("projectOverview.seeAlsoPrintEyebrow")}</p>
+              <p className="mt-1.5">{t("projectOverview.seeAlsoPrintBody")}</p>
             </div>
           </div>
         </div>

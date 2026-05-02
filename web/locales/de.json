@@ -3337,8 +3337,8 @@
     "contentsTitle": "Inhalt",
     "contentsNav": "Zu Abschnitt springen",
     "skipToContent": "Zum Dokument springen",
-    "introNote": "Neun erzählerische Blöcke plus Founder — ausgelegt auf etwa fünf PDF-Seiten. Nutzen Sie die Inhaltsübersicht unten oder Druckdialog → Als PDF speichern.",
-    "pdfLimitHint": "Text bewusst kompakt (oft Fünf-Seiten-Grenzen). Standard-Banner: `/project-overview-founder.png`. Optional überschreiben mit NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "introNote": "Knappe Projektzusammenfassung für Gutachter und Fördermittelgeber. Navigation über das Inhaltsverzeichnis; PDF-Anhänge über die Druckfunktion des Browsers.",
+    "pdfLimitHint": "Umfang und Layout sind für formale Einreichungen bewusst begrenzt. Bannergrafiken können in der Bereitstellung angepasst werden.",
     "coverEyebrow": "Projektüberblick",
     "coverTitle": "Bio Vera — Projektüberblick",
     "coverSubtitle": "Vertikal integriertes Agrar-Food-Netzwerk nach Bio‑Ready‑Regeln: ein durchgängiger Nachweisweg von Feldpolygonen bis zum Handels-QR‑Pass unter einheitlicher Software.",
@@ -3384,7 +3384,7 @@
     "founderPhotoPlaceholder": "Gründer-Banner",
     "founderPhotoAlt": "Jovica Mihajlović, Gründer von Bio Vera, im Vera-Büro",
     "founderPhotoCaption": "Jovica Mihajlović · Gründer · Bio Vera",
-    "founderPhotoHint": "Breites Banner (~4–5∶1): Standard `project-overview-founder.png` unter `web/public/`. Alternativ NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "founderPhotoHint": "Verwenden Sie eine scharfe, drucktaugliche Aufnahme; eine Ursprungsbreite um 2400 px oder größer eignet sich für Hochauflösungs-Displays und exportierte PDFs.",
     "founderParagraphs": [
       "Bio Vera wurde von Jovica Mihajlović gegründet, einem serbischen Staatsangehörigen mit Sitz in Hamburg, Deutschland; dort lebt und arbeitet er seit fünf Jahren.",
       "Er hat einen Bachelor in Kommunikation und Öffentlichkeitsarbeit von der Universität Niš absolviert — Grundlage für sein Verständnis von Kommunikation, Markenpositionierung und nutzerzentriertem Denken.",
@@ -3394,7 +3394,9 @@
     ],
 
     "seeAlsoEyebrow": "Verwandtes",
-    "seeAlsoBody": "Für einen ausführlicheren Investor-Storyline-Deck samt Annex-Tiefgang und optionalem Videoblock öffnen Sie das Investor Deck.",
-    "seeAlsoLink": "Investor Deck öffnen"
+    "seeAlsoBody": "Für die ausführlichere Investorenlinie, technischen Anhang und optional eingebettetes Video öffnen Sie das Investor Deck.",
+    "seeAlsoLink": "Investor Deck öffnen",
+    "seeAlsoPrintEyebrow": "Ergänzende Unterlagen",
+    "seeAlsoPrintBody": "Eine investorenorientierte Darstellung mit erweiterter Erzähllinie und Anhang (sowie Multimedia, soweit zutreffend) ist separat auf der Bio‑Vera-Website als Investor Deck veröffentlicht."
   }
 }

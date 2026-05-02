@@ -3952,8 +3952,8 @@
     "contentsTitle": "Sadržaj",
     "contentsNav": "Skok na poglavlje",
     "skipToContent": "Preskoči na dokument",
-    "introNote": "Devet narativnih poglavlja plus osnivač — prilagođeno PDF‑u (~5 str). Koristite sadržaj ispod za skok na sekciju ili Štampa → Sačuvaj kao PDF.",
-    "pdfLimitHint": "Namerno zbijen tekst radi limita od ~5 strana. Podrazumevana baner slika: `/project-overview-founder.png`. Zamena opcionim NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "introNote": "Stručni rezime projekta za revidere i davaoce sredstava. Za navigaciju koristite sadržaj; PDF prilog pripremite preko funkcije štampanja u pregledaču.",
+    "pdfLimitHint": "Dužina i raspored su namerni radi zvaničnih prijava. Baner se u produkciji može zameniti drugim odobrenim vizuelom.",
     "coverEyebrow": "Pregled projekta",
     "coverTitle": "Bio Vera — pregled projekta",
     "coverSubtitle": "Vertikalno povezana agrifood mreža pod Bio-Ready pravilima: jedan trag dokaza od parcela i odobrenih ulaza preko pakovanja i hladnog lanca do maloprodajnog pasoša.",
@@ -3999,7 +3999,7 @@
     "founderPhotoPlaceholder": "Baner osnivača",
     "founderPhotoAlt": "Jovica Mihajlović, osnivač Bio Vere, u kancelariji Vere",
     "founderPhotoCaption": "Jovica Mihajlović · Osnivač · Bio Vera",
-    "founderPhotoHint": "Široki baner (oko 4–5∶1): podrazumevano `project-overview-founder.png` u `web/public/`. Drugu putanju podešavanjem NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "founderPhotoHint": "Koristite oštro, pogodnu za štampu fotografiju; original širine od oko 2400 px ili više daje dobar rezultat na Retini i u izvezenom PDF-u.",
     "founderParagraphs": [
       "Bio Vera je osnovao Jovica Mihajlović, državljanin Republike Srbije sa sedištem u Hamburgu, Nemačka, gde živi i radi poslednjih pet godina.",
       "Diplomirao je na Univerzitetu u Nišu, smer Komunikacije i odnosi sa javnošću, što mu je oblikovalo razumevanje komunikacije, pozicioniranja na tržištu i korisnički orijentisanog razmišljanja.",
@@ -4009,8 +4009,10 @@
     ],
 
     "seeAlsoEyebrow": "Povezano",
-    "seeAlsoBody": "Za širu investitorsku priču, tehnički dubok prilog i opcioni video, otvorite stranicu Investitor deck.",
-    "seeAlsoLink": "Investitor deck"
+    "seeAlsoBody": "Za širu investitorsku priču, tehnički prilog i opcioni video otvorite stranicu Investitor deck.",
+    "seeAlsoLink": "Investitor deck",
+    "seeAlsoPrintEyebrow": "Dopunski materijal",
+    "seeAlsoPrintBody": "Posebna investitorska prezentacija sa proširenim narativom i prilogom (i multimedijom gde je primenljivo) objavljena je odvojeno na veb-sajtu Bio Vera pod nazivom Investitor deck."
   },
   "helpCenterPage": {
     "title": "Centar za pomoć",

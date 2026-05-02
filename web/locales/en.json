@@ -3922,8 +3922,8 @@
     "contentsTitle": "Contents",
     "contentsNav": "Jump to section",
     "skipToContent": "Skip to document",
-    "introNote": "Nine narrative blocks plus Founder — optimised for a five-page PDF. Use the outline below or Print → Save as PDF for applications.",
-    "pdfLimitHint": "Kept deliberately tight for typical five-page PDF caps. Default banner: `/project-overview-founder.png`. Override with NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC if needed.",
+    "introNote": "Concise project summary for reviewers and funding bodies. Use the table of contents for navigation; use your browser’s print dialog to attach a PDF.",
+    "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may be customised in deployment.",
     "coverEyebrow": "Project overview",
     "coverTitle": "Bio Vera — Project overview",
     "coverSubtitle": "One vertically integrated agrifood network under Bio‑Ready rules: traceable journeys from parcels and sanctioned inputs through packing, refrigerated logistics and retail passports — so growers, carriers and buyers share one truthful record.",
@@ -3969,7 +3969,7 @@
     "founderPhotoPlaceholder": "Founder banner",
     "founderPhotoAlt": "Jovica Mihajlovic, founder of Bio Vera, at the Vera office",
     "founderPhotoCaption": "Jovica Mihajlovic · Founder · Bio Vera",
-    "founderPhotoHint": "Wide banner (~4–5∶1): default `project-overview-founder.png` in `web/public/`. Override path with NEXT_PUBLIC_PROJECT_OVERVIEW_FOUNDER_SRC.",
+    "founderPhotoHint": "Use a sharp print‑friendly photo; original width about 2400px or larger works well for retina screens and exported PDF.",
     "founderParagraphs": [
       "Bio Vera is founded by Jovica Mihajlovic, a Serbian national based in Hamburg, Germany, where he has been living and working for the past five years.",
       "He holds a Bachelor’s degree in Communications and Public Relations from the University of Niš, which shaped his understanding of communication, market positioning, and user-oriented thinking.",
@@ -3978,8 +3978,10 @@
       "His work is driven by a long-term vision of building solutions that connect industries through trust, efficiency, and digital innovation, with plans to expand the Vera ecosystem into additional sectors over time."
     ],
     "seeAlsoEyebrow": "Related page",
-    "seeAlsoBody": "For the fuller investor-oriented deck (story, appendix depth, optional embedded video), open the Investor Deck.",
-    "seeAlsoLink": "Open Investor Deck"
+    "seeAlsoBody": "Open the Investor Deck for the fuller narrative, technical appendix depth, and optional embedded video.",
+    "seeAlsoLink": "Open Investor Deck",
+    "seeAlsoPrintEyebrow": "Supplementary material",
+    "seeAlsoPrintBody": "An investor-oriented presentation with extended narrative and appendix (and multimedia where applicable) is published separately on the Bio Vera website as the Investor Deck."
   },
   "helpCenterPage": {
     "title": "Help center",
