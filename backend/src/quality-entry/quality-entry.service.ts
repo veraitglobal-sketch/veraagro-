@@ -14,6 +14,7 @@ import {
 } from './dto/quality-entry.dto';
 import { buildLogisticsHandoverReceiverProofPdf } from '../common/pdf/simple-documents-pdf';
 import * as crypto from 'crypto';
+import sharp from 'sharp';
 
 @Injectable()
 export class QualityEntryService {
@@ -51,6 +52,33 @@ export class QualityEntryService {
   }
 
   /**
+   * When BLOB_READ_WRITE_TOKEN is unset, data URLs are stored in Postgres — shrink with sharp
+   * so typical handovers stay under pooler / payload limits.
+   */
+  private async shrinkHandoverImageToJpegDataUrl(buf: Buffer, context: string): Promise<string> {
+    try {
+      const out = await sharp(buf)
+        .rotate()
+        .resize({
+          width: 1280,
+          height: 1280,
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .jpeg({ quality: 76, mozjpeg: true })
+        .toBuffer();
+      return `data:image/jpeg;base64,${out.toString('base64')}`;
+    } catch (e) {
+      this.logger.warn(
+        `shrinkHandoverImageToJpegDataUrl (${context}): ${e instanceof Error ? e.message : String(e)}`,
+      );
+      throw new BadRequestException(
+        `${context}: could not process image. Try another file, or set BLOB_READ_WRITE_TOKEN for cloud storage.`,
+      );
+    }
+  }
+
+  /**
    * Replace data-URL images with public blob URLs when BLOB_READ_WRITE_TOKEN is set so JSON rows
    * stay small (avoids DB / pooler failures on multi-megabyte base64 payloads).
    */
@@ -75,7 +103,18 @@ export class QualityEntryService {
       }
 
       if (!token) {
-        out.push(p);
+        const raw = this.stripDataUrlBase64(p);
+        const buf = Buffer.from(raw, 'base64');
+        if (buf.length === 0) {
+          throw new BadRequestException(`${group} photos: invalid image data (entry ${i + 1})`);
+        }
+        if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
+          throw new BadRequestException(
+            `${group}: each image must be at most ${this.MAX_HANDOVER_PHOTO_BYTES} bytes after decoding`,
+          );
+        }
+        const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, `${group}#${i + 1}`);
+        out.push(shrunk);
         continue;
       }
 
@@ -134,12 +173,19 @@ export class QualityEntryService {
     }
     const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
     if (!token) {
-      if (t.length > this.MAX_PHOTO_STRING_LENGTH) {
+      const raw = this.stripDataUrlBase64(t);
+      const buf = Buffer.from(raw, 'base64');
+      if (buf.length === 0) throw new BadRequestException(`${part}: invalid image data`);
+      if (buf.length > this.MAX_HANDOVER_PHOTO_BYTES) {
+        throw new BadRequestException(`${part}: image too large`);
+      }
+      const shrunk = await this.shrinkHandoverImageToJpegDataUrl(buf, part);
+      if (shrunk.length > this.MAX_PHOTO_STRING_LENGTH) {
         throw new BadRequestException(
-          `${part}: image too large for inline storage; configure BLOB_READ_WRITE_TOKEN`,
+          `${part}: still too large after compression; set BLOB_READ_WRITE_TOKEN or use a smaller image.`,
         );
       }
-      return t;
+      return shrunk;
     }
     const raw = this.stripDataUrlBase64(t);
     const buf = Buffer.from(raw, 'base64');
@@ -407,21 +453,6 @@ export class QualityEntryService {
       throw new BadRequestException('Pickup driver not found or not active for your company');
     }
 
-    const blobConfigured = Boolean((process.env.BLOB_READ_WRITE_TOKEN || '').trim());
-    if (!blobConfigured) {
-      let inlineChars = 0;
-      for (const s of dto.palletPhotos) inlineChars += s.length;
-      for (const s of dto.truckInteriorPhotos) inlineChars += s.length;
-      inlineChars += dto.pickupBadgePhoto.length;
-      inlineChars += dto.pickupDriverSignatureDataUrl.length;
-      /** Without blob, base64 stays in Postgres JSON/Text — many providers choke above ~3–4MB JSON. */
-      if (inlineChars > 3_200_000) {
-        throw new BadRequestException(
-          'Handover images are too large to save without cloud storage. Set BLOB_READ_WRITE_TOKEN (Vercel Blob) on the API server, then retry.',
-        );
-      }
-    }
-
     const pickupDriverSnapshot = {
       driverId: pickupDriver.id,
       firstName: pickupDriver.firstName,
@@ -457,6 +488,8 @@ export class QualityEntryService {
       }
     }
 
+    const blobConfigured = Boolean((process.env.BLOB_READ_WRITE_TOKEN || '').trim());
+
     const palletStored = await this.normalizeHandoverPhotosForStorage(
       dto.palletPhotos,
       dto.missionId,
@@ -480,6 +513,18 @@ export class QualityEntryService {
       dto.missionId,
       'pickup-driver-signature',
     );
+
+    if (!blobConfigured) {
+      let inlineChars = 0;
+      for (const s of palletStored) inlineChars += s.length;
+      for (const s of truckStored) inlineChars += s.length;
+      inlineChars += badgeUrl.length + signatureUrl.length;
+      if (inlineChars > 5_500_000) {
+        throw new BadRequestException(
+          'Handover is still too large after server compression. Set BLOB_READ_WRITE_TOKEN or use fewer / smaller photos.',
+        );
+      }
+    }
 
     try {
       return await this.prisma.$transaction(async (tx) => {
