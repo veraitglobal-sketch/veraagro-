@@ -8,7 +8,7 @@ export const TP_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "Engineering dossier for serious diligence: corridor narrative, integrity posture, synced field evidence, logistics handshake depth, roadmap and risk. For EIC submissions, use the dedicated EIC Part B grant narrative page and the official portal PDF—do not rely on this annex alone. Export: Print → Save as PDF.",
+    "Engineering dossier for serious diligence: corridor narrative, integrity posture, synced field evidence, logistics handshake depth, roadmap and risk. For EU Part B, use the four-question grant narrative page (/eic-part-b) and the official portal PDF—do not rely on this annex alone. Export: Print → Save as PDF.",
   pdfHint:
     "Use figures signed off by finance and tax advisors before any contractual or commission submission.",
   copyLink: "Copy link",

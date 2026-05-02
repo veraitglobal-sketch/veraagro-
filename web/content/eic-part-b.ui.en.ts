@@ -9,19 +9,19 @@ export const EIC_PART_B_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "Structured for EIC-style Part B reviewers: Excellence, innovation, market, model, impact, implementation, team, risk, budget. Export with Print → Save as PDF; enable background graphics if headings print too light. Cross-check figures with your finance partner before uploading to the Funding & Tenders portal.",
+    "Framed for EU grant reviewers in four questions: why this exists, how large the market is, how we earn money, why we will succeed—then implementation and budget. Export with Print → Save as PDF. Align numbers with your portal budget and accountant before submission.",
   pdfHint:
-    "Portal submission should use accountant-validated totals and your institution’s salary templates; tables in PDF export may require moving numbers into official budget worksheets.",
+    "Transfer totals into the official Funding & Tenders budget tables; keep this page as the narrative companion.",
   copyLink: "Copy link",
   copied: "Copied",
   savePdf: "Save as PDF",
   savePdfAria: "Open print dialog to save as PDF",
-  coverEyebrow: "Grant narrative draft",
-  coverTitle: "Bio Vera — EIC Part B narrative (draft for PDF export)",
+  coverEyebrow: "EU grant narrative",
+  coverTitle: "Bio Vera — Part B narrative (four-question frame)",
   coverSubtitle:
-    "Excellence, innovation & technology, market opportunity, business model, impact, implementation plan, team, risks, budget and use of funds—written for evaluator clarity. The companion site section “Technical proposal” remains the deeper engineering dossier.",
+    "Why we exist · Market size · Revenue model · Why we will succeed — plus implementation plan and budget. Technical depth remains in the site’s Detailed technical proposal for engineers and diligence.",
   shellLanguageNote:
-    "Prepare the official Part B PDF in the portal template; use this page to align narrative text and stakeholder review—do not substitute portal forms with this HTML export alone.",
+    "Evaluators first look for purpose, market, economics and credibility—then timeline and money. Use the official Part B PDF template for upload; this page is the drafting shell.",
   contentsTitle: "Contents",
   contentsNav: "Table of sections",
   seeAlsoEyebrow: "Related",

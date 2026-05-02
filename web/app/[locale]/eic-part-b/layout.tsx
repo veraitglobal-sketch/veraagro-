@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-const TITLE = "Bio Vera — EIC Part B narrative (draft) | Bio Vera";
+const TITLE = "Bio Vera — EU Part B narrative (why, market, revenue, success) | Bio Vera";
 const DESCRIPTION =
-  "Evaluator-oriented Part B draft: Excellence, impact, implementation, budget—English; printable PDF via browser Print. Deep engineering annex lives in Detailed technical proposal.";
+  "Grant-oriented Part B draft in English: why Bio Vera exists, market size, how we earn, why we will succeed, plus implementation and budget. Printable PDF via browser Print.";
 
 export async function generateMetadata({
   params,
