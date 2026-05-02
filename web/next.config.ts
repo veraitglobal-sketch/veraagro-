@@ -129,7 +129,7 @@ const nextConfig: NextConfig = {
       /** Canonical public URL: Investor deck (replaces Pitch deck). */
       {
         source: "/:locale/pitch-deck",
-        destination: "/:locale/investor-deck",
+        destination: "/:locale/investor-deck/slides",
         permanent: true,
       },
     ];

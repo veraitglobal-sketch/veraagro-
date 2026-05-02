@@ -242,7 +242,7 @@ export default function TechnicalProposalPage() {
                 {UI.seeOverview}
               </Link>
               <Link
-                href={loc("/investor-deck")}
+                href={loc("/investor-deck/slides")}
                 className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-800 hover:border-[#2D5A27]/35"
               >
                 {UI.seeInvestorDeck}

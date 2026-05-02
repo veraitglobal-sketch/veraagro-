@@ -448,7 +448,7 @@ export default function ProjectOverviewPage() {
                 {t("projectOverview.seeAlsoBody")}
               </p>
               <Link
-                href={loc("/investor-deck")}
+                href={loc("/investor-deck/slides")}
                 className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
               >
                 {t("projectOverview.seeAlsoLink")}

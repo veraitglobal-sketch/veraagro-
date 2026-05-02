@@ -431,6 +431,9 @@ export default function PitchDeckPage() {
             <Link href={loc("/about")} className="hover:text-[#2D5A27] transition-colors hidden md:inline">
               {t("footer.about")}
             </Link>
+            <Link href={loc("/investor-deck")} className="hidden hover:text-[#2D5A27] transition-colors lg:inline">
+              {t("investorDeckPage.backToHub")}
+            </Link>
             <Link href={loc("/contact")} className="font-semibold text-[#2D5A27] hover:text-[#23471f]">
               {t("nav.contact")}
             </Link>

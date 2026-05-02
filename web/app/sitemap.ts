@@ -25,6 +25,7 @@ const localizedPaths = [
   'cookies',
   'investors',
   'investor-deck',
+  'investor-deck/slides',
   'project-overview',
   'technical-proposal',
 ] as const;
