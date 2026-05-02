@@ -21,7 +21,7 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_B: readonly TechnicalProposalChapt
       "Phase H1 Pilot corridor readiness (months 4–10): widen mission lifecycle with handshake completeness KPI; passport projection templates for two buyer archetypes (discounter QA vs speciality procurement); bilingual operational runbooks SR/DE for growers and drivers.",
       "Phase H2 Scale economics (months 10–18): optimise query plans for dossier merges above roughly 250k lineage rows at scale; rollout supplier governance modules where programme demands density in sanctioned SKUs.",
       "Phase H3 Institutional embedding (months 18–24): external auditor walkthrough artefacts; KPI contract templates annexed per buyer; treasury connectors where permitted (not prescriptive herein). Gates require green regression suite, catastrophe recovery tabletop, DPIA checklist completion.",
-      "Commercial overlay: runway consumption tracked against pilot revenue milestones; capex amortised over contractually committed SKU programmes—numbers appear in §13 as placeholders only.",
+      "Commercial overlay: runway consumption tracked against pilot revenue milestones; capex amortised over contractually committed SKU programmes—numbers appear in the financial annex (chapter 13) as placeholders only.",
     ],
   },
   {

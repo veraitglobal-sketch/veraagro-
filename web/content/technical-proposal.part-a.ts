@@ -13,9 +13,9 @@ export const TECHNICAL_PROPOSAL_CHAPTERS_PART_A: readonly TechnicalProposalChapt
     id: "tp-objectives",
     title: "1. Engineering objectives & KPI snapshot",
     paragraphs: [
-      "Higher-level behaviour is described in **Part B — The solution / How it works** and in the opening **Executive pitch**. Here we spell what engineering must reliably deliver.",
+      "Higher-level behaviour is described in Part B (solution and how it works) and in the opening Executive pitch. Here we spell what engineering must reliably deliver.",
       "O1 Offline-safe ingestion with deterministic reconciliation between mobile/web and server. O2 Integrity checks on sanctioned chemistry, seed identity and packaging genealogy where enabled. O3 Refrigerated missions with explicit handshake and temperature evidence suitable for disputes. O4 Buyer-facing dossiers (passports) anchored to immutable batch lineage. O5 Observability proportionate to real incidents—not decorative compliance dashboards.",
-      "Explicitly **out of scope** unless contracted: universal customs as sole proof, satellite imagery platforms, unrelated ERP replacement, hype automation of routing, compulsory public blockchain.",
+      "Explicitly out of scope unless contracted: universal customs as sole proof, satellite imagery platforms, unrelated ERP replacement, hype automation of routing, compulsory public blockchain.",
       "Operational KPI anchors (example classes): onboarding vs plan; handshake completeness; passport consumption; offline reconcile latency; discrepancy rate per thousand events; post-settlement churn. Sensitive actions must be audited; admin roles segregated from grower dossier views where policy requires minimisation.",
     ],
   },

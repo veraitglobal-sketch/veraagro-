@@ -8,7 +8,7 @@ export const TP_UI_EN = {
   skipToContent: "Skip to document",
   toolbarRegion: "Copy link and print to PDF",
   introNote:
-    "Read order: §1 tells you what to skim vs study; §2 is the compact pitch (economics & budget). Programme Part B continues the story + market + competition + finances in depth; the atlas is abbreviated—full route lists/OpenAPI exports live outside this PDF for partners. Funding & Tenders tables stay authoritative for money. Export: Print → Save as PDF.",
+    "Read order: the first chapter tells you what to skim vs study; the second is the compact pitch (economics and budget). Programme Part B continues the story, market, competition and finances; the atlas is abbreviated—full route lists and OpenAPI exports live outside this PDF for partners. Funding and Tenders tables stay authoritative for money. Export: Print → Save as PDF.",
   pdfHint:
     "Use figures signed off by finance and tax advisors before any contractual or commission submission.",
   copyLink: "Copy link",
