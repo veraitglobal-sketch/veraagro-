@@ -169,7 +169,14 @@ export default function PlantingsScreen() {
         });
 
       setAnnouncements([...localPlantings, ...serverRows]);
-    } catch {
+    } catch (e: unknown) {
+      if (__DEV__) {
+        const msg =
+          axiosLikeMessage(e) ||
+          apiErrorMessage(e, '') ||
+          (e instanceof Error ? e.message : typeof e === 'string' ? e : '');
+        console.warn('[PlantingsScreen] harvest-announcements getMy failed:', msg || e);
+      }
       try {
         const pending = await offlineStorage.getPendingHarvestPlans();
         const localOnly: HaRow[] = pending

@@ -13,7 +13,7 @@ import { readPartnerPlanMarkdown } from '@/lib/partner-plan-content';
 type RouteCtx = { params: Promise<{ locale: string; tier: string }> };
 
 function parseTier(raw: string): ConfidentialTier | null {
-  if (raw === 'short' || raw === 'medium' || raw === 'long') return raw;
+  if (raw === 'short' || raw === 'medium' || raw === 'long' || raw === 'confidential') return raw;
   return null;
 }
 

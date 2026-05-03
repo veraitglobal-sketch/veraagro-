@@ -1,7 +1,7 @@
 /**
  * Feature flag for password-only reader at `/[locale]/investor-deck/business-plans`.
  * Flow: `INVESTOR_BUSINESS_PLANS_GATE_PASSWORD` (bundle cookie) → per-tier `GROWER_CONFIDENTIAL_BUSINESS_PLAN_*_PASSWORD` (tier cookies).
- * Routes: unlock `/{locale}/investor-deck/business-plans/unlock`, markdown `.../plan-markdown/{short|medium|long}`.
+ * Routes: unlock `/{locale}/investor-deck/business-plans/unlock`, markdown `.../plan-markdown/{short|medium|long|confidential}`.
  * Not linked from public hubs; share URL only with cleared recipients.
  */
 export function isInvestorBusinessPlansPublicEnabled(): boolean {

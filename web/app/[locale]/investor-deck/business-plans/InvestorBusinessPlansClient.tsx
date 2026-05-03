@@ -49,27 +49,24 @@ const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
   short: '01',
   medium: '02',
   long: '03',
+  confidential: '04',
 };
 
-const TIER_IDS: GrowerConfidentialTierId[] = ['short', 'medium', 'long'];
+const TIER_IDS: GrowerConfidentialTierId[] = ['short', 'medium', 'long', 'confidential'];
 
 const TITLE_KEY: Record<GrowerConfidentialTierId, string> = {
   short: 'investorBusinessPlans.shortTitle',
   medium: 'investorBusinessPlans.mediumTitle',
   long: 'investorBusinessPlans.longTitle',
+  confidential: 'investorBusinessPlans.confidentialTitle',
 };
 
-function tierUrlField(tier: GrowerConfidentialTierId): 'shortTermUrl' | 'mediumTermUrl' | 'longTermUrl' {
-  if (tier === 'short') return 'shortTermUrl';
-  if (tier === 'medium') return 'mediumTermUrl';
-  return 'longTermUrl';
-}
-
-function tierInternalField(tier: GrowerConfidentialTierId): 'shortTermInternal' | 'mediumTermInternal' | 'longTermInternal' {
-  if (tier === 'short') return 'shortTermInternal';
-  if (tier === 'medium') return 'mediumTermInternal';
-  return 'longTermInternal';
-}
+const TIER_RESPONSE_KEYS: Record<GrowerConfidentialTierId, { url: string; internal: string }> = {
+  short: { url: 'shortTermUrl', internal: 'shortTermInternal' },
+  medium: { url: 'mediumTermUrl', internal: 'mediumTermInternal' },
+  long: { url: 'longTermUrl', internal: 'longTermInternal' },
+  confidential: { url: 'confidentialTermUrl', internal: 'confidentialTermInternal' },
+};
 
 /** Probe tier cookie: internal plans return 200 with markdown JSON (body unused here). */
 async function probeTierUnlocked(
@@ -100,6 +97,7 @@ export default function InvestorBusinessPlansClient() {
     short: emptyTier(),
     medium: emptyTier(),
     long: emptyTier(),
+    confidential: emptyTier(),
   });
 
   const [pageError, setPageError] = useState<string | null>(null);
@@ -144,9 +142,11 @@ export default function InvestorBusinessPlansClient() {
         typeof tiers.short === 'boolean' &&
         typeof tiers.medium === 'boolean' &&
         typeof tiers.long === 'boolean' &&
+        typeof tiers.confidential === 'boolean' &&
         typeof configured.short === 'boolean' &&
         typeof configured.medium === 'boolean' &&
-        typeof configured.long === 'boolean'
+        typeof configured.long === 'boolean' &&
+        typeof configured.confidential === 'boolean'
       ) {
         setTiersConfigured(configured);
         setBundleUnlocked(bu);
@@ -239,7 +239,12 @@ export default function InvestorBusinessPlansClient() {
         setBundlePw('');
         setBundleUnlocked(true);
         sessionHydratedRef.current = false;
-        setTierUi({ short: emptyTier(), medium: emptyTier(), long: emptyTier() });
+        setTierUi({
+          short: emptyTier(),
+          medium: emptyTier(),
+          long: emptyTier(),
+          confidential: emptyTier(),
+        });
         return;
       }
       setPageError(t('investorBusinessPlans.errorNetwork'));
@@ -281,13 +286,11 @@ export default function InvestorBusinessPlansClient() {
           return;
         }
 
-        const urlKey = tierUrlField(tier);
-        const intKey = tierInternalField(tier);
-        const internal = data[intKey] === true;
+        const keys = TIER_RESPONSE_KEYS[tier];
+        const internal = data[keys.internal] === true;
+        const rawUrl = data[keys.url];
         const externalUrl =
-          typeof data[urlKey] === 'string' && (data[urlKey] as string).trim().length > 0
-            ? (data[urlKey] as string)
-            : null;
+          typeof rawUrl === 'string' && rawUrl.trim().length > 0 ? rawUrl : null;
 
         if (!internal && !externalUrl) {
           setTier(tier, { wrongPassword: true });
@@ -328,7 +331,12 @@ export default function InvestorBusinessPlansClient() {
     setBundlePw('');
     setBundleWrong(false);
     sessionHydratedRef.current = false;
-    setTierUi({ short: emptyTier(), medium: emptyTier(), long: emptyTier() });
+    setTierUi({
+      short: emptyTier(),
+      medium: emptyTier(),
+      long: emptyTier(),
+      confidential: emptyTier(),
+    });
     setPasswordModalTier(null);
   }, [unlockEndpoint]);
 
@@ -481,13 +489,13 @@ export default function InvestorBusinessPlansClient() {
       ) : null}
 
       <main
-        className={`mx-auto w-full px-4 pb-16 pt-24 sm:px-6 lg:px-8 ${bundleUnlocked ? 'max-w-6xl' : 'max-w-lg'}`}
+        className={`mx-auto w-full px-4 pb-16 pt-24 sm:px-6 lg:px-8 ${bundleUnlocked ? 'max-w-7xl' : 'max-w-lg'}`}
         aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
       >
         {bootstrap === 'loading' || bootstrap === 'idle' ? (
           bundleUnlocked ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[0, 1, 2].map((i) => (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
                   <div className="aspect-[3/4] max-h-56 bg-gray-100" />
                   <div className="h-16 border-t border-gray-100 bg-white" />
@@ -576,7 +584,7 @@ export default function InvestorBusinessPlansClient() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {TIER_IDS.map((tier) => {
                 const secretsOk = tiersConfigured?.[tier] ?? false;
                 const ui = tierUi[tier];

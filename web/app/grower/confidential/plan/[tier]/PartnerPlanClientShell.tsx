@@ -15,6 +15,7 @@ const TITLE_KEYS: Record<ConfidentialTier, string> = {
   short: 'grower.confidential.shortTitle',
   medium: 'grower.confidential.mediumTitle',
   long: 'grower.confidential.longTitle',
+  confidential: 'grower.confidential.confidentialTitle',
 };
 
 type Props = {

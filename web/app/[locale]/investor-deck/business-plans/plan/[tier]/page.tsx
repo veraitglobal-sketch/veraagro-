@@ -12,7 +12,7 @@ import {
 import InvestorBusinessPlanReaderShell from '@/components/investor/InvestorBusinessPlanReaderShell';
 
 function parseTier(raw: string): ConfidentialTier | null {
-  if (raw === 'short' || raw === 'medium' || raw === 'long') return raw;
+  if (raw === 'short' || raw === 'medium' || raw === 'long' || raw === 'confidential') return raw;
   return null;
 }
 

@@ -444,6 +444,7 @@ export default function GrowerFieldsPage() {
                       type="date"
                       value={batchForm.harvestDate}
                       onChange={(e) => setBatchForm((f) => ({ ...f, harvestDate: e.target.value }))}
+                      required
                       className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#2D5A27]"
                     />
                   </div>

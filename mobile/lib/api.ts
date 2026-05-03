@@ -287,7 +287,7 @@ export const harvestAnnouncementsAPI = {
     return response.data;
   },
   getMy: async () => {
-    const response = await api.get('/harvest-announcements/my-announcements');
+    const response = await api.get('/harvest-announcements/my-announcements', { timeout: 25000 });
     return response.data || [];
   },
 };

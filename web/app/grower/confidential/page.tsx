@@ -44,9 +44,11 @@ export default function GrowerConfidentialPage() {
   const [shortPw, setShortPw] = useState('');
   const [mediumPw, setMediumPw] = useState('');
   const [longPw, setLongPw] = useState('');
+  const [confidentialPw, setConfidentialPw] = useState('');
   const [showShort, setShowShort] = useState(false);
   const [showMedium, setShowMedium] = useState(false);
   const [showLong, setShowLong] = useState(false);
+  const [showConfidential, setShowConfidential] = useState(false);
 
   const [bootstrap, setBootstrap] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [bootstrapErrorRecoverable, setBootstrapErrorRecoverable] = useState(false);
@@ -62,6 +64,7 @@ export default function GrowerConfidentialPage() {
     short: null,
     medium: null,
     long: null,
+    confidential: null,
   });
   const [loadingTier, setLoadingTier] = useState<GrowerConfidentialTierId | null>(null);
   const [errorTier, setErrorTier] = useState<GrowerConfidentialTierId | null>(null);
@@ -138,9 +141,11 @@ export default function GrowerConfidentialPage() {
         typeof tiers.short === 'boolean' &&
         typeof tiers.medium === 'boolean' &&
         typeof tiers.long === 'boolean' &&
+        typeof tiers.confidential === 'boolean' &&
         typeof configured.short === 'boolean' &&
         typeof configured.medium === 'boolean' &&
-        typeof configured.long === 'boolean'
+        typeof configured.long === 'boolean' &&
+        typeof configured.confidential === 'boolean'
       ) {
         setTiersConfigured(configured);
         setTiersAvailable(tiers);
@@ -199,6 +204,7 @@ export default function GrowerConfidentialPage() {
             ...(tier === 'short' ? { short: password } : {}),
             ...(tier === 'medium' ? { medium: password } : {}),
             ...(tier === 'long' ? { long: password } : {}),
+            ...(tier === 'confidential' ? { confidential: password } : {}),
           },
         };
         const res = await fetch('/api/grower/confidential-materials', {
@@ -239,10 +245,19 @@ export default function GrowerConfidentialPage() {
             ? data.shortTermInternal === true
             : tier === 'medium'
               ? data.mediumTermInternal === true
-              : data.longTermInternal === true;
+              : tier === 'long'
+                ? data.longTermInternal === true
+                : data.confidentialTermInternal === true;
 
         const urlKey =
-          tier === 'short' ? 'shortTermUrl' : tier === 'medium' ? 'mediumTermUrl' : 'longTermUrl';
+          tier === 'short'
+            ? 'shortTermUrl'
+            : tier === 'medium'
+              ? 'mediumTermUrl'
+              : tier === 'long'
+                ? 'longTermUrl'
+                : 'confidentialTermUrl';
+
         const externalUrl =
           typeof data[urlKey] === 'string' && (data[urlKey] as string).trim().length > 0
             ? (data[urlKey] as string)
@@ -263,6 +278,7 @@ export default function GrowerConfidentialPage() {
         if (tier === 'short') setShortPw('');
         if (tier === 'medium') setMediumPw('');
         if (tier === 'long') setLongPw('');
+        if (tier === 'confidential') setConfidentialPw('');
       } catch {
         setPageError(t('grower.confidential.errorNetwork'));
       } finally {
@@ -302,8 +318,17 @@ export default function GrowerConfidentialPage() {
           show: showLong,
           setShow: setShowLong,
         },
+        {
+          id: 'confidential' as const,
+          titleKey: 'grower.confidential.confidentialTitle',
+          hintKey: 'grower.confidential.confidentialHint',
+          password: confidentialPw,
+          setPassword: setConfidentialPw,
+          show: showConfidential,
+          setShow: setShowConfidential,
+        },
       ] as const,
-    [shortPw, mediumPw, longPw, showShort, showMedium, showLong],
+    [shortPw, mediumPw, longPw, confidentialPw, showShort, showMedium, showLong, showConfidential],
   );
 
   const sharedCardStrings = useMemo(
@@ -368,7 +393,7 @@ export default function GrowerConfidentialPage() {
           ) : null}
 
           <div
-            className="grid grid-cols-1 gap-4 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4"
             aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
             aria-label={
               bootstrap === 'loading' || bootstrap === 'idle'
@@ -377,7 +402,7 @@ export default function GrowerConfidentialPage() {
             }
           >
             {bootstrap === 'loading' || bootstrap === 'idle'
-              ? [0, 1, 2].map((i) => (
+              ? [0, 1, 2, 3].map((i) => (
                   <div
                     key={i}
                     className="h-[280px] animate-pulse rounded-xl border border-gray-200 bg-gray-100/80 sm:h-[300px]"
@@ -414,7 +439,7 @@ export default function GrowerConfidentialPage() {
                         tierId={id}
                         title={t(titleKey)}
                         hint={
-                          id === 'short'
+                          id === 'short' || id === 'confidential'
                             ? t(hintKey)
                             : id === 'medium'
                               ? t(hintKey, { years: mediumMin })
@@ -446,9 +471,11 @@ export default function GrowerConfidentialPage() {
                               ? t('grower.confidential.tenureRejectedNoticeLong', {
                                   years: partnerPlanTenure?.long.minYears ?? longMin,
                                 })
-                              : t('grower.confidential.tenureRejectedNoticeMedium', {
-                                  years: partnerPlanTenure?.medium.minYears ?? mediumMin,
-                                })
+                              : id === 'medium'
+                                ? t('grower.confidential.tenureRejectedNoticeMedium', {
+                                    years: partnerPlanTenure?.medium.minYears ?? mediumMin,
+                                  })
+                                : null
                             : null
                         }
                         loading={busy}

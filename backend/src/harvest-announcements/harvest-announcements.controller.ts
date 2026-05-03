@@ -26,20 +26,18 @@ export class HarvestAnnouncementsController {
 
   /**
    * Create harvest/planting announcement (Farmer)
+   * Role check: JwtAuthGuard only — `create()` enforces parcel ownership on the estate.
    */
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('GROWER', 'FARMER')
   async create(@Request() req, @Body() dto: CreateHarvestAnnouncementDto) {
     return this.announcementsService.create(req.user.id, dto);
   }
 
   /**
    * Get farmer's announcements
+   * Jwt only — scoped by `req.user.id` in service (no elevated cross-user read).
    */
   @Get('my-announcements')
-  @UseGuards(RolesGuard)
-  @Roles('GROWER', 'FARMER')
   async getMyAnnouncements(@Request() req) {
     return this.announcementsService.getFarmerAnnouncements(req.user.id);
   }
