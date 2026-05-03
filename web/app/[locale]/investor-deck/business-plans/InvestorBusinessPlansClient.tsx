@@ -2,21 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Check, ChevronRight, ExternalLink, Eye, EyeOff, FileText, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowRight, ExternalLink, Eye, EyeOff, FileText, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { GrowerConfidentialTierId } from '@/components/grower/GrowerConfidentialTierCard';
-import { PartnerPlanProse } from '@/components/grower/PartnerPlanProse';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 type TierAvailability = Record<GrowerConfidentialTierId, boolean>;
 
-type TierPhase = 'collapsed' | 'password' | 'content';
-
 type PerTierUi = {
-  phase: TierPhase;
-  markdown: string | null;
+  phase: 'collapsed' | 'content';
   externalUrl: string | null;
   password: string;
   showPassword: boolean;
@@ -27,7 +24,6 @@ type PerTierUi = {
 function emptyTier(): PerTierUi {
   return {
     phase: 'collapsed',
-    markdown: null,
     externalUrl: null,
     password: '',
     showPassword: false,
@@ -36,7 +32,6 @@ function emptyTier(): PerTierUi {
   };
 }
 
-/** Bio Vera — usklađeno sa `GrowerConfidentialTierCard` i .cursorrules (jednostavne kartice, #2D5A27) */
 const btnPrimary =
   'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2';
 const btnOutline =
@@ -46,11 +41,6 @@ const btnIconSubmit =
 const inputClass =
   'min-h-[48px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 transition-colors placeholder:text-gray-400 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 disabled:bg-gray-50 disabled:text-gray-500';
 
-const cardShell =
-  'flex min-w-0 flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6';
-const tierIconBox =
-  'flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-[#2D5A27]/10 text-sm font-semibold text-[#2D5A27]';
-
 const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
   short: '01',
   medium: '02',
@@ -59,23 +49,10 @@ const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
 
 const TIER_IDS: GrowerConfidentialTierId[] = ['short', 'medium', 'long'];
 
-function firstConfiguredTier(config: TierAvailability | null | undefined): GrowerConfidentialTierId {
-  for (const id of TIER_IDS) {
-    if (config?.[id]) return id;
-  }
-  return 'short';
-}
-
 const TITLE_KEY: Record<GrowerConfidentialTierId, string> = {
   short: 'investorBusinessPlans.shortTitle',
   medium: 'investorBusinessPlans.mediumTitle',
   long: 'investorBusinessPlans.longTitle',
-};
-
-const HINT_KEY: Record<GrowerConfidentialTierId, string> = {
-  short: 'investorBusinessPlans.shortHint',
-  medium: 'investorBusinessPlans.mediumHint',
-  long: 'investorBusinessPlans.longHint',
 };
 
 function tierUrlField(tier: GrowerConfidentialTierId): 'shortTermUrl' | 'mediumTermUrl' | 'longTermUrl' {
@@ -90,9 +67,19 @@ function tierInternalField(tier: GrowerConfidentialTierId): 'shortTermInternal' 
   return 'longTermInternal';
 }
 
+/** Probe tier cookie: internal plans return 200 with markdown JSON (body unused here). */
+async function probeTierUnlocked(
+  tier: GrowerConfidentialTierId,
+  markdownUrl: string,
+): Promise<boolean> {
+  const res = await fetch(markdownUrl, { credentials: 'include', cache: 'no-store', method: 'GET' });
+  return res.ok;
+}
+
 export default function InvestorBusinessPlansClient() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
+  const router = useRouter();
   const unlockEndpoint = useMemo(() => loc('/investor-deck/business-plans/unlock'), [loc]);
 
   const [bootstrap, setBootstrap] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
@@ -113,12 +100,20 @@ export default function InvestorBusinessPlansClient() {
 
   const [pageError, setPageError] = useState<string | null>(null);
   const [docLoadTier, setDocLoadTier] = useState<GrowerConfidentialTierId | null>(null);
-  const [activeTier, setActiveTier] = useState<GrowerConfidentialTierId>('short');
+  const [passwordModalTier, setPasswordModalTier] = useState<GrowerConfidentialTierId | null>(null);
   const sessionHydratedRef = useRef(false);
-
   const setTier = useCallback((tier: GrowerConfidentialTierId, patch: Partial<PerTierUi>) => {
     setTierUi((prev) => ({ ...prev, [tier]: { ...prev[tier], ...patch } }));
   }, []);
+
+  const closePasswordModal = useCallback(() => {
+    setPasswordModalTier((prev) => {
+      if (prev) {
+        setTier(prev, { password: '', wrongPassword: false, showPassword: false });
+      }
+      return null;
+    });
+  }, [setTier]);
 
   const loadBootstrap = useCallback(async () => {
     setBootstrap('loading');
@@ -167,20 +162,6 @@ export default function InvestorBusinessPlansClient() {
     loadBootstrap();
   }, [loadBootstrap]);
 
-  const fetchTierMarkdown = useCallback(
-    async (tier: GrowerConfidentialTierId) => {
-      const url = loc(`/investor-deck/business-plans/plan-markdown/${tier}`);
-      const res = await fetch(url, { credentials: 'include', cache: 'no-store' });
-      if (!res.ok) return false;
-      const data = (await res.json().catch(() => ({}))) as { markdown?: unknown };
-      if (typeof data.markdown !== 'string' || !data.markdown.trim()) return false;
-      setTier(tier, { markdown: data.markdown, externalUrl: null, phase: 'content' });
-      return true;
-    },
-    [loc, setTier],
-  );
-
-  /** Reload: restore any tier cookies without re-running on each fetch fn identity change. */
   useEffect(() => {
     if (bootstrap !== 'ok') return;
     if (!bundleUnlocked) {
@@ -197,7 +178,11 @@ export default function InvestorBusinessPlansClient() {
         if (!(tiersConfigured?.[tier] ?? false)) continue;
         setDocLoadTier(tier);
         try {
-          await fetchTierMarkdown(tier);
+          const url = loc(`/investor-deck/business-plans/plan-markdown/${tier}`);
+          const ok = await probeTierUnlocked(tier, url);
+          if (!cancelled && ok) {
+            setTier(tier, { phase: 'content', externalUrl: null });
+          }
         } finally {
           if (!cancelled) setDocLoadTier(null);
         }
@@ -207,14 +192,16 @@ export default function InvestorBusinessPlansClient() {
     return () => {
       cancelled = true;
     };
-  }, [bootstrap, bundleUnlocked, tiersConfigured, fetchTierMarkdown]);
+  }, [bootstrap, bundleUnlocked, tiersConfigured, loc, setTier]);
 
   useEffect(() => {
-    if (bootstrap !== 'ok' || !bundleUnlocked || !tiersConfigured) return;
-    setActiveTier((at) =>
-      tiersConfigured[at] ? at : firstConfiguredTier(tiersConfigured),
-    );
-  }, [bootstrap, bundleUnlocked, tiersConfigured]);
+    if (passwordModalTier == null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closePasswordModal();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [passwordModalTier, closePasswordModal]);
 
   const submitBundle = useCallback(async () => {
     const password = bundlePw.trim();
@@ -249,7 +236,6 @@ export default function InvestorBusinessPlansClient() {
         setBundleUnlocked(true);
         sessionHydratedRef.current = false;
         setTierUi({ short: emptyTier(), medium: emptyTier(), long: emptyTier() });
-        setActiveTier(firstConfiguredTier(tiersConfigured));
         return;
       }
       setPageError(t('investorBusinessPlans.errorNetwork'));
@@ -258,7 +244,7 @@ export default function InvestorBusinessPlansClient() {
     } finally {
       setBundleBusy(false);
     }
-  }, [bundlePw, t, tiersConfigured, unlockEndpoint]);
+  }, [bundlePw, t, unlockEndpoint]);
 
   const submitTier = useCallback(
     async (tier: GrowerConfidentialTierId) => {
@@ -304,23 +290,16 @@ export default function InvestorBusinessPlansClient() {
           return;
         }
 
-        setTier(tier, { password: '', wrongPassword: false });
+        setTier(tier, { password: '', wrongPassword: false, showPassword: false });
 
         if (internal) {
-          setDocLoadTier(tier);
-          try {
-            const loaded = await fetchTierMarkdown(tier);
-            if (!loaded && externalUrl) {
-              setTier(tier, { externalUrl, markdown: null, phase: 'content' });
-            }
-            if (!loaded && !externalUrl) {
-              setTier(tier, { wrongPassword: true });
-            }
-          } finally {
-            setDocLoadTier(null);
-          }
+          setTier(tier, { phase: 'content', externalUrl: null });
+          closePasswordModal();
+          router.push(loc(`/investor-deck/business-plans/plan/${tier}`));
         } else if (externalUrl) {
-          setTier(tier, { externalUrl, markdown: null, phase: 'content' });
+          setTier(tier, { phase: 'content', externalUrl });
+          closePasswordModal();
+          window.open(externalUrl, '_blank', 'noopener,noreferrer');
         }
       } catch {
         setPageError(t('investorBusinessPlans.errorNetwork'));
@@ -328,23 +307,7 @@ export default function InvestorBusinessPlansClient() {
         setTier(tier, { loading: false });
       }
     },
-    [fetchTierMarkdown, setTier, t, tierUi, unlockEndpoint],
-  );
-
-  const revokeTier = useCallback(
-    async (tier: GrowerConfidentialTierId) => {
-      try {
-        await fetch(`${unlockEndpoint}?tier=${encodeURIComponent(tier)}`, {
-          method: 'DELETE',
-          credentials: 'include',
-          cache: 'no-store',
-        });
-      } catch {
-        /* still reset */
-      }
-      setTier(tier, emptyTier());
-    },
-    [setTier, unlockEndpoint],
+    [closePasswordModal, loc, router, setTier, t, tierUi, unlockEndpoint],
   );
 
   const revokeAll = useCallback(async () => {
@@ -362,7 +325,17 @@ export default function InvestorBusinessPlansClient() {
     setBundleWrong(false);
     sessionHydratedRef.current = false;
     setTierUi({ short: emptyTier(), medium: emptyTier(), long: emptyTier() });
+    setPasswordModalTier(null);
   }, [unlockEndpoint]);
+
+  const docThumbLines = (
+    <div className="flex flex-col gap-2 px-4 pt-5">
+      <div className="h-2 w-[85%] rounded bg-gray-200/90" />
+      <div className="h-2 w-full rounded bg-gray-100" />
+      <div className="h-2 w-[92%] rounded bg-gray-100" />
+      <div className="h-2 w-[60%] rounded bg-gray-100" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -378,7 +351,17 @@ export default function InvestorBusinessPlansClient() {
               priority
             />
           </Link>
-          <nav className="flex items-center gap-8">
+          <nav className="flex items-center gap-6">
+            {bundleUnlocked ? (
+              <button
+                type="button"
+                onClick={() => void revokeAll()}
+                className={`${btnOutline} !min-h-[44px] gap-2 px-4 py-2 text-sm`}
+              >
+                <Lock className="h-4 w-4" aria-hidden />
+                {t('investorBusinessPlans.lockAllDocuments')}
+              </button>
+            ) : null}
             <Link
               href={loc('/investor-deck')}
               className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]"
@@ -401,347 +384,281 @@ export default function InvestorBusinessPlansClient() {
         </div>
       ) : null}
 
-      <main
-        className="mx-auto w-full max-w-4xl px-6 pb-16 pt-24 lg:px-8"
-        aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
-      >
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#2D5A27]">
-              {t('investorBusinessPlans.docSeriesEyebrow')}
-            </p>
-            <h1 className="mt-2 text-3xl font-light tracking-tight text-gray-900">
-              {t('investorBusinessPlans.docSeriesTitle')}
-            </h1>
-            <p className="mt-2 max-w-3xl text-base font-light leading-relaxed text-gray-700">
-              {t('investorBusinessPlans.pageDescription')}
-            </p>
+      {passwordModalTier ? (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+          role="presentation"
+          onClick={closePasswordModal}
+        >
+          <div
+            role="dialog"
+            aria-modal
+            aria-labelledby="tier-password-modal-title"
+            className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="tier-password-modal-title" className="sr-only">
+              {t(TITLE_KEY[passwordModalTier])}
+            </h2>
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={(e: FormEvent) => {
+                e.preventDefault();
+                void submitTier(passwordModalTier);
+              }}
+              noValidate
+            >
+              <div className="flex gap-2">
+                {(() => {
+                  const ui = tierUi[passwordModalTier];
+                  const busy = ui.loading || docLoadTier === passwordModalTier;
+                  return (
+                    <>
+                      <input
+                        type={ui.showPassword ? 'text' : 'password'}
+                        autoComplete="off"
+                        value={ui.password}
+                        onChange={(e) => {
+                          setTier(passwordModalTier, { password: e.target.value, wrongPassword: false });
+                        }}
+                        disabled={busy}
+                        aria-label={t('investorBusinessPlans.passwordAriaLabel')}
+                        aria-invalid={ui.wrongPassword}
+                        placeholder=""
+                        className={`${inputClass} flex-1 ${ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setTier(passwordModalTier, { showPassword: !ui.showPassword })}
+                        disabled={busy}
+                        aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
+                        className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                      >
+                        {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={busy || !ui.password.trim()}
+                        aria-busy={busy}
+                        aria-label={busy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
+                        className={btnIconSubmit}
+                      >
+                        {busy ? (
+                          <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+                        ) : (
+                          <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+                        )}
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
+              {tierUi[passwordModalTier].wrongPassword ? (
+                <p className="text-sm text-red-700" role="alert">
+                  {t('grower.confidential.wrongPassword')}
+                </p>
+              ) : null}
+            </form>
           </div>
         </div>
+      ) : null}
 
+      <main
+        className={`mx-auto w-full px-4 pb-16 pt-24 sm:px-6 lg:px-8 ${bundleUnlocked ? 'max-w-6xl' : 'max-w-md'}`}
+        aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
+      >
         {bootstrap === 'loading' || bootstrap === 'idle' ? (
-          <div className="h-64 animate-pulse rounded-xl border border-gray-200 bg-gray-100" aria-hidden />
+          bundleUnlocked ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="animate-pulse overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div className="aspect-[3/4] max-h-56 bg-gray-100" />
+                  <div className="h-16 border-t border-gray-100 bg-white" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mx-auto h-14 max-w-md animate-pulse rounded-lg bg-gray-200" aria-hidden />
+          )
         ) : bootstrap === 'ok' ? (
           !gateConfigured ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-6 shadow-sm">
               <p className="text-base leading-relaxed text-amber-950">{t('investorBusinessPlans.gateNotConfigured')}</p>
             </div>
-          ) : (
-          <div className="space-y-8">
-            {!bundleUnlocked ? (
-              <section className={cardShell} aria-labelledby="investor-bp-bundle-title">
-                <div className="flex items-start gap-3">
-                  <div className={tierIconBox}>
-                    <Lock className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#23471f]">
-                      {t('investorBusinessPlans.docConfidentialBadge')}
-                    </p>
-                    <h2 id="investor-bp-bundle-title" className="mt-2 text-lg font-semibold leading-snug text-gray-900">
-                      {t('investorBusinessPlans.bundleTitle')}
-                    </h2>
-                    <p className="mt-1 text-base font-light leading-relaxed text-gray-700">{t('investorBusinessPlans.bundleHint')}</p>
-
-                    <form
-                      className="mt-6 flex flex-col gap-3"
-                      onSubmit={(e: FormEvent) => {
-                        e.preventDefault();
-                        void submitBundle();
-                      }}
-                      noValidate
-                    >
-                      <div className="flex gap-2">
-                        <input
-                          type={showBundlePw ? 'text' : 'password'}
-                          autoComplete="off"
-                          value={bundlePw}
-                          onChange={(e) => {
-                            setBundlePw(e.target.value);
-                            if (bundleWrong) setBundleWrong(false);
-                          }}
-                          disabled={bundleBusy}
-                          aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
-                          aria-invalid={bundleWrong}
-                          placeholder={t('investorBusinessPlans.bundlePasswordLabel')}
-                          className={`${inputClass} flex-1 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowBundlePw((s) => !s)}
-                          disabled={bundleBusy}
-                          aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                          className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
-                        >
-                          {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={bundleBusy || !bundlePw.trim()}
-                          aria-busy={bundleBusy}
-                          aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
-                          className={btnIconSubmit}
-                        >
-                          {bundleBusy ? (
-                            <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
-                          ) : (
-                            <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                          )}
-                        </button>
-                      </div>
-                      {bundleWrong ? (
-                        <p className="text-sm text-red-700" role="alert">
-                          {t('grower.confidential.wrongPassword')}
-                        </p>
-                      ) : null}
-                    </form>
-                  </div>
-                </div>
-              </section>
-            ) : (
-              <div className="min-w-0 space-y-6">
-                <p className="text-base font-light leading-relaxed text-gray-700">{t('investorBusinessPlans.afterGateLead')}</p>
-
-                <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5">
-                  <div
-                    role="tablist"
-                    aria-label={t('investorBusinessPlans.docPickerAria')}
-                    className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden"
-                  >
-                    {TIER_IDS.map((tier) => {
-                      const secretsOk = tiersConfigured?.[tier] ?? false;
-                      const ui = tierUi[tier];
-                      const isActive = activeTier === tier;
-                      const unlocked = ui.phase === 'content';
-                      return (
-                        <button
-                          key={tier}
-                          type="button"
-                          role="tab"
-                          aria-selected={isActive}
-                          disabled={!secretsOk}
-                          onClick={() => setActiveTier(tier)}
-                          className={`inline-flex min-h-[48px] min-w-0 shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium transition-colors ${
-                            !secretsOk
-                              ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'
-                              : isActive
-                                ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#23471f] ring-1 ring-[#2D5A27]/20'
-                                : 'border-gray-200 bg-white text-gray-800 hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <span
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold ${
-                              isActive ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-[#2D5A27]'
-                            }`}
-                          >
-                            {TIER_INDEX[tier]}
-                          </span>
-                          <span className="max-w-[9rem] truncate sm:max-w-[12rem]">{t(TITLE_KEY[tier])}</span>
-                          {unlocked ? (
-                            <Check className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden strokeWidth={2.5} />
-                          ) : null}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => void revokeAll()}
-                    className={`${btnOutline} shrink-0 px-4 py-2.5 text-sm`}
-                  >
-                    <Lock className="h-4 w-4 shrink-0 text-gray-600" aria-hidden />
-                    {t('investorBusinessPlans.lockAllDocuments')}
-                  </button>
-                </div>
-
-                {(() => {
-                  const tier = activeTier;
-                  const secretsOk = tiersConfigured?.[tier] ?? false;
-                  const ui = tierUi[tier];
-                  const busy = ui.loading || docLoadTier === tier;
-
-                  if (!secretsOk) {
-                    return (
-                      <section className={`${cardShell} items-center justify-center py-12 text-center`} aria-live="polite">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50">
-                          <Lock className="h-6 w-6 text-gray-400" strokeWidth={1.75} aria-hidden />
-                        </div>
-                        <p className="max-w-md text-base leading-relaxed text-gray-700">{t('investorBusinessPlans.tierUnavailable')}</p>
-                      </section>
-                    );
-                  }
-
-                  if (ui.phase === 'content') {
-                    return (
-                      <section
-                        className={`${cardShell} min-h-[min(360px,48vh)] gap-0 overflow-hidden p-0 sm:min-h-[min(400px,52vh)]`}
-                        aria-live="polite"
-                      >
-                        <div className="flex flex-col gap-4 border-b border-gray-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                          <div className="flex min-w-0 items-start gap-3">
-                            <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
-                            <div className="min-w-0">
-                              <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
-                                {t('investorBusinessPlans.docConfidentialBadge')}
-                              </p>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => void revokeTier(tier)}
-                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 sm:w-auto"
-                          >
-                            {t('grower.confidential.lockAgain')}
-                          </button>
-                        </div>
-                        <div className="min-h-0 max-h-[min(72vh,840px)] flex-1 overflow-y-auto px-5 py-6 sm:px-6">
-                          {busy ? (
-                            <p className="py-12 text-center text-sm text-gray-600">{t('investorBusinessPlans.docLoadingContent')}</p>
-                          ) : ui.markdown ? (
-                            <div className="rounded-lg bg-gray-50/60 px-2 py-4 sm:px-4">
-                              <PartnerPlanProse markdown={ui.markdown} />
-                            </div>
-                          ) : ui.externalUrl ? (
-                            <div className="flex flex-col items-center gap-4 py-8">
-                              <a href={ui.externalUrl} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
-                                <ExternalLink className="h-5 w-5 shrink-0" aria-hidden />
-                                {t('investorBusinessPlans.docOpenExternal')}
-                              </a>
-                            </div>
-                          ) : null}
-                        </div>
-                        <p className="border-t border-gray-200 px-5 py-4 text-center text-xs leading-relaxed text-gray-600 sm:px-6">
-                          {t('investorBusinessPlans.planReaderFooter')}
-                        </p>
-                      </section>
-                    );
-                  }
-
-                  if (ui.phase === 'password') {
-                    return (
-                      <section className={cardShell} aria-live="polite">
-                        <div className="flex items-start gap-3">
-                          <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
-                          <div className="min-w-0">
-                            <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
-                              {t('investorBusinessPlans.docConfidentialBadge')}
-                            </p>
-                            <p className="mt-3 text-base font-light leading-relaxed text-gray-700">{t(HINT_KEY[tier])}</p>
-                          </div>
-                        </div>
-                        <form
-                          className="flex flex-col gap-3"
-                          onSubmit={(e: FormEvent) => {
-                            e.preventDefault();
-                            void submitTier(tier);
-                          }}
-                          noValidate
-                        >
-                          <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-                            <input
-                              type={ui.showPassword ? 'text' : 'password'}
-                              autoComplete="off"
-                              value={ui.password}
-                              onChange={(e) => {
-                                setTier(tier, { password: e.target.value, wrongPassword: false });
-                              }}
-                              disabled={busy}
-                              aria-label={t('investorBusinessPlans.passwordAriaLabel')}
-                              aria-invalid={ui.wrongPassword}
-                              placeholder={t('investorBusinessPlans.passwordAriaLabel')}
-                              className={`${inputClass} w-full flex-1 ${
-                                ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''
-                              }`}
-                            />
-                            <div className="flex shrink-0 gap-2 sm:flex-col">
-                              <button
-                                type="button"
-                                onClick={() => setTier(tier, { showPassword: !ui.showPassword })}
-                                disabled={busy}
-                                aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                                className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
-                              >
-                                {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
-                              </button>
-                              <button
-                                type="submit"
-                                disabled={busy || !ui.password.trim()}
-                                aria-busy={busy}
-                                aria-label={busy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
-                                className={btnIconSubmit}
-                              >
-                                {busy ? (
-                                  <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
-                                ) : (
-                                  <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                          {ui.wrongPassword ? (
-                            <p className="text-sm leading-relaxed text-red-700" role="alert">
-                              {t('grower.confidential.wrongPassword')}
-                            </p>
-                          ) : null}
-                          <button
-                            type="button"
-                            className="self-start text-sm font-medium text-[#2D5A27] underline underline-offset-2 decoration-[#2D5A27]/35 hover:decoration-[#2D5A27]"
-                            onClick={() => setTier(tier, { phase: 'collapsed', password: '', wrongPassword: false, showPassword: false })}
-                          >
-                            {t('investorBusinessPlans.docBackToPreview')}
-                          </button>
-                        </form>
-                      </section>
-                    );
-                  }
-
-                  return (
-                    <button
-                      type="button"
-                      onClick={() => setTier(tier, { phase: 'password' })}
-                      className="group w-full min-w-0 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-                    >
-                      <div
-                        className={`${cardShell} cursor-pointer transition-colors group-hover:border-gray-300 group-hover:bg-gray-50/40`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
-                          <div className="min-w-0 flex-1">
-                            <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
-                              {t('investorBusinessPlans.docConfidentialBadge')}
-                            </p>
-                            <p className="mt-3 text-base font-light leading-relaxed text-gray-700">
-                              {t('investorBusinessPlans.tierHintAfterGate')}
-                            </p>
-                          </div>
-                          <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#23471f] group-hover:border-[#2D5A27]/30">
-                            <FileText className="h-4 w-4 text-[#2D5A27]" aria-hidden />
-                            {t('investorBusinessPlans.docUnlockCta')}
-                          </span>
-                        </div>
-                        <p className="flex items-center gap-1 text-base font-medium text-[#2D5A27]">
-                          {t('investorBusinessPlans.docTapToOpen')}
-                          <ChevronRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })()}
-              </div>
-            )}
-
-            <div className="mt-10 border-t border-gray-200 pt-8">
-              <p className="text-center text-sm font-light leading-relaxed text-gray-600">{t('investorBusinessPlans.footerNote')}</p>
+          ) : !bundleUnlocked ? (
+            <div className="flex min-h-[50vh] flex-col items-center justify-center gap-8 pt-8">
+              <Link href={loc('/')} className="transition-opacity hover:opacity-80">
+                <Image
+                  src="/logo1.png"
+                  alt={t('footer.logoAlt')}
+                  width={72}
+                  height={26}
+                  className="h-6 w-auto"
+                  priority
+                />
+              </Link>
+              <form
+                className="flex w-full max-w-md gap-2"
+                onSubmit={(e: FormEvent) => {
+                  e.preventDefault();
+                  void submitBundle();
+                }}
+                noValidate
+              >
+                <input
+                  type={showBundlePw ? 'text' : 'password'}
+                  autoComplete="off"
+                  value={bundlePw}
+                  onChange={(e) => {
+                    setBundlePw(e.target.value);
+                    if (bundleWrong) setBundleWrong(false);
+                  }}
+                  disabled={bundleBusy}
+                  aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
+                  aria-invalid={bundleWrong}
+                  placeholder=""
+                  className={`${inputClass} min-w-0 flex-1 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowBundlePw((s) => !s)}
+                  disabled={bundleBusy}
+                  aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
+                  className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                >
+                  {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                </button>
+                <button
+                  type="submit"
+                  disabled={bundleBusy || !bundlePw.trim()}
+                  aria-busy={bundleBusy}
+                  aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
+                  className={btnIconSubmit}
+                >
+                  {bundleBusy ? (
+                    <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+                  ) : (
+                    <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+                  )}
+                </button>
+              </form>
+              {bundleWrong ? (
+                <p className="text-center text-sm text-red-700" role="alert">
+                  {t('grower.confidential.wrongPassword')}
+                </p>
+              ) : null}
             </div>
-            <p className="sr-only">{t('investorBusinessPlans.ndWarning')}</p>
-          </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {TIER_IDS.map((tier) => {
+                const secretsOk = tiersConfigured?.[tier] ?? false;
+                const ui = tierUi[tier];
+                const busy = ui.loading || docLoadTier === tier;
+                const unlocked = ui.phase === 'content';
+                const title = t(TITLE_KEY[tier]);
+
+                if (!secretsOk) {
+                  return (
+                    <div
+                      key={tier}
+                      className="overflow-hidden rounded-lg border border-dashed border-gray-300 bg-gray-50/80 opacity-80 shadow-sm"
+                    >
+                      <div className="aspect-[3/4] max-h-56 bg-gray-100/90" />
+                      <div className="flex items-center gap-3 border-t border-gray-200 bg-white p-4">
+                        <FileText className="h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+                        <p className="text-sm text-gray-600">{t('investorBusinessPlans.tierUnavailable')}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                const thumb = (
+                  <div className="relative aspect-[3/4] w-full max-h-56 min-h-[12rem] bg-gradient-to-b from-gray-50 to-white">
+                    <div className="absolute left-0 right-0 top-0 h-1 bg-[#2D5A27]" aria-hidden />
+                    {docThumbLines}
+                    <span className="absolute bottom-3 right-3 text-4xl font-light tabular-nums text-[#2D5A27]/15">
+                      {TIER_INDEX[tier]}
+                    </span>
+                    {!unlocked ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/55">
+                        <div className="rounded-full border border-gray-200 bg-white p-3 shadow-sm">
+                          <Lock className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+
+                const meta = (
+                  <div className="flex items-start gap-3 border-t border-gray-200 bg-white p-4">
+                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A27]" aria-hidden />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-gray-900">{title}</p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {unlocked
+                          ? ui.externalUrl
+                            ? t('investorBusinessPlans.docOpenExternal')
+                            : t('investorBusinessPlans.docOpenFull')
+                          : t('investorBusinessPlans.docUnlockCta')}
+                      </p>
+                    </div>
+                  </div>
+                );
+
+                if (unlocked && !ui.externalUrl) {
+                  return (
+                    <Link
+                      key={tier}
+                      href={loc(`/investor-deck/business-plans/plan/${tier}`)}
+                      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:border-[#2D5A27]/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+                    >
+                      {thumb}
+                      {meta}
+                    </Link>
+                  );
+                }
+
+                if (unlocked && ui.externalUrl) {
+                  return (
+                    <a
+                      key={tier}
+                      href={ui.externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:border-[#2D5A27]/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+                    >
+                      {thumb}
+                      <div className="flex items-start gap-3 border-t border-gray-200 bg-white p-4">
+                        <ExternalLink className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A27]" aria-hidden />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium text-gray-900">{title}</p>
+                          <p className="mt-0.5 text-xs text-gray-500">{t('investorBusinessPlans.docOpenExternal')}</p>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                }
+
+                return (
+                  <button
+                    key={tier}
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setPasswordModalTier(tier)}
+                    className="overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm transition-shadow hover:border-[#2D5A27]/25 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2 disabled:opacity-60"
+                  >
+                    {thumb}
+                    {meta}
+                  </button>
+                );
+              })}
+            </div>
           )
         ) : (
           <p className="text-center text-gray-700">{t('investorBusinessPlans.retry')}</p>
         )}
+
+        <p className="sr-only">{t('investorBusinessPlans.ndWarning')}</p>
       </main>
     </div>
   );

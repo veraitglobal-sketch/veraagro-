@@ -3740,6 +3740,7 @@
     "docLockedDescription": "Further programme materials are not released through this link. Contact Bio Vera if your mandate includes additional parts.",
     "docLoadingContent": "Loading document…",
     "docOpenExternal": "Open document",
+    "docOpenFull": "Open full document",
     "gateNotConfigured": "The first-step password for this page is not configured in this environment (INVESTOR_BUSINESS_PLANS_GATE_PASSWORD).",
     "bundleTitle": "Open the document set",
     "bundleHint": "Enter the first password Bio Vera gave you for this link. Then choose a part below — only one document is open at a time, and each asks for its own password.",

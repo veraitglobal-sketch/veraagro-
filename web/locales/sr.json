@@ -3770,6 +3770,7 @@
     "docLockedDescription": "Dalji delovi programa nisu dostupni na ovom linku. Za dodatne materijale kontaktirajte Bio Veru ako vam mandat to zahteva.",
     "docLoadingContent": "Učitavanje dokumenta…",
     "docOpenExternal": "Otvori dokument",
+    "docOpenFull": "Otvori ceo dokument",
     "gateNotConfigured": "Prvi korak (kapija) za ovu stranicu nije podešen u ovom okruženju (INVESTOR_BUSINESS_PLANS_GATE_PASSWORD).",
     "bundleTitle": "Pristup kompletu dokumenata",
     "bundleHint": "Unesite glavnu lozinku koju vam je dala Bio Vera za ovaj link. Zatim izaberite deo ispod — uvek je otvoren samo jedan dokument, i svaki traži svoju lozinku.",
