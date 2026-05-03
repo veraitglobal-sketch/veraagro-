@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { Throttle } from '@nestjs/throttler';
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsBoolean } from 'class-validator';
 
 export class ContactInquiryDto {
   @IsString()
@@ -19,6 +19,24 @@ export class ContactInquiryDto {
   @IsOptional()
   @IsString()
   phone?: string;
+
+  /** Job application via Careers — requires resume when true */
+  @IsOptional()
+  @IsBoolean()
+  careersApplication?: boolean;
+
+  /** Base64 file body (PDF or Word); required when careersApplication is true */
+  @IsOptional()
+  @IsString()
+  resumeBase64?: string;
+
+  @IsOptional()
+  @IsString()
+  resumeFileName?: string;
+
+  @IsOptional()
+  @IsString()
+  resumeMimeType?: string;
 }
 
 @Controller('contact')
@@ -28,7 +46,7 @@ export class ContactController {
   /**
    * Submit contact form inquiry
    * POST /contact/submit
-   * 
+   *
    * Rate limited to prevent spam: 20 requests per 15 minutes
    */
   @Post('submit')
@@ -52,6 +70,9 @@ export class ContactController {
       };
     }
 
-    return this.contactService.submitContactInquiry(dto);
+    return this.contactService.submitContactInquiry({
+      ...dto,
+      careersApplication: Boolean(dto.careersApplication),
+    });
   }
 }

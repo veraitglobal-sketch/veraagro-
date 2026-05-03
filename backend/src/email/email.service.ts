@@ -195,7 +195,8 @@ Bio Vera Team
   }
 
   /**
-   * Send contact inquiry email notification
+   * Send contact inquiry email notification (same destination as ADMIN_EMAIL contact flow).
+   * Careers applications include CV as an attachment when provided.
    */
   async sendContactInquiryEmail(data: {
     name: string;
@@ -203,22 +204,34 @@ Bio Vera Team
     subject: string;
     message: string;
     phone?: string;
+    careersApplication?: boolean;
+    resumeAttachment?: { filename: string; buffer: Buffer; contentType: string };
   }): Promise<boolean> {
+    const h = (s: string | undefined | null) => this.escapeForEmail(s);
+
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
       // Resend: use onboarding@resend.dev when using Resend API (free tier requires this unless domain verified)
       // SMTP_USER for Resend is "resend" - not a valid FROM email, so never use it here
       const customFrom = process.env.EMAIL_FROM;
       const fromAddr = this.resend
-        ? (customFrom && customFrom.includes('@') ? customFrom : 'onboarding@resend.dev')
-        : (customFrom || process.env.SMTP_USER || 'info@biovera.app');
+        ? customFrom && customFrom.includes('@')
+          ? customFrom
+          : 'onboarding@resend.dev'
+        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
 
-      const mailOptions = {
-        from: `"Bio Vera Contact Form" <${fromAddr}>`,
-        to: adminEmail,
-        replyTo: data.email,
-        subject: `Contact Inquiry: ${data.subject}`,
-        html: `
+      const kindLabel = data.careersApplication ? 'Careers application' : 'New contact inquiry';
+      const subjectPrefix = data.careersApplication ? 'Careers' : 'Contact inquiry';
+      const emailSubject = `${subjectPrefix}: ${data.subject}`;
+      const att = data.resumeAttachment;
+      const attNoteHtml = att
+        ? `<p style="margin:15px 0;padding:12px;background:#eaf3e9;border-radius:8px;border:1px solid #2D5A27;">
+            <strong>Attachment:</strong> ${h(att.filename)}
+          </p>`
+        : '';
+      const attNoteText = att ? `\nAttachment: ${att.filename}\n` : '';
+
+      const htmlContent = `
           <!DOCTYPE html>
           <html>
           <head>
@@ -238,78 +251,102 @@ Bio Vera Team
             <div class="container">
               <div class="header">
                 <h1>🌱 Bio Vera</h1>
-                <p>New Contact Inquiry</p>
+                <p>${kindLabel}</p>
               </div>
-              
+
               <div class="content">
-                <p>You have received a new contact inquiry from the Bio Vera website:</p>
-                
+                <p>You have received a new message from the Bio Vera website:</p>
+                ${attNoteHtml}
                 <div class="info-box">
                   <div style="margin: 10px 0;">
                     <span class="label">Name:</span>
-                    <span>${data.name}</span>
+                    <span>${h(data.name)}</span>
                   </div>
                   <div style="margin: 10px 0;">
                     <span class="label">Email:</span>
-                    <span><a href="mailto:${data.email}">${data.email}</a></span>
+                    <span><a href="mailto:${h(data.email)}">${h(data.email)}</a></span>
                   </div>
-                  ${data.phone ? `
+                  ${
+                    data.phone
+                      ? `
                   <div style="margin: 10px 0;">
                     <span class="label">Phone:</span>
-                    <span><a href="tel:${data.phone}">${data.phone}</a></span>
+                    <span><a href="tel:${h(data.phone)}">${h(data.phone)}</a></span>
                   </div>
-                  ` : ''}
+                  `
+                      : ''
+                  }
                   <div style="margin: 10px 0;">
                     <span class="label">Subject:</span>
-                    <span>${data.subject}</span>
+                    <span>${h(data.subject)}</span>
                   </div>
                 </div>
-                
+
                 <div class="message-box">
                   <h3 style="margin-top: 0; color: #2D5A27;">Message:</h3>
-                  <p style="white-space: pre-wrap;">${data.message}</p>
+                  <p style="white-space: pre-wrap;">${h(data.message)}</p>
                 </div>
-                
+
                 <p style="margin-top: 30px;">
-                  <strong>Reply to:</strong> <a href="mailto:${data.email}">${data.email}</a>
+                  <strong>Reply to:</strong> <a href="mailto:${h(data.email)}">${h(data.email)}</a>
                 </p>
               </div>
-              
+
               <div class="footer">
-                <p>Bio Vera - Contact Form Notification</p>
-                <p>This email was automatically generated from the contact form on biovera.app</p>
+                <p>Bio Vera — Website form</p>
+                <p>Sent to ${h(adminEmail)}</p>
               </div>
             </div>
           </body>
           </html>
-        `,
-        text: `
-New Contact Inquiry from Bio Vera Website
+        `.trimStart();
+
+      const textContent = `
+Bio Vera — ${kindLabel}
 
 Name: ${data.name}
 Email: ${data.email}
 ${data.phone ? `Phone: ${data.phone}\n` : ''}Subject: ${data.subject}
-
+${attNoteText}
 Message:
 ${data.message}
 
 ---
 Reply to: ${data.email}
-        `,
+        `.trimStart();
+
+      const mailOptions: nodemailer.SendMailOptions = {
+        from: `"Bio Vera Contact Form" <${fromAddr}>`,
+        to: adminEmail,
+        replyTo: data.email,
+        subject: emailSubject,
+        html: htmlContent,
+        text: textContent,
+        attachments: att
+          ? [{ filename: att.filename, content: att.buffer, contentType: att.contentType }]
+          : undefined,
       };
 
       if (this.resend) {
-        // Use Resend REST API - no SMTP, works on Railway (port 587 often blocked)
         this.logger.log(
-          `Sending contact inquiry via Resend API: to=${adminEmail}, from=${fromAddr}`,
+          `Sending contact inquiry via Resend API: to=${adminEmail}, from=${fromAddr}, careers=${Boolean(data.careersApplication)}, attachment=${Boolean(att)}`,
         );
         const { data: sendData, error } = await this.resend.emails.send({
           from: `"Bio Vera Contact Form" <${fromAddr}>`,
           to: adminEmail,
           replyTo: data.email,
-          subject: `Contact Inquiry: ${data.subject}`,
-          html: mailOptions.html,
-          text: mailOptions.text,
+          subject: emailSubject,
+          html: htmlContent,
+          text: textContent,
+          attachments: att?.buffer?.length
+            ? [
+                {
+                  filename: att.filename,
+                  content: att.buffer,
+                  contentType: att.contentType,
+                },
+              ]
+            : undefined,
         });
         if (error) {
           this.logger.error(`Resend API error: ${JSON.stringify(error)}`);
@@ -342,8 +379,8 @@ Reply to: ${data.email}
         if (resp && typeof resp === 'object') {
           const r = resp as Record<string, unknown>;
           const body = r['body'];
-          const data = r['data'];
-          const raw = body ?? data;
+          const respPayload = r['data'];
+          const raw = body ?? respPayload;
           if (raw !== undefined) {
             resendErr = typeof raw === 'string' ? raw : JSON.stringify(raw);
           }

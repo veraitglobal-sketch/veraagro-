@@ -1993,13 +1993,21 @@ export async function submitApplicationForm(
 }
 
 export const contactAPI = {
-  submitInquiry: async (data: {
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-    phone?: string;
-  }): Promise<{ success: boolean; message?: string }> => {
+  submitInquiry: async (
+    data: {
+      name: string;
+      email: string;
+      subject: string;
+      message: string;
+      phone?: string;
+      careersApplication?: boolean;
+      resumeBase64?: string;
+      resumeFileName?: string;
+      resumeMimeType?: string;
+      /** Only used when submitting to Formspree (multipart); omitted from JSON to backend */
+      resumeFile?: File | null;
+    },
+  ): Promise<{ success: boolean; message?: string }> => {
     const formspreeEndpoint = getFormspreeEndpoint();
     if (formspreeEndpoint) {
       const fd = new FormData();
@@ -2008,16 +2016,32 @@ export const contactAPI = {
       fd.append('subject', data.subject);
       fd.append('message', data.message);
       if (data.phone) fd.append('phone', data.phone);
+      if (data.careersApplication) {
+        fd.append('careersApplication', 'true');
+        fd.append('_form_type', 'Careers');
+      }
+      if (data.resumeFile && data.careersApplication) {
+        fd.append(
+          'resume',
+          data.resumeFile,
+          data.resumeFileName || data.resumeFile.name || 'lebenslauf.pdf',
+        );
+      }
 
       const res = await fetch(formspreeEndpoint, {
         method: 'POST',
         body: fd,
         headers: { Accept: 'application/json' },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(60000),
       });
       const result = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && result.ok !== false) {
-        return { success: true, message: 'Thank you for your message. We will get back to you soon.' };
+        return {
+          success: true,
+          message: data.careersApplication
+            ? 'Thank you for your application. We will contact you within 3-5 business days.'
+            : 'Thank you for your message. We will get back to you soon.',
+        };
       }
       throw new Error(result?.error || 'Failed to send message');
     }
@@ -2032,11 +2056,25 @@ export const contactAPI = {
       : (candidate && !isLocalhost ? candidate : CONTACT_API_BASE);
     const url = `${baseUrl}/contact/submit`;
 
+    const body: Record<string, unknown> = {
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
+      phone: data.phone,
+    };
+    if (data.careersApplication) {
+      body.careersApplication = true;
+      body.resumeBase64 = data.resumeBase64;
+      body.resumeFileName = data.resumeFileName;
+      body.resumeMimeType = data.resumeMimeType;
+    }
+
     const res = await fetch(url, {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(60000),
     });
     const result = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };

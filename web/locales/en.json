@@ -230,7 +230,17 @@
     "sendMessage": "Send message",
     "formHelpBefore": "If the form does not work, contact us directly at",
     "formHelpAfter": ".",
-    "devConsoleHint": "Check browser console for details."
+    "devConsoleHint": "Check browser console for details.",
+    "careersFormTitle": "Job application",
+    "careersFormIntro": "Tell us briefly about yourself and attach your CV (PDF or Word). Your message goes to the same inbox as other contact enquiries.",
+    "careersMessagePlaceholder": "A short motivation, availability, languages, and links if relevant…",
+    "cvLabel": "CV / Lebenslauf *",
+    "cvHint": "PDF or Word, max 5 MB.",
+    "cvRequired": "Please attach your CV.",
+    "cvInvalidType": "Allowed formats: PDF, Word (.doc, .docx).",
+    "cvTooLarge": "File too large — maximum 5 MB.",
+    "sendApplication": "Send application",
+    "successCareersMessage": "Thank you for your application! We’ll get back to you as soon as we can."
   },
   "faqPage": {
     "title": "Frequently Asked Questions",
