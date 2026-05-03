@@ -34,6 +34,7 @@
     "investorDeck": "Investor Deck",
     "projectOverview": "Project overview",
     "technicalProposal": "Technical proposal",
+    "bioVeraFresh": "BioVera Fresh",
     "vision": "Vision",
     "roadmap": "Roadmap",
     "faq": "FAQ",
@@ -165,7 +166,8 @@
     "unitKg": "kg",
     "save": "Save",
     "cancel": "Cancel",
-    "apiErrorGeneric": "Something went wrong. Please try again."
+    "apiErrorGeneric": "Something went wrong. Please try again.",
+    "databaseSchemaOutOfDate": "The server database is out of date — Prisma migrations were probably not applied (this usually isn't wrong input on this screen).\n\nWhat to do: deploy the latest API and on that environment run: npx prisma migrate deploy (with production DATABASE_URL). Then retry the action."
   },
   "notificationCenter": {
     "title": "Notifications",
@@ -2652,6 +2654,10 @@
     "plantingsHarvestSavedNotice": "Harvest plan submitted. Transport should appear shortly in Mission tracker. If nothing shows, check that My fields outlines the estate correctly.",
     "plantingsHarvestErrHarvestExists": "This parcel already has an active harvest plan. Open Mission tracker or contact support.",
     "plantingsApprovedOnly": "You need at least one parcel that is approved, active, or certified before registering a plan. Open My fields and wait if needed, or contact support.",
+    "plantingsNoParcelsYet": "No parcels yet. Add a field and parcel first under My fields, then refresh this page.",
+    "plantingsParcelPendingTag": "(awaiting approval)",
+    "plantingsHarvestNeedsApprovedParcel": "Harvest plans stay disabled until operations approves your parcel — you can register a planting for a pending parcel using the planting form above. After approval you can submit a harvest plan here.",
+    "plantingsHarvestErrParcelNotApproved": "Choose an approved parcel for the harvest plan, or finish admin approval first.",
     "plantingsSelectParcel": "Select parcel",
     "plantingsSelectParcelFirstHint": "Choose a parcel in the list above first — then you can enter crop, date, and save.",
     "plantingsTableField": "Field",
@@ -3098,7 +3104,12 @@
     ],
     "productsTitle": "Products we offer",
     "productsLead": "We deliver a wide range of fresh fruit and vegetables (and cereals) to European markets. The full, up-to-date list with varieties, availability, and prices is in your dashboard after registration.",
-    "productCategoryLabels": ["Fruits", "Vegetables", "Cereals", "Other"],
+    "productCategoryLabels": [
+      "Fruits",
+      "Vegetables",
+      "Cereals",
+      "Other"
+    ],
     "productsNote": "Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.",
     "harvestCalendarTitle": "Harvest calendar",
     "packagingTitle": "Packaging",
@@ -3229,9 +3240,18 @@
     "tableColCategory": "Category",
     "tableColStandard": "Standard",
     "certTableRows": [
-      { "category": "Certification", "standard": "GlobalG.A.P. IFA v6 (Group)" },
-      { "category": "Analysis", "standard": "MRL limit at 70% of EU permitted levels" },
-      { "category": "Logistics", "standard": "Direct packaging at farm in Vera packaging" }
+      {
+        "category": "Certification",
+        "standard": "GlobalG.A.P. IFA v6 (Group)"
+      },
+      {
+        "category": "Analysis",
+        "standard": "MRL limit at 70% of EU permitted levels"
+      },
+      {
+        "category": "Logistics",
+        "standard": "Direct packaging at farm in Vera packaging"
+      }
     ],
     "paymentGuaranteedBold": "Guaranteed payment:",
     "paymentGuaranteedRest": "Payment is secured by contracts with German retail chains (60-90 days).",
@@ -3327,11 +3347,26 @@
     "submitting": "Submitting…",
     "submitError": "Failed to submit. Please try again or contact info@biovera.app",
     "crops": [
-      { "id": "Raspberry", "label": "Raspberry" },
-      { "id": "Blackberry", "label": "Blackberry" },
-      { "id": "Apple", "label": "Apple" },
-      { "id": "Pepper", "label": "Pepper" },
-      { "id": "Blueberry", "label": "Blueberry" }
+      {
+        "id": "Raspberry",
+        "label": "Raspberry"
+      },
+      {
+        "id": "Blackberry",
+        "label": "Blackberry"
+      },
+      {
+        "id": "Apple",
+        "label": "Apple"
+      },
+      {
+        "id": "Pepper",
+        "label": "Pepper"
+      },
+      {
+        "id": "Blueberry",
+        "label": "Blueberry"
+      }
     ]
   },
   "logisticsPartnerPage": {
@@ -4259,6 +4294,80 @@
     "ctaBuyers": "Buyer information",
     "ctaInvestors": "Investor resources"
   },
+  "bioVeraFresh": {
+    "toolbarCopyLink": "Copy link",
+    "toolbarCopied": "Copied",
+    "toolbarPrintPdf": "Save as PDF",
+    "toolbarPrintAria": "Open print dialog to save as PDF",
+    "introNote": "Summary on this page; use Download for the full prospect PDF (same as other programme pages), or print if you prefer.",
+    "pdfHint": "Prefer a file? Use Download prospect PDF. You can still use Print → Save as PDF for the on-page layout including the appendix.",
+    "contentsTitle": "On this page",
+    "contentsNav": "Jump to section",
+    "skipToContent": "Skip to document",
+    "coverEyebrow": "Controlled retail",
+    "coverTitle": "BioVera Fresh",
+    "coverSubtitle": "An extra Bio Vera lane for verified fruit and vegetables—aligned with retail partners, not competing with them.",
+    "pdfDocumentTitle": "Complete document — BioVera Fresh",
+    "pdfDocumentSubtitle": "Full programme text for stakeholders, pilots, or archiving.",
+    "ctaTitle": "Interested in a franchise or a pilot store?",
+    "ctaBody": "Tell us about your location and capacity—we will connect you with the right programme contact.",
+    "ctaButton": "Contact Bio Vera",
+    "webSections": [
+      {
+        "title": "What BioVera Fresh is",
+        "body": "BioVera Fresh meets rising demand for goods from the Bio Vera network and more growers wanting to join. It is a controlled-quality retail concept—traceable shelf sales—not a replacement for your wholesale relationships."
+      },
+      {
+        "title": "Our goals",
+        "body": "• Reliable placement for network produce\n• Less shrink and surplus\n• Extra revenue through direct retail\n• Bring verified quality closer to shoppers"
+      },
+      {
+        "title": "How it works",
+        "body": "BioVera Fresh stores carry fruit and vegetables from the Bio Vera system, with known origin, quality gates cleared, and a clear line from farmer to buyer. Everything stays inside our controlled standards."
+      },
+      {
+        "title": "Relationship to the market",
+        "body": "Retail chains and distributors remain our primary partners. BioVera Fresh is additive: it stabilises placement, helps move surplus responsibly, and supports production continuity—expanded only where the market needs it."
+      },
+      {
+        "title": "Pricing and quality",
+        "body": "Prices stay stable; markdowns apply only when product condition or freshness requires it. Goods are sold honestly against their remaining freshness window."
+      },
+      {
+        "title": "Become a partner",
+        "body": "The BioVera Fresh franchise lets you build retail under Bio Vera rules—with assortment access, standards, and ops support. Details and economics are in the PDF appendix; start with Contact."
+      }
+    ],
+    "pdfSections": [
+      {
+        "title": "What BioVera Fresh is",
+        "body": "BioVera Fresh was developed in response to growing demand for products from the Bio Vera system and increasing farmer interest in cooperation. To enable stable placement of goods and secure an additional sales channel, we introduced the BioVera Fresh concept—a modern retail model based on controlled quality and direct connection between producers and the programme."
+      },
+      {
+        "title": "Our goal",
+        "body": "The BioVera Fresh programme aims to:\n• Enable reliable placement for products from our network\n• Reduce losses and surplus stock\n• Provide additional income through direct sales\n• Bring high-quality produce closer to end customers"
+      },
+      {
+        "title": "How it works",
+        "body": "BioVera Fresh outlets offer:\n• Fruit and vegetables from the Bio Vera system\n• Products with known, documented origin\n• Goods that have passed programme quality controls\n• A transparent link between farmer and shopper\n\nAll products come from our controlled network and follow defined programme standards."
+      },
+      {
+        "title": "Relationship to the market",
+        "body": "It is important to underline: our main partners remain retail chains and distributors. BioVera Fresh does not compete with existing buyers—it is an additional channel that stabilises the market, enables sale of surplus where appropriate, and supports continuity of production. Expansion of the BioVera Fresh network will be carefully controlled and aligned with real market needs."
+      },
+      {
+        "title": "Pricing and quality model",
+        "body": "BioVera Fresh applies a clear principle:\n• Prices remain stable\n• Discounts are used only when justified by the nature or freshness of the product\n• Goods are sold in line with their actual freshness\n\nThis preserves balance between quality and availability."
+      },
+      {
+        "title": "Become a BioVera Fresh partner",
+        "body": "The BioVera Fresh franchise allows partners to become part of our system and grow their own retail business with Bio Vera support.\n\nAs a partner you receive:\n• Access to Bio Vera products and protocols\n• A clearly defined operating model\n• Workplace and quality standards\n• Support in development and operations\n\nFor commercial terms and territory discussion, use the contact options on this website."
+      }
+    ],
+    "downloadProspectCta": "Download prospect PDF",
+    "downloadProspectError": "Failed to download prospect. Please try again.",
+    "prospectNote": "The PDF includes the full BioVera Fresh programme text—goals, market role, pricing principles and partnership overview."
+  },
   "projectOverview": {
     "toolbarCopyLink": "Copy link",
     "toolbarCopied": "Copied",
@@ -4367,22 +4476,58 @@
         }
       ],
       "growers": [
-        { "title": "How to create a batch", "content": "Step-by-step guide on creating and managing batches in the Bio Vera system." },
-        { "title": "Digital scheduling", "content": "Learn how to announce harvests 24 hours in advance and report start/stop times." },
-        { "title": "Quality standards", "content": "Understanding Bio Vera quality requirements and visual standards." },
-        { "title": "Payment process", "content": "How payments are processed and when you receive funds." }
+        {
+          "title": "How to create a batch",
+          "content": "Step-by-step guide on creating and managing batches in the Bio Vera system."
+        },
+        {
+          "title": "Digital scheduling",
+          "content": "Learn how to announce harvests 24 hours in advance and report start/stop times."
+        },
+        {
+          "title": "Quality standards",
+          "content": "Understanding Bio Vera quality requirements and visual standards."
+        },
+        {
+          "title": "Payment process",
+          "content": "How payments are processed and when you receive funds."
+        }
       ],
       "drivers": [
-        { "title": "Mission management", "content": "How to accept, start, and complete missions in the app." },
-        { "title": "Temperature monitoring", "content": "Using the temperature sensors and maintaining cold chain compliance." },
-        { "title": "Route optimization", "content": "Understanding the optimized routes provided by Bio Vera." },
-        { "title": "Digital seals", "content": "How to use and verify digital seals for cargo security." }
+        {
+          "title": "Mission management",
+          "content": "How to accept, start, and complete missions in the app."
+        },
+        {
+          "title": "Temperature monitoring",
+          "content": "Using the temperature sensors and maintaining cold chain compliance."
+        },
+        {
+          "title": "Route optimization",
+          "content": "Understanding the optimized routes provided by Bio Vera."
+        },
+        {
+          "title": "Digital seals",
+          "content": "How to use and verify digital seals for cargo security."
+        }
       ],
       "general": [
-        { "title": "Getting started", "content": "Welcome to Bio Vera! Learn programme basics plus how buyer tools, dashboards and trace views fit the loads we merchandise." },
-        { "title": "Account setup", "content": "How to create and manage your Bio Vera account." },
-        { "title": "Mobile app guide", "content": "Download and use the Bio Vera mobile application." },
-        { "title": "Contact support", "content": "Get in touch with our support team for assistance." }
+        {
+          "title": "Getting started",
+          "content": "Welcome to Bio Vera! Learn programme basics plus how buyer tools, dashboards and trace views fit the loads we merchandise."
+        },
+        {
+          "title": "Account setup",
+          "content": "How to create and manage your Bio Vera account."
+        },
+        {
+          "title": "Mobile app guide",
+          "content": "Download and use the Bio Vera mobile application."
+        },
+        {
+          "title": "Contact support",
+          "content": "Get in touch with our support team for assistance."
+        }
       ]
     }
   },
@@ -4453,8 +4598,34 @@
       "vegetables": "Vegetables",
       "cereals": "Cereals"
     },
-    "monthsShort": ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
-    "monthsFull": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "monthsShort": [
+      "J",
+      "F",
+      "M",
+      "A",
+      "M",
+      "J",
+      "J",
+      "A",
+      "S",
+      "O",
+      "N",
+      "D"
+    ],
+    "monthsFull": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
     "whyNotShock": {
       "title": "Why our produce is not in shock",
       "points": [

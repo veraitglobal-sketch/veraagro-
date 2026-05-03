@@ -26,10 +26,27 @@ const MAX_FIELD_LOG_PHOTO_BYTES = 8 * 1024 * 1024;
 function buildFieldLogGrowthNotes(entry: PendingFieldEntry): string {
   const lines: string[] = [];
   lines.push(`[Field diary · ${entry.activityType}]`);
+  const src = entry.materialInputMethod;
+  if (src) {
+    lines.push(
+      src === 'scanner'
+        ? 'Material entry: barcode scan'
+        : src === 'label_typed'
+          ? 'Material entry: typed from packaging label'
+          : 'Material entry: selected from materials list',
+    );
+  }
+  if (entry.catalogMaterialName?.trim()) {
+    lines.push(`Listed product: ${entry.catalogMaterialName.trim()}`);
+  }
   const mat = entry.materialID?.trim();
   if (mat) {
     const kind = entry.materialKind;
     lines.push(kind ? `${kind}: ${mat}` : `Material: ${mat}`);
+  }
+  const qty = entry.materialQuantity?.trim();
+  if (qty) {
+    lines.push(`Quantity / count: ${qty}`);
   }
   const jn = entry.journalNotes?.trim();
   if (jn) lines.push(jn);

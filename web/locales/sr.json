@@ -34,6 +34,7 @@
     "investorDeck": "Investitor deck",
     "projectOverview": "Pregled projekta",
     "technicalProposal": "Tehnički predlog",
+    "bioVeraFresh": "BioVera Fresh",
     "vision": "Vizija",
     "roadmap": "Plan razvoja",
     "faq": "ČPP",
@@ -165,7 +166,8 @@
     "unitKg": "kg",
     "save": "Sačuvaj",
     "cancel": "Otkaži",
-    "apiErrorGeneric": "Nešto nije uspelo. Pokušajte ponovo."
+    "apiErrorGeneric": "Nešto nije uspelo. Pokušajte ponovo.",
+    "databaseSchemaOutOfDate": "Baza na serveru nije ažurna — verovatno nisu primenjene migracije Prisma (ovo obično nije zbog pogrešnog unosa na ovom ekranu).\n\nŠta da se uradi: deploy najnovijeg API koda i na tom okruženju pokrenuti: npx prisma migrate deploy (sa produkcijskim DATABASE_URL). Zatim ponovi akciju."
   },
   "notificationCenter": {
     "title": "Obaveštenja",
@@ -2653,6 +2655,10 @@
     "plantingsHarvestSavedNotice": "Plan berbe je sačuvan. Prevoz bi uskoro trebalo da se vidi u Praćenju misija. Ako se ne pojavi proverite da je obrub gazdinstva u „Moja polja“ pouzdan za mapu.",
     "plantingsHarvestErrHarvestExists": "Za ovu parcelu već aktivan plan berbe. Otvori Praćenje misija ili se javi podršci.",
     "plantingsApprovedOnly": "Potrebna je bar jedna parcela koja je odobrena, aktivna ili sertifikovana pre prijave plana. Otvorite „Moja polja“ i sačekajte ako je potrebno, ili se javite podršci.",
+    "plantingsNoParcelsYet": "Još nema parcela. Prvo dodajte njivu i parcelu („Moja polja”), pa osvežite stranicu.",
+    "plantingsParcelPendingTag": "(čeka odobrenje)",
+    "plantingsHarvestNeedsApprovedParcel": "Plan berbe ostaje zaključan dok parcela ne bude odobrena — za čekanje možete ipak prijaviti zasad gornjim obrazcem. Kada parcela prodje odobrenje, ovde šaljete plan berbe.",
+    "plantingsHarvestErrParcelNotApproved": "Za plan berbe izaberite odobrenu parcelu ili sačekajte odobrenje od tima.",
     "plantingsSelectParcel": "Izaberite parcelu",
     "plantingsSelectParcelFirstHint": "Prvo izaberite parcelu iz liste iznad — zatim unesite usev, datum i sačuvajte.",
     "plantingsTableField": "Polje (gazdinstvo)",
@@ -4289,6 +4295,80 @@
     "ctaBuyers": "Informacije za kupce",
     "ctaInvestors": "Materijali za investitore"
   },
+  "bioVeraFresh": {
+    "toolbarCopyLink": "Kopiraj link",
+    "toolbarCopied": "Kopirano",
+    "toolbarPrintPdf": "Sačuvaj kao PDF",
+    "toolbarPrintAria": "Otvori dijalog za štampu ili čuvanje kao PDF",
+    "introNote": "Sažetak je na stranici; za ceo dokument koristite Preuzmi prospekt (PDF), kao na drugim programskim stranicama.",
+    "pdfHint": "Za fajl koristite Preuzmi prospekt (PDF). Štampa → Sačuvaj kao PDF i dalje radi za prikaz na stranici sa prilogom.",
+    "contentsTitle": "Na ovoj stranici",
+    "contentsNav": "Skok na odeljak",
+    "skipToContent": "Preskoči na dokument",
+    "coverEyebrow": "Kontrolisana maloprodaja",
+    "coverTitle": "BioVera Fresh",
+    "coverSubtitle": "Dodatni kanal Bio Vere za voće i povrće iz kontrolisane mreže—usklađen sa retail partnerima, ne kao njihova konkurencija.",
+    "pdfDocumentTitle": "Kompletan dokument — BioVera Fresh",
+    "pdfDocumentSubtitle": "Ceo tekst za deljenje sa partnerima, pilote ili arhivu.",
+    "ctaTitle": "Zainteresovani za franšizu ili pilot prodavnicu?",
+    "ctaBody": "Pošaljite lokaciju i kapacitete — usmerićemo vas ka pravom kontaktu u programu.",
+    "ctaButton": "Kontakt",
+    "webSections": [
+      {
+        "title": "Šta je BioVera Fresh",
+        "body": "Odgovor na veću potražnju za robom iz Bio Vera mreže i želju farmera da uđu u sistem. To je model maloprodaje uz kontrolisan kvalitet i tragljivost — ne zamena za vaše postojeće kanale veleprodaje."
+      },
+      {
+        "title": "Naš cilj",
+        "body": "• Siguran plasman robe iz mreže\n• Manje gubitaka i viška\n• Dodatni prihod kroz direktnu prodaju\n• Kvalitet bliže krajnjem kupcu"
+      },
+      {
+        "title": "Kako funkcioniše",
+        "body": "BioVera Fresh prodajna mesta nude voće i povrće iz sistema, poznato poreklo, robu koja je prošla kontrole kvaliteta i jasnu vezu farmer–kupac. Sve ostaje unutar definisanih standarda programa."
+      },
+      {
+        "title": "Odnos prema tržištu",
+        "body": "Retail lanci i distributeri ostaju primarni partneri. BioVera Fresh je dodatak: stabilizuje plasman, pomaže prodaju viška gde ima smisla i podržava kontinuitet proizvodnje — širi se kontrolisano, po potrebi tržišta."
+      },
+      {
+        "title": "Model cena i kvaliteta",
+        "body": "Cene ostaju stabilne; popusti samo kada to opravdava stanje ili svežina robe. Prodaja je usklađena sa realnom „životnom“ svežinom partije."
+      },
+      {
+        "title": "Postani partner",
+        "body": "Franšiza BioVera Fresh omogućava maloprodaju pod pravilima Bio Vere — asortiman, standardi i operativna podrška. Detalji i ekonomija su u PDF prilogu; prvi korak je kontakt."
+      }
+    ],
+    "pdfSections": [
+      {
+        "title": "Šta je BioVera Fresh",
+        "body": "BioVera Fresh je nastao kao odgovor na rastuću potražnju za proizvodima iz BioVera sistema i sve veće interesovanje farmera za saradnju. Kako bismo omogućili stabilan plasman robe i obezbedili dodatni kanal prodaje, razvijen je BioVera Fresh koncept — moderan model maloprodaje zasnovan na kontrolisanom kvalitetu i direktnoj povezanosti sa proizvođačima unutar programa."
+      },
+      {
+        "title": "Naš cilj",
+        "body": "Cilj BioVera Fresh sistema je:\n• omogućiti siguran plasman proizvoda iz naše mreže\n• smanjiti gubitke i višak robe\n• obezbediti dodatni prihod kroz direktnu prodaju\n• približiti kvalitetne proizvode krajnjim kupcima"
+      },
+      {
+        "title": "Kako funkcioniše",
+        "body": "BioVera Fresh prodavnice nude:\n• voće i povrće iz BioVera sistema\n• proizvode poznatog porekla\n• robu koja je prošla kontrolu kvaliteta\n• direktnu vezu između farmera i kupca\n\nSvi proizvodi dolaze iz naše kontrolisane mreže i prate definisane standarde programa."
+      },
+      {
+        "title": "Odnos prema tržištu",
+        "body": "Važno je naglasiti: naši glavni partneri ostaju retail lanci i distributeri. BioVera Fresh ne postoji kao konkurencija postojećim kupcima, već kao dodatni kanal koji stabilizuje tržište, omogućava prodaju viška robe gde je to opravdano i podržava kontinuitet proizvodnje. Širenje BioVera Fresh mreže biće pažljivo kontrolisano i usklađeno sa realnim potrebama tržišta."
+      },
+      {
+        "title": "Model cena i kvaliteta",
+        "body": "BioVera Fresh primenjuje jasan princip:\n• cene ostaju stabilne\n• popusti se koriste isključivo zbog prirode proizvoda (npr. prozor svežine)\n• roba se prodaje u skladu sa svojom stvarnom svežinom\n\nTako obezbeđujemo balans između kvaliteta i dostupnosti proizvoda."
+      },
+      {
+        "title": "Postani BioVera Fresh partner",
+        "body": "BioVera Fresh franšiza omogućava partnerima da postanu deo našeg sistema i razvijaju sopstveni maloprodajni biznis uz podršku Bio Vere.\n\nKao partner dobijate:\n• pristup BioVera proizvodima i protokolima\n• jasno definisan model poslovanja\n• standarde rada i kvaliteta\n• podršku u razvoju i operacijama\n\nZa komercijalne uslove i teritoriju koristite kontakt na ovom sajtu."
+      }
+    ],
+    "downloadProspectCta": "Preuzmi prospekt (PDF)",
+    "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
+    "prospectNote": "PDF sadrži ceo tekst programa BioVera Fresh — ciljevi, uloga na tržištu, principi cena i pregled partnerstva."
+  },
   "projectOverview": {
     "toolbarCopyLink": "Kopiraj link",
     "toolbarCopied": "Kopirano",
@@ -4352,7 +4432,6 @@
       "Sa Bio Verom iskustvo prenosi u agrarni domen, sa ciljem transparentne i skalabilne digitalne infrastrukture za lance snabdevanja hranom.",
       "Raduje ga dugoročna vizija: rešenja koja učine lance snabdevanja jasnijim kroz poverenje, efikasnost i digitalnu inovaciju; plan je da Vera porodica proizvoda sa vremenom obuhvati i druge sektore."
     ],
-
     "seeAlsoEyebrow": "Povezano",
     "seeAlsoBody": "Za širu investitorsku priču, tehnički prilog i opcioni video otvorite stranicu Investitor deck.",
     "seeAlsoLink": "Investitor deck",

@@ -4,6 +4,7 @@ import {
   BadRequestException,
   ForbiddenException,
   ServiceUnavailableException,
+  HttpException,
   Inject,
   forwardRef,
   Logger,
@@ -351,38 +352,32 @@ export class MissionsService {
       }
     }
 
-    const autoAssign = this.shouldAutoAssignLogistics();
-    const logisticsPartner = autoAssign
-      ? await this.findNearestLogisticsPartner(pickupLocation.lat, pickupLocation.lng)
-      : null;
-
-    // Calculate optimal route (using simple distance calculation for now)
-    const routeCalc = await this.calculateOptimalRoute(
-      pickupLocation,
-      logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
-    );
-    // Prisma JSON: no Date/undefined/NaN in stored objects; include destination for maps / handover UIs
-    const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
-    const routeWithDest = {
-      ...optimalRoute,
-      destination: {
-        address: dto.destinationAddress?.trim() || null,
-        city: dto.destinationCity?.trim() || null,
-      },
-    } as Prisma.InputJsonValue;
-
-    const linkedHarvestId = await this.resolveHarvestAnnouncementIdForCreate(
-      growerId,
-      batch ? { id: batch.id, parcelId: batch.parcelId } : null,
-      dto,
-    );
-
-    // Generate mission number
-    const missionNumber = await this.generateMissionNumber();
-
-    // Create mission
     let mission;
     try {
+      const autoAssign = this.shouldAutoAssignLogistics();
+      const logisticsPartner = autoAssign
+        ? await this.findNearestLogisticsPartner(pickupLocation.lat, pickupLocation.lng)
+        : null;
+
+      const routeCalc = await this.calculateOptimalRoute(
+        pickupLocation,
+        logisticsPartner ? MissionsService.parseJsonLatLng(logisticsPartner.currentLocation) : null,
+      );
+      const optimalRoute = MissionsService.routeToJsonValue(routeCalc);
+      const routeWithDest = {
+        ...optimalRoute,
+        destination: {
+          address: dto.destinationAddress?.trim() || null,
+          city: dto.destinationCity?.trim() || null,
+        },
+      } as Prisma.InputJsonValue;
+
+      const linkedHarvestId = await this.resolveHarvestAnnouncementIdForCreate(
+        growerId,
+        batch ? { id: batch.id, parcelId: batch.parcelId } : null,
+        dto,
+      );
+      const missionNumber = await this.generateMissionNumber();
       mission = await this.prisma.missions.create({
         data: {
           id: crypto.randomUUID(),
@@ -411,6 +406,9 @@ export class MissionsService {
         },
       });
     } catch (e: unknown) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
       const code = MissionsService.prismaKnownRequestCode(e);
       this.logger.error(
         `missions.create failed: ${code ?? 'non-prisma'} ${e instanceof Error ? e.message : String(e)}`,
@@ -418,6 +416,17 @@ export class MissionsService {
       );
       if (code) {
         if (code === 'P2002') {
+          const rawMeta =
+            typeof e === 'object' && e !== null && 'meta' in e
+              ? ((e as { meta?: { target?: string | string[] } }).meta ?? undefined)
+              : undefined;
+          const tg = rawMeta?.target;
+          const tStr = Array.isArray(tg) ? tg.map(String).join(' ') : tg != null ? String(tg) : '';
+          if (/harvestAnnouncementId/i.test(tStr)) {
+            throw new BadRequestException(
+              'A transport request is already linked to this harvest plan. Open Missions or finish the existing run first. If you need help, contact Vera support.',
+            );
+          }
           throw new BadRequestException(
             'Could not assign a unique mission number. Please try again in a few seconds.',
           );

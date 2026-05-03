@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  type NativeSyntheticEvent,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
@@ -15,13 +16,22 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Save, ChevronRight } from 'lucide-react-native';
 import * as Location from 'expo-location';
-import MapView, { Polygon, Marker } from 'react-native-maps';
+import MapView, { Polygon, Polyline, Marker } from 'react-native-maps';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
-import { estatesAPI, parcelsAPI } from '../../../lib/api';
-import { apiErrorMessage } from '../../../lib/api-error';
+import { estatesAPI, parcelsAPI, harvestAnnouncementsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
+import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { offlineStorage } from '../../../lib/offline-storage';
+import { syncService } from '../../../lib/sync-service';
+import { plantingFormDateToEstimatedIsoUtc } from '../../../features/grower/plantings/planting-estimated-date';
 import { CROP_HIERARCHY, getCropDisplayLabel } from '../../../lib/crops';
 import { markStepComplete } from '../../../lib/grower-journey';
+import {
+  appendPanSample,
+  finalizeFreehandRing,
+  type MapLonLat,
+} from '../../../lib/map-boundary-geometry';
 
 type EstateStep = 1 | 2 | 3;
 type PlantingType = 'NEW' | 'EXISTING';
@@ -43,6 +53,8 @@ export default function NewEstateScreen() {
   });
   const [loading, setLoading] = useState(false);
   const [drawing, setDrawing] = useState(false);
+  const [drawStyle, setDrawStyle] = useState<'tap' | 'finger'>('tap');
+  const [fingerStroke, setFingerStroke] = useState<MapLonLat[]>([]);
   const [locationRefreshing, setLocationRefreshing] = useState(false);
   const [plantingType, setPlantingType] = useState<PlantingType | null>(null);
   const [category, setCategory] = useState<CategoryKey | null>(null);
@@ -86,10 +98,39 @@ export default function NewEstateScreen() {
     }
   }, [step]);
 
-  const handleMapPress = (event: any) => {
-    if (!drawing) return;
+  const handleMapPress = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
+    if (!drawing || drawStyle !== 'tap') return;
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    setPolygonCoordinates([...polygonCoordinates, { lat: latitude, lng: longitude }]);
+    setPolygonCoordinates((prev) => [...prev, { lat: latitude, lng: longitude }]);
+  };
+
+  const fingerDrawingLocked = drawing && drawStyle === 'finger';
+
+  const handlePanDrag = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
+    if (!fingerDrawingLocked) return;
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setFingerStroke((prev) => appendPanSample(prev, latitude, longitude));
+  };
+
+  const handleAcceptFingerOutline = () => {
+    const done = finalizeFreehandRing(fingerStroke);
+    if (!done.ok) {
+      Alert.alert(
+        t('producer.estates.newEstate'),
+        done.reason === 'few'
+          ? t('producer.estates.fingerOutlineTooFew')
+          : t('producer.estates.fingerOutlineNotClosed'),
+      );
+      return;
+    }
+    setPolygonCoordinates(done.ring);
+    setFingerStroke([]);
+    setDrawing(false);
+  };
+
+  const setDrawStyleWrapped = (next: 'tap' | 'finger') => {
+    setDrawStyle(next);
+    if (next === 'tap') setFingerStroke([]);
   };
 
   const canProceedStep1 = name.trim().length > 0 && polygonCoordinates.length >= 3;
@@ -110,10 +151,39 @@ export default function NewEstateScreen() {
         name: name.trim(),
         polygonCoordinates,
       });
-      await parcelsAPI.create(estate.id, {
+      const cropTypeStr = `${cropLabel} (${plantingType === 'NEW' ? t('producer.estates.newPlanting') : t('producer.estates.existingPlanting')})`;
+      const parcel = await parcelsAPI.create(estate.id, {
         polygonCoordinates,
-        cropType: `${cropLabel} (${plantingType === 'NEW' ? t('producer.estates.newPlanting') : t('producer.estates.existingPlanting')})`,
+        cropType: cropTypeStr,
       });
+
+      const parsedEst = plantingFormDateToEstimatedIsoUtc(new Date().toISOString().slice(0, 10));
+      const plantingPayload: CreateHarvestPlanBody = {
+        parcelId: parcel.id,
+        announcementType: 'PLANTING',
+        cropType: cropTypeStr.slice(0, 500),
+        estimatedDate: parsedEst.ok ? parsedEst.iso : new Date().toISOString(),
+      };
+      try {
+        if (await isDeviceOnline()) {
+          try {
+            await harvestAnnouncementsAPI.create(plantingPayload);
+          } catch (e) {
+            if (isLikelyNetworkError(e)) {
+              await offlineStorage.savePendingHarvestPlan({ payload: plantingPayload });
+              void syncService.getSyncStatus();
+            } else if (__DEV__) {
+              console.warn('[NewEstateScreen] PLANTING record not created', e);
+            }
+          }
+        } else {
+          await offlineStorage.savePendingHarvestPlan({ payload: plantingPayload });
+          void syncService.getSyncStatus();
+        }
+      } catch (q) {
+        if (__DEV__) console.warn('[NewEstateScreen] planting queue failed', q);
+      }
+
       await markStepComplete(2);
       router.back();
     } catch (error: unknown) {
@@ -123,7 +193,10 @@ export default function NewEstateScreen() {
     }
   };
 
-  const clearPolygon = () => setPolygonCoordinates([]);
+  const clearPolygon = () => {
+    setPolygonCoordinates([]);
+    setFingerStroke([]);
+  };
 
   const categoryLabels: Record<CategoryKey, string> = {
     fruits: t('producer.estates.cropCategory.fruits'),
@@ -189,40 +262,136 @@ export default function NewEstateScreen() {
                 <TextInput value={location} onChangeText={setLocation} placeholder="e.g. Arilje, Serbia" style={inputStyle} />
               </View>
               <View style={infoBoxStyle}>
-                <Text style={{ fontSize: 13, color: colors.text.primary }}>
-                  {drawing ? t('producer.estates.clickToAddPoints') : t('producer.estates.enableDrawing')}
-                </Text>
-                <Text style={{ fontSize: 11, color: colors.text.secondary, marginTop: 4 }}>{t('producer.estates.atLeast3Points')}</Text>
+                <Text style={{ fontSize: 13, color: colors.text.primary }}>{t('producer.estates.drawFingerHint')}</Text>
+                {drawStyle === 'tap' ? (
+                  <Text style={{ fontSize: 11, color: colors.text.secondary, marginTop: 6 }}>{t('producer.estates.atLeast3Points')}</Text>
+                ) : null}
               </View>
-              <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.md }}>
+              <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.sm }}>
+                <TouchableOpacity
+                  onPress={() => setDrawStyleWrapped('tap')}
+                  disabled={fingerDrawingLocked && fingerStroke.length > 0}
+                  style={[
+                    buttonStyle,
+                    drawStyle === 'tap' && { borderColor: colors.primary, backgroundColor: `${colors.primary}12` },
+                  ]}
+                >
+                  <Text style={[buttonTextStyle, drawStyle === 'tap' && { fontWeight: '700' }]}>
+                    {t('producer.estates.drawStyleTap')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setDrawStyleWrapped('finger')}
+                  disabled={fingerDrawingLocked && fingerStroke.length > 0}
+                  style={[
+                    buttonStyle,
+                    drawStyle === 'finger' && { borderColor: colors.primary, backgroundColor: `${colors.primary}12` },
+                  ]}
+                >
+                  <Text style={[buttonTextStyle, drawStyle === 'finger' && { fontWeight: '700' }]}>
+                    {t('producer.estates.drawStyleFinger')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.md, flexWrap: 'wrap' }}>
                 <TouchableOpacity
                   onPress={() => setDrawing(!drawing)}
                   style={[buttonStyle, drawing && { backgroundColor: colors.primary }]}
                 >
-                  <Text style={[buttonTextStyle, drawing && { color: colors.background }]}>{drawing ? t('producer.estates.drawingActive') : t('producer.estates.enableDrawingBtn')}</Text>
+                  <Text style={[buttonTextStyle, drawing && { color: colors.background }]}>
+                    {drawing
+                      ? drawStyle === 'finger'
+                        ? t('producer.estates.drawStyleFinger')
+                        : t('producer.estates.drawingActive')
+                      : t('producer.estates.enableDrawingBtn')}
+                  </Text>
                 </TouchableOpacity>
-                {polygonCoordinates.length > 0 && (
-                  <TouchableOpacity onPress={clearPolygon} style={buttonStyle}>
+                {fingerDrawingLocked && fingerStroke.length > 2 && (
+                  <TouchableOpacity
+                    onPress={handleAcceptFingerOutline}
+                    style={{
+                      flex: 1,
+                      minWidth: 120,
+                      padding: theme.spacing.md,
+                      borderRadius: theme.borderRadius.sm,
+                      backgroundColor: colors.primary,
+                      borderWidth: 0.5,
+                      borderColor: colors.primary,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.background }}>
+                      {t('producer.estates.acceptFingerOutline')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
+                  <TouchableOpacity onPress={clearPolygon} style={[buttonStyle, { flex: 0 }]}>
                     <Text style={[buttonTextStyle, { color: colors.error }]}>{t('producer.estates.delete')}</Text>
                   </TouchableOpacity>
                 )}
               </View>
               <View style={{ height: 360, borderRadius: theme.borderRadius.md, overflow: 'hidden', borderWidth: 0.5, borderColor: colors.border, marginBottom: theme.spacing.md }}>
-                <MapView style={{ flex: 1 }} region={region} onPress={handleMapPress} showsUserLocation showsMyLocationButton>
-                  {currentLocation && <Marker coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }} title={t('producer.estates.yourLocation')} />}
-                  {polygonCoordinates.length > 0 && (
+                <MapView
+                  style={{ flex: 1 }}
+                  region={region}
+                  onRegionChangeComplete={(r) =>
+                    setRegion({
+                      latitude: r.latitude,
+                      longitude: r.longitude,
+                      latitudeDelta: r.latitudeDelta,
+                      longitudeDelta: r.longitudeDelta,
+                    })
+                  }
+                  scrollEnabled={!fingerDrawingLocked}
+                  zoomEnabled={!fingerDrawingLocked}
+                  rotateEnabled={!fingerDrawingLocked}
+                  onPress={handleMapPress}
+                  onPanDrag={handlePanDrag}
+                  showsUserLocation
+                  showsMyLocationButton
+                >
+                  {currentLocation && (
+                    <Marker coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }} title={t('producer.estates.yourLocation')} />
+                  )}
+                  {polygonCoordinates.length > 0 && !(fingerDrawingLocked && fingerStroke.length >= 2) ? (
                     <Polygon
                       coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
                       fillColor={`${colors.primary}30`}
                       strokeColor={colors.primary}
                       strokeWidth={2}
                     />
-                  )}
+                  ) : null}
+                  {polygonCoordinates.length > 0 && fingerDrawingLocked && fingerStroke.length >= 2 ? (
+                    <Polygon
+                      coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
+                      fillColor={`${colors.primary}14`}
+                      strokeColor={colors.primary}
+                      strokeWidth={1}
+                    />
+                  ) : null}
+                  {fingerDrawingLocked && fingerStroke.length >= 2 ? (
+                    <Polyline
+                      coordinates={fingerStroke.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
+                      strokeColor={colors.primary}
+                      strokeWidth={3}
+                    />
+                  ) : null}
+                  {drawStyle === 'tap'
+                    ? polygonCoordinates.map((coord, index) => (
+                        <Marker
+                          key={`v-${coord.lat}-${coord.lng}-${index}`}
+                          coordinate={{ latitude: coord.lat, longitude: coord.lng }}
+                          title={t('producer.estates.pointN', { n: index + 1 })}
+                        />
+                      ))
+                    : null}
                 </MapView>
               </View>
-              {polygonCoordinates.length > 0 && (
+              {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
                 <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: theme.spacing.md }}>
                   {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
+                  {fingerDrawingLocked && fingerStroke.length > 0 ? ` · ${fingerStroke.length}` : ''}
                 </Text>
               )}
               <TouchableOpacity

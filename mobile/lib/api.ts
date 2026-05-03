@@ -288,7 +288,12 @@ export const harvestAnnouncementsAPI = {
   },
   getMy: async () => {
     const response = await api.get('/harvest-announcements/my-announcements', { timeout: 25000 });
-    return response.data || [];
+    const raw = response.data as unknown;
+    if (Array.isArray(raw)) return raw;
+    if (raw !== null && typeof raw === 'object' && Array.isArray((raw as { data?: unknown }).data)) {
+      return (raw as { data: unknown[] }).data;
+    }
+    return [];
   },
 };
 

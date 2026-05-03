@@ -80,6 +80,7 @@ import { TreatmentLogsModule } from './treatment-logs/treatment-logs.module';
 import { HaccpModule } from './haccp/haccp.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { PackageBadgesModule } from './package-badges/package-badges.module';
+import { BioVeraFreshModule } from './biovera-fresh/biovera-fresh.module';
 
 @Module({
   imports: [
@@ -167,6 +168,7 @@ import { PackageBadgesModule } from './package-badges/package-badges.module';
     HaccpModule,
     BlockchainModule,
     PackageBadgesModule,
+    BioVeraFreshModule,
   ],
   providers: [
     {

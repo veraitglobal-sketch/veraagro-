@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { X, ScanLine } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { materialsAPI } from '../../../lib/api';
+import { apiErrorMessage } from '../../../lib/api-error';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { MaterialFilterType } from './useMaterialsData';
@@ -99,11 +100,7 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
       onClose();
       Alert.alert(t('alerts.success'), t('producer.materials.addForm.saved'));
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        (e instanceof Error ? e.message : null) ||
-        t('producer.materials.addForm.saveFailed');
-      const line = Array.isArray(msg) ? msg.join(' ') : String(msg);
+      const line = apiErrorMessage(e, t('producer.materials.addForm.saveFailed'));
       Alert.alert(t('error'), line);
     } finally {
       setSaving(false);

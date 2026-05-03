@@ -4,6 +4,9 @@ import type { CreateHarvestPlanBody } from './api';
 /** Optional material kind captured with field log (offline row). */
 export type FieldLogMaterialKind = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
 
+/** How the material barcode was captured (evidentiranje). */
+export type FieldLogMaterialInputMethod = 'label_typed' | 'scanner' | 'catalog';
+
 const PENDING_ENTRIES_KEY = 'pending_field_entries';
 const FIELD_LOG_HISTORY_KEY = 'field_log_history_v1';
 const FIELD_LOG_HISTORY_MAX = 100;
@@ -13,7 +16,13 @@ const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
 const WHITELIST_KEY = 'material_whitelist';
 
-export type FieldActivityType = 'Planting' | 'Fertilizing' | 'Spraying' | 'Harvest';
+export type FieldActivityType =
+  | 'Planting'
+  | 'Fertilizing'
+  | 'Spraying'
+  | 'Harvest'
+  | 'TransportCoordination'
+  | 'Packaging';
 
 export interface PendingFieldEntry {
   id: string;
@@ -30,7 +39,14 @@ export interface PendingFieldEntry {
   /** Required when plan is PLANTING (server-validated). */
   growthStage?: string;
   activityType: FieldActivityType;
+  /** Quantity or count entered by user (merged into synced notes). */
+  materialQuantity?: string;
+  /** Barcode / code of the material. */
   materialID?: string;
+  /** Typed from packaging label vs camera scan vs picker from Materijali whitelist. */
+  materialInputMethod?: FieldLogMaterialInputMethod;
+  /** Display name when `materialInputMethod === 'catalog'`. */
+  catalogMaterialName?: string;
   photoUri: string;
   location: {
     lat: number;
@@ -56,6 +72,9 @@ export interface FieldLogHistoryItem {
   growthStage?: string;
   materialKind?: FieldLogMaterialKind;
   materialID?: string;
+  materialQuantity?: string;
+  materialInputMethod?: FieldLogMaterialInputMethod;
+  catalogMaterialName?: string;
   status: 'pending' | 'syncing' | 'synced' | 'error';
   error?: string;
 }
@@ -125,10 +144,24 @@ const LEGACY_ACTIVITY_TO_EN: Record<string, FieldActivityType> = {
   Fertilizing: 'Fertilizing',
   Spraying: 'Spraying',
   Harvest: 'Harvest',
+  TransportCoordination: 'TransportCoordination',
+  Packaging: 'Packaging',
 };
 
+const KNOWN_ACTIVITIES_SET = new Set<FieldActivityType>([
+  'Planting',
+  'Fertilizing',
+  'Spraying',
+  'Harvest',
+  'TransportCoordination',
+  'Packaging',
+]);
+
 function normalizeFieldActivity(raw: string): FieldActivityType {
-  return LEGACY_ACTIVITY_TO_EN[raw] ?? 'Spraying';
+  const fromLegacy = LEGACY_ACTIVITY_TO_EN[raw];
+  if (fromLegacy) return fromLegacy;
+  if (KNOWN_ACTIVITIES_SET.has(raw as FieldActivityType)) return raw as FieldActivityType;
+  return 'Spraying';
 }
 
 export const offlineStorage = {
@@ -208,7 +241,10 @@ export const offlineStorage = {
         journalNotesPreview: (entry.journalNotes ?? '').slice(0, 240),
         growthStage: entry.growthStage,
         materialKind: entry.materialKind,
+        materialQuantity: entry.materialQuantity,
         materialID: entry.materialID,
+        materialInputMethod: entry.materialInputMethod,
+        catalogMaterialName: entry.catalogMaterialName,
         status: entry.status,
         error: entry.error,
       };

@@ -112,42 +112,61 @@ export default function HarvestForm() {
           <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 10 }}>
             {t('producer.harvest.stepParcel')}
           </Text>
-          <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 12, lineHeight: 18 }}>
-            {t('producer.harvest.selectParcel')} <Text style={{ color: colors.error }}>*</Text>
-          </Text>
-          {h.parcelsLoading ? (
-            <ActivityIndicator size="small" color={colors.accent} />
-          ) : h.approvedParcels.length === 0 ? (
-            <Text style={{ fontSize: 14, color: colors.error }}>{t('producer.harvest.noApprovedParcels')}</Text>
-          ) : (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {h.approvedParcels.map((p) => (
-                <TouchableOpacity
-                  key={p.id}
-                  onPress={() => h.setParcelId(p.id)}
-                  style={{
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    borderRadius: 8,
-                    borderWidth: 0.5,
-                    backgroundColor: h.parcelId === p.id ? colors.accent : colors.background,
-                    borderColor: h.parcelId === p.id ? colors.accent : colors.border,
-                    maxWidth: '100%',
-                  }}
-                >
-                  <Text
+            <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 12, lineHeight: 18 }}>
+              {t('producer.harvest.selectParcel')} <Text style={{ color: colors.error }}>*</Text>
+            </Text>
+            {h.parcelsLoading ? (
+              <ActivityIndicator size="small" color={colors.accent} />
+            ) : h.approvedParcels.length === 0 ? (
+              <Text style={{ fontSize: 14, color: colors.error }}>{t('producer.harvest.noApprovedParcels')}</Text>
+            ) : (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {h.approvedParcels.map((p) => (
+                  <TouchableOpacity
+                    key={p.id}
+                    onPress={() => h.setParcelId(p.id)}
                     style={{
-                      fontSize: 12,
-                      color: h.parcelId === p.id ? colors.background : colors.text.primary,
+                      paddingHorizontal: 12,
+                      paddingVertical: 10,
+                      borderRadius: 8,
+                      borderWidth: 0.5,
+                      backgroundColor: h.parcelId === p.id ? colors.accent : colors.background,
+                      borderColor: h.parcelId === p.id ? colors.accent : colors.border,
+                      maxWidth: '100%',
                     }}
-                    numberOfLines={2}
                   >
-                    {p.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: h.parcelId === p.id ? colors.background : colors.text.primary,
+                      }}
+                      numberOfLines={2}
+                    >
+                      {p.label}
+                    </Text>
+                    {!p.harvestPlanEligible ? (
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          marginTop: 4,
+                          color: h.parcelId === p.id ? colors.background : colors.text.secondary,
+                          opacity: h.parcelId === p.id ? 0.9 : 1,
+                          lineHeight: 14,
+                        }}
+                        numberOfLines={3}
+                      >
+                        {t('producer.harvest.parcelPendingHarvestOnly')}
+                      </Text>
+                    ) : null}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+            {!h.parcelsLoading && h.planMode === 'HARVEST' && h.parcelId && !h.selectedParcelHarvestEligible ? (
+              <Text style={{ fontSize: 13, color: colors.error, marginTop: 12, lineHeight: 18 }}>
+                {t('producer.harvest.harvestNeedsApprovedParcel')}
+              </Text>
+            ) : null}
         </View>
 
         {showHarvestPlantingStep ? (
@@ -281,43 +300,6 @@ export default function HarvestForm() {
 
             <View style={{ marginBottom: 16 }}>
               <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                {t('producer.harvest.estimatedQuantity')} <Text style={{ color: colors.error }}>*</Text>
-              </Text>
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                <TextInput
-                  value={h.estimatedQuantity}
-                  onChangeText={h.setEstimatedQuantity}
-                  placeholder="0"
-                  keyboardType="numeric"
-                  style={{
-                    flex: 1,
-                    fontSize: 14,
-                    paddingVertical: 12,
-                    paddingHorizontal: 16,
-                    borderWidth: 0.5,
-                    borderColor: colors.border,
-                    borderRadius: 8,
-                    backgroundColor: colors.background,
-                  }}
-                />
-                <View
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                    borderWidth: 0.5,
-                    borderColor: colors.border,
-                    borderRadius: 8,
-                    backgroundColor: colors.background,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 13, color: colors.text.primary }}>{h.unit}</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
                 {h.planMode === 'HARVEST' ? t('producer.harvest.plannedHarvestDate') : t('producer.harvest.plantingPlanDate')}{' '}
                 <Text style={{ color: colors.error }}>*</Text>
               </Text>
@@ -339,6 +321,45 @@ export default function HarvestForm() {
                 }}
               />
             </View>
+
+            {h.planMode === 'HARVEST' ? (
+              <View style={{ marginBottom: 16 }}>
+                <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
+                  {t('producer.harvest.estimatedQuantity')} <Text style={{ color: colors.error }}>*</Text>
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <TextInput
+                    value={h.estimatedQuantity}
+                    onChangeText={h.setEstimatedQuantity}
+                    placeholder="0"
+                    keyboardType="numeric"
+                    style={{
+                      flex: 1,
+                      fontSize: 14,
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      borderWidth: 0.5,
+                      borderColor: colors.border,
+                      borderRadius: 8,
+                      backgroundColor: colors.background,
+                    }}
+                  />
+                  <View
+                    style={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      borderWidth: 0.5,
+                      borderColor: colors.border,
+                      borderRadius: 8,
+                      backgroundColor: colors.background,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, color: colors.text.primary }}>{h.unit}</Text>
+                  </View>
+                </View>
+              </View>
+            ) : null}
 
             {h.planMode === 'HARVEST' ? (
               <>

@@ -22,7 +22,13 @@ function growthStagePersistedFromForm(preset: string, custom: string): string | 
   return preset.trim() || undefined;
 }
 
-export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
+export type ActivityType =
+  | 'PLANTING'
+  | 'FERTILIZING'
+  | 'SPRAYING'
+  | 'HARVEST'
+  | 'TRANSPORT_COORD'
+  | 'PACKAGING';
 
 /** Barcode validation path — user taps first so we don't infer wrong from vague typing. */
 export type MaterialKindForLog = FieldLogMaterialKind;
@@ -33,6 +39,8 @@ const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType'
   FERTILIZING: 'Fertilizing',
   SPRAYING: 'Spraying',
   HARVEST: 'Harvest',
+  TRANSPORT_COORD: 'TransportCoordination',
+  PACKAGING: 'Packaging',
 };
 
 export const ACTIVITY_TYPES: { value: ActivityType }[] = [
@@ -40,6 +48,8 @@ export const ACTIVITY_TYPES: { value: ActivityType }[] = [
   { value: 'FERTILIZING' },
   { value: 'SPRAYING' },
   { value: 'HARVEST' },
+  { value: 'TRANSPORT_COORD' },
+  { value: 'PACKAGING' },
 ];
 
 const FIELD_HISTORY_ACTIVITY_KEY: Record<string, string> = {
@@ -47,7 +57,13 @@ const FIELD_HISTORY_ACTIVITY_KEY: Record<string, string> = {
   Fertilizing: 'fertilizing',
   Spraying: 'spraying',
   Harvest: 'harvest',
+  TransportCoordination: 'transportCoord',
+  Packaging: 'packaging',
 };
+
+function activityRequiresParcelGps(a: ActivityType | ''): boolean {
+  return a === 'PLANTING' || a === 'FERTILIZING' || a === 'SPRAYING';
+}
 
 export function historyActivityLabelKey(activity: string): string {
   return FIELD_HISTORY_ACTIVITY_KEY[activity] ?? 'spraying';
@@ -78,62 +94,103 @@ export function useFieldLogData() {
   const [growthStagePreset, setGrowthStagePreset] = useState('');
   const [growthStageCustom, setGrowthStageCustom] = useState('');
   const [journalNotes, setJournalNotes] = useState('');
+  const [materialQuantity, setMaterialQuantity] = useState('');
 
   const [localHistory, setLocalHistory] = useState<FieldLogHistoryItem[]>([]);
 
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
-  const currentEstateRef = useRef<Estate | null>(null);
-  useEffect(() => {
-    currentEstateRef.current = currentEstate;
-  }, [currentEstate]);
+  const selectedParcelIdRef = useRef('');
   useEffect(() => {
     locationRef.current = location;
   }, [location]);
+  useEffect(() => {
+    selectedParcelIdRef.current = selectedParcelId;
+  }, [selectedParcelId]);
+
+  const [parcelsByEstate, setParcelsByEstate] = useState<Record<string, Parcel[]>>({});
 
   const loadEstates = useCallback(async () => {
     try {
       const data = await estatesAPI.getAll();
       const list = Array.isArray(data) ? data : [];
       setEstates(list);
-      setCurrentEstate((prev) => {
-        if (list.length === 0) return null;
-        if (prev) {
-          const n = list.find((e) => e.id === prev.id);
-          if (n) return n;
+      const entries = await Promise.all(
+        list.map(async (e) => {
+          try {
+            const pl = await parcelsAPI.getByEstate(e.id);
+            return [e.id, Array.isArray(pl) ? pl : []] as const;
+          } catch {
+            return [e.id, []] as const;
+          }
+        }),
+      );
+      const map = Object.fromEntries(entries) as Record<string, Parcel[]>;
+      setParcelsByEstate(map);
+      const preserved = selectedParcelIdRef.current;
+      if (!preserved) {
+        setCurrentEstate(null);
+        setParcelsForGps([]);
+        return;
+      }
+      let found: Estate | null = null;
+      let foundParcels: Parcel[] = [];
+      for (const e of list) {
+        const plist = map[e.id] ?? [];
+        if (plist.some((p) => p.id === preserved)) {
+          found = e;
+          foundParcels = plist;
+          break;
         }
-        return list[0];
-      });
+      }
+      if (found) {
+        setCurrentEstate(found);
+        setParcelsForGps(foundParcels);
+      } else {
+        setSelectedParcelId('');
+        setCurrentEstate(null);
+        setParcelsForGps([]);
+      }
     } catch (error) {
       console.error('Error loading estates:', error);
       setEstates([]);
+      setParcelsByEstate({});
       setCurrentEstate(null);
+      setParcelsForGps([]);
     }
   }, []);
 
+  const approvedParcelOptions = useMemo(() => {
+    const out: { parcel: Parcel; estate: Estate }[] = [];
+    for (const e of estates) {
+      for (const p of parcelsByEstate[e.id] ?? []) {
+        if (p.approvedAt) out.push({ parcel: p, estate: e });
+      }
+    }
+    out.sort((a, b) => {
+      const farm = a.estate.name.localeCompare(b.estate.name, undefined, { sensitivity: 'base' });
+      if (farm !== 0) return farm;
+      const c1 = a.parcel.cropType ?? '';
+      const c2 = b.parcel.cropType ?? '';
+      return c1.localeCompare(c2, undefined, { sensitivity: 'base' });
+    });
+    return out;
+  }, [estates, parcelsByEstate]);
+
   useEffect(() => {
-    const id = currentEstate?.id;
-    if (!id) {
+    if (!selectedParcelId) {
+      setCurrentEstate(null);
       setParcelsForGps([]);
       return;
     }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const list = await parcelsAPI.getByEstate(id);
-        if (!cancelled) setParcelsForGps(Array.isArray(list) ? list : []);
-      } catch {
-        if (!cancelled) setParcelsForGps([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [currentEstate?.id]);
-
-  const approvedParcels = useMemo(
-    () => parcelsForGps.filter((p) => p.approvedAt),
-    [parcelsForGps],
-  );
+    const opt = approvedParcelOptions.find((o) => o.parcel.id === selectedParcelId);
+    if (opt) {
+      setCurrentEstate(opt.estate);
+      setParcelsForGps(parcelsByEstate[opt.estate.id] ?? []);
+    } else {
+      setCurrentEstate(null);
+      setParcelsForGps([]);
+    }
+  }, [selectedParcelId, approvedParcelOptions, parcelsByEstate]);
 
   const loadParcelPlans = useCallback(async () => {
     if (!selectedParcelId) {
@@ -186,18 +243,19 @@ export function useFieldLogData() {
   );
 
   useEffect(() => {
-    setSelectedParcelId('');
-  }, [currentEstate?.id]);
-
-  useEffect(() => {
     setGrowthStagePreset('');
     setGrowthStageCustom('');
     setJournalNotes('');
+    setMaterialQuantity('');
   }, [selectedParcelId]);
 
-  /** Držati upozorenje u skladu sa poslednjom lokacijom i poligonima (ne samo preko ref‑a bez zavisnosti). */
+  /** Strict only for planting / fertilizer / spray — transport, packaging, harvest may be recorded off-parcel. */
   useEffect(() => {
     if (!location) {
+      setGpsWarning(false);
+      return;
+    }
+    if (!activityRequiresParcelGps(activityType)) {
       setGpsWarning(false);
       return;
     }
@@ -210,6 +268,7 @@ export function useFieldLogData() {
     currentEstate?.polygonCoordinates,
     parcelsForGps,
     currentEstate?.id,
+    activityType,
   ]);
 
   const requestPermissions = useCallback(async () => {
@@ -233,23 +292,46 @@ export function useFieldLogData() {
       const data = await estatesAPI.getAll();
       const list = Array.isArray(data) ? data : [];
       setEstates(list);
-      const prevId = currentEstateRef.current?.id;
-      const next =
-        list.length === 0 ? null : prevId ? (list.find((e) => e.id === prevId) ?? list[0]) : list[0];
-      setCurrentEstate(next);
-      if (next?.id) {
-        try {
-          const pl = await parcelsAPI.getByEstate(next.id);
-          setParcelsForGps(Array.isArray(pl) ? pl : []);
-        } catch {
+      const entries = await Promise.all(
+        list.map(async (e) => {
+          try {
+            const pl = await parcelsAPI.getByEstate(e.id);
+            return [e.id, Array.isArray(pl) ? pl : []] as const;
+          } catch {
+            return [e.id, []] as const;
+          }
+        }),
+      );
+      const map = Object.fromEntries(entries) as Record<string, Parcel[]>;
+      setParcelsByEstate(map);
+      const preserved = selectedParcelIdRef.current;
+      if (preserved) {
+        let foundEstate: Estate | null = null;
+        let foundParcels: Parcel[] = [];
+        for (const e of list) {
+          const plist = map[e.id] ?? [];
+          if (plist.some((p) => p.id === preserved)) {
+            foundEstate = e;
+            foundParcels = plist;
+            break;
+          }
+        }
+        if (foundEstate) {
+          setCurrentEstate(foundEstate);
+          setParcelsForGps(foundParcels);
+        } else {
+          setSelectedParcelId('');
+          setCurrentEstate(null);
           setParcelsForGps([]);
         }
       } else {
+        setCurrentEstate(null);
         setParcelsForGps([]);
       }
     } catch (error) {
       console.error('Error loading estates:', error);
       setEstates([]);
+      setParcelsByEstate({});
       setParcelsForGps([]);
     } finally {
       setReferenceRefreshing(false);
@@ -262,7 +344,11 @@ export function useFieldLogData() {
   }, []);
 
   useEffect(() => {
-    if (activityType === 'HARVEST') {
+    if (
+      activityType === 'HARVEST' ||
+      activityType === 'TRANSPORT_COORD' ||
+      activityType === 'PACKAGING'
+    ) {
       setMaterialID('');
       setMaterialValid(null);
       return;
@@ -277,7 +363,11 @@ export function useFieldLogData() {
       setMaterialValid(null);
       return;
     }
-    if (activityType === 'HARVEST') {
+    if (
+      activityType === 'HARVEST' ||
+      activityType === 'TRANSPORT_COORD' ||
+      activityType === 'PACKAGING'
+    ) {
       setMaterialValid(null);
       return;
     }
@@ -361,14 +451,6 @@ export function useFieldLogData() {
     }
   }, []);
 
-  const selectEstateById = useCallback(
-    (estateId: string) => {
-      const next = estates.find((e) => e.id === estateId);
-      if (next) setCurrentEstate(next);
-    },
-    [estates],
-  );
-
   const pickPhotoFromLibrary = useCallback(async () => {
     try {
       const library = await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -450,6 +532,11 @@ export function useFieldLogData() {
           ? growthStagePersistedFromForm(growthStagePreset, growthStageCustom)
           : undefined;
 
+      const usesMaterialBarcode =
+        activityType === 'PLANTING' ||
+        activityType === 'FERTILIZING' ||
+        activityType === 'SPRAYING';
+
       const entryId = await offlineStorage.savePendingEntry({
         activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
         estateId: currentEstate?.id,
@@ -458,8 +545,9 @@ export function useFieldLogData() {
         planAnnouncementType: plan?.announcementType,
         journalNotes: journalNotes.trim() || undefined,
         growthStage: growthStageSaved,
-        materialKind: activityType !== 'HARVEST' ? materialKind : undefined,
+        materialKind: usesMaterialBarcode ? materialKind : undefined,
         materialID: materialID || undefined,
+        materialQuantity: materialQuantity.trim() || undefined,
         photoUri: photoUri!,
         location: location!,
       });
@@ -496,6 +584,7 @@ export function useFieldLogData() {
       setGrowthStagePreset('');
       setGrowthStageCustom('');
       setJournalNotes('');
+      setMaterialQuantity('');
       await reloadLocalHistory();
     } catch (error) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
@@ -515,17 +604,21 @@ export function useFieldLogData() {
     growthStagePreset,
     growthStageCustom,
     journalNotes,
+    materialQuantity,
     t,
     reloadLocalHistory,
   ]);
 
   const handleSubmit = useCallback(async () => {
-    if (!currentEstate?.id) {
-      Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
-      return;
-    }
     if (!selectedParcelId) {
       Alert.alert(t('producer.growthJournalAlerts.parcelTitle'), t('producer.growthJournalAlerts.parcelBody'));
+      return;
+    }
+    if (!currentEstate?.id) {
+      Alert.alert(
+        t('producer.growthJournalAlerts.parcelTitle'),
+        t('producer.fieldLogAlerts.parcelContextMissing'),
+      );
       return;
     }
     if (plansLoading) {
@@ -566,15 +659,13 @@ export function useFieldLogData() {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.locationRequired'));
       return;
     }
-    if (activityType !== 'HARVEST' && materialID.trim() && materialValid === false) {
+    const materialBarcodeActivities: ActivityType[] = ['PLANTING', 'FERTILIZING', 'SPRAYING'];
+    if (
+      materialBarcodeActivities.includes(activityType as ActivityType) &&
+      materialID.trim() &&
+      materialValid === false
+    ) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.materialInvalid'));
-      return;
-    }
-    if (gpsWarning) {
-      Alert.alert(t('producer.fieldLogAlerts.gpsOffParcelTitle'), t('producer.fieldLogAlerts.gpsOffParcelBody'), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.continue'), onPress: saveEntry },
-      ]);
       return;
     }
     await saveEntry();
@@ -592,7 +683,6 @@ export function useFieldLogData() {
     location,
     materialID,
     materialValid,
-    gpsWarning,
     saveEntry,
     t,
   ]);
@@ -601,8 +691,7 @@ export function useFieldLogData() {
     router,
     estates,
     currentEstate,
-    selectEstateById,
-    approvedParcels,
+    approvedParcelOptions,
     selectedParcelId,
     setSelectedParcelId,
     parcelPlans,
@@ -616,6 +705,8 @@ export function useFieldLogData() {
     setGrowthStageCustom,
     journalNotes,
     setJournalNotes,
+    materialQuantity,
+    setMaterialQuantity,
     activityType,
     setActivityType,
     materialID,

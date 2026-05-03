@@ -62,9 +62,10 @@ export default function GrowerPlantingsPage() {
   const [harvestSavedNotice, setHarvestSavedNotice] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState<HaRow[]>([]);
-  const [approvedParcels, setApprovedParcels] = useState<(ParcelRow & { estateName: string })[]>([]);
+  const [growerParcels, setGrowerParcels] = useState<(ParcelRow & { estateName: string })[]>([]);
 
-  const [formParcelId, setFormParcelId] = useState('');
+  const [formPlantParcelId, setFormPlantParcelId] = useState('');
+  const [formHarvestParcelId, setFormHarvestParcelId] = useState('');
   const [formCrop, setFormCrop] = useState('');
   const [formDate, setFormDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [formNotes, setFormNotes] = useState('');
@@ -86,16 +87,14 @@ export default function GrowerPlantingsPage() {
       for (const e of estates || []) {
         const parcels = (await parcelsAPI.getByEstate(e.id).catch(() => [])) as ParcelRow[];
         for (const p of parcels || []) {
-          if (parcelEligibleForHarvestPlan(p)) {
-            rows.push({ ...p, estateName: e.name });
-          }
+          rows.push({ ...p, estateName: e.name });
         }
       }
-      setApprovedParcels(rows);
+      setGrowerParcels(rows);
     } catch (e: unknown) {
       setErr(growerApiErrorOrT(e, t, 'growerPages.plantingsErrLoad'));
       setAnnouncements([]);
-      setApprovedParcels([]);
+      setGrowerParcels([]);
     } finally {
       setLoading(false);
     }
@@ -105,16 +104,23 @@ export default function GrowerPlantingsPage() {
     void load();
   }, [load]);
 
+  const harvestParcelsApproved = useMemo(
+    () => growerParcels.filter(parcelEligibleForHarvestPlan),
+    [growerParcels],
+  );
+
   useEffect(() => {
-    if (approvedParcels.length === 1) {
-      setFormParcelId(approvedParcels[0].id);
+    if (growerParcels.length === 1) {
+      const one = growerParcels[0];
+      setFormPlantParcelId(one.id);
+      setFormHarvestParcelId(parcelEligibleForHarvestPlan(one) ? one.id : '');
       return;
     }
-    setFormParcelId((prev) => {
-      if (!prev) return '';
-      return approvedParcels.some((p) => p.id === prev) ? prev : '';
-    });
-  }, [approvedParcels]);
+    setFormPlantParcelId((prev) => (prev && growerParcels.some((p) => p.id === prev) ? prev : ''));
+    setFormHarvestParcelId((prev) =>
+      prev && harvestParcelsApproved.some((p) => p.id === prev) ? prev : '',
+    );
+  }, [growerParcels, harvestParcelsApproved]);
 
   const formatDate = useCallback(
     (iso: string) => {
@@ -144,11 +150,12 @@ export default function GrowerPlantingsPage() {
     return t('growerPages.ha_STATUS', { status });
   };
 
-  const restFieldsLocked = approvedParcels.length > 1 && !formParcelId.trim();
+  const restPlantingLocked = growerParcels.length > 1 && !formPlantParcelId.trim();
+  const restHarvestLocked = harvestParcelsApproved.length > 1 && !formHarvestParcelId.trim();
 
   const submitPlanting = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formParcelId || !formCrop.trim() || !formDate) return;
+    if (!formPlantParcelId || !formCrop.trim() || !formDate) return;
     const cropTrim = formCrop.trim();
     if (cropTrim.length > 500) {
       setErr(t('growerPages.plantingsErrCropTooLong'));
@@ -164,7 +171,7 @@ export default function GrowerPlantingsPage() {
     setHarvestSavedNotice(null);
     try {
       await harvestAnnouncementsAPI.create({
-        parcelId: formParcelId,
+        parcelId: formPlantParcelId,
         announcementType: 'PLANTING',
         cropType: cropTrim,
         estimatedDate: parsed.iso,
@@ -182,7 +189,12 @@ export default function GrowerPlantingsPage() {
 
   const submitHarvest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formParcelId || !formHarvestCrop.trim() || !formHarvestDate) return;
+    if (!formHarvestParcelId || !formHarvestCrop.trim() || !formHarvestDate) return;
+    const parcelForHarvest = growerParcels.find((p) => p.id === formHarvestParcelId);
+    if (!parcelForHarvest || !parcelEligibleForHarvestPlan(parcelForHarvest)) {
+      setErr(t('growerPages.plantingsHarvestErrParcelNotApproved'));
+      return;
+    }
     const cropTrim = formHarvestCrop.trim();
     if (cropTrim.length > 500) {
       setErr(t('growerPages.plantingsErrCropTooLong'));
@@ -204,7 +216,7 @@ export default function GrowerPlantingsPage() {
     setHarvestSavedNotice(null);
     try {
       await harvestAnnouncementsAPI.create({
-        parcelId: formParcelId,
+        parcelId: formHarvestParcelId,
         announcementType: 'HARVEST',
         cropType: cropTrim,
         estimatedDate: parsed.iso,
@@ -272,9 +284,9 @@ export default function GrowerPlantingsPage() {
                   <Sprout className="h-5 w-5 text-[#2D5A27]" />
                   {t('growerPages.plantingsFormTitle')}
                 </h2>
-                {approvedParcels.length === 0 ? (
+                {growerParcels.length === 0 ? (
                   <div className="text-base text-amber-900 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 leading-relaxed space-y-3">
-                    <p>{t('growerPages.plantingsApprovedOnly')}</p>
+                    <p>{t('growerPages.plantingsNoParcelsYet')}</p>
                     <p>
                       <Link
                         href={loc('/grower/fields')}
@@ -290,22 +302,25 @@ export default function GrowerPlantingsPage() {
                       <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormParcel')}</label>
                       <select
                         required
-                        value={formParcelId}
-                        onChange={(e) => setFormParcelId(e.target.value)}
+                        value={formPlantParcelId}
+                        onChange={(e) => setFormPlantParcelId(e.target.value)}
                         className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       >
                         <option value="">{t('growerPages.plantingsSelectParcel')}</option>
-                        {approvedParcels.map((p) => (
+                        {growerParcels.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.estateName} — {p.cropType || p.id.slice(0, 8)}…
+                            {!parcelEligibleForHarvestPlan(p)
+                              ? ` ${t('growerPages.plantingsParcelPendingTag')}`
+                              : ''}
                           </option>
                         ))}
                       </select>
                     </div>
-                    {restFieldsLocked ? (
+                    {restPlantingLocked ? (
                       <p className="text-sm text-gray-600 mb-3 leading-relaxed">{t('growerPages.plantingsSelectParcelFirstHint')}</p>
                     ) : null}
-                    <div className={restFieldsLocked ? 'opacity-50 pointer-events-none' : ''}>
+                    <div className={restPlantingLocked ? 'opacity-50 pointer-events-none' : ''}>
                     <div>
                       <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormCrop')}</label>
                       <input
@@ -338,7 +353,7 @@ export default function GrowerPlantingsPage() {
                     </div>
                     <button
                       type="submit"
-                      disabled={saving || savingHarvest || restFieldsLocked}
+                      disabled={saving || savingHarvest || restPlantingLocked}
                       className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Leaf className="h-4 w-4" />}
@@ -354,8 +369,22 @@ export default function GrowerPlantingsPage() {
                   {t('growerPages.plantingsHarvestFormTitle')}
                 </h2>
                 <p className="text-base text-gray-600 mb-4 leading-relaxed">{t('growerPages.plantingsHarvestFormLead')}</p>
-                {approvedParcels.length === 0 ? (
-                  <p className="text-base text-gray-600">{t('growerPages.plantingsApprovedOnly')}</p>
+                {growerParcels.length === 0 ? (
+                  <div className="text-base text-amber-900 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 leading-relaxed space-y-3">
+                    <p>{t('growerPages.plantingsNoParcelsYet')}</p>
+                    <p>
+                      <Link
+                        href={loc('/grower/fields')}
+                        className="inline-flex min-h-[44px] items-center font-semibold text-[#2D5A27] underline underline-offset-2"
+                      >
+                        {t('grower.placeholders.openParcels')}
+                      </Link>
+                    </p>
+                  </div>
+                ) : harvestParcelsApproved.length === 0 ? (
+                  <div className="text-base text-gray-700 bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 leading-relaxed">
+                    <p>{t('growerPages.plantingsHarvestNeedsApprovedParcel')}</p>
+                  </div>
                 ) : (
                   <form onSubmit={submitHarvest} className="space-y-4 max-w-lg">
                     <div>
@@ -364,22 +393,22 @@ export default function GrowerPlantingsPage() {
                       </label>
                       <select
                         required
-                        value={formParcelId}
-                        onChange={(e) => setFormParcelId(e.target.value)}
+                        value={formHarvestParcelId}
+                        onChange={(e) => setFormHarvestParcelId(e.target.value)}
                         className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       >
                         <option value="">{t('growerPages.plantingsSelectParcel')}</option>
-                        {approvedParcels.map((p) => (
+                        {harvestParcelsApproved.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.estateName} — {p.cropType || p.id.slice(0, 8)}…
                           </option>
                         ))}
                       </select>
                     </div>
-                    {restFieldsLocked ? (
+                    {restHarvestLocked ? (
                       <p className="text-sm text-gray-600 mb-3 leading-relaxed">{t('growerPages.plantingsSelectParcelFirstHint')}</p>
                     ) : null}
-                    <div className={restFieldsLocked ? 'opacity-50 pointer-events-none' : ''}>
+                    <div className={restHarvestLocked ? 'opacity-50 pointer-events-none' : ''}>
                       <div>
                         <label className="block text-base font-medium text-gray-700 mb-1.5">
                           {t('growerPages.plantingsHarvestFormCrop')}
@@ -432,7 +461,7 @@ export default function GrowerPlantingsPage() {
                     </div>
                     <button
                       type="submit"
-                      disabled={savingHarvest || saving || restFieldsLocked}
+                      disabled={savingHarvest || saving || restHarvestLocked}
                       className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {savingHarvest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Truck className="h-4 w-4" />}

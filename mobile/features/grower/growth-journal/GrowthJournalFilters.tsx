@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
@@ -19,6 +19,7 @@ interface GrowthJournalFiltersProps {
   activePlanId?: string;
   onPlanChange?: (planId: string) => void;
   plansLoading?: boolean;
+  parcelsLoading?: boolean;
 }
 
 export function GrowthJournalFilters({
@@ -32,6 +33,7 @@ export function GrowthJournalFilters({
   activePlanId = '',
   onPlanChange,
   plansLoading = false,
+  parcelsLoading = false,
 }: GrowthJournalFiltersProps) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
@@ -61,7 +63,7 @@ export function GrowthJournalFilters({
           flexDirection: 'row',
           flexWrap: 'wrap',
           gap: theme.spacing.sm,
-          marginBottom: parcels.length > 0 ? theme.spacing.md : 0,
+          marginBottom: parcels.length > 0 || parcelsLoading ? theme.spacing.md : 0,
         }}
       >
         {estates.map((estate) => (
@@ -93,6 +95,17 @@ export function GrowthJournalFilters({
           </TouchableOpacity>
         ))}
       </View>
+      {parcelsLoading && filterEstate !== 'all' && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: theme.spacing.sm }}>
+          <ActivityIndicator size="small" color={colors.primary} />
+          <Text style={{ fontSize: 12, color: colors.text.secondary }}>{t('producer.growthJournal.parcelsLoading')}</Text>
+        </View>
+      )}
+      {!parcelsLoading && filterEstate !== 'all' && parcels.length === 0 && (
+        <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
+          {t('producer.growthJournal.noApprovedParcelsOnField')}
+        </Text>
+      )}
       {parcels.length > 0 && (
         <>
           <Text style={labelStyle}>{t('producer.growthJournal.parcelLabel')}</Text>

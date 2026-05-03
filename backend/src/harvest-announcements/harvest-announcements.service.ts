@@ -175,13 +175,13 @@ export class HarvestAnnouncementsService {
     if (!parcel) {
       throw new ForbiddenException('Parcel not found or access denied');
     }
-    const parcelReadyForPlans =
+    const parcelReadyForHarvest =
       parcel.approvedAt != null ||
       parcel.status === 'ACTIVE' ||
       parcel.status === 'CERTIFIED';
-    if (!parcelReadyForPlans) {
+    if (dto.announcementType === 'HARVEST' && !parcelReadyForHarvest) {
       throw new ForbiddenException(
-        'Harvest and planting announcements require an administrator-approved parcel.',
+        'Harvest plans require an administrator-approved parcel.',
       );
     }
 
@@ -377,13 +377,21 @@ export class HarvestAnnouncementsService {
   }
 
   /**
-   * Get all announcements for a farmer (includes planting progress tracking for active PLANTING plans).
-   * DB errors from the main query propagate (so the client is not misled with an empty list).
-   * Growth-log aggregation is best-effort only.
+   * All harvest/planting plans for farmland this account owns (`estates.ownerId`),
+   * not only rows where `harvest_announcements.userId` matches.
+   *
+   * Rationale: mobile/web parity, legacy rows, and avoiding “empty app” when
+   * the row exists in DB under a mismatched creator id while the parcel is still theirs.
    */
   async getFarmerAnnouncements(userId: string) {
     const list = await this.prisma.harvest_announcements.findMany({
-      where: { userId },
+      where: {
+        parcel: {
+          estates: {
+            ownerId: userId,
+          },
+        },
+      },
       include: {
         parcel: {
           include: {

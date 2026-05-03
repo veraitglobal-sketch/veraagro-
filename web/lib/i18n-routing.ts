@@ -19,6 +19,7 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "investors",
   "investor-deck",
   "project-overview",
+  "biovera-fresh",
   "technical-proposal",
   "eic-part-b",
   "help-center",

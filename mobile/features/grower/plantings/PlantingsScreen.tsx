@@ -176,17 +176,15 @@ export default function PlantingsScreen() {
           ParcelAug & { calculatedArea?: number }
         >;
         for (const par of parcels || []) {
-          if (parcelEligibleForHarvestPlan(par)) {
-            rows.push({
-              id: par.id,
-              cropType: par.cropType,
-              approvedAt: par.approvedAt,
-              status: par.status,
-              estateId: par.estateId,
-              calculatedArea: typeof par.calculatedArea === 'number' ? par.calculatedArea : undefined,
-              estateName: e.name,
-            });
-          }
+          rows.push({
+            id: par.id,
+            cropType: par.cropType,
+            approvedAt: par.approvedAt,
+            status: par.status,
+            estateId: par.estateId,
+            calculatedArea: typeof par.calculatedArea === 'number' ? par.calculatedArea : undefined,
+            estateName: e.name,
+          });
         }
       }
       setParcelList(rows);
@@ -825,7 +823,9 @@ export default function PlantingsScreen() {
               </View>
 
               {parcelList.length === 0 ? (
-                <Text style={{ paddingVertical: theme.spacing.lg, color: theme.colors.warning }}>{t('producer.plantings.approvedOnlyHint')}</Text>
+                <Text style={{ paddingVertical: theme.spacing.lg, color: theme.colors.warning }}>
+                  {t('producer.plantings.noParcelsHint')}
+                </Text>
               ) : (
                 <>
                   <ScrollView
@@ -855,6 +855,11 @@ export default function PlantingsScreen() {
                             ? ` · ${formatArea(parcelList[0].calculatedArea, langSr)}`
                             : ''}
                         </Text>
+                        {!parcelEligibleForHarvestPlan(parcelList[0]) ? (
+                          <Text style={{ fontSize: 12, color: theme.colors.warning, marginTop: 6 }}>
+                            {t('producer.plantings.pendingParcelCanPlant')}
+                          </Text>
+                        ) : null}
                       </View>
                     ) : (
                       <>
@@ -869,6 +874,7 @@ export default function PlantingsScreen() {
                               typeof par.calculatedArea === 'number'
                                 ? `${formatArea(par.calculatedArea, langSr)}`
                                 : '—';
+                            const pendingApproval = !parcelEligibleForHarvestPlan(par);
                             return (
                               <TouchableOpacity
                                 key={par.id}
@@ -889,6 +895,11 @@ export default function PlantingsScreen() {
                                 <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
                                   {par.cropType || `${par.id.slice(0, 8)}…`} · {aM2}
                                 </Text>
+                                {pendingApproval ? (
+                                  <Text style={{ fontSize: 11, color: theme.colors.warning, marginTop: 4 }}>
+                                    {t('producer.plantings.pendingParcelCanPlant')}
+                                  </Text>
+                                ) : null}
                               </TouchableOpacity>
                             );
                           })}

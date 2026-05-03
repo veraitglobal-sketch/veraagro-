@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Body, UseGuards, Request, Query, Put, Param } from '@nestjs/common';
 import { ComplianceService } from './compliance.service';
+import { GrowerWhiteListDto } from './dto/grower-white-list.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -76,19 +77,13 @@ export class ComplianceController {
   /** Grower: add name + barcode + type to the same whitelist (visible in Materials + field checks). */
   @Post('white-list/grower')
   @Roles('FARMER', 'GROWER')
-  async growerAddToWhiteList(
-    @Request() req,
-    @Body()
-    body: {
-      barcode: string;
-      productName: string;
-      manufacturer?: string;
-      materialType: string;
-      description?: string;
-    },
-  ) {
+  async growerAddToWhiteList(@Request() req, @Body() dto: GrowerWhiteListDto) {
     return this.complianceService.submitGrowerMaterial({
-      ...body,
+      barcode: dto.barcode,
+      productName: dto.productName,
+      manufacturer: dto.manufacturer,
+      materialType: dto.materialType,
+      description: dto.description,
       userId: req.user.id,
     });
   }

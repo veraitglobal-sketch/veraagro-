@@ -1,4 +1,5 @@
 /** Best-effort user-facing message from Axios-like API errors (React Native). */
+import i18n from '../i18n/config';
 
 function responseBody(err: unknown): unknown {
   if (!err || typeof err !== 'object' || !('response' in err)) return undefined;
@@ -136,6 +137,9 @@ export function isGenericInfrastructureMessage(text: string): boolean {
   if (/^gateway timeout$/i.test(text.trim())) return true;
   if (/^service unavailable$/i.test(text.trim())) return true;
   if (/^request failed with status code \d+$/.test(lower)) return true;
+  /** Detailed API / DB diagnostics should surface to the user, not collapse to canned text */
+  if (/\bprisma\b/i.test(lower) && /\bP\d{4}\b/i.test(lower)) return false;
+  if (/\bmigrate\b/i.test(lower) && /\bdeploy\b/i.test(lower)) return false;
   return false;
 }
 
@@ -164,6 +168,54 @@ export function axiosErrorSupportHint(err: unknown): string | null {
   return null;
 }
 
+/** Long text blob for heuristic matching (migration / schema drift). */
+export function combinedApiErrorEvidence(err: unknown): string {
+  const parts: string[] = [];
+  const fromAxios = axiosLikeMessage(err);
+  if (fromAxios?.trim()) parts.push(fromAxios.trim());
+  const data = responseBody(err);
+  if (data !== undefined && data !== null) {
+    try {
+      if (typeof data === 'object') parts.push(JSON.stringify(data));
+      else parts.push(String(data));
+    } catch {
+      /** ignore */
+    }
+  }
+  const st = axiosResponseStatus(err);
+  if (st != null) parts.push(`http ${st}`);
+  return parts.join('\n');
+}
+
+/** True when failure is very likely missing Prisma migrations or DB column/table drift (not bad user input). */
+export function isDatabaseSchemaOutOfDateError(err: unknown): boolean {
+  const blob = combinedApiErrorEvidence(err).toLowerCase();
+  if (!blob.trim()) return false;
+  const st = axiosResponseStatus(err);
+
+  const strong =
+    /\bp20(21|22)\b/.test(blob) ||
+    /\bprisma migrate deploy\b/.test(blob) ||
+    /\bprisma_migrations\b/.test(blob) ||
+    /\bmissing a table or column\b/.test(blob) ||
+    /\bmissing column\b/.test(blob) ||
+    /\bmissing table\b/.test(blob) ||
+    /\bcolumn .* does not exist\b/.test(blob) ||
+    /\btable .* does not exist\b/.test(blob) ||
+    /\brelation .* does not exist\b/.test(blob) ||
+    /\bdb schema out of date\b/.test(blob) ||
+    (/\bmigrate\b/.test(blob) && /\bdeploy\b/.test(blob)) ||
+    /\bunable to resolve field\b/.test(blob) ||
+    /\bthere is no such column\b/.test(blob);
+
+  if (strong) return true;
+  /** 503 from Nest «ServiceUnavailable» + schema wording */
+  if (st === 503 && (/prisma|migration|migrate|missing column|missing table|\bp20\d+/i.test(blob) || /\bdatabase\b/.test(blob))) {
+    return true;
+  }
+  return false;
+}
+
 /** Timeout / abort — not a semantics error from `/missions`. */
 export function axiosIsAbortOrTimeout(err: unknown): boolean {
   if (!err || typeof err !== 'object') return false;
@@ -178,6 +230,14 @@ export function axiosIsAbortOrTimeout(err: unknown): boolean {
 
 /** API body or Error message, else `fallback` string (pass translated copy from caller). */
 export function apiErrorMessage(err: unknown, fallback: string): string {
+  if (isDatabaseSchemaOutOfDateError(err)) {
+    const base = i18n.t('errors.databaseSchemaOutOfDate');
+    const detail = axiosLikeMessage(err)?.trim();
+    const hint = axiosErrorSupportHint(err);
+    const extra =
+      detail && detail.length > 24 && !/^internal server error$/i.test(detail) ? detail : hint;
+    return extra ? `${base}\n\n${extra}` : base;
+  }
   return axiosLikeMessage(err) ?? fallback;
 }
 

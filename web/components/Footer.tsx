@@ -136,6 +136,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link
+                  href={loc('/biovera-fresh')}
+                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
+                >
+                  {t('footer.bioVeraFresh')}
+                </Link>
+              </li>
+              <li>
                 <Link href={`${loc('/')}#vision`} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('footer.vision')}
                 </Link>

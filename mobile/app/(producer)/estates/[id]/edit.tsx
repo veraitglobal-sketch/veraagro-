@@ -1,16 +1,30 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  RefreshControl,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
-import { Save, MapPin } from 'lucide-react-native';
-import * as Location from 'expo-location';
-import MapView, { Polygon, Marker } from 'react-native-maps';
+import { Save } from 'lucide-react-native';
+import MapView, { Polygon, Polyline, Marker } from 'react-native-maps';
 import { colors } from '../../../../lib/colors';
 import { theme } from '../../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../../lib/api';
 import { apiErrorMessage } from '../../../../lib/api-error';
+import {
+  appendPanSample,
+  finalizeFreehandRing,
+  type MapLonLat,
+} from '../../../../lib/map-boundary-geometry';
 
 /**
  * Edit Estate Screen
@@ -35,6 +49,8 @@ export default function EditEstateScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [drawing, setDrawing] = useState(false);
+  const [drawStyle, setDrawStyle] = useState<'tap' | 'finger'>('tap');
+  const [fingerStroke, setFingerStroke] = useState<MapLonLat[]>([]);
 
   const loadEstate = useCallback(
     async (mode: 'initial' | 'refresh') => {
@@ -77,11 +93,39 @@ export default function EditEstateScreen() {
     if (id) void loadEstate('initial');
   }, [id, loadEstate]);
 
-  const handleMapPress = (event: any) => {
-    if (!drawing) return;
-    
+  const handleMapPress = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
+    if (!drawing || drawStyle !== 'tap') return;
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    setPolygonCoordinates([...polygonCoordinates, { lat: latitude, lng: longitude }]);
+    setPolygonCoordinates((prev) => [...prev, { lat: latitude, lng: longitude }]);
+  };
+
+  const fingerDrawingLocked = drawing && drawStyle === 'finger';
+
+  const handlePanDrag = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
+    if (!fingerDrawingLocked) return;
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setFingerStroke((prev) => appendPanSample(prev, latitude, longitude));
+  };
+
+  const handleAcceptFingerOutline = () => {
+    const done = finalizeFreehandRing(fingerStroke);
+    if (!done.ok) {
+      Alert.alert(
+        t('producer.estates.editEstateTitle'),
+        done.reason === 'few'
+          ? t('producer.estates.fingerOutlineTooFew')
+          : t('producer.estates.fingerOutlineNotClosed'),
+      );
+      return;
+    }
+    setPolygonCoordinates(done.ring);
+    setFingerStroke([]);
+    setDrawing(false);
+  };
+
+  const setDrawStyleWrapped = (next: 'tap' | 'finger') => {
+    setDrawStyle(next);
+    if (next === 'tap') setFingerStroke([]);
   };
 
   const handleSave = async () => {
@@ -109,6 +153,7 @@ export default function EditEstateScreen() {
 
   const clearPolygon = () => {
     setPolygonCoordinates([]);
+    setFingerStroke([]);
   };
 
   if (initialLoad && !estate) {
@@ -211,11 +256,67 @@ export default function EditEstateScreen() {
           </View>
 
           {/* Drawing Controls */}
-          <View style={{ 
-            flexDirection: 'row', 
-            gap: theme.spacing.sm, 
-            marginBottom: theme.spacing.md 
-          }}>
+          <Text
+            style={{
+              fontSize: 13,
+              color: colors.text.secondary,
+              lineHeight: 19,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            {t('producer.estates.drawFingerHint')}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: theme.spacing.sm,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setDrawStyleWrapped('tap')}
+              disabled={fingerDrawingLocked && fingerStroke.length > 0}
+              style={{
+                flex: 1,
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                borderRadius: theme.borderRadius.sm,
+                backgroundColor: drawStyle === 'tap' ? `${colors.primary}18` : colors.background,
+                borderWidth: 0.5,
+                borderColor: drawStyle === 'tap' ? colors.primary : colors.border,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+                {t('producer.estates.drawStyleTap')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setDrawStyleWrapped('finger')}
+              disabled={fingerDrawingLocked && fingerStroke.length > 0}
+              style={{
+                flex: 1,
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                borderRadius: theme.borderRadius.sm,
+                backgroundColor: drawStyle === 'finger' ? `${colors.primary}18` : colors.background,
+                borderWidth: 0.5,
+                borderColor: drawStyle === 'finger' ? colors.primary : colors.border,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+                {t('producer.estates.drawStyleFinger')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: theme.spacing.sm,
+              marginBottom: theme.spacing.md,
+            }}
+          >
             <TouchableOpacity
               onPress={() => setDrawing(!drawing)}
               style={{
@@ -228,15 +329,39 @@ export default function EditEstateScreen() {
                 alignItems: 'center',
               }}
             >
-              <Text style={{
-                fontSize: 13,
-                fontWeight: '300',
-                color: drawing ? colors.background : colors.text.primary,
-              }}>
-                {drawing ? t('producer.estates.drawingActive') : t('producer.estates.enableDrawing')}
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '300',
+                  color: drawing ? colors.background : colors.text.primary,
+                }}
+              >
+                {drawing
+                  ? drawStyle === 'finger'
+                    ? t('producer.estates.drawStyleFinger')
+                    : t('producer.estates.drawingActive')
+                  : t('producer.estates.enableDrawingBtn')}
               </Text>
             </TouchableOpacity>
-            {polygonCoordinates.length > 0 && (
+            {fingerDrawingLocked && fingerStroke.length > 2 && (
+              <TouchableOpacity
+                onPress={handleAcceptFingerOutline}
+                style={{
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.md,
+                  borderRadius: theme.borderRadius.sm,
+                  backgroundColor: colors.primary,
+                  borderWidth: 0.5,
+                  borderColor: colors.primary,
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.background }}>
+                  {t('producer.estates.acceptFingerOutline')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
               <TouchableOpacity
                 onPress={clearPolygon}
                 style={{
@@ -247,11 +372,13 @@ export default function EditEstateScreen() {
                   borderColor: colors.border,
                 }}
               >
-                <Text style={{
-                  fontSize: 13,
-                  fontWeight: '300',
-                  color: colors.error,
-                }}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '300',
+                    color: colors.error,
+                  }}
+                >
                   {t('producer.estates.delete')}
                 </Text>
               </TouchableOpacity>
@@ -270,12 +397,24 @@ export default function EditEstateScreen() {
             <MapView
               style={{ flex: 1 }}
               region={region}
+              onRegionChangeComplete={(r) =>
+                setRegion({
+                  latitude: r.latitude,
+                  longitude: r.longitude,
+                  latitudeDelta: r.latitudeDelta,
+                  longitudeDelta: r.longitudeDelta,
+                })
+              }
+              scrollEnabled={!fingerDrawingLocked}
+              zoomEnabled={!fingerDrawingLocked}
+              rotateEnabled={!fingerDrawingLocked}
               onPress={handleMapPress}
+              onPanDrag={handlePanDrag}
               showsUserLocation={true}
             >
-              {polygonCoordinates.length > 0 && (
+              {polygonCoordinates.length > 0 && !(fingerDrawingLocked && fingerStroke.length >= 2) ? (
                 <Polygon
-                  coordinates={polygonCoordinates.map(coord => ({
+                  coordinates={polygonCoordinates.map((coord) => ({
                     latitude: coord.lat,
                     longitude: coord.lng,
                   }))}
@@ -283,22 +422,44 @@ export default function EditEstateScreen() {
                   strokeColor={colors.primary}
                   strokeWidth={2}
                 />
-              )}
-              {polygonCoordinates.map((coord, index) => (
-                <Marker
-                  key={index}
-                  coordinate={{
+              ) : null}
+              {polygonCoordinates.length > 0 &&
+              fingerDrawingLocked &&
+              fingerStroke.length >= 2 ? (
+                <Polygon
+                  coordinates={polygonCoordinates.map((coord) => ({
                     latitude: coord.lat,
                     longitude: coord.lng,
-                  }}
-                  title={t('producer.estates.pointN', { n: index + 1 })}
+                  }))}
+                  fillColor={`${colors.primary}14`}
+                  strokeColor={colors.primary}
+                  strokeWidth={1}
                 />
-              ))}
+              ) : null}
+              {fingerDrawingLocked && fingerStroke.length >= 2 ? (
+                <Polyline
+                  coordinates={fingerStroke.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
+                  strokeColor={colors.primary}
+                  strokeWidth={3}
+                />
+              ) : null}
+              {drawStyle === 'tap'
+                ? polygonCoordinates.map((coord, index) => (
+                    <Marker
+                      key={`v-${coord.lat}-${coord.lng}-${index}`}
+                      coordinate={{
+                        latitude: coord.lat,
+                        longitude: coord.lng,
+                      }}
+                      title={t('producer.estates.pointN', { n: index + 1 })}
+                    />
+                  ))
+                : null}
             </MapView>
           </View>
 
           {/* Polygon Info */}
-          {polygonCoordinates.length > 0 && (
+          {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
             <View style={{
               backgroundColor: colors.background,
               borderRadius: theme.borderRadius.md,
@@ -312,6 +473,9 @@ export default function EditEstateScreen() {
                 color: colors.text.primary,
               }}>
                 {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
+                {fingerDrawingLocked && fingerStroke.length > 0
+                  ? ` · ${fingerStroke.length}`
+                  : ''}
               </Text>
             </View>
           )}

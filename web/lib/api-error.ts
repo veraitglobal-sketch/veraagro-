@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 
-/** Best-effort user-facing message from Axios-like API errors (shared across web roles). */
+/** Best-effort user-facing message from Axios-like errors (shared across web roles). */
 export function axiosLikeMessage(err: unknown): string | null {
   if (err && typeof err === 'object' && 'response' in err) {
     const r = (err as { response?: { data?: { message?: unknown } } }).response;
@@ -19,12 +19,89 @@ export function axiosLikeMessage(err: unknown): string | null {
   return null;
 }
 
+function responseData(err: unknown): unknown {
+  if (!err || typeof err !== 'object' || !('response' in err)) return undefined;
+  return (err as { response?: { data?: unknown } }).response?.data;
+}
+
+/** Full blob for detecting migration/schema errors (Nest body + message + status). */
+export function combinedApiErrorEvidence(err: unknown): string {
+  const parts: string[] = [];
+  const ax = axiosLikeMessage(err);
+  if (ax) parts.push(ax);
+  const data = responseData(err);
+  if (data !== undefined && data !== null) {
+    try {
+      if (typeof data === 'object') parts.push(JSON.stringify(data));
+      else parts.push(String(data));
+    } catch {
+      /** ignore */
+    }
+  }
+  const st = axiosResponseStatus(err);
+  if (st != null) parts.push(`http ${st}`);
+  return parts.join('\n');
+}
+
+/** True when failure likely means missing migrations / DB column-table drift (admin fix, not wrong form data). */
+export function isDatabaseSchemaOutOfDateError(err: unknown): boolean {
+  const blob = combinedApiErrorEvidence(err).toLowerCase();
+  if (!blob.trim()) return false;
+  const st = axiosResponseStatus(err);
+  const strong =
+    /\bp20(21|22)\b/.test(blob) ||
+    /\bprisma migrate deploy\b/.test(blob) ||
+    /\bprisma_migrations\b/.test(blob) ||
+    /\bmissing a table or column\b/.test(blob) ||
+    /\bmissing column\b/.test(blob) ||
+    /\bmissing table\b/.test(blob) ||
+    /\bcolumn .* does not exist\b/.test(blob) ||
+    /\btable .* does not exist\b/.test(blob) ||
+    /\brelation .* does not exist\b/.test(blob) ||
+    /\bdb schema out of date\b/.test(blob) ||
+    (/\bmigrate\b/.test(blob) && /\bdeploy\b/.test(blob)) ||
+    /\bunable to resolve field\b/.test(blob) ||
+    /\bthere is no such column\b/.test(blob);
+  if (strong) return true;
+  if (st === 503 && (/prisma|migration|migrate|missing column|missing table|\bp20\d+/i.test(blob) || /\bdatabase\b/.test(blob))) {
+    return true;
+  }
+  return false;
+}
+
+export function axiosErrorSupportHint(err: unknown): string | null {
+  const data = responseData(err);
+  if (data && typeof data === 'object') {
+    const o = data as Record<string, unknown>;
+    const nestPath = typeof o.path === 'string' ? o.path : '';
+    const nestTs = typeof o.timestamp === 'string' ? o.timestamp : '';
+    if (nestPath || nestTs) {
+      return [nestTs, nestPath].filter(Boolean).join(' · ') || null;
+    }
+  }
+  if (typeof err === 'object' && err !== null && 'config' in err) {
+    const cfg = (err as { config?: { url?: string; method?: string } }).config;
+    const u = typeof cfg?.url === 'string' ? cfg.url : '';
+    const m = (cfg?.method || 'POST').toUpperCase();
+    if (u) return `${m} ${u}`;
+  }
+  return null;
+}
+
 /** Prefer API body message when present; otherwise localized fallback (default `common.apiErrorGeneric`). */
 export function apiErrorOrT(
   err: unknown,
   t: TFunction,
   fallbackKey = 'common.apiErrorGeneric',
 ): string {
+  if (isDatabaseSchemaOutOfDateError(err)) {
+    const base = String(t('common.databaseSchemaOutOfDate'));
+    const detail = axiosLikeMessage(err)?.trim();
+    const hint = axiosErrorSupportHint(err);
+    const extra =
+      detail && detail.length > 24 && !/^internal server error$/i.test(detail) ? detail : hint;
+    return extra ? `${base}\n\n${extra}` : base;
+  }
   return axiosLikeMessage(err) ?? String(t(fallbackKey));
 }
 

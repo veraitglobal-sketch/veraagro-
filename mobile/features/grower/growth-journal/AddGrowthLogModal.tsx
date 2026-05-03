@@ -107,12 +107,23 @@ export function AddGrowthLogModal({
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: theme.spacing.lg }}
           >
-            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.md }}>
+            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
               {t('producer.growthJournal.addLogContext', {
                 estate: estateName || '—',
                 parcel: parcelLabel || t('producer.growthJournal.allParcelsContext'),
                 plan: planLabel || '—',
               })}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                color: colors.primary,
+                lineHeight: 18,
+                marginBottom: theme.spacing.md,
+                fontWeight: '500',
+              }}
+            >
+              {t('producer.growthJournal.passportLinkedLine')}
             </Text>
             <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
               {t(

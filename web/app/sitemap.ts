@@ -28,6 +28,7 @@ const localizedPaths = [
   'investor-deck',
   'investor-deck/slides',
   'project-overview',
+  'biovera-fresh',
   'technical-proposal',
 ] as const;
 

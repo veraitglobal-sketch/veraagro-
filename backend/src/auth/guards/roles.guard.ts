@@ -24,11 +24,13 @@ export class RolesGuard implements CanActivate {
     // Support both old (single role) and new (multiple roles) format
     let userRoles: string[] = [];
     if (user.roles && Array.isArray(user.roles)) {
-      userRoles = user.roles;
-    } else if (user.role) {
-      // Backward compatibility: convert single role to array
-      userRoles = [user.role];
+      userRoles = user.roles.filter((x) => typeof x === 'string' || typeof x === 'number').map(String);
+    } else if (user.role != null && user.role !== '') {
+      userRoles = [String(user.role)];
     }
+
+    /** Enum / JWT drift: compare using uppercase tokens */
+    userRoles = userRoles.map((r) => r.trim()).filter(Boolean).map((r) => r.toUpperCase());
 
     // Map old roles to new roles for backward compatibility
     const roleMapping: Record<string, string> = {

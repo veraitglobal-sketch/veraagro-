@@ -39,6 +39,7 @@ export default function GrowthJournalScreen() {
     setAddModalVisible,
     uploading,
     selectedEstate,
+    parcelsLoading,
   } = useGrowthJournalData();
 
   const parcelLabel =
@@ -65,6 +66,7 @@ export default function GrowthJournalScreen() {
               backgroundColor: colors.primary,
               alignItems: 'center',
               justifyContent: 'center',
+              opacity: estates.length === 0 || uploading || !canAddLog ? 0.45 : 1,
             }}
           >
             <Camera size={20} color={colors.background} strokeWidth={1.5} />
@@ -76,11 +78,31 @@ export default function GrowthJournalScreen() {
         <Text style={{ fontSize: 13, color: colors.text.secondary, lineHeight: 20 }}>
           {t('producer.growthJournal.screenIntro')}
         </Text>
+        {filterEstate !== 'all' && !loading && (
+          <View style={{ marginTop: theme.spacing.sm }}>
+            {!canAddLog && !uploading ? (
+              <Text style={{ fontSize: 12, color: colors.warning, lineHeight: 18, fontWeight: '500' }}>
+                {filterParcel === 'all'
+                  ? t('producer.growthJournal.hintPickParcel')
+                  : parcelsLoading || plansLoading
+                    ? t('producer.growthJournal.hintLoadingSelections')
+                    : !activePlanId
+                      ? t('producer.growthJournal.hintPickPlan')
+                      : t('producer.growthJournal.addPhotosToTrack')}
+              </Text>
+            ) : (
+              <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18 }}>
+                {t('producer.growthJournal.stepsReminder')}
+              </Text>
+            )}
+          </View>
+        )}
       </View>
 
       <GrowthJournalFilters
         estates={estates}
         parcels={parcels}
+        parcelsLoading={parcelsLoading}
         filterEstate={filterEstate}
         filterParcel={filterParcel}
         onEstateChange={setFilterEstate}

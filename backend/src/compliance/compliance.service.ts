@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, Logger, Inject } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger, Inject, ServiceUnavailableException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -331,14 +331,14 @@ export class ComplianceService {
     if (!name) {
       throw new BadRequestException('Enter the product / material name.');
     }
-    const exists = await this.prisma.bio_white_list.findUnique({ where: { barcode } });
-    if (exists) {
-      throw new BadRequestException(
-        'This barcode is already on the list. Search for it or ask operations if it should be updated.',
-      );
-    }
     let row;
     try {
+      const exists = await this.prisma.bio_white_list.findUnique({ where: { barcode } });
+      if (exists) {
+        throw new BadRequestException(
+          'This barcode is already on the list. Search for it or ask operations if it should be updated.',
+        );
+      }
       row = await this.prisma.bio_white_list.create({
         data: {
           id: crypto.randomUUID(),
@@ -353,17 +353,44 @@ export class ComplianceService {
         },
       });
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+      if (e instanceof BadRequestException) {
+        throw e;
+      }
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(
+          `submitGrowerMaterial prisma ${e.code}: ${e.message}`,
+          e.meta != null ? JSON.stringify(e.meta) : undefined,
+        );
+        if (e.code === 'P2002') {
+          throw new BadRequestException(
+            'This barcode is already on the list. Search for it or ask operations if it should be updated.',
+          );
+        }
+        if (e.code === 'P2021' || e.code === 'P2022') {
+          throw new ServiceUnavailableException(
+            'The database is missing a column the app expects for materials (e.g. materialType). ' +
+              'Run `npx prisma migrate deploy` on the server and restart the API.',
+          );
+        }
         throw new BadRequestException(
-          'This barcode is already on the list. Search for it or ask operations if it should be updated.',
+          `Could not save the material (database ${e.code}). Try again or contact support.`,
         );
       }
       if (e instanceof Prisma.PrismaClientValidationError) {
         this.logger.error(`submitGrowerMaterial validation: ${e.message}`);
         throw new BadRequestException('Invalid material data. Check the fields and try again.');
       }
-      this.logger.error('submitGrowerMaterial: create failed', e instanceof Error ? e.stack : e);
-      throw e;
+      if (
+        e instanceof Prisma.PrismaClientInitializationError ||
+        e instanceof Prisma.PrismaClientRustPanicError
+      ) {
+        this.logger.error(`submitGrowerMaterial db unavailable: ${e instanceof Error ? e.message : e}`);
+        throw new ServiceUnavailableException('Database is temporarily unavailable. Please try again.');
+      }
+      this.logger.error('submitGrowerMaterial: unexpected failure', e instanceof Error ? e.stack : e);
+      throw new BadRequestException(
+        'Could not save the material. Please try again — if it continues, contact support with the time of the attempt.',
+      );
     }
     await this.invalidateWhitelistCache(barcode);
     return row;

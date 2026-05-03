@@ -18,7 +18,11 @@ const activityLabelKey: Record<ActivityType, string> = {
   FERTILIZING: 'fertilizing',
   SPRAYING: 'spraying',
   HARVEST: 'harvest',
+  TRANSPORT_COORD: 'transportCoord',
+  PACKAGING: 'packaging',
 };
+
+const MATERIAL_BARCODE_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'SPRAYING']);
 
 const MATERIAL_KINDS: MaterialKindForLog[] = ['SEED', 'FERTILIZER', 'PESTICIDE'];
 
@@ -34,8 +38,7 @@ export default function EntryForm() {
     router,
     estates,
     currentEstate,
-    selectEstateById,
-    approvedParcels,
+    approvedParcelOptions,
     selectedParcelId,
     setSelectedParcelId,
     parcelPlans,
@@ -49,6 +52,8 @@ export default function EntryForm() {
     setGrowthStageCustom,
     journalNotes,
     setJournalNotes,
+    materialQuantity,
+    setMaterialQuantity,
     activityType,
     setActivityType,
     materialID,
@@ -108,7 +113,9 @@ export default function EntryForm() {
     !selectedHarvestPlanId ||
     plansLoading ||
     (strictPlanting && (journalNotes.trim().length < PLANTING_NOTES_MIN || !growthStageReady)) ||
-    (activityType !== 'HARVEST' && Boolean(materialID.trim()) && materialValid === false);
+    (MATERIAL_BARCODE_ACTIVITIES.has(activityType as ActivityType) &&
+      Boolean(materialID.trim()) &&
+      materialValid === false);
 
   return (
     <View style={{ flex: 1 }}>
@@ -130,9 +137,9 @@ export default function EntryForm() {
         {gpsWarning && (
           <View
             style={{
-              backgroundColor: theme.colors.errorLight,
+              backgroundColor: `${theme.colors.warning}18`,
               borderWidth: 0.5,
-              borderColor: 'rgba(239, 68, 68, 0.3)',
+              borderColor: 'rgba(234, 179, 8, 0.45)',
               borderRadius: theme.borderRadius.md,
               padding: theme.spacing.sm,
               marginBottom: theme.spacing.md,
@@ -140,18 +147,18 @@ export default function EntryForm() {
               alignItems: 'center',
             }}
           >
-            <X size={20} color={theme.colors.error} strokeWidth={1} />
+            <X size={20} color={theme.colors.warning} strokeWidth={1} />
             <Text
               style={{
                 fontSize: 15,
                 fontWeight: '300',
-                color: theme.colors.error,
+                color: theme.colors.warning,
                 marginLeft: theme.spacing.sm,
                 flex: 1,
                 letterSpacing: 0.2,
               }}
             >
-              {t('producer.fieldLogForm.warningNotOnParcel')}
+              {t('producer.fieldLogForm.warningStrictOffParcel')}
             </Text>
           </View>
         )}
@@ -232,6 +239,11 @@ export default function EntryForm() {
                       {h.journalNotesPreview.length >= 240 ? '…' : ''}
                     </Text>
                   ) : null}
+                  {h.materialQuantity?.trim() ? (
+                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 4 }}>
+                      {t('producer.fieldLogForm.histQuantity')}: {h.materialQuantity.trim()}
+                    </Text>
+                  ) : null}
                   {h.materialID?.trim() ? (
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 6 }}>
                       {t('producer.fieldLogForm.histMaterial')}: {h.materialID.trim()}
@@ -256,76 +268,6 @@ export default function EntryForm() {
             backgroundColor: theme.colors.surfaceElevated,
           }}
         >
-          {estates.length > 1 ? (
-            <View style={{ marginBottom: theme.spacing.md }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '600',
-                  color: theme.colors.text.primary,
-                  letterSpacing: 0.2,
-                  marginBottom: theme.spacing.xs,
-                }}
-              >
-                {t('producer.fieldLogForm.chooserEstateMulti')}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '300',
-                  color: theme.colors.text.secondary,
-                  lineHeight: 18,
-                  marginBottom: theme.spacing.sm,
-                }}
-              >
-                {t('producer.fieldLogForm.chooserEstateHintMulti')}
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-                {estates.map((estate) => {
-                  const sel = currentEstate?.id === estate.id;
-                  return (
-                    <TouchableOpacity
-                      key={estate.id}
-                      onPress={() => selectEstateById(estate.id)}
-                      activeOpacity={0.7}
-                      style={{
-                        paddingHorizontal: theme.spacing.md,
-                        paddingVertical: theme.spacing.sm,
-                        borderRadius: theme.borderRadius.md,
-                        borderWidth: 0.5,
-                        borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
-                        backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '300',
-                          color: sel ? theme.colors.primary : theme.colors.text.primary,
-                          letterSpacing: 0.3,
-                        }}
-                      >
-                        {estate.name}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          ) : currentEstate ? (
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '300',
-                color: theme.colors.text.secondary,
-                marginBottom: theme.spacing.md,
-                letterSpacing: 0.2,
-              }}
-            >
-              {t('producer.fieldLogForm.chooserFarmContext', { name: currentEstate.name })}
-            </Text>
-          ) : null}
-
           <Text
             style={{
               fontSize: 16,
@@ -348,17 +290,19 @@ export default function EntryForm() {
           >
             {t('producer.fieldLogForm.chooserParcelHelp')}
           </Text>
-          {approvedParcels.length === 0 ? (
+          {approvedParcelOptions.length === 0 ? (
             <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
-              {t('producer.fieldLogForm.chooserParcelEmpty')}
+              {estates.length === 0 ? t('producer.fieldLogForm.chooserNoEstates') : t('producer.fieldLogForm.chooserParcelEmpty')}
             </Text>
           ) : (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-              {approvedParcels.map((parcel) => {
+              {approvedParcelOptions.map(({ parcel, estate }) => {
                 const sel = selectedParcelId === parcel.id;
+                const parcelTitle =
+                  parcel.cropType || t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) });
                 return (
                   <TouchableOpacity
-                    key={parcel.id}
+                    key={`${estate.id}-${parcel.id}`}
                     onPress={() => setSelectedParcelId(parcel.id)}
                     activeOpacity={0.7}
                     style={{
@@ -368,18 +312,29 @@ export default function EntryForm() {
                       borderWidth: 0.5,
                       borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
                       backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
+                      maxWidth: '100%',
                     }}
                   >
                     <Text
                       style={{
                         fontSize: 14,
-                        fontWeight: '300',
+                        fontWeight: '600',
                         color: sel ? theme.colors.primary : theme.colors.text.primary,
-                        letterSpacing: 0.3,
+                        letterSpacing: 0.2,
                       }}
                     >
-                      {parcel.cropType ||
-                        t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) })}
+                      {parcelTitle}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: '300',
+                        color: theme.colors.text.secondary,
+                        letterSpacing: 0.15,
+                        marginTop: 2,
+                      }}
+                    >
+                      {t('producer.fieldLogForm.chooserParcelFarmContext', { name: estate.name })}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -506,7 +461,7 @@ export default function EntryForm() {
           </View>
         </View>
 
-        {activityType && activityType !== 'HARVEST' ? (
+        {activityType && MATERIAL_BARCODE_ACTIVITIES.has(activityType as ActivityType) ? (
           <View style={{ marginBottom: theme.spacing.md }}>
             <Text
               style={{
@@ -615,6 +570,39 @@ export default function EntryForm() {
                   />
                 ))}
             </View>
+          </View>
+        ) : null}
+
+        {activityType ? (
+          <View style={{ marginBottom: theme.spacing.md }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '300',
+                color: theme.colors.text.primary,
+                letterSpacing: 0.5,
+                marginBottom: theme.spacing.sm,
+              }}
+            >
+              {t('producer.fieldLogForm.materialQuantityLabel')}
+            </Text>
+            <TextInput
+              style={{
+                backgroundColor: theme.colors.surface,
+                borderRadius: theme.borderRadius.md,
+                borderWidth: 0.5,
+                borderColor: 'rgba(0, 0, 0, 0.08)',
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: theme.spacing.sm,
+                fontSize: 15,
+                fontWeight: '300',
+                color: theme.colors.text.primary,
+              }}
+              placeholder={t('producer.fieldLogForm.materialQuantityPlaceholder')}
+              placeholderTextColor={theme.colors.text.tertiary}
+              value={materialQuantity}
+              onChangeText={setMaterialQuantity}
+            />
           </View>
         ) : null}
 
@@ -760,7 +748,18 @@ export default function EntryForm() {
               marginBottom: theme.spacing.sm,
             }}
           >
-            {t('producer.fieldLogForm.photo')} <Text style={{ color: theme.colors.error }}>*</Text>
+            {t('producer.fieldLogForm.photoMaterial')} <Text style={{ color: theme.colors.error }}>*</Text>
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '300',
+              color: theme.colors.text.secondary,
+              marginBottom: theme.spacing.sm,
+              lineHeight: 18,
+            }}
+          >
+            {t('producer.fieldLogForm.photoMaterialHint')}
           </Text>
           <TouchableOpacity
             onPress={takePhoto}
@@ -841,6 +840,17 @@ export default function EntryForm() {
             }}
           >
             {t('producer.fieldLogForm.location')} <Text style={{ color: theme.colors.error }}>*</Text>
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '300',
+              color: theme.colors.text.secondary,
+              marginBottom: theme.spacing.sm,
+              lineHeight: 18,
+            }}
+          >
+            {t('producer.fieldLogForm.locationHintLastStep')}
           </Text>
           <TouchableOpacity
             onPress={getCurrentLocation}

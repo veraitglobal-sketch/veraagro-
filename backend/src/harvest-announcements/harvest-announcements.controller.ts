@@ -34,8 +34,7 @@ export class HarvestAnnouncementsController {
   }
 
   /**
-   * Get farmer's announcements
-   * Jwt only — scoped by `req.user.id` in service (no elevated cross-user read).
+   * Get grower's announcements (scoped by parcel → estate ownership, same as HarvestAnnouncementsService.getFarmerAnnouncements).
    */
   @Get('my-announcements')
   async getMyAnnouncements(@Request() req) {

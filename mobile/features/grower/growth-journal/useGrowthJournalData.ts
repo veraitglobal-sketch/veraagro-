@@ -9,7 +9,10 @@ import {
   estatesAPI,
   Estate,
   harvestAnnouncementsAPI,
+  parcelsAPI,
+  Parcel,
 } from '../../../lib/api';
+import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 import { getOrCreateDeviceId } from '../../../lib/device-id';
 import { sha256HexFromImageUri } from '../../../lib/image-hash';
 import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from '../../../lib/image-data-url';
@@ -112,10 +115,37 @@ export function useGrowthJournalData() {
   }, [loadData, loadLogs]);
 
   const selectedEstate = useMemo(() => estates.find((e) => e.id === filterEstate), [estates, filterEstate]);
-  const parcels = useMemo(
-    () => (selectedEstate?.parcels || []).filter((p) => p.approvedAt),
-    [selectedEstate],
-  );
+  const [parcels, setParcels] = useState<Parcel[]>([]);
+  const [parcelsLoading, setParcelsLoading] = useState(false);
+
+  /** Same pattern as field log: `/parcels/estate/:id` so the list works even without nested parcels on `GET /estates`. */
+  useEffect(() => {
+    if (filterEstate === 'all' || !filterEstate) {
+      setParcels([]);
+      setParcelsLoading(false);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      setParcelsLoading(true);
+      try {
+        const fetched = await parcelsAPI.getByEstate(filterEstate);
+        const fromApi = Array.isArray(fetched) ? fetched.filter((p) => p.approvedAt) : [];
+        const fromNest = (selectedEstate?.parcels || []).filter((p) => p.approvedAt);
+        const merged = new Map<string, Parcel>();
+        for (const p of [...fromApi, ...fromNest]) merged.set(p.id, p);
+        if (!cancelled) setParcels([...merged.values()]);
+      } catch {
+        const fromNest = (selectedEstate?.parcels || []).filter((p) => p.approvedAt);
+        if (!cancelled) setParcels(fromNest);
+      } finally {
+        if (!cancelled) setParcelsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [filterEstate, selectedEstate]);
 
   const loadPlans = useCallback(async () => {
     if (filterParcel === 'all' || !filterParcel) {
@@ -128,8 +158,15 @@ export function useGrowthJournalData() {
       const raw = await harvestAnnouncementsAPI.getMy();
       const arr = Array.isArray(raw) ? raw : [];
       const forParcel = arr.filter(
-        (a: { parcelId: string; status: string }) =>
-          a.parcelId === filterParcel && a.status !== 'CANCELLED',
+        (
+          a: {
+            parcelId?: string | null;
+            status: string;
+            parcel?: { id?: string | null } | null;
+          },
+        ) =>
+          normalizeHarvestParcelId(a.parcelId, a.parcel ?? null) === filterParcel &&
+          a.status !== 'CANCELLED',
       );
       const options = forParcel.map((a: { id: string; announcementType: string; cropType: string; estimatedDate: string }) => {
         const kind = a.announcementType === 'PLANTING' ? t('producer.growthJournal.planKindPlanting') : t('producer.growthJournal.planKindHarvest');
@@ -360,7 +397,8 @@ export function useGrowthJournalData() {
     filterEstate !== 'all' &&
     filterParcel !== 'all' &&
     Boolean(activePlanId) &&
-    !plansLoading;
+    !plansLoading &&
+    !parcelsLoading;
 
   return {
     estates,
@@ -376,6 +414,7 @@ export function useGrowthJournalData() {
     setFilterEstate,
     setFilterParcel,
     parcels,
+    parcelsLoading,
     parcelPlans,
     activePlanId,
     setActivePlanId,

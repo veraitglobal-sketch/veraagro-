@@ -14,12 +14,19 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
-import { batchesAPI, missionsAPI, harvestAnnouncementsAPI } from '../../lib/api';
+import {
+  batchesAPI,
+  missionsAPI,
+  harvestAnnouncementsAPI,
+  materialControlAPI,
+  type ComplianceBatchStatus,
+} from '../../lib/api';
 import { normalizeHarvestParcelId } from '../../features/grower/harvest/useHarvestData';
 import { apiErrorMessage, axiosErrorSupportHint, axiosIsAbortOrTimeout, axiosResponseStatus, isGenericInfrastructureMessage, isLikelyNetworkError } from '../../lib/api-error';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
@@ -98,6 +105,43 @@ export default function MissionsCreateScreen() {
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
+  const [packagingCompliance, setPackagingCompliance] = useState<ComplianceBatchStatus | null>(null);
+  const [packagingComplianceLoading, setPackagingComplianceLoading] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!batchId) {
+        setPackagingCompliance(null);
+        return undefined;
+      }
+      let alive = true;
+      setPackagingComplianceLoading(true);
+      void (async () => {
+        try {
+          const s = await materialControlAPI.getComplianceStatus(batchId);
+          if (alive) setPackagingCompliance(s);
+        } catch {
+          if (alive) setPackagingCompliance(null);
+        } finally {
+          if (alive) setPackagingComplianceLoading(false);
+        }
+      })();
+      return () => {
+        alive = false;
+      };
+    }, [batchId]),
+  );
+
+  const packagingBlocksTransport =
+    batchId !== '' &&
+    !packagingComplianceLoading &&
+    packagingCompliance != null &&
+    !packagingCompliance.complete;
+
+  const photoTypeLabel = useCallback(
+    (code: string) => t(`producer.compliance.batchForm.photoTypes.${code}.label`, { defaultValue: code }),
+    [t],
+  );
 
   const loadBatches = useCallback(async (mode: 'initial' | 'refresh' = 'initial') => {
     if (mode === 'refresh') setListRefreshing(true);
@@ -185,6 +229,13 @@ export default function MissionsCreateScreen() {
       );
       return;
     }
+    if (packagingBlocksTransport) {
+      Alert.alert(
+        t('producer.missionsCreate.alerts.cannotStart'),
+        t('producer.missionsCreate.packagingIncompleteBody'),
+      );
+      return;
+    }
     if (!pickupAddress.trim()) {
       Alert.alert(
         t('producer.missionsCreate.alerts.addressRequired'),
@@ -228,8 +279,7 @@ export default function MissionsCreateScreen() {
       const supportHint = axiosErrorSupportHint(e);
 
       const useGenericSerbian =
-        (status === undefined || status === 500 || status === 502 || status === 503) &&
-        isGenericInfrastructureMessage(raw);
+        (status === 500 || status === 502 || status === 503) && isGenericInfrastructureMessage(raw);
 
       let msg =
         useGenericSerbian
@@ -423,6 +473,72 @@ export default function MissionsCreateScreen() {
           </View>
         )}
 
+        {batches.length > 0 && batchId ? (
+          <View style={{ marginBottom: theme.spacing.md }}>
+            {packagingComplianceLoading ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <ActivityIndicator size="small" color={theme.colors.primary} />
+                <Text style={{ fontSize: 15, color: theme.colors.text.secondary }}>
+                  {t('producer.missionsCreate.packagingComplianceChecking')}
+                </Text>
+              </View>
+            ) : packagingCompliance && !packagingCompliance.complete ? (
+              <View
+                style={{
+                  padding: theme.spacing.md,
+                  borderRadius: theme.borderRadius.md,
+                  borderWidth: 1,
+                  borderColor: 'rgba(245, 158, 11, 0.5)',
+                  backgroundColor: 'rgba(251, 191, 36, 0.12)',
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
+                  {t('producer.missionsCreate.packagingComplianceTitle')}
+                </Text>
+                <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>
+                  {t('producer.missionsCreate.packagingComplianceWhy')}
+                </Text>
+                {packagingCompliance.missingPhotoTypes.length > 0 ? (
+                  <Text style={{ fontSize: 14, color: theme.colors.text.primary, marginBottom: 6, lineHeight: 20 }}>
+                    <Text style={{ fontWeight: '600' }}>{t('producer.missionsCreate.packagingComplianceMissingPhotos')} </Text>
+                    {packagingCompliance.missingPhotoTypes.map((c) => photoTypeLabel(c)).join(' · ')}
+                  </Text>
+                ) : null}
+                {!packagingCompliance.stickerRollId ? (
+                  <Text style={{ fontSize: 14, color: theme.colors.text.primary, marginBottom: theme.spacing.sm, lineHeight: 20 }}>
+                    {t('producer.missionsCreate.packagingComplianceMissingSticker')}
+                  </Text>
+                ) : null}
+                <TouchableOpacity
+                  onPress={() => router.push('/(producer)/compliance-photos')}
+                  style={{
+                    marginTop: theme.spacing.sm,
+                    alignSelf: 'flex-start',
+                    paddingVertical: 12,
+                    paddingHorizontal: theme.spacing.md,
+                    borderRadius: theme.borderRadius.md,
+                    backgroundColor: theme.colors.primary,
+                    minHeight: 48,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
+                    {t('producer.missionsCreate.openPackagingCompliance')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : packagingCompliance?.complete ? (
+              <Text style={{ fontSize: 15, color: theme.colors.success, fontWeight: '500' }}>
+                {t('producer.missionsCreate.packagingComplianceOk')}
+              </Text>
+            ) : (
+              <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, lineHeight: 18 }}>
+                {t('producer.missionsCreate.packagingComplianceUnchecked')}
+              </Text>
+            )}
+          </View>
+        ) : null}
+
         <View style={{ marginBottom: theme.spacing.md }}>
           <TouchableOpacity
             onPress={getCurrentLocation}
@@ -554,7 +670,7 @@ export default function MissionsCreateScreen() {
         >
           <TouchableOpacity
             onPress={submit}
-            disabled={submitting || batches.length === 0}
+            disabled={submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport}
             activeOpacity={0.8}
             style={{
               flexDirection: 'row',
@@ -564,7 +680,7 @@ export default function MissionsCreateScreen() {
               backgroundColor: theme.colors.primary,
               borderRadius: theme.borderRadius.md,
               paddingVertical: 17,
-              opacity: submitting || batches.length === 0 ? 0.5 : 1,
+              opacity: submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport ? 0.5 : 1,
               minHeight: 54,
             }}
           >

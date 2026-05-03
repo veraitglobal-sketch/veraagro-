@@ -491,10 +491,15 @@ export const harvestAnnouncementsAPI = {
     const response = await api.put(`/harvest-announcements/${id}/status`, { status });
     return response.data;
   },
-  /** Grower: list own planting & harvest plans */
+  /** Grower: list planting & harvest plans on parcels belonging to estates you own */
   getMine: async () => {
     const response = await api.get('/harvest-announcements/my-announcements');
-    return response.data || [];
+    const raw = response.data as unknown;
+    if (Array.isArray(raw)) return raw;
+    if (raw !== null && typeof raw === 'object' && Array.isArray((raw as { data?: unknown }).data)) {
+      return (raw as { data: unknown[] }).data;
+    }
+    return [];
   },
   /** Grower: register planting or expected harvest (requires admin-approved parcel) */
   create: async (body: {
@@ -1749,6 +1754,39 @@ export const growersAPI = {
       }, 100);
     } catch (error: unknown) {
       console.error('Error downloading quality standards:', error);
+      throw error;
+    }
+  },
+};
+
+/** Public prospect PDFs for BioVera Fresh retail programme (locale matches site language: en | sr). */
+export const bioVeraFreshAPI = {
+  downloadProspect: async (locale: 'en' | 'sr') => {
+    try {
+      const response = await api.get('/biovera-fresh/prospect/download', {
+        params: { locale },
+        responseType: 'blob',
+      });
+
+      if (!(response.data instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        locale === 'sr' ? 'bio-vera-fresh-prospect-sr.pdf' : 'bio-vera-fresh-prospect-en.pdf',
+      );
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error: unknown) {
+      console.error('Error downloading BioVera Fresh prospect:', error);
       throw error;
     }
   },
