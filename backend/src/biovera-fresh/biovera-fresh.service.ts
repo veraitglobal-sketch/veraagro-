@@ -227,6 +227,19 @@ export class BioVeraFreshService {
       );
     }
 
+    let heroIw = 0;
+    let heroIh = 0;
+    if (heroBufPrepared) {
+      try {
+        const { default: sharp } = await import('sharp');
+        const m = await sharp(heroBufPrepared).metadata();
+        heroIw = m.width ?? 0;
+        heroIh = m.height ?? 0;
+      } catch {
+        /* fall back to PDFKit fit below */
+      }
+    }
+
     return new Promise((resolve, reject) => {
       try {
         // @ts-ignore - pdfkit types may not be perfect
@@ -564,7 +577,8 @@ export class BioVeraFreshService {
 
         if (heroBufPrepared) {
           try {
-            const heroMaxH = 220;
+            /** Taller hero band so the composite poster reads; cover-scale fills width/height (may crop edges). */
+            const heroMaxH = 400;
             if (doc.y + heroMaxH > contentBottom) {
               startNewContentPage();
             }
@@ -572,26 +586,44 @@ export class BioVeraFreshService {
             const heroW = contentW;
             const rHero = 10;
 
-            const drawHeroClipped = () => {
+            const drawHeroCoverClipped = () => {
               doc.save();
               doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
-              doc.image(heroBufPrepared, MARGIN, heroY, {
-                fit: [heroW, heroMaxH],
-                align: 'center',
-                valign: 'center',
-              });
+              if (heroIw > 0 && heroIh > 0) {
+                const scale = Math.max(heroW / heroIw, heroMaxH / heroIh);
+                const dw = heroIw * scale;
+                const dh = heroIh * scale;
+                const dx = MARGIN + (heroW - dw) / 2;
+                const dy = heroY + (heroMaxH - dh) / 2;
+                doc.image(heroBufPrepared, dx, dy, { width: dw, height: dh });
+              } else {
+                doc.image(heroBufPrepared, MARGIN, heroY, {
+                  fit: [heroW, heroMaxH],
+                  align: 'center',
+                  valign: 'center',
+                });
+              }
               doc.restore();
             };
 
             try {
-              drawHeroClipped();
+              drawHeroCoverClipped();
             } catch (clipErr) {
               this.logger.warn('BioVera Fresh PDF: clipped hero embed failed, retrying without clip', clipErr);
-              doc.image(heroBufPrepared, MARGIN, heroY, {
-                fit: [heroW, heroMaxH],
-                align: 'center',
-                valign: 'center',
-              });
+              if (heroIw > 0 && heroIh > 0) {
+                const scale = Math.max(heroW / heroIw, heroMaxH / heroIh);
+                const dw = heroIw * scale;
+                const dh = heroIh * scale;
+                const dx = MARGIN + (heroW - dw) / 2;
+                const dy = heroY + (heroMaxH - dh) / 2;
+                doc.image(heroBufPrepared, dx, dy, { width: dw, height: dh });
+              } else {
+                doc.image(heroBufPrepared, MARGIN, heroY, {
+                  fit: [heroW, heroMaxH],
+                  align: 'center',
+                  valign: 'center',
+                });
+              }
             }
 
             doc.save();
