@@ -21,7 +21,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "A vertically integrated agricultural network for Bio-Ready certification and EU market compliance.",
+    "tagline": "Vertically run agrifood supply chain—from grower standards through Bio Vera–branded sales, with Bio‑Ready dossiers for EU corridors.",
     "columnProduct": "Product",
     "columnCompany": "Company",
     "columnSupport": "Support",
@@ -95,11 +95,11 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "A vertically integrated agrifood company: we organise production across our grower programme, control quality and the chain, and sell as Bio Vera from field to customer. Traceable batches, Bio‑Ready assurance, verified proof every step—onboarding growers worldwide.",
-    "ldJsonDescription": "Vertically integrated agrifood company: Bio Vera organised production and controls the chain before selling branded product to consumers; batches have traceability and Bio‑Ready proof throughout. Grower programme onboarding worldwide.",
+    "siteDescription": "Vertically integrated agrifood operator: Bio Vera sells branded produce to downstream customers while running the programme—inputs, QA, crates, refrigerated legs and Batch_ID dossiers throughout. Vera grower programme with selective onboarding, packaging rails and coordinated pickup.",
+    "ldJsonDescription": "Bio Vera is an integrated agrifood company that sells branded product and manages the contracted grower corridor with trace-at-every-step Batch dossiers—not an open reseller marketplace.",
     "keywords": [
       "Bio Vera",
-      "Agricultural network",
+      "Integrated food supply chain",
       "Agricultural Technology",
       "Traceability",
       "Bio Certification",
@@ -141,11 +141,11 @@
       "actionPreorder": "Pre-order",
       "actionTraceability": "Traceability",
       "actionContactSales": "Contact Sales",
-      "actionApplyProducer": "Apply as Producer",
+      "actionApplyProducer": "Apply as a Vera grower",
       "actionCertification": "Certification",
       "actionResources": "Resources",
       "actionContact": "Contact",
-      "actionJoinNetwork": "Join Network",
+      "actionJoinNetwork": "Partner with Vera",
       "actionProducts": "Products",
       "actionRegions": "Regions"
     }
@@ -265,7 +265,7 @@
       {
         "category": "growers",
         "q": "How do I become a Bio Vera producer?",
-        "a": "You can apply through our Growers page. The application process includes providing information about your farm, certifications, and production capacity. Our team will review your application and guide you through onboarding."
+        "a": "Apply through our Growers page with farm, certification and capacity details. Our agronomy and compliance team reviews fit and, when tonnage and geography align, guides you through joining the Vera grower programme—the fruit and vegetables we merchandise to buyers."
       },
       {
         "category": "growers",
@@ -315,7 +315,7 @@
       {
         "category": "technical",
         "q": "How does the traceability system work?",
-        "a": "Our system uses immutable digital records, GPS timestamps, device fingerprinting, and QR codes to create an unbreakable chain of custody. Every step from field to shelf is recorded and verifiable."
+        "a": "We chain field diaries, GPS timestamps, authorised device capture and QR labels so each custody hop is stamped in one dossier auditors can replay—rather than spreadsheets that contradict each other the week before payout."
       },
       {
         "category": "technical",
@@ -341,7 +341,7 @@
     "sectionCompany": "About Bio Vera",
     "aboutTitle": "How the company explains its model to editors",
     "aboutParagraphs": [
-      "HAMBURG, Germany. When Bio Vera refers to a vertical agricultural network it does not mean another layer that connects growers and shoppers through loosely tied channels. Bio Vera presents itself as one integrated operating model whose steps—from cultivation to the labelled pack on shelf—sit inside a single documented system.",
+      "HAMBURG, Germany. When Bio Vera speaks about a vertically run food supply chain we do not mean a loose marketplace wiring strangers together — we mean every step from cultivation to the labelled pack on shelf lives inside Bio Vera's operating model and resale responsibility.",
       "Registered as an agricultural brand, the company maintains a contiguous production trace from cultivation rules through to shelf-facing goods so every downstream step—including sourcing—rides the same system: clear, joined-up and transparent.",
       "Key inputs—including seed, packaging and anything the approved worksheet names—route through contracted suppliers organised locally or, where economies demand it, at regional hubs. Procurement runs through the Bio Vera application: each purchase connects to crop-cycle records so supply-side entries track field activity.",
       "Packing carries a Bio Vera badge bearing a QR shortcut; scanning opens the product passport spanning production cues, farmer identity, lifecycle logs and QA checkpoints reachable to shoppers and supervisory bodies wherever statute requires transparency.",
@@ -482,7 +482,7 @@
           },
           {
             "name": "Bio Vera products — retail (sample JPG)",
-            "description": "Illustrative shelf-ready consumer pack; the Bio Vera programme covers the full range growers bring into the network under the same standards.",
+            "description": "Illustrative shelf-ready consumer pack; the Bio Vera commercial programme covers SKUs growers supply against the same dossier QA signs off.",
             "format": "JPG",
             "file": "/apples-retail-500g.jpg"
           },
@@ -2690,9 +2690,9 @@
     "hero": {
       "title1": "Vertically Integrated",
       "title2": "Agrifood Company",
-      "subtitle": "We organise production in our programme, control quality and the supply chain, and sell branded product to retailers and shoppers. Traceable batches and Bio‑Ready proof throughout. Farmers in the network are producers under our rules, not independent sellers—open to new growers worldwide.",
-      "browseProducts": "Browse Products",
-      "becomeProducer": "Become a Producer",
+      "subtitle": "Bio Vera sells branded fresh produce across the corridor we operate—contracted cultivation, QA, packing and refrigerated delivery with Batch_ID trace from parcel to checkout. Interested estates can become Vera growers with standard crates, agronomy checkpoints and routed logistics once approved—selective programme, not an open reseller board.",
+      "browseProducts": "Browse our products",
+      "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for 2026 is open",
       "preOrderAria": "Pre-order info",
       "preOrderTip1": "Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.",
@@ -2703,7 +2703,7 @@
       "Certified",
       "Monitoring",
       "Fraud Cases",
-      "Blockchain Complete"
+      "Public trace anchor (where enabled)"
     ],
     "partnersLine": "Trusted every day by leading agricultural organizations",
     "vision": {
@@ -2712,11 +2712,11 @@
       "cards": [
         {
           "title": "Transparency",
-          "description": "Complete visibility of the entire process from field to customer. Every step is documented and immutable."
+          "description": "Every step from field to shelf stays in one dossier that sales, QA and auditors can reconcile."
         },
         {
           "title": "Security",
-          "description": "Cryptographically protected data, anti-fraud protection, and immutable digital evidence."
+          "description": "Access controls and fraud safeguards—the same dossier backs the loads our commercial teams sell and deliver."
         },
         {
           "title": "EU documentation",
@@ -2730,7 +2730,7 @@
       "list": [
         {
           "title": "Smart-Lock System",
-          "description": "QR code scanning is the primary key. Immutable proof of production with GPS validation."
+          "description": "Crates tie to batches: scans plus GPS confirmations land in one operating file."
         },
         {
           "title": "Batch tracking",
@@ -2753,18 +2753,18 @@
           "description": "Automated EU certificates and passports tied to the sales channel we operate for end customers."
         },
         {
-          "title": "Blockchain verification (Polygon)",
-          "description": "Immutable proof of origin on-chain. Product passports show a verified badge and full journey. Complete."
+          "title": "Public dossier sealing (Polygon, optional)",
+          "description": "Where switched on for a programme tier, anchors give buyers and auditors a third-party checksum while the visible passport stays the merchant story."
         }
       ]
     },
     "blockchain": {
-      "title": "Why We Use Blockchain",
-      "body": "We use a blockchain system so our products stay faithful to you—the customer. Every step of the journey, from harvest to delivery, is recorded in a way that cannot be changed. Not by us, not by anyone inside our company. No one can alter the trail. What you see when you scan a product is the same proof we see: transparent, verifiable, and immutable.",
+      "title": "Why custody records stick",
+      "body": "We sell the goods, so reputational risk is ours. Operational teams log each transition so downstream parties cannot quietly rewrite yesterday’s custody story. Programme configurations may additionally publish fingerprints to public ledgers such as Polygon for independent spot checks—meaning every scan still matches what finance and QA already accepted.",
       "bullets": [
-        "Immutable record",
-        "No one can edit the trail",
-        "You verify the same data we do"
+        "Operational trail that survives buyer questions",
+        "Same evidence in the ERP story and shopper passport",
+        "Optional ledger checksum when regulators or retailers ask for third-party footing"
       ]
     },
     "roadmap": {
@@ -2776,7 +2776,7 @@
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Network go-live",
+          "title": "Operations launch",
           "status": "completed",
           "items": [
             "Backend API",
@@ -2791,7 +2791,7 @@
           "status": "completed",
           "items": [
             "AI Analytics — Complete",
-            "Blockchain verification (Polygon) — Complete",
+            "Ledger trace anchor (Polygon) — complete",
             "Advanced Dashboard",
             "Integrations",
             "EU Certificates"
@@ -2822,15 +2822,15 @@
     },
     "products": {
       "title": "Browse Products",
-      "subtitle": "Organic products with complete traceability",
+      "subtitle": "Catalogue SKUs Bio Vera sells with full batch dossiers behind each line.",
       "fruits": "Fruits",
       "vegetables": "Vegetables",
       "grains": "Grains"
     },
     "cta": {
-      "title": "Work inside the Bio Vera operation",
-      "body": "Growers under our protocols, hauliers on our missions, or buyers purchasing from Bio Vera—one batch trail and predictable commercial terms.",
-      "becomeProducer": "Become a Producer",
+      "title": "Supply us, haul for us, or buy from us",
+      "body": "Contract estates grow to our playbook; refrigerated partners run Vera missions; retail and wholesale buyers trade with Bio Vera directly—every batch ledger lines up financially.",
+      "becomeProducer": "Become a Vera grower",
       "startShopping": "Start Shopping"
     },
     "help": "Questions? We’re here to help."
@@ -2909,7 +2909,7 @@
     "valueBlocks": [
       {
         "title": "Our fruit and vegetables",
-        "body": "Sourced from Bio Vera certified producers. We focus on quality, sustainable growing methods, and compliance with our protocol."
+        "body": "Comes from contract growers supplying our commercial programme—the same checkpoints our sales team defends when we invoice retailers.",
       },
       {
         "title": "Fresh harvested",
@@ -2947,11 +2947,11 @@
   },
   "growersPage": {
     "title": "For Growers",
-    "heroLead": "Join a grower network with agreed offtake and organized logistics—grow to the Bio Vera Protocol and we align pickup, documents, and payment. Open to producers worldwide.",
+    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup paperwork and settlement as part of the load we merchandise to retailers. Screening is deliberate—capacity, geography and conformance must align; this is contracted supply, not an open bulletin board.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "whoCanApplyTitle": "Who can apply",
-    "whoCanApplyLead": "Producers from these countries can join. Same protocol, same certification.",
+    "whoCanApplyLead": "The programme currently accepts estates in the countries listed below pending capacity checks. Same playbook, same certification spine.",
     "countriesLine": "Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Montenegro, Netherlands, North Macedonia, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Spain, Sweden",
     "valuePropositionTitle": "The value proposition",
     "valuePropositionLead": "What we offer",
@@ -2970,7 +2970,7 @@
       }
     ],
     "protocolTitle": "The Bio Vera Protocol",
-    "protocolLead": "Strict requirements for network participation",
+    "protocolLead": "Strict standards for estates shipping into Bio Vera inventories",
     "protocolItems": [
       {
         "title": "Digital scheduling",
@@ -3009,7 +3009,7 @@
       {
         "id": "prospect",
         "title": "Grower prospect",
-        "description": "Complete information about becoming a Bio Vera grower, including benefits, requirements, and the application process.",
+        "description": "Everything about supplying Bio Vera as a contracted grower—in a chain where we own retail placement—benefits, QA rules and how to apply.",
         "type": "PDF",
         "size": "~2 MB"
       },
@@ -3030,7 +3030,7 @@
       {
         "id": "protocol",
         "title": "Bio Vera Protocol",
-        "description": "Detailed requirements and standards for network participation and certification.",
+        "description": "Operational and certification requirements for estates in the Vera programme.",
         "type": "PDF",
         "size": "1.8 MB"
       },
@@ -3068,7 +3068,7 @@
     "downloadFailed": "Failed to download resource. Please try again.",
     "comingSoon": "Coming soon",
     "applicationTitle": "Producer application",
-    "applicationLead": "Apply to join the Bio Vera network",
+    "applicationLead": "Apply to the Vera grower programme",
     "successTitle": "Application submitted!",
     "successBody": "Thank you for your interest. We'll review your application and contact you within 3-5 business days.",
     "farmNameLabel": "Farm name *",
@@ -3103,7 +3103,7 @@
   },
   "logisticsPartnerPage": {
     "title": "For logistics",
-    "heroLead": "Join Bio Vera's trusted network of transport partners. Open to independent drivers, small vans, medium trucks, and large transport companies. Deliver organic products with complete traceability and earn stable, long-term contracts.",
+    "heroLead": "Become a contracted Bio Vera carrier in our cold chain—regular missions, Vera fleet rules and the same batch story we present to paying customers.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "prospectNote": "The prospect PDF includes our branded truck design and complete program details",
@@ -3143,7 +3143,7 @@
       }
     ],
     "whatYouGetTitle": "What you get",
-    "whatYouGetLead": "Benefits of joining the Bio Vera network",
+    "whatYouGetLead": "Benefits of carrying Bio Vera loads",
     "benefitItems": [
       {
         "title": "Route optimization",
@@ -3426,7 +3426,7 @@
     "missionP1": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing, and logistics, and sells branded food to end customers—all with a single compliance narrative from field to shelf.",
     "missionP2": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and shoppers see verifiable origin and quality.",
     "visionTitle": "Our vision",
-    "visionP1": "To become a leading vertically integrated agricultural network, setting new standards for traceability, quality assurance, and sustainable agriculture.",
+    "visionP1": "To lead Europe’s vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf.",
     "visionP2": "We envision a future where every product on the shelf has a complete digital passport, where farmers receive fair compensation for their work, and where consumers can trust the origin and quality of what they purchase.",
     "valuesTitle": "Our values",
     "valueCards": [
@@ -3466,9 +3466,9 @@
         "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for seamless access to markets around the world."
       }
     ],
-    "ctaTitle": "Join us on this journey",
+    "ctaTitle": "Become part of the Vera corridor",
     "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera, the playbook from parcel to payout stays the same.",
-    "ctaProducer": "Become a producer",
+    "ctaProducer": "Become a Vera grower",
     "ctaContact": "Contact us"
   },
   "investorDeckPage": {
@@ -3512,7 +3512,7 @@
     "plainLanguageCards": [
       {
         "title": "What Bio Vera is",
-        "body": "Bio Vera is an operating company, not a bulletin board: networked fields, pack lines and trucks play by the same Bio‑Ready rules—one software spine for parcels, inputs, diaries, batches, missions, cash splits and the shopper QR. We care less about glossy PDFs than fingerprints you can defend: barcode, parcel boundary, timestamps, who signed the crate when the reefer wobbled."
+        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one Bio‑Ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
       },
       {
         "title": "How the operation runs week to week",
@@ -3554,7 +3554,7 @@
     ],
     "coverEyebrow": "Investor deck",
     "coverTitle": "One operating spine for growers, buyers and trucking partners",
-    "coverSubtitle": "Bio Vera is where producers and buyers who accept our Bio-Ready rules meet — your flag on the map is not what earns you the seat at the table, behaviour is. One stack keeps maps, field notes, carton checks, trucking handovers and retail QR passports honest with each other. Vera Partner pricing on seed, optional insurance snapped to qualifying buys, Vera packaging bonuses wired to proofs — carrots stay wired to chores. Approved inputs, GPS inside parcel lines, pallet identity, refrigerated episodes and payout lines aren’t campfire stories trapped in spreadsheets and chat threads anymore.",
+    "coverSubtitle": "Bio Vera is the merchant: we contract growing capacity, run QA, packaging and refrigerated missions, and place the batch story that retail buyers scan. One stack keeps polygons, field books, pack-line checks, carrier handovers and shelf QR aligned so finance, agriculture and sales argue over the same Batch_ID.",
     "whyTitle": "Why trace stops being polite once audits lean in",
     "whyLead": "Nobody wins when procurement chases heroic PDFs while agronomists scribble contradictory truths offline. Vera exists because intermittent networks shouldn’t disqualify conscientious notebooks — and because reconciling ghosts every shipment is misery disguised as ops tempo.",
     "whyBullets": [
@@ -3994,7 +3994,7 @@
     "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may be customised in deployment.",
     "coverEyebrow": "Project overview",
     "coverTitle": "Bio Vera — Project overview",
-    "coverSubtitle": "One vertically integrated agrifood network under Bio‑Ready rules: traceable journeys from parcels and sanctioned inputs through packing, refrigerated logistics and retail passports — so growers, carriers and buyers share one truthful record.",
+    "coverSubtitle": "Vertically operated agrifood company under Bio‑Ready rules—from sanctioned inputs through packing, refrigerated legs and passports our sales teams honour at checkout.",
     "sections": [
       {
         "title": "Introduction",
@@ -4102,7 +4102,7 @@
         { "title": "Digital seals", "content": "How to use and verify digital seals for cargo security." }
       ],
       "general": [
-        { "title": "Getting started", "content": "Welcome to Bio Vera! Learn the basics of the network and how to get around the app and buyer tools." },
+        { "title": "Getting started", "content": "Welcome to Bio Vera! Learn programme basics plus how buyer tools, dashboards and trace views fit the loads we merchandise." },
         { "title": "Account setup", "content": "How to create and manage your Bio Vera account." },
         { "title": "Mobile app guide", "content": "Download and use the Bio Vera mobile application." },
         { "title": "Contact support", "content": "Get in touch with our support team for assistance." }
@@ -4147,7 +4147,7 @@
       },
       {
         "title": "EU market standards",
-        "body": "All products distributed through the Bio Vera network meet EU certification standards. We facilitate GlobalG.A.P. IFA v6 group certification and ensure complete compliance with food safety regulations."
+        "body": "Every SKU marketed by Bio Vera under our standards meets EU certification expectations. We organise GlobalG.A.P. IFA v6 group certification support and tighten food-safety dossiers before release."
       },
       {
         "title": "ISO standards",
