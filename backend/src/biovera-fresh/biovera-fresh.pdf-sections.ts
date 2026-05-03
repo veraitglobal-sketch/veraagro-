@@ -1,4 +1,7 @@
-/** Keep in sync with web/locales/en.json and sr.json → `bioVeraFresh.pdfSections` (browser print appendix). */
+/**
+ * `PDF_SECTIONS_EN` — source for the API-generated partner prospect PDF (English only; same as other Bio Vera prospects).
+ * `PDF_SECTIONS_SR` — keep aligned with `bioVeraFresh.pdfSections` in web/locales/sr.json for on-page / browser-print Serbian copy.
+ */
 export type BioVeraFreshPdfSection = { title: string; body: string };
 
 const CONTACT_SR =
@@ -41,7 +44,7 @@ export const PDF_SECTIONS_SR: BioVeraFreshPdfSection[] = [
   {
     title: '6. UPRAVLJANJE ROBOM',
     body:
-      'Jedna od ključnih prednosti BioVera Fresh koncepta je pametno upravljanje proizvodima:\n\n• sveža roba ide direktno u prodaju\n• roba stara 2–3 dana koristi se za sokove i salate\n• roba koja ne zadovoljava standard ne koristi se\n\nOvim pristupom postiže se:\n\n• minimalan otpad\n• maksimalna iskorištenost\n• dodatna vrednost proizvoda',
+      'Jedna od ključnih prednosti BioVera Fresh koncepta je dosledno upravljanje ponudom:\n\n• prioritet je sveža roba na maloprodajnom izlaganju\n• Fresh pult dodaje vrednost kroz sokove i salate po unapred definisanom standardu kvaliteta\n• roba koja ne zadovoljava BioVera standard ne izlazi kupcu\n\nOvim pristupom postiže se:\n\n• minimalan otpad\n• maksimalna iskorištenost\n• dodatna vrednost proizvoda',
   },
   {
     title: '7. MODEL ZARADE',
@@ -98,12 +101,12 @@ export const PDF_SECTIONS_EN: BioVeraFreshPdfSection[] = [
   {
     title: '1. Introduction',
     body:
-      'BioVera Fresh responds to the growing need for organised, transparent and efficient sale of fresh produce.\n\nIn traditional systems, much value is lost through weak organisation, unpredictable demand and lack of control.\n\nBioVera Fresh sets a new standard — linking production and the market through a controlled chain, stable quality and minimal losses.',
+      'BioVera Fresh responds to the growing need for organised, transparent and efficient sale of fresh produce.\n\nIn traditional systems, much value is lost through weak organisation, unpredictable demand and lack of control.\n\nBioVera Fresh sets a new standard - linking production and the market through a controlled chain, stable quality and minimal losses.',
   },
   {
     title: '2. Market challenges',
     body:
-      'Today’s fruit and vegetable market faces several structural issues:\n\n• fragmented distribution\n• high shrink and waste\n• unclear origin\n• volatile pricing\n• weak quality control\n\nThis creates uncertainty for growers, partners and shoppers alike.',
+      'Today\'s fruit and vegetable market faces several structural issues:\n\n• fragmented distribution\n• high shrink and waste\n• unclear origin\n• volatile pricing\n• weak quality control\n\nThis creates uncertainty for growers, partners and shoppers alike.',
   },
   {
     title: '3. The BioVera answer',
@@ -123,7 +126,7 @@ export const PDF_SECTIONS_EN: BioVeraFreshPdfSection[] = [
   {
     title: '6. Managing inventory',
     body:
-      'A core advantage is disciplined product handling:\n\n• freshest goods go straight to the floor\n• produce aged 2–3 days moves into juices and salads\n• anything below standard is not used\n\nThe outcome:\n\n• minimal waste\n• high utilisation\n• extra value from the same harvest',
+      'A core advantage is disciplined assortment management:\n\n• the freshest retail selection is prioritised on the shop floor\n• the Fresh counter adds value with juices and salads prepared to a defined quality standard\n• anything below the BioVera standard never reaches the customer\n\nThe outcome:\n\n• minimal waste\n• high utilisation\n• extra value across the range',
   },
   {
     title: '7. Earnings model',

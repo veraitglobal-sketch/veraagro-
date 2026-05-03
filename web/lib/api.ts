@@ -1759,12 +1759,11 @@ export const growersAPI = {
   },
 };
 
-/** Public prospect PDFs for BioVera Fresh retail programme (locale matches site language: en | sr). */
+/** English BioVera Fresh partner prospect PDF (same convention as grower/supplier/logistics prospects). */
 export const bioVeraFreshAPI = {
-  downloadProspect: async (locale: 'en' | 'sr') => {
+  downloadProspect: async () => {
     try {
       const response = await api.get('/biovera-fresh/prospect/download', {
-        params: { locale },
         responseType: 'blob',
       });
 
@@ -1775,10 +1774,7 @@ export const bioVeraFreshAPI = {
       const url = window.URL.createObjectURL(response.data);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute(
-        'download',
-        locale === 'sr' ? 'bio-vera-fresh-prospect-sr.pdf' : 'bio-vera-fresh-prospect-en.pdf',
-      );
+      link.setAttribute('download', 'bio-vera-fresh-prospect.pdf');
       document.body.appendChild(link);
       link.click();
       setTimeout(() => {

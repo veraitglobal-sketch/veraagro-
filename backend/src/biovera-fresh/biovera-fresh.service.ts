@@ -2,9 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as PDFDocument from 'pdfkit';
-import { PDF_SECTIONS_EN, PDF_SECTIONS_SR } from './biovera-fresh.pdf-sections';
-
-export type BioVeraFreshPdfLocale = 'en' | 'sr';
+import { PDF_SECTIONS_EN } from './biovera-fresh.pdf-sections';
 
 /** Prospect hero: place image at web/public/biovera-fresh-prospect-hero.jpg or .png; API resolves repo public folders. */
 const BIOVERA_FRESH_HERO_PREFERRED = 'biovera-fresh-prospect-hero.jpg';
@@ -100,6 +98,7 @@ export class BioVeraFreshService {
       path.join(process.cwd(), 'public', fileName),
       path.join(process.cwd(), '..', 'web', 'public', fileName),
       path.join(process.cwd(), 'web', 'public', fileName),
+      path.join(process.cwd(), 'backend', 'public', fileName),
     ];
     for (const p of candidates) {
       if (fs.existsSync(p)) return p;
@@ -111,17 +110,14 @@ export class BioVeraFreshService {
     return this.resolveRepoPublicAsset('logo1.png') ?? this.resolveRepoPublicAsset('logo.png');
   }
 
-  normalizeLocale(raw: string | undefined): BioVeraFreshPdfLocale {
-    if (!raw) return 'en';
-    const lower = raw.toLowerCase();
-    if (lower === 'sr' || lower.startsWith('sr-')) return 'sr';
-    return 'en';
-  }
-
-  async generateProspectPDF(locale: BioVeraFreshPdfLocale): Promise<Buffer> {
-    const sections = locale === 'sr' ? PDF_SECTIONS_SR : PDF_SECTIONS_EN;
-    const docTitle = locale === 'sr' ? 'BioVera Fresh — prospekt' : 'BioVera Fresh — prospect';
-    const tocTitle = locale === 'sr' ? 'Sadržaj' : 'Contents';
+  /**
+   * Partner prospect PDF - English only (same convention as grower / supplier / logistics prospect PDFs).
+   * Uses Helvetica-friendly ASCII; Serbian site copy stays on the web page and in print appendix from locales.
+   */
+  async generateProspectPDF(): Promise<Buffer> {
+    const sections = PDF_SECTIONS_EN;
+    const docTitle = 'BioVera Fresh - Partner prospect';
+    const tocTitle = 'Contents';
 
     return new Promise((resolve, reject) => {
       try {
@@ -133,7 +129,7 @@ export class BioVeraFreshService {
           info: {
             Title: docTitle,
             Author: 'Bio Vera',
-            Subject: locale === 'sr' ? 'Partner prospekt' : 'Partner prospect',
+            Subject: 'BioVera Fresh retail partner prospect',
           },
         });
         const buffers: Buffer[] = [];
@@ -168,8 +164,7 @@ export class BioVeraFreshService {
           doc.fillColor(veraGreen).font('Helvetica-Bold').fontSize(10);
           doc.text('BioVera Fresh', MARGIN + 6, 17, { width: contentW - 120, lineBreak: false });
           doc.fillColor(lightGray).font('Helvetica').fontSize(8);
-          const tag =
-            locale === 'sr' ? 'Partner prospekt · Direktno. Sveže. Pod kontrolom.' : 'Partner prospect · Direct. Fresh. Controlled.';
+          const tag = 'Partner prospect · Direct. Fresh. Controlled.';
           doc.text(tag, MARGIN + 6, 31, { width: contentW - 40 });
           doc.strokeColor('#000000').lineWidth(1);
           doc.restore();
@@ -361,10 +356,7 @@ export class BioVeraFreshService {
 
           let tocBodyH = 36;
           doc.fontSize(9).fillColor(lightGray).font('Helvetica');
-          const tocLead =
-            locale === 'sr'
-              ? 'Pregled poglavlja programa za partnere.'
-              : 'Overview of chapters in this partner programme.';
+          const tocLead = 'Overview of chapters in this partner programme.';
           tocBodyH += doc.heightOfString(tocLead, { width: tocInnerW }) + 18;
 
           const perCol = Math.ceil(tocEntries.length / 2);
@@ -454,9 +446,7 @@ export class BioVeraFreshService {
           .fillColor(lightGray)
           .font('Helvetica')
           .text(
-            locale === 'sr'
-              ? 'Kontrolisana maloprodaja i franšiza uz Bio Vera mrežu.'
-              : 'Controlled retail and franchise within the Bio Vera network.',
+            'Controlled retail and franchise within the Bio Vera network.',
             { width: contentW, lineGap: 4 },
           );
         doc.moveDown(1);
@@ -507,8 +497,7 @@ export class BioVeraFreshService {
         for (let i = range.start; i < range.start + totalPages; i++) {
           doc.switchToPage(i);
           const n = i - range.start + 1;
-          const pageLabel =
-            locale === 'sr' ? `Strana ${n} od ${totalPages}` : `Page ${n} of ${totalPages}`;
+          const pageLabel = `Page ${n} of ${totalPages}`;
 
           doc.save();
           doc.strokeColor(veraGreen).opacity(0.55).lineWidth(2);

@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, HttpStatus, Query, Res } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { BioVeraFreshService } from './biovera-fresh.service';
 
@@ -6,12 +6,12 @@ import { BioVeraFreshService } from './biovera-fresh.service';
 export class BioVeraFreshController {
   constructor(private readonly bioVeraFreshService: BioVeraFreshService) {}
 
+  /** English prospect PDF only (same as other Bio Vera prospect downloads). */
   @Get('prospect/download')
-  async downloadProspect(@Query('locale') locale: string | undefined, @Res() res: Response) {
+  async downloadProspect(@Res() res: Response) {
     try {
-      const loc = this.bioVeraFreshService.normalizeLocale(locale);
-      const pdfBuffer = await this.bioVeraFreshService.generateProspectPDF(loc);
-      const filename = loc === 'sr' ? 'bio-vera-fresh-prospect-sr.pdf' : 'bio-vera-fresh-prospect-en.pdf';
+      const pdfBuffer = await this.bioVeraFreshService.generateProspectPDF();
+      const filename = 'bio-vera-fresh-prospect.pdf';
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(pdfBuffer);

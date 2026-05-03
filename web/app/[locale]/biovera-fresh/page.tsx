@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
-import { siteLocaleFromLanguageTag } from "@/lib/i18n-routing";
 import { bioVeraFreshAPI } from "@/lib/api";
 import Footer from "@/components/Footer";
 
@@ -77,26 +76,22 @@ function sectionSlug(title: string, index: number): string {
 }
 
 export default function BioVeraFreshPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const loc = useLocalizedHref();
   const [copied, setCopied] = useState(false);
   const [pdfDownloading, setPdfDownloading] = useState(false);
 
-  const pdfLocale = useMemo((): "en" | "sr" => {
-    return siteLocaleFromLanguageTag(i18n.language) === "sr" ? "sr" : "en";
-  }, [i18n.language]);
-
   const downloadProspect = useCallback(async () => {
     setPdfDownloading(true);
     try {
-      await bioVeraFreshAPI.downloadProspect(pdfLocale);
+      await bioVeraFreshAPI.downloadProspect();
     } catch (error) {
       console.error("BioVera Fresh prospect download:", error);
       alert(t("bioVeraFresh.downloadProspectError"));
     } finally {
       setPdfDownloading(false);
     }
-  }, [pdfLocale, t]);
+  }, [t]);
 
   const rawWeb = t("bioVeraFresh.webSections", { returnObjects: true });
   const webSections = Array.isArray(rawWeb) ? rawWeb.filter(isSection) : [];
