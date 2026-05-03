@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Vertikalno povezana poljoprivredna mreža. Od polja do kupca: partije sa tragom, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",
-    "ldJsonDescription": "Vertikalno povezana poljoprivredna mreža. Od polja do kupca, sa partijama sa tragom, Bio-Ready sertifikacijom i digitalnim dokazom. Otvoreno za proizvođače širom sveta.",
+    "siteDescription": "Vertikalno integrisana agrifood kompanija: organizujemo proizvodnju u našoj mreži, kontrolišemo kvalitet i lanac, prodajemo kao Bio Vera od polja do kupca. Partije sa tragom, Bio-Ready i proverljiv dokaz. Prijem novih proizvođača u program širom sveta.",
+    "ldJsonDescription": "Vertikalno integrisana agrifood kompanija: jedan lanac od parcele do kupca — organizovana proizvodnja, kontrolisan kvalitet, prodaja pod brendom; partije sa tragom i Bio-Ready dokazom. Prijem proizvođača u program širom sveta.",
     "keywords": [
       "Bio Vera",
       "Poljoprivredna mreža",
@@ -250,7 +250,7 @@
       {
         "category": "general",
         "q": "Šta je Bio Vera?",
-        "a": "Bio Vera je vertikalno povezana poljoprivredna mreža: povezujemo proizvođače sa tržištem u jednom operativnom modelu—sledljivost, obezbeđenje kvaliteta i usklađenost od polja do kupca, širom sveta."
+        "a": "Bio Vera je agrifood kompanija sa vertikalno vođenim lancem: definiše standarde i ulaze, organizuje i kontroliše proizvodnju kroz mrežu proizvođača, upravlja pakovanjem i logistikom i prodaje krajnjem kupcu kao vlasnik brenda—u istom modelu sledljivosti i kvaliteta od polja do kupca."
       },
       {
         "category": "general",
@@ -352,7 +352,7 @@
     "keyFactsAccordionLabel": "Ključne činjenice",
     "keyFacts": [
       "Registrovani poljoprivredni brend sa integrisanim sistemom od parcele do proizvoda na polici.",
-      "Jedinstven digitalni trag koji povezuje proizvodnju, nabavku i distribuciju.",
+      "Jedinstven trag koji prati produkciju i nabavku inputa sve do distribucije pod nadzorom Bio Vere.",
       "Ugovoreni dobavljači i digitalizovana nabavka kroz aplikaciju.",
       "QR kod na bedžu koji omogućava pristup digitalnom pasošu proizvoda.",
       "Tehnička podrška za verifikaciju podataka, uključujući blokčejn trag gde je u konfiguraciji uključen.",
@@ -393,7 +393,7 @@
           "„Protocol 360 predstavlja sledeći korak u razvoju Bio Vera sistema. Naš cilj je da svaki proizvod prođe kroz jasan, merljiv i transparentan proces kontrole — od polja do police.“",
           "U komunikaciji oko Protocol 360 ističu se vrednosti: Standards Beyond Expectation · Controlled by Science, Grown by Nature · Every Unit a Masterpiece.",
           "Za proveru statusa konkretnog lota u javnom profilu programa koristi se dokumentovana adresa u obliku biovera.app/protocol-360?batchId=YOUR_BATCH_ID (umesto YOUR_BATCH_ID unosi se identifikator iz digitalnog pasoša ili radnog naloga programa).",
-          "Bio Vera razvija digitalni sistem za kontrolu, trag i transparentnost u proizvodnji hrane, povezujući proizvođače, logistiku i tržište u jedan operativni model. Sjedište kompanije: Hamburg.",
+          "Bio Vera vodi operativni sistem za kontrolu i trag u proizvodnji hrane uz proizvođače u programu, logističke partnere i sopstvenu prodaju krajnjem kupcu. Sjedište: Hamburg.",
           "Kontakt za medije: press@biovera.app · www.biovera.app"
         ]
       },
@@ -401,10 +401,10 @@
         "id": "2",
         "date": "Hamburg · 2026.",
         "title": "Bio Vera pokreće kompletan digitalni sistem za transparentnu i sledljivu proizvodnju hrane",
-        "summary": "Integrisani digitalni sistem povezuje farmu, kontrolu i tržište: digitalni pasoš uz QR, Bio Vera Standard, podrška proizvođačima i završna kontrola pre plasmana; predviđeno je postepeno širenje (program je još u ranoj fazi), počev od 2026. godine ka dodatnim tržištima, uključujući SAD — u koracima koji zavise od dozvola i operativnog tempa u svakoj zemlji.",
+        "summary": "Digitalni trag drži farmu, kontrole i Bio Vera prodaju u jednoj knjizi: pasoš uz QR, Bio Vera Standard i završna kontrola pre plasmana; postepeno širenje programa od 2026. ka dodatnim tržištima, uključujući SAD — u koracima zavisnim od regulatorike i tempa zemlje.",
         "paragraphs": [
-          "HAMBURG, Nemačka — Bio Vera, kao agrotehnološki startup, pokreće integrisani digitalni sistem za transparentnost i trag u proizvodnji hrane — od polja do krajnjeg kupca.",
-          "Za razliku od običnih izolovanih digitalnih alata, Bio Vera ne predstavlja samo „još jednu platformu“, već operativni sistem koji povezuje proizvodnju, logistiku i tržište u jednu funkcionalnu celinu pod istim tehničkim pravilima.",
+          "HAMBURG, Nemačka — Bio Vera, kao vertikalno organizovana agrifood kompanija, dodatno razvija operativni sistem za transparentnost i trag u snabdevanju — od ugovorne proizvodnje na parceli do prodaje krajnjem kupcu.",
+          "To nije kolekcija razdvojenih alata ni još jednog sajta koji samo „spaja strane”: jedan sistem drži definisane ulaze, polja, pakovanje, logistiku i prodaju kao Bio Vera pod istim pravilima.",
           "Preko savremenih tehnologija beleže se ključni procesi kako bi proizvođači i krajnji korisnici imali merljiv trag i jasnu dokumentaciju — ne zamenjujući inspekciju, već je podržavajući istim podacima tamo gde zakon to predviđa.",
           "Centralni deo je digitalni pasoš proizvoda: jedinstveni QR kod vodi do porekla i lokacije uzgoja, profila proizvođača, evidencije aktivnosti u polju, fotografija sa terena kada ih tehnički list predviđa, datuma ključnih procesa i zapisa o posetama i kontrolama.",
           "Kupac na taj način vidi doslednu priču o partiji; nadležni nadzor i inspekcija rade sa istim dokumentacionim skupom podataka tamo gde je to zakonom propisano.",
@@ -418,8 +418,8 @@
           "Tehnološki sloj koristi digitalno praćenje procesa, GPS i vremenske oznake, evidenciju aktivnosti, QR kod po pakovanju i mere zaštite podataka tako da krajnjem korisniku budu dostupne merljive informacije, ne samo slogan.",
           "Plan je dalje širenje van fokusa na Evropu, uključujući javno najavljenu orijentaciju ka američkom tržištu u razdoblju od kraja 2027. do 2028. godine, u skladu sa regulatornim uslovima.",
           "Izvršni tim formulise cilj jačanja poverenja potrošača, zakonskih garancija proizvodnje i preglednosti tržišta kroz dokumentovane tragove i moderniji operativni model u poljoprivredi.",
-          "„Bio Vera nije samo platforma — to je sistem koji povezuje proizvodnju, kontrolu i tržište. Naš cilj je da kroz tehnologiju omogućimo transparentnost i sigurnost za sve učesnike u lancu.“",
-          "Bio Vera je agrotehnološki startup koji razvija digitalni sistem praćenja i kontrole proizvodnje hrane; sjedište kompanije je u Hamburgu. Kontakt za medije: press@biovera.app · www.biovera.app",
+          "„Bio Vera nije tržišnica — mi organizujemo proizvodnju, kontrolišemo kvalitet i prodajemo hranu. Tehnologija čini trag proverljivim za sve u lancu.“",
+          "Bio Vera je agrifood kompanija koja vodi digitalni operativni sistem za trag i kontrolu proizvodnje; sjedište u Hamburgu. Kontakt za medije: press@biovera.app · www.biovera.app",
           "Zahvaljujemo se uredništvima na interesovanju. Tim Bio Vere."
         ]
       }
@@ -2689,9 +2689,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertikalno povezana",
-      "title2": "poljoprivredna mreža",
-      "subtitle": "Od polja do kupca u jednom sistemu: sledljive partije, Bio-Ready sertifikacija i digitalni dokaz na svakom koraku. Otvoreno za proizvođače širom sveta.",
+      "title1": "Vertikalno integrisana",
+      "title2": "agrifood kompanija",
+      "subtitle": "Organizujemo proizvodnju u našem sistemu, kontrolišemo kvalitet i lanac snabdevanja i prodajemo kao Bio Vera. Sledljive partije i Bio-Ready dokaz na svakom koraku. Proizvođači nisu prodavci — oni uzgajaju po našim pravilima; prijem u program širom sveta.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postani proizvođač",
       "preOrder": "Pretporudžbina za 2026. je otvorena",
@@ -2709,7 +2709,7 @@
     "partnersLine": "Poverenje vodećih poljoprivrednih organizacija svakodnevno",
     "vision": {
       "title": "Naša vizija",
-      "intro": "Gradimo poveren put od polja do kupca: jasna pravila, iskreni zapisi i fer pristup tržištu za proizvođače koji ispunjavaju naše standarde.",
+      "intro": "Gradimo poveren put od parcele do kupca koji kupuje od Bio Vere: jasni standardi za proizvodnju, kontrolisan kvalitet i fer uslovi za proizvođače u našem programu.",
       "cards": [
         {
           "title": "Transparentnost",
@@ -2720,14 +2720,14 @@
           "description": "Kriptografski zaštićeni podaci, zaštita od prevare i nepromenljivi digitalni dokazi."
         },
         {
-          "title": "Pristup EU",
-          "description": "Automatsko generisanje EU sertifikata i digitalnih pasoša za direktan pristup tržištu."
+          "title": "EU dokumentacija",
+          "description": "Automatsko generisanje EU sertifikata i digitalnih pasoša dok plasirate sa nama — dokumentacija koja prati prodaju koju kao kompanija obezbeđujemo."
         }
       ]
     },
     "features": {
       "title": "Ključne funkcije",
-      "intro": "Kako mreža radi svakodnevno—proizvodnja, logistika, isporuka i obračun povezani u jedan operativni model.",
+      "intro": "Svakodnevna operacija: proizvodnja po protokolu, pakovanje, logistika, isporuka i obračun u jednom lancu koordinovanom od strane Bio Vere.",
       "list": [
         {
           "title": "Smart-Lock sistem",
@@ -2735,7 +2735,7 @@
         },
         {
           "title": "Praćenje partija",
-          "description": "Svaka gajba sa Batch_ID. Jedan klik od polja do kupca."
+          "description": "Svaka gajba ima Batch_ID; isti trag od parcele do isporuke u našem operativnom sistemu."
         },
         {
           "title": "Eskro plaćanje",
@@ -2751,7 +2751,7 @@
         },
         {
           "title": "EU digitalni pasoš",
-          "description": "Automatsko generisanje EU sertifikata. Direktan pristup tržištu bez posrednika."
+          "description": "Automatsko generisanje EU sertifikata i pasoša koji prate našu prodaju krajnjem kupcu."
         },
         {
           "title": "Blokčejn verifikacija (Polygon)",
@@ -2804,7 +2804,7 @@
           "status": "planned",
           "items": [
             "Podrška za više regiona",
-            "API pijaca",
+            "API za partnere (integracije)",
             "Partnerske integracije",
             "Enterprise funkcije"
           ]
@@ -2829,8 +2829,8 @@
       "grains": "Žitarice"
     },
     "cta": {
-      "title": "Partnerstvo sa mrežom",
-      "body": "Sarađujte sa proizvođačima, logističkim partnerima i kupcima pod jednim setom standarda—jasna predaja partija, sledljive serije i predvidljivi uslovi.",
+      "title": "Uključite se u operaciju Bio Vere",
+      "body": "Proizvođači pod našim standardima, logisti pod našim misijama ili kupci koji kupuju od Bio Vere—jedan trag partija i jasni komercijalni uslovi.",
       "becomeProducer": "Postani proizvođač",
       "startShopping": "Započni kupovinu"
     },
@@ -2838,7 +2838,7 @@
   },
   "forBuyersPage": {
     "title": "Za kupce",
-    "heroLead": "Nabavljajte sveže voće i povrće iz mreže Bio Vera: sertifikovano poreklo i sledljiva istorija partije, a ne samo oglas. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
+    "heroLead": "Nabavljajte kod Bio Vere: sveže voće i povrće uz sertifikovano poreklo i sledljivu istoriju partije, ne kao generičku pijacu. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
     "notShopBody": "Nismo klasična internet prodavnica. Radimo jasnim, transparentnim postupkom: vidite šta nudimo, ostavite podatke kompanije i kontakt i saglasnost, a svaki zahtev shvatamo ozbiljno. Pročitajte kako radimo ispod, a kada ste spremni, iskažite interes na dnu stranice kako bismo vam se javili.",
     "linkHowWeOperate": "Kako radimo",
     "linkExpressInterest": "Iskažite interes",
@@ -2885,7 +2885,7 @@
     "operateInformator": "Informator za kupce",
     "operateLead": "Pokrećemo vertikalno povezan lanac: od semena i gajenja, preko ambalaže i logistike, do maloprodaje i isporuke.",
     "operateList": [
-      "Direktna veza sertifikovanih proizvođača i kupaca; bez nepotrebnih posrednika.",
+      "Jedinstven trag od ugovorenih proizvođača u programu do kupca koji kupuje od Bio Vere — manje paralelnih posrednika uz jasnu odgovornost kompanije.",
       "Svaka partija je zabeležena: datum berbe, poreklo i rukovanje su evidentirani i vidljivi.",
       "Hladni lanac i logistika vode se tako da roba ostane sveža od polja do odredišta.",
       "Radimo jasnim cenama i obračunom: depozit do ispunjenja uslova otpuste, zatim isplata partnerima po dogovoru."
@@ -2895,7 +2895,7 @@
     "securityCards": [
       {
         "title": "Plaćanja",
-        "desc": "Jasan tok: uplata kupca drži se u depozitu kod Bio Vera dok se ne potvrdi isporuka, zatim ide proizvođaču i logističkim partnerima po ugovoru. Radimo kao brend i snabdevalac—nema skrivenih provizija; uslovi su direktno sa Bio Vera, a ne apstraktni marketplace."
+        "desc": "Jasan tok: uplata kupca drži se u depozitu kod Bio Vera dok se ne potvrdi isporuka; zatim isplate proizvođaču i logističkim partnerima po ugovoru. Mi smo prodavac i snabdevalac uz brend Bio Vera—bez skrivenih provizija; uslovi su direktno sa nama, bez „anonimnog tržišta“."
       },
       {
         "title": "Ugovori i usklađenost",
@@ -2997,7 +2997,7 @@
     ],
     "groupCertTitle": "Grupna sertifikacija",
     "groupCertSubtitle": "Opcija 2: grupna sertifikacija",
-    "groupCertBody": "Vera Agrar drži sertifikaciju za sve partnere. Troškove i postupak pokrivamo mi, a vi stičete direktan pristup nemačkom tržištu.",
+    "groupCertBody": "Vera Agrar drži sertifikaciju za sve partnere. Troškove i postupak pokrivamo mi, a vi dobijate strukturisan ulaz u nemačke plasmane kroz Bio Vera program.",
     "technicalStandardsTitle": "Tehnički standardi",
     "tableColCategory": "Kategorija",
     "tableColStandard": "Standard",
@@ -3388,7 +3388,7 @@
         "title": "Menadžer za poslovni razvoj",
         "department": "Prodaja",
         "location": "Hamburg, Nemačka",
-        "description": "Tražimo menadžera za poslovni razvoj koji će širiti mrežu proizvođača, dobavljača i kupaca širom sveta. Odgovorni ste za strateška partnerstva.",
+        "description": "Tražimo menadžera za poslovni razvoj koji širi bazu ugovorenih proizvođača i dobavljača i jača prodaju i retail kanale kao Bio Vera. Odgovorni ste za strateška partnerstva.",
         "requirements": [
           "3+ godine u B2B prodaji ili poslovnom razvoju",
           "Iskustvo u poljoprivredi, prehrani ili logistici",
@@ -3453,8 +3453,8 @@
     "heroTitle": "O Bio Veri",
     "heroSubtitle": "Poboljšavamo poljoprivredu kroz tehnologiju, transparentnost i poverenje",
     "missionTitle": "Naša misija",
-    "missionP1": "Bio Vera jača poljoprivredne lance snabdevanja povezivanjem proizvođača širom sveta direktno sa tržištima, uz jasne standarde, obezbeđenje kvaliteta i pravičnu nadoknadu na svakom koraku.",
-    "missionP2": "Verujemo da tehnologija može da poveže tradicionalnu proizvodnju i savremene zahteve tržišta, u održivom ekosistemu gde proizvođači napreduju, kupci imaju poverenje, a potrošači imaju sledljiv, kvalitetan proizvod.",
+    "missionP1": "Bio Vera organizuje proizvodnju hrane kroz ugovorene proizvođače pod našim standardima i inputima, kontroliše teren, pakovanje i logistiku, i prodaje krajnjem kupcu kao vlasnik brenda—uz jasnu usklađenost i fer nadoknadu u lancu.",
+    "missionP2": "Verujemo da ista tehnologija služi kontroli i prodaji: poljoprivrednici u našem sistemu proizvode po pravilima; kupac ima odnos sa Bio Vera; potrošač vidi proverljivo poreklo i kvalitet.",
     "visionTitle": "Naša vizija",
     "visionP1": "Da postanemo vodeća vertikalno povezana poljoprivredna mreža, uz nove standarde sledljivosti, obezbeđenja kvaliteta i održive proizvodnje.",
     "visionP2": "Zamisljamo budućnost gde svaki proizvod na polici ima potpun digitalni pasoš, gde proizvođači dobijaju pravičnu nadoknadu, a potrošači mogu verovati u poreklo i kvalitet onoga što kupuju.",
@@ -3481,15 +3481,15 @@
     "whatWeDoItems": [
       {
         "title": "Puna sledljivost",
-        "body": "Svaki proizvod dobija digitalni pasoš sa dokazom porekla, puta i kvaliteta. QR na kutiji povezuje potrošača sa farmom sa koje potiče hrana."
+        "body": "Svaki proizvod dobija digitalni pasoš sa dokazom porekla, puta i kvaliteta. QR na kutiji pokazuje gazdinstvo u našem programu koje je uzgajalo tu partiju."
       },
       {
         "title": "Obezbeđenje kvaliteta",
         "body": "Protocol 360 obezbeđuje trostepenu kontrolu: analize na terenu, biometriju pri pakovanju, monitoring hladnog lanca u transportu."
       },
       {
-        "title": "Direktan pristup tržištu",
-        "body": "Smanjujemo posrednike i povezujemo proizvođače i kupce. Bolje cene proizvođačima, svežina za potrošače."
+        "title": "Prodaja i snabdevanje",
+        "body": "Mi prodajemo krajnjem kupcu; proizvođači ostaju proizvođači u našem sistemu. Kraći, odgovorniji lanac nego klasični niz posrednika — fer uslovi uzgajivaču, svežina i jasnoća za kupca."
       },
       {
         "title": "Usklađenost sa EU tržištem",
@@ -3497,7 +3497,7 @@
       }
     ],
     "ctaTitle": "Pridružite nam se",
-    "ctaBody": "Bilo da ste proizvođač, dobavljač, logistički partner ili kupac, Bio Vera nudi mesto u jedinstvenoj mreži — jasni procesi od polja do obračuna.",
+    "ctaBody": "Proizvođač pod našim programom, dobavljač inputa, logistički partner ili kupac kod Bio Vere—isti jasni procesi od parcele do obračuna.",
     "ctaProducer": "Postanite proizvođač",
     "ctaContact": "Kontakt"
   },
@@ -3516,7 +3516,7 @@
     "toolbarPrintPdf": "Sačuvaj kao PDF",
     "toolbarPrintAria": "Otvori štampu da sačuvaš PDF",
     "toolbarHint": "Za PDF u dijalogu štampa izaberite „Sačuvaj kao PDF“ — pogodno da pošaljete nekome ko voli attachment umesto dugog link-a.",
-    "introNote": "Stranica počinje običnim jezikom — kako namirnice danas hodaju evropskim tržištem i zašto postoji Bio Vera — pa prelazi u to kako platforma funkcioniše u praksi. Link za komitet ili PDF u paketu.",
+    "introNote": "Stranica počinje običnim jezikom — kako hrana putuje evropskim tržištem i gde Bio Vera stoji kao kompanija — pa prelazi u to kako operacija funkcioniše u praksi. Link za komitet ili PDF u paketu.",
     "heroTechPill": "Protocol 360 · Integrity Guard · QR pasoš",
     "narrativeEyebrow": "Uvodni kontekst",
     "narrativeTitle": "Evropska prehrana i dalje traži čistiju stazu ka poverenju",
@@ -3529,24 +3529,24 @@
       "Bez te sigurnosti širenje za njih ostaje rizik.",
       "Zato ceo lanac ostane iskrzan.\nI poverenje slabo naraste.",
       "Tu stupamo mi — Bio Vera.",
-      "Bio Vera povezuje proizvođače i kupce jednom digitalnom platformom na kojoj svaki proizvod može da prati trag, ima jasnu proverljivost i smislu pun smisao.",
-      "Bez nagadjanja i bez naknadnih slojeva posrednika kao glavnog odgovora.",
-      "Veza direktnija i transparentna — uz podatke koji stvarno nose smisao.",
+      "Bio Vera organizuje proizvodnju, nadzire kvalitet i prodaje kao brend krajnjem kupcu uz jedan zajednički trag po partiji koji se može proveriti bez nagađanja.",
+      "Bez nagađanja — odgovorna kompanija, ne anonimni sajt koji „spaja strane“.",
+      "Prodaja i trag idu zajedno: podaci koji prolaze kontrolu, ne slogan.",
       "Za proizvođače je to opravdan razlog da rastu bez straha da će tržište nestati iz ispod njih.\nZa kupce je tačno znati šta dovlače.",
       "A za ceo sistem znaci pomak ka nečemu što je transparentnije, pouzdanije i pravednije.",
       "To građamo sa Bio Vera."
     ],
     "plainLanguageEyebrow": "Žargonski kraće",
     "plainLanguageTitle": "Šta smo, kako se posao kotrlja, koji je smisao",
-    "plainLanguageIntro": "Pre tehničkog priloga obično treba da „legnu“ tri stvari: šta gradimo zajedno, kako jedna obična radna nedelja izgleda na platformi, i šta partner zaista dobija ako svi držimo isti trag. Sledeće tri kartice samo za to.",
+    "plainLanguageIntro": "Pre tehničkog priloga treba da „legnu“ tri stvari: šta gradimo zajedno, kako jedna radna nedelja izgleda u našoj operaciji i šta partner dobija ako svi držimo isti trag. Sledeće tri kartice samo za to.",
     "plainLanguageCards": [
       {
         "title": "Šta je Bio Vera",
-        "body": "Gradimo zajedničku mrežu polja i prodavnica koja igra po istim Bio-Ready pravilima, sa jednim digitalnim dnevnikom kroz ceo lanac — poligon, nabavku, belešku sa njive, seriju iz pakovanja, kamion, obračun i QR u radnji. Manje nam treba uredan PDF koji samo lepo izgleda na papiru; više trag koji ima smisla i kad auditor zavlati obrve: barkod koji prolazi belu listu, GPS koji ne izlazi iz ugovorne parcele i jasnu evidenciju predaje kutije kad rashlada krene škripati."
+        "body": "Bio Vera je operativna kompanija, ne oglasna tabla: zajednička mreža polja i pakovanja koja radi po istim Bio-Ready pravilima — jedan digitalni dnevnik za poligon, nabavku, belešku sa njive, seriju, kamion, obračun i QR u radnji. Manje nam treba uredan PDF za štampu; više trag kojim se branite pred revizorom: barkod koji prolazi belu listu, GPS unutar ugovorne parcele, jasna predaja kutije kad rashlada škripi."
       },
       {
-        "title": "Kako živi proces na platformi",
-        "body": "Komercija već instinktivno poznaje ovaj hod od nabavke do police: ubacujete dozvoljene ulaze (uključujući seme uz Vera Partner cenu i opcionalno osiguranje ako ga program dopušta), dokazujete rad u polju GPS-om koji ostaje unutar parcele kao u ugovoru, pravite serije po Protocol 360, vučete ih kroz misije u kojima se kutija stvarno preda, pa zatvorite krug kod kupca. Novac ne završi kao jedna mutna cifra — isplate ostaju fazirane, tako da proizvođač, kamion i platforma i dalje vide svoj deo, uz Vera bonus za rad kojim dokument još uvek stoji čvrsto na nogama."
+        "title": "Kako teče operacija u praksi",
+        "body": "Komercija već instinktivno poznaje ovaj hod od nabavke do police: ubacujete dozvoljene ulaze (uključujući seme uz Vera Partner cenu i opcionalno osiguranje ako ga program dopušta), dokazujete rad u polju GPS-om koji ostaje unutar parcele kao u ugovoru, pravite serije po Protocol 360, vučete ih kroz misije u kojima se kutija stvarno preda, pa zatvorite krug prodajom ka kupcu. Novac ne završi kao jedna mutna cifra — isplate ostaju fazirane, tako da proizvođač, kamion i kompanija i dalje vide svoj deo, uz Vera bonus za rad kojim dokument još uvek stoji čvrsto na nogama."
       },
       {
         "title": "Šta želimo da se oseti",
@@ -3554,7 +3554,7 @@
       }
     ],
     "videoTitle": "Bio Vera — kratak pitch pregled",
-    "videoCaption": "Kratak prilog ovoj strani: ideja iza Bio Vere, zašto transparentna trgovina ima smisla za proizvođače i kupce i kako jedna platforma nosi trag i proveru proizvoda kroz ceo proces.",
+    "videoCaption": "Kratak prilog: zašto vertikalni model sa kontrolisanim tragom ima smisla za proizvođače u programu, logističke partnere i kupce koji kupuju od Bio Vere.",
     "videoPlaceholderTitle": "Ovde ugradite video pitch",
     "videoPlaceholderBody": "Objavite na YouTube ili Vimeu (javno ili unlisted), podesite NEXT_PUBLIC_PITCH_DECK_VIDEO_URL pri deploy-u sajta, ponovo publikujte — ovde se pojavljuje ubačeni plejer.",
     "howItWorksEyebrow": "Kako to izgleda u hodu",
@@ -4028,7 +4028,7 @@
     "sections": [
       {
         "title": "Uvod (Introduction)",
-        "body": "Bio Vera razvija digitalno koordinisanu agrifood mrežu koja povezuje savesne proizvođače, logistiku i kupce koji prihvataju istu Bio-Ready transparentnost. Fokus je koridor kao jedinstven pojam poverenja — balkanska proizvodnja i EU kontrolni okvir bez paralelnih naracija u tabelama."
+        "body": "Bio Vera je kompanija koja organizuje proizvodnju kroz Ugovorene proizvođače, vodi logistiku i prodaje kupcima uz istu Bio-Ready transparentnost. Koridor znači jedan trag — balkanska proizvodnja u EU okviru bez paralelnih naracija u tabelama."
       },
       {
         "title": "Problem",
@@ -4071,9 +4071,9 @@
     "founderParagraphs": [
       "Bio Vera je osnovao Jovica Mihajlović, državljanin Republike Srbije sa sedištem u Hamburgu, Nemačka, gde živi i radi poslednjih pet godina.",
       "Diplomirao je na Univerzitetu u Nišu, smer Komunikacije i odnosi sa javnošću, što mu je oblikovalo razumevanje komunikacije, pozicioniranja na tržištu i korisnički orijentisanog razmišljanja.",
-      "Poslednjih godina gradi Vera brend u IT sektoru i stiče iskustvo u digitalnim uslugama i platformskim rešenjima.",
+      "Poslednjih godina gradi Vera brend u IT sektoru i stiče iskustvo u digitalnim operativnim proizvodima i servisima.",
       "Sa Bio Verom iskustvo prenosi u agrarni domen, sa ciljem transparentne i skalabilne digitalne infrastrukture za lance snabdevanja hranom.",
-      "Raduje ga dugoročna vizija: rešenja koja povezuju industrije kroz poverenje, efikasnost i digitalnu inovaciju i planovi da Vera ekosistem vremenom proširi i na druge sektore."
+      "Raduje ga dugoročna vizija: rešenja koja učine lance snabdevanja jasnijim kroz poverenje, efikasnost i digitalnu inovaciju; plan je da Vera porodica proizvoda sa vremenom obuhvati i druge sektore."
     ],
 
     "seeAlsoEyebrow": "Povezano",
@@ -4109,7 +4109,7 @@
         },
         {
           "title": "Prednosti za kupce",
-          "content": "Konkurentne cene, garancija svežine, transparentnost i direktan pristup proizvođačima. Izgradite poverenje kupaca kroz proveren kvalitet."
+          "content": "Konkurentne cene, garancija svežine, transparentnost i jasno poreklo iz našeg programa proizvođača. Izgradite poverenje kupaca kroz proveren kvalitet."
         },
         {
           "title": "Uslovi i odredbe",
