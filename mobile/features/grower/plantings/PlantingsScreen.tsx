@@ -35,6 +35,7 @@ import {
 import { mapPlantingSaveError } from './map-planting-save-error';
 import { plantingFormDateToEstimatedIsoUtc } from './planting-estimated-date';
 import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
+import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 
 type EstateRow = { id: string; name: string };
 type ParcelAug = {
@@ -78,6 +79,11 @@ type HaRow = {
   } | null;
 };
 
+function parcelLabelSnippet(ha: HaRow): string {
+  const id = normalizeHarvestParcelId(ha.parcelId, ha.parcel ?? null);
+  return id ? id.slice(0, 8) : '—';
+}
+
 export default function PlantingsScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
@@ -107,6 +113,25 @@ export default function PlantingsScreen() {
   const [detailHa, setDetailHa] = useState<HaRow | null>(null);
 
   const parcelById = useMemo(() => new Map(parcelList.map((q) => [q.id, q])), [parcelList]);
+
+  const goHarvestForPlanting = useCallback(
+    (ha: HaRow) => {
+      const parcelIdEff = normalizeHarvestParcelId(ha.parcelId, ha.parcel ?? null);
+      if (!parcelIdEff) {
+        Alert.alert(t('error'), t('producer.plantings.harvestLinkMissing'));
+        return;
+      }
+      setDetailHa(null);
+      router.push({
+        pathname: '/(producer)/(tabs)/harvest',
+        params: {
+          harvestParcelId: parcelIdEff,
+          harvestPlantingId: ha.id,
+        },
+      });
+    },
+    [router, t],
+  );
 
   const load = useCallback(async () => {
     setErr(null);
@@ -156,7 +181,7 @@ export default function PlantingsScreen() {
             q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
           return {
             id: `local:${h.id}`,
-            parcelId: payload.parcelId,
+            parcelId: normalizeHarvestParcelId(payload.parcelId, null) || String(payload.parcelId ?? ''),
             announcementType: 'PLANTING',
             cropType: payload.cropType,
             estimatedDate: payload.estimatedDate,
@@ -168,7 +193,10 @@ export default function PlantingsScreen() {
           };
         });
 
-      setAnnouncements([...localPlantings, ...serverRows]);
+      setAnnouncements([...localPlantings, ...serverRows.map((r) => ({
+        ...r,
+        parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel ?? null) || r.parcelId,
+      }))]);
     } catch (e: unknown) {
       if (__DEV__) {
         const msg =
@@ -188,7 +216,7 @@ export default function PlantingsScreen() {
               q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
             return {
               id: `local:${h.id}`,
-              parcelId: payload.parcelId,
+              parcelId: normalizeHarvestParcelId(payload.parcelId, null) || String(payload.parcelId ?? ''),
               announcementType: 'PLANTING',
               cropType: payload.cropType,
               estimatedDate: payload.estimatedDate,
@@ -375,7 +403,8 @@ export default function PlantingsScreen() {
   };
 
   const resolvedParcelFor = (ha: HaRow): ParcelAug | undefined => {
-    const local = parcelById.get(ha.parcelId);
+    const pid = normalizeHarvestParcelId(ha.parcelId, ha.parcel ?? null);
+    const local = parcelById.get(pid);
     if (local) return local;
     if (ha.parcel?.id) {
       return {
@@ -569,13 +598,31 @@ export default function PlantingsScreen() {
                       📍{' '}
                       {pr?.estateName ?? a.parcel?.estates?.name ?? ''}
                       {' — '}
-                      {pr?.cropType ?? a.parcel?.cropType ?? a.parcelId.slice(0, 8)}
+                      {pr?.cropType ?? a.parcel?.cropType ?? parcelLabelSnippet(a)}
                       {areaM2 != null ? ` · ${formatArea(areaM2, langSr)}` : ''}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 8 }}>
                       {formatWhen(a.estimatedDate)} ·{' '}
                       {t(`producer.plantings.ha_${a.status}`, { defaultValue: a.status })}
                     </Text>
+                    <TouchableOpacity
+                      onPress={() => goHarvestForPlanting(a)}
+                      activeOpacity={0.85}
+                      style={{
+                        marginTop: 12,
+                        alignSelf: 'flex-start',
+                        paddingVertical: 10,
+                        paddingHorizontal: 16,
+                        borderRadius: theme.borderRadius.md,
+                        backgroundColor: theme.colors.primary,
+                        minHeight: 44,
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>
+                        {t('producer.plantings.openHarvestPlanCta')} →
+                      </Text>
+                    </TouchableOpacity>
                     {a.localQueue?.queueStatus === 'error' && a.localQueue.queueError ? (
                       <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: 6 }}>
                         {a.localQueue.queueError}
@@ -693,6 +740,11 @@ export default function PlantingsScreen() {
                   formatWhen={formatWhen}
                   formatDateShort={formatDateShort}
                   formatAreaFn={formatArea}
+                  onOpenHarvest={
+                    String(detailHa.announcementType ?? '').toUpperCase() === 'PLANTING'
+                      ? () => goHarvestForPlanting(detailHa)
+                      : undefined
+                  }
                 />
               </ScrollView>
             ) : null}
@@ -1010,6 +1062,7 @@ function DetailBody({
   formatWhen,
   formatDateShort,
   formatAreaFn,
+  onOpenHarvest,
 }: {
   ha: HaRow;
   pr?: ParcelAug;
@@ -1018,6 +1071,7 @@ function DetailBody({
   formatWhen: (iso: string) => string;
   formatDateShort: (iso: string) => string;
   formatAreaFn: (m2: number, lng: boolean) => string;
+  onOpenHarvest?: () => void;
 }) {
   const areaM2 =
     typeof pr?.calculatedArea === 'number'
@@ -1039,7 +1093,7 @@ function DetailBody({
         {pr?.estateName ?? ha.parcel?.estates?.name ?? '—'}
       </Text>
       <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 4 }}>
-        {t('producer.plantings.detailBlock')}: {pr?.cropType ?? ha.parcel?.cropType ?? ha.parcelId.slice(0, 8)}
+        {t('producer.plantings.detailBlock')}: {pr?.cropType ?? ha.parcel?.cropType ?? parcelLabelSnippet(ha)}
       </Text>
       {areaM2 != null ? (
         <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 4 }}>
@@ -1128,6 +1182,25 @@ function DetailBody({
               : t('producer.plantings.detailProgressNext', { date: formatDateShort(ha.plantingProgress.nextDueAt) })}
           </Text>
         </View>
+      ) : null}
+
+      {String(ha.announcementType ?? '').toUpperCase() === 'PLANTING' && onOpenHarvest ? (
+        <TouchableOpacity
+          onPress={onOpenHarvest}
+          activeOpacity={0.85}
+          style={{
+            marginTop: theme.spacing.lg,
+            paddingVertical: 14,
+            paddingHorizontal: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
+            backgroundColor: theme.colors.primary,
+            alignItems: 'center',
+            minHeight: 48,
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>{t('producer.plantings.openHarvestPlanCta')} →</Text>
+        </TouchableOpacity>
       ) : null}
 
       {ha.notes ? (

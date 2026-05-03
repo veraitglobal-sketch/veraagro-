@@ -561,6 +561,8 @@
       "submit": "Sačuvaj zasad",
       "sectionPlantings": "Zasadi",
       "sectionHarvests": "Berbe (planovi)",
+      "openHarvestPlanCta": "Žetva / plan za ovaj zasad",
+      "harvestLinkMissing": "Nije moguće povezati zasad sa parcelom. Povuci da osvežiš i probaj ponovo.",
       "empty": "Još nema zasada — dodirni + za novi.",
       "emptyHintParcelCrop": "Samo ako si na parceli („Moje parcele”) upisao usev, to još nije zasad ovde — dodirni + i ovde prijavi plan zasada za tu parcelu (isti zapis kao na webu).",
       "localQueuePending": "Sačuvano na telefonu — šalje kad bude internet.",

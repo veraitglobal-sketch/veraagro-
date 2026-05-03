@@ -559,6 +559,8 @@
       "submit": "Save planting",
       "sectionPlantings": "Plantings",
       "sectionHarvests": "Harvest plans",
+      "openHarvestPlanCta": "Plan harvest for this planting",
+      "harvestLinkMissing": "Could not tie this planting to a parcel ID. Pull down to refresh, then try again.",
       "empty": "Nothing here yet — tap + to add a planting.",
       "emptyHintParcelCrop": "If you only chose a crop on the parcel My parcels screen, it does not count as a registered planting yet. Tap + here to submit a planting plan for that parcel (same backend as Harvest / plan submission).",
       "localQueuePending": "Saved on phone — sends when you're online.",

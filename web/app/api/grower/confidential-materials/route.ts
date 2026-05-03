@@ -40,11 +40,11 @@ async function requireGrowerAndGate(request: NextRequest) {
   return null;
 }
 
+/** Grower app only issues reader cookies for the three horizon tiers — confidential supplement is investor-deck only. */
 const INTERNAL_KEYS: Array<{ tier: ConfidentialTier; flag: keyof ConfidentialUnlockResponse }> = [
   { tier: 'short', flag: 'shortTermInternal' },
   { tier: 'medium', flag: 'mediumTermInternal' },
   { tier: 'long', flag: 'longTermInternal' },
-  { tier: 'confidential', flag: 'confidentialTermInternal' },
 ];
 
 function stripUnsettableInternalFlags(payload: ConfidentialUnlockResponse): ConfidentialUnlockResponse {

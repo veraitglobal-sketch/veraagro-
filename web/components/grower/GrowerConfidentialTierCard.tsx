@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, CalendarClock, Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 
-export type GrowerConfidentialTierId = 'short' | 'medium' | 'long' | 'confidential';
+export type GrowerConfidentialTierId = 'short' | 'medium' | 'long';
 
 export type GrowerConfidentialTierCardProps = {
   tierId: GrowerConfidentialTierId;

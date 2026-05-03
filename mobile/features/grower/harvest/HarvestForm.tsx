@@ -8,13 +8,40 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useCallback, useMemo } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { useHarvestData, CROP_TYPES } from './useHarvestData';
 
 export default function HarvestForm() {
   const { t, i18n } = useTranslation();
-  const h = useHarvestData();
+  const router = useRouter();
+  const routeParams = useLocalSearchParams<{ harvestParcelId?: string; harvestPlantingId?: string }>();
+
+  const prefillIntent = useMemo(() => {
+    const rawP = routeParams.harvestParcelId;
+    const rawPl = routeParams.harvestPlantingId;
+    const p = typeof rawP === 'string' ? rawP : Array.isArray(rawP) ? rawP[0] : '';
+    const pl = typeof rawPl === 'string' ? rawPl : Array.isArray(rawPl) ? rawPl[0] : '';
+    const parcelId = typeof p === 'string' ? p.trim() : '';
+    if (!parcelId) return null;
+    const plantingId = typeof pl === 'string' && pl.trim() ? pl.trim() : null;
+    return { parcelId, plantingId };
+  }, [routeParams.harvestParcelId, routeParams.harvestPlantingId]);
+
+  const onPrefillConsumed = useCallback(() => {
+    try {
+      router.setParams({
+        harvestParcelId: undefined,
+        harvestPlantingId: undefined,
+      });
+    } catch {
+      // ignore navigation param clear failures
+    }
+  }, [router]);
+
+  const h = useHarvestData(prefillIntent, onPrefillConsumed);
 
   const formatPlanDate = (iso: string) => {
     try {

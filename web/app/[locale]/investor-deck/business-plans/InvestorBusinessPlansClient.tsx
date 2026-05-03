@@ -7,10 +7,10 @@ import { ArrowRight, ExternalLink, Eye, EyeOff, FileText, Lock, X } from 'lucide
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { GrowerConfidentialTierId } from '@/components/grower/GrowerConfidentialTierCard';
+import type { ConfidentialTier } from '@/lib/grower-confidential-types';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
-type TierAvailability = Record<GrowerConfidentialTierId, boolean>;
+type TierAvailability = Record<ConfidentialTier, boolean>;
 
 type PerTierUi = {
   phase: 'collapsed' | 'content';
@@ -45,23 +45,23 @@ const inputClass =
 const docCardClass =
   'block overflow-hidden rounded-xl border border-gray-200/90 bg-white text-left shadow-sm ring-1 ring-gray-950/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2D5A27]/28 hover:shadow-md hover:shadow-[#2D5A27]/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2';
 
-const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
+const TIER_INDEX: Record<ConfidentialTier, string> = {
   short: '01',
   medium: '02',
   long: '03',
   confidential: '04',
 };
 
-const TIER_IDS: GrowerConfidentialTierId[] = ['short', 'medium', 'long', 'confidential'];
+const TIER_IDS: ConfidentialTier[] = ['short', 'medium', 'long', 'confidential'];
 
-const TITLE_KEY: Record<GrowerConfidentialTierId, string> = {
+const TITLE_KEY: Record<ConfidentialTier, string> = {
   short: 'investorBusinessPlans.shortTitle',
   medium: 'investorBusinessPlans.mediumTitle',
   long: 'investorBusinessPlans.longTitle',
   confidential: 'investorBusinessPlans.confidentialTitle',
 };
 
-const TIER_RESPONSE_KEYS: Record<GrowerConfidentialTierId, { url: string; internal: string }> = {
+const TIER_RESPONSE_KEYS: Record<ConfidentialTier, { url: string; internal: string }> = {
   short: { url: 'shortTermUrl', internal: 'shortTermInternal' },
   medium: { url: 'mediumTermUrl', internal: 'mediumTermInternal' },
   long: { url: 'longTermUrl', internal: 'longTermInternal' },
@@ -70,7 +70,7 @@ const TIER_RESPONSE_KEYS: Record<GrowerConfidentialTierId, { url: string; intern
 
 /** Probe tier cookie: internal plans return 200 with markdown JSON (body unused here). */
 async function probeTierUnlocked(
-  tier: GrowerConfidentialTierId,
+  tier: ConfidentialTier,
   markdownUrl: string,
 ): Promise<boolean> {
   const res = await fetch(markdownUrl, { credentials: 'include', cache: 'no-store', method: 'GET' });
@@ -93,7 +93,7 @@ export default function InvestorBusinessPlansClient() {
   const [bundleWrong, setBundleWrong] = useState(false);
   const [bundleBusy, setBundleBusy] = useState(false);
 
-  const [tierUi, setTierUi] = useState<Record<GrowerConfidentialTierId, PerTierUi>>({
+  const [tierUi, setTierUi] = useState<Record<ConfidentialTier, PerTierUi>>({
     short: emptyTier(),
     medium: emptyTier(),
     long: emptyTier(),
@@ -101,10 +101,10 @@ export default function InvestorBusinessPlansClient() {
   });
 
   const [pageError, setPageError] = useState<string | null>(null);
-  const [docLoadTier, setDocLoadTier] = useState<GrowerConfidentialTierId | null>(null);
-  const [passwordModalTier, setPasswordModalTier] = useState<GrowerConfidentialTierId | null>(null);
+  const [docLoadTier, setDocLoadTier] = useState<ConfidentialTier | null>(null);
+  const [passwordModalTier, setPasswordModalTier] = useState<ConfidentialTier | null>(null);
   const sessionHydratedRef = useRef(false);
-  const setTier = useCallback((tier: GrowerConfidentialTierId, patch: Partial<PerTierUi>) => {
+  const setTier = useCallback((tier: ConfidentialTier, patch: Partial<PerTierUi>) => {
     setTierUi((prev) => ({ ...prev, [tier]: { ...prev[tier], ...patch } }));
   }, []);
 
@@ -256,7 +256,7 @@ export default function InvestorBusinessPlansClient() {
   }, [bundlePw, t, unlockEndpoint]);
 
   const submitTier = useCallback(
-    async (tier: GrowerConfidentialTierId) => {
+    async (tier: ConfidentialTier) => {
       const password = tierUi[tier].password.trim();
       if (!password) return;
       setTier(tier, { loading: true, wrongPassword: false });

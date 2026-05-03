@@ -28,8 +28,8 @@ export type PlantingPickRow = {
   estimatedDate: string;
 };
 
-/** Align with PlantingsScreen `resolvedParcelFor` — some payloads only expose parcel id on nested `parcel`. */
-function normalizeParcelId(value: unknown, nested?: { id?: unknown } | null): string {
+/** Parcel id from scalar or nested relation (matches PlantingsScreen `resolvedParcelFor`). */
+export function normalizeHarvestParcelId(value: unknown, nested?: { id?: unknown } | null): string {
   const raw = value != null && String(value).trim() !== '' ? String(value).trim() : '';
   if (raw) return raw;
   const nid = nested?.id;
@@ -41,7 +41,7 @@ async function fetchPlantingRows(): Promise<PlantingPickRow[]> {
   const local: PlantingPickRow[] = pending
     .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
     .map((h) => {
-      const parcelId = normalizeParcelId(h.payload.parcelId, null);
+      const parcelId = normalizeHarvestParcelId(h.payload.parcelId, null);
       return {
         id: `local:${h.id}`,
         parcelId,
@@ -65,7 +65,7 @@ async function fetchPlantingRows(): Promise<PlantingPickRow[]> {
         .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'PLANTING')
         .map((r) => ({
           id: r.id,
-          parcelId: normalizeParcelId(r.parcelId, r.parcel),
+          parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel),
           cropType: r.cropType,
           estimatedDate: r.estimatedDate,
         }))
@@ -107,9 +107,9 @@ export function useHarvestData(
   const [planMode, setPlanMode] = useState<HarvestPlanMode>('HARVEST');
 
   const plantingsForParcel = useMemo(() => {
-    const sel = normalizeParcelId(parcelId, null);
+    const sel = normalizeHarvestParcelId(parcelId, null);
     if (!sel) return [];
-    return plantingAnnouncements.filter((a) => normalizeParcelId(a.parcelId, null) === sel);
+    return plantingAnnouncements.filter((a) => normalizeHarvestParcelId(a.parcelId, null) === sel);
   }, [plantingAnnouncements, parcelId]);
 
   const loadApprovedParcels = useCallback(async (opts?: { silent?: boolean }) => {
@@ -174,19 +174,26 @@ export function useHarvestData(
     if (!prefillIntent?.parcelId?.trim() || parcelsLoading) return;
     const key = `${prefillIntent.parcelId.trim()}|${prefillIntent.plantingId ?? ''}`;
     if (prefillAppliedKeyRef.current === key) return;
-    const wantParcel = normalizeParcelId(prefillIntent.parcelId, null);
-    if (!wantParcel || !approvedParcels.some((p) => normalizeParcelId(p.id, null) === wantParcel)) {
+    const wantParcel = normalizeHarvestParcelId(prefillIntent.parcelId, null);
+    if (!wantParcel || !approvedParcels.some((p) => normalizeHarvestParcelId(p.id, null) === wantParcel)) {
       return;
     }
     setParcelId(wantParcel);
     setPlanMode('HARVEST');
-    const forParcel = plantingAnnouncements.filter((a) => normalizeParcelId(a.parcelId, null) === wantParcel);
+    const forParcel = plantingAnnouncements.filter((a) => normalizeHarvestParcelId(a.parcelId, null) === wantParcel);
     const wantPlanting = prefillIntent.plantingId?.trim();
-    if (wantPlanting && forParcel.some((p) => p.id === wantPlanting)) {
-      setSelectedPlantingId(wantPlanting);
+
+    if (wantPlanting) {
+      if (forParcel.some((p) => p.id === wantPlanting)) {
+        setSelectedPlantingId(wantPlanting);
+      } else if (forParcel.length === 0) {
+        return;
+      }
+      // Plantings loaded but id mismatch — parcel left selected for manual pick.
     } else if (forParcel.length === 1) {
       setSelectedPlantingId(forParcel[0].id);
     }
+
     prefillAppliedKeyRef.current = key;
     onPrefillConsumed?.();
   }, [

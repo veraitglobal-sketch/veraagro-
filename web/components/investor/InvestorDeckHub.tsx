@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 
-/** Three document cards — same rhythm as `/legal`, each link navigates away (deck → `/investor-deck/slides`). */
+/** Four document cards — pitch, overview, technical, password-gated partner plans (`/investor-deck/business-plans`). */
 export function InvestorDeckHub() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
@@ -19,7 +19,7 @@ export function InvestorDeckHub() {
       </h2>
       <p className="mb-6 font-light leading-relaxed text-gray-600">{t("investorDeckPage.documentsLead")}</p>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Link href={loc("/investor-deck/slides")} className={cardClass}>
           <h3 className="mb-2 text-xl font-medium text-gray-900">{t("footer.investorDeck")}</h3>
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardPitchDesc")}</p>
@@ -30,9 +30,14 @@ export function InvestorDeckHub() {
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardProjectDesc")}</p>
         </Link>
 
-        <Link href={loc("/technical-proposal")} className={`${cardClass} md:col-span-2 md:mx-auto md:w-full md:max-w-md`}>
+        <Link href={loc("/technical-proposal")} className={cardClass}>
           <h3 className="mb-2 text-xl font-medium text-gray-900">{t("footer.technicalProposal")}</h3>
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardTechnicalDesc")}</p>
+        </Link>
+
+        <Link href={loc("/investor-deck/business-plans")} className={cardClass}>
+          <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardConfidentialTitle")}</h3>
+          <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardConfidentialDesc")}</p>
         </Link>
       </div>
     </section>
