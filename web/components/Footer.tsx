@@ -107,6 +107,14 @@ export default function Footer() {
                   {t('nav.forLogistics')}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={loc('/biovera-fresh')}
+                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
+                >
+                  {t('nav.freshConcept')}
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -133,14 +141,6 @@ export default function Footer() {
                   className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
                 >
                   {t('footer.investorDeck')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={loc('/biovera-fresh')}
-                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
-                >
-                  {t('nav.freshConcept')}
                 </Link>
               </li>
               <li>

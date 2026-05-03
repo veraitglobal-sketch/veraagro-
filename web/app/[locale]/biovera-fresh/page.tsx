@@ -76,39 +76,6 @@ function sectionSlug(title: string, index: number): string {
   return `bf-${base}`;
 }
 
-type AnchorRow = { slug: string; title: string; index: number };
-
-const TOC_LINK_CLASS =
-  "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm font-light text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
-const TOC_NUM_CLASS =
-  "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/10 text-[11px] font-semibold tabular-nums text-[#2D5A27]";
-
-function TocNav({
-  anchors,
-  contentsTitle,
-  contentsNavAria,
-}: {
-  anchors: AnchorRow[];
-  contentsTitle: string;
-  contentsNavAria: string;
-}) {
-  return (
-    <nav aria-label={contentsNavAria}>
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-400">{contentsTitle}</p>
-      <ul className="space-y-0.5">
-        {anchors.map(({ slug, title, index }) => (
-          <li key={slug}>
-            <a href={`#${slug}`} className={TOC_LINK_CLASS}>
-              <span className={TOC_NUM_CLASS}>{index + 1}</span>
-              <span className="min-w-0 leading-snug group-hover:text-gray-900">{title}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
 export default function BioVeraFreshPage() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
@@ -161,13 +128,7 @@ export default function BioVeraFreshPage() {
   }, []);
 
   const contentsTitle = t("bioVeraFresh.contentsTitle");
-  const contentsNavAria = t("bioVeraFresh.contentsNav");
   const pdfDocTitle = t("bioVeraFresh.pdfDocumentTitle");
-
-  const primaryBtnClass =
-    "inline-flex min-h-[48px] items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors shadow-sm hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-400 disabled:shadow-none";
-  const secondaryBtnClass =
-    "inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-800 rounded-lg hover:border-[#2D5A27]/40 transition-colors";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 biovera-fresh-root print:bg-white">
@@ -234,145 +195,116 @@ export default function BioVeraFreshPage() {
         {t("bioVeraFresh.skipToContent")}
       </a>
 
-      {/* Hero — aligned with growers / for-buyers landing pages */}
-      <section className="bf-no-print border-b border-gray-200 pt-24 pb-16 px-6 lg:px-8">
+      {/* Hero — same rhythm as growers (`growers/page.tsx`) */}
+      <section className="bf-no-print pt-24 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/90 mb-4">
-            {t("bioVeraFresh.coverEyebrow")}
-          </p>
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
-            {t("bioVeraFresh.coverTitle")}
-          </h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-            {t("bioVeraFresh.coverSubtitle")}
-          </p>
-          <div className="mb-8 p-5 border border-gray-200 rounded-xl bg-gray-50/50 text-left max-w-2xl mx-auto">
-            <p className="text-gray-700 font-light leading-relaxed text-sm sm:text-[15px]">{t("bioVeraFresh.introNote")}</p>
-          </div>
-          <div
-            className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3"
-            role="region"
-            aria-label={`${t("bioVeraFresh.downloadProspectCta")} · ${t("bioVeraFresh.toolbarCopyLink")} · ${t("bioVeraFresh.toolbarPrintPdf")}`}
+          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">{t("bioVeraFresh.coverTitle")}</h1>
+          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto leading-relaxed font-light">{t("bioVeraFresh.coverSubtitle")}</p>
+          <p className="text-base text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">{t("bioVeraFresh.introNote")}</p>
+          <button
+            type="button"
+            disabled={pdfDownloading}
+            onClick={() => void downloadProspect()}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors disabled:cursor-not-allowed disabled:bg-gray-400"
           >
-            <button type="button" disabled={pdfDownloading} onClick={() => void downloadProspect()} className={primaryBtnClass}>
-              {pdfDownloading ? (
-                <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
-              ) : (
-                <Download className="size-4 shrink-0" aria-hidden />
-              )}
-              {t("bioVeraFresh.downloadProspectCta")}
-            </button>
-            <button type="button" onClick={copyPublicUrl} className={secondaryBtnClass}>
-              <Link2 className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
+            {pdfDownloading ? (
+              <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
+            ) : (
+              <Download className="size-4 shrink-0" aria-hidden />
+            )}
+            {t("bioVeraFresh.downloadProspectCta")}
+          </button>
+          <div
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium"
+            role="region"
+            aria-label={`${t("bioVeraFresh.toolbarCopyLink")} · ${t("bioVeraFresh.toolbarPrintPdf")}`}
+          >
+            <button type="button" onClick={copyPublicUrl} className="text-[#2D5A27] hover:text-[#23471f] transition-colors inline-flex items-center gap-1.5">
+              <Link2 className="size-4 shrink-0 opacity-80" aria-hidden />
               {copied ? t("bioVeraFresh.toolbarCopied") : t("bioVeraFresh.toolbarCopyLink")}
             </button>
-            <button type="button" onClick={openPrint} aria-label={t("bioVeraFresh.toolbarPrintAria")} className={secondaryBtnClass}>
-              <Printer className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
+            <span className="hidden sm:inline text-gray-300" aria-hidden>
+              |
+            </span>
+            <button
+              type="button"
+              onClick={openPrint}
+              aria-label={t("bioVeraFresh.toolbarPrintAria")}
+              className="text-[#2D5A27] hover:text-[#23471f] transition-colors inline-flex items-center gap-1.5"
+            >
+              <Printer className="size-4 shrink-0 opacity-80" aria-hidden />
               {t("bioVeraFresh.toolbarPrintPdf")}
             </button>
           </div>
           <p className="mt-6 text-xs text-gray-500 font-light max-w-xl mx-auto leading-snug">{t("bioVeraFresh.pdfHint")}</p>
-          <p className="mt-4 text-xs text-gray-500 font-light max-w-xl mx-auto leading-relaxed">{t("bioVeraFresh.prospectNote")}</p>
+          <p className="mt-3 text-xs text-gray-500 font-light max-w-xl mx-auto leading-relaxed">{t("bioVeraFresh.prospectNote")}</p>
         </div>
       </section>
 
       <main
         id="biovera-fresh-document"
-        className="biovera-fresh-doc scroll-mt-28 print:scroll-mt-0"
+        className="biovera-fresh-doc bf-panel border-0 shadow-none bg-transparent rounded-none scroll-mt-28 print:scroll-mt-0 print:bg-white"
         tabIndex={-1}
       >
-        <section className="py-12 px-6 lg:px-8 border-t border-gray-200 print:border-0 print:py-0 print:px-4">
+        {/* Print cover — screen readers / print only */}
+        <header className="bf-cover hidden print:block px-6 pt-2 pb-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
+            {t("bioVeraFresh.coverEyebrow")}
+          </p>
+          <h1 className="bf-heading mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 print:text-[16pt]">
+            {t("bioVeraFresh.coverTitle")}
+          </h1>
+          <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">{t("bioVeraFresh.coverSubtitle")}</p>
+        </header>
+
+        {/* Programme overview — same grid + dividers as growers “protocol” block */}
+        <section className="py-20 px-6 lg:px-8 border-t border-gray-200 print:py-6 print:border-gray-300">
           <div className="max-w-6xl mx-auto print:max-w-none">
-            <div className="bf-panel border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
-              {/* Print cover — hidden on screen (hero above duplicates messaging) */}
-              <header className="bf-cover hidden print:block px-6 py-10 sm:px-10 sm:py-11 print:border-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
-                  {t("bioVeraFresh.coverEyebrow")}
-                </p>
-                <h1 className="bf-heading mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 print:text-[16pt]">
-                  {t("bioVeraFresh.coverTitle")}
-                </h1>
-                <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">
-                  {t("bioVeraFresh.coverSubtitle")}
-                </p>
-              </header>
-
-              <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-0 print:block">
-                <aside className="bf-no-print mb-0 hidden border-t border-gray-200 bg-gray-50/40 px-5 py-8 sm:px-8 lg:col-span-4 lg:block lg:border-r lg:border-t-0 lg:px-6 lg:py-10">
-                  <TocNav anchors={sectionAnchors} contentsTitle={contentsTitle} contentsNavAria={contentsNavAria} />
-                </aside>
-
-                <div className="lg:col-span-8 print:w-full">
-                  <nav
-                    className="bf-no-print border-t border-gray-200 bg-gray-50/40 px-5 py-4 sm:px-8 lg:hidden"
-                    aria-label={contentsNavAria}
-                  >
-                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
-                  {contentsTitle}
-                </p>
-                <ul className="grid max-h-[min(40vh,18rem)] grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2">
-                  {sectionAnchors.map(({ slug, title, index }) => (
-                    <li key={slug}>
-                      <a href={`#${slug}`} className={TOC_LINK_CLASS}>
-                        <span className={TOC_NUM_CLASS}>{index + 1}</span>
-                        <span className="min-w-0 leading-snug">{title}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-
-                  <div className="divide-y divide-gray-200">
-                    {webSections.map((s, i) => {
-                      const id = sectionAnchors[i]?.slug ?? sectionSlug(s.title, i);
-                      return (
-                        <section
-                          key={id}
-                          id={id}
-                          className="bf-body scroll-mt-28 px-5 py-8 sm:px-9 sm:py-10 print:scroll-mt-0 print:px-0 print:py-4"
-                        >
-                          <h2 className="bf-heading text-lg font-light text-gray-900 sm:text-xl print:text-[12pt]">
-                            {s.title}
-                          </h2>
-                          <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-gray-600 font-light sm:text-[15px] print:text-[11pt]">
-                            {s.body}
-                          </p>
-                        </section>
-                      );
-                    })}
-
-                    <section className="bf-no-print border-t border-gray-200 bg-white px-5 py-8 sm:px-9 print:hidden">
-                      <h2 className="text-lg font-light text-gray-900">{t("bioVeraFresh.ctaTitle")}</h2>
-                      <p className="mt-3 text-[15px] leading-relaxed text-gray-600 font-light">{t("bioVeraFresh.ctaBody")}</p>
-                      <Link
-                        href={loc("/contact")}
-                        className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-8 py-4 text-base font-medium text-white hover:bg-[#23471f] transition-colors shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-                      >
-                        {t("bioVeraFresh.ctaButton")}
-                      </Link>
-                    </section>
+            <div className="text-center mb-12 bf-no-print">
+              <h2 className="text-2xl font-light text-gray-900 mb-3">{contentsTitle}</h2>
+              <p className="text-base text-gray-600 font-light">{t("bioVeraFresh.coverEyebrow")}</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 print:grid-cols-1 print:gap-6">
+              {webSections.map((s, i) => {
+                const id = sectionAnchors[i]?.slug ?? sectionSlug(s.title, i);
+                return (
+                  <div key={id} id={id} className="border-b border-[#2D5A27]/20 pb-8 bf-body scroll-mt-28 print:scroll-mt-0">
+                    <h3 className="bf-heading text-lg font-light text-gray-900 mb-3">{s.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed font-light whitespace-pre-line">{s.body}</p>
                   </div>
-                </div>
-              </div>
-
-              {/* Full brochure text — hidden on screen, included when user prints / saves as PDF */}
-              <div className="bf-pdf-block hidden print:block border-t border-gray-200 px-5 py-8 sm:px-10 print:px-0">
-                <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
-                <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
-                <div className="mt-8 space-y-8 print:space-y-6">
-                  {pdfSections.map((s) => (
-                    <section key={s.title} className="bf-body">
-                      <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
-                      <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">
-                        {s.body}
-                      </p>
-                    </section>
-                  ))}
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </section>
+
+        {/* Partner CTA — growers-style centered block */}
+        <section className="bf-no-print py-20 px-6 lg:px-8 border-t border-gray-200">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.ctaTitle")}</h2>
+            <p className="text-base text-gray-600 font-light mb-8">{t("bioVeraFresh.ctaBody")}</p>
+            <Link
+              href={loc("/contact")}
+              className="inline-block px-8 py-4 bg-[#2D5A27] text-white text-base font-medium hover:bg-[#23471f] transition-colors rounded-lg shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+            >
+              {t("bioVeraFresh.ctaButton")}
+            </Link>
+          </div>
+        </section>
+
+        {/* Full brochure — print / Save as PDF only */}
+        <div className="bf-pdf-block hidden print:block border-t border-gray-200 px-6 py-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
+          <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
+          <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
+          <div className="mt-8 space-y-8 print:space-y-6">
+            {pdfSections.map((s) => (
+              <section key={s.title} className="bf-body">
+                <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
+                <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">{s.body}</p>
+              </section>
+            ))}
+          </div>
+        </div>
       </main>
 
       <div className="bf-no-print bg-white">
