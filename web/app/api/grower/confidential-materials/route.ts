@@ -6,8 +6,8 @@ import {
   confidentialJsonResponse,
   isConfidentialSectionEnabled,
   isInviteGateConfigured,
-  isMediumLongTenureEligible,
   resolveConfidentialBootstrap,
+  resolvePartnerPlanTenure,
   unlockFromPasswordBody,
   verifyGrowerJwt,
 } from '@/lib/grower-confidential-server';
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     inviteGateActive: isInviteGateConfigured(),
     tiersConfigured: boot.tiersConfigured,
     tiersAvailable: boot.tiersAvailable,
-    mediumLongTenure: boot.mediumLongTenure,
+    partnerPlanTenure: boot.partnerPlanTenure,
   });
 }
 
@@ -95,8 +95,11 @@ export async function POST(request: NextRequest) {
   }
 
   const auth = request.headers.get('authorization') || request.headers.get('Authorization');
-  const tenureEligible = await isMediumLongTenureEligible(auth);
-  const unlocked = unlockFromPasswordBody(parsed, { mediumLongTenureEligible: tenureEligible });
+  const tenure = await resolvePartnerPlanTenure(auth);
+  const unlocked = unlockFromPasswordBody(parsed, {
+    mediumTenureEligible: tenure.medium.eligible,
+    longTenureEligible: tenure.long.eligible,
+  });
   const payload = stripUnsettableInternalFlags(unlocked);
   const res = confidentialJsonResponse(payload);
   appendPartnerPlanCookies(res, payload);

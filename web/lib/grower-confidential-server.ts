@@ -22,13 +22,15 @@ export type ConfidentialUnlockResponse = {
   shortTermInternal?: boolean;
   mediumTermInternal?: boolean;
   longTermInternal?: boolean;
-  /** Correct password but medium/long blocked by partnership tenure rule. */
+  /** Correct password but tier blocked by account-age rule. */
   tenureRejected?: ConfidentialTier[];
 };
 
-export type MediumLongTenureBootstrap = {
-  eligible: boolean;
-  minYears: number;
+export type TierTenureGate = { eligible: boolean; minYears: number };
+
+export type PartnerPlanTenureBootstrap = {
+  medium: TierTenureGate;
+  long: TierTenureGate;
 };
 
 const TIER_ENV_KEYS: Record<ConfidentialTier, { urlKey: string; passKey: string }> = {
@@ -56,13 +58,36 @@ export function isInviteGateConfigured(): boolean {
   return !!(process.env.GROWER_CONFIDENTIAL_ACCESS_TOKEN || '').trim();
 }
 
-/** Minimum full calendar years since grower account creation before medium/long unlock. Use `0` to disable (e.g. dev). Default `3`. */
-export function getMediumLongMinPartnershipYears(): number {
-  const raw = process.env.GROWER_CONFIDENTIAL_MEDIUM_LONG_MIN_YEARS?.trim();
-  if (!raw) return 3;
-  const n = Number(raw);
-  if (!Number.isFinite(n) || n < 0) return 3;
+function parseNonNegativeIntEnv(val: string | undefined): number | null {
+  if (val === undefined || val.trim() === '') return null;
+  const n = Number(val.trim());
+  if (!Number.isFinite(n) || n < 0) return null;
   return Math.floor(n);
+}
+
+/**
+ * Medium- and long-term minimum full calendar years since grower account registration.
+ *
+ * - `GROWER_CONFIDENTIAL_MEDIUM_MIN_YEARS` — first gate (default **3**). Use **0** to disable the medium tenure check.
+ * - `GROWER_CONFIDENTIAL_LONG_MIN_YEARS` — second gate (default **medium + 3**, or **6** when medium is 0). Use **0** to disable the long tenure check.
+ * - Legacy: if only `GROWER_CONFIDENTIAL_MEDIUM_LONG_MIN_YEARS=Y` is set (and neither new key), both tiers use **Y** (old single-threshold behaviour).
+ */
+export function getPartnershipTenureThresholds(): { medium: number; long: number } {
+  const legacy = parseNonNegativeIntEnv(process.env.GROWER_CONFIDENTIAL_MEDIUM_LONG_MIN_YEARS);
+  const mediumExplicit = parseNonNegativeIntEnv(process.env.GROWER_CONFIDENTIAL_MEDIUM_MIN_YEARS);
+  const longExplicit = parseNonNegativeIntEnv(process.env.GROWER_CONFIDENTIAL_LONG_MIN_YEARS);
+
+  const usingLegacyOnly =
+    legacy !== null && mediumExplicit === null && longExplicit === null;
+
+  if (usingLegacyOnly) {
+    return { medium: legacy, long: legacy };
+  }
+
+  const medium = mediumExplicit ?? 3;
+  const longDefault = medium > 0 ? medium + 3 : 6;
+  const long = longExplicit ?? longDefault;
+  return { medium, long };
 }
 
 function wholeYearsBetween(start: Date, end: Date): number {
@@ -90,6 +115,32 @@ async function fetchFarmerProfileMe(
   } catch {
     return null;
   }
+}
+
+async function getGrowerAccountAgeYears(authHeader: string | null): Promise<number | null> {
+  const row = await fetchFarmerProfileMe(authHeader);
+  const iso = row?.accountCreatedAt;
+  if (typeof iso !== 'string') return null;
+  const start = new Date(iso);
+  if (Number.isNaN(start.getTime())) return null;
+  return wholeYearsBetween(start, new Date());
+}
+
+function tenureGateEligible(ageYears: number | null, minYears: number): boolean {
+  if (minYears <= 0) return true;
+  if (ageYears === null) return false;
+  return ageYears >= minYears;
+}
+
+export async function resolvePartnerPlanTenure(
+  authHeader: string | null,
+): Promise<PartnerPlanTenureBootstrap> {
+  const { medium: minM, long: minL } = getPartnershipTenureThresholds();
+  const age = await getGrowerAccountAgeYears(authHeader);
+  return {
+    medium: { eligible: tenureGateEligible(age, minM), minYears: minM },
+    long: { eligible: tenureGateEligible(age, minL), minYears: minL },
+  };
 }
 
 /** HTTPS everywhere; HTTP allowed only for localhost dev. */
@@ -144,33 +195,21 @@ export function getTierSecretsConfigured(): ConfidentialTierAvailability {
   };
 }
 
-export async function isMediumLongTenureEligible(authHeader: string | null): Promise<boolean> {
-  const minY = getMediumLongMinPartnershipYears();
-  if (minY <= 0) return true;
-  const row = await fetchFarmerProfileMe(authHeader);
-  const iso = row?.accountCreatedAt;
-  if (typeof iso !== 'string') return false;
-  const start = new Date(iso);
-  if (Number.isNaN(start.getTime())) return false;
-  return wholeYearsBetween(start, new Date()) >= minY;
-}
-
 export async function resolveConfidentialBootstrap(authHeader: string | null): Promise<{
   tiersConfigured: ConfidentialTierAvailability;
   tiersAvailable: ConfidentialTierAvailability;
-  mediumLongTenure: MediumLongTenureBootstrap;
+  partnerPlanTenure: PartnerPlanTenureBootstrap;
 }> {
   const tiersConfigured = getTierSecretsConfigured();
-  const minYears = getMediumLongMinPartnershipYears();
-  const eligible = minYears <= 0 ? true : await isMediumLongTenureEligible(authHeader);
+  const tenure = await resolvePartnerPlanTenure(authHeader);
   return {
     tiersConfigured,
     tiersAvailable: {
       short: tiersConfigured.short,
-      medium: tiersConfigured.medium && eligible,
-      long: tiersConfigured.long && eligible,
+      medium: tiersConfigured.medium && tenure.medium.eligible,
+      long: tiersConfigured.long && tenure.long.eligible,
     },
-    mediumLongTenure: { eligible, minYears },
+    partnerPlanTenure: tenure,
   };
 }
 
@@ -203,7 +242,7 @@ function sanitizePasswordAttempt(raw: unknown): string {
 
 export function unlockFromPasswordBody(
   body: unknown,
-  ctx?: { mediumLongTenureEligible?: boolean },
+  ctx?: { mediumTenureEligible?: boolean; longTenureEligible?: boolean },
 ): ConfidentialUnlockResponse {
   let passwords: Partial<Record<ConfidentialTier, string>> = {};
   if (body && typeof body === 'object' && !Array.isArray(body)) {
@@ -218,7 +257,8 @@ export function unlockFromPasswordBody(
     }
   }
 
-  const tenureOk = ctx?.mediumLongTenureEligible !== false;
+  const mediumOk = ctx?.mediumTenureEligible !== false;
+  const longOk = ctx?.longTenureEligible !== false;
 
   const out: ConfidentialUnlockResponse = { ok: true };
 
@@ -228,9 +268,12 @@ export function unlockFromPasswordBody(
     const attempt = passwords[tier] ?? '';
     if (!attempt) return;
     if (!safeEqualUtf8(attempt, cfg.password)) return;
-    if ((tier === 'medium' || tier === 'long') && !tenureOk) {
-      const prev = out.tenureRejected ?? [];
-      out.tenureRejected = [...prev, tier];
+    if (tier === 'medium' && !mediumOk) {
+      out.tenureRejected = [...(out.tenureRejected ?? []), tier];
+      return;
+    }
+    if (tier === 'long' && !longOk) {
+      out.tenureRejected = [...(out.tenureRejected ?? []), tier];
       return;
     }
     if (cfg.url) {

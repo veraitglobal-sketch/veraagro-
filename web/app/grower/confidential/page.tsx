@@ -50,9 +50,10 @@ export default function GrowerConfidentialPage() {
   const [bootstrapErrorRecoverable, setBootstrapErrorRecoverable] = useState(false);
   const [tiersConfigured, setTiersConfigured] = useState<TierAvailability | null>(null);
   const [tiersAvailable, setTiersAvailable] = useState<TierAvailability | null>(null);
-  const [mediumLongTenure, setMediumLongTenure] = useState<{ eligible: boolean; minYears: number } | null>(
-    null,
-  );
+  const [partnerPlanTenure, setPartnerPlanTenure] = useState<{
+    medium: { eligible: boolean; minYears: number };
+    long: { eligible: boolean; minYears: number };
+  } | null>(null);
   const [inviteGateActive, setInviteGateActive] = useState(false);
 
   const [unlocked, setUnlocked] = useState<Record<GrowerConfidentialTierId, TierUnlock | null>>({
@@ -116,25 +117,32 @@ export default function GrowerConfidentialPage() {
 
       const tiers = data.tiersAvailable as TierAvailability | undefined;
       const configured = data.tiersConfigured as TierAvailability | undefined;
-      const tenure = data.mediumLongTenure as { eligible: boolean; minYears: number } | undefined;
+      const tenure = data.partnerPlanTenure as
+        | {
+            medium: { eligible: boolean; minYears: number };
+            long: { eligible: boolean; minYears: number };
+          }
+        | undefined;
       const invite = Boolean(data.inviteGateActive);
       if (
         data.ok === true &&
         tiers &&
         configured &&
         tenure &&
+        typeof tenure.medium?.eligible === 'boolean' &&
+        typeof tenure.medium?.minYears === 'number' &&
+        typeof tenure.long?.eligible === 'boolean' &&
+        typeof tenure.long?.minYears === 'number' &&
         typeof tiers.short === 'boolean' &&
         typeof tiers.medium === 'boolean' &&
         typeof tiers.long === 'boolean' &&
         typeof configured.short === 'boolean' &&
         typeof configured.medium === 'boolean' &&
-        typeof configured.long === 'boolean' &&
-        typeof tenure.eligible === 'boolean' &&
-        typeof tenure.minYears === 'number'
+        typeof configured.long === 'boolean'
       ) {
         setTiersConfigured(configured);
         setTiersAvailable(tiers);
-        setMediumLongTenure(tenure);
+        setPartnerPlanTenure(tenure);
         setInviteGateActive(invite);
         setBootstrap('ok');
       } else {
@@ -321,7 +329,8 @@ export default function GrowerConfidentialPage() {
           <GrowerPageHeader
             title={t('grower.confidential.pageTitle')}
             description={t('grower.confidential.pageDescription', {
-              years: mediumLongTenure?.minYears ?? 3,
+              mediumYears: partnerPlanTenure?.medium.minYears ?? 3,
+              longYears: partnerPlanTenure?.long.minYears ?? 6,
             })}
           />
 
@@ -377,14 +386,23 @@ export default function GrowerConfidentialPage() {
                 ? tiers.map(({ id, titleKey, hintKey, password, setPassword, show, setShow }) => {
                     const secretsOk = tiersConfigured?.[id] ?? false;
                     const unlockAllowed = tiersAvailable?.[id] ?? false;
-                    const minY = mediumLongTenure?.minYears ?? 3;
+                    const mediumMin = partnerPlanTenure?.medium.minYears ?? 3;
+                    const longMin = partnerPlanTenure?.long.minYears ?? 6;
                     const tenureBlocked =
-                      (id === 'medium' || id === 'long') &&
+                      id === 'medium' &&
                       secretsOk &&
                       !unlockAllowed &&
-                      mediumLongTenure !== null &&
-                      mediumLongTenure.minYears > 0 &&
-                      !mediumLongTenure.eligible;
+                      partnerPlanTenure !== null &&
+                      partnerPlanTenure.medium.minYears > 0 &&
+                      !partnerPlanTenure.medium.eligible;
+                    const tenureBlockedLong =
+                      id === 'long' &&
+                      secretsOk &&
+                      !unlockAllowed &&
+                      partnerPlanTenure !== null &&
+                      partnerPlanTenure.long.minYears > 0 &&
+                      !partnerPlanTenure.long.eligible;
+                    const showTenureLock = tenureBlocked || tenureBlockedLong;
                     const u = unlocked[id];
                     const busy = loadingTier === id;
 
@@ -393,11 +411,21 @@ export default function GrowerConfidentialPage() {
                         key={id}
                         tierId={id}
                         title={t(titleKey)}
-                        hint={id === 'short' ? t(hintKey) : t(hintKey, { years: minY })}
+                        hint={
+                          id === 'short'
+                            ? t(hintKey)
+                            : id === 'medium'
+                              ? t(hintKey, { years: mediumMin })
+                              : t(hintKey, { years: longMin })
+                        }
                         tierSecretsConfigured={secretsOk}
-                        tenureBlocked={tenureBlocked}
+                        tenureBlocked={showTenureLock}
                         tenureBlockedMessage={
-                          tenureBlocked ? t('grower.confidential.tierTenureBlocked', { years: minY }) : undefined
+                          showTenureLock
+                            ? tenureBlockedLong
+                              ? t('grower.confidential.tierTenureBlockedLong', { years: longMin })
+                              : t('grower.confidential.tierTenureBlockedMedium', { years: mediumMin })
+                            : undefined
                         }
                         unlockPresentationHref={u?.internalPath ?? null}
                         unlockExternalHref={u?.externalUrl ?? null}
@@ -412,7 +440,13 @@ export default function GrowerConfidentialPage() {
                         wrongPassword={errorTier === id}
                         tenureNotice={
                           tenureRejectedTier === id
-                            ? t('grower.confidential.tenureRejectedNotice', { years: minY })
+                            ? id === 'long'
+                              ? t('grower.confidential.tenureRejectedNoticeLong', {
+                                  years: partnerPlanTenure?.long.minYears ?? longMin,
+                                })
+                              : t('grower.confidential.tenureRejectedNoticeMedium', {
+                                  years: partnerPlanTenure?.medium.minYears ?? mediumMin,
+                                })
                             : null
                         }
                         loading={busy}
