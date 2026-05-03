@@ -275,7 +275,7 @@
       {
         "category": "growers",
         "q": "How are payments processed?",
-        "a": "Payments are processed automatically upon successful delivery verification. We use an escrow system to ensure secure transactions. Farmers receive payment within 3–5 business days after delivery confirmation."
+        "a": "Grower payouts open only once the Bio Vera process is satisfied — documented delivery plus conformity checks that show goods are in good order. Buyer funds remain secured with Bio Vera until those milestones clear; then contracted shares settle (typically 3–5 business days after verified acceptance). That protects the company — we don’t finalize partner payouts until verification says the load is right."
       },
       {
         "category": "buyers",
@@ -984,14 +984,14 @@
       "createFirstEstate": "Create your first estate →",
       "financialOverview": "Financial overview",
       "financialOverviewSub": "Platform-wide estimate: margins and commissions across delivered lots (typically for operations).",
-      "financialOverviewSubGrower": "Your share from buyer orders (escrow split). Track each lot on Mission tracker for payout timing.",
+      "financialOverviewSubGrower": "Your share from buyer orders (secured / conditional payout). Track each lot on Mission tracker for when release conditions are met.",
       "farmerShareFromOrders": "Your share (all orders)",
       "farmerShareReleased": "Released to you",
-      "farmerShareInEscrow": "In escrow",
+      "farmerShareInEscrow": "Held pending release",
       "farmerSharePending": "Pending / other",
       "estimatedVeraBonus": "Estimated Vera bonus (delivered lots)",
       "estimatedVeraBonusFootnote": "Model estimate from delivered batch weight — actual bonus follows compliance and payout rules.",
-      "financialExplainShort": "These numbers follow your buyer orders. In escrow means funds are held until delivery is verified. Released should match what is already paid into your wallet.",
+      "financialExplainShort": "These figures follow buyer orders tied to your lots. “Held pending release” means Bio Vera safeguards amounts until delivery and conformity checks pass. Released should match what is already credited to your wallet.",
       "financialExplainPortalLink": "See each lot in Mission tracker / portal →",
       "totalProfit": "Total profit",
       "seedMargin": "Seed margin",
@@ -1278,7 +1278,7 @@
     },
     "financeOverview": {
       "heading": "Platform finance snapshot",
-      "intro": "Margins mix modeled and database-backed fields: active Bio Vera standards (packaging, Vera bonus), inventory vs order lines where linked, a 2% insurance proxy on order totals, and the sum of escrow platform fee per payment row for orders tied to delivered batches. Net profit card is still the combined model below; booked platform fee is shown separately.",
+      "intro": "Margins mix modeled and database-backed fields: active Bio Vera standards (packaging, Vera bonus), inventory vs order lines where linked, a 2% insurance proxy on order totals, and the sum of platformFee on secured-hold payment rows for orders tied to delivered batches. Net profit card is still the combined model below; booked platform fee is shown separately.",
       "loading": "Loading finance data…",
       "loadFailed": "Could not load financial dashboard.",
       "refresh": "Refresh",
@@ -1292,7 +1292,7 @@
       "insuranceCommissions": "Insurance commissions",
       "veraBonusPaid": "Vera bonus (growers, modeled)",
       "platformFeeBooked": "Platform fee (from payments)",
-      "platformFeeBookedHint": "Sum of payments.platformFee for escrow rows on linked orders; each order counted once.",
+      "platformFeeBookedHint": "Sum of payments.platformFee where buyer funds remain in secured-hold settlement rows on linked orders; each order counted once.",
       "periodMonth": "Delivered batches — this month",
       "periodYear": "Delivered batches — this year",
       "batchesCount": "{{count}} batches",
@@ -1624,7 +1624,7 @@
       "createMission": "Create mission",
       "creating": "Creating…",
       "bankModalTitle": "Confirm bank transfer received",
-      "bankModalLead": "Order {{orderNumber}} will be marked PAID and an escrow payment record will be created. Use when the amount is visible on the BioVera account.",
+      "bankModalLead": "Order {{orderNumber}} will be marked PAID and a secured-payment (held) record will be created. Use when the amount is visible on the BioVera account.",
       "bankRefLabel": "Bank reference (optional)",
       "bankRefPlaceholder": "e.g. payment order number",
       "markPaid": "Mark as PAID",
@@ -2568,7 +2568,7 @@
     "portalTotalAmount": "Total amount",
     "portalPaid": "Paid",
     "portalPending": "Pending",
-    "portalFinancialInEscrowLine": "In escrow: {{amount}} (same basis as your dashboard “in escrow” total).",
+    "portalFinancialInEscrowLine": "Held securely: {{amount}} — same basis as your dashboard “Held pending release” total.",
     "portalJourneyMapLoadError": "Could not load journey map ({{status}})",
     "portalMilestone_farmHandover": "Farm: truck & loading handover",
     "portalMilestone_leftFarm": "Left farm (departure)",
@@ -2579,12 +2579,12 @@
     "portalFinancialMsg_PENDING": "Awaiting delivery",
     "portalFinancialMsg_PROCESSING": "Delivered and approved — payment processing",
     "portalFinancialMsg_AWAITING_APPROVAL": "Delivered — awaiting distributor approval",
-    "portalFinancialMsg_NO_ESCROW": "No escrow payment for this batch yet — amounts follow your orders once funded.",
-    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Delivery recorded — waiting for buyer payment / your escrow share to appear.",
+    "portalFinancialMsg_NO_ESCROW": "No secured-payment record for this batch yet — figures follow orders once funded.",
+    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Delivery recorded — waiting for buyer funding / your secured holding to appear.",
     "portalFinancialMsg_RELEASED": "Released — your farmer share should be in your wallet.",
-    "portalFinancialMsg_IN_ESCROW": "In escrow — released after delivery verification (same rules as payouts).",
-    "portalFinancialMsg_PARTIAL_RELEASE": "Partly released — some share is still in escrow or pending.",
-    "portalFinancialMsg_PAYMENT_PENDING": "Payment not yet in escrow — setup or buyer step still pending.",
+    "portalFinancialMsg_IN_ESCROW": "Funds held securely — released after delivery and conformity checks clear (same payout rules apply).",
+    "portalFinancialMsg_PARTIAL_RELEASE": "Partly released — some share remains held or pending verification.",
+    "portalFinancialMsg_PAYMENT_PENDING": "Payment not yet in the secured settlement flow — setup or buyer step still pending.",
     "portalNotAssigned": "Not assigned",
     "missionStatus_PENDING": "Pending",
     "missionStatus_ASSIGNED": "Assigned",
@@ -2737,8 +2737,8 @@
           "description": "Every crate has a Batch_ID; the same trace runs from parcel to delivery inside our operating system."
         },
         {
-          "title": "Escrow Payment",
-          "description": "Buyer funds stay in escrow until delivery is confirmed, then are released to grower and logistics partners under agreed terms. Bio Vera runs the chain as brand and supply operator—strong, fair commercial terms, not a public percentage sheet."
+          "title": "Secured payment",
+          "description": "Buyer funds stay with Bio Vera under controlled settlement until documented delivery plus quality and programme checks confirm the load is good order—we don’t finalize goods payables before that gate. Shares for growers and logistics follow contract terms once verified. Strong, fair commercial terms, not a public percentage sheet."
         },
         {
           "title": "Digital Handshake",
@@ -2882,14 +2882,14 @@
       "One trace from growers in our programme to customers who purchase from Bio Vera—fewer shadow intermediaries with clear accountability on our side.",
       "Every batch is documented: harvest date, origin, and handling are recorded and visible.",
       "Cold chain and logistics are managed to keep produce fresh from field to destination.",
-      "We work with clear pricing and settlement: escrow until release conditions are met, then payout to partners under agreed terms."
+      "We work with clear pricing and secured settlement: funds stay guarded through Bio Vera until delivery and conformity checks clear, then partners are paid under agreed terms—reducing company risk until we know the shipment is acceptable."
     ],
     "securityTitle": "Security and safeguards",
     "securityLead": "We protect quality, payments, and data so you can order with confidence.",
     "securityCards": [
       {
         "title": "Payments",
-        "desc": "Structured cash flow: buyer funds sit in escrow with Bio Vera until delivery is confirmed, then release to growers and logistics partners under contract. Bio Vera is seller and supplier of record—no hidden fees; agreements are signed with us rather than hidden inside a pseudo-marketplace."
+        "desc": "Structured cash flow: buyer funds remain secured with Bio Vera until accepted handover plus conformity checks—we don’t treat the goods as payable until verification shows they meet programme standards. Then payouts to growers and logistics follow contract. Bio Vera is seller and supplier of record—no hidden fees; agreements sit with us, not buried in a pseudo-marketplace."
       },
       {
         "title": "Contracts & compliance",
@@ -2909,7 +2909,7 @@
     "valueBlocks": [
       {
         "title": "Our fruit and vegetables",
-        "body": "Comes from contract growers supplying our commercial programme—the same checkpoints our sales team defends when we invoice retailers.",
+        "body": "Comes from contract growers supplying our commercial programme—the same checkpoints our sales team defends when we invoice retailers."
       },
       {
         "title": "Fresh harvested",
@@ -3051,7 +3051,7 @@
       {
         "id": "payment",
         "title": "Payment process guide",
-        "description": "How escrow, release after delivery, and partner payouts work under your agreements with Bio Vera.",
+        "description": "How secured settlement works: conditional release after delivery plus verification, and partner payouts under your Bio Vera agreements.",
         "type": "PDF",
         "size": "1.5 MB"
       },
@@ -3549,7 +3549,7 @@
       },
       {
         "title": "Shoppers swipe QR; finance honours the choreography",
-        "body": "Retail QR merges grower swagger, certs, corridors and refrigerated chapters without inventing metaphors escrow never heard. Releases fan out deliberately so growers, hauliers, Vera bonuses where earned, seeds margin and insurer slices keep their receipts. Taxes differ between export throats and European shelf zip codes — upstream modelling avoids last-minute archaeology at quarter close."
+        "body": "Retail QR merges grower swagger, certs, corridors and refrigerated chapters without inventing treasury theatre nobody authorised. Releases fan out deliberately so growers, hauliers, Vera bonuses where earned, seeds margin and insurer slices keep their receipts. Taxes differ between export throats and European shelf zip codes — upstream modelling avoids last-minute archaeology at quarter close."
       }
     ],
     "coverEyebrow": "Investor deck",
@@ -3634,7 +3634,7 @@
       "We leave purple adjectives stranded when artefacts don’t back them — reputations downstream matter."
     ],
     "financeTitle": "Money that stops pretending to be monolithic",
-    "financeLead": "Escrow stages exist so finance can narrate who earned which slice without heroically merging unrelated lines on a Friday night.",
+    "financeLead": "Phased secured settlement exists so finance can narrate who earned which slice once verification clears — without heroically merging unrelated lines on a Friday night.",
     "financeBullets": [
       "Vera Partner seed math is baked in from purchase one — no surprise footnotes at payout o’clock.",
       "Insurance programme picks show their platform commission honestly when they apply.",
@@ -3835,11 +3835,11 @@
         ]
       },
       {
-        "title": "9. Escrow, payout splits and multi-party finance",
+        "title": "9. Secured settlement, payout splits and multi-party finance",
         "items": [
           {
-            "heading": "Escrow staging",
-            "body": "Buyer settlement lands in intermediary states before disbursement waterfalls execute—matching enterprise-grade controls."
+            "heading": "Hold until verification",
+            "body": "Buyer settlement passes through intermediary, Bio Vera-controlled states until delivery plus conformity checkpoints clear; disbursement waterfalls then execute—matching enterprise-grade risk controls."
           },
           {
             "heading": "Waterfall constituents",
@@ -3851,7 +3851,7 @@
           },
           {
             "heading": "Order-to-batch reconciliation",
-            "body": "Commercial orders reference batch identities so invoicing, credit notes and release triggers chase the same stock objects finance teams analyse."
+            "body": "Commercial orders reference batch identities so invoicing, approvals and conditional release triggers chase the same stock objects finance teams analyse."
           },
           {
             "heading": "Period-end readability",
@@ -4018,7 +4018,7 @@
       },
       {
         "title": "Business Model",
-        "body": "Programme-aligned economics spanning Vera Partner inputs, programme insurance companions where permissible, Vera material/work bonuses grounded in controls, corridor-specific transport settlements and escrow-style releases segmented for growers, logistics and platform uplift."
+        "body": "Programme-aligned economics spanning Vera Partner inputs, programme insurance companions where permissible, Vera material/work bonuses grounded in controls, corridor-specific transport settlements and secured conditional releases segmented for growers, logistics and platform uplift."
       },
       {
         "title": "Current status",

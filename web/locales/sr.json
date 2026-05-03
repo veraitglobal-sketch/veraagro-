@@ -275,7 +275,7 @@
       {
         "category": "growers",
         "q": "Kako se obrađuju isplate?",
-        "a": "Isplate se pokreću automatski nakon potvrde isporuke. Koristimo eskro radi bezbednih transakcija. Proizvođači obično primaju uplatu u roku od 3–5 radnih dana od potvrde isporuke."
+        "a": "Isplate proizvođaču otvaraju se tek kada ceo Bio Vera proces ispuni uslove — dokumentovana isporuka i provere koje pokažu da je roba u redu. Sredstva kupca ostaju osigurana kod Bio Vere dok to ne potvrdimo; potom sledi obračun po ugovoru (obično 3–5 radnih dana od potvrđenog prijema). Tako smanjujemo rizik za kompaniju — robu ne obračunavamo kao konačno plaćenu kod partnera dok dokumentacija i kontrola ne pokažu da je sve u najboljem redu."
       },
       {
         "category": "buyers",
@@ -984,14 +984,14 @@
       "createFirstEstate": "Kreirajte prvo gazdinstvo →",
       "financialOverview": "Finansijski pregled",
       "financialOverviewSub": "Platformska procena: marže i provizije po isporučenim partijama (obično za operativu).",
-      "financialOverviewSubGrower": "Vaš udeo iz kupčevih porudžbina (escrow podela). Za isplate pratite misiju u trackeru.",
+      "financialOverviewSubGrower": "Vaš udeo iz kupčevih porudžbina (osiguran, uslovni isplaćivi raspored). Za vreme isplate pratite misiju u trackeru.",
       "farmerShareFromOrders": "Vaš udeo (sve porudžbine)",
       "farmerShareReleased": "Isplaćeno vama",
-      "farmerShareInEscrow": "U eskrouu",
+      "farmerShareInEscrow": "Čeka otpust pod kontrolom",
       "farmerSharePending": "Na čekanju / ostalo",
       "estimatedVeraBonus": "Procenjeni Vera bonus (isporučeni lotovi)",
       "estimatedVeraBonusFootnote": "Model po težini isporučenih partija — stvarni bonus sledi pravila usklađenosti i isplate.",
-      "financialExplainShort": "Ove cifre prate vaše porudžbine kupaca. U eskrouu znači da su sredstva zadržana dok se isporuka ne potvrdi. Isplaćeno bi trebalo da odgovara onome što je već uplaćeno na novčanik.",
+      "financialExplainShort": "Ove brojke prate kupčeve porudžbine vezane za vaše lotove. „Čeka otpust pod kontrolom” znači da Bio Vera čuva iznos dok ne prođu potvrda isporuke i provere skladnosti. „Isplaćeno” odgovara onome što je već zaduženo na novčaniku.",
       "financialExplainPortalLink": "Po partijama: portal i praćenje misija →",
       "totalProfit": "Ukupna dobit",
       "seedMargin": "Marža na seme",
@@ -1279,7 +1279,7 @@
     },
     "financeOverview": {
       "heading": "Pregled finansija platforme",
-      "intro": "Marže kombinuju model i podatke iz baze: aktivan Bio Vera standard (pakovanje, Vera bonus), inventar naspram stavki porudžbine gde postoji veza, 2% proxy provizije na total porudžbine, i zbir polja platformFee u escrow porudžbinama za isporučene lotove. Kartica neto profita i dalje je kombinovani model — knjižen platform fee je posebno.",
+      "intro": "Marže kombinuju model i podatke iz baze: aktivan Bio Vera standard (pakovanje, Vera bonus), inventar naspram stavki porudžbine gde postoji veza, 2% proxy provizije na total porudžbine, i zbir polja platformFee na platnim redovima gde novac još čeka otpust dok traje obračun. Kartica neto profita i dalje je kombinovani model — knjižen platform fee je posebno.",
       "loading": "Učitavanje finansijskih podataka…",
       "loadFailed": "Finansijski pregled nije učitan.",
       "refresh": "Osveži",
@@ -1293,7 +1293,7 @@
       "insuranceCommissions": "Provizije na osiguranje",
       "veraBonusPaid": "Vera bonus (proizvođači, model)",
       "platformFeeBooked": "Platform fee (iz uplata)",
-      "platformFeeBookedHint": "Zbir polja platformFee u escrow porudžbinama za ove lotove; svaka porudžbina jednom.",
+      "platformFeeBookedHint": "Zbir polja platformFee gde ostaje osiguran, neotpust dok traje obračun; jednom po povezanoj porudžbini.",
       "periodMonth": "Isporučeni lotovi — ovaj mesec",
       "periodYear": "Isporučeni lotovi — ova godina",
       "batchesCount": "{{count}} partija",
@@ -1625,7 +1625,7 @@
       "createMission": "Kreiraj misiju",
       "creating": "Kreiranje…",
       "bankModalTitle": "Potvrda uplate bankovnim transferom",
-      "bankModalLead": "Porudžbina {{orderNumber}} biće označena kao PAID i kreiraće se escrow zapis uplate. Koristite kada je iznos vidljiv na BioVera računu.",
+      "bankModalLead": "Porudžbina {{orderNumber}} biće označena kao PAID i kreiraće se zapis uplata koji ostaje pod kontrolom do otpusta. Koristite kada je iznos vidljiv na BioVera računu.",
       "bankRefLabel": "Bankovna referenca (opciono)",
       "bankRefPlaceholder": "npr. broj naloga za plaćanje",
       "markPaid": "Označi kao PAID",
@@ -2569,7 +2569,7 @@
     "portalTotalAmount": "Ukupan iznos",
     "portalPaid": "Isplaćeno",
     "portalPending": "Na čekanju",
-    "portalFinancialInEscrowLine": "U eskrouu: {{amount}} (isti osnov kao „u eskrouu“ na kontrolnoj tabli).",
+    "portalFinancialInEscrowLine": "Osigurano zadržano: {{amount}} — isti osnov kao „Čeka otpust pod kontrolom“ na kontrolnoj tabli.",
     "portalJourneyMapLoadError": "Karta putovanja se nije učitala ({{status}})",
     "portalMilestone_farmHandover": "Farma: kamion i predaja tereta",
     "portalMilestone_leftFarm": "Izlaz sa farme (polazak)",
@@ -2580,12 +2580,12 @@
     "portalFinancialMsg_PENDING": "Čeka se isporuka",
     "portalFinancialMsg_PROCESSING": "Isporučeno i odobreno — obrada plaćanja",
     "portalFinancialMsg_AWAITING_APPROVAL": "Isporučeno — čeka se odobrenje distributera",
-    "portalFinancialMsg_NO_ESCROW": "Još nema eskrou plaćanja za ovu partiju — iznosi slede porudžbine kad budu plaćene.",
-    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Isporuka zabeležena — čeka se kupac / pojavljivanje vašeg dela u eskrouu.",
+    "portalFinancialMsg_NO_ESCROW": "Za ovaj lot još nema zapisa pod osiguranim obračunom — iznosi slede kad porudžbina bude financirana.",
+    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Isporuka zabeležena — čeka se kupčeva uplata ili pojavljuje se vaše zadržano učešće.",
     "portalFinancialMsg_RELEASED": "Isplaćeno — vaš deo bi trebalo da je na novčaniku.",
-    "portalFinancialMsg_IN_ESCROW": "U eskrouu — puštanje posle provere isporuke (ista pravila kao isplate).",
-    "portalFinancialMsg_PARTIAL_RELEASE": "Delimično isplaćeno — deo je još u eskrouu ili na čekanju.",
-    "portalFinancialMsg_PAYMENT_PENDING": "Plaćanje još nije u eskrouu — podešavanje ili korak kupca.",
+    "portalFinancialMsg_IN_ESCROW": "Novac ostaje pod kontrolom dok provere isporuke i skladnosti sa programom ne prođu — ista pravila isplate kao uvek.",
+    "portalFinancialMsg_PARTIAL_RELEASE": "Delimično isplaćeno — deo je još zadržan ili čeka dodatnu proveru.",
+    "portalFinancialMsg_PAYMENT_PENDING": "Plaćanje još nije u toku pod osiguranim obračunom — podešavanje ili korak kupca još u toku.",
     "portalNotAssigned": "Još nije dodeljeno",
     "missionStatus_PENDING": "Na čekanju",
     "missionStatus_ASSIGNED": "Dodeljeno",
@@ -2738,8 +2738,8 @@
           "description": "Svaka gajba ima Batch_ID; isti trag od parcele do isporuke u našem operativnom sistemu."
         },
         {
-          "title": "Eskro plaćanje",
-          "description": "Sredstva kupca ostaju u eskrou dok se ne potvrdi isporuka, zatim isplata proizvođaču i logistici po dogovoru. Bio Vera vodi lanac kao brend i operater—jaki, fer uslovi, ne javna „tabela procenta”."
+          "title": "Osigurano plaćanje",
+          "description": "Novac od kupca ostaje kod Bio Vere pod kontrolisanim obračunom dok dokumentacija, isporuka i provere programa ne potvrde da je roba prihvaćena i na redu — bez zatvaranja obaveza dok operativa i kvalitet ne daju „zeleno svetlo”. Zatim sledi obračun proizvodnje i logistike po ugovoru. Jaki i fer komercijalni uslovi — ne javna „tabela procenta”."
         },
         {
           "title": "Digitalni rukovanje",
@@ -2888,14 +2888,14 @@
       "Jedinstven trag od ugovorenih proizvođača u programu do kupca koji kupuje od Bio Vere — manje paralelnih posrednika uz jasnu odgovornost kompanije.",
       "Svaka partija je zabeležena: datum berbe, poreklo i rukovanje su evidentirani i vidljivi.",
       "Hladni lanac i logistika vode se tako da roba ostane sveža od polja do odredišta.",
-      "Radimo jasnim cenama i obračunom: depozit do ispunjenja uslova otpuste, zatim isplata partnerima po dogovoru."
+      "Radimo jasnim cenama i osiguranim obračunom: novac je zaštićen kod Bio Vere dok dokumentovana prijemnica plus provera skladnosti ne prođe, zatim isplata partnerima po dogovoru — manji rizik za kompaniju dok ne znamo da je roba „čista” šta se tiče programa."
     ],
     "securityTitle": "Bezbednost i zaštite",
     "securityLead": "Štitimo kvalitet, plaćanje i podatke kako biste sa poverenjem naručivali.",
     "securityCards": [
       {
         "title": "Plaćanja",
-        "desc": "Jasan tok: uplata kupca drži se u depozitu kod Bio Vera dok se ne potvrdi isporuka; zatim isplate proizvođaču i logističkim partnerima po ugovoru. Mi smo prodavac i snabdevalac uz brend Bio Vera—bez skrivenih provizija; uslovi su direktno sa nama, bez „anonimnog tržišta“."
+        "desc": "Strukturan tok: uplata ostaje kod Bio Vere pod nadzorom dok dokumentovani prijem i provere kvaliteta ne pokažu da je roba u redu; ne zatvaramo obračun dobavljača dok to ne stoji u dosijeu. Zatim isplate ugovorenim proizvođačima i logističkim partnerima. Bio Vera kao prodavac uz brend iza sebe — bez skrivenih naknada; uslovi su direktno sa nama, ne kroz „nevidljivi marketplejs”. "
       },
       {
         "title": "Ugovori i usklađenost",
@@ -3066,7 +3066,7 @@
       {
         "id": "payment",
         "title": "Uputstvo za plaćanje i isplatu",
-        "description": "Kako rade depozit, otpust nakon isporuke i isplate partnerima prema dogovoru sa Bio Vera.",
+        "description": "Kako funkcionišu osigurano držanje uplata, uslovni otpust posle dokumentovane primke i provera, i isplate partnerima prema dogovoru sa Bio Vera.",
         "type": "PDF",
         "size": "1,5 MB"
       },
@@ -3579,7 +3579,7 @@
       },
       {
         "title": "Kupac skenira QR; finansija drži fazni raspored kojim se računi i dalje mogu složiti",
-        "body": "Maloprodajni QR skupi lice proizvodnje, sertifikate, put i rashladne epizode u jednoj priči koja se meri uz eskro otpuštanje bez crvenila. Novac ostaje faziran tako da proizvođač, prevoznik, Vera bonus gde ima mesta, marža na semenu i učešće osiguravača i dalje mogu pomiriti u glavi bez mešanja stavki. Različiti PDV slojevi između izvoznog grla i evropskih poštanskih kodova žive u modelu tako da na kraju kvartala ne vadimo arheologiju iz prazne fioke."
+        "body": "Maloprodajni QR skupi lice proizvodnje, sertifikate, put i rashladne epizode u jednoj priči koja se slaže uz faziran, uslovni obračun isplate kad provere prođu. Novac ostaje faziran tako da proizvođač, prevoznik, Vera bonus gde ima dokument, marža na semenu i učešće osiguranja mogu držati sopstvene stavke jasnim. Različiti PDV slojevi između izvoznog grla i evropskih zip kodova žive u modelu tako da kraju kvartala ne izvlačimo arheologiju iz šuplje fioke."
       }
     ],
     "coverEyebrow": "Investitorski deck",
@@ -3664,7 +3664,7 @@
       "Grimiznu marketinšku rečenicu ne šaljemo napolje ako iza nje nema artefakata — reputacija trgovca ne plaća cenu greške par slojeva uzvodno u lancu."
     ],
     "financeTitle": "Novac koji ne glumi monolit",
-    "financeLead": "Faziran eskrov drži finansijski tim pri razumu tako da svaka linija još zna lice: naknada proizvodnje, naknada kamiona koji je držao kutiju, platformska marža i Vera bonus kad dokument kaže da je zarađen — tako da zaključavanje meseca ne završi kao jedna mutna crta sa tri zalepljena Excela koju revizor neće pročitati kao knjigu.",
+    "financeLead": "Fazirani, osigurani obračun čuva finansijski tim kod jasnih linija — naknada proizvodnje, naknada prevoza, Vera bonus gdje dokument opravdava, platformska ekonomija — da kraj meseca ne završi jednom mutnom crtom koja ne drži audit.",
     "financeBullets": [
       "Vera Partner matematika za seme upisana je od prve kupovine — na isplati nema iznenađenja u fusnoti.",
       "Programi osiguranja koji uđu u tok još uvek jasno pokazuju procenat koji platforma zadržava, tako da ga revizoru ne morate iščupavati iz fusnote.",
@@ -3674,7 +3674,7 @@
     "detailSpecEyebrow": "Kad ti treba svaka nit",
     "appendixWatermark": "Prilog — dubina za operaciju",
     "detailSpecTitle": "Proširena mapa programa — svih četrnaest stubova",
-    "detailSpecLead": "Pročitali ste priču; ovo je radionički priručnik kako obučavamo partnere, preživljavamo reviziju i širimo platformu: kontrolisani ulazi i ekonomika semena, mape i dnevnici, Integrity Guard, Protocol 360 u slojevima, offline snimanje, misije i kustodija, pasoš koji kupac vidi, eskro i porezi, dobavljačka bela lista, bezbednost i tehnička osnova, plus koji interfejas koju stvarno dira kad smena krene.",
+    "detailSpecLead": "Pročitali ste priču; ovo je radionički priručnik kako obučavamo partnere, preživljavamo reviziju i širimo platformu: kontrolisani ulazi i ekonomika semena, mape i dnevnici, Integrity Guard, Protocol 360 u slojevima, offline snimanje, misije i kustodija, pasoš koji kupac vidi, osigurani obračun i porezi, dobavljačka bela lista, bezbednost i tehnička osnova, plus koji interfejas stvarno dira kad smena krene.",
     "detailSections": [
       {
         "title": "1. Seme, osiguranje i kontrolisani ulazi",
@@ -3865,11 +3865,11 @@
         ]
       },
       {
-        "title": "9. Eskro, raspored isplate i učešće vozača",
+        "title": "9. Osigurano obračunavanje, raspodela isplate i učešće vozača",
         "items": [
           {
-            "heading": "Faze eskrovog držanja novca",
-            "body": "Sredstva kupca prolaze kroz međuzbir pre finalnog rashoda kako bi se pravila obračuna poštovala sloj za slojem."
+            "heading": "Zadržavanje dok provere ne prođu",
+            "body": "Sredstva kupca ostaju pod kontrolom Bio Vere u fazama pre konačne podele tako da dokumentovana primka plus skladnost sa standardom aktiviraju otpust slojeva — rizik kao u ozbiljnom obračunu, ne kao da se „odmah plaća sve” bez verifikacije."
           },
           {
             "heading": "Sastav obračuna",
@@ -3881,7 +3881,7 @@
           },
           {
             "heading": "Narudžbine usklađene sa serijama",
-            "body": "Kupci referenciju serije kako fakturisanje, odobrenja i otpust eskrov-a prate iste objekte zaliha koje finansije analiziraju."
+            "body": "Narudžbine referišu isti Batch_ID tako da fakture, odobrenja i uslovni otpust prate iste zalihe koje finansije analiziraju."
           },
           {
             "heading": "Čitljivost na kraju perioda",
@@ -4048,7 +4048,7 @@
       },
       {
         "title": "Poslovni model (Business model)",
-        "body": "Programsko poravnanje Vera Partner nabavkom opciona osiguranja gde dozvoljeno Vera bonusi ako materijali i pakovanje imaju dokumente transport obračuni po koridoru escrow otpusti jasno segmentiraju proizvođača nosioce i platformu."
+        "body": "Programsko poravnanje: Vera Partner ulazi, opciono osiguranje kad zakon dopušta, Vera bonus gde dokumenti na ambalaži i materijalu drže trag, obračuni transporta po koridoru — uslovni otpust podele ostaje faziran između proizvodnje, prevoza i ekonomije Bio Vere."
       },
       {
         "title": "Trenutni status (Current status)",
