@@ -2691,7 +2691,7 @@
     "hero": {
       "title1": "Vertikalno integrisana",
       "title2": "agrifood kompanija",
-      "subtitle": "Bio Vera prodaje brendiranu svežu robu kroz lanac koji sami vodimo—od ugovornog uzgoja do isporuke, uz Batch_ID i kontrolisan kvalitet. Postanite Vera proizvođač: standardizovana ambalaža, terenska podrška i dogovoren otkup uz jasne protokole; prijem u program je selektivan—nije marketplace.",
+      "subtitle": "Bio Vera prodaje brendiranu svežu robu kroz lanac koji sami vodimo—od ugovornog uzgoja do isporuke, uz Batch_ID i kontrolisan kvalitet. Postanite Vera proizvođač: standardizovana ambalaža, terenska podrška i dogovoren otkup uz jasne protokole; prijem u program je selektivan i prati procenu tima.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postanite Vera proizvođač",
       "preOrder": "Pretporudžbina za 2026. je otvorena",
@@ -2838,7 +2838,7 @@
   },
   "forBuyersPage": {
     "title": "Za kupce",
-    "heroLead": "Nabavljajte kod Bio Vere: sveže voće i povrće uz sertifikovano poreklo i sledljivu istoriju partije, ne kao generičku pijacu. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
+    "heroLead": "Nabavljajte kod Bio Vere: sveže voće i povrće uz sertifikovano poreklo i sledljivu istoriju partije. Kompletan katalog i porudžbine su u kontrolnoj tabli nakon registracije.",
     "notShopBody": "Nismo klasična internet prodavnica. Radimo jasnim, transparentnim postupkom: vidite šta nudimo, ostavite podatke kompanije i kontakt i saglasnost, a svaki zahtev shvatamo ozbiljno. Pročitajte kako radimo ispod, a kada ste spremni, iskažite interes na dnu stranice kako bismo vam se javili.",
     "linkHowWeOperate": "Kako radimo",
     "linkExpressInterest": "Iskažite interes",
@@ -2953,7 +2953,7 @@
   },
   "growersPage": {
     "title": "Za proizvođače",
-    "heroLead": "Postanite Vera proizvođač: radite po našem protokolu, a mi organizujemo preuzimanje, dokumentaciju i isplatu kao deo lanca u kome Bio Vera prodaje vašu robu kupcu. Prijava je selektivna—nije otvoreni listing.",
+    "heroLead": "Postanite Vera proizvođač: radite po našem protokolu, a mi organizujemo preuzimanje, dokumentaciju i isplatu kao deo lanca u kome Bio Vera prodaje vašu robu kupcu. Prijava je selektivna i prati procenu tima.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "whoCanApplyTitle": "Ko se može prijaviti",

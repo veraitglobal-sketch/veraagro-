@@ -2690,7 +2690,7 @@
     "hero": {
       "title1": "Vertically Integrated",
       "title2": "Agrifood Company",
-      "subtitle": "Bio Vera sells branded fresh produce across the corridor we operate—contracted cultivation, QA, packing and refrigerated delivery with Batch_ID trace from parcel to checkout. Interested estates can become Vera growers with standard crates, agronomy checkpoints and routed logistics once approved—selective programme, not an open reseller board.",
+      "subtitle": "Bio Vera sells branded fresh produce across the corridor we operate—contracted cultivation, QA, packing and refrigerated delivery with Batch_ID trace from parcel to checkout. Interested estates can become Vera growers with standard crates, agronomy checkpoints and routed logistics once approved—selective programme with team-led onboarding review.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for 2026 is open",
@@ -2837,7 +2837,7 @@
   },
   "forBuyersPage": {
     "title": "For Buyers",
-    "heroLead": "Buy produce from Bio Vera: certified origins and traceable batch history—not a generic marketplace listing. Full catalogue and ordering live in your dashboard after registration.",
+    "heroLead": "Buy produce from Bio Vera: certified origins and traceable batch history. Full catalogue and ordering live in your dashboard after registration.",
     "notShopBody": "We are not a standard online store. We work with a clear, transparent process: you see what we offer, you provide your company and contact details and consent, and we take every request seriously. Read how we operate below and, when ready, express your interest at the bottom of the page so we can get in touch.",
     "linkHowWeOperate": "How we operate",
     "linkExpressInterest": "Express your interest",
@@ -2947,7 +2947,7 @@
   },
   "growersPage": {
     "title": "For Growers",
-    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup paperwork and settlement as part of the load we merchandise to retailers. Screening is deliberate—capacity, geography and conformance must align; this is contracted supply, not an open bulletin board.",
+    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup paperwork and settlement as part of the load we merchandise to retailers. Screening is deliberate—capacity, geography and conformance must align for contracted supply.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "whoCanApplyTitle": "Who can apply",
