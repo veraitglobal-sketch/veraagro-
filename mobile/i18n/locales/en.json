@@ -522,6 +522,11 @@
       "addAccessibility": "Add planting",
       "loadError": "Could not load plantings",
       "announcementsLoadWarn": "Could not refresh planting list (pull to try again).",
+      "announcementsLoadHintNetwork": "No connection or server unreachable — only plantings queued on this phone are shown.",
+      "announcementsLoadHintTimeout": "The list request timed out — try again on better signal or Wi‑Fi.",
+      "announcementsLoadHintSession": "Session expired or permission missing — log out and sign in again.",
+      "announcementsLoadHintServer": "The server temporarily could not return the list. Retry later or contact support.",
+      "announcementsLoadHintGeneric": "If this keeps happening, contact support.",
       "detailTitle": "Planting details",
       "selectParcel": "Choose parcel",
       "selectParcelBeforeCrop": "Select a parcel first. Then choose the crop and date.",
@@ -588,7 +593,11 @@
       "errSaveAccess": "Parcel not found or you do not have access. Open My parcels and refresh.",
       "errSaveNotApproved": "Plantings require an admin-approved parcel. Wait for approval or choose another parcel.",
       "errSaveInvalidData": "The server could not accept this data. Check parcel, crop and date, then try again.",
-      "errCropTooLong": "Crop name is too long. Use a shorter name (maximum 500 characters)."
+      "errCropTooLong": "Crop name is too long. Use a shorter name (maximum 500 characters).",
+      "errSaveHarvestAlreadyExists": "A harvest plan for this parcel is already active. Don't submit again — open Transport / Missions to book pickup or check your list.",
+      "errSavePhiCheckFailed": "The server couldn't verify pesticide withdrawal (PHI). Try again shortly or contact support.",
+      "errSaveHarvestBlockedPhi": "{{detail}}",
+      "errSaveServerPersist": "The server couldn't save this planting or plan (database or link). Pull to refresh parcels and lists, then try again. If it keeps failing, contact support."
     },
     "fieldSeason": {
       "title": "Instructions",

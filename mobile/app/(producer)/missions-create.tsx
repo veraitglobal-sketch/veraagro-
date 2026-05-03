@@ -218,15 +218,18 @@ export default function MissionsCreateScreen() {
       ]);
     } catch (e: unknown) {
       const status = axiosResponseStatus(e);
-      const raw = apiErrorMessage(e, '');
-      const looksInternal =
-        status === 500 ||
-        status === 502 ||
-        status === 503 ||
-        /internal server error/i.test(raw);
-      const msg = looksInternal
+      const raw = apiErrorMessage(e, '').trim();
+      /** Backend body is often useful (compliance text, migrations notice); discard only empty/generic 5xx. */
+      const looksLikeGenericBackend =
+        !raw ||
+        /^internal\s+server\s*error$/i.test(raw) ||
+        /^something\s+went\s+wrong$/i.test(raw) ||
+        raw === 'Error';
+      const isBareInfrastructure =
+        (status === 500 || status === 502 || status === 503) && looksLikeGenericBackend && raw.length <= 140;
+      const msg = isBareInfrastructure
         ? t('producer.missionsCreate.serverError')
-        : apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
+        : raw || apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
       Alert.alert(t('producer.missionsCreate.alerts.cannotStart'), msg);
     } finally {
       setSubmitting(false);

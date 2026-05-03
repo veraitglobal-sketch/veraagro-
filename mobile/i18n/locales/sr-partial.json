@@ -524,6 +524,11 @@
       "addAccessibility": "Dodaj zasad",
       "loadError": "Učitavanje podataka nije uspelo",
       "announcementsLoadWarn": "Lista zasada nije učitana (povuci da pokušaš ponovo).",
+      "announcementsLoadHintNetwork": "Nema mreže ili server ne odgovara — videćeš samo zasade koje još čekaju slanje ili su sačuvani na ovom telefonu.",
+      "announcementsLoadHintTimeout": "Zahtev za listu je predugo trajao — probaj na jačoj mreži ili Wi‑Fi.",
+      "announcementsLoadHintSession": "Sesija je istekla ili nemaš dozvolu — odjavi se pa ponovo prijavi.",
+      "announcementsLoadHintServer": "Server trenutno ne vraća listu — probaj kasnije ili javi podršci.",
+      "announcementsLoadHintGeneric": "Ako se ponavlja više puta — javi podršci (ili pošalji snimak ekrana).",
       "detailTitle": "Detalji zasada",
       "selectParcel": "Izaberi parcelu",
       "selectParcelBeforeCrop": "Prvo izaberite parcelu, zatim usev i datum.",
@@ -590,7 +595,11 @@
       "errSaveAccess": "Parcela nije pronađena ili nemaš pristup. Otvori „Moje parcele” i osveži.",
       "errSaveNotApproved": "Zasadi zahtevaju odobrenu parcelu od admina. Sačekaj odobrenje ili izaberi drugu parcelu.",
       "errSaveInvalidData": "Server nije prihvatio podatke. Proveri parcelu, usev i datum, pa probaj ponovo.",
-      "errCropTooLong": "Naziv useva je predugačak. Skratite na najviše 500 znakova."
+      "errCropTooLong": "Naziv useva je predugačak. Skratite na najviše 500 znakova.",
+      "errSaveHarvestAlreadyExists": "Za ovu parcelu već postoji aktivan plan berbe — ne šalji ponovo. Otvori transport / Misije da zakažeš prevoz ili proveri listu.",
+      "errSavePhiCheckFailed": "Server nije uspeo da proveri pauzu posle hemije (PHI). Probaj ponovo za trenutak ili javi podršci.",
+      "errSaveHarvestBlockedPhi": "{{detail}}",
+      "errSaveServerPersist": "Server nije uspeo da sačuva zasad ili plan (veza ili baza). Povuci da osvežiš parcele i listu pa probaj opet — ako ostane, javi podršci."
     },
     "fieldSeason": {
       "title": "Uputstva",

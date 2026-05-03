@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { AuthGuard } from '../../components/AuthGuard';
 
@@ -10,7 +10,13 @@ export default function LogisticsLayout() {
   return (
     <AuthGuard requiredRole={['LOGISTICS_PARTNER']}>
       <View style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            gestureEnabled: true,
+            ...(Platform.OS === 'ios' ? { fullScreenGestureEnabled: true } : {}),
+          }}
+        >
           <Stack.Screen name="index" />
           <Stack.Screen name="notifications" />
           <Stack.Screen name="mission/[id]" />

@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useTranslation } from 'react-i18next';
 import { Camera, MapPin, Check, X } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
@@ -110,19 +111,21 @@ export default function EntryForm() {
     (activityType !== 'HARVEST' && Boolean(materialID.trim()) && materialValid === false);
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag"
-      refreshControl={
-        <RefreshControl
-          refreshing={referenceRefreshing}
-          onRefresh={refreshReferenceData}
-          tintColor={theme.colors.primary}
-          colors={[theme.colors.primary]}
-        />
-      }
-    >
+    <View style={{ flex: 1 }}>
+      <BioVeraSubpageHeader title={t('producer.tabs.fieldLog')} left="back" />
+      <ScrollView
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        refreshControl={
+          <RefreshControl
+            refreshing={referenceRefreshing}
+            onRefresh={refreshReferenceData}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
       <View style={{ padding: theme.spacing.md }}>
         {gpsWarning && (
           <View
@@ -880,6 +883,7 @@ export default function EntryForm() {
           )}
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

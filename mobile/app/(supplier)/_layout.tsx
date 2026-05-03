@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AuthGuard } from '../../components/AuthGuard';
 import { theme } from '../../lib/theme';
@@ -16,6 +16,10 @@ export default function SupplierLayout() {
             headerTintColor: theme.colors.text.primary,
             headerTitleStyle: { fontWeight: '300' as const, fontSize: 17 },
             headerShadowVisible: true,
+            gestureEnabled: true,
+            ...(Platform.OS === 'ios'
+              ? { fullScreenGestureEnabled: true }
+              : {}),
           }}
         >
           <Stack.Screen name="dashboard" options={{ title: t('supplier.partnerStore') }} />

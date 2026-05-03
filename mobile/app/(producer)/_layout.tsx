@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import i18n from '../../i18n/config';
 import { AuthGuard } from '../../components/AuthGuard';
@@ -17,7 +17,13 @@ export default function ProducerLayout() {
       <View style={{ flex: 1 }}>
         <GrowerReconnectAutoSync />
         <ProducerOfflineStrip />
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          ...(Platform.OS === 'ios' ? { fullScreenGestureEnabled: true } : {}),
+        }}
+      >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="scanner"

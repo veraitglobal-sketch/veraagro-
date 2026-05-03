@@ -67,21 +67,22 @@ export default function RootLayout() {
           options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
         />
         <Stack.Screen name="buyer-register" options={{ headerShown: false }} />
+        {/* Authenticated hubs: allow native edge-swipe and stack gestures (inner navigators handle pop). */}
         <Stack.Screen
           name="(producer)"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="(buyer)"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="(supplier)"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="(logistics)"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false }}
         />
       </Stack>
     </CartProvider>

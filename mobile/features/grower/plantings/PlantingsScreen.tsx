@@ -21,7 +21,7 @@ import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI, type CreateHarvestPlan
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
-import { apiErrorMessage, axiosLikeMessage, isLikelyNetworkError } from '../../../lib/api-error';
+import { apiErrorMessage, axiosLikeMessage, axiosResponseStatus, isLikelyNetworkError } from '../../../lib/api-error';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { theme } from '../../../lib/theme';
@@ -36,6 +36,36 @@ import { mapPlantingSaveError } from './map-planting-save-error';
 import { plantingFormDateToEstimatedIsoUtc } from './planting-estimated-date';
 import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
+
+function explainHarvestAnnouncementsLoadFailure(
+  err: unknown,
+  translate: (key: string) => string,
+): string {
+  const code =
+    err && typeof err === 'object' && 'code' in err ? String((err as { code?: unknown }).code) : '';
+  if (code === 'ECONNABORTED' || (err instanceof Error && /timeout/i.test(err.message))) {
+    return translate('producer.plantings.announcementsLoadHintTimeout');
+  }
+  if (isLikelyNetworkError(err)) {
+    return translate('producer.plantings.announcementsLoadHintNetwork');
+  }
+  const status = axiosResponseStatus(err);
+  if (status === 401 || status === 403) {
+    return translate('producer.plantings.announcementsLoadHintSession');
+  }
+  if (status != null && status >= 500) {
+    const raw = (axiosLikeMessage(err) || apiErrorMessage(err, '') || '').trim();
+    if (raw.length > 0 && !/^internal\s+server\s*error$/i.test(raw)) {
+      return raw.length > 380 ? `${raw.slice(0, 377)}…` : raw;
+    }
+    return translate('producer.plantings.announcementsLoadHintServer');
+  }
+  const raw = (axiosLikeMessage(err) || apiErrorMessage(err, '') || '').trim();
+  if (raw.length > 2 && !/^error$/i.test(raw)) {
+    return raw.length > 380 ? `${raw.slice(0, 377)}…` : raw;
+  }
+  return translate('producer.plantings.announcementsLoadHintGeneric');
+}
 
 type EstateRow = { id: string; name: string };
 type ParcelAug = {
@@ -95,6 +125,7 @@ export default function PlantingsScreen() {
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [announcementsWarn, setAnnouncementsWarn] = useState<string | null>(null);
+  const [announcementsWarnDetail, setAnnouncementsWarnDetail] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState<HaRow[]>([]);
   const [parcelList, setParcelList] = useState<ParcelAug[]>([]);
 
@@ -136,6 +167,7 @@ export default function PlantingsScreen() {
   const load = useCallback(async () => {
     setErr(null);
     setAnnouncementsWarn(null);
+    setAnnouncementsWarnDetail(null);
     try {
       const estates = (await estatesAPI.getAll()) as EstateRow[];
       const rows: ParcelAug[] = [];
@@ -232,6 +264,7 @@ export default function PlantingsScreen() {
         setAnnouncements([]);
       }
       setAnnouncementsWarn(t('producer.plantings.announcementsLoadWarn'));
+      setAnnouncementsWarnDetail(explainHarvestAnnouncementsLoadFailure(e, t));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -521,6 +554,18 @@ export default function PlantingsScreen() {
             }}
           >
             <Text style={{ color: theme.colors.text.primary, fontSize: 14 }}>{announcementsWarn}</Text>
+            {announcementsWarnDetail ? (
+              <Text
+                style={{
+                  marginTop: theme.spacing.sm,
+                  color: theme.colors.text.secondary,
+                  fontSize: 13,
+                  lineHeight: 18,
+                }}
+              >
+                {announcementsWarnDetail}
+              </Text>
+            ) : null}
           </View>
         ) : null}
 

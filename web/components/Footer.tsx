@@ -170,6 +170,14 @@ export default function Footer() {
                   {t('footer.security')}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={loc('/language')}
+                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
+                >
+                  {t('footer.language')}
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -181,11 +189,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href={loc('/language')}
-                  className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
-                >
-                  {t('footer.language')}
+                <Link href={loc('/terms')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('footer.terms')}
                 </Link>
               </li>
               <li>

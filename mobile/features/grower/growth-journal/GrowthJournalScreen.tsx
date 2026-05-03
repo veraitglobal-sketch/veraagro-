@@ -52,7 +52,7 @@ export default function GrowthJournalScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <BioVeraSubpageHeader
-        left="none"
+        left="back"
         title={t('producer.growthJournal.screenTitle')}
         right={
           <TouchableOpacity

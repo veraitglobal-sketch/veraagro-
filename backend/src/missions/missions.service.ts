@@ -528,7 +528,31 @@ export class MissionsService {
       }
     }
 
-    return MissionsService.missionCreateHttpPayload(mission as unknown as Record<string, unknown>);
+    try {
+      return MissionsService.missionCreateHttpPayload(mission as unknown as Record<string, unknown>);
+    } catch (ser: unknown) {
+      this.logger.error(
+        `missionCreateHttpPayload serialization failed (${mission?.id ?? '?'})`,
+        ser instanceof Error ? ser.stack : String(ser),
+      );
+      return {
+        id: mission.id,
+        missionNumber: mission.missionNumber,
+        growerId: mission.growerId,
+        batchId: mission.batchId ?? null,
+        harvestAnnouncementId: mission.harvestAnnouncementId ?? null,
+        pickupLocation: mission.pickupLocation,
+        pickupAddress: mission.pickupAddress,
+        optimalRoute: mission.optimalRoute ?? null,
+        status: mission.status,
+        logisticsPartnerId: mission.logisticsPartnerId ?? null,
+        vehicleId: mission.vehicleId ?? null,
+        createdAt:
+          mission.createdAt instanceof Date ? mission.createdAt.toISOString() : mission.createdAt,
+        updatedAt:
+          mission.updatedAt instanceof Date ? mission.updatedAt.toISOString() : mission.updatedAt,
+      } as Record<string, unknown>;
+    }
   }
 
   /**
