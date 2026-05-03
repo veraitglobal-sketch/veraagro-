@@ -4,7 +4,9 @@ import { notFound, redirect } from 'next/navigation';
 import type { ConfidentialTier } from '@/lib/grower-confidential-types';
 import { readPartnerPlanMarkdown } from '@/lib/partner-plan-content';
 import {
+  investorBundleCookieName,
   investorPartnerPlanCookieName,
+  verifyInvestorBundleUnlockToken,
   verifyInvestorPartnerPlanUnlockToken,
 } from '@/lib/investor-business-plan-cookie';
 import InvestorBusinessPlanReaderShell from '@/components/investor/InvestorBusinessPlanReaderShell';
@@ -31,6 +33,10 @@ export default async function InvestorBusinessPlanPage({ params }: PageProps) {
   if (!markdown) notFound();
 
   const jar = await cookies();
+  if (!verifyInvestorBundleUnlockToken(jar.get(investorBundleCookieName())?.value)) {
+    redirect(`/${locale}/investor-deck/business-plans`);
+  }
+
   const token = jar.get(investorPartnerPlanCookieName(tier))?.value;
   if (!verifyInvestorPartnerPlanUnlockToken(tier, token)) {
     redirect(`/${locale}/investor-deck/business-plans`);

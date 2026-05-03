@@ -1,6 +1,6 @@
 # Outstanding product / tech (tracked)
 
-*Last pass: 2026-04-26*
+*Last pass: 2026-05-03*
 
 ## B2B: porudžbine proizvođača (grower) ↔ snabdevač
 
@@ -20,5 +20,6 @@
 | Prisma `migrate deploy` P3009 (failed `20260505130000_missions_harvest_announcement`) | DB-specific; vidi `backend/scripts/repair-missions-harvest-migration.sql` + `prisma migrate resolve` |
 | Offline sync / field-entries 403 | Delimično adreseovano (estateId, validacije) — proveriti na stvarnom nalogu |
 | Pallet / logistics handover (ako je bila zasebna niti) | Proveri da li je u branchu kompletno u odnosu na backend |
+| **Buyer: last‑mile primopredaja / 24h / eskrou** | Urađen osnovni tok; otvoren backlog u **`docs/BUYER_LOGISTICS_HANDOVER_GAPS.md`** |
 
 *Ažuriraj ovu tabelu kada nešto zatvoriš (ili obriši red).*

@@ -192,11 +192,10 @@ export class PaymentsService {
 
     const dh = delivery.digital_handovers;
     if (delivery.status === 'DELIVERED') {
-      const handoverOk =
-        dh?.status === 'COMPLETED' && !!(dh.signature?.trim() || dh.completedBy);
-      if (!handoverOk) {
+      const hasSignature = !!(dh?.status === 'COMPLETED' && (dh.signature?.trim().length ?? 0) >= 80);
+      if (!hasSignature) {
         throw new BadRequestException(
-          'Completed digital handover with store signature (or completedBy) is required before payment release',
+          'Completed digital handover with a store recipient signature is required before payment release.',
         );
       }
     }

@@ -482,6 +482,43 @@ export default function OrdersPage() {
                         </div>
                       </div>
                     )}
+                    {Array.isArray(selectedOrder.shipmentTracking?.events) &&
+                    selectedOrder.shipmentTracking.events.length > 0 ? (
+                      <div className="mb-6 rounded-lg border border-gray-200/90 bg-gray-50/70 p-4">
+                        <h3 className="text-sm font-medium text-gray-900 mb-1">
+                          {t('buyerPortalOrders.shipmentTimelineTitle')}
+                        </h3>
+                        {selectedOrder.shipmentTracking.missionNumber ? (
+                          <p className="text-xs text-gray-600 font-light mb-3">
+                            {t('buyerPortalOrders.shipmentMissionRef', {
+                              number: selectedOrder.shipmentTracking.missionNumber,
+                            })}
+                          </p>
+                        ) : null}
+                        <ol className="space-y-3 border-l border-[#2D5A27]/30 pl-4 ml-1.5">
+                          {selectedOrder.shipmentTracking.events.map(
+                            (ev: { code: string; at: string }, idx: number) => {
+                              const labelKey = `buyerPortalOrders.tracking.${ev.code}`;
+                              const label = t(labelKey, { defaultValue: ev.code.replace(/_/g, ' ') });
+                              return (
+                                <li key={`${ev.code}-${ev.at}-${idx}`} className="relative">
+                                  <span
+                                    className="absolute -left-[23px] top-1.5 h-2 w-2 rounded-full bg-[#2D5A27]/80"
+                                    aria-hidden
+                                  />
+                                  <p className="text-sm text-gray-900 font-light leading-snug">{label}</p>
+                                  <p className="text-xs text-gray-500 font-light mt-0.5 tabular-nums">
+                                    {new Date(ev.at).toLocaleString()}
+                                  </p>
+                                </li>
+                              );
+                            },
+                          )}
+                        </ol>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 font-light mb-4">{t('buyerPortalOrders.shipmentTimelineEmpty')}</p>
+                    )}
                     <h3 className="text-sm font-light text-gray-500 mb-4 mt-2">Progress</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm">

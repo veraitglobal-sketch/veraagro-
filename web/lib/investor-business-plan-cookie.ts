@@ -20,6 +20,52 @@ export function investorPartnerPlanCookieName(tier: ConfidentialTier): string {
   return `${INVESTOR_PARTNER_PLAN_COOKIE_PREFIX}${tier}`;
 }
 
+/** HttpOnly cookie: passed first “gate” password; required before tier passwords are accepted. */
+export function investorBundleCookieName(): string {
+  return `${INVESTOR_PARTNER_PLAN_COOKIE_PREFIX}bundle`;
+}
+
+export function createInvestorBundleUnlockToken(): string | null {
+  const secret = sessionSecret();
+  if (!secret) return null;
+  const exp = Date.now() + TTL_MS;
+  const body = `bundle|${exp}|inv`;
+  const sig = createHmac('sha256', secret).update(body).digest('hex');
+  return `${body}|${sig}`;
+}
+
+export function verifyInvestorBundleUnlockToken(raw: string | undefined): boolean {
+  const secret = sessionSecret();
+  if (!raw || !secret) return false;
+  const parts = raw.split('|');
+  if (parts.length !== 4) return false;
+  const [t, expStr, kind, sig] = parts;
+  if (t !== 'bundle' || kind !== 'inv') return false;
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || Date.now() > exp) return false;
+  const body = `${t}|${exp}|${kind}`;
+  const expected = createHmac('sha256', secret).update(body).digest('hex');
+  if (sig.length !== expected.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'));
+  } catch {
+    return false;
+  }
+}
+
+export function serializeInvestorBundleSetCookie(token: string): string {
+  const name = investorBundleCookieName();
+  const maxAge = Math.floor(TTL_MS / 1000);
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  return `${name}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
+}
+
+export function serializeInvestorBundleClearCookie(): string {
+  const name = investorBundleCookieName();
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  return `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`;
+}
+
 export function createInvestorPartnerPlanUnlockToken(tier: ConfidentialTier): string | null {
   const secret = sessionSecret();
   if (!secret) return null;

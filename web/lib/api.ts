@@ -375,12 +375,37 @@ export const deliveriesAPI = {
     const response = await api.post('/deliveries/buyer/report-issue', body);
     return response.data;
   },
+  confirmBuyerPickup: async (body: { deliveryId: string }) => {
+    const response = await api.post('/deliveries/buyer/confirm-pickup', body);
+    return response.data;
+  },
   /** Download waybill PDF (auth required; buyer, driver, grower, admin). */
   downloadWaybillPdf: async (waybillId: string) => {
     const response = await api.get(`/waybills/document/${waybillId}/pdf`, {
       responseType: 'blob',
     });
     return response.data as Blob;
+  },
+};
+
+/** Store / warehouse ramp handover — buyer completes after driver scans STORE- QR. See `buyer-portal/handover/[id]`. */
+export const digitalHandoverAPI = {
+  getOne: async (handoverId: string) => {
+    const response = await api.get(`/digital-handover/${encodeURIComponent(handoverId)}`);
+    return response.data;
+  },
+  complete: async (body: {
+    handoverId: string;
+    qualityCheck: {
+      visualCheck: 'FRESH' | 'DAMAGED';
+      temperature: number;
+      photoUrls: string[];
+      signature?: string;
+      notes?: string;
+    };
+  }) => {
+    const response = await api.post('/digital-handover/complete', body);
+    return response.data;
   },
 };
 

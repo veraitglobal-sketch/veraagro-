@@ -80,6 +80,10 @@ export class OrdersService {
         add('SHIPMENT_COLLECTED', delivery.pickedUpAt ?? undefined);
         add('SHIPMENT_ENTRY_TRANSIT_LINE', delivery.inTransitAt ?? undefined);
         add('SHIPMENT_DROP_OFF_CONFIRMED', delivery.deliveredAt ?? undefined);
+        add(
+          'SHIPMENT_BUYER_RECEIPT_CONFIRMED',
+          delivery.buyerPickupConfirmedAt ?? delivery.confirmedAt ?? undefined,
+        );
       }
 
       add('ORDER_RECORDED', orderCreatedAt);

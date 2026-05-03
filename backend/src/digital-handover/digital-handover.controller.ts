@@ -32,7 +32,9 @@ export class DigitalHandoverController {
     @Body() dto: CompleteHandoverDto,
     @GetUser() user: any,
   ) {
-    return this.handoverService.completeHandover(user.id, dto);
+    const roles =
+      Array.isArray(user.roles) ? user.roles : user.role ? [user.role] : [];
+    return this.handoverService.completeHandover(user.id, dto, roles);
   }
 
   /**

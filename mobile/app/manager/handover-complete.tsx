@@ -1,9 +1,22 @@
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  PanResponder,
+} from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { CheckCircle2, XCircle, Thermometer, Image as ImageIcon, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
+import ViewShot, { type CaptureOptions } from 'react-native-view-shot';
+import Svg, { Polyline } from 'react-native-svg';
 import { colors } from '../../lib/colors';
 import { theme } from '../../lib/theme';
 import { digitalHandoverAPI } from '../../lib/api';
@@ -12,22 +25,65 @@ import StepIndicator from '../../components/StepIndicator';
 
 const PHOTO_COUNT = 4;
 const SLOT_KEYS = ['slot0', 'slot1', 'slot2', 'slot3'] as const;
+const SIG_W = 300;
+const SIG_H = 160;
+
+type Point = { x: number; y: number };
+
+const viewShotOptions: CaptureOptions = {
+  format: 'png',
+  quality: 0.95,
+  result: 'data-uri',
+};
+
+function hasStrokes(strokes: Point[][]): boolean {
+  return strokes.some((s) => s.length >= 2);
+}
 
 /**
- * Manager / store handover: visual check, temperature, four documented photos, then submit.
- * Backend still accepts 2+ URLs; we always send 4 for full traceability.
+ * Manager / store handover: visual check, temperature, four documented photos, recipient signature for OK receipt, then submit.
  */
 export default function HandoverCompleteScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { handoverId } = useLocalSearchParams<{ handoverId: string }>();
+  const viewShotRef = useRef<InstanceType<typeof ViewShot> | null>(null);
   const [step, setStep] = useState(2);
   const [visualCheck, setVisualCheck] = useState<'FRESH' | 'DAMAGED' | null>(null);
   const [temperature, setTemperature] = useState('');
   const [photos, setPhotos] = useState<(string | null)[]>(() => Array(PHOTO_COUNT).fill(null));
   const [notes, setNotes] = useState('');
+  const [strokes, setStrokes] = useState<Point[][]>([]);
   const [loading, setLoading] = useState(false);
   const [picking, setPicking] = useState(false);
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (ev) => {
+          const { locationX, locationY } = ev.nativeEvent;
+          setStrokes((prev) => [...prev, [{ x: locationX, y: locationY }]]);
+        },
+        onPanResponderMove: (ev) => {
+          const { locationX, locationY } = ev.nativeEvent;
+          setStrokes((prev) => {
+            if (prev.length === 0) {
+              return [[{ x: locationX, y: locationY }]];
+            }
+            const next = prev.slice();
+            const last = next[next.length - 1]!.concat({ x: locationX, y: locationY });
+            next[next.length - 1] = last;
+            return next;
+          });
+        },
+        onPanResponderRelease: () => {},
+      }),
+    [],
+  );
+
+  const clearPad = () => setStrokes([]);
 
   const takePhoto = useCallback(
     async (index: number) => {
@@ -75,6 +131,27 @@ export default function HandoverCompleteScreen() {
       Alert.alert(t('error'), t('handover.errHandoverId'));
       return;
     }
+
+    let signatureDataUrl: string | undefined;
+    if (visualCheck === 'FRESH') {
+      if (!hasStrokes(strokes)) {
+        Alert.alert(t('error'), t('handover.errSignature'));
+        return;
+      }
+      try {
+        const uri = viewShotRef.current?.capture ? await viewShotRef.current.capture() : null;
+        if (uri?.startsWith('data:image')) {
+          signatureDataUrl = uri;
+        }
+      } catch {
+        // fall through — caught below
+      }
+      if (!signatureDataUrl || signatureDataUrl.length < 80) {
+        Alert.alert(t('error'), t('handover.errSignatureCapture'));
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       const photoUrls = photos.filter((p): p is string => p != null);
@@ -85,6 +162,7 @@ export default function HandoverCompleteScreen() {
           temperature: parseFloat(temperature),
           photoUrls,
           notes: notes || undefined,
+          ...(signatureDataUrl ? { signature: signatureDataUrl } : {}),
         },
       });
       Alert.alert(
@@ -163,7 +241,10 @@ export default function HandoverCompleteScreen() {
               <Text style={[styles.pillText, visualCheck === 'FRESH' && { color: colors.primary }]}>{t('handover.fresh')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setVisualCheck('DAMAGED')}
+              onPress={() => {
+                clearPad();
+                setVisualCheck('DAMAGED');
+              }}
               style={[
                 styles.pill,
                 { borderColor: visualCheck === 'DAMAGED' ? colors.error : colors.border },
@@ -191,6 +272,37 @@ export default function HandoverCompleteScreen() {
             <Text style={styles.celsius}>°C</Text>
           </View>
         </View>
+
+        {visualCheck === 'FRESH' && (
+          <View style={{ marginTop: 24 }}>
+            <View style={styles.padHeader}>
+              <Text style={styles.label}>{t('handover.signatureLabel')} *</Text>
+              <TouchableOpacity onPress={clearPad} hitSlop={8}>
+                <Text style={styles.clearText}>{t('handover.signatureClear')}</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.hint}>{t('handover.signatureHint')}</Text>
+            <View style={styles.shotWrap} collapsable={false}>
+              <ViewShot ref={viewShotRef} options={viewShotOptions} style={styles.shotInner}>
+                <View style={styles.padTouch} collapsable={false} {...panResponder.panHandlers}>
+                  <Svg width={SIG_W} height={SIG_H} style={StyleSheet.absoluteFill}>
+                    {strokes.map((line, i) => (
+                      <Polyline
+                        key={i}
+                        points={line.map((p) => `${p.x},${p.y}`).join(' ')}
+                        fill="none"
+                        stroke="#111827"
+                        strokeWidth={2.2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    ))}
+                  </Svg>
+                </View>
+              </ViewShot>
+            </View>
+          </View>
+        )}
 
         <View style={{ marginTop: 24 }}>
           <Text style={styles.label}>{t('handover.notes')}</Text>
@@ -242,4 +354,16 @@ const styles = StyleSheet.create({
   celsius: { fontSize: 13, color: colors.text.secondary, marginRight: 8 },
   cta: { marginTop: 32, backgroundColor: colors.primary, paddingVertical: 16, borderRadius: 8, alignItems: 'center' },
   ctaText: { fontSize: 14, fontWeight: '600', color: colors.background },
+  padHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  clearText: { fontSize: 12, color: colors.primary, fontWeight: '500' },
+  shotWrap: {
+    marginTop: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: theme.borderRadius.md,
+    overflow: 'hidden',
+    alignSelf: 'flex-start',
+  },
+  shotInner: { width: SIG_W, height: SIG_H, backgroundColor: '#fff' },
+  padTouch: { width: SIG_W, height: SIG_H },
 });

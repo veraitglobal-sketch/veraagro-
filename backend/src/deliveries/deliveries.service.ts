@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+  HttpException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { getPickupEstate, getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
 import { PaymentsService } from '../payments/payments.service';
@@ -225,27 +231,68 @@ export class DeliveriesService {
       throw new BadRequestException('Delivery already confirmed');
     }
 
-    // Update delivery
     const now = new Date();
-    await this.prisma.deliveries.update({
-      where: { id: delivery.id },
-      data: {
-        status: 'CONFIRMED',
-        deliveredAt: now,
-        confirmedAt: now,
-        qrScannedAt: now,
-        deliverySignature: crypto.randomBytes(16).toString('hex'),
-      },
+    const preservedDockReceiptAt =
+      delivery.status === 'DELIVERED' && delivery.deliveredAt ? delivery.deliveredAt : now;
+
+    const prevDelivery = {
+      status: delivery.status,
+      deliveredAt: delivery.deliveredAt,
+      buyerPickupConfirmedAt: delivery.buyerPickupConfirmedAt,
+      confirmedAt: delivery.confirmedAt,
+      qrScannedAt: delivery.qrScannedAt,
+      deliverySignature: delivery.deliverySignature,
+    };
+    const prevOrderStatus = delivery.orders.status;
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.deliveries.update({
+        where: { id: delivery.id },
+        data: {
+          status: 'CONFIRMED',
+          deliveredAt: preservedDockReceiptAt,
+          buyerPickupConfirmedAt: now,
+          confirmedAt: now,
+          qrScannedAt: now,
+          deliverySignature:
+            delivery.deliverySignature?.trim() || crypto.randomBytes(16).toString('hex'),
+        },
+      });
+      await tx.orders.update({
+        where: { id: delivery.orderId },
+        data: { status: 'DELIVERED' },
+      });
     });
 
-    // Update order
-    await this.prisma.orders.update({
-      where: { id: delivery.orderId },
-      data: { status: 'DELIVERED' },
-    });
-
-    // Release escrow payment automatically
-    await this.paymentsService.releaseEscrowPayment(delivery.orderId);
+    try {
+      await this.paymentsService.releaseEscrowPayment(delivery.orderId);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      this.logger.error(`confirmDelivery escrow failed for delivery ${delivery.id}, rolling back: ${msg}`);
+      await this.prisma.$transaction(async (tx) => {
+        await tx.deliveries.update({
+          where: { id: delivery.id },
+          data: {
+            status: prevDelivery.status,
+            deliveredAt: prevDelivery.deliveredAt,
+            buyerPickupConfirmedAt: prevDelivery.buyerPickupConfirmedAt,
+            confirmedAt: prevDelivery.confirmedAt,
+            qrScannedAt: prevDelivery.qrScannedAt,
+            deliverySignature: prevDelivery.deliverySignature,
+          },
+        });
+        await tx.orders.update({
+          where: { id: delivery.orderId },
+          data: { status: prevOrderStatus },
+        });
+      });
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new BadRequestException(
+        'Isplata iz eskroua nije prošla. Stanje je vraćeno — pokušajte ponovo skeniranje ili potvrdu kroz portal.',
+      );
+    }
 
     const farmerUid = getFarmerOwnerUserId(delivery.orders);
     if (farmerUid) {
@@ -267,6 +314,98 @@ export class DeliveriesService {
     return {
       message: 'Delivery confirmed. Payment released.',
       delivery,
+    };
+  }
+
+  /**
+   * Buyer confirms physical takeover after warehouse digital handover (`DELIVERED` + completed handover).
+   * Starts the 24h buyer issue window (`buyerPickupConfirmedAt`), separate from dock `deliveredAt`.
+   * Escrow is released while the delivery is still `DELIVERED` (same gates as payment service), then this
+   * confirmation is recorded — so a failed payout does not strand the buyer without a retry path.
+   */
+  async confirmBuyerPickup(deliveryId: string, buyerId: string) {
+    const delivery = await this.prisma.deliveries.findUnique({
+      where: { id: deliveryId },
+      include: {
+        orders: {
+          select: {
+            buyerId: true,
+            orderNumber: true,
+            estateId: true,
+            fulfillingEstateId: true,
+            estates: { select: { ownerId: true } },
+            fulfilling_estate: { select: { ownerId: true } },
+          },
+        },
+        digital_handovers: true,
+      },
+    });
+
+    if (!delivery) {
+      throw new NotFoundException('Delivery not found');
+    }
+    if (delivery.orders.buyerId !== buyerId) {
+      throw new BadRequestException('This delivery is not linked to your buyer account.');
+    }
+    if (delivery.buyerPickupConfirmedAt) {
+      throw new BadRequestException('Pickup has already been confirmed for this shipment.');
+    }
+    if (delivery.status !== 'DELIVERED') {
+      throw new BadRequestException(
+        'Pickup can only be confirmed after the shipment is marked received at the dock (digital handover completed).',
+      );
+    }
+    const dh = delivery.digital_handovers;
+    if (!dh || dh.status !== 'COMPLETED') {
+      throw new BadRequestException(
+        'Complete store/warehouse digital handover with signature first, then confirm pickup here.',
+      );
+    }
+
+    await this.paymentsService.releaseEscrowPayment(delivery.orderId);
+
+    const now = new Date();
+    const updated = await this.prisma.deliveries.update({
+      where: { id: delivery.id },
+      data: {
+        status: 'CONFIRMED',
+        buyerPickupConfirmedAt: now,
+        confirmedAt: delivery.confirmedAt ?? now,
+        qrScannedAt: delivery.qrScannedAt ?? now,
+        deliverySignature:
+          delivery.deliverySignature?.trim() || crypto.randomBytes(16).toString('hex'),
+      },
+    });
+
+    const farmerUid = getFarmerOwnerUserId(delivery.orders);
+    if (farmerUid) {
+      await this.notificationsService.create({
+        userId: farmerUid,
+        type: 'SYSTEM',
+        title: 'Delivery confirmed',
+        message: `Payment released for order ${delivery.orders.orderNumber}.`,
+      });
+    }
+
+    await this.notificationsService.create({
+      userId: delivery.driverId,
+      type: 'SYSTEM',
+      title: 'Delivery completed',
+      message: `Payment released for delivery ${delivery.deliveryNumber}.`,
+    });
+
+    await this.notificationsService.create({
+      userId: buyerId,
+      type: 'SYSTEM',
+      title: 'Preuzimanje potvrđeno',
+      message: `Za porudžbinu ${delivery.orders.orderNumber} zabeležena je potvrda preuzimanja: u roku od 24 sata možete prijaviti primedbu uz fotografije.`,
+      actionUrl: '/buyer-portal/deliveries',
+    });
+
+    return {
+      message:
+        'Pickup confirmed. Payment released. You can report an issue with photos within 24 hours from this confirmation.',
+      delivery: updated,
     };
   }
 
@@ -368,6 +507,12 @@ export class DeliveriesService {
             generatedAt: true,
           },
         },
+        digital_handovers: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
         orders: {
           include: {
             estates: {
@@ -426,6 +571,9 @@ export class DeliveriesService {
         orderId,
       },
       include: {
+        digital_handovers: {
+          select: { id: true, status: true },
+        },
         orders: {
           include: {
             estates: {
@@ -473,7 +621,7 @@ export class DeliveriesService {
 
   /**
    * Buyer reports a problem with a received shipment. Requires at least one photo and a description.
-   * Accepts only within 24 hours of system-recorded receipt (deliveredAt / confirmedAt).
+   * Accepts only within 24 hours of buyer pickup / takeover confirmation (`buyerPickupConfirmedAt` or legacy QR `confirmedAt`).
    */
   async reportBuyerDeliveryIssue(
     buyerId: string,
@@ -511,17 +659,17 @@ export class DeliveriesService {
       throw new BadRequestException('This delivery is not linked to your buyer account.');
     }
 
-    const receiptAt = delivery.deliveredAt ?? delivery.confirmedAt;
+    const receiptAt = delivery.buyerPickupConfirmedAt ?? delivery.confirmedAt;
     if (!receiptAt) {
       throw new BadRequestException(
-        'Receipt is not recorded for this shipment yet. You can submit a report only after receipt is logged.',
+        'Confirm takeover in the buyer portal (Deliveries) after receipt at the warehouse — or scan the delivery QR when offered. The 24-hour report window starts only after that confirmation.',
       );
     }
 
     const windowMs = 24 * 60 * 60 * 1000;
     if (Date.now() - receiptAt.getTime() > windowMs) {
       throw new BadRequestException(
-        'The 24-hour reporting window from recorded receipt has expired. Please contact Bio Vera operations.',
+        'The 24-hour reporting window from your pickup/receipt confirmation has expired. Please contact Bio Vera operations.',
       );
     }
 

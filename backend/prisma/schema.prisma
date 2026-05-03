@@ -272,6 +272,8 @@ model deliveries {
   pickedUpAt        DateTime?
   inTransitAt       DateTime?
   deliveredAt       DateTime?
+  /// Buyer confirmation of physical takeover (starts 24h issue window); distinct from dock `deliveredAt`.
+  buyerPickupConfirmedAt DateTime?
   confirmedAt       DateTime?
   pickupSignature   String?
   deliverySignature String?
@@ -284,6 +286,7 @@ model deliveries {
   waybills          waybills?
 
   @@index([deliveryQRCode])
+  @@index([buyerPickupConfirmedAt])
   @@index([driverId])
   @@index([orderId])
   @@index([status])

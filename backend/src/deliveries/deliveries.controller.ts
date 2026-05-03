@@ -20,6 +20,14 @@ export class DeliveriesController {
     return this.deliveriesService.reportBuyerDeliveryIssue(req.user.id, body);
   }
 
+  /** After warehouse digital handover: buyer confirms physical takeover (starts 24h issue window). */
+  @Post('buyer/confirm-pickup')
+  @UseGuards(RolesGuard)
+  @Roles('BUYER')
+  async confirmBuyerPickup(@Request() req: any, @Body() body: { deliveryId: string }) {
+    return this.deliveriesService.confirmBuyerPickup(body.deliveryId, req.user.id);
+  }
+
   @Post('assign')
   async assignDelivery(
     @Body() body: { orderId: string; driverId: string },

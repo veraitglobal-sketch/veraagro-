@@ -6,28 +6,46 @@ import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
-import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown, AlertTriangle } from 'lucide-react';
+import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, RefreshCw, FileDown, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 const REPORT_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-function buyerDeliveryReceiptAt(delivery: { deliveredAt?: string | null; confirmedAt?: string | null } | null): Date | null {
-  if (!delivery?.deliveredAt && !delivery?.confirmedAt) return null;
-  const raw = delivery.deliveredAt ?? delivery.confirmedAt;
+/** Start of buyer 24h issue window — after takeover confirmation (portal or QR), not dock receipt. */
+function buyerIssueWindowStart(
+  delivery: {
+    buyerPickupConfirmedAt?: string | null;
+    confirmedAt?: string | null;
+  } | null,
+): Date | null {
+  const raw = delivery?.buyerPickupConfirmedAt ?? delivery?.confirmedAt ?? null;
+  if (!raw) return null;
   const d = new Date(raw as string);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
 function canBuyerReportDeliveryIssue(delivery: {
   status?: string;
-  deliveredAt?: string | null;
+  buyerPickupConfirmedAt?: string | null;
   confirmedAt?: string | null;
 } | null): boolean {
   if (!delivery || delivery.status === 'CANCELLED') return false;
-  const at = buyerDeliveryReceiptAt(delivery);
+  const at = buyerIssueWindowStart(delivery);
   if (!at) return false;
   return Date.now() - at.getTime() <= REPORT_WINDOW_MS;
+}
+
+function needsBuyerPickupConfirmation(delivery: {
+  status?: string;
+  buyerPickupConfirmedAt?: string | null;
+  digital_handovers?: { status?: string } | null;
+}): boolean {
+  return (
+    delivery.status === 'DELIVERED' &&
+    delivery.digital_handovers?.status === 'COMPLETED' &&
+    !delivery.buyerPickupConfirmedAt
+  );
 }
 
 function readFileAsDataUrl(file: File): Promise<string> {
@@ -53,7 +71,7 @@ export default function DeliveriesPage() {
   const [issuePhotos, setIssuePhotos] = useState<{ preview: string; dataUrl: string }[]>([]);
   const [issueSubmitting, setIssueSubmitting] = useState(false);
   const [issueLocalError, setIssueLocalError] = useState<string | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [pickupSubmittingId, setPickupSubmittingId] = useState<string | null>(null);
   const errorRef = useRef<string | null>(null);
   errorRef.current = error;
 
@@ -165,7 +183,7 @@ export default function DeliveriesPage() {
         e?.message === 'Network Error' ||
         (Boolean(e?.isAxiosError) && !e?.response);
       const message = isNetworkError
-        ? 'Cannot reach server. Check your connection and that the backend is running (e.g. NEXT_PUBLIC_API_URL).'
+        ? t('buyerPortalDeliveries.networkErrorDeliveries')
         : apiErrorOrT(err, t, 'common.apiErrorGeneric');
       setError(message);
       setDeliveries([]);
@@ -176,6 +194,8 @@ export default function DeliveriesPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
+      case 'DELIVERED':
+        return <Package className="w-4 h-4 text-emerald-700/70" strokeWidth={1} />;
       case 'CONFIRMED':
       case 'COMPLETED':
         return <CheckCircle className="w-4 h-4 text-green-600/60" strokeWidth={1} />;
@@ -194,6 +214,8 @@ export default function DeliveriesPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case 'DELIVERED':
+        return 'border-emerald-200/70 text-emerald-800/80';
       case 'CONFIRMED':
       case 'COMPLETED':
         return 'border-green-200/50 text-green-600/80';
@@ -210,9 +232,10 @@ export default function DeliveriesPage() {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    return status?.replace(/_/g, ' ') || 'UNKNOWN';
-  };
+  const getStatusLabel = (status: string) =>
+    t(`buyerPortalDeliveries.deliveryStatus_${status}`, {
+      defaultValue: status?.replace(/_/g, ' ') || 'UNKNOWN',
+    });
 
   const filteredDeliveries = deliveries.filter((delivery) => {
     const matchesSearch =
@@ -226,11 +249,25 @@ export default function DeliveriesPage() {
   const handleConfirmDelivery = async (qrCode: string) => {
     try {
       await deliveriesAPI.confirmDelivery(qrCode);
-      alert('Delivery confirmed successfully! Payment has been released.');
+      alert(t('buyerPortalDeliveries.qrConfirmAlertSuccess'));
       loadDeliveries();
     } catch (err: unknown) {
       console.error('Error confirming delivery:', err);
       alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
+    }
+  };
+
+  const handleConfirmPickup = async (deliveryId: string) => {
+    setPickupSubmittingId(deliveryId);
+    try {
+      await deliveriesAPI.confirmBuyerPickup({ deliveryId });
+      alert(t('buyerPortalDeliveries.confirmPickupSuccess'));
+      setSelectedDelivery(null);
+      await loadDeliveries();
+    } catch (err: unknown) {
+      alert(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
+    } finally {
+      setPickupSubmittingId(null);
     }
   };
 
@@ -255,8 +292,8 @@ export default function DeliveriesPage() {
           {/* Header */}
           <div className="border-b border-green-200/50 pb-6">
             <div>
-              <h1 className="text-2xl font-light text-gray-900">My Deliveries</h1>
-              <p className="text-sm text-gray-600 mt-2 font-light">Track and manage your deliveries</p>
+              <h1 className="text-2xl font-light text-gray-900">{t('buyerPortalDeliveries.pageHeading')}</h1>
+              <p className="text-sm text-gray-600 mt-2 font-light">{t('buyerPortalDeliveries.pageSubtitle')}</p>
             </div>
           </div>
 
@@ -267,7 +304,7 @@ export default function DeliveriesPage() {
                 <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" strokeWidth={1} />
                 <input
                   type="text"
-                  placeholder="Search by delivery number, order number, product, or supplier..."
+                  placeholder={t('buyerPortalDeliveries.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full px-4 py-2 pl-10 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
@@ -279,12 +316,13 @@ export default function DeliveriesPage() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-green-600/50"
                 >
-                  <option value="all">All Status</option>
-                  <option value="ASSIGNED">Assigned</option>
-                  <option value="PICKED_UP">Picked Up</option>
-                  <option value="IN_TRANSIT">In Transit</option>
-                  <option value="CONFIRMED">Confirmed</option>
-                  <option value="COMPLETED">Completed</option>
+                  <option value="all">{t('buyerPortalDeliveries.filterLabelAll')}</option>
+                  <option value="ASSIGNED">{t('buyerPortalDeliveries.filter_ASSIGNED')}</option>
+                  <option value="PICKED_UP">{t('buyerPortalDeliveries.filter_PICKED_UP')}</option>
+                  <option value="IN_TRANSIT">{t('buyerPortalDeliveries.filter_IN_TRANSIT')}</option>
+                  <option value="DELIVERED">{t('buyerPortalDeliveries.filter_DELIVERED')}</option>
+                  <option value="CONFIRMED">{t('buyerPortalDeliveries.filter_CONFIRMED')}</option>
+                  <option value="COMPLETED">{t('buyerPortalDeliveries.filter_COMPLETED')}</option>
                 </select>
               </div>
             </div>
@@ -300,7 +338,7 @@ export default function DeliveriesPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 text-sm font-light rounded border border-red-200 transition-colors shrink-0"
               >
                 <RefreshCw className="w-4 h-4" strokeWidth={1.5} />
-                Retry
+                {t('buyerPortalDeliveries.retryButton')}
               </button>
             </div>
           )}
@@ -310,7 +348,7 @@ export default function DeliveriesPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600 font-light">Loading deliveries...</p>
+                <p className="mt-4 text-gray-600 font-light">{t('buyerPortalDeliveries.loadingMessage')}</p>
               </div>
             </div>
           ) : (
@@ -325,17 +363,21 @@ export default function DeliveriesPage() {
                       <div className="flex items-center gap-3 mb-2">
                         <Truck className="w-5 h-5 text-green-600/60" strokeWidth={1} />
                         <h3 className="text-lg font-light text-gray-900">
-                          {delivery.deliveryNumber || `Delivery #${delivery.id.slice(0, 8)}`}
+                          {delivery.deliveryNumber ||
+                            t('buyerPortalDeliveries.deliveryFallbackTitle', { slice: delivery.id.slice(0, 8) })}
                         </h3>
                       </div>
                       <p className="text-sm text-gray-500 font-light">
-                        Order: {delivery.orders?.orderNumber || 'N/A'}
+                        {t('buyerPortalDeliveries.labelOrder')}{' '}
+                        {delivery.orders?.orderNumber || t('common.emDash')}
                       </p>
                       <p className="text-sm text-gray-500 font-light">
-                        Product: {delivery.orders?.productName || 'N/A'}
+                        {t('buyerPortalDeliveries.labelProduct')}{' '}
+                        {delivery.orders?.productName || t('common.emDash')}
                       </p>
                       <p className="text-sm text-gray-500 font-light">
-                        Supplier: {delivery.orders?.estates?.name || 'N/A'}
+                        {t('buyerPortalDeliveries.labelSupplier')}{' '}
+                        {delivery.orders?.estates?.name || t('common.emDash')}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
@@ -353,7 +395,7 @@ export default function DeliveriesPage() {
                             className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
                           >
                             <FileDown className="w-4 h-4" strokeWidth={1} />
-                            Waybill PDF
+                            {t('buyerPortalDeliveries.timelineWaybillPdf')}
                           </button>
                         )}
                         <button
@@ -361,7 +403,7 @@ export default function DeliveriesPage() {
                           className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
                         >
                           <Eye className="w-4 h-4" strokeWidth={1} />
-                          Details
+                          {t('buyerPortalDeliveries.detailButton')}
                         </button>
                         {canBuyerReportDeliveryIssue(delivery) && (
                           <button
@@ -374,11 +416,11 @@ export default function DeliveriesPage() {
                           </button>
                         )}
                       </div>
-                      {buyerDeliveryReceiptAt(delivery) && canBuyerReportDeliveryIssue(delivery) && (
+                      {buyerIssueWindowStart(delivery) && canBuyerReportDeliveryIssue(delivery) && (
                         <p className="text-xs text-amber-900/85 font-light text-right max-w-md">
                           {t('buyerPortalDeliveries.reportIssueDeadline', {
                             time: new Date(
-                              buyerDeliveryReceiptAt(delivery)!.getTime() + REPORT_WINDOW_MS,
+                              buyerIssueWindowStart(delivery)!.getTime() + REPORT_WINDOW_MS,
                             ).toLocaleString(),
                           })}
                         </p>
@@ -390,20 +432,20 @@ export default function DeliveriesPage() {
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-gray-400" strokeWidth={1} />
                       <div>
-                        <span className="text-gray-600 font-light">From:</span>
+                        <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.pickupFrom')}:</span>
                         <span className="ml-2 font-light text-gray-900">
-                          {delivery.pickupAddress || delivery.orders?.estates?.name || 'N/A'}
+                          {delivery.pickupAddress || delivery.orders?.estates?.name || t('common.emDash')}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-gray-400" strokeWidth={1} />
                       <div>
-                        <span className="text-gray-600 font-light">To:</span>
+                        <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.deliveryTo')}:</span>
                         <span className="ml-2 font-light text-gray-900">
                           {typeof delivery.deliveryAddress === 'string'
                             ? delivery.deliveryAddress
-                            : delivery.deliveryAddress?.address || 'N/A'}
+                            : delivery.deliveryAddress?.address || t('common.emDash')}
                         </span>
                       </div>
                     </div>
@@ -411,7 +453,7 @@ export default function DeliveriesPage() {
                       <div className="flex items-center gap-2 text-sm">
                         <Truck className="w-4 h-4 text-gray-400" strokeWidth={1} />
                         <div>
-                          <span className="text-gray-600 font-light">Driver:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.deliveryDriver')}:</span>
                           <span className="ml-2 font-light text-gray-900">
                             {delivery.users.firstName} {delivery.users.lastName}
                           </span>
@@ -424,27 +466,36 @@ export default function DeliveriesPage() {
                     {delivery.assignedAt && (
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" strokeWidth={1} />
-                        <span>Assigned: {new Date(delivery.assignedAt).toLocaleDateString()}</span>
+                        <span>
+                          {t('buyerPortalDeliveries.assignedShort')}{' '}
+                          {new Date(delivery.assignedAt).toLocaleDateString()}
+                        </span>
                       </div>
                     )}
                     {delivery.pickedUpAt && (
                       <div className="flex items-center gap-1">
                         <Package className="w-4 h-4" strokeWidth={1} />
-                        <span>Picked Up: {new Date(delivery.pickedUpAt).toLocaleDateString()}</span>
+                        <span>
+                          {t('buyerPortalDeliveries.pickedUpShort')}{' '}
+                          {new Date(delivery.pickedUpAt).toLocaleDateString()}
+                        </span>
                       </div>
                     )}
                     {delivery.deliveredAt && (
                       <div className="flex items-center gap-1">
                         <CheckCircle className="w-4 h-4" strokeWidth={1} />
-                        <span>Delivered: {new Date(delivery.deliveredAt).toLocaleDateString()}</span>
+                        <span>
+                          {t('buyerPortalDeliveries.dockReceiptShort')}{' '}
+                          {new Date(delivery.deliveredAt).toLocaleDateString()}
+                        </span>
                       </div>
                     )}
                   </div>
 
-                  {/* QR Code for confirmation */}
+                  {/* QR Code for confirmation (curb / direct scan — also sets takeover time) */}
                   {delivery.status === 'IN_TRANSIT' && delivery.deliveryQRCode && (
                     <div className="mt-4 pt-4 border-t border-green-200/50">
-                      <p className="text-sm text-gray-600 mb-2 font-light">Scan QR code to confirm delivery:</p>
+                      <p className="text-sm text-gray-600 mb-2 font-light">{t('buyerPortalDeliveries.qrConfirmLead')}</p>
                       <div className="flex items-center gap-2">
                         <div className="bg-white p-3 border border-green-200/50">
                           <QrCode className="w-16 h-16 text-green-600/60" strokeWidth={1} />
@@ -453,9 +504,25 @@ export default function DeliveriesPage() {
                           onClick={() => handleConfirmDelivery(delivery.deliveryQRCode)}
                           className="px-4 py-2 bg-green-600 text-white text-sm font-light hover:bg-green-700 transition-colors"
                         >
-                          Confirm Delivery
+                          {t('buyerPortalDeliveries.qrConfirmButton')}
                         </button>
                       </div>
+                    </div>
+                  )}
+
+                  {needsBuyerPickupConfirmation(delivery) && (
+                    <div className="mt-4 pt-4 border-t border-emerald-200/50 rounded-lg bg-emerald-50/40 p-4 space-y-3">
+                      <p className="text-sm text-gray-800 font-light">{t('buyerPortalDeliveries.confirmPickupHint')}</p>
+                      <button
+                        type="button"
+                        disabled={pickupSubmittingId === delivery.id}
+                        onClick={() => void handleConfirmPickup(delivery.id)}
+                        className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
+                      >
+                        {pickupSubmittingId === delivery.id
+                          ? t('buyerPortalDeliveries.confirmPickupDoing')
+                          : t('buyerPortalDeliveries.confirmPickupCta')}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -495,10 +562,15 @@ export default function DeliveriesPage() {
                   <div className="flex items-start justify-between mb-6 border-b border-gray-200/50 pb-4">
                     <div>
                       <h2 className="text-2xl font-light text-gray-900 mb-2">
-                        Delivery {selectedDelivery.deliveryNumber}
+                        {t('buyerPortalDeliveries.modalDetailTitle', {
+                          number:
+                            selectedDelivery.deliveryNumber ||
+                            `#${String(selectedDelivery.id).slice(0, 8)}`,
+                        })}
                       </h2>
                       <p className="text-sm text-gray-600 font-light">
-                        Order: {selectedDelivery.orders?.orderNumber || 'N/A'}
+                        {t('buyerPortalDeliveries.labelOrder')}{' '}
+                        {selectedDelivery.orders?.orderNumber || t('common.emDash')}
                       </p>
                       {selectedDelivery.waybills?.id && (
                         <button
@@ -512,7 +584,7 @@ export default function DeliveriesPage() {
                           className="mt-3 inline-flex items-center gap-1 px-3 py-1.5 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors"
                         >
                           <FileDown className="w-4 h-4" strokeWidth={1} />
-                          Download waybill PDF
+                          {t('buyerPortalDeliveries.timelineWaybillPdf')}
                         </button>
                       )}
                     </div>
@@ -526,13 +598,17 @@ export default function DeliveriesPage() {
 
                   {/* Delivery Status Timeline */}
                   <div className="mb-6 border-b border-gray-200/50 pb-6">
-                    <h3 className="text-sm font-light text-gray-500 mb-4">Delivery Timeline</h3>
+                    <h3 className="text-sm font-light text-gray-500 mb-4">
+                      {t('buyerPortalDeliveries.timelineTitle')}
+                    </h3>
                     <div className="space-y-3">
                       {selectedDelivery.assignedAt && (
                         <div className="flex items-center gap-3 text-sm">
                           <div className="w-2 h-2 bg-green-600/60 rounded-full"></div>
                           <div className="flex-1">
-                            <p className="font-light text-gray-900">Assigned</p>
+                            <p className="font-light text-gray-900">
+                              {t('buyerPortalDeliveries.timelineAssigned')}
+                            </p>
                             <p className="text-xs text-gray-500 font-light">
                               {new Date(selectedDelivery.assignedAt).toLocaleString()}
                             </p>
@@ -543,7 +619,9 @@ export default function DeliveriesPage() {
                         <div className="flex items-center gap-3 text-sm">
                           <div className="w-2 h-2 bg-blue-600/60 rounded-full"></div>
                           <div className="flex-1">
-                            <p className="font-light text-gray-900">Picked Up</p>
+                            <p className="font-light text-gray-900">
+                              {t('buyerPortalDeliveries.timelinePickedUp')}
+                            </p>
                             <p className="text-xs text-gray-500 font-light">
                               {new Date(selectedDelivery.pickedUpAt).toLocaleString()}
                             </p>
@@ -554,7 +632,9 @@ export default function DeliveriesPage() {
                         <div className="flex items-center gap-3 text-sm">
                           <div className="w-2 h-2 bg-yellow-600/60 rounded-full"></div>
                           <div className="flex-1">
-                            <p className="font-light text-gray-900">In Transit</p>
+                            <p className="font-light text-gray-900">
+                              {t('buyerPortalDeliveries.timelineInTransit')}
+                            </p>
                             <p className="text-xs text-gray-500 font-light">
                               {new Date(selectedDelivery.inTransitAt).toLocaleString()}
                             </p>
@@ -565,9 +645,22 @@ export default function DeliveriesPage() {
                         <div className="flex items-center gap-3 text-sm">
                           <div className="w-2 h-2 bg-green-600/60 rounded-full"></div>
                           <div className="flex-1">
-                            <p className="font-light text-gray-900">Delivered</p>
+                            <p className="font-light text-gray-900">{t('buyerPortalDeliveries.timelineDockReceipt')}</p>
                             <p className="text-xs text-gray-500 font-light">
                               {new Date(selectedDelivery.deliveredAt).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {buyerIssueWindowStart(selectedDelivery) && (
+                        <div className="flex items-center gap-3 text-sm">
+                          <div className="w-2 h-2 bg-emerald-700 rounded-full"></div>
+                          <div className="flex-1">
+                            <p className="font-light text-gray-900">
+                              {t('buyerPortalDeliveries.timelineTakeoverConfirmed')}
+                            </p>
+                            <p className="text-xs text-gray-500 font-light">
+                              {new Date(buyerIssueWindowStart(selectedDelivery)!).toLocaleString()}
                             </p>
                           </div>
                         </div>
@@ -578,19 +671,22 @@ export default function DeliveriesPage() {
                   {/* Delivery Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 border-b border-gray-200/50 pb-6">
                     <div>
-                      <h3 className="text-sm font-light text-gray-500 mb-4">Pickup Information</h3>
+                      <h3 className="text-sm font-light text-gray-500 mb-4">{t('buyerPortalDeliveries.sectionPickupTitle')}</h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <span className="text-gray-600 font-light">Location:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelLocation')}</span>
                           <span className="ml-2 font-light text-gray-900">
-                            {selectedDelivery.pickupAddress || selectedDelivery.orders?.estates?.name || 'N/A'}
+                            {selectedDelivery.pickupAddress ||
+                              selectedDelivery.orders?.estates?.name ||
+                              t('common.emDash')}
                           </span>
                         </div>
                         {selectedDelivery.orders?.estates?.users && (
                           <div>
-                            <span className="text-gray-600 font-light">Supplier:</span>
+                            <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelSupplier')}</span>
                             <span className="ml-2 font-light text-gray-900">
-                              {selectedDelivery.orders.estates.users.firstName} {selectedDelivery.orders.estates.users.lastName}
+                              {selectedDelivery.orders.estates.users.firstName}{' '}
+                              {selectedDelivery.orders.estates.users.lastName}
                             </span>
                           </div>
                         )}
@@ -598,19 +694,21 @@ export default function DeliveriesPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-light text-gray-500 mb-4">Delivery Information</h3>
+                      <h3 className="text-sm font-light text-gray-500 mb-4">
+                        {t('buyerPortalDeliveries.sectionDeliveryTitle')}
+                      </h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <span className="text-gray-600 font-light">Address:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelAddress')}</span>
                           <span className="ml-2 font-light text-gray-900">
                             {typeof selectedDelivery.deliveryAddress === 'string'
                               ? selectedDelivery.deliveryAddress
-                              : selectedDelivery.deliveryAddress?.address || 'N/A'}
+                              : selectedDelivery.deliveryAddress?.address || t('common.emDash')}
                           </span>
                         </div>
                         {selectedDelivery.users && (
                           <div>
-                            <span className="text-gray-600 font-light">Driver:</span>
+                            <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.deliveryDriver')}:</span>
                             <span className="ml-2 font-light text-gray-900">
                               {selectedDelivery.users.firstName} {selectedDelivery.users.lastName}
                             </span>
@@ -628,27 +726,48 @@ export default function DeliveriesPage() {
                   {/* Order Details */}
                   {selectedDelivery.orders && (
                     <div className="mb-6 border-b border-gray-200/50 pb-6">
-                      <h3 className="text-sm font-light text-gray-500 mb-4">Order Details</h3>
+                      <h3 className="text-sm font-light text-gray-500 mb-4">
+                        {t('buyerPortalDeliveries.sectionOrderTitle')}
+                      </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-light">Product:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelProduct')}</span>
                           <span className="font-light text-gray-900">
                             {selectedDelivery.orders.productName}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-light">Quantity:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelQuantity')}</span>
                           <span className="font-light text-gray-900">
                             {selectedDelivery.orders.quantity} {selectedDelivery.orders.unit}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-light">Total Amount:</span>
+                          <span className="text-gray-600 font-light">{t('buyerPortalDeliveries.labelTotalAmount')}</span>
                           <span className="font-light text-green-600/80">
                             €{selectedDelivery.orders.totalAmount?.toFixed(2) || '0.00'}
                           </span>
                         </div>
                       </div>
+                    </div>
+                  )}
+
+                  {needsBuyerPickupConfirmation(selectedDelivery) && (
+                    <div className="mb-6 border-b border-gray-200/50 pb-6">
+                      <h3 className="text-sm font-medium text-gray-800 mb-2">
+                        {t('buyerPortalDeliveries.confirmPickupCta')}
+                      </h3>
+                      <p className="text-xs text-gray-600 font-light mb-3">{t('buyerPortalDeliveries.confirmPickupHint')}</p>
+                      <button
+                        type="button"
+                        disabled={pickupSubmittingId === selectedDelivery.id}
+                        onClick={() => void handleConfirmPickup(selectedDelivery.id)}
+                        className="inline-flex min-h-[48px] items-center rounded-lg bg-[#2D5A27] px-4 py-2 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
+                      >
+                        {pickupSubmittingId === selectedDelivery.id
+                          ? t('buyerPortalDeliveries.confirmPickupDoing')
+                          : t('buyerPortalDeliveries.confirmPickupCta')}
+                      </button>
                     </div>
                   )}
 
@@ -678,10 +797,10 @@ export default function DeliveriesPage() {
                   {/* QR Code for confirmation */}
                   {selectedDelivery.status === 'IN_TRANSIT' && selectedDelivery.deliveryQRCode && (
                     <div className="mb-6 border-b border-gray-200/50 pb-6">
-                      <h3 className="text-sm font-light text-gray-500 mb-4">Confirm Delivery</h3>
-                      <p className="text-sm text-gray-600 mb-4 font-light">
-                        Scan the QR code or click the button below to confirm delivery and release payment.
-                      </p>
+                      <h3 className="text-sm font-light text-gray-500 mb-4">
+                        {t('buyerPortalDeliveries.modalConfirmQrTitle')}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4 font-light">{t('buyerPortalDeliveries.modalConfirmQrLead')}</p>
                       <div className="flex items-center gap-4">
                         <div className="bg-white p-4 border border-green-200/50">
                           <QrCode className="w-24 h-24 text-green-600/60" strokeWidth={1} />
@@ -690,7 +809,7 @@ export default function DeliveriesPage() {
                           onClick={() => handleConfirmDelivery(selectedDelivery.deliveryQRCode)}
                           className="px-6 py-3 bg-green-600 text-white text-sm font-light hover:bg-green-700 transition-colors"
                         >
-                          Confirm Delivery
+                          {t('buyerPortalDeliveries.qrConfirmButton')}
                         </button>
                       </div>
                     </div>
@@ -757,7 +876,7 @@ export default function DeliveriesPage() {
                             onClick={() => removeIssuePhoto(i)}
                             disabled={issueSubmitting}
                             className="absolute -right-2 -top-2 rounded-full bg-gray-900 text-white p-0.5 text-xs"
-                            aria-label="Remove"
+                            aria-label={t('buyerPortalDeliveries.reportIssuePhotoRemoveAria')}
                           >
                             <XCircle className="h-4 w-4" strokeWidth={1} />
                           </button>

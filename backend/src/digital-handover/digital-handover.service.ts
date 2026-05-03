@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
@@ -85,7 +85,7 @@ export class DigitalHandoverService {
       type: 'ACTION_REQUIRED',
       title: 'Handover Initiated',
       message: `Driver ${delivery.users.firstName} ${delivery.users.lastName} has arrived. Please complete quality audit.`,
-      actionUrl: `/handover/${handover.id}`,
+      actionUrl: `/buyer-portal/handover/${handover.id}`,
     });
 
     // Real-time notification
@@ -96,7 +96,7 @@ export class DigitalHandoverService {
           type: 'ACTION_REQUIRED',
           title: 'Handover Initiated',
           message: `Driver has arrived. Please complete quality audit.`,
-          actionUrl: `/handover/${handover.id}`,
+          actionUrl: `/buyer-portal/handover/${handover.id}`,
           handoverId: handover.id,
         },
       );
@@ -110,7 +110,7 @@ export class DigitalHandoverService {
   /**
    * Store manager completes handover with quality check
    */
-  async completeHandover(managerId: string, dto: CompleteHandoverDto) {
+  async completeHandover(managerId: string, dto: CompleteHandoverDto, callerRoles?: string[]) {
     const handover = await this.prisma.digital_handovers.findUnique({
       where: { id: dto.handoverId },
       include: {
@@ -136,9 +136,25 @@ export class DigitalHandoverService {
       throw new BadRequestException('Handover already completed or disputed');
     }
 
+    const roles = callerRoles ?? [];
+    const elevated = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+    const linkedBuyerId = handover.deliveries.orders.buyerId;
+    if (!elevated && linkedBuyerId !== managerId) {
+      throw new ForbiddenException(
+        'Samo Bio Vera buyer nalog vezan za ovu porudžbinu može da završi primopredaju.',
+      );
+    }
+
     // Validate photos (must have 2)
     if (dto.qualityCheck.photoUrls.length < 2) {
       throw new BadRequestException('At least 2 photos are required');
+    }
+
+    const sig = (dto.qualityCheck.signature ?? '').trim();
+    if (dto.qualityCheck.visualCheck === QualityStatus.FRESH && sig.length < 80) {
+      throw new BadRequestException(
+        'Recipient digital signature is required to complete handover without a dispute (draw or capture signature, then submit).',
+      );
     }
 
     // Update handover
