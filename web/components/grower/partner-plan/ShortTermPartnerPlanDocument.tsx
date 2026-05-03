@@ -84,6 +84,33 @@ export default function ShortTermPartnerPlanDocument() {
           ['Additional', 'Collaboration with buyers in other EU countries'],
         ]}
       />
+      <PlanH3>BioVera Fresh flagship rollout (Serbia + EU)</PlanH3>
+      <PlanP>
+        Within the same <strong className="font-semibold text-gray-900">three-year period</strong>, Bio Vera plans{' '}
+        <strong className="font-semibold text-gray-900">three controlled BioVera Fresh openings</strong>. The{' '}
+        <strong className="font-semibold text-gray-900">first two</strong> are in{' '}
+        <strong className="font-semibold text-gray-900">Serbia</strong>, in{' '}
+        <strong className="font-semibold text-gray-900">Belgrade</strong>,{' '}
+        <strong className="font-semibold text-gray-900">Niš</strong>, or{' '}
+        <strong className="font-semibold text-gray-900">Novi Sad</strong> (exact cities and sequence follow site
+        criteria and partner readiness — any two of these three). The{' '}
+        <strong className="font-semibold text-gray-900">third</strong> opening is{' '}
+        <strong className="font-semibold text-gray-900">Bucharest, Romania</strong>, as the anchor for the{' '}
+        <strong className="font-semibold text-gray-900">European market</strong>.
+      </PlanP>
+      <PlanTable
+        headers={['Year', 'Cumulative stores', 'Location']}
+        rows={[
+          ['Year 1', '1', 'Serbia: flagship in Belgrade, Niš, or Novi Sad'],
+          ['Year 2', '2', 'Serbia: second store in another of Belgrade, Niš, or Novi Sad'],
+          ['Year 3', '3', 'Romania: Bucharest – European market footprint'],
+        ]}
+      />
+      <PlanP>
+        Together this anchors the concept domestically and adds a clear{' '}
+        <strong className="font-semibold text-gray-900">EU retail step</strong> alongside existing export-oriented sales
+        channels.
+      </PlanP>
 
       <PlanDivider />
 

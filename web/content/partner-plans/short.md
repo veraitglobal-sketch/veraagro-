@@ -60,6 +60,18 @@ These locations provide access to production, lower operating costs, and strong 
 | Primary | Germany |
 | Additional | Collaboration with buyers in other EU countries |
 
+### BioVera Fresh flagship rollout (Serbia + EU)
+
+Within the **same three-year period**, Bio Vera plans **three controlled BioVera Fresh openings**. The **first two** are in **Serbia**, in **Belgrade**, **Niš**, or **Novi Sad** (exact cities and sequence follow site criteria and partner readiness — any **two** of these three). The **third** opening is **Bucharest, Romania**, as the anchor for the **European market**.
+
+| Year | Cumulative stores | Location |
+| ---- | ----------------- | -------- |
+| **Year 1** | 1 | **Serbia:** flagship in **Belgrade**, **Niš**, or **Novi Sad** |
+| **Year 2** | 2 | **Serbia:** second store in another of **Belgrade**, **Niš**, or **Novi Sad** |
+| **Year 3** | 3 | **Romania: Bucharest** – European market footprint |
+
+Together this anchors the concept domestically and adds a clear **EU retail step** alongside existing export-oriented sales channels.
+
 ---
 
 ## 4. Business model
