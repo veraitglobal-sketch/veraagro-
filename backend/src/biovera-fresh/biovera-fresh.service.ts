@@ -6,7 +6,7 @@ import { PDF_SECTIONS_EN, PDF_SECTIONS_SR } from './biovera-fresh.pdf-sections';
 
 export type BioVeraFreshPdfLocale = 'en' | 'sr';
 
-/** Prospect hero photo: add `web/public/biovera-fresh-prospect-hero.jpg` (or `.png`). API also checks `public/` at process cwd. */
+/** Prospect hero: place image at web/public/biovera-fresh-prospect-hero.jpg or .png; API resolves repo public folders. */
 const BIOVERA_FRESH_HERO_PREFERRED = 'biovera-fresh-prospect-hero.jpg';
 const BIOVERA_FRESH_HERO_FALLBACK = 'biovera-fresh-prospect-hero.png';
 
