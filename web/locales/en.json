@@ -3050,7 +3050,7 @@
         {
           "phase": "Q3-Q4 2026",
           "title": "Scaling",
-          "status": "planned",
+          "status": "in-progress",
           "items": [
             "Multi-region Support",
             "Partner API access",
