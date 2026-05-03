@@ -6,9 +6,26 @@ import { PDF_SECTIONS_EN, PDF_SECTIONS_SR } from './biovera-fresh.pdf-sections';
 
 export type BioVeraFreshPdfLocale = 'en' | 'sr';
 
+/** Prospect hero photo: add `web/public/biovera-fresh-prospect-hero.jpg` (or `.png`). API also checks `public/` at process cwd. */
+const BIOVERA_FRESH_HERO_PREFERRED = 'biovera-fresh-prospect-hero.jpg';
+const BIOVERA_FRESH_HERO_FALLBACK = 'biovera-fresh-prospect-hero.png';
+
 @Injectable()
 export class BioVeraFreshService {
   private readonly logger = new Logger(BioVeraFreshService.name);
+
+  /** Resolve static files whether Nest runs from repo root, `backend/`, or another cwd. */
+  private resolveRepoPublicAsset(fileName: string): string | null {
+    const candidates = [
+      path.join(process.cwd(), 'public', fileName),
+      path.join(process.cwd(), '..', 'web', 'public', fileName),
+      path.join(process.cwd(), 'web', 'public', fileName),
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) return p;
+    }
+    return null;
+  }
 
   normalizeLocale(raw: string | undefined): BioVeraFreshPdfLocale {
     if (!raw) return 'en';
@@ -78,6 +95,28 @@ export class BioVeraFreshService {
             { width: textWidth },
           );
         doc.moveDown(1);
+
+        const heroImage =
+          this.resolveRepoPublicAsset(BIOVERA_FRESH_HERO_PREFERRED) ??
+          this.resolveRepoPublicAsset(BIOVERA_FRESH_HERO_FALLBACK);
+        if (heroImage) {
+          try {
+            const heroMaxH = 200;
+            if (doc.y + heroMaxH > doc.page.height - bottomMargin) {
+              doc.addPage();
+              doc.y = 50;
+            }
+            const heroY = doc.y;
+            doc.image(heroImage, 50, heroY, {
+              fit: [textWidth, heroMaxH],
+              align: 'center',
+              valign: 'center',
+            });
+            doc.y = heroY + heroMaxH + 14;
+          } catch (e) {
+            this.logger.warn('BioVera Fresh PDF: hero image failed', e);
+          }
+        }
 
         for (const section of sections) {
           doc.fontSize(13).fillColor(veraGreen).font('Helvetica-Bold');

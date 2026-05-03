@@ -4305,73 +4305,105 @@
     "contentsTitle": "Na ovoj stranici",
     "contentsNav": "Skok na odeljak",
     "skipToContent": "Preskoči na dokument",
-    "coverEyebrow": "Kontrolisana maloprodaja",
+    "coverEyebrow": "Direct. Fresh. Controlled.",
     "coverTitle": "BioVera Fresh",
-    "coverSubtitle": "Svježe voće i povrće direktno iz kontrolisane proizvodnje.",
+    "coverSubtitle": "Moderan koncept prodaje svježih proizvoda.",
     "pdfDocumentTitle": "Kompletan dokument — BioVera Fresh",
     "pdfDocumentSubtitle": "Ceo tekst za deljenje sa partnerima, pilote ili arhivu.",
     "ctaTitle": "Postanite BioVera Fresh partner",
-    "ctaBody": "Za franšizu ili pilot prodavnicu pošaljite lokaciju i kapacitete — usmerićemo vas ka sledećem koraku u programu.",
+    "ctaBody": "Ako želite da postanete dio modernog sistema prodaje hrane i razvijate sopstveni biznis uz podršku BioVera koncepta, javite nam se — usmerićemo vas ka sledećem koraku.",
     "ctaButton": "Kontakt",
     "webSections": [
       {
         "title": "BioVera Fresh",
-        "body": "Moderan maloprodajni koncept: proizvođač → kupac uz kontrolisan kvalitet, poznato porijeklo i direktnu distribuciju."
+        "body": "Moderan koncept prodaje svježih proizvoda — Direct. Fresh. Controlled.\n\nSavremeni model maloprodaje voća i povrća: direktna veza sa proizvođačima, kontrolisan kvalitet i maksimalna iskorištenost robe."
       },
       {
-        "title": "Program",
-        "body": "Prirodni nastavak BioVere — siguran plasman, manje gubitaka, transparentan model za krajnje kupce."
+        "title": "Uvod",
+        "body": "Odgovor na rastuću potrebu za organizovanom, transparentnom i efikasnom prodajom. Umjesto gubitaka zbog haosa u lancu — jasan standard koji povezuje proizvodnju i tržište."
       },
       {
-        "title": "Proces i ponuda",
-        "body": "• Mreža farmera → BioVera standard → distribucija → prodavnica\n• Voće i povrće, dnevne voćne salate, svježi sokovi, BioVera pakovanja"
+        "title": "Problem i BioVera rješenje",
+        "body": "Izazovi na tržištu: neorganizovana distribucija, gubici, nepoznato porijeklo, nestabilne cijene, nedostatak kontrole.\n\nNaš model: direktna veza farmer–prodaja, standardizovan kvalitet, organizovana distribucija i prodajna mjesta — manje otpada, viša vrijednost."
       },
       {
-        "title": "Kvalitet i cijene",
-        "body": "Kontrolisano porijeklo i dnevna kontrola kvaliteta. Stabilne cijene; popusti samo u skladu sa svežinom."
+        "title": "Prodavnica i tok robe",
+        "body": "Dvije zone: retail (svježe voće i povrće, prodaja na mjeru, BioVera pakovanja) i Fresh pult (sokovi, voćne salate, priprema pred kupcem), uz brz servis.\n\nTok: proizvodnja u mreži farmera → BioVera standard → distribucija → BioVera Fresh prodavnica."
       },
       {
-        "title": "Partneri i franšiza",
-        "body": "Bez konkurencije postojećim partnerima — dodatni kanal. Franšiza: proizvodi, model, standardi, podrška. Prijava — kontakt."
+        "title": "Roba, zarada i partneri",
+        "body": "Upravljanje robom smanjuje otpad (npr. roba 2–3 dana u sokove i salate). Zarada iz prodaje, sokova i salata; operativno jednostavno — mali tim.\n\nNije konkurencija retail partnerima — dodatni kanal. Kontakt za ulazak u program."
       }
     ],
     "pdfSections": [
       {
         "title": "BioVera Fresh",
-        "body": "Svježe voće i povrće direktno iz kontrolisane proizvodnje.\n\nBioVera Fresh je moderan maloprodajni koncept koji povezuje proizvođače i krajnje kupce kroz sistem kontrolisanog kvaliteta, poznatog porijekla i direktne distribucije."
+        "body": "Moderan koncept prodaje svježih proizvoda.\n\nDirect. Fresh. Controlled.\n\nBioVera Fresh predstavlja savremeni model maloprodaje voća i povrća, zasnovan na direktnoj povezanosti sa proizvođačima, kontrolisanom kvalitetu i maksimalnoj iskorištenosti proizvoda."
       },
       {
-        "title": "Šta je BioVera Fresh",
-        "body": "BioVera Fresh predstavlja prirodni nastavak BioVera sistema.\n\nRazvijen je kao odgovor na rastuću potražnju za kvalitetnim proizvodima iz naše mreže, kao i potrebu za stabilnim i kontrolisanim plasmanom robe.\n\nNaš cilj je da omogućimo siguran kanal prodaje, smanjimo gubitke i približimo proizvode krajnjim kupcima kroz moderan i transparentan model."
+        "title": "1. UVOD",
+        "body": "BioVera Fresh je nastao kao odgovor na rastuću potrebu za organizovanom, transparentnom i efikasnom prodajom svježih proizvoda.\n\nU tradicionalnim sistemima, veliki dio robe gubi vrijednost zbog loše organizacije, nepredvidive potražnje i nedostatka kontrole.\n\nBioVera Fresh uvodi novi standard — sistem koji povezuje proizvodnju i tržište kroz kontrolisan lanac, uz stabilan kvalitet i minimalne gubitke."
       },
       {
-        "title": "Kako funkcioniše",
-        "body": "Proizvodi u BioVera Fresh sistemu prolaze kroz jasno definisan proces:\n\n• proizvodnja u mreži farmera\n• kontrola kvaliteta kroz BioVera standard\n• distribucija kroz organizovani sistem\n• prodaja u BioVera Fresh prodavnicama\n\nNa ovaj način obezbjeđujemo dosljedan kvalitet i pouzdano porijeklo svakog proizvoda."
+        "title": "2. PROBLEM NA TRŽIŠTU",
+        "body": "Današnje tržište voća i povrća suočava se sa nekoliko ključnih problema:\n\n• neorganizovana distribucija\n• veliki gubici robe\n• nepoznato porijeklo proizvoda\n• nestabilne cijene\n• nedostatak kontrole kvaliteta\n\nOvakav sistem stvara nesigurnost za proizvođače, partnere i krajnje kupce."
       },
       {
-        "title": "Šta nudimo",
-        "body": "U BioVera Fresh prodavnicama dostupni su:\n\n• svježe voće i povrće\n• voćne salate pripremljene svakodnevno\n• svježe cijeđeni sokovi\n• BioVera pakovanja i selekcije proizvoda\n\nSvi proizvodi dolaze iz naše mreže i prate definisane standarde kvaliteta."
+        "title": "3. BIOVERA RJEŠENJE",
+        "body": "BioVera Fresh uvodi jasan i kontrolisan model:\n\n• direktna veza između farmera i prodaje\n• standardizovan kvalitet proizvoda\n• organizovana distribucija\n• kontrolisana prodajna mjesta\n• maksimalna iskorištenost robe\n\nNa ovaj način smanjuju se gubici i povećava ukupna vrijednost proizvoda."
       },
       {
-        "title": "Standard i kvalitet",
-        "body": "BioVera Fresh proizvodi zasnovani su na:\n\n• kontrolisanom porijeklu\n• jasno definisanim pravilima proizvodnje\n• svakodnevnoj provjeri kvaliteta\n• transparentnosti prema kupcima\n\nNaš fokus je da svaki proizvod zadrži svoju vrijednost i svježinu od proizvodnje do prodaje."
+        "title": "4. KONCEPT PRODAVNICE",
+        "body": "BioVera Fresh prodavnica je moderan, funkcionalan i jednostavan prostor podijeljen u dvije ključne zone:\n\nRetail zona\n• svježe voće i povrće\n• jasno izloženi proizvodi\n• prodaja na mjeru\n• BioVera pakovanja\n\nFresh zona (pult)\n• svježe cijeđeni sokovi\n• voćne salate\n• priprema pred kupcem\n\nDodatno\n• mali prostor za konzumaciju\n• brz i jednostavan servis"
       },
       {
-        "title": "Model cijena",
-        "body": "Cijene u BioVera Fresh prodavnicama ostaju stabilne i odražavaju kvalitet proizvoda.\n\nPopusti se primjenjuju isključivo u skladu sa prirodom proizvoda i njihovom svježinom, kako bi se obezbijedio optimalan balans između kvaliteta i dostupnosti."
+        "title": "5. KAKO SISTEM FUNKCIONIŠE",
+        "body": "BioVera Fresh prati jednostavan i efikasan tok:\n\n• proizvodnja u mreži farmera\n• kontrola kvaliteta kroz BioVera standard\n• distribucija kroz organizovani sistem\n• prodaja u BioVera Fresh prodavnicama\n\nOvaj model omogućava stabilnost, kontrolu i transparentnost u svakom koraku."
       },
       {
-        "title": "Odnos prema partnerima",
-        "body": "BioVera Fresh ne predstavlja konkurenciju postojećim partnerima.\n\nNaši glavni partneri ostaju retail lanci, distributeri i kupci sa kojima razvijamo dugoročnu saradnju.\n\nBioVera Fresh funkcioniše kao dodatni kanal koji omogućava stabilnost sistema, bolju iskorištenost proizvoda i kontinuiranu distribuciju."
+        "title": "6. UPRAVLJANJE ROBOM",
+        "body": "Jedna od ključnih prednosti BioVera Fresh koncepta je pametno upravljanje proizvodima:\n\n• svježa roba ide direktno u prodaju\n• roba stara 2–3 dana koristi se za sokove i salate\n• roba koja ne zadovoljava standard ne koristi se\n\nOvim pristupom postiže se:\n\n• minimalan otpad\n• maksimalna iskorištenost\n• dodatna vrijednost proizvoda"
       },
       {
-        "title": "Postani BioVera Fresh partner",
-        "body": "BioVera Fresh omogućava partnerima da postanu dio sistema kroz franšizni model.\n\nKao partner dobijate:\n\n• pristup BioVera proizvodima\n• jasno definisan poslovni model\n• standarde rada i kvaliteta\n• podršku u razvoju i operacijama\n\nUkoliko želite da razvijate sopstveni biznis uz podršku BioVera sistema, prijavite se za partnerstvo."
+        "title": "7. MODEL ZARADE",
+        "body": "BioVera Fresh partner ostvaruje zaradu kroz više izvora:\n\n1. Prodaja voća i povrća\n• stabilan promet\n• kontinuirana potražnja\n• osnovni prihod\n\n2. Svježe cijeđeni sokovi\n• visoka marža\n• brza prodaja\n• dodatni prihod\n\n3. Voćne salate\n• premium proizvod\n• povećanje vrijednosti kupovine\n• dodatna profitabilnost\n\nKombinacijom ovih izvora, partner ostvaruje stabilan i skalabilan model zarade."
+      },
+      {
+        "title": "8. OPERATIVNI MODEL",
+        "body": "BioVera Fresh je dizajniran da bude jednostavan za upravljanje:\n\n• mali tim (2 radnika)\n• jasan raspored rada\n• brza organizacija\n• minimalna kompleksnost\n\nOvaj model omogućava brz početak i efikasno svakodnevno poslovanje."
+      },
+      {
+        "title": "9. PREDNOSTI ZA PARTNERA",
+        "body": "Ulaskom u BioVera Fresh sistem, partner dobija:\n\n• pristup BioVera proizvodima\n• gotov poslovni model\n• standarde rada i kvaliteta\n• podršku u pokretanju i razvoju\n• stabilno snabdijevanje\n• prepoznatljiv brend"
+      },
+      {
+        "title": "10. INVESTICIJA",
+        "body": "Investicija za pokretanje BioVera Fresh prodavnice zavisi od:\n\n• veličine prostora\n• lokacije\n• opreme\n\nModel je dizajniran tako da omogući relativno brz povrat investicije uz stabilno poslovanje."
+      },
+      {
+        "title": "11. ODNOS PREMA TRŽIŠTU",
+        "body": "BioVera Fresh ne predstavlja konkurenciju postojećim partnerima.\n\nNaši glavni partneri ostaju retail lanci i distributeri, dok BioVera Fresh funkcioniše kao dodatni kanal koji:\n\n• stabilizuje tržište\n• omogućava prodaju viška robe\n• podržava kontinuitet proizvodnje"
+      },
+      {
+        "title": "12. RAZVOJ I RAST",
+        "body": "BioVera Fresh je dio šireg sistema koji se razvija na evropskom tržištu.\n\nPlanirano širenje uključuje:\n\n• nove lokacije\n• razvoj mreže partnera\n• povećanje proizvodnje\n• jačanje distribucije"
+      },
+      {
+        "title": "13. KO MOŽE POSTATI PARTNER",
+        "body": "BioVera Fresh partner može biti:\n\n• preduzetnik\n• investitor\n• vlasnik lokacije\n• osoba zainteresovana za razvoj stabilnog biznisa"
+      },
+      {
+        "title": "14. POSTANI BIOVERA FRESH PARTNER",
+        "body": "Ukoliko želite da postanete dio modernog sistema prodaje hrane i razvijate sopstveni biznis uz podršku BioVera koncepta, pozivamo vas da nas kontaktirate."
+      },
+      {
+        "title": "Kontakt",
+        "body": "Za dodatne informacije kontaktirajte BioVera tim.\n\nEmail: contact@biovera.app\nTelefon: +49 155 63740470\nWeb: https://biovera.app"
       }
     ],
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
-    "prospectNote": "PDF obuhvata ceo narativ: uvod, proces, ponudu (uključujući salate i sokove), standarde, cijene, odnos prema partnerima i franšizu.",
+    "prospectNote": "PDF sadrži kompletan prospekt: 14 poglavlja (od uvoda do partnerstva), kontakt i pun tekst za štampu ili arhivu.",
     "franchiseBlueprintTitle": "Kako treba da izgleda BioVera Fresh franšiza",
     "franchiseBlueprintLead": "Jedna prepoznatljiva prodavnica: jasni brend, hladni lanac na očigled, čist rad prostora.",
     "franchiseBlueprintItems": [
@@ -4402,7 +4434,7 @@
       {
         "id": "freshProspect",
         "title": "BioVera Fresh prospekt",
-        "description": "Kompletan tekst programa: koncept, proces, asortiman, standardi, model cijena, partneri i franšiza.",
+        "description": "Kompletan tekst: uvod, tržište, rješenje, koncept prodavnice, tok, upravljanje robom, zarada, operativa, prednosti, investicija, odnos prema tržištu, razvoj, ko može biti partner i kontakt.",
         "type": "PDF",
         "size": "~180 KB"
       }
