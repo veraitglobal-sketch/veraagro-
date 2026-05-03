@@ -110,7 +110,7 @@ export function MaterialComplianceForm() {
           <Text style={{ fontSize: 14, color: colors.text.secondary, lineHeight: 20 }}>
             {t('producer.compliance.batchForm.noBatches')}{' '}
             <Text
-              onPress={() => router.push('/(producer)/batches')}
+              onPress={() => router.push('/(producer)/batch-new')}
               style={{ color: colors.primary, fontWeight: '600' }}
             >
               {t('producer.compliance.batchForm.createBatch')}

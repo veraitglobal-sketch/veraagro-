@@ -311,7 +311,7 @@ export default function MissionsCreateScreen() {
               {t('producer.missionsCreate.noBatchesBody')}
             </Text>
             <TouchableOpacity
-              onPress={() => router.push('/(producer)/batches')}
+              onPress={() => router.push('/(producer)/batch-new')}
               style={{ marginTop: theme.spacing.md, minHeight: 48, justifyContent: 'center' }}
             >
               <Text style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '600' }}>

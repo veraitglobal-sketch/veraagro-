@@ -28,7 +28,7 @@ export class BatchesService {
 
   /**
    * Create new batch (when farmer packs produce).
-   * If parcelId is provided, the parcel must be approved by admin before the farmer can form a batch.
+   * If parcelId is provided, the parcel must be approved (or ACTIVE/CERTIFIED) before the farmer can form a batch.
    */
   async createBatch(data: {
     estateId: string;
@@ -50,8 +50,14 @@ export class BatchesService {
       if (parcel.estates.ownerId !== data.harvestedByUserId) {
         throw new ForbiddenException('You can only create batches from your own estate parcels');
       }
-      if (!parcel.approvedAt) {
-        throw new ForbiddenException('Parcel must be approved before you can form a batch. Wait for admin approval.');
+      const parcelReady =
+        parcel.approvedAt != null ||
+        parcel.status === 'ACTIVE' ||
+        parcel.status === 'CERTIFIED';
+      if (!parcelReady) {
+        throw new ForbiddenException(
+          'Parcel must be administrator-approved or active/certified before you can form a batch.',
+        );
       }
     }
 
@@ -374,6 +380,19 @@ export class BatchesService {
       throw new NotFoundException('Batch not found');
     }
 
+    const formatUserDisplay = (u: { id: string; firstName?: string | null; lastName?: string | null } | null | undefined) => {
+      if (!u) return null;
+      const name = [u.firstName, u.lastName].filter(Boolean).join(' ').trim();
+      return {
+        id: u.id,
+        name: name || u.id,
+      };
+    };
+
+    const estate = batch.estates;
+    const estateOwnerUser = estate?.users;
+    const estateOwner = formatUserDisplay(estateOwnerUser ?? null);
+
     return {
       batch: {
         batchId: batch.batchId,
@@ -385,14 +404,13 @@ export class BatchesService {
       },
       traceability: {
         origin: {
-          estate: {
-            id: batch.estates.id,
-            name: batch.estates.name,
-            owner: {
-              id: batch.estates.users.id,
-              name: `${batch.estates.users.firstName} ${batch.estates.users.lastName}`,
-            },
-          },
+          estate: estate
+            ? {
+                id: estate.id,
+                name: estate.name,
+                owner: estateOwner,
+              }
+            : null,
           parcel: batch.parcels
             ? {
                 id: batch.parcels.id,
@@ -400,18 +418,8 @@ export class BatchesService {
               }
             : null,
         },
-        harvestedBy: batch.users_batches_harvestedByUserIdTousers
-          ? {
-              id: batch.users_batches_harvestedByUserIdTousers.id,
-              name: `${batch.users_batches_harvestedByUserIdTousers.firstName} ${batch.users_batches_harvestedByUserIdTousers.lastName}`,
-            }
-          : null,
-        transportedBy: batch.users_batches_transportedByDriverIdTousers
-          ? {
-              id: batch.users_batches_transportedByDriverIdTousers.id,
-              name: `${batch.users_batches_transportedByDriverIdTousers.firstName} ${batch.users_batches_transportedByDriverIdTousers.lastName}`,
-            }
-          : null,
+        harvestedBy: formatUserDisplay(batch.users_batches_harvestedByUserIdTousers ?? null),
+        transportedBy: formatUserDisplay(batch.users_batches_transportedByDriverIdTousers ?? null),
         currentLocation: batch.hubs
           ? {
               hubId: batch.hubs.id,
@@ -420,26 +428,27 @@ export class BatchesService {
             }
           : 'At origin (estate)',
         locationHistory: batch.locationHistory,
-        orders: batch.order_items && batch.order_items.length > 0
-          ? batch.order_items.map((item) => ({
-              orderId: item.orders.id,
-              orderNumber: item.orders.orderNumber,
-              buyer: {
-                id: item.orders.users.id,
-                name: `${item.orders.users.firstName} ${item.orders.users.lastName}`,
-              },
-              delivery: item.orders.deliveries
-                ? {
-                    driver: item.orders.deliveries.users
+        orders:
+          batch.order_items && batch.order_items.length > 0
+            ? batch.order_items
+                .filter((item) => item.orders?.users)
+                .map((item) => {
+                  const ord = item.orders;
+                  const buyer = formatUserDisplay(ord.users);
+                  const deliveryUser = ord.deliveries?.users;
+                  const driver = formatUserDisplay(deliveryUser ?? null);
+                  return {
+                    orderId: ord.id,
+                    orderNumber: ord.orderNumber,
+                    buyer: buyer ?? { id: ord.buyerId, name: ord.buyerId },
+                    delivery: ord.deliveries
                       ? {
-                          id: item.orders.deliveries.users.id,
-                          name: `${item.orders.deliveries.users.firstName} ${item.orders.deliveries.users.lastName}`,
+                          driver,
                         }
                       : null,
-                  }
-                : null,
-            }))
-          : [],
+                  };
+                })
+            : [],
         qualityIssues: batch.qualityIssues,
       },
     };
@@ -503,7 +512,7 @@ export class BatchesService {
   async getAllBatchesForUser(userId: string) {
     return this.prisma.batches.findMany({
       where: {
-        harvestedByUserId: userId,
+        OR: [{ harvestedByUserId: userId }, { estates: { ownerId: userId } }],
       },
       include: {
         estates: true,

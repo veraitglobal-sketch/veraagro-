@@ -1,22 +1,43 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useLocalSearchParams } from 'expo-router';
-import { Save } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Save, ChevronLeft } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { usePlotMapperData } from './usePlotMapperData';
 import { DimensionsForm } from './DimensionsForm';
 import { PlotCanvas } from './PlotCanvas';
 import { ZonesList } from './ZonesList';
 import { ZoneModal } from './ZoneModal';
+import PlotMapperParcelPicker from './PlotMapperParcelPicker';
 
-/**
- * Plot mapper – digital parcel layout with zones and crops.
- * App route: app/(producer)/plot-mapper.tsx renders this screen.
- */
-export default function PlotMapperScreen() {
+function normalizeParam(v: string | string[] | undefined): string | undefined {
+  if (v == null) return undefined;
+  const s = Array.isArray(v) ? v[0] : v;
+  const t = (s || '').trim();
+  return t.length ? t : undefined;
+}
+
+function safeDecodeParam(s: string) {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
+
+function PlotMapperEditor({
+  parcelId,
+  parcelLabel,
+}: {
+  parcelId: string;
+  parcelLabel?: string;
+}) {
   const { t } = useTranslation();
-  const { parcelId } = useLocalSearchParams<{ parcelId: string }>();
+  const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [pullRefreshing, setPullRefreshing] = useState(false);
   const {
     length,
@@ -60,16 +81,44 @@ export default function PlotMapperScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View
         style={{
-          padding: 20,
+          paddingTop: theme.spacing.sm,
+          paddingHorizontal: Math.max(theme.spacing.sm, p.screenPaddingLeft),
+          paddingRight: Math.max(theme.spacing.sm, p.screenPaddingRight),
+          paddingBottom: 14,
           borderBottomWidth: 0.5,
           borderBottomColor: colors.border,
         }}
       >
+        <TouchableOpacity
+          onPress={() => router.replace('/(producer)/plot-mapper')}
+          hitSlop={12}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: parcelLabel ? 4 : 0 }}
+        >
+          <ChevronLeft size={20} color={colors.primary} strokeWidth={1.75} />
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
+            {t('producer.plotMapper.changeParcel')}
+          </Text>
+        </TouchableOpacity>
+        {parcelLabel ? (
+          <Text
+            style={{
+              fontSize: 13,
+              color: colors.text.secondary,
+              marginBottom: 4,
+              flexWrap: 'wrap',
+            }}
+            numberOfLines={2}
+          >
+            {parcelLabel}
+          </Text>
+        ) : null}
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
           }}
         >
           <Text
@@ -78,12 +127,14 @@ export default function PlotMapperScreen() {
               fontWeight: '300',
               color: colors.text.primary,
               letterSpacing: 0.5,
+              flex: 1,
+              minWidth: 160,
             }}
           >
             {t('producer.plotMapper.veraPlanTitle')}
           </Text>
           <TouchableOpacity
-            onPress={handleSaveBlueprint}
+            onPress={() => void handleSaveBlueprint()}
             disabled={saving}
             style={{
               paddingHorizontal: 16,
@@ -93,6 +144,8 @@ export default function PlotMapperScreen() {
               flexDirection: 'row',
               alignItems: 'center',
               gap: 6,
+              minHeight: 44,
+              opacity: saving ? 0.85 : 1,
             }}
             activeOpacity={0.7}
           >
@@ -132,8 +185,16 @@ export default function PlotMapperScreen() {
             colors={[colors.primary]}
           />
         }
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={{ padding: 20 }}>
+        <View
+          style={{
+            paddingHorizontal: Math.max(theme.spacing.sm, p.screenPaddingLeft),
+            paddingRight: Math.max(theme.spacing.sm, p.screenPaddingRight),
+            paddingTop: theme.spacing.md,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
+          }}
+        >
           <DimensionsForm
             length={length}
             width={width}
@@ -171,4 +232,20 @@ export default function PlotMapperScreen() {
       />
     </View>
   );
+}
+
+/**
+ * Vera plan — zoniranje pravougaonika parcele. Zahteva izabranu parcelu ako ruta ne prosledi `parcelId`.
+ */
+export default function PlotMapperScreen() {
+  const rawId = normalizeParam(useLocalSearchParams<{ parcelId?: string }>().parcelId);
+  const parcelLabelRaw = normalizeParam(useLocalSearchParams<{ parcelLabel?: string }>().parcelLabel);
+
+  const parcelLabel = parcelLabelRaw ? safeDecodeParam(parcelLabelRaw) : undefined;
+
+  if (!rawId) {
+    return <PlotMapperParcelPicker />;
+  }
+
+  return <PlotMapperEditor parcelId={rawId} parcelLabel={parcelLabel} />;
 }

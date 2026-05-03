@@ -30,6 +30,25 @@ export function mapPlantingSaveError(raw: string | undefined | null, t: TFunctio
   if (low.includes('could not save this plan')) {
     return t('producer.plantings.errSaveGeneric');
   }
+  if (low.includes('invalid time value')) {
+    return t('producer.plantings.validationDateFormat');
+  }
+  if (low.includes('invalid planned date')) {
+    return t('producer.plantings.validationDateFormat');
+  }
+  if (
+    low.includes('estimateddate') ||
+    (low.includes('property') &&
+      (low.includes('should not exist') || low.includes('whitelist')))
+  ) {
+    return t('producer.plantings.errSaveInvalidData');
+  }
+  if (low.includes('shorter') && low.includes('crop')) {
+    return t('producer.plantings.errCropTooLong');
+  }
+  if (low.includes('maxlength') || low.includes('must be shorter')) {
+    return t('producer.plantings.errCropTooLong');
+  }
 
   return t('producer.plantings.errSaveGeneric');
 }

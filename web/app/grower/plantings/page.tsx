@@ -10,12 +10,25 @@ import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '@/lib/api';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { plantingFormDateToEstimatedIsoUtc } from '@/lib/planting-estimated-date';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import type { ReactNode } from 'react';
 import { Leaf, Loader2, Sprout, Wheat } from 'lucide-react';
 
+function parcelEligibleForHarvestPlan(par: { approvedAt?: string | null; status?: string | null }) {
+  if (par.approvedAt) return true;
+  const s = String(par.status ?? '').toUpperCase();
+  return s === 'ACTIVE' || s === 'CERTIFIED';
+}
+
 type EstateRow = { id: string; name: string };
-type ParcelRow = { id: string; cropType?: string | null; approvedAt: string | null; estateId: string };
+type ParcelRow = {
+  id: string;
+  cropType?: string | null;
+  approvedAt: string | null;
+  estateId: string;
+  status?: string | null;
+};
 type HaRow = {
   id: string;
   parcelId: string;
@@ -66,7 +79,7 @@ export default function GrowerPlantingsPage() {
       for (const e of estates || []) {
         const parcels = (await parcelsAPI.getByEstate(e.id).catch(() => [])) as ParcelRow[];
         for (const p of parcels || []) {
-          if (p.approvedAt) {
+          if (parcelEligibleForHarvestPlan(p)) {
             rows.push({ ...p, estateName: e.name });
           }
         }
@@ -84,6 +97,17 @@ export default function GrowerPlantingsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (approvedParcels.length === 1) {
+      setFormParcelId(approvedParcels[0].id);
+      return;
+    }
+    setFormParcelId((prev) => {
+      if (!prev) return '';
+      return approvedParcels.some((p) => p.id === prev) ? prev : '';
+    });
+  }, [approvedParcels]);
 
   const formatDate = useCallback(
     (iso: string) => {
@@ -113,17 +137,29 @@ export default function GrowerPlantingsPage() {
     return t('growerPages.ha_STATUS', { status });
   };
 
+  const restFieldsLocked = approvedParcels.length > 1 && !formParcelId.trim();
+
   const submitPlanting = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formParcelId || !formCrop.trim() || !formDate) return;
+    const cropTrim = formCrop.trim();
+    if (cropTrim.length > 500) {
+      setErr(t('growerPages.plantingsErrCropTooLong'));
+      return;
+    }
+    const parsed = plantingFormDateToEstimatedIsoUtc(formDate);
+    if (!parsed.ok) {
+      setErr(t('growerPages.plantingsErrDateFormat'));
+      return;
+    }
     setSaving(true);
     setErr(null);
     try {
       await harvestAnnouncementsAPI.create({
         parcelId: formParcelId,
         announcementType: 'PLANTING',
-        cropType: formCrop.trim(),
-        estimatedDate: new Date(formDate + 'T12:00:00').toISOString(),
+        cropType: cropTrim,
+        estimatedDate: parsed.iso,
         notes: formNotes.trim() || undefined,
       });
       setFormCrop('');
@@ -204,6 +240,10 @@ export default function GrowerPlantingsPage() {
                         ))}
                       </select>
                     </div>
+                    {restFieldsLocked ? (
+                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">{t('growerPages.plantingsSelectParcelFirstHint')}</p>
+                    ) : null}
+                    <div className={restFieldsLocked ? 'opacity-50 pointer-events-none' : ''}>
                     <div>
                       <label className="block text-base font-medium text-gray-700 mb-1.5">{t('growerPages.plantingsFormCrop')}</label>
                       <input
@@ -233,9 +273,10 @@ export default function GrowerPlantingsPage() {
                         className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
                       />
                     </div>
+                    </div>
                     <button
                       type="submit"
-                      disabled={saving}
+                      disabled={saving || restFieldsLocked}
                       className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Leaf className="h-4 w-4" />}

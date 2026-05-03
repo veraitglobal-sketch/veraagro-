@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
-import { ArrowLeft, Package, QrCode, Calendar } from 'lucide-react-native';
+import { ArrowLeft, Package, QrCode, Calendar, Plus } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
@@ -113,6 +113,15 @@ export default function BatchesScreen() {
         }}>
           {t('producer.batches.listScreenTitle')}
         </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/(producer)/batch-new')}
+          accessibilityRole="button"
+          accessibilityLabel={t('producer.batches.createFabA11y')}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Plus size={26} color={theme.colors.primary} strokeWidth={2} />
+        </TouchableOpacity>
       </View>
 
       {/* Filters */}
@@ -217,10 +226,16 @@ export default function BatchesScreen() {
             </View>
           ) : (
             <View style={{ gap: theme.spacing.sm }}>
-              {filteredBatches.map((batch) => (
+              {filteredBatches.map((batch, index) => {
+                const rowKey = String(batch.id ?? batch.batchId ?? '');
+                const displayId = batch.batchId || (batch.id ? String(batch.id).slice(0, 8) : '');
+                const detailRef = batch.id ?? batch.batchId;
+                return (
                 <TouchableOpacity
-                  key={batch.id}
-                  onPress={() => router.push(`/(producer)/batch/${batch.id}`)}
+                  key={rowKey || displayId || `batch-row-${index}`}
+                  onPress={() => {
+                    if (detailRef) router.push(`/(producer)/batch/${detailRef}`);
+                  }}
                   activeOpacity={0.7}
                   style={{
                     backgroundColor: theme.colors.surface,
@@ -253,7 +268,7 @@ export default function BatchesScreen() {
                           marginLeft: theme.spacing.xs,
                           letterSpacing: 0.2,
                         }}>
-                          {batch.batchId || batch.id.slice(0, 8)}
+                          {displayId}
                         </Text>
                       </View>
                       <Text style={{
@@ -312,7 +327,8 @@ export default function BatchesScreen() {
                     </View>
                   )}
                 </TouchableOpacity>
-              ))}
+                );
+              })}
             </View>
           )}
         </View>

@@ -34,6 +34,13 @@ interface Estate {
   parcels?: Parcel[];
 }
 
+/** Aligned with POST /batches parcel gate (approvedAt or ACTIVE/CERTIFIED). */
+function parcelEligibleForBatch(p: Parcel): boolean {
+  if (p.approvedAt) return true;
+  const s = String(p.status ?? '').toUpperCase();
+  return s === 'ACTIVE' || s === 'CERTIFIED';
+}
+
 export default function GrowerFieldsPage() {
   const { t } = useTranslation();
   const growerNavItems = useGrowerNavItems();
@@ -254,10 +261,11 @@ export default function GrowerFieldsPage() {
                           <span className="ml-2 text-sm text-gray-500">({parcel.id.slice(0, 8)}…)</span>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-2">
-                          {parcel.approvedAt ? (
+                          {parcelEligibleForBatch(parcel) ? (
                             <>
                               <span className="inline-flex items-center gap-1 text-sm text-[#23471f] bg-[#f7faf6] px-2.5 py-1.5 rounded border border-[#2D5A27]/20">
-                                <CheckCircle className="w-3.5 h-3.5 shrink-0" /> {t('growerPages.statusApproved')}
+                                <CheckCircle className="w-3.5 h-3.5 shrink-0" />{' '}
+                                {parcel.approvedAt ? t('growerPages.statusApproved') : t('growerPages.parcelEligibleBadge')}
                               </span>
                               {parcel.publicCode && (
                                 <Link

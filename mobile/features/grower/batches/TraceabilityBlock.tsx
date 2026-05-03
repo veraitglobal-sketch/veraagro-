@@ -32,7 +32,7 @@ export default function TraceabilityBlock({ batch }: { batch: any }) {
           <View style={{ marginLeft: theme.spacing.xs, flex: 1 }}>
             <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary }}>{t('producer.batches.harvestLabel')}</Text>
             <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
-              {batch.harvestedBy.firstName} {batch.harvestedBy.lastName}
+              {personLabel(batch.harvestedBy) || '—'}
             </Text>
           </View>
         </View>

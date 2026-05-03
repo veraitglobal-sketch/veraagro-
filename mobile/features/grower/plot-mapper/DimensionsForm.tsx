@@ -29,7 +29,7 @@ export function DimensionsForm({
           letterSpacing: 0.3,
         }}
       >
-        Dimensions
+        {t('producer.plotMapper.dimensionsHeading')}
       </Text>
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1 }}>

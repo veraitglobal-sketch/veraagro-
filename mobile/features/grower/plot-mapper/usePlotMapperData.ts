@@ -1,14 +1,32 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { plotMapperAPI } from '../../../lib/api';
 import type { Zone, Partition } from './types';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { CANVAS_HEIGHT } from './constants';
+import { computePlotZones } from './computeZones';
 
-export function usePlotMapperData(parcelId: string | undefined) {
+function zonesEqual(a: Zone[], b: Zone[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((z, i) => {
+    const o = b[i];
+    return (
+      z.id === o.id &&
+      z.area === o.area &&
+      z.coordinates.x1 === o.coordinates.x1 &&
+      z.coordinates.y1 === o.coordinates.y1 &&
+      z.coordinates.x2 === o.coordinates.x2 &&
+      z.coordinates.y2 === o.coordinates.y2 &&
+      z.cropType === o.cropType &&
+      z.plantingDate === o.plantingDate &&
+      z.status === o.status &&
+      z.name === o.name
+    );
+  });
+}
+
+export function usePlotMapperData(parcelId: string) {
   const { t } = useTranslation();
-  const router = useRouter();
   const [length, setLength] = useState('');
   const [width, setWidth] = useState('');
   const [zones, setZones] = useState<Zone[]>([]);
@@ -16,20 +34,35 @@ export function usePlotMapperData(parcelId: string | undefined) {
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
   const [showZoneModal, setShowZoneModal] = useState(false);
   const [partitionMode, setPartitionMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const calculateArea = (l: number, w: number) => l * w;
+  /** Debounce dimension typing so we do not recompute zones on every keystroke. */
+  const [debouncedLength, setDebouncedLength] = useState('');
+  const [debouncedWidth, setDebouncedWidth] = useState('');
+
+  useEffect(() => {
+    const h = setTimeout(() => {
+      setDebouncedLength(length);
+      setDebouncedWidth(width);
+    }, 400);
+    return () => clearTimeout(h);
+  }, [length, width]);
+
+  const partitionsKey = useMemo(() => JSON.stringify(partitions.map((p) => [p.id, p.type, p.position])), [partitions]);
 
   const loadBlueprint = useCallback(
     async (opts?: { silent?: boolean }) => {
-      if (!parcelId) return;
       if (!opts?.silent) setLoading(true);
       try {
         const blueprint = await plotMapperAPI.getByParcel(parcelId);
         if (blueprint) {
-          setLength(blueprint.length.toString());
-          setWidth(blueprint.width.toString());
+          const len = blueprint.length.toString();
+          const wid = blueprint.width.toString();
+          setLength(len);
+          setWidth(wid);
+          setDebouncedLength(len);
+          setDebouncedWidth(wid);
           setZones((blueprint.blueprintData.zones || []) as Zone[]);
           setPartitions(blueprint.blueprintData.partitions || []);
         }
@@ -43,30 +76,27 @@ export function usePlotMapperData(parcelId: string | undefined) {
   );
 
   useEffect(() => {
-    if (parcelId) void loadBlueprint();
+    void loadBlueprint();
   }, [parcelId, loadBlueprint]);
 
+  /** Partitions changed — recompute immediately with current dimensions (not debounced). */
   useEffect(() => {
-    if (length && width && partitions.length > 0) {
-      const l = parseFloat(length);
-      const w = parseFloat(width);
-      if (!isNaN(l) && !isNaN(w) && l > 0 && w > 0) generateZones();
-    } else if (partitions.length === 0 && length && width) {
-      const l = parseFloat(length);
-      const w = parseFloat(width);
-      if (!isNaN(l) && !isNaN(w) && l > 0 && w > 0) {
-        const totalArea = calculateArea(l, w);
-        setZones([
-          {
-            id: 'zone-1',
-            name: 'ZONA A',
-            coordinates: { x1: 0, y1: 0, x2: CANVAS_WIDTH, y2: CANVAS_HEIGHT },
-            area: Math.round(totalArea),
-          },
-        ]);
-      }
-    }
-  }, [length, width, partitions.length]);
+    setZones((prev) => {
+      const next = computePlotZones(length, width, partitions, prev);
+      if (!next || zonesEqual(prev, next)) return prev;
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- layout only when partition list changes; length/width read from latest render
+  }, [partitionsKey]);
+
+  /** User paused typing dimensions — recompute without hammering on every keystroke. */
+  useEffect(() => {
+    setZones((prev) => {
+      const next = computePlotZones(debouncedLength, debouncedWidth, partitions, prev);
+      if (!next || zonesEqual(prev, next)) return prev;
+      return next;
+    });
+  }, [debouncedLength, debouncedWidth]);
 
   const handleAddPartition = () => setPartitionMode(true);
 
@@ -83,54 +113,6 @@ export function usePlotMapperData(parcelId: string | undefined) {
     setPartitionMode(false);
   };
 
-  const generateZones = () => {
-    if (!length || !width) return;
-    const l = parseFloat(length);
-    const w = parseFloat(width);
-    if (isNaN(l) || isNaN(w)) return;
-
-    const horizontalPartitions = partitions
-      .filter((p) => p.type === 'HORIZONTAL')
-      .sort((a, b) => a.position - b.position);
-    const verticalPartitions = partitions
-      .filter((p) => p.type === 'VERTICAL')
-      .sort((a, b) => a.position - b.position);
-
-    const rows = horizontalPartitions.length + 1;
-    const cols = verticalPartitions.length + 1;
-    const totalArea = calculateArea(l, w);
-    const zoneCount = rows * cols;
-    const zoneArea = totalArea / zoneCount;
-    const zoneWidth = CANVAS_WIDTH / cols;
-    const zoneHeight = CANVAS_HEIGHT / rows;
-
-    const newZones: Zone[] = [];
-    let zoneIndex = 1;
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        const zoneName = `ZONA ${String.fromCharCode(64 + zoneIndex)}`;
-        const x1 = (col * CANVAS_WIDTH) / cols;
-        const y1 = (row * CANVAS_HEIGHT) / rows;
-        const x2 = ((col + 1) * CANVAS_WIDTH) / cols;
-        const y2 = ((row + 1) * CANVAS_HEIGHT) / rows;
-        const existingZone = zones.find(
-          (z) => Math.abs(z.coordinates.x1 - x1) < 1 && Math.abs(z.coordinates.y1 - y1) < 1
-        );
-        newZones.push({
-          id: existingZone?.id || `zone-${zoneIndex}`,
-          name: existingZone?.name || zoneName,
-          coordinates: { x1, y1, x2, y2 },
-          area: Math.round(zoneArea),
-          cropType: existingZone?.cropType,
-          plantingDate: existingZone?.plantingDate,
-          status: existingZone?.status,
-        });
-        zoneIndex++;
-      }
-    }
-    setZones(newZones);
-  };
-
   const handleZonePress = (zone: Zone) => {
     setSelectedZone(zone);
     setShowZoneModal(true);
@@ -140,7 +122,7 @@ export function usePlotMapperData(parcelId: string | undefined) {
     zoneCropType: string,
     zonePlantingDate: Date,
     zoneStatus: string,
-    onClose: () => void
+    onClose: () => void,
   ) => {
     if (!selectedZone) return;
     setZones((prev) =>
@@ -152,8 +134,8 @@ export function usePlotMapperData(parcelId: string | undefined) {
               plantingDate: zonePlantingDate.toISOString(),
               status: zoneStatus as Zone['status'],
             }
-          : z
-      )
+          : z,
+      ),
     );
     setShowZoneModal(false);
     setSelectedZone(null);
@@ -161,10 +143,6 @@ export function usePlotMapperData(parcelId: string | undefined) {
   };
 
   const handleSaveBlueprint = async () => {
-    if (!parcelId) {
-      Alert.alert(t('error'), t('producer.plotMapper.missingParcelId'));
-      return;
-    }
     if (!length || !width) {
       Alert.alert(t('producer.plotMapper.required'), t('producer.plotMapper.enterLengthWidth'));
       return;
@@ -184,13 +162,12 @@ export function usePlotMapperData(parcelId: string | undefined) {
         width: w,
         blueprintData: { zones, partitions },
       });
-      Alert.alert(t('alerts.success'), t('producer.plotMapper.planSaved'), [
-        { text: t('alerts.ok'), onPress: () => router.back() },
-      ]);
+      Alert.alert(t('alerts.success'), t('producer.plotMapper.planSaved'));
     } catch (err: unknown) {
-      const msg = err && typeof err === 'object' && 'response' in err
-        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-        : null;
+      const msg =
+        err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : null;
       Alert.alert(t('error'), msg || t('producer.plotMapper.savePlanFailed'));
     } finally {
       setSaving(false);
@@ -198,7 +175,7 @@ export function usePlotMapperData(parcelId: string | undefined) {
   };
 
   const totalArea =
-    length && width ? calculateArea(parseFloat(length), parseFloat(width)) : 0;
+    length && width ? parseFloat(length) * parseFloat(width) : 0;
 
   return {
     length,
@@ -214,7 +191,7 @@ export function usePlotMapperData(parcelId: string | undefined) {
     partitionMode,
     loading,
     saving,
-    totalArea,
+    totalArea: Number.isFinite(totalArea) ? totalArea : 0,
     handleAddPartition,
     handleCanvasPress,
     handleZonePress,

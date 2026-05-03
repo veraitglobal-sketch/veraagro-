@@ -51,7 +51,8 @@ interface Batch {
     location?: string;
   };
   parcels?: {
-    name: string;
+    name?: string;
+    cropType?: string | null;
   };
   hubs?: {
     name: string;
@@ -101,8 +102,9 @@ export default function GrowerBatchesPage() {
       setLoading(true);
       setError(null);
       const data = await batchesAPI.getAll();
-      setBatches(data);
-      setFilteredBatches(data);
+      const rows = Array.isArray(data) ? data : [];
+      setBatches(rows);
+      setFilteredBatches(rows);
     } catch (err: unknown) {
       console.error('Error loading batches:', err);
       setError(growerApiErrorOrT(err, t, 'growerPages.loadFailed'));
@@ -112,26 +114,28 @@ export default function GrowerBatchesPage() {
   };
 
   const applyFilters = () => {
-    let filtered = [...batches];
+    const safe = Array.isArray(batches) ? batches : [];
+    let filtered = [...safe];
+    const q = searchTerm.trim().toLowerCase();
 
     // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (batch) =>
-          batch.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          batch.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          batch.estates?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    if (q) {
+      filtered = filtered.filter((batch) => {
+        const bid = String(batch.batchId ?? '').toLowerCase();
+        const pname = String(batch.productName ?? '').toLowerCase();
+        const ename = String(batch.estates?.name ?? '').toLowerCase();
+        return bid.includes(q) || pname.includes(q) || ename.includes(q);
+      });
     }
 
     // Status filter
     if (statusFilter !== 'all') {
-      filtered = filtered.filter((batch) => batch.status === statusFilter);
+      filtered = filtered.filter((batch) => String(batch.status ?? '') === statusFilter);
     }
 
     // Product filter
     if (productFilter !== 'all') {
-      filtered = filtered.filter((batch) => batch.productName === productFilter);
+      filtered = filtered.filter((batch) => String(batch.productName ?? '') === productFilter);
     }
 
     setFilteredBatches(filtered);
@@ -141,8 +145,15 @@ export default function GrowerBatchesPage() {
     setSelectedBatch(batch);
     setBatchDetailsError(null);
     setLoadingDetails(true);
+    const traceRef = String(batch.batchId ?? batch.id ?? '').trim();
+    if (!traceRef) {
+      setBatchDetails(null);
+      setBatchDetailsError(t('growerPages.batchDetailsLoadFailed'));
+      setLoadingDetails(false);
+      return;
+    }
     try {
-      const details = await batchesAPI.getOne(batch.batchId);
+      const details = await batchesAPI.getOne(traceRef);
       setBatchDetails(details);
     } catch (err: unknown) {
       console.error('Error loading batch details:', err);
@@ -227,8 +238,14 @@ export default function GrowerBatchesPage() {
     }
   };
 
-  const uniqueProducts = Array.from(new Set(batches.map((b) => b.productName))).sort();
-  const uniqueStatuses = Array.from(new Set(batches.map((b) => b.status))).sort();
+  const uniqueProducts = Array.from(
+    new Set(batches.map((b) => b.productName).filter((x): x is string => typeof x === 'string' && x.length > 0)),
+  ).sort();
+  const uniqueStatuses = Array.from(
+    new Set(batches.map((b) => b.status).filter((x): x is string => typeof x === 'string' && x.length > 0)),
+  ).sort();
+
+  const formatStatusLabel = (status: string | null | undefined) => String(status ?? '').replace(/_/g, ' ');
 
   if (loading) {
     return (
@@ -322,7 +339,7 @@ export default function GrowerBatchesPage() {
                     <option value="all">{t('growerPages.allStatuses')}</option>
                     {uniqueStatuses.map((status) => (
                       <option key={status} value={status}>
-                        {status.replace('_', ' ')}
+                        {formatStatusLabel(status)}
                       </option>
                     ))}
                   </select>
@@ -409,7 +426,7 @@ export default function GrowerBatchesPage() {
                             )}`}
                           >
                             {getStatusIcon(batch.status)}
-                            {batch.status.replace('_', ' ')}
+                            {formatStatusLabel(batch.status)}
                           </span>
                         </div>
 
@@ -434,7 +451,9 @@ export default function GrowerBatchesPage() {
                             <MapPin className="w-4 h-4 text-gray-400" />
                             <span>
                               {batch.estates?.name || t('growerPages.na')}
-                              {batch.parcels?.name ? ` • ${batch.parcels.name}` : ''}
+                              {(batch.parcels?.cropType || batch.parcels?.name)
+                                ? ` • ${batch.parcels?.cropType || batch.parcels?.name}`
+                                : ''}
                             </span>
                           </div>
                         </div>
@@ -523,7 +542,7 @@ export default function GrowerBatchesPage() {
                               )}`}
                             >
                               {getStatusIcon(selectedBatch.status)}
-                              {selectedBatch.status.replace('_', ' ')}
+                              {formatStatusLabel(selectedBatch.status)}
                             </span>
                           </div>
                         </div>

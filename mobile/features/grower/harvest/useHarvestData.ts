@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
@@ -13,6 +13,7 @@ import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
 import { apiErrorMessage, isLikelyNetworkError, axiosResponseStatus } from '../../../lib/api-error';
+import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
 
 export type HarvestPlanMode = 'PLANTING' | 'HARVEST';
 
@@ -20,18 +21,62 @@ export const CROP_TYPES = ['Raspberry', 'Pepper', 'Tomato', 'Cucumber', 'Lettuce
 
 type ParcelOption = { id: string; label: string };
 
+export type PlantingPickRow = {
+  id: string;
+  parcelId: string;
+  cropType: string;
+  estimatedDate: string;
+};
+
+async function fetchPlantingRows(): Promise<PlantingPickRow[]> {
+  const pending = await offlineStorage.getPendingHarvestPlans();
+  const local: PlantingPickRow[] = pending
+    .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
+    .map((h) => ({
+      id: `local:${h.id}`,
+      parcelId: h.payload.parcelId,
+      cropType: h.payload.cropType,
+      estimatedDate: h.payload.estimatedDate,
+    }));
+  let server: PlantingPickRow[] = [];
+  try {
+    const list = (await harvestAnnouncementsAPI.getMy()) as Array<{
+      id: string;
+      parcelId: string;
+      announcementType?: string;
+      cropType: string;
+      estimatedDate: string;
+    }>;
+    if (Array.isArray(list)) {
+      server = list
+        .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'PLANTING')
+        .map((r) => ({
+          id: r.id,
+          parcelId: r.parcelId,
+          cropType: r.cropType,
+          estimatedDate: r.estimatedDate,
+        }));
+    }
+  } catch {
+    // offline: locals only
+  }
+  return [...local, ...server];
+}
+
 export function useHarvestData() {
   const { t } = useTranslation();
   const [approvedParcels, setApprovedParcels] = useState<ParcelOption[]>([]);
+  const [plantingAnnouncements, setPlantingAnnouncements] = useState<PlantingPickRow[]>([]);
   const [parcelsLoading, setParcelsLoading] = useState(true);
   const [parcelsRefreshing, setParcelsRefreshing] = useState(false);
   const [parcelId, setParcelId] = useState('');
+  const [selectedPlantingId, setSelectedPlantingId] = useState<string | null>(null);
 
   const [cropType, setCropType] = useState('');
   const [estimatedQuantity, setEstimatedQuantity] = useState('');
   const [unit, setUnit] = useState('kg');
   const [harvestDate, setHarvestDate] = useState(() => new Date().toISOString().split('T')[0]);
-  const [plannedLoadDate, setPlannedLoadDate] = useState(''); // YYYY-MM-DD, optional
+  const [plannedLoadDate, setPlannedLoadDate] = useState('');
   const [loadQuantity, setLoadQuantity] = useState('');
   const [marketChannel, setMarketChannel] = useState<'INDUSTRIAL' | 'RETAIL' | 'MIXED' | ''>('');
   const [qualityGrade, setQualityGrade] = useState('');
@@ -41,6 +86,11 @@ export function useHarvestData() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [planMode, setPlanMode] = useState<HarvestPlanMode>('HARVEST');
+
+  const plantingsForParcel = useMemo(
+    () => plantingAnnouncements.filter((a) => a.parcelId === parcelId),
+    [plantingAnnouncements, parcelId],
+  );
 
   const loadApprovedParcels = useCallback(async (opts?: { silent?: boolean }) => {
     const silent = opts?.silent === true;
@@ -65,12 +115,21 @@ export function useHarvestData() {
           ps = (await growerOfflineCache.loadParcels(e.id)) ?? [];
         }
         for (const p of ps || []) {
-          if (p.approvedAt) {
+          if (parcelEligibleForHarvestPlan(p)) {
             out.push({ id: p.id, label: `${e.name} — ${p.cropType || 'Parcel'}` });
           }
         }
       }
+
+      let plantRows: PlantingPickRow[] = [];
+      try {
+        plantRows = await fetchPlantingRows();
+      } catch {
+        plantRows = [];
+      }
+
       setApprovedParcels(out);
+      setPlantingAnnouncements(plantRows);
       setParcelId((prev) => {
         if (out.some((p) => p.id === prev)) return prev;
         if (out.length === 1) return out[0].id;
@@ -79,6 +138,7 @@ export function useHarvestData() {
     } catch (e) {
       console.error(e);
       setApprovedParcels([]);
+      setPlantingAnnouncements([]);
     } finally {
       if (silent) setParcelsRefreshing(false);
       else setParcelsLoading(false);
@@ -89,23 +149,50 @@ export function useHarvestData() {
     void loadApprovedParcels();
   }, [loadApprovedParcels]);
 
-  const refreshParcels = useCallback(() => {
-    void loadApprovedParcels({ silent: true });
-  }, [loadApprovedParcels]);
-
   useEffect(() => {
     Location.requestForegroundPermissionsAsync().then(({ status }) => {
       if (status !== 'granted') Alert.alert(t('producer.estates.permissionsTitle'), t('producer.estates.locationPermissionRequired'));
     });
   }, [t]);
 
-  /** GPS is optional for a harvest *plan* — only for notes/traceability, not to prove you are on the plot. */
+  useEffect(() => {
+    if (planMode !== 'HARVEST') {
+      setSelectedPlantingId(null);
+      return;
+    }
+    if (!parcelId) {
+      setSelectedPlantingId(null);
+      return;
+    }
+    const list = plantingsForParcel;
+    if (list.length === 1) {
+      setSelectedPlantingId(list[0].id);
+      return;
+    }
+    setSelectedPlantingId((prev) => (prev && list.some((p) => p.id === prev) ? prev : null));
+  }, [planMode, parcelId, plantingsForParcel]);
+
+  useEffect(() => {
+    if (planMode !== 'HARVEST' || !selectedPlantingId) return;
+    const row = plantingAnnouncements.find((p) => p.id === selectedPlantingId);
+    if (row?.cropType) setCropType(row.cropType);
+    if (row?.estimatedDate) {
+      const d = new Date(row.estimatedDate);
+      if (!Number.isNaN(d.getTime())) setHarvestDate(d.toISOString().slice(0, 10));
+    }
+  }, [planMode, selectedPlantingId, plantingAnnouncements]);
+
+  const refreshParcels = useCallback(() => {
+    void loadApprovedParcels({ silent: true });
+  }, [loadApprovedParcels]);
+
+  /** GPS optional for harvest *plan*. */
   const getCurrentLocation = useCallback(async () => {
     try {
       setLoading(true);
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
-    } catch (error) {
+    } catch (_error) {
       Alert.alert(t('error'), t('producer.harvest.locationFailed'));
     } finally {
       setLoading(false);
@@ -117,6 +204,18 @@ export function useHarvestData() {
       Alert.alert(t('error'), t('producer.harvest.selectParcel'));
       return;
     }
+
+    if (planMode === 'HARVEST') {
+      if (plantingsForParcel.length === 0) {
+        Alert.alert(t('error'), t('producer.harvest.noPlantingsForParcel'));
+        return;
+      }
+      if (!selectedPlantingId || !plantingsForParcel.some((p) => p.id === selectedPlantingId)) {
+        Alert.alert(t('error'), t('producer.harvest.selectPlanting'));
+        return;
+      }
+    }
+
     if (!cropType.trim()) {
       Alert.alert(t('error'), t('producer.harvest.enterCropType'));
       return;
@@ -146,6 +245,7 @@ export function useHarvestData() {
     }
 
     const resetAfterSuccess = () => {
+      setSelectedPlantingId(null);
       setCropType('');
       setEstimatedQuantity('');
       setLoadQuantity('');
@@ -184,6 +284,7 @@ export function useHarvestData() {
         await harvestAnnouncementsAPI.create(payload);
         Alert.alert(t('alerts.success'), t('producer.harvest.planSent'));
         resetAfterSuccess();
+        void loadApprovedParcels({ silent: true });
       } catch (e: unknown) {
         if (isLikelyNetworkError(e)) {
           try {
@@ -213,6 +314,9 @@ export function useHarvestData() {
     await run();
   }, [
     parcelId,
+    planMode,
+    plantingsForParcel,
+    selectedPlantingId,
     cropType,
     estimatedQuantity,
     harvestDate,
@@ -224,8 +328,16 @@ export function useHarvestData() {
     growerNotes,
     location,
     t,
-    planMode,
+    loadApprovedParcels,
   ]);
+
+  const harvestDetailsReady =
+    planMode === 'PLANTING'
+      ? !!(parcelId && cropType.trim())
+      : !!(parcelId && selectedPlantingId && plantingsForParcel.some((p) => p.id === selectedPlantingId));
+
+  const canSubmit =
+    !parcelsLoading && parcelId && harvestDetailsReady && cropType.trim().length > 0 && estimatedQuantity && !loading;
 
   return {
     planMode,
@@ -236,6 +348,10 @@ export function useHarvestData() {
     refreshParcels,
     parcelId,
     setParcelId,
+    plantingsForParcel,
+    selectedPlantingId,
+    setSelectedPlantingId,
+    harvestDetailsReady,
     cropType,
     setCropType,
     estimatedQuantity,
@@ -260,5 +376,6 @@ export function useHarvestData() {
     loading,
     getCurrentLocation,
     handleSubmit,
+    canSubmit,
   };
 }

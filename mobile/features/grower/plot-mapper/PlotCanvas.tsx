@@ -1,9 +1,13 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { getPlotCanvasLayout } from './canvasLayout';
 import type { Zone, Partition } from './types';
+
+const GRID_LINE = 0.5;
 
 interface PlotCanvasProps {
   length: string;
@@ -14,6 +18,15 @@ interface PlotCanvasProps {
   onAddPartition: () => void;
   onCanvasPress: (event: { nativeEvent: { locationX: number; locationY: number } }) => void;
   onZonePress: (zone: Zone) => void;
+}
+
+/** Logical → display X */
+function toDx(x: number, displayW: number) {
+  return (x / CANVAS_WIDTH) * displayW;
+}
+/** Logical → display Y */
+function toDy(y: number, displayH: number) {
+  return (y / CANVAS_HEIGHT) * displayH;
 }
 
 export function PlotCanvas({
@@ -27,10 +40,24 @@ export function PlotCanvas({
   onZonePress,
 }: PlotCanvasProps) {
   const { t } = useTranslation();
-  const vertCount = partitions.filter((p) => p.type === 'VERTICAL').length + 1;
-  const horzCount = partitions.filter((p) => p.type === 'HORIZONTAL').length + 1;
-  const zoneWidth = CANVAS_WIDTH / vertCount;
-  const zoneHeight = CANVAS_HEIGHT / horzCount;
+  const { width: screenW } = useWindowDimensions();
+  const p = useBioVeraScreenPadding();
+  const horizontalPad = p.screenPaddingLeft + p.screenPaddingRight + 48;
+  const { displayW, displayH, touchToLogical } = getPlotCanvasLayout(screenW, horizontalPad);
+
+  const vertCount = partitions.filter((pr) => pr.type === 'VERTICAL').length + 1;
+  const horzCount = partitions.filter((pr) => pr.type === 'HORIZONTAL').length + 1;
+  const zoneWidth = displayW / vertCount;
+  const zoneHeight = displayH / horzCount;
+
+  const mapPress = (locationX: number, locationY: number) => {
+    onCanvasPress({
+      nativeEvent: {
+        locationX: locationX * touchToLogical,
+        locationY: locationY * touchToLogical,
+      },
+    });
+  };
 
   return (
     <View style={{ marginBottom: 24 }}>
@@ -40,6 +67,8 @@ export function PlotCanvas({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: 12,
+          flexWrap: 'wrap',
+          gap: 8,
         }}
       >
         <Text
@@ -48,6 +77,7 @@ export function PlotCanvas({
             fontWeight: '400',
             color: colors.text.primary,
             letterSpacing: 0.3,
+            flexShrink: 1,
           }}
         >
           {t('producer.plotMapper.canvasPlanLabel')}
@@ -79,145 +109,190 @@ export function PlotCanvas({
               color: partitionMode ? colors.primary : colors.text.secondary,
             }}
           >
-            Add partition
+            {t('producer.plotMapper.addPartition')}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        onPress={onCanvasPress}
-        activeOpacity={1}
-        style={{
-          width: CANVAS_WIDTH,
-          height: CANVAS_HEIGHT,
-          backgroundColor: colors.surface,
-          borderWidth: 0.5,
-          borderColor: 'rgba(26, 48, 33, 0.2)',
-          borderRadius: 6,
-          position: 'relative',
-          alignSelf: 'center',
-        }}
-      >
-        {/* Grid */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <View
-            key={`h-${i}`}
-            style={{
-              position: 'absolute',
-              top: (i * CANVAS_HEIGHT) / 20,
-              left: 0,
-              right: 0,
-              height: 0.5,
-              backgroundColor: 'rgba(26, 48, 33, 0.05)',
-            }}
-          />
-        ))}
-        {Array.from({ length: 15 }).map((_, i) => (
-          <View
-            key={`v-${i}`}
-            style={{
-              position: 'absolute',
-              left: (i * CANVAS_WIDTH) / 15,
-              top: 0,
-              bottom: 0,
-              width: 0.5,
-              backgroundColor: 'rgba(26, 48, 33, 0.05)',
-            }}
-          />
-        ))}
+      {length ? (
+        <Text
+          style={{
+            fontSize: 11,
+            fontWeight: '300',
+            color: colors.text.secondary,
+            textAlign: 'center',
+            marginBottom: 6,
+          }}
+          numberOfLines={1}
+        >
+          {t('producer.plotMapper.axisLength')} {length} m
+        </Text>
+      ) : null}
 
-        {partitions.map((partition) => (
+      <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+        {width ? (
           <View
-            key={partition.id}
             style={{
-              position: 'absolute',
-              [partition.type === 'HORIZONTAL' ? 'top' : 'left']: partition.position,
-              [partition.type === 'HORIZONTAL' ? 'left' : 'top']: 0,
-              [partition.type === 'HORIZONTAL' ? 'width' : 'height']:
-                partition.type === 'HORIZONTAL' ? CANVAS_WIDTH : CANVAS_HEIGHT,
-              [partition.type === 'HORIZONTAL' ? 'height' : 'width']: 1,
-              borderWidth: 1,
-              borderColor: colors.primary,
-              borderStyle: 'dashed',
+              width: 48,
+              paddingRight: 6,
+              justifyContent: 'center',
+              minHeight: displayH,
             }}
-          />
-        ))}
+          >
+            <Text style={{ fontSize: 9, fontWeight: '300', color: colors.text.secondary, textAlign: 'center' }}>
+              {t('producer.plotMapper.axisWidth')}
+            </Text>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.primary, textAlign: 'center', marginTop: 2 }}>
+              {width} m
+            </Text>
+          </View>
+        ) : (
+          <View style={{ width: 8 }} />
+        )}
 
-        {zones.map((zone, index) => {
-          const col = index % vertCount;
-          const row = Math.floor(index / vertCount);
-          return (
-            <TouchableOpacity
-              key={zone.id}
-              onPress={() => onZonePress(zone)}
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={(ev) =>
+            mapPress(ev.nativeEvent.locationX, ev.nativeEvent.locationY)
+          }
+          style={{
+            width: displayW,
+            height: displayH,
+            backgroundColor: colors.surface,
+            borderWidth: 0.5,
+            borderColor: 'rgba(26, 48, 33, 0.2)',
+            borderRadius: 6,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {Array.from({ length: 20 }).map((_, i) => (
+            <View
+              key={`h-${i}`}
               style={{
                 position: 'absolute',
-                left: col * zoneWidth,
-                top: row * zoneHeight,
-                width: zoneWidth,
-                height: zoneHeight,
-                borderWidth: 0.5,
-                borderColor: colors.primary,
-                backgroundColor: zone.cropType ? `${colors.primary}05` : 'transparent',
-                padding: 4,
+                top: (i * displayH) / 20,
+                left: 0,
+                width: displayW,
+                height: GRID_LINE,
+                backgroundColor: 'rgba(26, 48, 33, 0.05)',
               }}
-              activeOpacity={0.7}
-            >
-              <Text
+            />
+          ))}
+          {Array.from({ length: 15 }).map((_, i) => (
+            <View
+              key={`v-${i}`}
+              style={{
+                position: 'absolute',
+                left: (i * displayW) / 15,
+                top: 0,
+                height: displayH,
+                width: GRID_LINE,
+                backgroundColor: 'rgba(26, 48, 33, 0.05)',
+              }}
+            />
+          ))}
+
+          {partitions.map((partition) =>
+            partition.type === 'HORIZONTAL' ? (
+              <View
+                key={partition.id}
                 style={{
-                  fontSize: 9,
-                  fontWeight: '300',
-                  color: colors.text.primary,
-                  letterSpacing: 0.2,
+                  position: 'absolute',
+                  top: toDy(partition.position, displayH),
+                  left: 0,
+                  width: displayW,
+                  height: GRID_LINE,
+                  backgroundColor: colors.primary,
+                  borderStyle: 'dashed',
+                  opacity: 0.95,
                 }}
-                numberOfLines={2}
+              />
+            ) : (
+              <View
+                key={partition.id}
+                style={{
+                  position: 'absolute',
+                  left: toDx(partition.position, displayW),
+                  top: 0,
+                  height: displayH,
+                  width: GRID_LINE,
+                  backgroundColor: colors.primary,
+                  opacity: 0.95,
+                }}
+              />
+            ),
+          )}
+
+          {zones.map((zone, index) => {
+            const col = index % vertCount;
+            const row = Math.floor(index / vertCount);
+            return (
+              <View
+                key={zone.id}
+                pointerEvents={partitionMode ? 'none' : 'auto'}
+                style={{
+                  position: 'absolute',
+                  left: col * zoneWidth,
+                  top: row * zoneHeight,
+                  width: zoneWidth,
+                  height: zoneHeight,
+                }}
               >
-                {zone.name}
-              </Text>
-              {zone.cropType && (
-                <Text
+                <TouchableOpacity
+                  onPress={() => onZonePress(zone)}
                   style={{
-                    fontSize: 8,
-                    fontWeight: '300',
-                    color: colors.text.secondary,
-                    marginTop: 2,
+                    flex: 1,
+                    borderWidth: 0.5,
+                    borderColor: colors.primary,
+                    backgroundColor: zone.cropType ? `${colors.primary}05` : 'transparent',
+                    padding: 4,
                   }}
-                  numberOfLines={1}
+                  activeOpacity={0.7}
                 >
-                  {zone.cropType}
-                </Text>
-              )}
-              <Text
-                style={{
-                  fontSize: 7,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
-                  marginTop: 1,
-                }}
-              >
-                {zone.area} m²
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                  <Text
+                    style={{
+                      fontSize: 9,
+                      fontWeight: '300',
+                      color: colors.text.primary,
+                      letterSpacing: 0.2,
+                    }}
+                    numberOfLines={2}
+                  >
+                    {zone.name}
+                  </Text>
+                  {zone.cropType ? (
+                    <Text
+                      style={{
+                        fontSize: 8,
+                        fontWeight: '300',
+                        color: colors.text.secondary,
+                        marginTop: 2,
+                      }}
+                      numberOfLines={1}
+                    >
+                      {zone.cropType}
+                    </Text>
+                  ) : null}
+                  <Text
+                    style={{
+                      fontSize: 7,
+                      fontWeight: '300',
+                      color: colors.text.secondary,
+                      marginTop: 1,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {zone.area} m²
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </TouchableOpacity>
+      </View>
 
-        {length && width && (
-          <>
-            <View style={{ position: 'absolute', top: -20, left: CANVAS_WIDTH / 2 - 20 }}>
-              <Text style={{ fontSize: 10, fontWeight: '300', color: colors.text.secondary }}>
-                {length}m
-              </Text>
-            </View>
-            <View style={{ position: 'absolute', left: -40, top: CANVAS_HEIGHT / 2 - 8 }}>
-              <Text style={{ fontSize: 10, fontWeight: '300', color: colors.text.secondary }}>
-                {width}m
-              </Text>
-            </View>
-          </>
-        )}
-      </TouchableOpacity>
-
-      {partitionMode && (
+      {partitionMode ? (
         <Text
           style={{
             marginTop: 8,
@@ -227,9 +302,9 @@ export function PlotCanvas({
             textAlign: 'center',
           }}
         >
-          Dodirnite plan da dodate liniju podela
+          {t('producer.plotMapper.partitionHint')}
         </Text>
-      )}
+      ) : null}
     </View>
   );
 }

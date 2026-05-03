@@ -310,6 +310,33 @@ export default function EstateDetailsScreen() {
                         {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString(dateLocale)}
                       </Text>
                     )}
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.push({
+                          pathname: '/(producer)/plot-mapper',
+                          params: {
+                            parcelId: parcel.id,
+                            parcelLabel: encodeURIComponent(
+                              `${estate.name} · ${parcel.cropType || t('producer.products.unknownProduct')}`,
+                            ),
+                          },
+                        })
+                      }
+                      style={{
+                        alignSelf: 'flex-start',
+                        marginTop: theme.spacing.sm,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: theme.borderRadius.md,
+                        borderWidth: 1,
+                        borderColor: colors.primary,
+                        backgroundColor: `${colors.primary}0D`,
+                      }}
+                    >
+                      <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primary }}>
+                        {t('producer.plotMapper.openPlanForParcel')} →
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
