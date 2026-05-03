@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Truck, Calendar, Clock, FileSignature, Bell } from 'lucide-react-native';
+import { Truck, Calendar, Clock, FileSignature, Bell, Camera } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission, notificationsAPI } from '../../lib/api';
@@ -149,6 +149,16 @@ export default function LogisticsHomeScreen() {
                   </View>
                 ) : null}
               </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push('/(logistics)/handover-loading')}
+              hitSlop={8}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+            >
+              <Camera size={14} color={theme.colors.primary} strokeWidth={1.5} />
+              <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '500' }}>
+                {t('logistics.loadingHandover.link')}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push('/(logistics)/handover-receiver')}

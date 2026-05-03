@@ -1155,6 +1155,7 @@
       "successTitle": "Transport zatražen",
       "successBody": "Zahtev je poslat. Operativa će dodeliti vozača; prati status pod Zadaci.",
       "serverError": "Greška servera pri slanju zahteva za transport. Pokušaj ponovo za koji trenutak. Ako se ponavlja, javi podršci.",
+      "transportNetworkError": "Nema stabilne veze sa serverom (mreža ili istek čekanja). Proveri internet i ponovo tapni Pošalji; ako koristiš VPN, ugasi ga za test.",
       "ok": "U redu"
     },
     "materials": {
@@ -1769,6 +1770,14 @@
   "packingFlow": {
     "title": "Proces pakovanja",
     "submit": "Pošalji",
+    "needBatch": "Otvori ovaj proces sa detalja serije (lot) da bi provera pakovanja bila zapisana na serveru.",
+    "needBatchBanner": "Nedostaje serija — uđi u „Serije“, otvori lot i pokreni „Proces pakovanja“ odande da bi podaci išli na server.",
+    "submitFailed": "Nije moguće sačuvati. Proveri vezu ili pokušaj ponovo.",
+    "successTitle": "Pakovanje zabeleženo",
+    "successBodyWithPhotos": "Lokacija, vreme i fotografije su sačuvani na serveru za ovu seriju.",
+    "successBodyLocationOnly": "Lokacija i vreme su sačuvani na serveru za ovu seriju.",
+    "successHint": "Proces je završen. Vratićemo te na prethodni ekran.",
+    "finishButton": "Gotovo — nazad",
     "step1": {
       "title": "Uputstvo za pakovanje",
       "subtitle": "Prati ove korake pre pakovanja gajbi",

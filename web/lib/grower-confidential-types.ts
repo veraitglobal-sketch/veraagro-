@@ -1,1 +1,1 @@
-export type ConfidentialTier = 'short' | 'medium' | 'long' | 'confidential';
+export type ConfidentialTier = 'short' | 'medium' | 'long';

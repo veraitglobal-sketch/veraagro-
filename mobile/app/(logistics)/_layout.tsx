@@ -21,6 +21,7 @@ export default function LogisticsLayout() {
           <Stack.Screen name="notifications" />
           <Stack.Screen name="mission/[id]" />
           <Stack.Screen name="handover-receiver" />
+          <Stack.Screen name="handover-loading" />
         </Stack>
       </View>
     </AuthGuard>

@@ -12,7 +12,6 @@ const TITLE_KEYS: Record<ConfidentialTier, string> = {
   short: 'investorBusinessPlans.shortTitle',
   medium: 'investorBusinessPlans.mediumTitle',
   long: 'investorBusinessPlans.longTitle',
-  confidential: 'investorBusinessPlans.confidentialTitle',
 };
 
 type Props = {

@@ -12,22 +12,16 @@ export const CONFIDENTIAL_ACCESS_HEADER = 'x-grower-confidential-access';
 
 export type ConfidentialTierAvailability = Record<ConfidentialTier, boolean>;
 
-export type ConfidentialUrlField =
-  | 'shortTermUrl'
-  | 'mediumTermUrl'
-  | 'longTermUrl'
-  | 'confidentialTermUrl';
+export type ConfidentialUrlField = 'shortTermUrl' | 'mediumTermUrl' | 'longTermUrl';
 
 export type ConfidentialUnlockResponse = {
   ok: true;
   shortTermUrl?: string;
   mediumTermUrl?: string;
   longTermUrl?: string;
-  confidentialTermUrl?: string;
   shortTermInternal?: boolean;
   mediumTermInternal?: boolean;
   longTermInternal?: boolean;
-  confidentialTermInternal?: boolean;
   /** Correct password but tier blocked by account-age rule. */
   tenureRejected?: ConfidentialTier[];
 };
@@ -51,10 +45,6 @@ const TIER_ENV_KEYS: Record<ConfidentialTier, { urlKey: string; passKey: string 
   long: {
     urlKey: 'GROWER_CONFIDENTIAL_BUSINESS_PLAN_LONG_URL',
     passKey: 'GROWER_CONFIDENTIAL_BUSINESS_PLAN_LONG_PASSWORD',
-  },
-  confidential: {
-    urlKey: 'GROWER_CONFIDENTIAL_BUSINESS_PLAN_CONFIDENTIAL_URL',
-    passKey: 'GROWER_CONFIDENTIAL_BUSINESS_PLAN_CONFIDENTIAL_PASSWORD',
   },
 };
 
@@ -202,7 +192,6 @@ export function getTierSecretsConfigured(): ConfidentialTierAvailability {
     short: readTierSecrets('short') !== null,
     medium: readTierSecrets('medium') !== null,
     long: readTierSecrets('long') !== null,
-    confidential: readTierSecrets('confidential') !== null,
   };
 }
 
@@ -219,7 +208,6 @@ export async function resolveConfidentialBootstrap(authHeader: string | null): P
       short: tiersConfigured.short,
       medium: tiersConfigured.medium && tenure.medium.eligible,
       long: tiersConfigured.long && tenure.long.eligible,
-      confidential: tiersConfigured.confidential,
     },
     partnerPlanTenure: tenure,
   };
@@ -265,7 +253,6 @@ export function unlockFromPasswordBody(
         short: sanitizePasswordAttempt(o.short),
         medium: sanitizePasswordAttempt(o.medium),
         long: sanitizePasswordAttempt(o.long),
-        confidential: sanitizePasswordAttempt(o.confidential),
       };
     }
   }
@@ -296,14 +283,12 @@ export function unlockFromPasswordBody(
       if (tier === 'short') out.shortTermInternal = true;
       if (tier === 'medium') out.mediumTermInternal = true;
       if (tier === 'long') out.longTermInternal = true;
-      if (tier === 'confidential') out.confidentialTermInternal = true;
     }
   };
 
   apply('short', 'shortTermUrl');
   apply('medium', 'mediumTermUrl');
   apply('long', 'longTermUrl');
-  apply('confidential', 'confidentialTermUrl');
 
   return out;
 }

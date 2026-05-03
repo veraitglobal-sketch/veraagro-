@@ -29,7 +29,6 @@ const INTERNAL_KEYS: Array<{ tier: ConfidentialTier; flag: keyof ConfidentialUnl
   { tier: 'short', flag: 'shortTermInternal' },
   { tier: 'medium', flag: 'mediumTermInternal' },
   { tier: 'long', flag: 'longTermInternal' },
-  { tier: 'confidential', flag: 'confidentialTermInternal' },
 ];
 
 function stripUnsettableInternalFlags(payload: ConfidentialUnlockResponse): ConfidentialUnlockResponse {
@@ -53,7 +52,7 @@ function appendTierPlanCookies(res: ReturnType<typeof confidentialJsonResponse>,
 
 function parseTierBody(raw: unknown): ConfidentialTier | null {
   if (typeof raw !== 'string') return null;
-  if (raw === 'short' || raw === 'medium' || raw === 'long' || raw === 'confidential') return raw;
+  if (raw === 'short' || raw === 'medium' || raw === 'long') return raw;
   return null;
 }
 
@@ -127,7 +126,6 @@ export async function POST(request: NextRequest) {
       ...(tier === 'short' ? { short: tierPassword } : {}),
       ...(tier === 'medium' ? { medium: tierPassword } : {}),
       ...(tier === 'long' ? { long: tierPassword } : {}),
-      ...(tier === 'confidential' ? { confidential: tierPassword } : {}),
     },
   };
 
@@ -142,9 +140,7 @@ export async function POST(request: NextRequest) {
       ? !!(payload.shortTermInternal || payload.shortTermUrl)
       : tier === 'medium'
         ? !!(payload.mediumTermInternal || payload.mediumTermUrl)
-        : tier === 'long'
-          ? !!(payload.longTermInternal || payload.longTermUrl)
-          : !!(payload.confidentialTermInternal || payload.confidentialTermUrl);
+        : !!(payload.longTermInternal || payload.longTermUrl);
 
   if (!flagOk) {
     return confidentialJsonResponse({ ok: false as const, error: 'wrong_password' as const }, 401);
@@ -164,14 +160,14 @@ export async function DELETE(request: NextRequest) {
   if (scope === 'bundle') {
     const res = confidentialJsonResponse({ ok: true as const });
     res.headers.append('Set-Cookie', serializeInvestorBundleClearCookie());
-    for (const tier of ['short', 'medium', 'long', 'confidential'] as const) {
+    for (const tier of ['short', 'medium', 'long'] as const) {
       res.headers.append('Set-Cookie', serializeInvestorPartnerPlanClearCookie(tier));
     }
     return res;
   }
 
   const tierRaw = request.nextUrl.searchParams.get('tier');
-  if (tierRaw !== 'short' && tierRaw !== 'medium' && tierRaw !== 'long' && tierRaw !== 'confidential') {
+  if (tierRaw !== 'short' && tierRaw !== 'medium' && tierRaw !== 'long') {
     return confidentialJsonResponse({ error: 'bad_request' as const }, 400);
   }
   const tier = tierRaw as ConfidentialTier;

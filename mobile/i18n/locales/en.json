@@ -1152,6 +1152,7 @@
       "successTitle": "Transport requested",
       "successBody": "Your request was sent. Operations will assign a driver; track status under Missions.",
       "serverError": "Server error while requesting transport. Try again in a moment. If it keeps happening, contact support.",
+      "transportNetworkError": "Could not reach the server (offline, DNS, or timeout). Check your internet and tap send again.",
       "ok": "OK"
     },
     "materials": {
@@ -1763,6 +1764,14 @@
   "packingFlow": {
     "title": "Packing Flow",
     "submit": "Submit",
+    "needBatch": "Open this screen from a batch detail so the packing check can be saved to the server.",
+    "needBatchBanner": "Missing batch — go to “Batches”, open a lot, and start packing from there so records reach the server.",
+    "submitFailed": "Could not save. Try again or check your connection.",
+    "successTitle": "Packing check saved",
+    "successBodyWithPhotos": "Location, time, and photos are stored on the server for this batch.",
+    "successBodyLocationOnly": "Location and time are stored on the server for this batch.",
+    "successHint": "You're done — we'll take you back to the previous screen.",
+    "finishButton": "Finish",
     "step1": {
       "title": "Packaging Instructions",
       "subtitle": "Follow these steps before packing crates",

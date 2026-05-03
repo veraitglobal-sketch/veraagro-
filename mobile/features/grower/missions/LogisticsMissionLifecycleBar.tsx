@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { missionsAPI, Mission } from '../../../lib/api';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 
 type Step = 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY';
+
+const BEFORE_LOADING_DONE: string[] = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS'];
 
 interface Props {
   mission: Mission;
@@ -14,13 +17,12 @@ interface Props {
 
 export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Props) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
 
   const status = mission.status ?? '';
 
-  if (!['READY_FOR_LOADING', 'PICKED_UP', 'IN_TRANSIT'].includes(String(status))) {
-    return null;
-  }
+  const loadingHandoverRequired = BEFORE_LOADING_DONE.includes(String(status));
 
   const run = async (step: Step) => {
     const key = `${mission.id}:${step}`;
@@ -38,6 +40,26 @@ export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Pro
       setBusy(null);
     }
   };
+
+  const openLoadingHandover = () => {
+    router.push(`/(logistics)/handover-loading?missionId=${encodeURIComponent(mission.id)}`);
+  };
+
+  if (loadingHandoverRequired) {
+    return (
+      <View style={[styles.wrap, styles.wrapNotice]}>
+        <Text style={styles.title}>{t('logistics.loadingHandover.needTitle')}</Text>
+        <Text style={styles.hint}>{t('logistics.loadingHandover.needBody')}</Text>
+        <TouchableOpacity style={[styles.btn, styles.btnFull]} onPress={openLoadingHandover}>
+          <Text style={styles.btnText}>{t('logistics.loadingHandover.needCta')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (!['READY_FOR_LOADING', 'PICKED_UP', 'IN_TRANSIT'].includes(String(status))) {
+    return null;
+  }
 
   return (
     <View style={styles.wrap}>
@@ -97,6 +119,10 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(45, 90, 39, 0.25)',
     backgroundColor: 'rgba(247, 250, 246, 0.9)',
   },
+  wrapNotice: {
+    backgroundColor: 'rgba(251, 191, 36, 0.12)',
+    borderColor: 'rgba(245, 158, 11, 0.45)',
+  },
   title: {
     fontSize: 14,
     fontWeight: '600',
@@ -121,6 +147,11 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
     minWidth: 140,
     alignItems: 'center',
+  },
+  btnFull: {
+    minWidth: undefined,
+    width: '100%',
+    marginTop: theme.spacing.sm,
   },
   btnText: {
     color: '#fff',

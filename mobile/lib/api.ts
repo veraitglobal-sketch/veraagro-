@@ -24,7 +24,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 25000,
 });
 
 // Add token to requests
@@ -839,6 +839,37 @@ export const qualityEntryAPI = {
       { responseType: 'arraybuffer' },
     );
     return response.data;
+  },
+
+  /** Farm loading handover — temperature, pallet & truck photos, badge + driver signature → mission READY_FOR_LOADING */
+  submitLoadingHandover: async (data: {
+    missionId: string;
+    insideTruckTemperature: number;
+    palletPhotos: string[];
+    truckInteriorPhotos: string[];
+    notes?: string;
+    pickupDriverId: string;
+    pickupBadgePhoto: string;
+    pickupDriverSignatureDataUrl: string;
+  }): Promise<unknown> => {
+    const response = await api.post('/quality-entry/handover', data);
+    return response.data;
+  },
+};
+
+export type LogisticsDriverRow = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  phone?: string | null;
+  isActive: boolean;
+};
+
+export const logisticsDriversAPI = {
+  list: async (): Promise<LogisticsDriverRow[]> => {
+    const response = await api.get('/logistics-partner/drivers');
+    return Array.isArray(response.data) ? response.data : [];
   },
 };
 

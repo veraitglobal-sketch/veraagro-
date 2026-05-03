@@ -9,7 +9,7 @@ import {
 } from '@/lib/partner-plan-cookie';
 
 function parseTier(raw: string): ConfidentialTier | null {
-  if (raw === 'short' || raw === 'medium' || raw === 'long' || raw === 'confidential') return raw;
+  if (raw === 'short' || raw === 'medium' || raw === 'long') return raw;
   return null;
 }
 

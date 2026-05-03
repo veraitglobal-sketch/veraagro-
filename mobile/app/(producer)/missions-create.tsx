@@ -14,13 +14,14 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI, missionsAPI, harvestAnnouncementsAPI } from '../../lib/api';
 import { normalizeHarvestParcelId } from '../../features/grower/harvest/useHarvestData';
-import { apiErrorMessage, axiosResponseStatus } from '../../lib/api-error';
+import { apiErrorMessage, axiosErrorSupportHint, axiosIsAbortOrTimeout, axiosResponseStatus, isGenericInfrastructureMessage, isLikelyNetworkError } from '../../lib/api-error';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
 type BatchRow = {
@@ -80,8 +81,6 @@ async function pickHarvestAnnouncementIdForParcel(
 function readyForTransport(b: BatchRow) {
   return b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED';
 }
-
-const HEADER_ACTION_ROW = 48;
 
 export default function MissionsCreateScreen() {
   const { t } = useTranslation();
@@ -217,19 +216,31 @@ export default function MissionsCreateScreen() {
         { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
       ]);
     } catch (e: unknown) {
+      if (isLikelyNetworkError(e) || axiosIsAbortOrTimeout(e)) {
+        Alert.alert(
+          t('producer.missionsCreate.alerts.cannotStart'),
+          t('producer.missionsCreate.transportNetworkError'),
+        );
+        return;
+      }
       const status = axiosResponseStatus(e);
       const raw = apiErrorMessage(e, '').trim();
-      /** Backend body is often useful (compliance text, migrations notice); discard only empty/generic 5xx. */
-      const looksLikeGenericBackend =
-        !raw ||
-        /^internal\s+server\s*error$/i.test(raw) ||
-        /^something\s+went\s+wrong$/i.test(raw) ||
-        raw === 'Error';
-      const isBareInfrastructure =
-        (status === 500 || status === 502 || status === 503) && looksLikeGenericBackend && raw.length <= 140;
-      const msg = isBareInfrastructure
-        ? t('producer.missionsCreate.serverError')
-        : raw || apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
+      const supportHint = axiosErrorSupportHint(e);
+
+      const useGenericSerbian =
+        (status === undefined || status === 500 || status === 502 || status === 503) &&
+        isGenericInfrastructureMessage(raw);
+
+      let msg =
+        useGenericSerbian
+          ? t('producer.missionsCreate.serverError')
+          : raw || apiErrorMessage(e, t('producer.missionsCreate.alerts.createErrorFallback'));
+
+      /** When the API only returns „Internal server error”, still show path/time so support can trace logs */
+      if (useGenericSerbian && supportHint) {
+        msg = `${msg}\n\n${supportHint}`;
+      }
+
       Alert.alert(t('producer.missionsCreate.alerts.cannotStart'), msg);
     } finally {
       setSubmitting(false);
@@ -238,17 +249,20 @@ export default function MissionsCreateScreen() {
 
   if (initialBatchesLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}
+        edges={['top', 'left', 'right']}
+      >
         <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
       <View
         style={{
-          paddingTop: p.headerTop,
+          paddingTop: theme.spacing.sm,
           paddingBottom: theme.spacing.md,
           paddingLeft: p.screenPaddingLeft,
           paddingRight: p.screenPaddingRight,
@@ -284,7 +298,7 @@ export default function MissionsCreateScreen() {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? p.headerTop + HEADER_ACTION_ROW : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}
       >
         <ScrollView
           ref={scrollRef}
@@ -293,8 +307,7 @@ export default function MissionsCreateScreen() {
             paddingTop: theme.spacing.md,
             paddingLeft: p.screenPaddingLeft,
             paddingRight: p.screenPaddingRight,
-            paddingBottom:
-              Math.max(p.bottomInset, theme.spacing.xl) + keyboardPad + 24,
+            paddingBottom: theme.spacing.lg + keyboardPad,
           }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
@@ -527,35 +540,47 @@ export default function MissionsCreateScreen() {
           </Text>
         </View>
 
-        <TouchableOpacity
-          onPress={submit}
-          disabled={submitting || batches.length === 0}
-          activeOpacity={0.8}
+        </ScrollView>
+        <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            backgroundColor: theme.colors.primary,
-            borderRadius: theme.borderRadius.md,
-            paddingVertical: 17,
-            opacity: submitting || batches.length === 0 ? 0.5 : 1,
-            minHeight: 54,
+            paddingTop: theme.spacing.md,
+            paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
+            paddingLeft: p.screenPaddingLeft,
+            paddingRight: p.screenPaddingRight,
+            borderTopWidth: 0.5,
+            borderTopColor: 'rgba(0,0,0,0.08)',
+            backgroundColor: theme.colors.background,
           }}
         >
-          {submitting ? (
-            <ActivityIndicator color={theme.colors.text.inverse} />
-          ) : (
-            <>
-              <Truck size={22} color={theme.colors.text.inverse} strokeWidth={1.75} />
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.inverse }}>
-                {t('producer.missionsCreate.title')}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
-        </ScrollView>
+          <TouchableOpacity
+            onPress={submit}
+            disabled={submitting || batches.length === 0}
+            activeOpacity={0.8}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              backgroundColor: theme.colors.primary,
+              borderRadius: theme.borderRadius.md,
+              paddingVertical: 17,
+              opacity: submitting || batches.length === 0 ? 0.5 : 1,
+              minHeight: 54,
+            }}
+          >
+            {submitting ? (
+              <ActivityIndicator color={theme.colors.text.inverse} />
+            ) : (
+              <>
+                <Truck size={22} color={theme.colors.text.inverse} strokeWidth={1.75} />
+                <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.inverse }}>
+                  {t('producer.missionsCreate.title')}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }

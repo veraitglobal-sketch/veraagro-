@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
-/** Body: `{ passwords?: { short?, medium?, long?, confidential? } }` — returns URLs / internal flags for matching tiers; sets HttpOnly cookies for internal reader. */
+/** Body: `{ passwords?: { short?, medium?, long? } }` — returns URLs / internal flags for matching tiers; sets HttpOnly cookies for internal reader. */
 export async function POST(request: NextRequest) {
   const deny = await requireGrowerAndGate(request);
   if (deny) return deny;
@@ -107,13 +107,13 @@ export async function POST(request: NextRequest) {
   return res;
 }
 
-/** Clears HttpOnly reader cookie for one tier (`?tier=short|medium|long|confidential`). */
+/** Clears HttpOnly reader cookie for one tier (`?tier=short|medium|long`). */
 export async function DELETE(request: NextRequest) {
   const deny = await requireGrowerAndGate(request);
   if (deny) return deny;
 
   const tierRaw = request.nextUrl.searchParams.get('tier');
-  if (tierRaw !== 'short' && tierRaw !== 'medium' && tierRaw !== 'long' && tierRaw !== 'confidential') {
+  if (tierRaw !== 'short' && tierRaw !== 'medium' && tierRaw !== 'long') {
     return confidentialJsonResponse({ error: 'bad_request' as const }, 400);
   }
   const tier = tierRaw as ConfidentialTier;
