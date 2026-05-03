@@ -170,9 +170,7 @@ export default function CareersPage() {
                         </div>
                       </div>
                       <Link
-                        href={`${loc('/contact')}?careers=1&subject=${encodeURIComponent(
-                          t('careersPage.applySubject', { role: job.title }),
-                        )}`}
+                        href={`${loc('/careers/apply')}?job=${job.key}`}
                         className="px-6 py-2 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg whitespace-nowrap"
                       >
                         {t('careersPage.applyNow')}
@@ -219,7 +217,7 @@ export default function CareersPage() {
             <h2 className="text-xl font-light text-gray-900 mb-4">{t('careersPage.ctaTitle')}</h2>
             <p className="text-gray-600 font-light leading-relaxed mb-6">{t('careersPage.ctaBody')}</p>
             <Link
-              href={`${loc('/contact')}?careers=1&subject=${encodeURIComponent(t('careersPage.generalApplicationSubject'))}`}
+              href={loc('/careers/apply')}
               className="inline-block px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
             >
               {t('careersPage.ctaButton')}

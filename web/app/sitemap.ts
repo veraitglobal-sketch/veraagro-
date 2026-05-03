@@ -15,6 +15,7 @@ const localizedPaths = [
   'products',
   'faq',
   'careers',
+  'careers/apply',
   'press',
   'security',
   'help-center',

@@ -195,8 +195,7 @@ Bio Vera Team
   }
 
   /**
-   * Send contact inquiry email notification (same destination as ADMIN_EMAIL contact flow).
-   * Careers applications include CV as an attachment when provided.
+   * Send contact inquiry (general contact form only — same ADMIN_EMAIL inbox).
    */
   async sendContactInquiryEmail(data: {
     name: string;
@@ -204,15 +203,11 @@ Bio Vera Team
     subject: string;
     message: string;
     phone?: string;
-    careersApplication?: boolean;
-    resumeAttachment?: { filename: string; buffer: Buffer; contentType: string };
   }): Promise<boolean> {
     const h = (s: string | undefined | null) => this.escapeForEmail(s);
 
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
-      // Resend: use onboarding@resend.dev when using Resend API (free tier requires this unless domain verified)
-      // SMTP_USER for Resend is "resend" - not a valid FROM email, so never use it here
       const customFrom = process.env.EMAIL_FROM;
       const fromAddr = this.resend
         ? customFrom && customFrom.includes('@')
@@ -220,16 +215,7 @@ Bio Vera Team
           : 'onboarding@resend.dev'
         : customFrom || process.env.SMTP_USER || 'info@biovera.app';
 
-      const kindLabel = data.careersApplication ? 'Careers application' : 'New contact inquiry';
-      const subjectPrefix = data.careersApplication ? 'Careers' : 'Contact inquiry';
-      const emailSubject = `${subjectPrefix}: ${data.subject}`;
-      const att = data.resumeAttachment;
-      const attNoteHtml = att
-        ? `<p style="margin:15px 0;padding:12px;background:#eaf3e9;border-radius:8px;border:1px solid #2D5A27;">
-            <strong>Attachment:</strong> ${h(att.filename)}
-          </p>`
-        : '';
-      const attNoteText = att ? `\nAttachment: ${att.filename}\n` : '';
+      const emailSubject = `[Bio Vera] Contact: ${data.subject}`;
 
       const htmlContent = `
           <!DOCTYPE html>
@@ -251,12 +237,11 @@ Bio Vera Team
             <div class="container">
               <div class="header">
                 <h1>🌱 Bio Vera</h1>
-                <p>${kindLabel}</p>
+                <p>New contact inquiry</p>
               </div>
 
               <div class="content">
-                <p>You have received a new message from the Bio Vera website:</p>
-                ${attNoteHtml}
+                <p>You have received a new message from the Bio Vera contact form:</p>
                 <div class="info-box">
                   <div style="margin: 10px 0;">
                     <span class="label">Name:</span>
@@ -293,7 +278,7 @@ Bio Vera Team
               </div>
 
               <div class="footer">
-                <p>Bio Vera — Website form</p>
+                <p>Bio Vera — Contact form</p>
                 <p>Sent to ${h(adminEmail)}</p>
               </div>
             </div>
@@ -302,12 +287,12 @@ Bio Vera Team
         `.trimStart();
 
       const textContent = `
-Bio Vera — ${kindLabel}
+Bio Vera — Contact inquiry
 
 Name: ${data.name}
 Email: ${data.email}
 ${data.phone ? `Phone: ${data.phone}\n` : ''}Subject: ${data.subject}
-${attNoteText}
+
 Message:
 ${data.message}
 
@@ -322,15 +307,10 @@ Reply to: ${data.email}
         subject: emailSubject,
         html: htmlContent,
         text: textContent,
-        attachments: att
-          ? [{ filename: att.filename, content: att.buffer, contentType: att.contentType }]
-          : undefined,
       };
 
       if (this.resend) {
-        this.logger.log(
-          `Sending contact inquiry via Resend API: to=${adminEmail}, from=${fromAddr}, careers=${Boolean(data.careersApplication)}, attachment=${Boolean(att)}`,
-        );
+        this.logger.log(`Sending contact inquiry via Resend API: to=${adminEmail}, from=${fromAddr}`);
         const { data: sendData, error } = await this.resend.emails.send({
           from: `"Bio Vera Contact Form" <${fromAddr}>`,
           to: adminEmail,
@@ -338,15 +318,6 @@ Reply to: ${data.email}
           subject: emailSubject,
           html: htmlContent,
           text: textContent,
-          attachments: att?.buffer?.length
-            ? [
-                {
-                  filename: att.filename,
-                  content: att.buffer,
-                  contentType: att.contentType,
-                },
-              ]
-            : undefined,
         });
         if (error) {
           this.logger.error(`Resend API error: ${JSON.stringify(error)}`);
@@ -361,9 +332,6 @@ Reply to: ${data.email}
         );
         return false;
       }
-      this.logger.log(
-        `Sending contact inquiry email: to=${adminEmail}, from=${fromAddr}, replyTo=${data.email}`,
-      );
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Contact inquiry email sent successfully to ${adminEmail} from ${data.email}`);
       return true;
@@ -396,6 +364,150 @@ Reply to: ${data.email}
     }
   }
 
+  async sendCareersApplicationEmail(data: {
+    name: string;
+    email: string;
+    phone?: string;
+    roleKey?: string;
+    appliedRoleTitle: string;
+    coverLetter: string;
+    linkedinUrl?: string;
+    resumeAttachment: { filename: string; buffer: Buffer; contentType: string };
+  }): Promise<boolean> {
+    const h = (s: string | undefined | null) => this.escapeForEmail(s);
+
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
+      const customFrom = process.env.EMAIL_FROM;
+      const fromAddr = this.resend
+        ? customFrom && customFrom.includes('@')
+          ? customFrom
+          : 'onboarding@resend.dev'
+        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
+
+      const attachment = data.resumeAttachment;
+      const emailSubject = `[Bio Vera] Careers: ${data.appliedRoleTitle}`;
+      const ln = data.linkedinUrl ? this.parseLinkedInUrl(data.linkedinUrl) : undefined;
+
+      const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 620px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #2D5A27; color: white; padding: 20px; text-align: center; }
+              .content { background-color: #f9f9f9; padding: 30px; }
+              .info-box { background-color: white; border-left: 4px solid #2D5A27; padding: 15px; margin: 15px 0; }
+              .label { font-weight: bold; color: #2D5A27; display: inline-block; min-width: 120px; }
+              .message-box { background-color: white; padding: 20px; margin: 20px 0; border-radius: 5px; border: 1px solid #ddd; }
+              .pill { margin:15px 0;padding:12px;background:#eaf3e9;border-radius:8px;border:1px solid #2D5A27;font-size:14px;}
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🌱 Bio Vera</h1>
+                <p>New job application</p>
+              </div>
+              <div class="content">
+                <p class="pill"><strong>CV attached:</strong> ${h(attachment.filename)}</p>
+                <div class="info-box">
+                  <div style="margin: 10px 0;"><span class="label">Name:</span> <span>${h(data.name)}</span></div>
+                  <div style="margin: 10px 0;"><span class="label">Email:</span> <span><a href="mailto:${h(data.email)}">${h(data.email)}</a></span></div>
+                  ${data.phone ? `<div style="margin: 10px 0;"><span class="label">Phone:</span> <span><a href="tel:${h(data.phone)}">${h(data.phone)}</a></span></div>` : ''}
+                  <div style="margin: 10px 0;"><span class="label">Role:</span> <span>${h(data.appliedRoleTitle)}${data.roleKey ? ` — ${h(data.roleKey)}` : ''}</span></div>
+                  ${
+                    ln
+                      ? `<div style="margin: 10px 0;"><span class="label">LinkedIn:</span> <span><a href="${ln.href}" target="_blank" rel="noopener noreferrer">${h(ln.display)}</a></span></div>`
+                      : ''
+                  }
+                </div>
+                <div class="message-box">
+                  <h3 style="margin-top: 0; color: #2D5A27;">Cover letter:</h3>
+                  <p style="white-space: pre-wrap;">${h(data.coverLetter)}</p>
+                </div>
+                <p><strong>Reply to:</strong> <a href="mailto:${h(data.email)}">${h(data.email)}</a></p>
+              </div>
+              <div style="text-align:center;padding:20px;color:#666;font-size:12px;"><p>Bio Vera — Careers application</p><p>Sent to ${h(adminEmail)}</p></div>
+            </div>
+          </body>
+          </html>
+        `.trimStart();
+
+      const textContent = `
+Bio Vera — Careers application — ${data.appliedRoleTitle}${data.roleKey ? ` [${data.roleKey}]` : ''}
+
+Applicant
+Name: ${data.name}
+Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}\n` : ''}${ln ? `LinkedIn: ${ln.display}\n` : ''}
+
+CV attachment: ${attachment.filename}
+
+Cover letter:
+${data.coverLetter}
+
+---
+Reply to: ${data.email}
+        `.trimStart();
+
+      const mailOptions: nodemailer.SendMailOptions = {
+        from: `"Bio Vera Careers" <${fromAddr}>`,
+        to: adminEmail,
+        replyTo: data.email,
+        subject: emailSubject,
+        html: htmlContent,
+        text: textContent,
+        attachments: [
+          {
+            filename: attachment.filename,
+            content: attachment.buffer,
+            contentType: attachment.contentType,
+          },
+        ],
+      };
+
+      if (this.resend) {
+        this.logger.log(
+          `Sending careers application via Resend: to=${adminEmail}, role=${data.roleKey ?? '-'}`,
+        );
+        const { data: sendData, error } = await this.resend.emails.send({
+          from: `"Bio Vera Careers" <${fromAddr}>`,
+          to: adminEmail,
+          replyTo: data.email,
+          subject: emailSubject,
+          html: htmlContent,
+          text: textContent,
+          attachments: [
+            {
+              filename: attachment.filename,
+              content: attachment.buffer,
+              contentType: attachment.contentType,
+            },
+          ],
+        });
+        if (error) {
+          this.logger.error(`Resend careers API error: ${JSON.stringify(error)}`);
+          return false;
+        }
+        this.logger.log(`Careers email sent via Resend (id=${sendData?.id})`);
+        return true;
+      }
+      if (!this.transporter) {
+        this.logger.warn('Email not configured, skipping careers application email');
+        return false;
+      }
+      await this.transporter.sendMail(mailOptions);
+      return true;
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to send careers application email: ${errMsg}`);
+      return false;
+    }
+  }
+
   private escapeForEmail(s: string | undefined | null): string {
     if (s == null || s === '') return '';
     return String(s)
@@ -404,6 +516,25 @@ Reply to: ${data.email}
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+
+  private parseLinkedInUrl(raw: string): { href: string; display: string } | undefined {
+    const t = raw.trim();
+    if (!t) return undefined;
+    let urlStr = t;
+    if (!/^https?:\/\//i.test(urlStr)) urlStr = `https://${urlStr}`;
+    try {
+      const p = new URL(urlStr);
+      const host = p.hostname.toLowerCase();
+      if (host !== 'linkedin.com' && host !== 'www.linkedin.com' && !host.endsWith('.linkedin.com')) {
+        return undefined;
+      }
+      const hrefSafe = String(p.href).replace(/"/g, '%22');
+      return { href: hrefSafe, display: t };
+    } catch {
+      return undefined;
+    }
+  }
+
 
   /**
    * Notify operations (e.g. info@biovera.app) of a new buyer order or pre-order.

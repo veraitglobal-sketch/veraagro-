@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { Throttle } from '@nestjs/throttler';
-import { IsString, IsEmail, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class ContactInquiryDto {
   @IsString()
@@ -19,24 +19,6 @@ export class ContactInquiryDto {
   @IsOptional()
   @IsString()
   phone?: string;
-
-  /** Job application via Careers — requires resume when true */
-  @IsOptional()
-  @IsBoolean()
-  careersApplication?: boolean;
-
-  /** Base64 file body (PDF or Word); required when careersApplication is true */
-  @IsOptional()
-  @IsString()
-  resumeBase64?: string;
-
-  @IsOptional()
-  @IsString()
-  resumeFileName?: string;
-
-  @IsOptional()
-  @IsString()
-  resumeMimeType?: string;
 }
 
 @Controller('contact')
@@ -53,7 +35,6 @@ export class ContactController {
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 20, ttl: 900000 } }) // 20 requests per 15 minutes
   async submitInquiry(@Body() dto: ContactInquiryDto) {
-    // Basic validation
     if (!dto.name || !dto.email || !dto.subject || !dto.message) {
       return {
         success: false,
@@ -61,7 +42,6 @@ export class ContactController {
       };
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(dto.email)) {
       return {
@@ -70,9 +50,6 @@ export class ContactController {
       };
     }
 
-    return this.contactService.submitContactInquiry({
-      ...dto,
-      careersApplication: Boolean(dto.careersApplication),
-    });
+    return this.contactService.submitContactInquiry(dto);
   }
 }
