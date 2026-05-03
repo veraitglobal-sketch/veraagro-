@@ -46,7 +46,7 @@ export default function SupplierHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className={`px-3 py-1.5 text-sm rounded-md ${
+              className={`px-3 py-1.5 text-sm rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2 ${
                 active ? 'bg-[#2D5A27]/10 text-[#2D5A27] font-medium' : 'text-gray-600 hover:text-[#2D5A27]'
               }`}
             >

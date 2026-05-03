@@ -375,4 +375,69 @@ export const offlineStorage = {
       await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(list));
     }
   },
+
+  /**
+   * Rows left in `syncing` after an app crash never complete; `needsSync` keeps them forever.
+   * Reset to `pending` before any outbound sync sweep.
+   */
+  async resetStuckSyncingQueues(): Promise<void> {
+    try {
+      const entries = await this.getPendingEntries();
+      let dirty = false;
+      const entriesNext = entries.map((e) => {
+        if (e.status === 'syncing') {
+          dirty = true;
+          return { ...e, status: 'pending' as const };
+        }
+        return e;
+      });
+      if (dirty) await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(entriesNext));
+
+      const products = await this.getPendingProducts();
+      dirty = false;
+      const productsNext = products.map((p) => {
+        if (p.status === 'syncing') {
+          dirty = true;
+          return { ...p, status: 'pending' as const };
+        }
+        return p;
+      });
+      if (dirty) await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(productsNext));
+
+      const costs = await this.getPendingCosts();
+      dirty = false;
+      const costsNext = costs.map((c) => {
+        if (c.status === 'syncing') {
+          dirty = true;
+          return { ...c, status: 'pending' as const };
+        }
+        return c;
+      });
+      if (dirty) await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(costsNext));
+
+      const certs = await this.getPendingCertificatePhotos();
+      dirty = false;
+      const certsNext = certs.map((c) => {
+        if (c.status === 'syncing') {
+          dirty = true;
+          return { ...c, status: 'pending' as const };
+        }
+        return c;
+      });
+      if (dirty) await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsNext));
+
+      const harvests = await this.getPendingHarvestPlans();
+      dirty = false;
+      const harvestsNext = harvests.map((h) => {
+        if (h.status === 'syncing') {
+          dirty = true;
+          return { ...h, status: 'pending' as const };
+        }
+        return h;
+      });
+      if (dirty) await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(harvestsNext));
+    } catch (e) {
+      console.warn('[offlineStorage] resetStuckSyncingQueues:', e);
+    }
+  },
 };

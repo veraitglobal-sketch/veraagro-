@@ -2626,6 +2626,21 @@
       "defaultStoreName": "Your store",
       "loadError": "Could not load"
     },
+    "storefront": {
+      "intro": "Direct grower orders and message threads in one place. Build your in-app catalog so growers see what you stock; orders still use free-text lines — the catalog is your reference list.",
+      "shopWindow": "Shop window",
+      "shopWindowHint": "Upload product photos in Catalog — they appear here and on your public profile.",
+      "windowPlaceholderTitle": "Add products with photos in Catalog",
+      "mapApproved": "Approved on the grower map",
+      "mapPending": "Map listing pending team approval for your address. Contact Bio Vera to update profile or location.",
+      "cardOrdersSub": "From growers — pending, confirmed, fulfilled",
+      "cardMessagesSub": "Threads with growers",
+      "cardCatalogSub": "Products & reference prices",
+      "open": "Open",
+      "footerBeforeLink": "Update store name, website, contact, and address in",
+      "footerLink": "Settings",
+      "footerAfterLink": ". If your map pin or address changes, Bio Vera re-verifies the listing."
+    },
     "messagesPage": {
       "loading": "Loading…",
       "selectConversation": "Select a conversation",

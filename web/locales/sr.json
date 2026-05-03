@@ -2627,6 +2627,21 @@
       "defaultStoreName": "Vaša prodavnica",
       "loadError": "Učitavanje nije uspelo"
     },
+    "storefront": {
+      "intro": "Dolazne porudžbine od proizvođača i poruke na jednom mestu. Popunite katalog u aplikaciji da proizvođači vide šta imate; porudžbine i dalje koriste slobodan tekst u stavkama — katalog je vaša referentna lista.",
+      "shopWindow": "Izlog",
+      "shopWindowHint": "Otpremite fotografije proizvoda u Katalogu — vide se ovde i na javnom profilu.",
+      "windowPlaceholderTitle": "Dodajte proizvode sa fotografijama u Katalogu",
+      "mapApproved": "Odobreno na mapi za proizvođače",
+      "mapPending": "Prikaz na mapi čeka odobrenje tima za vašu adresu. Za izmenu profila ili lokacije kontaktirajte Bio Vera.",
+      "cardOrdersSub": "Od proizvođača — na čekanju, potvrđeno, isporučeno",
+      "cardMessagesSub": "Razgovori sa proizvođačima",
+      "cardCatalogSub": "Proizvodi i referentne cene",
+      "open": "Otvori",
+      "footerBeforeLink": "Naziv prodavnice, veb sajt, kontakt i adresu možete ažurirati u",
+      "footerLink": "Podešavanjima",
+      "footerAfterLink": ". Ako se promeni pin na mapi ili adresa, Bio Vera ponovo proverava prikaz."
+    },
     "messagesPage": {
       "loading": "Učitavanje…",
       "selectConversation": "Izaberite razgovor",

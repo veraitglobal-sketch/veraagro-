@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageCircle, Package, MapPin, Sparkles, ShoppingBag, ArrowUpRight } from 'lucide-react';
 
 type CatalogWindowItem = { id: string; name: string; imageUrl: string | null };
@@ -31,32 +33,37 @@ export default function SupplierStorefrontSection({
   catalogCount,
   catalogWindowItems = [],
 }: Props) {
+  const { t, i18n } = useTranslation();
   const location = [city, country].filter(Boolean).join(', ');
   const windowSlots: (CatalogWindowItem | undefined)[] = [0, 1, 2].map((i) => catalogWindowItems[i]);
 
-  const cards = [
-    {
-      href: '/supplier/orders',
-      label: 'Orders',
-      sub: 'From growers — pending, confirmed, fulfilled',
-      count: ordersCount,
-      icon: Package,
-    },
-    {
-      href: '/supplier/messages',
-      label: 'Messages',
-      sub: 'Threads with growers',
-      count: threadsCount,
-      icon: MessageCircle,
-    },
-    {
-      href: '/supplier/catalog',
-      label: 'Catalog',
-      sub: 'Products & reference prices',
-      count: catalogCount,
-      icon: ShoppingBag,
-    },
-  ] as const;
+  const cards = useMemo(
+    () =>
+      [
+        {
+          href: '/supplier/orders',
+          label: t('supplier.nav.orders'),
+          sub: t('supplier.storefront.cardOrdersSub'),
+          count: ordersCount,
+          icon: Package,
+        },
+        {
+          href: '/supplier/messages',
+          label: t('supplier.nav.messages'),
+          sub: t('supplier.storefront.cardMessagesSub'),
+          count: threadsCount,
+          icon: MessageCircle,
+        },
+        {
+          href: '/supplier/catalog',
+          label: t('supplier.nav.catalog'),
+          sub: t('supplier.storefront.cardCatalogSub'),
+          count: catalogCount,
+          icon: ShoppingBag,
+        },
+      ] as const,
+    [t, i18n.language, ordersCount, threadsCount, catalogCount],
+  );
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -73,7 +80,7 @@ export default function SupplierStorefrontSection({
       </div>
 
       <div className="border-b border-gray-100 bg-gradient-to-b from-[#2D5A27]/5 to-white px-5 py-6 sm:px-8 sm:py-8">
-        <p className="text-xs font-medium uppercase tracking-wider text-[#2D5A27]">Partner store</p>
+        <p className="text-xs font-medium uppercase tracking-wider text-[#2D5A27]">{t('supplier.header.badge')}</p>
         <h1 className="mt-1 text-2xl sm:text-3xl font-light text-gray-900 tracking-tight">{storeName}</h1>
         {location && (
           <p className="mt-2 flex items-center gap-1.5 text-sm text-gray-500 font-light">
@@ -81,19 +88,16 @@ export default function SupplierStorefrontSection({
             {location}
           </p>
         )}
-        <p className="mt-3 text-sm text-gray-600 font-light max-w-2xl leading-relaxed">
-          Direct grower orders and message threads in one place. Build your in-app catalog so growers see what
-          you stock; orders still use free-text lines — the catalog is your reference list.
-        </p>
+        <p className="mt-3 text-sm text-gray-600 font-light max-w-2xl leading-relaxed">{t('supplier.storefront.intro')}</p>
 
         <div className="mt-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Shop window</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-gray-400">{t('supplier.storefront.shopWindow')}</p>
           <div className="mt-2 flex flex-wrap items-end gap-2">
             {windowSlots.map((it, idx) => (
               <div
                 key={it?.id ?? `placeholder-${idx}`}
                 className="relative h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem] overflow-hidden rounded-md border-2 border-[#2D5A27]/20 bg-gradient-to-b from-white to-[#f7f4ef] shadow-[inset_0_0_0_1px_rgba(45,90,39,0.08)]"
-                title={it?.name || 'Add products with photos in Catalog'}
+                title={it?.name || t('supplier.storefront.windowPlaceholderTitle')}
               >
                 {it?.imageUrl ? (
                   <img
@@ -109,9 +113,7 @@ export default function SupplierStorefrontSection({
               </div>
             ))}
           </div>
-          <p className="mt-1.5 text-xs text-gray-400 font-light">
-            Upload product photos in Catalog — they appear here and on your public profile.
-          </p>
+          <p className="mt-1.5 text-xs text-gray-400 font-light">{t('supplier.storefront.shopWindowHint')}</p>
         </div>
 
         {mapApproved !== undefined && (
@@ -125,10 +127,10 @@ export default function SupplierStorefrontSection({
             {mapApproved ? (
               <>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                Approved on the grower map
+                {t('supplier.storefront.mapApproved')}
               </>
             ) : (
-              'Map listing pending team approval for your address. Contact Bio Vera to update profile or location.'
+              t('supplier.storefront.mapPending')
             )}
           </div>
         )}
@@ -155,18 +157,18 @@ export default function SupplierStorefrontSection({
               </div>
               <p className="mt-2 text-xs text-gray-500 font-light leading-snug flex-1">{sub}</p>
               <span className="mt-3 inline-flex items-center gap-0.5 text-sm font-light text-[#2D5A27] group-hover:gap-1 transition-all">
-                Open <ArrowUpRight className="h-3.5 w-3.5" />
+                {t('supplier.storefront.open')} <ArrowUpRight className="h-3.5 w-3.5" />
               </span>
             </Link>
           ))}
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-400 font-light max-w-md mx-auto">
-          Update store name, website, contact, and address in{' '}
+          {t('supplier.storefront.footerBeforeLink')}{' '}
           <Link href="/supplier/settings" className="text-[#2D5A27] hover:underline">
-            Settings
+            {t('supplier.storefront.footerLink')}
           </Link>
-          . If your map pin or address changes, Bio Vera re-verifies the listing.
+          {t('supplier.storefront.footerAfterLink')}
         </p>
       </div>
     </div>

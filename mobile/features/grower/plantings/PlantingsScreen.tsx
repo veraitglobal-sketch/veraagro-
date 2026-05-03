@@ -12,11 +12,16 @@ import {
   Modal,
   Pressable,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Wheat, Plus, X } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI } from '../../../lib/api';
+import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { offlineStorage } from '../../../lib/offline-storage';
+import { syncService } from '../../../lib/sync-service';
+import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { theme } from '../../../lib/theme';
@@ -49,6 +54,12 @@ type HaRow = {
   notes?: string | null;
   createdAt?: string;
   estimatedQuantity?: number | null;
+  /** Local-only row from offline harvest-announcements queue */
+  localQueue?: {
+    pendingId: string;
+    queueStatus: 'pending' | 'syncing' | 'synced' | 'error';
+    queueError?: string;
+  };
   plantingProgress?: {
     intervalDays: number;
     lastGrowthLogAt: string | null;
@@ -127,9 +138,58 @@ export default function PlantingsScreen() {
 
     try {
       const list = (await harvestAnnouncementsAPI.getMy()) as HaRow[];
-      setAnnouncements(Array.isArray(list) ? list : []);
+      const serverRows = Array.isArray(list) ? list : [];
+
+      const pending = await offlineStorage.getPendingHarvestPlans();
+      const localPlantings: HaRow[] = pending
+        .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
+        .map((h) => {
+          const payload = h.payload;
+          const q = h.status;
+          const statusFlag =
+            q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
+          return {
+            id: `local:${h.id}`,
+            parcelId: payload.parcelId,
+            announcementType: 'PLANTING',
+            cropType: payload.cropType,
+            estimatedDate: payload.estimatedDate,
+            status: statusFlag,
+            notes: payload.notes ?? null,
+            createdAt: h.createdAt,
+            estimatedQuantity: payload.estimatedQuantity ?? null,
+            localQueue: { pendingId: h.id, queueStatus: q, queueError: h.error },
+          };
+        });
+
+      setAnnouncements([...localPlantings, ...serverRows]);
     } catch {
-      setAnnouncements([]);
+      try {
+        const pending = await offlineStorage.getPendingHarvestPlans();
+        const localOnly: HaRow[] = pending
+          .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
+          .map((h) => {
+            const payload = h.payload;
+            const q = h.status;
+            const statusFlag =
+              q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
+            return {
+              id: `local:${h.id}`,
+              parcelId: payload.parcelId,
+              announcementType: 'PLANTING',
+              cropType: payload.cropType,
+              estimatedDate: payload.estimatedDate,
+              status: statusFlag,
+              notes: payload.notes ?? null,
+              createdAt: h.createdAt,
+              estimatedQuantity: payload.estimatedQuantity ?? null,
+              localQueue: { pendingId: h.id, queueStatus: q, queueError: h.error },
+            };
+          });
+        setAnnouncements(localOnly);
+      } catch {
+        setAnnouncements([]);
+      }
       setAnnouncementsWarn(t('producer.plantings.announcementsLoadWarn'));
     } finally {
       setLoading(false);
@@ -164,7 +224,9 @@ export default function PlantingsScreen() {
   };
 
   const plantingsSorted = useMemo(() => {
-    const list = announcements.filter((a) => a.announcementType === 'PLANTING');
+    const list = announcements.filter(
+      (a) => String(a.announcementType ?? '').toUpperCase() === 'PLANTING',
+    );
     return [...list].sort((a, b) => {
       const ta = new Date(a.createdAt || a.estimatedDate).getTime();
       const tb = new Date(b.createdAt || b.estimatedDate).getTime();
@@ -173,7 +235,7 @@ export default function PlantingsScreen() {
   }, [announcements]);
 
   const harvestsSorted = useMemo(() => {
-    const list = announcements.filter((a) => a.announcementType === 'HARVEST');
+    const list = announcements.filter((a) => String(a.announcementType ?? '').toUpperCase() === 'HARVEST');
     return [...list].sort((a, b) => {
       const ta = new Date(a.createdAt || a.estimatedDate).getTime();
       const tb = new Date(b.createdAt || b.estimatedDate).getTime();
@@ -233,23 +295,47 @@ export default function PlantingsScreen() {
       return;
     }
 
+    const payload: CreateHarvestPlanBody = {
+      parcelId: formParcelId,
+      announcementType: 'PLANTING',
+      cropType: crop,
+      estimatedDate: new Date(formDate + 'T12:00:00').toISOString(),
+      notes: formNotes.trim() || undefined,
+    };
+
     setSaving(true);
     setErr(null);
     try {
-      await harvestAnnouncementsAPI.create({
-        parcelId: formParcelId,
-        announcementType: 'PLANTING',
-        cropType: crop,
-        estimatedDate: new Date(formDate + 'T12:00:00').toISOString(),
-        notes: formNotes.trim() || undefined,
-      });
+      if (!(await isDeviceOnline())) {
+        await offlineStorage.savePendingHarvestPlan({ payload });
+        void syncService.getSyncStatus();
+        Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
+        setAddOpen(false);
+        resetAddForm();
+        await load();
+        return;
+      }
+      await harvestAnnouncementsAPI.create(payload);
       setAddOpen(false);
       resetAddForm();
       await load();
     } catch (e: unknown) {
+      if (isLikelyNetworkError(e)) {
+        try {
+          await offlineStorage.savePendingHarvestPlan({ payload });
+          void syncService.getSyncStatus();
+          Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
+          setAddOpen(false);
+          resetAddForm();
+          await load();
+          return;
+        } catch {
+          // fall through
+        }
+      }
       const msg = (e as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
       const text = Array.isArray(msg) ? msg.join(' ') : msg;
-      const fromApi = text || (e instanceof Error ? e.message : '');
+      const fromApi = text || apiErrorMessage(e, e instanceof Error ? e.message : '');
       const friendly = mapPlantingSaveError(fromApi, t);
       setAddFormErr(friendly);
     } finally {
@@ -380,9 +466,23 @@ export default function PlantingsScreen() {
             </Text>
 
             {plantingsSorted.length === 0 ? (
-              <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: theme.spacing.lg }}>
-                {t('producer.plantings.empty')}
-              </Text>
+              <View style={{ marginBottom: theme.spacing.lg }}>
+                <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>
+                  {t('producer.plantings.empty')}
+                </Text>
+                {parcelList.some((p) => (p.cropType ?? '').trim().length > 0) ? (
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: theme.colors.text.tertiary,
+                      marginTop: theme.spacing.sm,
+                      lineHeight: 19,
+                    }}
+                  >
+                    {t('producer.plantings.emptyHintParcelCrop')}
+                  </Text>
+                ) : null}
+              </View>
             ) : (
               plantingsSorted.map((a) => {
                 const pr = resolvedParcelFor(a);
@@ -406,6 +506,27 @@ export default function PlantingsScreen() {
                     })}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.text.primary }}>{a.cropType}</Text>
+                    {a.localQueue ? (
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: '600',
+                          color:
+                            a.localQueue.queueStatus === 'error'
+                              ? theme.colors.error
+                              : a.localQueue.queueStatus === 'syncing'
+                                ? theme.colors.primary
+                                : theme.colors.warning,
+                          marginTop: 4,
+                        }}
+                      >
+                        {a.localQueue.queueStatus === 'error'
+                          ? t('producer.plantings.localQueueError')
+                          : a.localQueue.queueStatus === 'syncing'
+                            ? t('producer.plantings.localQueueSyncing')
+                            : t('producer.plantings.localQueuePending')}
+                      </Text>
+                    ) : null}
                     <Text style={{ fontSize: 14, color: theme.colors.primary, marginTop: 6, fontWeight: '600' }}>
                       📍{' '}
                       {pr?.estateName ?? a.parcel?.estates?.name ?? ''}
@@ -414,8 +535,14 @@ export default function PlantingsScreen() {
                       {areaM2 != null ? ` · ${formatArea(areaM2, langSr)}` : ''}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 8 }}>
-                      {formatWhen(a.estimatedDate)} · {t(`producer.plantings.ha_${a.status}`, { defaultValue: a.status })}
+                      {formatWhen(a.estimatedDate)} ·{' '}
+                      {t(`producer.plantings.ha_${a.status}`, { defaultValue: a.status })}
                     </Text>
+                    {a.localQueue?.queueStatus === 'error' && a.localQueue.queueError ? (
+                      <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: 6 }}>
+                        {a.localQueue.queueError}
+                      </Text>
+                    ) : null}
                     {a.plantingProgress ? (
                       <View style={{ marginTop: 8 }}>
                         <Text
@@ -846,7 +973,9 @@ function DetailBody({
     <View style={{ paddingBottom: theme.spacing.lg }}>
       <Text style={{ fontSize: 20, fontWeight: '800', color: theme.colors.text.primary }}>{ha.cropType}</Text>
       <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 6 }}>
-        {ha.announcementType === 'PLANTING' ? t('producer.plantings.typePlanting') : t('producer.plantings.typeHarvest')}
+        {String(ha.announcementType ?? '').toUpperCase() === 'PLANTING'
+          ? t('producer.plantings.typePlanting')
+          : t('producer.plantings.typeHarvest')}
       </Text>
 
       <Text style={{ fontSize: 14, fontWeight: '700', marginTop: theme.spacing.md, color: theme.colors.text.primary }}>{t('producer.plantings.detailParcel')}</Text>
@@ -882,7 +1011,33 @@ function DetailBody({
       <Text style={{ fontSize: 14, fontWeight: '700', marginTop: theme.spacing.md }}>{t('producer.plantings.detailStatus')}</Text>
       <Text style={{ marginTop: 4, color: theme.colors.text.secondary }}>{t(`producer.plantings.ha_${ha.status}`, { defaultValue: ha.status })}</Text>
 
-      {ha.announcementType === 'PLANTING' && ha.plantingProgress ? (
+      {ha.localQueue ? (
+        <View
+          style={{
+            marginTop: theme.spacing.md,
+            padding: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.warning,
+            backgroundColor: theme.colors.warningLight,
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary }}>
+            {ha.localQueue.queueStatus === 'error'
+              ? t('producer.plantings.localQueueError')
+              : ha.localQueue.queueStatus === 'syncing'
+                ? t('producer.plantings.localQueueSyncing')
+                : t('producer.plantings.localQueuePending')}
+          </Text>
+          {ha.localQueue.queueError ? (
+            <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: 8, lineHeight: 18 }}>
+              {ha.localQueue.queueError}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+
+      {String(ha.announcementType ?? '').toUpperCase() === 'PLANTING' && ha.plantingProgress ? (
         <View
           style={{
             marginTop: theme.spacing.md,

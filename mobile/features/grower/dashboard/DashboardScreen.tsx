@@ -11,6 +11,7 @@ import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
 import SyncQueueStrip from './SyncQueueStrip';
 import DashboardHomeFinanceTeaser from './DashboardHomeFinanceTeaser';
+import { computeNextStep } from './computeNextStep';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -23,6 +24,22 @@ export default function DashboardScreen() {
 
   const estateCount = data.estates.length;
   const ps = data.parcelSteps;
+
+  const nextStep =
+    ps.loaded
+      ? computeNextStep({
+          estateCount,
+          totalParcels: ps.total,
+          pendingApproval: ps.pending,
+          approved: ps.approved,
+          activeMissions: data.activeMissions.length,
+          offlinePending: data.offlinePending,
+          batchesReadyForTransport: data.batchesReadyForTransport,
+        })
+      : null;
+
+  /** Next step card already has “Open field log” — avoid repeating it in the sync strip. */
+  const hideDuplicateFieldLogCta = data.offlinePending > 0 && nextStep?.kind === 'log_work';
 
   const hasAlerts =
     data.unreadCount > 0 || data.activeMissions.length > 0 || data.activeBatches.length > 0;
@@ -75,6 +92,7 @@ export default function DashboardScreen() {
           lastError={data.offlineSyncLastError}
           onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
           onSyncNow={() => void data.onRefresh()}
+          hideOpenLogCta={hideDuplicateFieldLogCta}
           compact
         />
         <NextStepCard

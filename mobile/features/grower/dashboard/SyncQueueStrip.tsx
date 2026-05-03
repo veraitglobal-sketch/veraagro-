@@ -14,6 +14,10 @@ export interface SyncQueueStripProps {
   onSyncNow: () => void;
   /** Tighter layout for producer home (less vertical space). */
   compact?: boolean;
+  /**
+   * Hide the secondary “open field log” CTA — e.g. when the home NextStepCard already shows the same action.
+   */
+  hideOpenLogCta?: boolean;
 }
 
 /** Older builds stored raw i18n keys in AsyncStorage — normalize for display. */
@@ -38,6 +42,7 @@ export default function SyncQueueStrip({
   onOpenFieldLog,
   onSyncNow,
   compact = false,
+  hideOpenLogCta = false,
 }: SyncQueueStripProps) {
   const { t } = useTranslation();
 
@@ -118,7 +123,8 @@ export default function SyncQueueStrip({
             disabled={syncing}
             activeOpacity={0.8}
             style={{
-              flex: 1,
+              flex: hideOpenLogCta ? 1 : undefined,
+              flexGrow: 1,
               backgroundColor: theme.colors.primary,
               borderRadius: theme.borderRadius.md,
               paddingVertical: 10,
@@ -133,28 +139,30 @@ export default function SyncQueueStrip({
               {t('producer.dashboard.syncStrip.syncNow')}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onOpenFieldLog}
-            activeOpacity={0.75}
-            style={{
-              flex: 1,
-              borderRadius: theme.borderRadius.md,
-              paddingVertical: 10,
-              paddingHorizontal: 10,
-              minHeight: 40,
-              borderWidth: 1,
-              borderColor: theme.colors.primary,
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-              gap: 4,
-            }}
-          >
-            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }} numberOfLines={1}>
-              {t('producer.dashboard.syncStrip.openLog')}
-            </Text>
-            <ChevronRight size={16} color={theme.colors.primary} strokeWidth={2} />
-          </TouchableOpacity>
+          {!hideOpenLogCta ? (
+            <TouchableOpacity
+              onPress={onOpenFieldLog}
+              activeOpacity={0.75}
+              style={{
+                flex: 1,
+                borderRadius: theme.borderRadius.md,
+                paddingVertical: 10,
+                paddingHorizontal: 10,
+                minHeight: 40,
+                borderWidth: 1,
+                borderColor: theme.colors.primary,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 4,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }} numberOfLines={1}>
+                {t('producer.dashboard.syncStrip.openLog')}
+              </Text>
+              <ChevronRight size={16} color={theme.colors.primary} strokeWidth={2} />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     );
@@ -233,7 +241,7 @@ export default function SyncQueueStrip({
           paddingHorizontal: 14,
           minHeight: 44,
           opacity: syncing ? 0.65 : 1,
-          marginBottom: theme.spacing.xs,
+          marginBottom: hideOpenLogCta ? 0 : theme.spacing.xs,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -243,22 +251,24 @@ export default function SyncQueueStrip({
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={onOpenFieldLog}
-        activeOpacity={0.75}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingVertical: 8,
-          minHeight: 40,
-        }}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.primary }}>
-          {t('producer.dashboard.syncStrip.openLog')}
-        </Text>
-        <ChevronRight size={18} color={theme.colors.primary} strokeWidth={2} />
-      </TouchableOpacity>
+      {!hideOpenLogCta ? (
+        <TouchableOpacity
+          onPress={onOpenFieldLog}
+          activeOpacity={0.75}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: 8,
+            minHeight: 40,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.primary }}>
+            {t('producer.dashboard.syncStrip.openLog')}
+          </Text>
+          <ChevronRight size={18} color={theme.colors.primary} strokeWidth={2} />
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }

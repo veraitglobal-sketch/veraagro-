@@ -1,9 +1,6 @@
 import {
   offlineStorage,
   PendingFieldEntry,
-  PendingProduct,
-  PendingCost,
-  PendingCertificatePhoto,
 } from './offline-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -25,6 +22,36 @@ const SYNC_STATUS_KEY = 'sync_status';
 /** Queue items that still need upload (pending, failed retry, or stuck mid-sync after crash). */
 function needsSync(status: string | undefined): boolean {
   return status === 'pending' || status === 'error' || status === 'syncing';
+}
+
+async function peekFirstRecordedQueueError(): Promise<string | null> {
+  try {
+    const [entries, products, costs, certPhotos, harvests] = await Promise.all([
+      offlineStorage.getPendingEntries(),
+      offlineStorage.getPendingProducts(),
+      offlineStorage.getPendingCosts(),
+      offlineStorage.getPendingCertificatePhotos(),
+      offlineStorage.getPendingHarvestPlans(),
+    ]);
+    for (const e of entries) {
+      if (e.error?.trim()) return e.error.trim();
+    }
+    for (const p of products) {
+      if (p.error?.trim()) return p.error.trim();
+    }
+    for (const c of costs) {
+      if (c.error?.trim()) return c.error.trim();
+    }
+    for (const p of certPhotos) {
+      if (p.error?.trim()) return p.error.trim();
+    }
+    for (const h of harvests) {
+      if (h.error?.trim()) return h.error.trim();
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
 }
 
 export interface SyncStatus {
@@ -81,8 +108,9 @@ export const syncService = {
 
   /**
    * Sync all pending entries to backend
+   * @param updateGlobalLedger when false (`syncAll` path), avoids writing SYNC_STATUS halfway through a multi-queue flush
    */
-  async syncPendingEntries(): Promise<{ success: number; failed: number }> {
+  async syncPendingEntries(updateGlobalLedger = true): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingEntries();
     const pendingEntries = pending.filter((e) => needsSync(e.status));
 
@@ -90,11 +118,9 @@ export const syncService = {
       return { success: 0, failed: 0 };
     }
 
-    // Update sync status
-    await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({
-      syncing: true,
-      lastError: null,
-    }));
+    if (updateGlobalLedger) {
+      await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
+    }
 
     let success = 0;
     let failed = 0;
@@ -176,12 +202,16 @@ export const syncService = {
       }
     }
 
-    // Update sync status
-    await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({
-      syncing: false,
-      lastSyncTime: new Date().toISOString(),
-      lastError: failed > 0 ? `${failed} entries failed to sync` : null,
-    }));
+    if (updateGlobalLedger) {
+      await AsyncStorage.setItem(
+        SYNC_STATUS_KEY,
+        JSON.stringify({
+          syncing: false,
+          lastSyncTime: new Date().toISOString(),
+          lastError: failed > 0 ? `${failed} entries failed to sync` : null,
+        }),
+      );
+    }
 
     return { success, failed };
   },
@@ -373,13 +403,33 @@ export const syncService = {
     certificatePhotos: { success: number; failed: number };
     harvestPlans: { success: number; failed: number };
   }> {
+    await offlineStorage.resetStuckSyncingQueues();
     await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
 
-    const entries = await this.syncPendingEntries();
-    const products = await this.syncPendingProducts();
-    const costs = await this.syncPendingCosts();
-    const certificatePhotos = await this.syncPendingCertificatePhotos();
-    const harvestPlans = await this.syncPendingHarvestPlans();
+    let entries = { success: 0, failed: 0 };
+    let products = { success: 0, failed: 0 };
+    let costs = { success: 0, failed: 0 };
+    let certificatePhotos = { success: 0, failed: 0 };
+    let harvestPlans = { success: 0, failed: 0 };
+
+    try {
+      entries = await this.syncPendingEntries(false);
+      products = await this.syncPendingProducts();
+      costs = await this.syncPendingCosts();
+      certificatePhotos = await this.syncPendingCertificatePhotos();
+      harvestPlans = await this.syncPendingHarvestPlans();
+    } catch (e: unknown) {
+      const msg = apiErrorMessage(e, 'Sync failed');
+      await AsyncStorage.setItem(
+        SYNC_STATUS_KEY,
+        JSON.stringify({
+          syncing: false,
+          lastSyncTime: new Date().toISOString(),
+          lastError: msg,
+        }),
+      );
+      return { entries, products, costs, certificatePhotos, harvestPlans };
+    }
 
     const totalFailed =
       entries.failed +
@@ -387,6 +437,7 @@ export const syncService = {
       costs.failed +
       certificatePhotos.failed +
       harvestPlans.failed;
+    const detail = totalFailed > 0 ? await peekFirstRecordedQueueError() : null;
     await AsyncStorage.setItem(
       SYNC_STATUS_KEY,
       JSON.stringify({
@@ -394,9 +445,9 @@ export const syncService = {
         lastSyncTime: new Date().toISOString(),
         lastError:
           totalFailed > 0
-            ? tString(i18n.t, 'producer.sync.itemsNotSent', { count: totalFailed })
+            ? detail ?? tString(i18n.t, 'producer.sync.itemsNotSent', { count: totalFailed })
             : null,
-      })
+      }),
     );
 
     return { entries, products, costs, certificatePhotos, harvestPlans };
