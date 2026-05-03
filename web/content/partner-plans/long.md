@@ -1,5 +1,7 @@
 # Long-term partner plan
 
+> **Programme rule:** Bio Vera treats this horizon as **password-protected** and ordinarily unlockable only after **three full calendar years** from the grower account registration date (same gate as in the web app), unless operations agrees otherwise in writing.
+
 _Bio Vera · Confidential · Partner circulation only_
 
 ---

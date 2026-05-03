@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
+import { CalendarClock, Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 
 export type GrowerConfidentialTierId = 'short' | 'medium' | 'long';
@@ -10,7 +10,11 @@ export type GrowerConfidentialTierCardProps = {
   tierId: GrowerConfidentialTierId;
   title: string;
   hint: string;
-  tierConfigured: boolean;
+  /** Password + content published in env (tenure may still block medium/long). */
+  tierSecretsConfigured: boolean;
+  /** False for medium/long until account age meets minimum full years. */
+  tenureBlocked?: boolean;
+  tenureBlockedMessage?: string;
   /** After unlock: in-app reader path (may coexist with external URL). */
   unlockPresentationHref: string | null;
   unlockExternalHref: string | null;
@@ -34,6 +38,8 @@ export type GrowerConfidentialTierCardProps = {
   lockAgainLabel: string;
   showPasswordLabel: string;
   hidePasswordLabel: string;
+  /** Password matched but medium/long blocked by tenure (POST `tenureRejected`). */
+  tenureNotice?: string | null;
 };
 
 export default function GrowerConfidentialTierCard(props: GrowerConfidentialTierCardProps) {
@@ -41,7 +47,9 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     tierId,
     title,
     hint,
-    tierConfigured,
+    tierSecretsConfigured,
+    tenureBlocked,
+    tenureBlockedMessage,
     unlockPresentationHref,
     unlockExternalHref,
     password,
@@ -64,6 +72,7 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     lockAgainLabel,
     showPasswordLabel,
     hidePasswordLabel,
+    tenureNotice,
   } = props;
 
   const inputId = `grower-confidential-pw-${tierId}`;
@@ -72,7 +81,7 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
 
   const unlocked = unlockPresentationHref || unlockExternalHref;
 
-  if (!tierConfigured) {
+  if (!tierSecretsConfigured) {
     return (
       <section
         aria-labelledby={`grower-confidential-title-${tierId}`}
@@ -91,6 +100,33 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
             </h2>
             <p className="mt-1 text-base font-light leading-relaxed text-gray-600">{hint}</p>
             <p className="mt-4 text-base leading-relaxed text-gray-600">{unavailableLabel}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (tenureBlocked && tenureBlockedMessage) {
+    return (
+      <section
+        aria-labelledby={`grower-confidential-title-${tierId}`}
+        className="flex flex-col gap-4 rounded-xl border border-amber-200 bg-amber-50/90 p-5 shadow-sm sm:p-6"
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-amber-200 bg-white">
+            <CalendarClock className="h-6 w-6 text-amber-900/70" strokeWidth={1.75} aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2
+              id={`grower-confidential-title-${tierId}`}
+              className="text-lg font-semibold leading-snug text-gray-900"
+            >
+              {title}
+            </h2>
+            <p id={hintId} className="mt-1 text-base font-light leading-relaxed text-gray-800">
+              {hint}
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-amber-950">{tenureBlockedMessage}</p>
           </div>
         </div>
       </section>
@@ -201,6 +237,11 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
           {wrongPassword ? (
             <p id={errorId} className="text-sm leading-relaxed text-red-700" role="alert">
               {wrongPasswordLabel}
+            </p>
+          ) : null}
+          {tenureNotice ? (
+            <p className="text-sm leading-relaxed text-amber-900" role="status">
+              {tenureNotice}
             </p>
           ) : null}
           <button

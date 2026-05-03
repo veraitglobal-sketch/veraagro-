@@ -48,7 +48,11 @@ export default function GrowerConfidentialPage() {
 
   const [bootstrap, setBootstrap] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [bootstrapErrorRecoverable, setBootstrapErrorRecoverable] = useState(false);
+  const [tiersConfigured, setTiersConfigured] = useState<TierAvailability | null>(null);
   const [tiersAvailable, setTiersAvailable] = useState<TierAvailability | null>(null);
+  const [mediumLongTenure, setMediumLongTenure] = useState<{ eligible: boolean; minYears: number } | null>(
+    null,
+  );
   const [inviteGateActive, setInviteGateActive] = useState(false);
 
   const [unlocked, setUnlocked] = useState<Record<GrowerConfidentialTierId, TierUnlock | null>>({
@@ -58,6 +62,7 @@ export default function GrowerConfidentialPage() {
   });
   const [loadingTier, setLoadingTier] = useState<GrowerConfidentialTierId | null>(null);
   const [errorTier, setErrorTier] = useState<GrowerConfidentialTierId | null>(null);
+  const [tenureRejectedTier, setTenureRejectedTier] = useState<GrowerConfidentialTierId | null>(null);
   const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -110,15 +115,26 @@ export default function GrowerConfidentialPage() {
       }
 
       const tiers = data.tiersAvailable as TierAvailability | undefined;
+      const configured = data.tiersConfigured as TierAvailability | undefined;
+      const tenure = data.mediumLongTenure as { eligible: boolean; minYears: number } | undefined;
       const invite = Boolean(data.inviteGateActive);
       if (
         data.ok === true &&
         tiers &&
+        configured &&
+        tenure &&
         typeof tiers.short === 'boolean' &&
         typeof tiers.medium === 'boolean' &&
-        typeof tiers.long === 'boolean'
+        typeof tiers.long === 'boolean' &&
+        typeof configured.short === 'boolean' &&
+        typeof configured.medium === 'boolean' &&
+        typeof configured.long === 'boolean' &&
+        typeof tenure.eligible === 'boolean' &&
+        typeof tenure.minYears === 'number'
       ) {
+        setTiersConfigured(configured);
         setTiersAvailable(tiers);
+        setMediumLongTenure(tenure);
         setInviteGateActive(invite);
         setBootstrap('ok');
       } else {
@@ -165,6 +181,7 @@ export default function GrowerConfidentialPage() {
       }
       setLoadingTier(tier);
       setErrorTier(null);
+      setTenureRejectedTier(null);
       setPageError(null);
       try {
         const body = {
@@ -198,6 +215,14 @@ export default function GrowerConfidentialPage() {
           setPageError(t('grower.confidential.errorGate'));
           return;
         }
+
+        const rejected = data.tenureRejected as GrowerConfidentialTierId[] | undefined;
+        if (Array.isArray(rejected) && rejected.includes(tier)) {
+          setTenureRejectedTier(tier);
+          setErrorTier(null);
+          return;
+        }
+        setTenureRejectedTier(null);
 
         const internal =
           tier === 'short'
@@ -295,7 +320,9 @@ export default function GrowerConfidentialPage() {
         <GrowerPageShell>
           <GrowerPageHeader
             title={t('grower.confidential.pageTitle')}
-            description={t('grower.confidential.pageDescription')}
+            description={t('grower.confidential.pageDescription', {
+              years: mediumLongTenure?.minYears ?? 3,
+            })}
           />
 
           <div className="mb-6 flex gap-3 rounded-xl border border-amber-200 bg-amber-50/90 p-4 sm:p-5">
@@ -348,7 +375,16 @@ export default function GrowerConfidentialPage() {
                 ))
               : bootstrap === 'ok'
                 ? tiers.map(({ id, titleKey, hintKey, password, setPassword, show, setShow }) => {
-                    const configured = tiersAvailable?.[id] ?? false;
+                    const secretsOk = tiersConfigured?.[id] ?? false;
+                    const unlockAllowed = tiersAvailable?.[id] ?? false;
+                    const minY = mediumLongTenure?.minYears ?? 3;
+                    const tenureBlocked =
+                      (id === 'medium' || id === 'long') &&
+                      secretsOk &&
+                      !unlockAllowed &&
+                      mediumLongTenure !== null &&
+                      mediumLongTenure.minYears > 0 &&
+                      !mediumLongTenure.eligible;
                     const u = unlocked[id];
                     const busy = loadingTier === id;
 
@@ -357,18 +393,28 @@ export default function GrowerConfidentialPage() {
                         key={id}
                         tierId={id}
                         title={t(titleKey)}
-                        hint={t(hintKey)}
-                        tierConfigured={configured}
+                        hint={id === 'short' ? t(hintKey) : t(hintKey, { years: minY })}
+                        tierSecretsConfigured={secretsOk}
+                        tenureBlocked={tenureBlocked}
+                        tenureBlockedMessage={
+                          tenureBlocked ? t('grower.confidential.tierTenureBlocked', { years: minY }) : undefined
+                        }
                         unlockPresentationHref={u?.internalPath ?? null}
                         unlockExternalHref={u?.externalUrl ?? null}
                         password={password}
                         onPasswordChange={(v) => {
                           setPassword(v);
                           if (errorTier === id) setErrorTier(null);
+                          if (tenureRejectedTier === id) setTenureRejectedTier(null);
                         }}
                         showPassword={show}
                         onToggleShowPassword={() => setShow((s) => !s)}
                         wrongPassword={errorTier === id}
+                        tenureNotice={
+                          tenureRejectedTier === id
+                            ? t('grower.confidential.tenureRejectedNotice', { years: minY })
+                            : null
+                        }
                         loading={busy}
                         onUnlock={() => fetchUnlock(id, password.trim())}
                         onLockAgain={() => revokeTierSession(id)}

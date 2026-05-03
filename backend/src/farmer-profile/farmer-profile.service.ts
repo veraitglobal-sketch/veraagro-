@@ -190,6 +190,8 @@ export class FarmerProfileService {
     return {
       farmer: {
         id: user.id,
+        /** ISO timestamp — used for programme tenure gates (e.g. confidential medium/long plans). */
+        accountCreatedAt: user.createdAt.toISOString(),
         firstName: user.firstName,
         lastName: user.lastName,
         photo: user.farmerPhoto,

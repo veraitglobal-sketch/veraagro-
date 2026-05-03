@@ -22,6 +22,13 @@ export type ConfidentialUnlockResponse = {
   shortTermInternal?: boolean;
   mediumTermInternal?: boolean;
   longTermInternal?: boolean;
+  /** Correct password but medium/long blocked by partnership tenure rule. */
+  tenureRejected?: ConfidentialTier[];
+};
+
+export type MediumLongTenureBootstrap = {
+  eligible: boolean;
+  minYears: number;
 };
 
 const TIER_ENV_KEYS: Record<ConfidentialTier, { urlKey: string; passKey: string }> = {
@@ -49,6 +56,42 @@ export function isInviteGateConfigured(): boolean {
   return !!(process.env.GROWER_CONFIDENTIAL_ACCESS_TOKEN || '').trim();
 }
 
+/** Minimum full calendar years since grower account creation before medium/long unlock. Use `0` to disable (e.g. dev). Default `3`. */
+export function getMediumLongMinPartnershipYears(): number {
+  const raw = process.env.GROWER_CONFIDENTIAL_MEDIUM_LONG_MIN_YEARS?.trim();
+  if (!raw) return 3;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 0) return 3;
+  return Math.floor(n);
+}
+
+function wholeYearsBetween(start: Date, end: Date): number {
+  let years = end.getFullYear() - start.getFullYear();
+  const monthDiff = end.getMonth() - start.getMonth();
+  const dayDiff = end.getDate() - start.getDate();
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) years -= 1;
+  return Math.max(0, years);
+}
+
+async function fetchFarmerProfileMe(
+  authHeader: string | null,
+): Promise<{ accountCreatedAt?: string } | null> {
+  if (!authHeader || !/^Bearer\s+\S+/i.test(authHeader)) return null;
+  const apiBase = WEB_API_BASE.replace(/\/$/, '');
+  try {
+    const res = await fetch(`${apiBase}/farmer-profile/me`, {
+      method: 'GET',
+      headers: { Authorization: authHeader },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { farmer?: { accountCreatedAt?: string } };
+    return data?.farmer ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** HTTPS everywhere; HTTP allowed only for localhost dev. */
 export function isAllowedPartnerDocumentUrl(raw: string): boolean {
   try {
@@ -73,7 +116,7 @@ export function safeEqualUtf8(a: string, b: string): boolean {
   return timingSafeEqual(na, nb);
 }
 
-/** Tier is available when password is set and (published markdown exists OR valid external URL). */
+/** Tier has password + markdown or external URL (and cookie secret when markdown-only). */
 function readTierSecrets(tier: ConfidentialTier): { url: string | null; password: string } | null {
   const { urlKey, passKey } = TIER_ENV_KEYS[tier];
   const urlRaw = String(process.env[urlKey] ?? '').trim();
@@ -92,7 +135,8 @@ function readTierSecrets(tier: ConfidentialTier): { url: string | null; password
   return { url: urlOk ? urlRaw : null, password };
 }
 
-export function getTierAvailability(): ConfidentialTierAvailability {
+/** Env/content publishing status — ignores tenure (medium/long may still be locked). */
+export function getTierSecretsConfigured(): ConfidentialTierAvailability {
   return {
     short: readTierSecrets('short') !== null,
     medium: readTierSecrets('medium') !== null,
@@ -100,19 +144,39 @@ export function getTierAvailability(): ConfidentialTierAvailability {
   };
 }
 
+export async function isMediumLongTenureEligible(authHeader: string | null): Promise<boolean> {
+  const minY = getMediumLongMinPartnershipYears();
+  if (minY <= 0) return true;
+  const row = await fetchFarmerProfileMe(authHeader);
+  const iso = row?.accountCreatedAt;
+  if (typeof iso !== 'string') return false;
+  const start = new Date(iso);
+  if (Number.isNaN(start.getTime())) return false;
+  return wholeYearsBetween(start, new Date()) >= minY;
+}
+
+export async function resolveConfidentialBootstrap(authHeader: string | null): Promise<{
+  tiersConfigured: ConfidentialTierAvailability;
+  tiersAvailable: ConfidentialTierAvailability;
+  mediumLongTenure: MediumLongTenureBootstrap;
+}> {
+  const tiersConfigured = getTierSecretsConfigured();
+  const minYears = getMediumLongMinPartnershipYears();
+  const eligible = minYears <= 0 ? true : await isMediumLongTenureEligible(authHeader);
+  return {
+    tiersConfigured,
+    tiersAvailable: {
+      short: tiersConfigured.short,
+      medium: tiersConfigured.medium && eligible,
+      long: tiersConfigured.long && eligible,
+    },
+    mediumLongTenure: { eligible, minYears },
+  };
+}
+
 export async function verifyGrowerJwt(authHeader: string | null): Promise<boolean> {
-  if (!authHeader || !/^Bearer\s+\S+/i.test(authHeader)) return false;
-  const apiBase = WEB_API_BASE.replace(/\/$/, '');
-  try {
-    const res = await fetch(`${apiBase}/farmer-profile/me`, {
-      method: 'GET',
-      headers: { Authorization: authHeader },
-      cache: 'no-store',
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const row = await fetchFarmerProfileMe(authHeader);
+  return row !== null;
 }
 
 export type InviteGateResult = 'ok' | 'missing' | 'mismatch';
@@ -137,7 +201,10 @@ function sanitizePasswordAttempt(raw: unknown): string {
   return t;
 }
 
-export function unlockFromPasswordBody(body: unknown): ConfidentialUnlockResponse {
+export function unlockFromPasswordBody(
+  body: unknown,
+  ctx?: { mediumLongTenureEligible?: boolean },
+): ConfidentialUnlockResponse {
   let passwords: Partial<Record<ConfidentialTier, string>> = {};
   if (body && typeof body === 'object' && !Array.isArray(body)) {
     const p = (body as { passwords?: unknown }).passwords;
@@ -151,6 +218,8 @@ export function unlockFromPasswordBody(body: unknown): ConfidentialUnlockRespons
     }
   }
 
+  const tenureOk = ctx?.mediumLongTenureEligible !== false;
+
   const out: ConfidentialUnlockResponse = { ok: true };
 
   const apply = (tier: ConfidentialTier, field: ConfidentialUrlField) => {
@@ -159,6 +228,11 @@ export function unlockFromPasswordBody(body: unknown): ConfidentialUnlockRespons
     const attempt = passwords[tier] ?? '';
     if (!attempt) return;
     if (!safeEqualUtf8(attempt, cfg.password)) return;
+    if ((tier === 'medium' || tier === 'long') && !tenureOk) {
+      const prev = out.tenureRejected ?? [];
+      out.tenureRejected = [...prev, tier];
+      return;
+    }
     if (cfg.url) {
       out[field] = cfg.url;
     }
