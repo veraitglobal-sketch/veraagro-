@@ -4,7 +4,10 @@ import * as path from 'path';
 import * as PDFDocument from 'pdfkit';
 import { PDF_SECTIONS_EN } from './biovera-fresh.pdf-sections';
 
-/** Prospect hero: place under web/public or backend/public (see listPublicAssetDirs). */
+/**
+ * Prospect hero filenames: web/public (synced into src/biovera-fresh/assets on backend prebuild),
+ * or backend/src/biovera-fresh/assets committed manually; see readHeroBuffer().
+ */
 const BIOVERA_FRESH_HERO_FILES = [
   'biovera-fresh-prospect-hero.jpg',
   'biovera-fresh-prospect-hero.jpeg',
@@ -136,6 +139,36 @@ export class BioVeraFreshService {
     return null;
   }
 
+  /** Prefer Nest-bundled assets next to compiled JS (dist/biovera-fresh/assets), then public dirs. */
+  private readHeroBuffer(): Buffer | null {
+    const bundledDir = path.join(__dirname, 'assets');
+    for (const name of BIOVERA_FRESH_HERO_FILES) {
+      const p = path.join(bundledDir, name);
+      if (!fs.existsSync(p)) continue;
+      try {
+        return fs.readFileSync(p);
+      } catch (e) {
+        this.logger.warn(`BioVera Fresh PDF: could not read bundled hero ${p}`, e);
+      }
+    }
+    return this.readPublicImageFirstMatch(BIOVERA_FRESH_HERO_FILES);
+  }
+
+  /** Normalize to RGB JPEG so PDFKit embed is reliable (e.g. CMYK / exotic JPEG). */
+  private async normalizeHeroImageForPdf(input: Buffer): Promise<Buffer> {
+    try {
+      const { default: sharp } = await import('sharp');
+      return await sharp(input)
+        .rotate()
+        .resize({ width: 1800, height: 1000, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 88, mozjpeg: true })
+        .toBuffer();
+    } catch (e) {
+      this.logger.warn('BioVera Fresh PDF: sharp normalize failed, using raw bytes', e);
+      return input;
+    }
+  }
+
   private resolveLogoPath(): string | null {
     return this.resolveRepoPublicAsset('logo1.png') ?? this.resolveRepoPublicAsset('logo.png');
   }
@@ -148,6 +181,14 @@ export class BioVeraFreshService {
     const sections = PDF_SECTIONS_EN;
     const docTitle = 'BioVera Fresh - Partner prospect';
     const tocTitle = 'Contents';
+
+    const rawHero = this.readHeroBuffer();
+    const heroBufPrepared = rawHero ? await this.normalizeHeroImageForPdf(rawHero) : null;
+    if (!rawHero) {
+      this.logger.warn(
+        'BioVera Fresh PDF: hero image not found. Add biovera-fresh-prospect-hero.jpg to web/public (backend prebuild syncs it) or backend/src/biovera-fresh/assets/.',
+      );
+    }
 
     return new Promise((resolve, reject) => {
       try {
@@ -484,10 +525,9 @@ export class BioVeraFreshService {
           );
         doc.moveDown(1);
 
-        const heroBuf = this.readPublicImageFirstMatch(BIOVERA_FRESH_HERO_FILES);
-        if (heroBuf) {
+        if (heroBufPrepared) {
           try {
-            const heroMaxH = 200;
+            const heroMaxH = 220;
             if (doc.y + heroMaxH > contentBottom) {
               startNewContentPage();
             }
@@ -497,7 +537,7 @@ export class BioVeraFreshService {
 
             doc.save();
             doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
-            doc.image(heroBuf, MARGIN, heroY, {
+            doc.image(heroBufPrepared, MARGIN, heroY, {
               fit: [heroW, heroMaxH],
               align: 'center',
               valign: 'center',
@@ -515,10 +555,6 @@ export class BioVeraFreshService {
           } catch (e) {
             this.logger.warn('BioVera Fresh PDF: hero image embed failed', e);
           }
-        } else {
-          this.logger.warn(
-            `BioVera Fresh PDF: hero image not found (tried ${BIOVERA_FRESH_HERO_FILES.join(', ')} in ${this.listPublicAssetDirs().length} directories). Place file in web/public or backend/public.`,
-          );
         }
 
         renderToc();

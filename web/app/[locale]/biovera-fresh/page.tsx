@@ -1,6 +1,27 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+
+const FRESH_PROSPECT_HERO_SRC = [
+  "/biovera-fresh-prospect-hero.jpg",
+  "/biovera-fresh-prospect-hero.jpeg",
+  "/biovera-fresh-prospect-hero.png",
+] as const;
+
+function FreshProspectHero({ alt, className }: { alt: string; className?: string }) {
+  const [i, setI] = useState(0);
+  const src = FRESH_PROSPECT_HERO_SRC[i];
+  if (src === undefined) return null;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      decoding="async"
+      onError={() => setI((x) => x + 1)}
+    />
+  );
+}
 import Link from "next/link";
 import {
   Link2,
@@ -31,18 +52,32 @@ function isFranchiseBlueprintList(x: unknown): x is { title: string; body: strin
   );
 }
 
-function isFreshResourceItems(
-  x: unknown,
-): x is { id: string; title: string; description: string; type: string; size: string }[] {
-  return (
-    Array.isArray(x) &&
-    x.length > 0 &&
-    typeof x[0] === "object" &&
-    x[0] !== null &&
-    "id" in x[0] &&
-    "title" in x[0] &&
-    "description" in x[0]
-  );
+interface FreshResourceItem {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  size: string;
+  /** Static path under web/public (direct browser download). */
+  publicPath?: string;
+}
+
+function isFreshResourceItems(x: unknown): x is FreshResourceItem[] {
+  if (!Array.isArray(x) || x.length === 0) return false;
+  return x.every((item) => {
+    if (typeof item !== "object" || item === null) return false;
+    const o = item as Record<string, unknown>;
+    if (
+      typeof o.id !== "string" ||
+      typeof o.title !== "string" ||
+      typeof o.description !== "string" ||
+      typeof o.type !== "string" ||
+      typeof o.size !== "string"
+    )
+      return false;
+    if (o.publicPath !== undefined && typeof o.publicPath !== "string") return false;
+    return true;
+  });
 }
 
 const FRANCHISE_ICONS = [
@@ -250,6 +285,9 @@ export default function BioVeraFreshPage() {
             {t("bioVeraFresh.coverTitle")}
           </h1>
           <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">{t("bioVeraFresh.coverSubtitle")}</p>
+          <figure className="mt-6 hidden max-h-[240px] w-full max-w-4xl print:block mx-auto overflow-hidden rounded-lg border border-gray-300">
+            <FreshProspectHero alt="" className="max-h-[240px] w-full object-cover object-center" />
+          </figure>
         </header>
 
         {/* Programme overview — same grid + dividers as growers “protocol” block */}
@@ -394,6 +432,22 @@ export default function BioVeraFreshPage() {
                               </>
                             )}
                           </button>
+                        ) : resource.publicPath ? (
+                          <a
+                            href={resource.publicPath}
+                            download={resource.publicPath.split("/").pop() ?? undefined}
+                            className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors inline-flex items-center gap-1"
+                          >
+                            {t("bioVeraFresh.resourceDownload")}
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                              />
+                            </svg>
+                          </a>
                         ) : (
                           <span className="text-sm font-medium text-gray-400">—</span>
                         )}

@@ -503,6 +503,17 @@
         ]
       },
       {
+        "category": "BioVera Fresh programme",
+        "items": [
+          {
+            "name": "BioVera Fresh — retail concept (photo)",
+            "description": "Hero visual for the BioVera Fresh controlled-retail and store-pilot programme — for press articles, partner decks and franchise-preparation stories.",
+            "format": "JPG",
+            "file": "/biovera-fresh-prospect-hero.jpg"
+          }
+        ]
+      },
+      {
         "category": "Documents",
         "items": [
           {
@@ -4307,6 +4318,7 @@
     "coverEyebrow": "Direct. Fresh. Controlled.",
     "coverTitle": "BioVera Fresh",
     "coverSubtitle": "A modern concept for selling fresh produce.",
+    "heroImageAlt": "BioVera Fresh retail concept — fresh produce presentation",
     "pdfDocumentTitle": "Complete document — BioVera Fresh",
     "pdfDocumentSubtitle": "Full programme text for stakeholders, pilots, or archiving.",
     "ctaTitle": "Become a BioVera Fresh partner",
@@ -4428,7 +4440,7 @@
       }
     ],
     "resourcesTitle": "Resources & downloads",
-    "resourcesLead": "Essential programme PDFs for partners preparing a store pilot.",
+    "resourcesLead": "Essential programme PDFs and the official concept photo for partners preparing a store pilot.",
     "resourceItems": [
       {
         "id": "freshProspect",
@@ -4436,6 +4448,14 @@
         "description": "Full copy: introduction, market context, solution, store concept, flow, inventory management, earnings, operations, benefits, investment, channel positioning, growth, eligibility and contact.",
         "type": "PDF",
         "size": "~180 KB"
+      },
+      {
+        "id": "freshConceptPhoto",
+        "title": "BioVera Fresh — concept photo",
+        "description": "High-resolution hero image for decks, lender packs and partner onboarding (same visual embedded in the prospect PDF).",
+        "type": "JPG",
+        "size": "~2.5 MB",
+        "publicPath": "/biovera-fresh-prospect-hero.jpg"
       }
     ],
     "resourceDownload": "Download",

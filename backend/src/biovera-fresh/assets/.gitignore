@@ -1,0 +1,4 @@
+# Copied from ../web/public by scripts/sync-biovera-fresh-hero.cjs at backend prebuild.
+*
+!.gitignore
+!.gitkeep
