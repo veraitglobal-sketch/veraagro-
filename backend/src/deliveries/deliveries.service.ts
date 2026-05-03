@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { getPickupEstate, getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
 import { PaymentsService } from '../payments/payments.service';
@@ -13,6 +13,8 @@ import * as crypto from 'crypto';
  */
 @Injectable()
 export class DeliveriesService {
+  private readonly logger = new Logger(DeliveriesService.name);
+
   constructor(
     private prisma: PrismaService,
     private paymentsService: PaymentsService,
@@ -447,5 +449,147 @@ export class DeliveriesService {
     }
 
     return delivery;
+  }
+
+  /**
+   * Buyer reports a problem with a received shipment. Requires at least one photo and a description.
+   * Accepts only within 24 hours of system-recorded receipt (deliveredAt / confirmedAt).
+   */
+  async reportBuyerDeliveryIssue(
+    buyerId: string,
+    dto: { deliveryId: string; description: string; photosBase64: string[] },
+  ) {
+    const desc = (dto.description ?? '').trim();
+    if (desc.length < 20) {
+      throw new BadRequestException('Description must be at least 20 characters.');
+    }
+    if (desc.length > 8000) {
+      throw new BadRequestException('Description is too long.');
+    }
+
+    const rawPhotos = Array.isArray(dto.photosBase64)
+      ? dto.photosBase64.map((p) => (typeof p === 'string' ? p.trim() : '')).filter(Boolean)
+      : [];
+    if (rawPhotos.length === 0) {
+      throw new BadRequestException('At least one photo of the shipment is required.');
+    }
+    if (rawPhotos.length > 6) {
+      throw new BadRequestException('Maximum 6 photos allowed.');
+    }
+
+    const delivery = await this.prisma.deliveries.findUnique({
+      where: { id: dto.deliveryId },
+      include: {
+        orders: { select: { buyerId: true, orderNumber: true } },
+      },
+    });
+
+    if (!delivery) {
+      throw new NotFoundException('Delivery not found.');
+    }
+    if (delivery.orders.buyerId !== buyerId) {
+      throw new BadRequestException('This delivery is not linked to your buyer account.');
+    }
+
+    const receiptAt = delivery.deliveredAt ?? delivery.confirmedAt;
+    if (!receiptAt) {
+      throw new BadRequestException(
+        'Receipt is not recorded for this shipment yet. You can submit a report only after receipt is logged.',
+      );
+    }
+
+    const windowMs = 24 * 60 * 60 * 1000;
+    if (Date.now() - receiptAt.getTime() > windowMs) {
+      throw new BadRequestException(
+        'The 24-hour reporting window from recorded receipt has expired. Please contact Bio Vera operations.',
+      );
+    }
+
+    const issueId = crypto.randomUUID();
+    const photoUrls = await this.persistBuyerIssuePhotos(delivery.id, issueId, rawPhotos);
+
+    await this.prisma.buyer_delivery_issues.create({
+      data: {
+        id: issueId,
+        deliveryId: delivery.id,
+        buyerId,
+        description: desc,
+        photoUrls: photoUrls as unknown as object,
+      },
+    });
+
+    this.logger.log(
+      `buyer_delivery_issue created id=${issueId} delivery=${delivery.deliveryNumber} order=${delivery.orders.orderNumber} buyer=${buyerId} photos=${photoUrls.length}`,
+    );
+
+    return {
+      id: issueId,
+      message: 'Report received. Our team will review the photos and description.',
+    };
+  }
+
+  private decodeBuyerIssuePhotoBase64(raw: string): Buffer {
+    const s = raw.trim();
+    let b64 = s;
+    const dataMatch = /^data:image\/(?:jpeg|jpg|png|webp);base64,(.+)$/i.exec(s);
+    if (dataMatch) {
+      b64 = dataMatch[1];
+    }
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(b64, 'base64');
+    } catch {
+      throw new BadRequestException('Invalid photo encoding.');
+    }
+    if (buf.length < 80) {
+      throw new BadRequestException('Invalid or empty image.');
+    }
+    const maxBytes = 1_800_000;
+    if (buf.length > maxBytes) {
+      throw new BadRequestException(`Each photo must be under ${Math.round(maxBytes / 1024)} KB.`);
+    }
+    return buf;
+  }
+
+  private async persistBuyerIssuePhotos(
+    deliveryId: string,
+    issueId: string,
+    base64Photos: string[],
+  ): Promise<string[]> {
+    const urls: string[] = [];
+    const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
+
+    for (let i = 0; i < base64Photos.length; i++) {
+      const buf = this.decodeBuyerIssuePhotoBase64(base64Photos[i]);
+      if (token) {
+        const { put } = await import('@vercel/blob');
+        const ext = DeliveriesService.guessBuyerIssueImageExt(buf);
+        const out = await put(`buyer-delivery-issue/${deliveryId}/${issueId}-${i}.${ext}`, buf, {
+          access: 'public',
+          token,
+        });
+        urls.push(out.url);
+      } else {
+        urls.push(`data:image/jpeg;base64,${buf.toString('base64')}`);
+      }
+    }
+
+    return urls;
+  }
+
+  private static guessBuyerIssueImageExt(buf: Buffer): string {
+    if (buf.length >= 2 && buf[0] === 0xff && buf[1] === 0xd8) {
+      return 'jpg';
+    }
+    if (
+      buf.length >= 8 &&
+      buf[0] === 0x89 &&
+      buf[1] === 0x50 &&
+      buf[2] === 0x4e &&
+      buf[3] === 0x47
+    ) {
+      return 'png';
+    }
+    return 'webp';
   }
 }

@@ -371,6 +371,10 @@ export const deliveriesAPI = {
     const response = await api.post(`/deliveries/confirm/${qrCode}`);
     return response.data;
   },
+  reportBuyerIssue: async (body: { deliveryId: string; description: string; photosBase64: string[] }) => {
+    const response = await api.post('/deliveries/buyer/report-issue', body);
+    return response.data;
+  },
   /** Download waybill PDF (auth required; buyer, driver, grower, admin). */
   downloadWaybillPdf: async (waybillId: string) => {
     const response = await api.get(`/waybills/document/${waybillId}/pdf`, {

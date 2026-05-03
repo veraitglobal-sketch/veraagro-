@@ -424,6 +424,8 @@
       "legacyFarmToolsBody": "Otvori Polje za parcele i dnevnik, Lot za partije i prevoz, Nabavka za materijal i porudžbine partnera. Posle prelaska možeš da zatvoriš ovaj ekran.",
       "seasonGuideTitle": "Uputstvo za sezonu",
       "seasonGuideSubtitle": "Koraci: parcele, odobrenje, lanac žetve i transport.",
+      "educationBannerTitle": "Edukacija za proizvođače",
+      "educationBannerSubtitle": "Video materijali, odgovornost za robu, etika — isti skup tema kao na web kontrolnoj tabli.",
       "farmer": {
         "blockTitle": "Na farmi — redosled",
         "blockHint": "1–3: koraci, parcele, zasadi · 4 Dnevnik · 5 Materijali · 6–8: dozvoljeno, zabranjeno, sertifikati.",
@@ -917,6 +919,30 @@
           "saveFailed": "Otpremanje nije uspelo"
         }
       }
+    },
+    "education": {
+      "screenTitle": "Edukacija",
+      "pageDescription": "Kratak pregled pakovanja, odgovornosti za robu i etike u lancu Bio Vera — isti fokus kao na web kontrolnoj tabli za proizvođače.",
+      "comingSoon": "Video materijali i linkovi dolaze postepeno. Posećuj ovaj ekran kad pakujete novi teret; hitna obaveštenja dolaze i u aplikaciji.",
+      "videoSectionTitle": "Pakovanje i video materijal",
+      "videoSectionIntro": "Kako pakuješ, nalepljuješ i vežeš lot pre predaje.",
+      "videoBullet1": "Pakovanje spremno za hladni lanac",
+      "videoBullet2": "Nalepnice, QR i pravilo za rolu etikete",
+      "videoBullet3": "Paleta i završna priprema pre preuzimanja od prevoznika",
+      "liabilitySectionTitle": "Odgovornost za robu i sankcije",
+      "liabilitySectionIntro": "Od tebe se traži da ispunjavaš prihvatan kvalitet i usklađenost za predati lot.",
+      "liabilityBullet1": "Ozbiljni prekršaji mogu blokirati isplate, isključiti lot ili prekinuti saradnju",
+      "liabilityBullet2": "Operativa pregledava odstupanja; sledi moguće ugovorne korake",
+      "liabilityBullet3": "Obavezujući uslovi uvek dolaze iz pisanih dokumenata Bio Vere",
+      "ethicsSectionTitle": "Etika",
+      "ethicsSectionIntro": "Transparentnost i poštovanje kupca, prevoznika i operativnog tima.",
+      "ethicsBullet1": "Tačan dnevnik i izjave o kvalitetu",
+      "ethicsBullet2": "Drži rokove i uputstva za bezbednost hrane i hladni lanac",
+      "moreSectionTitle": "Dodatne teme",
+      "moreSectionIntro": "Često pitanja pored koraka u aplikaciji i na sajtu.",
+      "moreBullet1": "Čuvanje dokaza koji ide uz lot",
+      "moreBullet2": "Šta da proveriš kod novih gajbi ili materijala",
+      "footerNote": "Za pravnu obavezujućnost oslanjaj se na pisane dokumente Bio Vere ili pravnika. Ovaj ekran samo sistematizuje teme."
     },
     "fieldLog": {
       "planting": "Setva",
@@ -1530,6 +1556,7 @@
     "scanBarcode": "Skeniraj barkod",
     "requestTransport": "Zatraži transport",
     "partnerOrders": "Porudžbine partnera",
+    "education": "Edukacija",
     "packingFlow": "Proces pakovanja",
     "packageBadges": "Nalepnice / serije"
   },

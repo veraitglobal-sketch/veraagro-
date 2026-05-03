@@ -16,6 +16,7 @@ import {
   Leaf,
   NotebookPen,
   Smartphone,
+  GraduationCap,
 } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
@@ -33,9 +34,9 @@ export type GrowerNavItem = {
 /**
  * Full grower sidebar: same on every /grower/* page.
  * Order follows field workflow: dashboard → guide → parcels → plantings → materials →
- * batches (packed) → entry log → scan pallets → quality → compliance → suppliers →
- * transport → tracker → profile.
- * Parity: mobile grower tab bar + stack routes (align separately).
+ * batches (packed) → entry log → scan pallets → quality → compliance → education →
+ * suppliers → transport → tracker → profile.
+ * Parity: mobile stack route `/education` + deep links (`grower-web-href-to-mobile`).
  */
 export function buildGrowerNavItems(t: TFunction, locale: SiteLocale): GrowerNavItem[] {
   const p = (path: string) => withLocalePrefix(locale, path);
@@ -52,6 +53,7 @@ export function buildGrowerNavItems(t: TFunction, locale: SiteLocale): GrowerNav
     { href: p('/grower/package-badges/scan'), label: t('grower.nav.scanPallets'), icon: <ScanBarcode className="w-5 h-5" /> },
     { href: p('/grower/quality-entry'), label: t('grower.nav.qualityEntry'), icon: <CheckCircle className="w-5 h-5" /> },
     { href: p('/grower/compliance-photos'), label: t('grower.nav.compliancePhotos'), icon: <Camera className="w-5 h-5" /> },
+    { href: p('/grower/education'), label: t('grower.nav.education'), icon: <GraduationCap className="w-5 h-5" /> },
     { href: p('/grower/where-to-buy'), label: t('grower.nav.suppliersAndOrders'), icon: <ShoppingBag className="w-5 h-5" /> },
     { href: p('/grower/missions/create'), label: t('grower.nav.requestTransport'), icon: <Truck className="w-5 h-5" /> },
     { href: p('/grower/portal'), label: t('grower.nav.missionTracker'), icon: <MapPin className="w-5 h-5" /> },

@@ -422,6 +422,8 @@
       "legacyFarmToolsBody": "Open Field for parcels and diary, Lots for batches and transport, Supplies for materials and partner orders. You can close this screen after you jump to the right tab.",
       "seasonGuideTitle": "Season instructions",
       "seasonGuideSubtitle": "Step-by-step: parcels, approval, harvest chain, and transport.",
+      "educationBannerTitle": "Grower education",
+      "educationBannerSubtitle": "Packing videos, responsibility for goods, ethics — open the same hub as on the website.",
       "farmer": {
         "blockTitle": "On the farm — follow this order",
         "blockHint": "1–3: steps, parcels, plantings · 4 Field log · 5 Materials · 6–8: allowed, banned, certificates.",
@@ -914,6 +916,30 @@
           "saveFailed": "Upload failed"
         }
       }
+    },
+    "education": {
+      "screenTitle": "Education",
+      "pageDescription": "Short guides about packing, legal responsibility for the goods you hand over, ethics in our chain — same topics as biovera.app for growers.",
+      "comingSoon": "Videos and extra links will appear gradually. Visit when you ship a lot; notices also arrive in the app.",
+      "videoSectionTitle": "Packing & video guides",
+      "videoSectionIntro": "How to pack, label, and tie serials to your lot.",
+      "videoBullet1": "Cold-chain-ready packaging",
+      "videoBullet2": "Labels, QR, sticker-roll rules",
+      "videoBullet3": "Pallet finishing before haulier pickup",
+      "liabilitySectionTitle": "Goods responsibility & sanctions",
+      "liabilitySectionIntro": "You must meet quality & compliance commitments for submitted lots.",
+      "liabilityBullet1": "Serious breaches can pause payouts, exclude lots, or end cooperation",
+      "liabilityBullet2": "Operations reviews deviations; contractual steps may follow",
+      "liabilityBullet3": "Binding terms always come from signed documents from Bio Vera",
+      "ethicsSectionTitle": "Ethics",
+      "ethicsSectionIntro": "Transparency and respect across buyer, carrier, ops.",
+      "ethicsBullet1": "Honest diary & quality declarations",
+      "ethicsBullet2": "Keep timelines & food-safety / cold-chain instructions",
+      "moreSectionTitle": "More topics",
+      "moreSectionIntro": "FAQs beside app + web steps.",
+      "moreBullet1": "Keeping proofs with each lot",
+      "moreBullet2": "What to verify on new crates or labels",
+      "footerNote": "For legal wording, rely on formal Bio Vera documents or counsel. This screen is thematic only."
     },
     "fieldLog": {
       "planting": "Planting",
@@ -1524,6 +1550,7 @@
     "scanBarcode": "Scan barcode",
     "requestTransport": "Request transport",
     "partnerOrders": "Partner orders",
+    "education": "Education",
     "packingFlow": "Packing flow",
     "packageBadges": "Package badges"
   },

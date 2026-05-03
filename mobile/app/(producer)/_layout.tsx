@@ -40,6 +40,14 @@ export default function ProducerLayout() {
         <Stack.Screen name="orders/[id]" />
         <Stack.Screen name="notifications" />
         <Stack.Screen name="compliance-photos" />
+        <Stack.Screen
+          name="education"
+          options={{
+            headerShown: true,
+            title: i18n.t('producer.education.screenTitle'),
+            headerBackTitle: i18n.t('common.back'),
+          }}
+        />
         <Stack.Screen name="quality-entry" />
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />

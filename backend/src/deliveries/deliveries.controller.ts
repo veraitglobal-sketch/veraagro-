@@ -9,6 +9,17 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class DeliveriesController {
   constructor(private deliveriesService: DeliveriesService) {}
 
+  /** Buyer: report quality / handling issue with mandatory photos; only within 24h of recorded receipt. */
+  @Post('buyer/report-issue')
+  @UseGuards(RolesGuard)
+  @Roles('BUYER')
+  async reportBuyerDeliveryIssue(
+    @Request() req: any,
+    @Body() body: { deliveryId: string; description: string; photosBase64: string[] },
+  ) {
+    return this.deliveriesService.reportBuyerDeliveryIssue(req.user.id, body);
+  }
+
   @Post('assign')
   async assignDelivery(
     @Body() body: { orderId: string; driverId: string },

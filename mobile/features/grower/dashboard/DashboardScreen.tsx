@@ -178,6 +178,32 @@ export default function DashboardScreen() {
           </View>
           <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push('/(producer)/education')}
+          activeOpacity={0.75}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: 'rgba(45, 90, 39, 0.06)',
+            borderRadius: theme.borderRadius.md,
+            paddingVertical: theme.spacing.sm,
+            paddingHorizontal: theme.spacing.md,
+            marginBottom: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: 'rgba(45, 90, 39, 0.2)',
+            minHeight: 48,
+          }}
+        >
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }}>
+              {t('producer.dashboard.educationBannerTitle')}
+            </Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }} numberOfLines={2}>
+              {t('producer.dashboard.educationBannerSubtitle')}
+            </Text>
+          </View>
+          <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />
+        </TouchableOpacity>
         {hasAlerts ? (
           <TouchableOpacity
             onPress={() => {

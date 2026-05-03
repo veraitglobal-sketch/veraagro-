@@ -1,14 +1,43 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { deliveriesAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
-import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown } from 'lucide-react';
+import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, Filter, RefreshCw, FileDown, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
+
+const REPORT_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+function buyerDeliveryReceiptAt(delivery: { deliveredAt?: string | null; confirmedAt?: string | null } | null): Date | null {
+  if (!delivery?.deliveredAt && !delivery?.confirmedAt) return null;
+  const raw = delivery.deliveredAt ?? delivery.confirmedAt;
+  const d = new Date(raw as string);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function canBuyerReportDeliveryIssue(delivery: {
+  status?: string;
+  deliveredAt?: string | null;
+  confirmedAt?: string | null;
+} | null): boolean {
+  if (!delivery || delivery.status === 'CANCELLED') return false;
+  const at = buyerDeliveryReceiptAt(delivery);
+  if (!at) return false;
+  return Date.now() - at.getTime() <= REPORT_WINDOW_MS;
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function DeliveriesPage() {
   const { t } = useTranslation();
@@ -19,9 +48,96 @@ export default function DeliveriesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDelivery, setSelectedDelivery] = useState<any | null>(null);
+  const [issueTarget, setIssueTarget] = useState<any | null>(null);
+  const [issueDescription, setIssueDescription] = useState('');
+  const [issuePhotos, setIssuePhotos] = useState<{ preview: string; dataUrl: string }[]>([]);
+  const [issueSubmitting, setIssueSubmitting] = useState(false);
+  const [issueLocalError, setIssueLocalError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const errorRef = useRef<string | null>(null);
   errorRef.current = error;
+
+  const openIssueModal = useCallback((delivery: any) => {
+    setIssueTarget(delivery);
+    setIssueDescription('');
+    setIssuePhotos([]);
+    setIssueLocalError(null);
+  }, []);
+
+  const closeIssueModal = useCallback(() => {
+    if (issueSubmitting) return;
+    setIssueTarget(null);
+    setIssueDescription('');
+    setIssuePhotos([]);
+    setIssueLocalError(null);
+  }, [issueSubmitting]);
+
+  const onIssueFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    const next: { preview: string; dataUrl: string }[] = [...issuePhotos];
+    const maxFiles = 6;
+    const maxBytes = 1_700_000;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    const list = Array.from(files);
+    for (const f of list) {
+      if (next.length >= maxFiles) break;
+      if (!allowed.includes(f.type)) {
+        setIssueLocalError(t('buyerPortalDeliveries.reportIssueBadFileType'));
+        continue;
+      }
+      if (f.size > maxBytes) {
+        setIssueLocalError(t('buyerPortalDeliveries.reportIssueFileTooLarge'));
+        continue;
+      }
+      try {
+        const dataUrl = await readFileAsDataUrl(f);
+        next.push({ preview: URL.createObjectURL(f), dataUrl });
+      } catch {
+        setIssueLocalError(t('common.apiErrorGeneric'));
+      }
+    }
+    setIssuePhotos(next);
+  };
+
+  const removeIssuePhoto = (idx: number) => {
+    setIssuePhotos((prev) => {
+      const copy = [...prev];
+      const [removed] = copy.splice(idx, 1);
+      if (removed?.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(removed.preview);
+      }
+      return copy;
+    });
+  };
+
+  const submitIssue = async () => {
+    if (!issueTarget?.id) return;
+    const desc = issueDescription.trim();
+    if (issuePhotos.length === 0) {
+      setIssueLocalError(t('buyerPortalDeliveries.reportIssuePhotosRequired'));
+      return;
+    }
+    if (desc.length < 20) {
+      setIssueLocalError(t('buyerPortalDeliveries.reportIssueDescMin'));
+      return;
+    }
+    setIssueSubmitting(true);
+    setIssueLocalError(null);
+    try {
+      await deliveriesAPI.reportBuyerIssue({
+        deliveryId: issueTarget.id,
+        description: desc,
+        photosBase64: issuePhotos.map((p) => p.dataUrl),
+      });
+      alert(t('buyerPortalDeliveries.reportIssueSuccess'));
+      closeIssueModal();
+      await loadDeliveries();
+    } catch (err: unknown) {
+      setIssueLocalError(apiErrorOrT(err, t, 'common.apiErrorGeneric'));
+    } finally {
+      setIssueSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     loadDeliveries();
@@ -222,30 +338,51 @@ export default function DeliveriesPage() {
                         Supplier: {delivery.orders?.estates?.name || 'N/A'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 flex-wrap justify-end">
-                      <span className={`px-3 py-1 text-xs font-light border flex items-center gap-1 ${getStatusColor(delivery.status)}`}>
-                        {getStatusIcon(delivery.status)}
-                        {getStatusLabel(delivery.status)}
-                      </span>
-                      {delivery.waybills?.id && (
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
+                        <span className={`px-3 py-1 text-xs font-light border flex items-center gap-1 ${getStatusColor(delivery.status)}`}>
+                          {getStatusIcon(delivery.status)}
+                          {getStatusLabel(delivery.status)}
+                        </span>
+                        {delivery.waybills?.id && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDownloadWaybill(delivery.waybills.id, delivery.waybills.waybillNumber)
+                            }
+                            className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
+                          >
+                            <FileDown className="w-4 h-4" strokeWidth={1} />
+                            Waybill PDF
+                          </button>
+                        )}
                         <button
-                          type="button"
-                          onClick={() =>
-                            handleDownloadWaybill(delivery.waybills.id, delivery.waybills.waybillNumber)
-                          }
+                          onClick={() => setSelectedDelivery(delivery)}
                           className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
                         >
-                          <FileDown className="w-4 h-4" strokeWidth={1} />
-                          Waybill PDF
+                          <Eye className="w-4 h-4" strokeWidth={1} />
+                          Details
                         </button>
+                        {canBuyerReportDeliveryIssue(delivery) && (
+                          <button
+                            type="button"
+                            onClick={() => openIssueModal(delivery)}
+                            className="px-3 py-1 border border-amber-800/35 bg-amber-50/90 text-sm font-light text-amber-950 hover:bg-amber-100/90 transition-colors flex items-center gap-1"
+                          >
+                            <AlertTriangle className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                            {t('buyerPortalDeliveries.reportIssueShort')}
+                          </button>
+                        )}
+                      </div>
+                      {buyerDeliveryReceiptAt(delivery) && canBuyerReportDeliveryIssue(delivery) && (
+                        <p className="text-xs text-amber-900/85 font-light text-right max-w-md">
+                          {t('buyerPortalDeliveries.reportIssueDeadline', {
+                            time: new Date(
+                              buyerDeliveryReceiptAt(delivery)!.getTime() + REPORT_WINDOW_MS,
+                            ).toLocaleString(),
+                          })}
+                        </p>
                       )}
-                      <button
-                        onClick={() => setSelectedDelivery(delivery)}
-                        className="px-3 py-1 border border-gray-300 text-sm font-light hover:border-green-200/50 transition-colors flex items-center gap-1"
-                      >
-                        <Eye className="w-4 h-4" strokeWidth={1} />
-                        Details
-                      </button>
                     </div>
                   </div>
 
@@ -515,6 +652,29 @@ export default function DeliveriesPage() {
                     </div>
                   )}
 
+                  {canBuyerReportDeliveryIssue(selectedDelivery) && (
+                    <div className="mb-6 border-b border-gray-200 pb-6">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        {t('buyerPortalDeliveries.reportIssue')}
+                      </h3>
+                      <p className="text-xs text-gray-600 font-light mb-3">
+                        {t('buyerPortalDeliveries.reportIssueIntro')}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const d = selectedDelivery;
+                          setSelectedDelivery(null);
+                          openIssueModal(d);
+                        }}
+                        className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-amber-800/40 bg-amber-50 px-4 text-sm font-medium text-amber-950 hover:bg-amber-100"
+                      >
+                        <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
+                        {t('buyerPortalDeliveries.reportIssueShort')}
+                      </button>
+                    </div>
+                  )}
+
                   {/* QR Code for confirmation */}
                   {selectedDelivery.status === 'IN_TRANSIT' && selectedDelivery.deliveryQRCode && (
                     <div className="mb-6 border-b border-gray-200/50 pb-6">
@@ -535,6 +695,114 @@ export default function DeliveriesPage() {
                       </div>
                     </div>
                   )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {issueTarget && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="buyer-issue-title"
+            >
+              <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => closeIssueModal()}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-700"
+                  aria-label={t('buyerPortalDeliveries.reportIssueCancel')}
+                >
+                  <XCircle className="h-6 w-6" strokeWidth={1} />
+                </button>
+                <div className="p-6 space-y-4">
+                  <div className="flex items-start gap-2 pr-10">
+                    <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" strokeWidth={1.5} />
+                    <div>
+                      <h2 id="buyer-issue-title" className="text-lg font-medium text-gray-900">
+                        {t('buyerPortalDeliveries.reportIssueTitle')}
+                      </h2>
+                      <p className="text-sm text-gray-600 font-light mt-1">
+                        {issueTarget.deliveryNumber || issueTarget.id?.slice?.(0, 8)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 font-light">{t('buyerPortalDeliveries.reportIssueIntro')}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{t('buyerPortalDeliveries.reportIssueLegal')}</p>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-1">
+                      {t('buyerPortalDeliveries.reportIssuePhotosLabel')}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{t('buyerPortalDeliveries.reportIssuePhotosHint')}</p>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      className="block w-full text-sm text-gray-700 file:mr-4 file:rounded-lg file:border-0 file:bg-[#2D5A27] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white"
+                      onChange={(e) => onIssueFiles(e.target.files)}
+                      disabled={issueSubmitting}
+                    />
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {issuePhotos.map((p, i) => (
+                        <div key={i} className="relative">
+                          <img
+                            src={p.preview}
+                            alt=""
+                            className="h-20 w-20 rounded border border-gray-200 object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeIssuePhoto(i)}
+                            disabled={issueSubmitting}
+                            className="absolute -right-2 -top-2 rounded-full bg-gray-900 text-white p-0.5 text-xs"
+                            aria-label="Remove"
+                          >
+                            <XCircle className="h-4 w-4" strokeWidth={1} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="issue-desc" className="block text-sm font-medium text-gray-800 mb-1">
+                      {t('buyerPortalDeliveries.reportIssueDescriptionLabel')}
+                    </label>
+                    <textarea
+                      id="issue-desc"
+                      rows={5}
+                      value={issueDescription}
+                      onChange={(e) => setIssueDescription(e.target.value)}
+                      placeholder={t('buyerPortalDeliveries.reportIssueDescriptionPlaceholder')}
+                      disabled={issueSubmitting}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25"
+                    />
+                  </div>
+
+                  {issueLocalError && (
+                    <p className="text-sm text-red-700">{issueLocalError}</p>
+                  )}
+
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => submitIssue()}
+                      disabled={issueSubmitting}
+                      className="inline-flex min-h-[48px] flex-1 min-w-[140px] items-center justify-center rounded-lg bg-[#2D5A27] hover:bg-[#23471f] px-4 text-sm font-medium text-white disabled:opacity-50"
+                    >
+                      {issueSubmitting ? t('buyerPortalDeliveries.reportIssueSending') : t('buyerPortalDeliveries.reportIssueSubmit')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => closeIssueModal()}
+                      disabled={issueSubmitting}
+                      className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                    >
+                      {t('buyerPortalDeliveries.reportIssueCancel')}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

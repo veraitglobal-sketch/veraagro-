@@ -259,6 +259,7 @@ model deliveries {
   id                String             @id
   deliveryNumber    String             @unique
   orderId           String             @unique
+  buyer_delivery_issues buyer_delivery_issues[]
   driverId          String
   pickupLocation    Json
   pickupAddress     String
@@ -286,6 +287,21 @@ model deliveries {
   @@index([driverId])
   @@index([orderId])
   @@index([status])
+}
+
+model buyer_delivery_issues {
+  id          String      @id @default(uuid())
+  deliveryId String
+  buyerId    String
+  description String
+  photoUrls Json
+  createdAt DateTime    @default(now())
+  deliveries deliveries @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  users      users       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@index([deliveryId])
+  @@index([buyerId])
+  @@index([createdAt])
 }
 
 model digital_passports {
@@ -1184,6 +1200,7 @@ model users {
   supplier_barcodes_sold_to_me                 supplier_material_barcodes[] @relation("SupplierBarcodeSoldToFarmer")
   package_badges_owned                         package_badges[]             @relation("PackageBadgeOwner")
   package_badges_created                       package_badges[]             @relation("PackageBadgeCreatedBy")
+  buyer_delivery_issues                        buyer_delivery_issues[]
   badge_print_orders_requester                 badge_print_orders[]         @relation("BadgePrintOrderRequester")
   badge_print_orders_printer                   badge_print_orders[]         @relation("BadgePrintOrderPrinter")
   /// When a partner / distributor application is converted to a store user

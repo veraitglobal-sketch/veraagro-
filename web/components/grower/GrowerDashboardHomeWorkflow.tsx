@@ -22,6 +22,7 @@ import {
   FilePlus,
   Image as ImageIcon,
   ClipboardCheck,
+  GraduationCap,
 } from 'lucide-react';
 
 type EssentialItem = {
@@ -142,6 +143,11 @@ export default function GrowerDashboardHomeWorkflow() {
   ] as const;
 
   const also = [
+    {
+      href: loc('/grower/education'),
+      titleKey: 'grower.dashboard.workflow.alsoEducation',
+      icon: GraduationCap,
+    },
     {
       href: loc('/grower/where-to-buy'),
       titleKey: 'grower.dashboard.workflow.alsoPartnerOrders',
