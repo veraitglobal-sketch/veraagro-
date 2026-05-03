@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ExternalLink, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, ExternalLink, Eye, EyeOff, FileText } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 type TierAvailability = Record<GrowerConfidentialTierId, boolean>;
 
-type TierPhase = 'password' | 'content';
+type TierPhase = 'collapsed' | 'password' | 'content';
 
 type PerTierUi = {
   phase: TierPhase;
@@ -26,7 +26,7 @@ type PerTierUi = {
 
 function emptyTier(): PerTierUi {
   return {
-    phase: 'password',
+    phase: 'collapsed',
     markdown: null,
     externalUrl: null,
     password: '',
@@ -566,77 +566,119 @@ export default function InvestorBusinessPlansClient() {
                     );
                   }
 
-                  return (
-                    <div key={tier} className="flex min-w-0">
-                      <section className={`${paperCol} gap-4`}>
-                        <div className="flex items-start gap-3">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2D5A27] text-sm font-semibold text-white shadow-md shadow-[#2D5A27]/20">
-                            {TIER_INDEX[tier]}
-                          </span>
-                          <div className="min-w-0">
-                            <span className="inline-flex rounded-full bg-[#2D5A27]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#23471f]">
-                              {t('investorBusinessPlans.docConfidentialBadge')}
+                  if (ui.phase === 'password') {
+                    return (
+                      <div key={tier} className="flex min-w-0">
+                        <section className={`${paperCol} gap-4 ring-2 ring-[#2D5A27]/15`}>
+                          <div className="flex items-start gap-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2D5A27] text-sm font-semibold text-white shadow-md shadow-[#2D5A27]/20">
+                              {TIER_INDEX[tier]}
                             </span>
-                            <h2 className="mt-2 text-lg font-semibold text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                            <p className="mt-2 text-sm leading-relaxed text-gray-600">{t(HINT_KEY[tier])}</p>
-                          </div>
-                        </div>
-                        <form
-                          className="mt-auto flex flex-col gap-3"
-                          onSubmit={(e: FormEvent) => {
-                            e.preventDefault();
-                            void submitTier(tier);
-                          }}
-                          noValidate
-                        >
-                          <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-                            <input
-                              type={ui.showPassword ? 'text' : 'password'}
-                              autoComplete="off"
-                              value={ui.password}
-                              onChange={(e) => {
-                                setTier(tier, { password: e.target.value, wrongPassword: false });
-                              }}
-                              disabled={busy}
-                              aria-label={t('investorBusinessPlans.passwordAriaLabel')}
-                              aria-invalid={ui.wrongPassword}
-                              placeholder={t('investorBusinessPlans.passwordAriaLabel')}
-                              className={`${inputClass} w-full flex-1 ${
-                                ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''
-                              }`}
-                            />
-                            <div className="flex shrink-0 gap-2 sm:flex-col sm:justify-stretch">
-                              <button
-                                type="button"
-                                onClick={() => setTier(tier, { showPassword: !ui.showPassword })}
-                                disabled={busy}
-                                aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                                className="inline-flex min-h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#2D5A27]/25 hover:bg-[#fafbf9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50 sm:min-h-0 sm:flex-1"
-                              >
-                                {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
-                              </button>
-                              <button
-                                type="submit"
-                                disabled={busy || !ui.password.trim()}
-                                aria-busy={busy}
-                                aria-label={busy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
-                                className={`${btnIconSubmit} sm:w-full`}
-                              >
-                                {busy ? (
-                                  <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
-                                ) : (
-                                  <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                                )}
-                              </button>
+                            <div className="min-w-0">
+                              <span className="inline-flex rounded-full bg-[#2D5A27]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#23471f]">
+                                {t('investorBusinessPlans.docConfidentialBadge')}
+                              </span>
+                              <h2 className="mt-2 text-lg font-semibold text-gray-900">{t(TITLE_KEY[tier])}</h2>
+                              <p className="mt-2 text-sm leading-relaxed text-gray-600">{t(HINT_KEY[tier])}</p>
                             </div>
                           </div>
-                          {ui.wrongPassword ? (
-                            <p className="text-xs text-red-700" role="alert">
-                              {t('grower.confidential.wrongPassword')}
-                            </p>
-                          ) : null}
-                        </form>
-                      </section>
+                          <form
+                            className="mt-auto flex flex-col gap-3"
+                            onSubmit={(e: FormEvent) => {
+                              e.preventDefault();
+                              void submitTier(tier);
+                            }}
+                            noValidate
+                          >
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
+                              <input
+                                type={ui.showPassword ? 'text' : 'password'}
+                                autoComplete="off"
+                                value={ui.password}
+                                onChange={(e) => {
+                                  setTier(tier, { password: e.target.value, wrongPassword: false });
+                                }}
+                                disabled={busy}
+                                aria-label={t('investorBusinessPlans.passwordAriaLabel')}
+                                aria-invalid={ui.wrongPassword}
+                                placeholder={t('investorBusinessPlans.passwordAriaLabel')}
+                                className={`${inputClass} w-full flex-1 ${
+                                  ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''
+                                }`}
+                              />
+                              <div className="flex shrink-0 gap-2 sm:flex-col sm:justify-stretch">
+                                <button
+                                  type="button"
+                                  onClick={() => setTier(tier, { showPassword: !ui.showPassword })}
+                                  disabled={busy}
+                                  aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
+                                  className="inline-flex min-h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#2D5A27]/25 hover:bg-[#fafbf9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50 sm:min-h-0 sm:flex-1"
+                                >
+                                  {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                                </button>
+                                <button
+                                  type="submit"
+                                  disabled={busy || !ui.password.trim()}
+                                  aria-busy={busy}
+                                  aria-label={busy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
+                                  className={`${btnIconSubmit} sm:w-full`}
+                                >
+                                  {busy ? (
+                                    <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+                                  ) : (
+                                    <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                            {ui.wrongPassword ? (
+                              <p className="text-xs text-red-700" role="alert">
+                                {t('grower.confidential.wrongPassword')}
+                              </p>
+                            ) : null}
+                            <button
+                              type="button"
+                              className="self-start text-sm font-medium text-[#2D5A27] underline decoration-[#2D5A27]/30 underline-offset-2 hover:decoration-[#2D5A27]"
+                              onClick={() => setTier(tier, { phase: 'collapsed', password: '', wrongPassword: false, showPassword: false })}
+                            >
+                              {t('investorBusinessPlans.docBackToPreview')}
+                            </button>
+                          </form>
+                        </section>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={tier} className="flex min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => setTier(tier, { phase: 'password' })}
+                        className="group w-full min-w-0 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/45 focus-visible:ring-offset-2"
+                      >
+                        <section className={`${paperCol} w-full cursor-pointer gap-4 group-hover:border-[#2D5A27]/25`}>
+                          <div className="flex items-start gap-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2D5A27] text-sm font-semibold text-white shadow-md shadow-[#2D5A27]/20">
+                              {TIER_INDEX[tier]}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <span className="inline-flex rounded-full bg-[#2D5A27]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#23471f]">
+                                {t('investorBusinessPlans.docConfidentialBadge')}
+                              </span>
+                              <h2 className="mt-2 text-lg font-semibold text-gray-900">{t(TITLE_KEY[tier])}</h2>
+                            </div>
+                            <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50/90 px-2.5 py-1 text-xs font-medium text-[#23471f] group-hover:border-[#2D5A27]/30 group-hover:bg-[#2D5A27]/[0.06]">
+                              <FileText className="h-3.5 w-3.5" aria-hidden />
+                              {t('investorBusinessPlans.docUnlockCta')}
+                            </span>
+                          </div>
+                          <p className="text-sm leading-relaxed text-gray-600">{t('investorBusinessPlans.tierHintAfterGate')}</p>
+                          <p className="mt-auto pt-2 text-center text-sm font-medium text-[#2D5A27] group-hover:underline">
+                            {t('investorBusinessPlans.docTapToOpen')}
+                            <span aria-hidden> →</span>
+                          </p>
+                        </section>
+                      </button>
                     </div>
                   );
                 })}

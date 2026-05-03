@@ -3772,10 +3772,10 @@
     "docOpenExternal": "Otvori dokument",
     "gateNotConfigured": "Prvi korak (kapija) za ovu stranicu nije podešen u ovom okruženju (INVESTOR_BUSINESS_PLANS_GATE_PASSWORD).",
     "bundleTitle": "Pristup kompletu dokumenata",
-    "bundleHint": "Unesite prvu lozinku koju vam je dala Bio Vera za ovaj link. Ona otključava sva tri dokumenta; svaki dokument zatim traži samo svoju lozinku.",
+    "bundleHint": "Unesite glavnu lozinku koju vam je dala Bio Vera za ovaj link. Zatim otvorite svaki dokument — svaki traži svoju lozinku posle klika.",
     "bundlePasswordLabel": "Prva lozinka (za sva tri dokumenta)",
     "lockAllDocuments": "Zaključaj sve i odjavi se",
-    "tierHintAfterGate": "Unesite lozinku koju vam je dodelila Bio Vera samo za ovaj deo.",
+    "tierHintAfterGate": "Kliknite na karticu, zatim unesite lozinku koju vam je Bio Vera poslala samo za ovaj deo.",
     "bundleRequiredAgain": "Sesija za ovu stranicu je istekla ili je prvi korak ponovo zaključan. Unesite ponovo prvu lozinku."
   },
   "pitchDeck": {
