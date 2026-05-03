@@ -2421,7 +2421,9 @@
     "documentsLead": "Choose a card to open the investor presentation, the structured project overview, or the full technical proposal.",
     "cardPitchDesc": "Slide-style narrative and optional video — use the toolbar to print or save as PDF.",
     "cardProjectDesc": "Structured project summary: scope, roadmap, markets, and current status.",
-    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators."
+    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators.",
+    "cardPartnerPlansTitle": "Partner business plans",
+    "cardPartnerPlansDesc": "Confidential horizons (short / medium / long) — password only, no farm account."
   },
   "supplierStatusPage": {
     "title": "Статус на приложението",

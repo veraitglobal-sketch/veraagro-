@@ -25,6 +25,11 @@ export function InvestorDeckHub() {
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardPitchDesc")}</p>
         </Link>
 
+        <Link href={loc("/investor-deck/business-plans")} className={cardClass}>
+          <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardPartnerPlansTitle")}</h3>
+          <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardPartnerPlansDesc")}</p>
+        </Link>
+
         <Link href={loc("/project-overview")} className={cardClass}>
           <h3 className="mb-2 text-xl font-medium text-gray-900">{t("footer.projectOverview")}</h3>
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardProjectDesc")}</p>

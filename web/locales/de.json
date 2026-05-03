@@ -2835,7 +2835,9 @@
     "documentsLead": "Wählen Sie eine Karte für die Präsentation, die strukturierte Projektübersicht oder den technischen Antrag.",
     "cardPitchDesc": "Geschichte im Slide‑Format und optionales Video — über die Toolbar drucken oder als PDF speichern.",
     "cardProjectDesc": "Strukturierte Projektzusammenfassung: Umfang, Roadmap, Märkte und aktueller Stand.",
-    "cardTechnicalDesc": "Architektur, Compliance, Offline‑First‑Betrieb und Programm‑Passung für Evaluatorinnen und Evaluatoren."
+    "cardTechnicalDesc": "Architektur, Compliance, Offline‑First‑Betrieb und Programm‑Passung für Evaluatorinnen und Evaluatoren.",
+    "cardPartnerPlansTitle": "Partner business plans",
+    "cardPartnerPlansDesc": "Confidential horizons (short / medium / long) — password only, no farm account."
   },
   "pitchDeck": {
     "toolbarCopyLink": "Link kopieren",

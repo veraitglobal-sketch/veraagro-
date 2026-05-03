@@ -13,7 +13,7 @@ import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { plantingFormDateToEstimatedIsoUtc } from '@/lib/planting-estimated-date';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import type { ReactNode } from 'react';
-import { Leaf, Loader2, Sprout, Wheat } from 'lucide-react';
+import { Leaf, Loader2, Sprout, Truck, Wheat } from 'lucide-react';
 
 function parcelEligibleForHarvestPlan(par: { approvedAt?: string | null; status?: string | null }) {
   if (par.approvedAt) return true;
@@ -35,6 +35,7 @@ type HaRow = {
   announcementType: string;
   cropType: string;
   estimatedDate: string;
+  estimatedQuantity?: number | null;
   status: string;
   notes?: string | null;
   parcel?: {
@@ -57,6 +58,8 @@ export default function GrowerPlantingsPage() {
   const nav = useGrowerNavItems();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingHarvest, setSavingHarvest] = useState(false);
+  const [harvestSavedNotice, setHarvestSavedNotice] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState<HaRow[]>([]);
   const [approvedParcels, setApprovedParcels] = useState<(ParcelRow & { estateName: string })[]>([]);
@@ -65,6 +68,10 @@ export default function GrowerPlantingsPage() {
   const [formCrop, setFormCrop] = useState('');
   const [formDate, setFormDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [formNotes, setFormNotes] = useState('');
+  const [formHarvestCrop, setFormHarvestCrop] = useState('');
+  const [formHarvestDate, setFormHarvestDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [formHarvestQty, setFormHarvestQty] = useState('');
+  const [formHarvestNotes, setFormHarvestNotes] = useState('');
 
   const load = useCallback(async () => {
     setErr(null);
@@ -154,6 +161,7 @@ export default function GrowerPlantingsPage() {
     }
     setSaving(true);
     setErr(null);
+    setHarvestSavedNotice(null);
     try {
       await harvestAnnouncementsAPI.create({
         parcelId: formParcelId,
@@ -172,6 +180,54 @@ export default function GrowerPlantingsPage() {
     }
   };
 
+  const submitHarvest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formParcelId || !formHarvestCrop.trim() || !formHarvestDate) return;
+    const cropTrim = formHarvestCrop.trim();
+    if (cropTrim.length > 500) {
+      setErr(t('growerPages.plantingsErrCropTooLong'));
+      return;
+    }
+    const qtyRaw = formHarvestQty.replace(/\s/g, '').replace(',', '.');
+    const qty = Number(qtyRaw);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      setErr(t('growerPages.plantingsHarvestErrQty'));
+      return;
+    }
+    const parsed = plantingFormDateToEstimatedIsoUtc(formHarvestDate);
+    if (!parsed.ok) {
+      setErr(t('growerPages.plantingsErrDateFormat'));
+      return;
+    }
+    setSavingHarvest(true);
+    setErr(null);
+    setHarvestSavedNotice(null);
+    try {
+      await harvestAnnouncementsAPI.create({
+        parcelId: formParcelId,
+        announcementType: 'HARVEST',
+        cropType: cropTrim,
+        estimatedDate: parsed.iso,
+        estimatedQuantity: qty,
+        notes: formHarvestNotes.trim() || undefined,
+      });
+      setFormHarvestCrop('');
+      setFormHarvestNotes('');
+      setFormHarvestQty('');
+      setHarvestSavedNotice(t('growerPages.plantingsHarvestSavedNotice'));
+      await load();
+    } catch (er: unknown) {
+      const msg = growerApiErrorOrT(er, t, 'growerPages.plantingsErrSave');
+      if (typeof msg === 'string' && /already registered|Harvest is already|već.*berb/i.test(msg)) {
+        setErr(t('growerPages.plantingsHarvestErrHarvestExists'));
+      } else {
+        setErr(msg);
+      }
+    } finally {
+      setSavingHarvest(false);
+    }
+  };
+
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
       <SidebarLayout title={t('grower.nav.myPlantings')} navItems={nav}>
@@ -184,6 +240,12 @@ export default function GrowerPlantingsPage() {
           <p className="text-base leading-relaxed text-[#23471f] bg-[#2D5A27]/10 border border-[#2D5A27]/25 rounded-lg px-4 py-3">
             {t('growerPages.plantingsProgressObligation')}
           </p>
+
+          {harvestSavedNotice && (
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-base text-emerald-950">
+              {harvestSavedNotice}
+            </div>
+          )}
 
           {err && (
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">{err}</div>
@@ -276,11 +338,105 @@ export default function GrowerPlantingsPage() {
                     </div>
                     <button
                       type="submit"
-                      disabled={saving || restFieldsLocked}
+                      disabled={saving || savingHarvest || restFieldsLocked}
                       className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
                     >
                       {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Leaf className="h-4 w-4" />}
                       {saving ? t('growerPages.plantingsFormSaving') : t('growerPages.plantingsFormSubmit')}
+                    </button>
+                  </form>
+                )}
+              </section>
+
+              <section id="grower-harvest-form" className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm scroll-mt-24">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                  <Truck className="h-5 w-5 text-[#2D5A27]" />
+                  {t('growerPages.plantingsHarvestFormTitle')}
+                </h2>
+                <p className="text-base text-gray-600 mb-4 leading-relaxed">{t('growerPages.plantingsHarvestFormLead')}</p>
+                {approvedParcels.length === 0 ? (
+                  <p className="text-base text-gray-600">{t('growerPages.plantingsApprovedOnly')}</p>
+                ) : (
+                  <form onSubmit={submitHarvest} className="space-y-4 max-w-lg">
+                    <div>
+                      <label className="block text-base font-medium text-gray-700 mb-1.5">
+                        {t('growerPages.plantingsHarvestFormParcel')}
+                      </label>
+                      <select
+                        required
+                        value={formParcelId}
+                        onChange={(e) => setFormParcelId(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
+                      >
+                        <option value="">{t('growerPages.plantingsSelectParcel')}</option>
+                        {approvedParcels.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.estateName} — {p.cropType || p.id.slice(0, 8)}…
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {restFieldsLocked ? (
+                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">{t('growerPages.plantingsSelectParcelFirstHint')}</p>
+                    ) : null}
+                    <div className={restFieldsLocked ? 'opacity-50 pointer-events-none' : ''}>
+                      <div>
+                        <label className="block text-base font-medium text-gray-700 mb-1.5">
+                          {t('growerPages.plantingsHarvestFormCrop')}
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formHarvestCrop}
+                          onChange={(e) => setFormHarvestCrop(e.target.value)}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <label className="block text-base font-medium text-gray-700 mb-1.5">
+                          {t('growerPages.plantingsHarvestFormDate')}
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          value={formHarvestDate}
+                          onChange={(e) => setFormHarvestDate(e.target.value)}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <label className="block text-base font-medium text-gray-700 mb-1.5">
+                          {t('growerPages.plantingsHarvestFormQty')}
+                        </label>
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          required
+                          value={formHarvestQty}
+                          onChange={(e) => setFormHarvestQty(e.target.value)}
+                          placeholder={t('growerPages.plantingsHarvestQtyPlaceholder')}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <label className="block text-base font-medium text-gray-700 mb-1.5">
+                          {t('growerPages.plantingsHarvestFormNotes')}
+                        </label>
+                        <textarea
+                          value={formHarvestNotes}
+                          onChange={(e) => setFormHarvestNotes(e.target.value)}
+                          rows={2}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-[#2D5A27]/30"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={savingHarvest || saving || restFieldsLocked}
+                      className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-6 py-3 text-base font-medium text-white hover:bg-[#23471f] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
+                    >
+                      {savingHarvest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Truck className="h-4 w-4" />}
+                      {savingHarvest ? t('growerPages.plantingsHarvestFormSaving') : t('growerPages.plantingsHarvestFormSubmit')}
                     </button>
                   </form>
                 )}
@@ -309,13 +465,13 @@ export default function GrowerPlantingsPage() {
                 title={t('growerPages.plantingsSectionHarvest')}
                 icon={Wheat}
                 rows={harvests}
-                empty={t('growerPages.plantingsEmpty')}
+                empty={t('growerPages.plantingsHarvestEmpty')}
                 emptyAction={
                   <Link
-                    href="#grower-plan-form"
+                    href="#grower-harvest-form"
                     className="inline-flex min-h-[44px] items-center font-medium text-[#2D5A27] underline underline-offset-2"
                   >
-                    {t('growerPages.plantingsEmptyGoToForm')}
+                    {t('growerPages.plantingsHarvestEmptyGoToForm')}
                   </Link>
                 }
                 t={t}
@@ -405,7 +561,14 @@ function AnnouncementsTable({
                   {a.announcementType === 'PLANTING' ? t('growerPages.annTypePLANTING') : t('growerPages.annTypeHARVEST')}
                 </td>
                 <td className="px-4 py-3 font-medium text-gray-900">{a.cropType}</td>
-                <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatDate(a.estimatedDate)}</td>
+                <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                  {formatDate(a.estimatedDate)}
+                  {String(a.announcementType ?? '').toUpperCase() === 'HARVEST' &&
+                  a.estimatedQuantity != null &&
+                  Number.isFinite(Number(a.estimatedQuantity)) ? (
+                    <span className="text-gray-500">{` · ~${Math.round(Number(a.estimatedQuantity))} kg`}</span>
+                  ) : null}
+                </td>
                 {showPlantingProgress ? (
                   <td className="px-4 py-3 text-sm">
                     {a.plantingProgress ? (
