@@ -4440,7 +4440,7 @@
       }
     ],
     "resourcesTitle": "Resources & downloads",
-    "resourcesLead": "Essential programme PDFs and the official concept photo for partners preparing a store pilot.",
+    "resourcesLead": "Essential programme PDF for partners preparing a store pilot. Press imagery is on the press kit page.",
     "resourceItems": [
       {
         "id": "freshProspect",
@@ -4448,14 +4448,6 @@
         "description": "Full copy: introduction, market context, solution, store concept, flow, inventory management, earnings, operations, benefits, investment, channel positioning, growth, eligibility and contact.",
         "type": "PDF",
         "size": "~180 KB"
-      },
-      {
-        "id": "freshConceptPhoto",
-        "title": "BioVera Fresh — concept photo",
-        "description": "High-resolution hero image for decks, lender packs and partner onboarding (same visual embedded in the prospect PDF).",
-        "type": "JPG",
-        "size": "~2.5 MB",
-        "publicPath": "/biovera-fresh-prospect-hero.jpg"
       }
     ],
     "resourceDownload": "Download",

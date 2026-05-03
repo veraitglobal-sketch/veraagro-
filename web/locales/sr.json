@@ -4441,7 +4441,7 @@
       }
     ],
     "resourcesTitle": "Resursi i preuzimanja",
-    "resourcesLead": "PDF dokumenti programa i zvanična fotografija koncepta za partnere koji spremaju pilot prodavnicu.",
+    "resourcesLead": "PDF dokument programa za partnere koji spremaju pilot prodavnicu. Fotografije za medije su na stranici medijskog kompleta.",
     "resourceItems": [
       {
         "id": "freshProspect",
@@ -4449,14 +4449,6 @@
         "description": "Kompletan tekst: uvod, tržište, rešenje, koncept prodavnice, tok, upravljanje robom, zarada, operativa, prednosti, investicija, odnos prema tržištu, razvoj, ko može biti partner i kontakt.",
         "type": "PDF",
         "size": "~180 KB"
-      },
-      {
-        "id": "freshConceptPhoto",
-        "title": "BioVera Fresh — fotografija koncepta",
-        "description": "Hero fotografija visoke rezolucije za prezentacije, banke i uvod partnera (isti vizuel kao u PDF prospektu).",
-        "type": "JPG",
-        "size": "~2,5 MB",
-        "publicPath": "/biovera-fresh-prospect-hero.jpg"
       }
     ],
     "resourceDownload": "Preuzmi",

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as PDFDocument from 'pdfkit';
@@ -106,6 +107,7 @@ export class BioVeraFreshService {
     const dirs = [
       path.join(process.cwd(), 'public'),
       path.join(process.cwd(), '..', 'web', 'public'),
+      path.join(process.cwd(), '..', '..', 'web', 'public'),
       path.join(process.cwd(), 'web', 'public'),
       path.join(process.cwd(), 'backend', 'public'),
       path.join(__dirname, '..', '..', '..', 'web', 'public'),
@@ -154,6 +156,38 @@ export class BioVeraFreshService {
     return this.readPublicImageFirstMatch(BIOVERA_FRESH_HERO_FILES);
   }
 
+  /**
+   * When the API container has no monorepo `web/public` and assets were not copied into dist,
+   * load the same file the marketing site serves (production URLs). Override with BIOVERA_FRESH_HERO_URL.
+   */
+  private async tryFetchHeroBuffer(): Promise<Buffer | null> {
+    const custom = process.env.BIOVERA_FRESH_HERO_URL?.trim();
+    const urls = [
+      ...(custom ? [custom] : []),
+      'https://biovera.app/biovera-fresh-prospect-hero.jpg',
+      'https://www.biovera.app/biovera-fresh-prospect-hero.jpg',
+    ];
+    for (const url of urls) {
+      try {
+        const res = await axios.get<ArrayBuffer>(url, {
+          responseType: 'arraybuffer',
+          timeout: 25_000,
+          maxContentLength: 20 * 1024 * 1024,
+          validateStatus: (s) => s === 200,
+          headers: { Accept: 'image/jpeg,image/png,*/*' },
+        });
+        const buf = Buffer.from(res.data);
+        if (buf.length >= 512) {
+          this.logger.log(`BioVera Fresh PDF: hero bytes loaded from ${url} (${buf.length} B)`);
+          return buf;
+        }
+      } catch (e) {
+        this.logger.warn(`BioVera Fresh PDF: hero fetch failed (${url})`, e);
+      }
+    }
+    return null;
+  }
+
   /** Normalize to RGB JPEG so PDFKit embed is reliable (e.g. CMYK / exotic JPEG). */
   private async normalizeHeroImageForPdf(input: Buffer): Promise<Buffer> {
     try {
@@ -182,11 +216,14 @@ export class BioVeraFreshService {
     const docTitle = 'BioVera Fresh - Partner prospect';
     const tocTitle = 'Contents';
 
-    const rawHero = this.readHeroBuffer();
+    let rawHero = this.readHeroBuffer();
+    if (!rawHero) {
+      rawHero = await this.tryFetchHeroBuffer();
+    }
     const heroBufPrepared = rawHero ? await this.normalizeHeroImageForPdf(rawHero) : null;
     if (!rawHero) {
       this.logger.warn(
-        'BioVera Fresh PDF: hero image not found. Add biovera-fresh-prospect-hero.jpg to web/public (backend prebuild syncs it) or backend/src/biovera-fresh/assets/.',
+        'BioVera Fresh PDF: hero image missing locally and URL fetch failed. Set BIOVERA_FRESH_HERO_URL or deploy web/public asset / dist assets.',
       );
     }
 
@@ -535,14 +572,27 @@ export class BioVeraFreshService {
             const heroW = contentW;
             const rHero = 10;
 
-            doc.save();
-            doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
-            doc.image(heroBufPrepared, MARGIN, heroY, {
-              fit: [heroW, heroMaxH],
-              align: 'center',
-              valign: 'center',
-            });
-            doc.restore();
+            const drawHeroClipped = () => {
+              doc.save();
+              doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
+              doc.image(heroBufPrepared, MARGIN, heroY, {
+                fit: [heroW, heroMaxH],
+                align: 'center',
+                valign: 'center',
+              });
+              doc.restore();
+            };
+
+            try {
+              drawHeroClipped();
+            } catch (clipErr) {
+              this.logger.warn('BioVera Fresh PDF: clipped hero embed failed, retrying without clip', clipErr);
+              doc.image(heroBufPrepared, MARGIN, heroY, {
+                fit: [heroW, heroMaxH],
+                align: 'center',
+                valign: 'center',
+              });
+            }
 
             doc.save();
             doc.strokeColor(veraGreen).lineWidth(1.15).opacity(0.45);
