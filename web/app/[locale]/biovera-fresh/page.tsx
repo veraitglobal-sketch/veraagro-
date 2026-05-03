@@ -18,38 +18,6 @@ import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import { bioVeraFreshAPI } from "@/lib/api";
 import Footer from "@/components/Footer";
 
-const FRESH_PROSPECT_HERO_SRC = [
-  "/biovera-fresh-prospect-hero.jpg",
-  "/biovera-fresh-prospect-foto.jpg",
-  "/biovera-fresh-prospect-hero.jpeg",
-  "/biovera-fresh-prospect-hero.png",
-] as const;
-
-function FreshProspectHero({
-  alt,
-  className,
-  loading = "lazy",
-}: {
-  alt: string;
-  className?: string;
-  loading?: "eager" | "lazy";
-}) {
-  const [i, setI] = useState(0);
-  const src = FRESH_PROSPECT_HERO_SRC[i];
-  if (src === undefined) return null;
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      decoding="async"
-      loading={loading}
-      fetchPriority={loading === "eager" ? "high" : undefined}
-      onError={() => setI((x) => x + 1)}
-    />
-  );
-}
-
 function isFranchiseBlueprintList(x: unknown): x is { title: string; body: string }[] {
   return (
     Array.isArray(x) &&
@@ -188,17 +156,6 @@ export default function BioVeraFreshPage() {
           .biovera-fresh-root .bf-pdf-block {
             display: block !important;
           }
-          .biovera-fresh-root header.bf-cover figure.bf-print-hero img {
-            display: block !important;
-            width: 100% !important;
-            max-height: 400px !important;
-            height: auto !important;
-            object-fit: contain !important;
-            position: static !important;
-            inset: auto !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
         }
         @media print {
           .biovera-fresh-root .bf-no-print {
@@ -313,25 +270,7 @@ export default function BioVeraFreshPage() {
         className="biovera-fresh-doc bf-panel border-0 shadow-none bg-transparent rounded-none scroll-mt-28 print:scroll-mt-0 print:bg-white"
         tabIndex={-1}
       >
-        {/* Prospect visual — screen: fills card; print cover uses same treatment */}
-        <div className="bf-no-print px-6 lg:px-8 pt-6 pb-4 max-w-6xl mx-auto w-full">
-          <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-100 shadow-sm h-[clamp(300px,52vh,560px)] md:h-[clamp(340px,48vh,600px)]">
-            <FreshProspectHero
-              alt={t("bioVeraFresh.heroImageAlt")}
-              className="absolute inset-0 h-full w-full object-cover object-center"
-            />
-          </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href={loc("/contact")}
-              className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-[#2D5A27] bg-white px-8 py-3 text-base font-medium text-[#2D5A27] shadow-sm transition-colors hover:bg-[#2D5A27]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-            >
-              {t("bioVeraFresh.ctaButton")}
-            </Link>
-          </div>
-        </div>
-
-        {/* Print cover — Save as PDF from browser (visibility via global CSS, not hidden/print:block) */}
+        {/* Print cover — Save as PDF from browser (no hero image; visuals in downloadable PDF / press kit) */}
         <header className="bf-cover px-6 pt-2 pb-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
             {t("bioVeraFresh.coverEyebrow")}
@@ -340,13 +279,6 @@ export default function BioVeraFreshPage() {
             {t("bioVeraFresh.coverTitle")}
           </h1>
           <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">{t("bioVeraFresh.coverSubtitle")}</p>
-          <figure className="bf-print-hero mt-6 w-full max-w-6xl mx-auto overflow-hidden rounded-lg border border-gray-300 bg-gray-100 print:min-h-[200px]">
-            <FreshProspectHero
-              alt=""
-              loading="eager"
-              className="mx-auto block h-auto w-full max-h-[420px] object-contain object-center print:max-h-[400px]"
-            />
-          </figure>
           <p className="mt-6 text-center text-[10pt] leading-snug text-gray-700">
             <span className="font-semibold text-[#2D5A27]">{t("bioVeraFresh.ctaButton")}</span>
             <span className="text-gray-500"> · {loc("/contact")}</span>
