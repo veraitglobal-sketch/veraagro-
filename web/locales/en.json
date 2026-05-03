@@ -3742,10 +3742,12 @@
     "docOpenExternal": "Open document",
     "gateNotConfigured": "The first-step password for this page is not configured in this environment (INVESTOR_BUSINESS_PLANS_GATE_PASSWORD).",
     "bundleTitle": "Open the document set",
-    "bundleHint": "Enter the first password Bio Vera gave you for this link. Then open each document — each one asks for its own password.",
+    "bundleHint": "Enter the first password Bio Vera gave you for this link. Then choose a part below — only one document is open at a time, and each asks for its own password.",
+    "afterGateLead": "Choose which part you want to read. You will only see one document at a time.",
+    "docPickerAria": "Business plan parts",
     "bundlePasswordLabel": "First password (all documents)",
     "lockAllDocuments": "Lock all and sign out",
-    "tierHintAfterGate": "Click the card, then enter the password Bio Vera sent for this part only.",
+    "tierHintAfterGate": "Tap below, then enter the password Bio Vera sent for this part only.",
     "bundleRequiredAgain": "Your session for this page expired or the first-step lock was applied again. Enter the first password again."
   },
   "pitchDeck": {
