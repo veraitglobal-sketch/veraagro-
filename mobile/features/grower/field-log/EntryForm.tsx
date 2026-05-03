@@ -57,9 +57,11 @@ export default function EntryForm() {
     location,
     gpsWarning,
     materialValid,
-    loading,
+    saveBusy,
+    gpsLoading,
     getCurrentLocation,
     takePhoto,
+    pickPhotoFromLibrary,
     handleSubmit,
     referenceRefreshing,
     refreshReferenceData,
@@ -73,7 +75,7 @@ export default function EntryForm() {
     : true;
 
   const submitBlocked =
-    loading ||
+    saveBusy ||
     !activityType ||
     !photoUri ||
     !location ||
@@ -86,6 +88,8 @@ export default function EntryForm() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.colors.background }}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
       refreshControl={
         <RefreshControl
           refreshing={referenceRefreshing}
@@ -646,6 +650,30 @@ export default function EntryForm() {
               </>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={pickPhotoFromLibrary}
+            activeOpacity={0.7}
+            style={{
+              marginTop: theme.spacing.sm,
+              paddingVertical: theme.spacing.sm,
+              paddingHorizontal: theme.spacing.md,
+              borderRadius: theme.borderRadius.md,
+              borderWidth: 0.5,
+              borderColor: theme.colors.primary,
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '500',
+                color: theme.colors.primary,
+                letterSpacing: 0.2,
+              }}
+            >
+              {t('producer.fieldLogForm.chooseFromGallery')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <View style={{ marginBottom: theme.spacing.lg }}>
@@ -662,7 +690,7 @@ export default function EntryForm() {
           </Text>
           <TouchableOpacity
             onPress={getCurrentLocation}
-            disabled={loading}
+            disabled={gpsLoading}
             activeOpacity={0.7}
             style={{
               backgroundColor: theme.colors.surface,
@@ -716,7 +744,7 @@ export default function EntryForm() {
                 )}
               </View>
             </View>
-            {loading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+            {gpsLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
           </TouchableOpacity>
         </View>
 
@@ -731,10 +759,10 @@ export default function EntryForm() {
             borderWidth: 0.5,
             borderColor: submitBlocked ? 'rgba(0, 0, 0, 0.05)' : theme.colors.primary,
             alignItems: 'center',
-            opacity: loading ? 0.5 : 1,
+            opacity: saveBusy ? 0.5 : 1,
           }}
         >
-          {loading ? (
+          {saveBusy ? (
             <ActivityIndicator color={theme.colors.background} />
           ) : (
             <Text

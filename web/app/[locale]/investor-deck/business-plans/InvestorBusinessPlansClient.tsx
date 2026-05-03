@@ -464,7 +464,7 @@ export default function InvestorBusinessPlansClient() {
       ) : null}
 
       <main
-        className={`mx-auto w-full px-4 pb-16 pt-24 sm:px-6 lg:px-8 ${bundleUnlocked ? 'max-w-6xl' : 'max-w-md'}`}
+        className={`mx-auto w-full px-4 pb-16 pt-24 sm:px-6 lg:px-8 ${bundleUnlocked ? 'max-w-6xl' : 'max-w-lg'}`}
         aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
       >
         {bootstrap === 'loading' || bootstrap === 'idle' ? (
@@ -486,67 +486,72 @@ export default function InvestorBusinessPlansClient() {
               <p className="text-base leading-relaxed text-amber-950">{t('investorBusinessPlans.gateNotConfigured')}</p>
             </div>
           ) : !bundleUnlocked ? (
-            <div className="flex min-h-[50vh] flex-col items-center justify-center gap-8 pt-8">
-              <Link href={loc('/')} className="transition-opacity hover:opacity-80">
-                <Image
-                  src="/logo1.png"
-                  alt={t('footer.logoAlt')}
-                  width={72}
-                  height={26}
-                  className="h-6 w-auto"
-                  priority
-                />
-              </Link>
-              <form
-                className="flex w-full max-w-md gap-2"
-                onSubmit={(e: FormEvent) => {
-                  e.preventDefault();
-                  void submitBundle();
-                }}
-                noValidate
-              >
-                <input
-                  type={showBundlePw ? 'text' : 'password'}
-                  autoComplete="off"
-                  value={bundlePw}
-                  onChange={(e) => {
-                    setBundlePw(e.target.value);
-                    if (bundleWrong) setBundleWrong(false);
+            <div className="flex w-full justify-center">
+              <div className="flex w-full max-w-md flex-col items-center justify-center gap-10 py-8 min-h-[min(70vh,calc(100dvh-9rem))] sm:min-h-[min(75vh,calc(100dvh-8rem))]">
+                <Link
+                  href={loc('/')}
+                  className="flex w-full justify-center transition-opacity hover:opacity-80"
+                >
+                  <Image
+                    src="/logo1.png"
+                    alt={t('footer.logoAlt')}
+                    width={100}
+                    height={36}
+                    className="h-8 w-auto sm:h-9"
+                    priority
+                  />
+                </Link>
+                <form
+                  className="flex w-full max-w-md gap-2"
+                  onSubmit={(e: FormEvent) => {
+                    e.preventDefault();
+                    void submitBundle();
                   }}
-                  disabled={bundleBusy}
-                  aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
-                  aria-invalid={bundleWrong}
-                  placeholder=""
-                  className={`${inputClass} min-w-0 flex-1 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowBundlePw((s) => !s)}
-                  disabled={bundleBusy}
-                  aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                  className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                  noValidate
                 >
-                  {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
-                </button>
-                <button
-                  type="submit"
-                  disabled={bundleBusy || !bundlePw.trim()}
-                  aria-busy={bundleBusy}
-                  aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
-                  className={btnIconSubmit}
-                >
-                  {bundleBusy ? (
-                    <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
-                  ) : (
-                    <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                  )}
-                </button>
-              </form>
-              {bundleWrong ? (
-                <p className="text-center text-sm text-red-700" role="alert">
-                  {t('grower.confidential.wrongPassword')}
-                </p>
-              ) : null}
+                  <input
+                    type={showBundlePw ? 'text' : 'password'}
+                    autoComplete="off"
+                    value={bundlePw}
+                    onChange={(e) => {
+                      setBundlePw(e.target.value);
+                      if (bundleWrong) setBundleWrong(false);
+                    }}
+                    disabled={bundleBusy}
+                    aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
+                    aria-invalid={bundleWrong}
+                    placeholder=""
+                    className={`${inputClass} min-w-0 flex-1 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowBundlePw((s) => !s)}
+                    disabled={bundleBusy}
+                    aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
+                    className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                  >
+                    {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={bundleBusy || !bundlePw.trim()}
+                    aria-busy={bundleBusy}
+                    aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
+                    className={btnIconSubmit}
+                  >
+                    {bundleBusy ? (
+                      <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+                    ) : (
+                      <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+                    )}
+                  </button>
+                </form>
+                {bundleWrong ? (
+                  <p className="w-full text-center text-sm text-red-700" role="alert">
+                    {t('grower.confidential.wrongPassword')}
+                  </p>
+                ) : null}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

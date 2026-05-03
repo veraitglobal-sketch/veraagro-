@@ -55,7 +55,7 @@ function PlotMapperEditor({
     saving,
     totalArea,
     handleAddPartition,
-    handleCanvasPress,
+    handlePartitionGestureEnd,
     handleZonePress,
     handleSaveZone,
     handleSaveBlueprint,
@@ -70,6 +70,7 @@ function PlotMapperEditor({
           backgroundColor: colors.background,
           justifyContent: 'center',
           alignItems: 'center',
+          paddingTop: p.topInset,
         }}
       >
         <ActivityIndicator size="large" color={colors.primary} />
@@ -81,7 +82,7 @@ function PlotMapperEditor({
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View
         style={{
-          paddingTop: theme.spacing.sm,
+          paddingTop: Math.max(p.headerTop, theme.spacing.md),
           paddingHorizontal: Math.max(theme.spacing.sm, p.screenPaddingLeft),
           paddingRight: Math.max(theme.spacing.sm, p.screenPaddingRight),
           paddingBottom: 14,
@@ -170,6 +171,8 @@ function PlotMapperEditor({
 
       <ScrollView
         style={{ flex: 1 }}
+        scrollEnabled={!partitionMode}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl
             refreshing={pullRefreshing}
@@ -185,7 +188,6 @@ function PlotMapperEditor({
             colors={[colors.primary]}
           />
         }
-        keyboardShouldPersistTaps="handled"
       >
         <View
           style={{
@@ -209,7 +211,7 @@ function PlotMapperEditor({
             partitions={partitions}
             partitionMode={partitionMode}
             onAddPartition={handleAddPartition}
-            onCanvasPress={handleCanvasPress}
+            onPartitionGestureEnd={handlePartitionGestureEnd}
             onZonePress={handleZonePress}
           />
           <ZonesList zones={zones} onZonePress={handleZonePress} />

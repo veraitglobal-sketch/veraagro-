@@ -51,7 +51,8 @@ export function useFieldLogData() {
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const [gpsWarning, setGpsWarning] = useState(false);
   const [materialValid, setMaterialValid] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [saveBusy, setSaveBusy] = useState(false);
   const [referenceRefreshing, setReferenceRefreshing] = useState(false);
   const [estates, setEstates] = useState<Estate[]>([]);
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
@@ -180,14 +181,22 @@ export function useFieldLogData() {
     setJournalNotes('');
   }, [selectedParcelId]);
 
+  /** Držati upozorenje u skladu sa poslednjom lokacijom i poligonima (ne samo preko ref‑a bez zavisnosti). */
   useEffect(() => {
-    const loc = locationRef.current;
-    if (!loc) return;
-    const isValid = verifyGPSAgainstEstateOrParcels(loc, currentEstate?.polygonCoordinates, [
+    if (!location) {
+      setGpsWarning(false);
+      return;
+    }
+    const isValid = verifyGPSAgainstEstateOrParcels(location, currentEstate?.polygonCoordinates, [
       ...parcelsForGps.map((p) => p.polygonCoordinates),
     ]);
     setGpsWarning(!isValid);
-  }, [currentEstate?.polygonCoordinates, parcelsForGps, currentEstate?.id]);
+  }, [
+    location,
+    currentEstate?.polygonCoordinates,
+    parcelsForGps,
+    currentEstate?.id,
+  ]);
 
   const requestPermissions = useCallback(async () => {
     const [cameraStatus, locationStatus] = await Promise.all([
@@ -272,14 +281,14 @@ export function useFieldLogData() {
 
   const getCurrentLocation = useCallback(async () => {
     try {
-      setLoading(true);
+      setGpsLoading(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(t('producer.fieldLogAlerts.locSettingsTitle'), t('producer.fieldLogAlerts.locSettingsBody'), [
           { text: t('common.cancel'), style: 'cancel' },
           { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => Linking.openSettings() },
         ]);
-        setLoading(false);
+        setGpsLoading(false);
         return;
       }
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
@@ -287,19 +296,15 @@ export function useFieldLogData() {
         loc.coords.accuracy != null && Number.isFinite(loc.coords.accuracy) ? loc.coords.accuracy : undefined;
       const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude, accuracy: acc };
       setLocation(userLocation);
-      const isValid = verifyGPSAgainstEstateOrParcels(userLocation, currentEstate?.polygonCoordinates, [
-        ...parcelsForGps.map((p) => p.polygonCoordinates),
-      ]);
-      setGpsWarning(!isValid);
     } catch (error: unknown) {
       Alert.alert(
         t('producer.fieldLogAlerts.locationError'),
         apiErrorMessage(error, t('producer.fieldLogAlerts.locationErrorFallback')),
       );
     } finally {
-      setLoading(false);
+      setGpsLoading(false);
     }
-  }, [currentEstate, parcelsForGps, t]);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -332,23 +337,81 @@ export function useFieldLogData() {
     [estates],
   );
 
-  const takePhoto = useCallback(async () => {
+  const pickPhotoFromLibrary = useCallback(async () => {
     try {
-      const result = await ImagePicker.launchCameraAsync({
+      const library = await ImagePicker.getMediaLibraryPermissionsAsync();
+      let status = library.status;
+      if (status !== 'granted') {
+        const req = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        status = req.status;
+      }
+      if (status !== 'granted') {
+        Alert.alert(t('producer.fieldLogAlerts.galleryPermTitle'), t('producer.fieldLogAlerts.galleryPermBody'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => void Linking.openSettings() },
+        ]);
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
+        allowsEditing: false,
+        quality: 0.72,
       });
-      if (!result.canceled && result.assets[0]) setPhotoUri(result.assets[0].uri);
-    } catch {
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.cameraError'));
+      if (!result.canceled && result.assets[0]?.uri) {
+        setPhotoUri(result.assets[0].uri);
+      }
+    } catch (e: unknown) {
+      console.warn('launchImageLibrary field log:', e);
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.galleryError'));
     }
   }, [t]);
 
+  const takePhoto = useCallback(async () => {
+    try {
+      let status = (await ImagePicker.getCameraPermissionsAsync()).status;
+      if (status !== 'granted') {
+        ({ status } = await ImagePicker.requestCameraPermissionsAsync());
+      }
+      if (status !== 'granted') {
+        Alert.alert(t('producer.fieldLogAlerts.camPermTitle'), t('producer.fieldLogAlerts.camPermBody'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('producer.fieldLogAlerts.openSettings'),
+            onPress: () => void Linking.openSettings(),
+          },
+          {
+            text: t('producer.fieldLogAlerts.pickFromGallery'),
+            onPress: () => void pickPhotoFromLibrary(),
+          },
+        ]);
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 0.72,
+      });
+      if (!result.canceled && result.assets[0]?.uri) {
+        setPhotoUri(result.assets[0].uri);
+        return;
+      }
+    } catch (e: unknown) {
+      console.warn('launchCameraAsync field log:', e);
+      Alert.alert(t('producer.fieldLogAlerts.camFailedTitle'), t('producer.fieldLogAlerts.camFailedBody'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.fieldLogAlerts.pickFromGallery'),
+          onPress: () => void pickPhotoFromLibrary(),
+        },
+      ]);
+    }
+  }, [pickPhotoFromLibrary, t]);
+
   const saveEntry = useCallback(async () => {
     try {
-      setLoading(true);
+      setSaveBusy(true);
       const plan = selectedHarvestPlan;
       const growthStageSaved =
         plan?.announcementType === 'PLANTING'
@@ -404,7 +467,7 @@ export function useFieldLogData() {
     } catch (error) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
     } finally {
-      setLoading(false);
+      setSaveBusy(false);
     }
   }, [
     activityType,
@@ -529,9 +592,11 @@ export function useFieldLogData() {
     location,
     gpsWarning,
     materialValid,
-    loading,
+    gpsLoading,
+    saveBusy,
     getCurrentLocation,
     takePhoto,
+    pickPhotoFromLibrary,
     handleSubmit,
     referenceRefreshing,
     refreshReferenceData,

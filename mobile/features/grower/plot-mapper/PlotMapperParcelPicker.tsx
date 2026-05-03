@@ -36,7 +36,7 @@ export default function PlotMapperParcelPicker() {
           next.push({
             parcelId: parcel.id,
             estateName: estate.name,
-            cropLabel: parcel.cropType?.trim() ? parcel.cropType : t('producer.products.unknownProduct'),
+            cropLabel: parcel.cropType?.trim() ? parcel.cropType : t('producer.batches.unknownProduct'),
             area: parcel.calculatedArea,
           });
         }
@@ -64,7 +64,15 @@ export default function PlotMapperParcelPicker() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.background,
+          paddingTop: p.topInset,
+        }}
+      >
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -86,7 +94,7 @@ export default function PlotMapperParcelPicker() {
       contentContainerStyle={{
         paddingHorizontal: p.screenPaddingLeft,
         paddingRight: p.screenPaddingRight,
-        paddingTop: theme.spacing.md,
+        paddingTop: Math.max(p.headerTop, theme.spacing.md),
         paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
       }}
     >

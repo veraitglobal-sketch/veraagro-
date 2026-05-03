@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, PanResponder } from 'react-native';
+import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, MIN_PARTITION_GESTURE_DRAG } from './constants';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { getPlotCanvasLayout } from './canvasLayout';
 import type { Zone, Partition } from './types';
@@ -16,7 +17,7 @@ interface PlotCanvasProps {
   partitions: Partition[];
   partitionMode: boolean;
   onAddPartition: () => void;
-  onCanvasPress: (event: { nativeEvent: { locationX: number; locationY: number } }) => void;
+  onPartitionGestureEnd: (partition: Pick<Partition, 'type' | 'position'>) => void;
   onZonePress: (zone: Zone) => void;
 }
 
@@ -29,6 +30,25 @@ function toDy(y: number, displayH: number) {
   return (y / CANVAS_HEIGHT) * displayH;
 }
 
+function commitGesture(
+  sx: number,
+  sy: number,
+  endX: number,
+  endY: number,
+): Pick<Partition, 'type' | 'position'> {
+  const dx = Math.abs(endX - sx);
+  const dy = Math.abs(endY - sy);
+  const MIN = MIN_PARTITION_GESTURE_DRAG;
+
+  if (dx < MIN && dy < MIN) {
+    return { type: 'VERTICAL', position: sx };
+  }
+  if (dx > dy) {
+    return { type: 'VERTICAL', position: (sx + endX) / 2 };
+  }
+  return { type: 'HORIZONTAL', position: (sy + endY) / 2 };
+}
+
 export function PlotCanvas({
   length,
   width,
@@ -36,7 +56,7 @@ export function PlotCanvas({
   partitions,
   partitionMode,
   onAddPartition,
-  onCanvasPress,
+  onPartitionGestureEnd,
   onZonePress,
 }: PlotCanvasProps) {
   const { t } = useTranslation();
@@ -45,19 +65,51 @@ export function PlotCanvas({
   const horizontalPad = p.screenPaddingLeft + p.screenPaddingRight + 48;
   const { displayW, displayH, touchToLogical } = getPlotCanvasLayout(screenW, horizontalPad);
 
+  const startRef = useRef({ x: 0, y: 0 });
+  /** Latest pointer in logical coords — used when gesture is cancelled mid-drag. */
+  const lastLocalRef = useRef({ x: 0, y: 0 });
+
+  const toLogical = (ev: { locationX: number; locationY: number }) => ({
+    x: ev.locationX * touchToLogical,
+    y: ev.locationY * touchToLogical,
+  });
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => partitionMode,
+        onMoveShouldSetPanResponder: (_, gestate) =>
+          partitionMode && (Math.abs(gestate.dx) > 2 || Math.abs(gestate.dy) > 2),
+        onStartShouldSetPanResponderCapture: () => partitionMode,
+        onMoveShouldSetPanResponderCapture: (_, gestate) =>
+          partitionMode && (Math.abs(gestate.dx) > 4 || Math.abs(gestate.dy) > 4),
+        onPanResponderTerminationRequest: () => false,
+        onPanResponderGrant: (e) => {
+          const logical = toLogical(e.nativeEvent);
+          startRef.current = logical;
+          lastLocalRef.current = logical;
+        },
+        onPanResponderMove: (e) => {
+          lastLocalRef.current = toLogical(e.nativeEvent);
+        },
+        onPanResponderRelease: (e) => {
+          if (!partitionMode) return;
+          const logical = toLogical(e.nativeEvent);
+          onPartitionGestureEnd(commitGesture(startRef.current.x, startRef.current.y, logical.x, logical.y));
+        },
+        onPanResponderTerminate: () => {
+          if (!partitionMode) return;
+          const logical = lastLocalRef.current;
+          onPartitionGestureEnd(commitGesture(startRef.current.x, startRef.current.y, logical.x, logical.y));
+        },
+      }),
+    [partitionMode, touchToLogical, onPartitionGestureEnd],
+  );
+
   const vertCount = partitions.filter((pr) => pr.type === 'VERTICAL').length + 1;
   const horzCount = partitions.filter((pr) => pr.type === 'HORIZONTAL').length + 1;
   const zoneWidth = displayW / vertCount;
   const zoneHeight = displayH / horzCount;
-
-  const mapPress = (locationX: number, locationY: number) => {
-    onCanvasPress({
-      nativeEvent: {
-        locationX: locationX * touchToLogical,
-        locationY: locationY * touchToLogical,
-      },
-    });
-  };
 
   return (
     <View style={{ marginBottom: 24 }}>
@@ -150,11 +202,8 @@ export function PlotCanvas({
           <View style={{ width: 8 }} />
         )}
 
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={(ev) =>
-            mapPress(ev.nativeEvent.locationX, ev.nativeEvent.locationY)
-          }
+        <View
+          collapsable={false}
           style={{
             width: displayW,
             height: displayH,
@@ -165,6 +214,7 @@ export function PlotCanvas({
             position: 'relative',
             overflow: 'hidden',
           }}
+          {...(partitionMode ? panResponder.panHandlers : {})}
         >
           {Array.from({ length: 20 }).map((_, i) => (
             <View
@@ -289,7 +339,7 @@ export function PlotCanvas({
               </View>
             );
           })}
-        </TouchableOpacity>
+        </View>
       </View>
 
       {partitionMode ? (

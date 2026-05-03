@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { plotMapperAPI } from '../../../lib/api';
 import type { Zone, Partition } from './types';
-import { CANVAS_HEIGHT } from './constants';
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constants';
 import { computePlotZones } from './computeZones';
 
 function zonesEqual(a: Zone[], b: Zone[]): boolean {
@@ -100,18 +100,23 @@ export function usePlotMapperData(parcelId: string) {
 
   const handleAddPartition = () => setPartitionMode(true);
 
-  const handleCanvasPress = (event: { nativeEvent: { locationX: number; locationY: number } }) => {
-    if (!partitionMode) return;
-    const { locationX, locationY } = event.nativeEvent;
-    const isHorizontal = locationY < CANVAS_HEIGHT / 2;
-    const partition: Partition = {
-      id: `partition-${Date.now()}`,
-      type: isHorizontal ? 'HORIZONTAL' : 'VERTICAL',
-      position: isHorizontal ? locationY : locationX,
-    };
-    setPartitions((prev) => [...prev, partition]);
-    setPartitionMode(false);
-  };
+  const handlePartitionGestureEnd = useCallback(
+    ({ type, position }: Pick<Partition, 'type' | 'position'>) => {
+      if (!partitionMode) return;
+      const capped =
+        type === 'VERTICAL'
+          ? Math.max(1, Math.min(CANVAS_WIDTH - 1, position))
+          : Math.max(1, Math.min(CANVAS_HEIGHT - 1, position));
+      const partition: Partition = {
+        id: `partition-${Date.now()}`,
+        type,
+        position: capped,
+      };
+      setPartitions((prev) => [...prev, partition]);
+      setPartitionMode(false);
+    },
+    [partitionMode],
+  );
 
   const handleZonePress = (zone: Zone) => {
     setSelectedZone(zone);
@@ -193,7 +198,7 @@ export function usePlotMapperData(parcelId: string) {
     saving,
     totalArea: Number.isFinite(totalArea) ? totalArea : 0,
     handleAddPartition,
-    handleCanvasPress,
+    handlePartitionGestureEnd,
     handleZonePress,
     handleSaveZone,
     handleSaveBlueprint,
