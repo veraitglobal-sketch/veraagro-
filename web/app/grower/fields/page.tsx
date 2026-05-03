@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { estatesAPI, parcelsAPI, batchesAPI } from '@/lib/api';
@@ -10,6 +11,7 @@ import { MapPin, Plus, Clock, CheckCircle, Loader2, QrCode } from 'lucide-react'
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { useGrowerHref } from '@/hooks/useGrowerHref';
 
 const DEFAULT_POLYGON = [
   { lat: 44.7866, lng: 20.4489 },
@@ -43,6 +45,8 @@ function parcelEligibleForBatch(p: Parcel): boolean {
 
 export default function GrowerFieldsPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const growerHrefFn = useGrowerHref();
   const growerNavItems = useGrowerNavItems();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,18 +161,34 @@ export default function GrowerFieldsPage() {
     e.preventDefault();
     if (!formBatchParcel) return;
     setBatchError(null);
+    const name = batchForm.productName.trim();
+    const qtyRaw = Number(batchForm.quantity);
+    const harvestStr = batchForm.harvestDate?.trim() ?? '';
+    if (!name) {
+      setBatchError(t('growerPages.createBatchNeedProduct'));
+      return;
+    }
+    if (!Number.isFinite(qtyRaw) || qtyRaw <= 0) {
+      setBatchError(t('growerPages.createBatchNeedQty'));
+      return;
+    }
+    const harvestParsed = harvestStr ? new Date(harvestStr) : null;
+    if (!harvestStr || !harvestParsed || Number.isNaN(harvestParsed.getTime())) {
+      setBatchError(t('growerPages.createBatchInvalidDate'));
+      return;
+    }
     setSubmittingBatch(true);
     try {
-      const batch = await batchesAPI.create({
+      await batchesAPI.create({
         estateId: formBatchParcel.estateId,
         parcelId: formBatchParcel.parcelId,
-        productName: batchForm.productName.trim(),
-        quantity: batchForm.quantity,
-        unit: batchForm.unit,
-        harvestDate: batchForm.harvestDate,
+        productName: name,
+        quantity: qtyRaw,
+        unit: batchForm.unit.trim() || 'kg',
+        harvestDate: harvestStr,
       });
       setFormBatchParcel(null);
-      window.location.href = `/grower/batches`;
+      router.push(growerHrefFn('/grower/batches'));
     } catch (err: unknown) {
       setBatchError(growerApiErrorOrT(err, t, 'growerPages.createBatchError'));
     } finally {

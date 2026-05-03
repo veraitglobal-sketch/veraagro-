@@ -10,6 +10,7 @@ import { WEB_API_BASE } from '@/lib/api-base';
 import Link from 'next/link';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { useGrowerHref } from '@/hooks/useGrowerHref';
 
 const PHOTO_ORDER = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
 
@@ -67,6 +68,7 @@ type ComplianceStatus = {
 export default function CompliancePhotosPage() {
   const { t, i18n } = useTranslation();
   const navItems = useGrowerNavItems();
+  const growerHrefFn = useGrowerHref();
 
   const requiredPhotos = useMemo(
     () =>
@@ -426,7 +428,7 @@ export default function CompliancePhotosPage() {
             ) : batches.length === 0 ? (
               <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
                 {t('grower.compliancePhotos.noBatches')}{' '}
-                <Link href="/grower/batches" className="text-[#2D5A27] font-medium underline">
+                <Link href={growerHrefFn('/grower/fields')} className="text-[#2D5A27] font-medium underline">
                   {t('grower.compliancePhotos.createBatch')}
                 </Link>{' '}
                 {t('grower.compliancePhotos.noBatchesSuffix')}

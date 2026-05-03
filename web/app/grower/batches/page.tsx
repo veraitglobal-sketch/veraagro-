@@ -13,6 +13,7 @@ import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import {
   Package,
+  Plus,
   Search,
   Filter,
   Calendar,
@@ -270,14 +271,23 @@ export default function GrowerBatchesPage() {
             title={t('grower.nav.myBatches')}
             description={t('growerPages.batchesDescription')}
             right={
-              <button
-                type="button"
-                onClick={() => setShowFilters(!showFilters)}
-                className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                {t('growerPages.filters')}
-              </button>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <Link
+                  href={loc('/grower/fields')}
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('growerPages.addLotCta')}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
+                >
+                  <Filter className="mr-2 h-4 w-4" />
+                  {t('growerPages.filters')}
+                </button>
+              </div>
             }
           />
 

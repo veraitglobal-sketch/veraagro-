@@ -1,28 +1,28 @@
 {
   "chainShort": [
     {
-      "kicker": "Polje i usklađenost na terenu",
-      "text": "parcele odobrene → setva i rad u sezoni (mobilna) → plan berbe kada se približi berba."
+      "kicker": "Na farmi",
+      "text": "odobrene parcele → setva / beleške u sezoni (uglavnom mobilno) → plan berbe pred berbu."
     },
     {
-      "kicker": "Partija i dokumentacija",
-      "text": "kreiraj/ažuriraj partiju → pakovanje do PACKED / QUALITY_VERIFIED → unos kvaliteta → fotografije usklađenosti + rolna nalepnica."
+      "kicker": "Partija",
+      "text": "partija → pakovanje do PACKED / QUALITY_VERIFIED → kvalitet → tri fotografije + rolna nalepnica."
     },
     {
-      "kicker": "Izlaz sa farme",
-      "text": "Zahtev za transport (na čekanju za dispečere) → operativa dodeli vozača → prihvat / preuzimanje → predaja na utovaru (dokaz za kamion) → hladni lanac do haba / kupca → lista misija prati vožnju; maloprodajne porudžbine se usklađuju u operativi (aplikacija ne deli automatski)."
+      "kicker": "Sa farme",
+      "text": "zahtev za transport → dispečer dodeli vozača → preuzimanje i predaja → hladnjak → hub ili kupac · misije prate vožnju · raspodela kg kupcu ide u operativi, ne iz aplikacije automatski."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Čitajte korake 1–12 redom. Meni levo prati red rada: od tabele, uputstava, parcela i zasada, preko materijala i partija, Dnevnika unosa, skeniranja i kvaliteta, do dobavljača i transporta. Neke teme su ovde na karticama podeljene jasnije (npr. odobrenje, rad na polju).",
+    "sidebarBlurb": "Idite korak 1→12 redom. Levi meni je isti tok; ovde jedna kartica = jedna stvar da brzo pročitate.",
     "myFieldsCta": {
       "title": "Moja polja",
-      "line": "Otvorite kada budete spremni da mapirate blokove i useve.",
+      "line": "Mapirajte blok kad krenete sa radom.",
       "linkLabel": "Otvori Moja polja",
       "webHref": "/grower/fields"
     }
   },
-  "fullChainTitle": "Ceo lanac (kratko)",
+  "fullChainTitle": "Lanac — tri linije",
   "fieldsMapKicker": "Polja i mapa",
   "navJumpLabel": "Skoči na korak",
   "stepNumber": "Korak {{n}}",
@@ -31,71 +31,69 @@
     {
       "title": "Kontrolna tabla",
       "paragraphs": [
-        "Počnite ovde: obaveštenja (poruke, aktivne partije, transport), naziv farme i sledeća preporučena akcija. Koristite je svakih nekoliko dana, ne samo jednom."
+        "Obaveštenja, aktivne partije, poruke, šta sledi — bacite pogled povremeno."
       ],
-      "links": [{ "label": "Otvori kontrolnu tablu", "href": "/grower" }]
+      "links": [{ "label": "Kontrolna tabla", "href": "/grower" }]
     },
     {
-      "title": "Koraci (ova stranica)",
+      "title": "Ova lista (uputstva)",
       "paragraphs": [
-        "Mreža ima 12 numerisanih kartica; bočna traka prati isti red rada kao meni (neke teme ovde delimo radi jasnoće). U aplikaciji: sa Početne idite na polja, materijale, transport i ostalo."
+        "Dvanaest kartica na jednoj stranici · isti red kao levim menijem (na mobilnom donji tab prati isti tok)."
       ],
       "links": []
     },
     {
-      "title": "Moja polja — gazdinstva i parcele (blokovi)",
+      "title": "Moja polja (parcele)",
       "paragraphs": [
-        "Kreirajte polje (gazdinstvo) i parcele (blokove useva). Nacrtajte ili prilagodite površinu da sistem izračuna m². Unesite usev / sortu gde forma dozvoljava. Administrator mora da odobri parcelu pre nego što se partije, dnevnici i tretmani u potpunosti otključaju na tom bloku."
+        "Gazdinstvo + parcele, m², usev · partije/tretmani/dnevnik na bloku aktivni tek kad admin odobri parcelu."
       ],
       "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
     },
     {
       "title": "Odobrenje",
       "paragraphs": [
-        "Sačekajte da se parcele prikažu kao odobrene. Do tada neke radnje ostaju zaključane — to je uobičajeno. Ako traje predugo, koristite Kontakt / poruke operativi."
+        "Čekajte oznaku odobreno · zaključano stanje je uobičajeno · obratite se operativi ako se vuče."
       ],
       "links": []
     },
     {
-      "title": "Snabdevanje — materijali i dobavljači",
+      "title": "Materijali i dobavljači",
       "paragraphs": [
-        "Materijali = katalog u aplikaciji: gajbe, role nalepnica, folija, salda i serijski brojevi (npr. role) radi usklađenosti. Dobavljači i porudžbine = imenik, B2B porudžbina, poruke i „Primeto na farmi” kada roba stigne. U mobilnoj aplikaciji Materijali i Partner porudžbine; na webu Dobavljači i porudžbine."
+        "Katalog (gajbe, role, folija, serijski) · imenik + B2B porudžbine · primalo robe · mobilno Materijali + Partner porudžbine / na webu Dobavljači."
       ],
       "links": [
         { "label": "Materijali", "href": "/grower/materials" },
-        { "label": "Dobavljači i porudžbine", "href": "/grower/where-to-buy" }
+        { "label": "Dobavljači", "href": "/grower/where-to-buy" }
       ]
     },
     {
-      "title": "Rad na polju — setva, dnevnik unosa, tretmani",
+      "title": "Rad na parceli",
       "paragraphs": [
-        "Od setve nadalje koristite mobilnu aplikaciju za svakodnevni rad: Dnevnik unosa, dnevnik rasta, usklađene prskalice/tretmane (sa GPS gde treba). To je sloj traga pre komercijalne partije.",
-        "Kada usev približava berbu, podnesite plan berbe u aplikaciji (očekivane kg, opciono prozor utovara) da operativa i logistika planiraju — to nije maloprodajna porudžbina; služi planiranju i misijama.",
-        "Na webu su granice i blokovi ispod Moja polja; unose u redu radite telefonom."
+        "Svakodnevno: mobilni Dnevnik unosa, dnevnici, usklađeni tretmani (GPS gde pravilo traži). Pre berbe plan berbe kg/prozor za logistiku — nije maloprodajna porudžbina. Granice/mapu na web, unosi u redu."
       ],
       "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
     },
     {
-      "title": "Berba i formiranje partije (lot)",
+      "title": "Berba → partija",
       "paragraphs": [
-        "Kada je usev zreo, prijavite berbu i formirajte partiju / lot za tu parcelu. Povezujete količinu i vreme sa blokom koji ste ranije mapirali. Mobilni tok berbe koristite za prozor berbe ili kg."
+        "Kada zrije: berba · partija vezana za parcelu · mobilni tok za kg i prozor."
       ],
       "links": [
-        { "label": "Moja polja (nova partija)", "href": "/grower/fields" },
+        { "label": "Moja polja", "href": "/grower/fields" },
         { "label": "Moji lotovi", "href": "/grower/batches" }
       ]
     },
     {
-      "title": "Pakovanje i status partije",
+      "title": "Pakovanje i status",
       "paragraphs": [
-        "Dovršite korake pakovanja / traga u Mojim lotovima dok status ne bude PACKED ili QUALITY_VERIFIED (po potrebi mobilni tok pakovanja). Transport je blokiran dok partija ne stigne u jedan od tih statusa i dok usklađenost nije kompletna (sledeći korak)."
+        "Dovedite lot do PACKED ili QUALITY_VERIFIED · transport čeka pakovanje + usklađenost."
       ],
       "links": [{ "label": "Moji lotovi", "href": "/grower/batches" }]
     },
     {
-      "title": "Unos kvaliteta i fotografije usklađenosti",
+      "title": "Kvalitet i fotografije",
       "paragraphs": [
-        "Radite ovo redom za svaki lot: (1) Unos kvaliteta — provere i jedinice po partiji. (2) Fotografije usklađenosti + ID rolne nalepnica (tri fotografije + rolna u sistemu). Formular transporta proverava usklađenost; ako nešto fali, ispravite prvo ovde."
+        "(1) Unos kvaliteta · (2) fotografije + ID role · formular transporta proverava oba."
       ],
       "links": [
         { "label": "Unos kvaliteta", "href": "/grower/quality-entry" },
@@ -105,25 +103,25 @@
     {
       "title": "Zahtev za transport",
       "paragraphs": [
-        "Samo kada je partija PACKED ili QUALITY_VERIFIED i usklađenost završena, otvorite Zahtev za transport. Potrebni su GPS/ adresa preuzimanja i jasno odredište (kupac, hab ili rampa). Zahtev je na čekanju: operativa dodeli hladnjaču kada bude moguće (PENDING do tada)."
+        "Tek posle pakovanja / verifikacije + usklađenosti · GPS/adresa preuzimanja i odredište · čekanje dok dispečer ne dodeli vozača."
       ],
-      "footnote": "Maloprodajne / veleprodajne porudžbine kupaca usklađuju se u operativi (ko isporučuje koje kg). Aplikacija ne deli prognozu berbe automatski u porudžbinu kupca — količine i datume uskladite sa koordinatorom, zatim odrazite u partijama i transportu.",
+      "footnote": "Ko šta koliko kilograma nosi kojem kupcu — operativa, ne prognoza u aplikaciji.",
       "links": [{ "label": "Zahtev za transport", "href": "/grower/missions/create" }]
     },
     {
-      "title": "Praćenje misije (farma → tržište)",
+      "title": "Misije",
       "paragraphs": [
-        "Pratite misiju sa farme: logistika može završiti predaju na utovaru (temperatura kamiona + fotografije) nakon kvaliteta, zatim vožnja ka preuzimanju i hladnjački transport do haba ili kupca. Vidite status do koraka isporuke. U aplikaciji lista Misija; na webu stranica /grower/portal."
+        "Predaja na utovaru · hladnjak · koraci ka hub/kupcu · mobilni: lista misija · web: /grower/portal."
       ],
       "links": [{ "label": "Praćenje misija", "href": "/grower/portal" }]
     },
     {
-      "title": "Profil i nalog",
+      "title": "Profil",
       "paragraphs": [
-        "Partnerski kod, zemlja proizvodnje, obaveštenja — otvorite Moj profil. U mobilnom novčanik, sertifikati i dr. su pod tabom Profil."
+        "Partnerski kod, država, obaveštenja · novčanik i sertifikati ispod Profil na mobilnom."
       ],
       "links": [{ "label": "Moj profil", "href": "/grower/profile" }]
     }
   ],
-  "seasonMetaChip": "12 koraka · isti red kao u meniju"
+  "seasonMetaChip": "12 koraka · kao u meniju"
 }

@@ -20,25 +20,26 @@ export type GrowerJourneyStepDef = {
 
 export const GROWER_JOURNEY_CHAIN_SHORT: Array<{ kicker: string; text: string }> = [
   {
-    kicker: 'Field & compliance on the ground',
-    text: 'parcels approved → sowing & season work (mobile) → harvest plan when close to picking.',
+    kicker: 'On farm',
+    text: 'parcels approved → sowing / season notes (mostly mobile) → harvest plan near pick.',
   },
   {
-    kicker: 'Lot & paperwork',
-    text: 'create/update batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll.',
+    kicker: 'Lot',
+    text: 'batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll.',
   },
   {
-    kicker: 'Exit farm',
-    text: 'Request transport (queued for dispatch) → operations assigns a driver → accept / pickup → loading handover (truck proof) → cold chain to hub / buyer → Missions list follows the run; retail orders are matched in operations (not auto-split in the app).',
+    kicker: 'Off farm',
+    text:
+      'request transport → dispatcher assigns driver → pickup & handover → cold chain → hub or buyer · missions track the run · buyer allocations are done in ops, not auto in the app.',
   },
 ];
 
 export const GROWER_JOURNEY_INTRO = {
   sidebarBlurb:
-    'Read steps 1–12 in order. The green sidebar lists 11 pages (it combines a few topics these cards split out, e.g. approval and field work). Order: Dashboard → Steps → My fields through Mission tracker, then Profile.',
+    'Go 1→12 in order. The left menu is the same journey; here each card is one beat you can scan quickly.',
   myFieldsCta: {
     title: 'My fields',
-    line: 'Open when you are ready to map blocks and crops.',
+    line: 'Draw blocks and crops when you start.',
     linkLabel: 'Open My fields',
     webHref: '/grower/fields',
     mobilePath: '/(producer)/estates',
@@ -48,36 +49,30 @@ export const GROWER_JOURNEY_INTRO = {
 export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
   {
     title: 'Dashboard',
+    paragraphs: ['Alerts, active lots, messages, suggested next step — glance every few visits.'],
+    links: [{ label: 'Open Dashboard', webHref: '/grower', mobilePath: '/(producer)/(tabs)/' }],
+  },
+  {
+    title: 'This checklist',
     paragraphs: [
-      'Start here for alerts (messages, active batches, transport), farm name, and the next recommended action. Use it every few days, not only once.',
-    ],
-    links: [
-      { label: 'Open Dashboard', webHref: '/grower', mobilePath: '/(producer)/(tabs)/' },
+      'Twelve cards on one page · same order as the sidebar (app: bottom tabs mirror the flow).',
     ],
   },
   {
-    title: 'Steps (this page)',
+    title: 'My fields (parcels)',
     paragraphs: [
-      'This grid has 12 numbered cards; the web sidebar has 11 links in the same journey (we split a few topics here for clarity). Order: Dashboard → Steps → My fields … Mission tracker → Profile. On the app, the bottom tab has Home, Steps, Products, and Profile — open Home for fields, materials, transport, and the rest.',
-    ],
-  },
-  {
-    title: 'My fields — estates & parcels (blocks)',
-    paragraphs: [
-      'Create your field (estate) and parcels (crop blocks). Draw or adjust the area so the system can compute surface in m². Set crop / variety where the form allows. An administrator must approve a parcel before batches, diaries, and sprays are fully unlocked on that block.',
+      'Estate + parcels · m² · crop · batches / diary / treatments on a block stay limited until admin approves the parcel.',
     ],
     links: [{ label: 'My fields', webHref: '/grower/fields', mobilePath: '/(producer)/estates' }],
   },
   {
     title: 'Approval',
-    paragraphs: [
-      'Wait until parcels show as approved. Until then, some actions will stay locked — that is normal. If it takes long, use Contact / messages to operations.',
-    ],
+    paragraphs: ['Wait for approved · locked screens are normal · ping ops via messages if stalled.'],
   },
   {
-    title: 'Supply — materials & suppliers',
+    title: 'Materials & suppliers',
     paragraphs: [
-      'Materials = in-app catalog: crates, label rolls, film, balances and serial numbers (e.g. label rolls) for compliance. Suppliers & orders = directory, B2B order to a partner, messages, and Received at farm when goods arrive. On mobile, use Materials and Partner orders; on web, Suppliers & orders.',
+      'Catalog (crates, rolls, foil, serials) · directory + B2B orders · mark received · app: Materials + Partner orders / web: Suppliers & orders.',
     ],
     links: [
       { label: 'Materials', webHref: '/grower/materials', mobilePath: '/(producer)/materials' },
@@ -89,11 +84,9 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
     ],
   },
   {
-    title: 'Field work — sowing, journal, treatments',
+    title: 'Field work',
     paragraphs: [
-      'From sowing onward, use the mobile app for day-to-day work: entry log, growth journal, compliant sprays/treatments (with GPS where required). That is the traceability layer before you form a commercial lot.',
-      'When the crop is nearing harvest, file a harvest plan in the app (expected kg, optional loading window) so operations and logistics can plan — that is not the same as a retail order; it feeds planning and missions.',
-      'On web, boundaries and blocks live under My fields; use the phone in the row for entries.',
+      'Daily: mobile entry log, journals, compliant sprays/treatments (GPS when required). Before harvest submit a kg/window harvest plan — for planning, not a retail checkout. Borders on web, captures in the field.',
     ],
     linksWeb: [{ label: 'My fields', href: '/grower/fields' }],
     linksMobile: [
@@ -102,19 +95,23 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
     ],
   },
   {
-    title: 'Harvest & forming a lot (batch)',
+    title: 'Harvest → batch',
     paragraphs: [
-      'When the crop is ready, report harvest and form a batch / lot for that parcel. That ties quantity and timing to the block you mapped earlier. Use the mobile harvest flow when you announce a window or kg.',
+      'When ready: declare harvest · create batch linked to parcel · use mobile flows for qty / window.',
     ],
     links: [
-      { label: 'My fields (start batch)', webHref: '/grower/fields', mobilePath: '/(producer)/(tabs)/harvest' },
+      {
+        label: 'My fields (start batch)',
+        webHref: '/grower/fields',
+        mobilePath: '/(producer)/(tabs)/harvest',
+      },
       { label: 'My batches', webHref: '/grower/batches', mobilePath: '/(producer)/batches' },
     ],
   },
   {
-    title: 'Packing & lot status',
+    title: 'Packing & status',
     paragraphs: [
-      'Complete packing / trace steps for the lot in My batches until status is PACKED or QUALITY_VERIFIED (use the mobile packing flow when required). Transport is blocked until the lot reaches one of those states and compliance is complete (next step).',
+      'Work the lot until PACKED or QUALITY_VERIFIED · transport waits until packing + compliance (next step).',
     ],
     linksWeb: [{ label: 'My batches', href: '/grower/batches' }],
     linksMobile: [
@@ -123,22 +120,25 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
     ],
   },
   {
-    title: 'Quality entry & compliance photos',
+    title: 'Quality & compliance pics',
     paragraphs: [
-      'Do these in order for each lot: (1) Quality entry — per-lot checks and units. (2) Compliance photos + label roll ID (three photos + sticker roll on file). The transport form checks compliance; if something is missing, fix it here first.',
+      '(1) Quality entry · (2) Compliance photos + label roll · transport form validates both.',
     ],
     links: [
       { label: 'Quality entry', webHref: '/grower/quality-entry', mobilePath: '/(producer)/quality-entry' },
-      { label: 'Compliance photos', webHref: '/grower/compliance-photos', mobilePath: '/(producer)/compliance-photos' },
+      {
+        label: 'Compliance photos',
+        webHref: '/grower/compliance-photos',
+        mobilePath: '/(producer)/compliance-photos',
+      },
     ],
   },
   {
     title: 'Request transport',
     paragraphs: [
-      'Only when the batch is PACKED or QUALITY_VERIFIED and compliance is complete, open Request transport. You need pickup GPS/address and a full drop-off (buyer, hub, or dock). The request is queued: BioVera operations assigns a cold-chain driver when ready (PENDING until then).',
+      'Only after packed / verified + compliance · pickup GPS/address + destination · queued until dispatcher assigns driver.',
     ],
-    footnote:
-      'Retail / wholesale orders from buyers are matched in operations (who supplies which kg). The app does not auto-split a harvest forecast into a buyer order — you align quantity and dates with your coordinator, then reflect the real load in batches and transport.',
+    footnote: 'Who ships which kg to which buyer is set in ops — not inferred from forecasts in-app.',
     linksWeb: [{ label: 'Request transport', href: '/grower/missions/create' }],
     linksMobile: [
       { label: 'Request transport', path: '/(producer)/missions-create' },
@@ -146,19 +146,15 @@ export const GROWER_JOURNEY_STEP_DEFS: GrowerJourneyStepDef[] = [
     ],
   },
   {
-    title: 'Mission tracker (farm → market)',
-    paragraphs: [
-      'Follow the mission from your farm: logistics may complete a loading handover (truck temperature + photos) after your quality step, then the run moves toward pickup and cold-chain transit to hub or buyer. You see status until delivery-style milestones complete. On the app, use the Missions list; on web, Mission tracker is /grower/portal.',
-    ],
+    title: 'Missions',
+    paragraphs: ['Handover · cold chain · hub/buyer milestones · app: missions list · web: /grower/portal.'],
     links: [
       { label: 'Mission tracker', webHref: '/grower/portal', mobilePath: '/(producer)/missions' },
     ],
   },
   {
-    title: 'Profile & account',
-    paragraphs: [
-      'Partner code, production country, notifications — open My profile. On mobile, wallet, certificates, and more live under the Profile tab and menus.',
-    ],
+    title: 'Profile',
+    paragraphs: ['Partner code, country, notifications · wallet & certs live under Profile on mobile.'],
     links: [{ label: 'My profile', webHref: '/grower/profile', mobilePath: '/(producer)/(tabs)/profile' }],
   },
 ];

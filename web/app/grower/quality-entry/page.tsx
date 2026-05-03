@@ -306,7 +306,7 @@ export default function QualityEntryPage() {
                 ) : batches.length === 0 ? (
                   <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
                     {fk('noBatchesLead')}{' '}
-                    <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
+                    <Link href={growerHref('/grower/fields')} className="text-[#2D5A27] font-medium underline">
                       {fk('createBatchCta')}
                     </Link>{' '}
                     {fk('noBatchesTail')}

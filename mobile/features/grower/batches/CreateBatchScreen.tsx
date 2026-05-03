@@ -151,14 +151,24 @@ export default function CreateBatchScreen() {
 
   const selectedParcel = useMemo(() => parcelsRows.find((r) => r.id === parcelId), [parcelsRows, parcelId]);
 
+  /** Default to newest plan row for this parcel so submit is not blocked when several plans exist. */
   useEffect(() => {
     if (!parcelId) {
       setSelectedHarvestPlanId(null);
       return;
     }
     const list = harvestAnnouncements.filter((h) => h.parcelId === parcelId);
-    if (list.length === 1) setSelectedHarvestPlanId(list[0].id);
-    else setSelectedHarvestPlanId((prev) => (prev && list.some((x) => x.id === prev) ? prev : null));
+    if (list.length === 0) {
+      setSelectedHarvestPlanId(null);
+      return;
+    }
+    setSelectedHarvestPlanId((prev) => {
+      if (prev && list.some((x) => x.id === prev)) return prev;
+      const sorted = [...list].sort(
+        (a, b) => new Date(a.estimatedDate).getTime() - new Date(b.estimatedDate).getTime(),
+      );
+      return sorted[0]?.id ?? null;
+    });
   }, [parcelId, harvestAnnouncements]);
 
   useEffect(() => {

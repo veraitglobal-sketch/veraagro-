@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, ExternalLink, Eye, EyeOff, FileText, Lock } from 'lucide-react';
+import { ArrowRight, ExternalLink, Eye, EyeOff, FileText, Lock, X } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,9 +37,13 @@ const btnPrimary =
 const btnOutline =
   'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2';
 const btnIconSubmit =
-  'inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg bg-[#2D5A27] text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  'inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg bg-[#2D5A27] text-white shadow-sm transition-colors hover:bg-[#23471f] hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
 const inputClass =
-  'min-h-[48px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 transition-colors placeholder:text-gray-400 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 disabled:bg-gray-50 disabled:text-gray-500';
+  'min-h-[48px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 disabled:bg-gray-50 disabled:text-gray-500';
+
+/** Google-Docs–style tiles — Vera border + soft lift on hover */
+const docCardClass =
+  'block overflow-hidden rounded-xl border border-gray-200/90 bg-white text-left shadow-sm ring-1 ring-gray-950/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2D5A27]/28 hover:shadow-md hover:shadow-[#2D5A27]/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2';
 
 const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
   short: '01',
@@ -337,9 +341,13 @@ export default function InvestorBusinessPlansClient() {
     </div>
   );
 
+  const gateActive = bootstrap === 'ok' && !bundleUnlocked;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+    <div className={`min-h-screen transition-colors ${gateActive ? 'bg-white' : 'bg-gray-50'}`}>
+      <header
+        className={`fixed top-0 z-50 w-full border-b backdrop-blur-sm ${gateActive ? 'border-gray-100 bg-white/95' : 'border-gray-200 bg-white/80'}`}
+      >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
             <Image
@@ -386,7 +394,7 @@ export default function InvestorBusinessPlansClient() {
 
       {passwordModalTier ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/45 p-4 backdrop-blur-[2px]"
           role="presentation"
           onClick={closePasswordModal}
         >
@@ -394,21 +402,30 @@ export default function InvestorBusinessPlansClient() {
             role="dialog"
             aria-modal
             aria-labelledby="tier-password-modal-title"
-            className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-lg"
+            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_24px_64px_-16px_rgba(15,23,42,0.25),0_0_0_1px_rgba(45,90,39,0.06)]"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="h-1 bg-[#2D5A27]" aria-hidden />
+            <button
+              type="button"
+              onClick={closePasswordModal}
+              className="absolute right-3 top-4 inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40"
+              aria-label={t('common.close')}
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
             <h2 id="tier-password-modal-title" className="sr-only">
               {t(TITLE_KEY[passwordModalTier])}
             </h2>
             <form
-              className="flex flex-col gap-3"
+              className="flex flex-col gap-3 px-6 pb-7 pt-8 sm:px-8"
               onSubmit={(e: FormEvent) => {
                 e.preventDefault();
                 void submitTier(passwordModalTier);
               }}
               noValidate
             >
-              <div className="flex gap-2">
+              <div className="flex w-full gap-2 rounded-xl border border-gray-200/80 bg-gray-50/70 p-2 ring-1 ring-inset ring-gray-200/50">
                 {(() => {
                   const ui = tierUi[passwordModalTier];
                   const busy = ui.loading || docLoadTier === passwordModalTier;
@@ -425,14 +442,14 @@ export default function InvestorBusinessPlansClient() {
                         aria-label={t('investorBusinessPlans.passwordAriaLabel')}
                         aria-invalid={ui.wrongPassword}
                         placeholder=""
-                        className={`${inputClass} flex-1 ${ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''}`}
+                        className={`${inputClass} min-w-0 flex-1 border-gray-200 ${ui.wrongPassword ? 'border-red-400 ring-1 ring-red-200' : ''}`}
                       />
                       <button
                         type="button"
                         onClick={() => setTier(passwordModalTier, { showPassword: !ui.showPassword })}
                         disabled={busy}
                         aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                        className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                        className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
                       >
                         {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
                       </button>
@@ -486,71 +503,76 @@ export default function InvestorBusinessPlansClient() {
               <p className="text-base leading-relaxed text-amber-950">{t('investorBusinessPlans.gateNotConfigured')}</p>
             </div>
           ) : !bundleUnlocked ? (
-            <div className="flex w-full justify-center">
-              <div className="flex w-full max-w-md flex-col items-center justify-center gap-10 py-8 min-h-[min(70vh,calc(100dvh-9rem))] sm:min-h-[min(75vh,calc(100dvh-8rem))]">
+            <div className="flex w-full justify-center px-2">
+              <div
+                className="flex w-full max-w-md flex-col items-center justify-center gap-10 rounded-2xl border border-gray-200/90 bg-white px-7 py-11 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_28px_56px_-32px_rgba(45,90,39,0.14)] min-h-[min(68vh,calc(100dvh-9rem))] sm:min-h-[min(72vh,calc(100dvh-8rem))] sm:px-10 sm:py-12"
+              >
+                <div className="h-1 w-16 shrink-0 rounded-full bg-[#2D5A27]/85" aria-hidden />
                 <Link
                   href={loc('/')}
-                  className="flex w-full justify-center transition-opacity hover:opacity-80"
+                  className="flex w-full justify-center transition-opacity hover:opacity-90"
                 >
                   <Image
                     src="/logo1.png"
                     alt={t('footer.logoAlt')}
-                    width={100}
-                    height={36}
-                    className="h-8 w-auto sm:h-9"
+                    width={112}
+                    height={40}
+                    className="h-9 w-auto sm:h-10"
                     priority
                   />
                 </Link>
                 <form
-                  className="flex w-full max-w-md gap-2"
+                  className="flex w-full flex-col gap-3"
                   onSubmit={(e: FormEvent) => {
                     e.preventDefault();
                     void submitBundle();
                   }}
                   noValidate
                 >
-                  <input
-                    type={showBundlePw ? 'text' : 'password'}
-                    autoComplete="off"
-                    value={bundlePw}
-                    onChange={(e) => {
-                      setBundlePw(e.target.value);
-                      if (bundleWrong) setBundleWrong(false);
-                    }}
-                    disabled={bundleBusy}
-                    aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
-                    aria-invalid={bundleWrong}
-                    placeholder=""
-                    className={`${inputClass} min-w-0 flex-1 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowBundlePw((s) => !s)}
-                    disabled={bundleBusy}
-                    aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                    className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
-                  >
-                    {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={bundleBusy || !bundlePw.trim()}
-                    aria-busy={bundleBusy}
-                    aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
-                    className={btnIconSubmit}
-                  >
-                    {bundleBusy ? (
-                      <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
-                    ) : (
-                      <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                    )}
-                  </button>
+                  <div className="flex w-full gap-2 rounded-xl border border-gray-200/80 bg-gray-50/80 p-2 ring-1 ring-inset ring-gray-200/40">
+                    <input
+                      type={showBundlePw ? 'text' : 'password'}
+                      autoComplete="off"
+                      value={bundlePw}
+                      onChange={(e) => {
+                        setBundlePw(e.target.value);
+                        if (bundleWrong) setBundleWrong(false);
+                      }}
+                      disabled={bundleBusy}
+                      aria-label={t('investorBusinessPlans.bundlePasswordLabel')}
+                      aria-invalid={bundleWrong}
+                      placeholder=""
+                      className={`${inputClass} min-w-0 flex-1 border-gray-200 ${bundleWrong ? 'border-red-400 ring-1 ring-red-200' : ''}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowBundlePw((s) => !s)}
+                      disabled={bundleBusy}
+                      aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
+                      className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+                    >
+                      {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={bundleBusy || !bundlePw.trim()}
+                      aria-busy={bundleBusy}
+                      aria-label={bundleBusy ? t('investorBusinessPlans.loadingSkeleton') : t('investorBusinessPlans.submitAriaLabel')}
+                      className={btnIconSubmit}
+                    >
+                      {bundleBusy ? (
+                        <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+                      ) : (
+                        <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+                      )}
+                    </button>
+                  </div>
+                  {bundleWrong ? (
+                    <p className="text-center text-sm text-red-700" role="alert">
+                      {t('grower.confidential.wrongPassword')}
+                    </p>
+                  ) : null}
                 </form>
-                {bundleWrong ? (
-                  <p className="w-full text-center text-sm text-red-700" role="alert">
-                    {t('grower.confidential.wrongPassword')}
-                  </p>
-                ) : null}
               </div>
             </div>
           ) : (
@@ -566,7 +588,7 @@ export default function InvestorBusinessPlansClient() {
                   return (
                     <div
                       key={tier}
-                      className="overflow-hidden rounded-lg border border-dashed border-gray-300 bg-gray-50/80 opacity-80 shadow-sm"
+                      className="overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50/80 opacity-80 shadow-sm ring-1 ring-gray-950/[0.03]"
                     >
                       <div className="aspect-[3/4] max-h-56 bg-gray-100/90" />
                       <div className="flex items-center gap-3 border-t border-gray-200 bg-white p-4">
@@ -585,7 +607,7 @@ export default function InvestorBusinessPlansClient() {
                       {TIER_INDEX[tier]}
                     </span>
                     {!unlocked ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white/55">
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[2px]">
                         <div className="rounded-full border border-gray-200 bg-white p-3 shadow-sm">
                           <Lock className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
                         </div>
@@ -615,7 +637,7 @@ export default function InvestorBusinessPlansClient() {
                     <Link
                       key={tier}
                       href={loc(`/investor-deck/business-plans/plan/${tier}`)}
-                      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:border-[#2D5A27]/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+                      className={`group ${docCardClass}`}
                     >
                       {thumb}
                       {meta}
@@ -630,7 +652,7 @@ export default function InvestorBusinessPlansClient() {
                       href={ui.externalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:border-[#2D5A27]/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+                      className={`group ${docCardClass}`}
                     >
                       {thumb}
                       <div className="flex items-start gap-3 border-t border-gray-200 bg-white p-4">
@@ -650,7 +672,7 @@ export default function InvestorBusinessPlansClient() {
                     type="button"
                     disabled={busy}
                     onClick={() => setPasswordModalTier(tier)}
-                    className="overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm transition-shadow hover:border-[#2D5A27]/25 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2 disabled:opacity-60"
+                    className={`${docCardClass} w-full cursor-pointer disabled:pointer-events-none disabled:opacity-60`}
                   >
                     {thumb}
                     {meta}

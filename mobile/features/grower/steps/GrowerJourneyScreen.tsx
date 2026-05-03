@@ -196,24 +196,6 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
         </Text>
       </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: theme.spacing.sm,
-          marginBottom: theme.spacing.lg,
-          padding: theme.spacing.md,
-          borderRadius: theme.borderRadius.md,
-          backgroundColor: theme.colors.primaryLight,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-        }}
-      >
-        <ListOrdered size={22} color={theme.colors.primary} style={{ marginTop: 2 }} />
-        <Text style={{ flex: 1, fontSize: 14, color: theme.colors.text.primary, lineHeight: 20 }}>
-          {journey.intro.sidebarBlurb}
-        </Text>
-      </View>
-
       <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.tertiary, marginBottom: theme.spacing.sm, textTransform: 'uppercase', letterSpacing: 0.4 }}>
         {t('producer.tabs.steps')}
       </Text>
