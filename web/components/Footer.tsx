@@ -145,11 +145,6 @@ export default function Footer() {
                   {t('footer.roadmap')}
                 </Link>
               </li>
-              <li>
-                <Link href={loc('/contact')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
-                  {t('nav.contact')}
-                </Link>
-              </li>
             </ul>
           </div>
           <div>
@@ -163,6 +158,11 @@ export default function Footer() {
               <li>
                 <Link href={loc('/help-center')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.helpCenter')}
+                </Link>
+              </li>
+              <li>
+                <Link href={loc('/contact')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('nav.contact')}
                 </Link>
               </li>
               <li>

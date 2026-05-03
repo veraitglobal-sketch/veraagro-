@@ -12,6 +12,7 @@ import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
 import type { PendingFieldEntry, FieldLogMaterialKind, FieldLogHistoryItem } from '../../../lib/offline-storage';
+import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 
 /** Match server default (see `planting-progress.util` / PLANTING_PROGRESS_NOTES_MIN_LEN). */
 export const PLANTING_NOTES_MIN = 15;
@@ -144,10 +145,10 @@ export function useFieldLogData() {
     try {
       const raw = await harvestAnnouncementsAPI.getMy();
       const arr = Array.isArray(raw) ? raw : [];
-      const forParcel = arr.filter(
-        (a: { parcelId: string; status: string }) =>
-          a.parcelId === selectedParcelId && a.status !== 'CANCELLED',
-      );
+      const forParcel = arr.filter((a: { parcelId: unknown; status: string; parcel?: { id?: string } | null }) => {
+        const aid = normalizeHarvestParcelId(a.parcelId, a.parcel ?? null);
+        return aid === selectedParcelId && a.status !== 'CANCELLED';
+      });
       const options = forParcel.map(
         (a: { id: string; announcementType: string; cropType: string; estimatedDate: string }) => {
           const kind =

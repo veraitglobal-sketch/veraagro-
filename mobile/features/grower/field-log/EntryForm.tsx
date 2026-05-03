@@ -246,80 +246,111 @@ export default function EntryForm() {
           )}
         </View>
 
-        {estates.length > 1 ? (
-          <View style={{ marginBottom: theme.spacing.md }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                letterSpacing: 0.5,
-                marginBottom: theme.spacing.sm,
-              }}
-            >
-              {t('producer.growthJournal.estateLabel')}
-            </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-              {estates.map((estate) => {
-                const sel = currentEstate?.id === estate.id;
-                return (
-                  <TouchableOpacity
-                    key={estate.id}
-                    onPress={() => selectEstateById(estate.id)}
-                    activeOpacity={0.7}
-                    style={{
-                      paddingHorizontal: theme.spacing.md,
-                      paddingVertical: theme.spacing.sm,
-                      borderRadius: theme.borderRadius.md,
-                      borderWidth: 0.5,
-                      borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
-                      backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
-                    }}
-                  >
-                    <Text
+        <View
+          style={{
+            marginBottom: theme.spacing.lg,
+            borderWidth: 0.5,
+            borderColor: theme.colors.border,
+            borderRadius: theme.borderRadius.md,
+            padding: theme.spacing.md,
+            backgroundColor: theme.colors.surfaceElevated,
+          }}
+        >
+          {estates.length > 1 ? (
+            <View style={{ marginBottom: theme.spacing.md }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: theme.colors.text.primary,
+                  letterSpacing: 0.2,
+                  marginBottom: theme.spacing.xs,
+                }}
+              >
+                {t('producer.fieldLogForm.chooserEstateMulti')}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '300',
+                  color: theme.colors.text.secondary,
+                  lineHeight: 18,
+                  marginBottom: theme.spacing.sm,
+                }}
+              >
+                {t('producer.fieldLogForm.chooserEstateHintMulti')}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+                {estates.map((estate) => {
+                  const sel = currentEstate?.id === estate.id;
+                  return (
+                    <TouchableOpacity
+                      key={estate.id}
+                      onPress={() => selectEstateById(estate.id)}
+                      activeOpacity={0.7}
                       style={{
-                        fontSize: 14,
-                        fontWeight: '300',
-                        color: sel ? theme.colors.primary : theme.colors.text.primary,
-                        letterSpacing: 0.3,
+                        paddingHorizontal: theme.spacing.md,
+                        paddingVertical: theme.spacing.sm,
+                        borderRadius: theme.borderRadius.md,
+                        borderWidth: 0.5,
+                        borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
+                        backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
                       }}
                     >
-                      {estate.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: '300',
+                          color: sel ? theme.colors.primary : theme.colors.text.primary,
+                          letterSpacing: 0.3,
+                        }}
+                      >
+                        {estate.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
-          </View>
-        ) : currentEstate ? (
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: '300',
-              color: theme.colors.text.secondary,
-              marginBottom: theme.spacing.md,
-              letterSpacing: 0.2,
-            }}
-          >
-            {t('producer.growthJournal.estateLabel')}: {currentEstate.name}
-          </Text>
-        ) : null}
+          ) : currentEstate ? (
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '300',
+                color: theme.colors.text.secondary,
+                marginBottom: theme.spacing.md,
+                letterSpacing: 0.2,
+              }}
+            >
+              {t('producer.fieldLogForm.chooserFarmContext', { name: currentEstate.name })}
+            </Text>
+          ) : null}
 
-        <View style={{ marginBottom: theme.spacing.md }}>
           <Text
             style={{
               fontSize: 16,
-              fontWeight: '300',
+              fontWeight: '600',
               color: theme.colors.text.primary,
-              letterSpacing: 0.5,
+              letterSpacing: 0.2,
+              marginBottom: theme.spacing.xs,
+            }}
+          >
+            {t('producer.fieldLogForm.chooserParcelTitle')}
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '300',
+              color: theme.colors.text.secondary,
+              lineHeight: 18,
               marginBottom: theme.spacing.sm,
             }}
           >
-            {t('producer.growthJournal.parcelLabel')}
+            {t('producer.fieldLogForm.chooserParcelHelp')}
           </Text>
           {approvedParcels.length === 0 ? (
             <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
-              {t('producer.growthJournalAlerts.parcelBody')}
+              {t('producer.fieldLogForm.chooserParcelEmpty')}
             </Text>
           ) : (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
@@ -355,62 +386,80 @@ export default function EntryForm() {
               })}
             </View>
           )}
-        </View>
 
-        {selectedParcelId ? (
-          <View style={{ marginBottom: theme.spacing.md }}>
-            <Text
+          {selectedParcelId ? (
+            <View
               style={{
-                fontSize: 16,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                letterSpacing: 0.5,
-                marginBottom: theme.spacing.sm,
+                marginTop: theme.spacing.md,
+                paddingTop: theme.spacing.md,
+                borderTopWidth: 0.5,
+                borderTopColor: theme.colors.border,
               }}
             >
-              {t('producer.growthJournal.planLabel')}
-              {plansLoading ? ` (${t('producer.growthJournal.plansLoading')})` : ''}
-            </Text>
-            {!plansLoading && parcelPlans.length === 0 ? (
-              <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
-                {t('producer.growthJournal.noPlansForParcel')}
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: theme.colors.text.primary,
+                  letterSpacing: 0.2,
+                  marginBottom: theme.spacing.xs,
+                }}
+              >
+                {t('producer.fieldLogForm.chooserPlanTitle')}
+                {plansLoading ? ` ${t('producer.fieldLogForm.chooserPlansLoadingHint')}` : ''}
               </Text>
-            ) : (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-                {parcelPlans.map((plan) => {
-                  const sel = selectedHarvestPlanId === plan.id;
-                  return (
-                    <TouchableOpacity
-                      key={plan.id}
-                      onPress={() => setSelectedHarvestPlanId(plan.id)}
-                      activeOpacity={0.7}
-                      style={{
-                        paddingHorizontal: theme.spacing.md,
-                        paddingVertical: theme.spacing.sm,
-                        borderRadius: theme.borderRadius.md,
-                        borderWidth: 0.5,
-                        borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
-                        backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
-                        maxWidth: '100%',
-                      }}
-                    >
-                      <Text
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '300',
+                  color: theme.colors.text.secondary,
+                  lineHeight: 18,
+                  marginBottom: theme.spacing.sm,
+                }}
+              >
+                {t('producer.fieldLogForm.chooserPlanHint')}
+              </Text>
+              {!plansLoading && parcelPlans.length === 0 ? (
+                <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
+                  {t('producer.fieldLogForm.chooserNoPlansForParcel')}
+                </Text>
+              ) : (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+                  {parcelPlans.map((plan) => {
+                    const sel = selectedHarvestPlanId === plan.id;
+                    return (
+                      <TouchableOpacity
+                        key={plan.id}
+                        onPress={() => setSelectedHarvestPlanId(plan.id)}
+                        activeOpacity={0.7}
                         style={{
-                          fontSize: 13,
-                          fontWeight: '300',
-                          color: sel ? theme.colors.primary : theme.colors.text.primary,
-                          letterSpacing: 0.2,
+                          paddingHorizontal: theme.spacing.md,
+                          paddingVertical: theme.spacing.sm,
+                          borderRadius: theme.borderRadius.md,
+                          borderWidth: 0.5,
+                          borderColor: sel ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)',
+                          backgroundColor: sel ? `${theme.colors.primary}12` : theme.colors.surface,
+                          maxWidth: '100%',
                         }}
                       >
-                        {plan.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            )}
-          </View>
-        ) : null}
+                        <Text
+                          style={{
+                            fontSize: 13,
+                            fontWeight: '300',
+                            color: sel ? theme.colors.primary : theme.colors.text.primary,
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {plan.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
+            </View>
+          ) : null}
+        </View>
 
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text

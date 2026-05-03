@@ -1310,7 +1310,17 @@
       "histStatus_syncing": "Uploading",
       "histStatus_synced": "Sent",
       "histStatus_error": "Error",
-      "histMaterial": "Material"
+      "histMaterial": "Material",
+      "chooserEstateMulti": "Farm",
+      "chooserEstateHintMulti": "If you have more than one registered farm, pick where you’re working now.",
+      "chooserFarmContext": "Farm: {{name}}",
+      "chooserParcelTitle": "Parcel (field / plot block)",
+      "chooserParcelHelp": "Your “parcel” is the mapped block under “My parcels” — approved ground you log activity on.",
+      "chooserParcelEmpty": "No approved parcels yet. Add a block under “My parcels” or wait for approval.",
+      "chooserPlanTitle": "Crop planting or harvest plan",
+      "chooserPlanHint": "Tap a parcel above; plans listed here belong only to that parcel (same as “Harvest & plan”).",
+      "chooserPlansLoadingHint": "(loading)",
+      "chooserNoPlansForParcel": "There’s no active planting or harvest plan for this parcel. Add them under “Harvest & plan” for this parcel — then tap the parcel again here if the list doesn’t refresh."
     },
     "fieldLogAlerts": {
       "permTitle": "Permissions",
