@@ -4,9 +4,15 @@ import * as path from 'path';
 import * as PDFDocument from 'pdfkit';
 import { PDF_SECTIONS_EN } from './biovera-fresh.pdf-sections';
 
-/** Prospect hero: place image at web/public/biovera-fresh-prospect-hero.jpg or .png; API resolves repo public folders. */
-const BIOVERA_FRESH_HERO_PREFERRED = 'biovera-fresh-prospect-hero.jpg';
-const BIOVERA_FRESH_HERO_FALLBACK = 'biovera-fresh-prospect-hero.png';
+/** Prospect hero: place under web/public or backend/public (see listPublicAssetDirs). */
+const BIOVERA_FRESH_HERO_FILES = [
+  'biovera-fresh-prospect-hero.jpg',
+  'biovera-fresh-prospect-hero.jpeg',
+  'biovera-fresh-prospect-hero.png',
+] as const;
+
+/** Extra vertical slack so measured card height matches rendered body (avoids overlap hiding later chapters). */
+const BODY_HEIGHT_SLACK = 28;
 
 const MARGIN = 48;
 const CARD_PAD = 14;
@@ -92,16 +98,40 @@ function measureRichBodyHeight(
 export class BioVeraFreshService {
   private readonly logger = new Logger(BioVeraFreshService.name);
 
-  /** Resolve static files whether Nest runs from repo root, `backend/`, or another cwd. */
-  private resolveRepoPublicAsset(fileName: string): string | null {
-    const candidates = [
-      path.join(process.cwd(), 'public', fileName),
-      path.join(process.cwd(), '..', 'web', 'public', fileName),
-      path.join(process.cwd(), 'web', 'public', fileName),
-      path.join(process.cwd(), 'backend', 'public', fileName),
+  /** Directories that may hold shared static assets (cwd variants + path relative to compiled `dist/` or `src/`). */
+  private listPublicAssetDirs(): string[] {
+    const dirs = [
+      path.join(process.cwd(), 'public'),
+      path.join(process.cwd(), '..', 'web', 'public'),
+      path.join(process.cwd(), 'web', 'public'),
+      path.join(process.cwd(), 'backend', 'public'),
+      path.join(__dirname, '..', '..', '..', 'web', 'public'),
+      path.join(__dirname, '..', '..', '..', 'backend', 'public'),
     ];
-    for (const p of candidates) {
+    return [...new Set(dirs.map((d) => path.normalize(d)))];
+  }
+
+  /** Resolve static files whether Nest runs from repo root, `backend/`, monorepo root, or `dist/`. */
+  private resolveRepoPublicAsset(fileName: string): string | null {
+    for (const dir of this.listPublicAssetDirs()) {
+      const p = path.join(dir, fileName);
       if (fs.existsSync(p)) return p;
+    }
+    return null;
+  }
+
+  /** Read first matching image from public dirs (buffer embedding is more reliable than path for some JPEGs). */
+  private readPublicImageFirstMatch(baseNames: readonly string[]): Buffer | null {
+    for (const dir of this.listPublicAssetDirs()) {
+      for (const name of baseNames) {
+        const p = path.join(dir, name);
+        if (!fs.existsSync(p)) continue;
+        try {
+          return fs.readFileSync(p);
+        } catch (e) {
+          this.logger.warn(`BioVera Fresh PDF: could not read image ${p}`, e);
+        }
+      }
     }
     return null;
   }
@@ -269,7 +299,9 @@ export class BioVeraFreshService {
           const badgeColH = chapter.num ? BADGE_SIZE + 4 : 0;
           const titleBandH =
             TITLE_BAND_PAD_V + Math.max(badgeColH, titleH + 2) + TITLE_BAND_PAD_V + 6;
-          const bodyH = measureRichBodyHeight(doc, body, innerBodyW, veraGreen, bodyGray, bodyFontSize);
+          const bodyH =
+            measureRichBodyHeight(doc, body, innerBodyW, veraGreen, bodyGray, bodyFontSize) +
+            BODY_HEIGHT_SLACK;
           const cardH =
             titleBandH + BODY_GAP_AFTER_BAND + bodyH + CARD_PAD + (chapter.isContact ? 10 : 0);
           return { titleBandH, titleH, titleOnly, titleFontSize, bodyH, cardH };
@@ -335,16 +367,17 @@ export class BioVeraFreshService {
           doc.text(titleOnly, titleBlockX, titleBaseline, { width: titleBlockW, lineGap: 3 });
 
           const bodyTop = bandBottom + BODY_GAP_AFTER_BAND;
-          renderRichBody(doc, innerBodyX, bodyTop, body, innerBodyW, bodyFontSize);
+          const bodyEndY = renderRichBody(doc, innerBodyX, bodyTop, body, innerBodyW, bodyFontSize);
+          const paintedBottom = Math.max(cardTop + cardH, bodyEndY + 12);
 
           if (contactTone) {
-            const stripY = cardTop + cardH - 7;
+            const stripY = paintedBottom - 7;
             doc.save();
             doc.roundedRect(cardX + CARD_PAD, stripY, cardW - CARD_PAD * 2, 5, 2).fill(veraGreen).opacity(0.88);
             doc.restore();
           }
 
-          doc.y = cardTop + cardH + SECTION_AFTER;
+          doc.y = paintedBottom + SECTION_AFTER;
         };
 
         const renderToc = () => {
@@ -451,10 +484,8 @@ export class BioVeraFreshService {
           );
         doc.moveDown(1);
 
-        const heroImage =
-          this.resolveRepoPublicAsset(BIOVERA_FRESH_HERO_PREFERRED) ??
-          this.resolveRepoPublicAsset(BIOVERA_FRESH_HERO_FALLBACK);
-        if (heroImage) {
+        const heroBuf = this.readPublicImageFirstMatch(BIOVERA_FRESH_HERO_FILES);
+        if (heroBuf) {
           try {
             const heroMaxH = 200;
             if (doc.y + heroMaxH > contentBottom) {
@@ -466,7 +497,7 @@ export class BioVeraFreshService {
 
             doc.save();
             doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
-            doc.image(heroImage, MARGIN, heroY, {
+            doc.image(heroBuf, MARGIN, heroY, {
               fit: [heroW, heroMaxH],
               align: 'center',
               valign: 'center',
@@ -482,8 +513,12 @@ export class BioVeraFreshService {
 
             doc.y = heroY + heroMaxH + 20;
           } catch (e) {
-            this.logger.warn('BioVera Fresh PDF: hero image failed', e);
+            this.logger.warn('BioVera Fresh PDF: hero image embed failed', e);
           }
+        } else {
+          this.logger.warn(
+            `BioVera Fresh PDF: hero image not found (tried ${BIOVERA_FRESH_HERO_FILES.join(', ')} in ${this.listPublicAssetDirs().length} directories). Place file in web/public or backend/public.`,
+          );
         }
 
         renderToc();
