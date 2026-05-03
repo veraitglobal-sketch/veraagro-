@@ -10,6 +10,86 @@ export type BioVeraFreshPdfLocale = 'en' | 'sr';
 const BIOVERA_FRESH_HERO_PREFERRED = 'biovera-fresh-prospect-hero.jpg';
 const BIOVERA_FRESH_HERO_FALLBACK = 'biovera-fresh-prospect-hero.png';
 
+const MARGIN = 48;
+const CARD_PAD = 14;
+const CARD_RADIUS = 8;
+const TITLE_BAND_PAD_V = 12;
+const TITLE_BAND_PAD_H = 14;
+const BODY_GAP_AFTER_BAND = 12;
+const SECTION_AFTER = 18;
+const BODY_LINE_GAP = 5;
+const PARA_GAP = 9;
+const BULLET_INDENT = 16;
+const BULLET_MARKER_GAP = 8;
+const BULLET_ROW_GAP = 5;
+const HEADING_GAP_AFTER = 11;
+const FOOTER_RESERVE = 52;
+const INNER_HEADER_H = 44;
+const BADGE_SIZE = 26;
+
+/** Rich body: paragraphs, • lists, and lines like `1. Heading` (subsection titles). */
+function measureRichBodyHeight(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  doc: any,
+  body: string,
+  textWidth: number,
+  veraGreen: string,
+  bodyGray: string,
+  bodyFontSize: number,
+): number {
+  let y = 0;
+  const lines = body.split('\n');
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (line === '') {
+      i++;
+      y += PARA_GAP / 2;
+      continue;
+    }
+
+    if (/^\d+\.\s/.test(line)) {
+      doc.fontSize(bodyFontSize + 0.5).fillColor(veraGreen).font('Helvetica-Bold');
+      y += doc.heightOfString(line, { width: textWidth, lineGap: BODY_LINE_GAP }) + HEADING_GAP_AFTER;
+      i++;
+      continue;
+    }
+
+    if (line.startsWith('•')) {
+      const bullets: string[] = [];
+      while (i < lines.length) {
+        const L = lines[i].trim();
+        if (L === '' || !L.startsWith('•')) break;
+        bullets.push(L.replace(/^•\s*/, ''));
+        i++;
+      }
+      doc.fontSize(bodyFontSize).fillColor(bodyGray).font('Helvetica');
+      const bulletTextW = textWidth - BULLET_INDENT - BULLET_MARKER_GAP;
+      for (const b of bullets) {
+        y +=
+          doc.heightOfString(b, { width: bulletTextW, lineGap: BODY_LINE_GAP }) + BULLET_ROW_GAP;
+      }
+      y += PARA_GAP / 2;
+      continue;
+    }
+
+    const prose: string[] = [];
+    while (i < lines.length) {
+      const L = lines[i].trim();
+      if (L === '') break;
+      if (L.startsWith('•') || /^\d+\.\s/.test(L)) break;
+      prose.push(L);
+      i++;
+    }
+    const text = prose.join(' ');
+    doc.fontSize(bodyFontSize).fillColor(bodyGray).font('Helvetica');
+    y += doc.heightOfString(text, { width: textWidth, lineGap: BODY_LINE_GAP }) + PARA_GAP;
+  }
+
+  return y;
+}
+
 @Injectable()
 export class BioVeraFreshService {
   private readonly logger = new Logger(BioVeraFreshService.name);
@@ -27,6 +107,10 @@ export class BioVeraFreshService {
     return null;
   }
 
+  private resolveLogoPath(): string | null {
+    return this.resolveRepoPublicAsset('logo1.png') ?? this.resolveRepoPublicAsset('logo.png');
+  }
+
   normalizeLocale(raw: string | undefined): BioVeraFreshPdfLocale {
     if (!raw) return 'en';
     const lower = raw.toLowerCase();
@@ -37,62 +121,343 @@ export class BioVeraFreshService {
   async generateProspectPDF(locale: BioVeraFreshPdfLocale): Promise<Buffer> {
     const sections = locale === 'sr' ? PDF_SECTIONS_SR : PDF_SECTIONS_EN;
     const docTitle = locale === 'sr' ? 'BioVera Fresh — prospekt' : 'BioVera Fresh — prospect';
+    const tocTitle = locale === 'sr' ? 'Sadržaj' : 'Contents';
 
     return new Promise((resolve, reject) => {
       try {
         // @ts-ignore - pdfkit types may not be perfect
         const doc = new PDFDocument({
-          margin: 50,
+          margin: MARGIN,
           size: 'A4',
+          bufferPages: true,
+          info: {
+            Title: docTitle,
+            Author: 'Bio Vera',
+            Subject: locale === 'sr' ? 'Partner prospekt' : 'Partner prospect',
+          },
         });
         const buffers: Buffer[] = [];
 
         const veraGreen = '#2D5A27';
-        const darkGray = '#1F2937';
+        const veraGreenMuted = '#3d6b37';
+        const darkGray = '#111827';
+        const bodyGray = '#374151';
         const lightGray = '#6B7280';
-        const bgGreen = '#F0F9F0';
+        const mutedLine = '#e5e7eb';
+        const bgGreen = '#ecf7ec';
+        const bgGreenDeep = '#dff0df';
+        const titleBandFill = '#f3faf3';
+        const cardFill = '#ffffff';
+        const cardStroke = '#cfe6cf';
+        const shadowFill = '#d9e5d8';
+
+        const pageW = doc.page.width;
+        const pageH = doc.page.height;
+        const contentW = pageW - MARGIN * 2;
+        const contentBottom = pageH - FOOTER_RESERVE;
 
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => resolve(Buffer.concat(buffers)));
         doc.on('error', reject);
 
-        doc.rect(0, 0, doc.page.width, 120).fill(bgGreen);
+        const drawInnerPageChrome = () => {
+          doc.save();
+          doc.rect(0, 0, pageW, INNER_HEADER_H).fill(bgGreen);
+          doc.strokeColor(veraGreen).lineWidth(2);
+          doc.moveTo(0, INNER_HEADER_H).lineTo(pageW, INNER_HEADER_H).stroke();
+          doc.fillColor(veraGreen).font('Helvetica-Bold').fontSize(10);
+          doc.text('BioVera Fresh', MARGIN + 6, 17, { width: contentW - 120, lineBreak: false });
+          doc.fillColor(lightGray).font('Helvetica').fontSize(8);
+          const tag =
+            locale === 'sr' ? 'Partner prospekt · Direktno. Sveže. Pod kontrolom.' : 'Partner prospect · Direct. Fresh. Controlled.';
+          doc.text(tag, MARGIN + 6, 31, { width: contentW - 40 });
+          doc.strokeColor('#000000').lineWidth(1);
+          doc.restore();
+        };
 
-        const logoPath1 = path.join(process.cwd(), 'public', 'logo1.png');
-        const logoPath2 = path.join(process.cwd(), 'public', 'logo.png');
-        const logoPath = fs.existsSync(logoPath1) ? logoPath1 : fs.existsSync(logoPath2) ? logoPath2 : null;
+        const startNewContentPage = () => {
+          doc.addPage();
+          drawInnerPageChrome();
+          doc.y = INNER_HEADER_H + 16;
+        };
 
+        const parseChapterTitle = (
+          title: string,
+        ): { num: string | null; label: string; isContact: boolean } => {
+          const isContact = /kontakt|contact/i.test(title);
+          const m = title.match(/^(\d+)\.\s*(.+)$/);
+          if (m) return { num: m[1], label: m[2].trim(), isContact };
+          return { num: null, label: title.trim(), isContact };
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const renderRichBody = (docRef: any, x: number, startY: number, body: string, textWidth: number, bodyFontSize: number): number => {
+          let y = startY;
+          const lines = body.split('\n');
+          let i = 0;
+
+          while (i < lines.length) {
+            const line = lines[i].trim();
+            if (line === '') {
+              i++;
+              y += PARA_GAP / 2;
+              continue;
+            }
+
+            if (/^\d+\.\s/.test(line)) {
+              docRef.fontSize(bodyFontSize + 0.5).fillColor(veraGreen).font('Helvetica-Bold');
+              docRef.text(line, x, y, { width: textWidth, lineGap: BODY_LINE_GAP });
+              y +=
+                docRef.heightOfString(line, { width: textWidth, lineGap: BODY_LINE_GAP }) +
+                HEADING_GAP_AFTER;
+              i++;
+              continue;
+            }
+
+            if (line.startsWith('•')) {
+              const bullets: string[] = [];
+              while (i < lines.length) {
+                const L = lines[i].trim();
+                if (L === '' || !L.startsWith('•')) break;
+                bullets.push(L.replace(/^•\s*/, ''));
+                i++;
+              }
+              const bulletTextW = textWidth - BULLET_INDENT - BULLET_MARKER_GAP;
+              docRef.fontSize(bodyFontSize).fillColor(bodyGray).font('Helvetica');
+              for (const b of bullets) {
+                const rowTop = y;
+                docRef.save();
+                docRef.circle(x + BULLET_INDENT / 2 - 2, rowTop + bodyFontSize * 0.35, 2.2).fill(veraGreen);
+                docRef.restore();
+                docRef.fillColor(bodyGray).font('Helvetica').text(b, x + BULLET_INDENT + BULLET_MARKER_GAP, y, {
+                  width: bulletTextW,
+                  lineGap: BODY_LINE_GAP,
+                });
+                y +=
+                  docRef.heightOfString(b, { width: bulletTextW, lineGap: BODY_LINE_GAP }) +
+                  BULLET_ROW_GAP;
+              }
+              y += PARA_GAP / 2;
+              continue;
+            }
+
+            const prose: string[] = [];
+            while (i < lines.length) {
+              const L = lines[i].trim();
+              if (L === '') break;
+              if (L.startsWith('•') || /^\d+\.\s/.test(L)) break;
+              prose.push(L);
+              i++;
+            }
+            const text = prose.join(' ');
+            docRef.fontSize(bodyFontSize).fillColor(bodyGray).font('Helvetica');
+            docRef.text(text, x, y, { width: textWidth, lineGap: BODY_LINE_GAP });
+            y +=
+              docRef.heightOfString(text, { width: textWidth, lineGap: BODY_LINE_GAP }) + PARA_GAP;
+          }
+
+          return y;
+        };
+
+        const sectionCardMetrics = (
+          title: string,
+          body: string,
+          bodyFontSize: number,
+          innerBodyW: number,
+          titleBlockW: number,
+          chapter: ReturnType<typeof parseChapterTitle>,
+        ) => {
+          const titleFontSize = chapter.num ? 12.5 : 13.5;
+          doc.fontSize(titleFontSize).font('Helvetica-Bold');
+          const titleOnly = chapter.num ? chapter.label : title;
+          const titleH = doc.heightOfString(titleOnly, { width: titleBlockW });
+          const badgeColH = chapter.num ? BADGE_SIZE + 4 : 0;
+          const titleBandH =
+            TITLE_BAND_PAD_V + Math.max(badgeColH, titleH + 2) + TITLE_BAND_PAD_V + 6;
+          const bodyH = measureRichBodyHeight(doc, body, innerBodyW, veraGreen, bodyGray, bodyFontSize);
+          const cardH =
+            titleBandH + BODY_GAP_AFTER_BAND + bodyH + CARD_PAD + (chapter.isContact ? 10 : 0);
+          return { titleBandH, titleH, titleOnly, titleFontSize, bodyH, cardH };
+        };
+
+        const renderSectionCard = (title: string, body: string, sectionIndex: number) => {
+          const chapter = parseChapterTitle(title);
+          const isIntro = sectionIndex === 0;
+          const contactTone = chapter.isContact;
+
+          const innerBodyX = MARGIN + CARD_PAD + TITLE_BAND_PAD_H;
+          const innerBodyW = contentW - 2 * CARD_PAD - TITLE_BAND_PAD_H * 2;
+          const titleBlockX = MARGIN + CARD_PAD + TITLE_BAND_PAD_H + (chapter.num ? BADGE_SIZE + 12 : 0);
+          const titleBlockW =
+            contentW - 2 * CARD_PAD - TITLE_BAND_PAD_H * 2 - (chapter.num ? BADGE_SIZE + 12 : 0);
+
+          const bodyFontSize = isIntro ? 11 : 10.5;
+          const { titleBandH, titleOnly, titleFontSize, cardH } = sectionCardMetrics(
+            title,
+            body,
+            bodyFontSize,
+            innerBodyW,
+            titleBlockW,
+            chapter,
+          );
+
+          if (doc.y + cardH + SECTION_AFTER > contentBottom) {
+            startNewContentPage();
+          }
+
+          const cardTop = doc.y;
+          const cardX = MARGIN;
+          const cardW = contentW;
+
+          doc.save();
+          doc.roundedRect(cardX + 2, cardTop + 2, cardW, cardH, CARD_RADIUS).fill(shadowFill).opacity(0.55);
+          doc.restore();
+
+          const fillTop = contactTone ? bgGreenDeep : cardFill;
+          doc.save();
+          doc.roundedRect(cardX, cardTop, cardW, cardH, CARD_RADIUS).fill(fillTop).stroke(cardStroke, 0.9);
+          doc.restore();
+
+          const bandBottom = cardTop + titleBandH;
+          doc.rect(cardX, cardTop, cardW, titleBandH).fill(titleBandFill);
+          doc.moveTo(cardX + CARD_PAD, bandBottom).lineTo(cardX + cardW - CARD_PAD, bandBottom).stroke(mutedLine, 0.65);
+
+          const titleBaseline = cardTop + TITLE_BAND_PAD_V + 2;
+
+          if (chapter.num) {
+            doc.save();
+            doc.roundedRect(MARGIN + CARD_PAD + TITLE_BAND_PAD_H, titleBaseline - 2, BADGE_SIZE, BADGE_SIZE, 5).fill(veraGreen);
+            doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(11);
+            doc.text(chapter.num, MARGIN + CARD_PAD + TITLE_BAND_PAD_H, titleBaseline + 6, {
+              width: BADGE_SIZE,
+              align: 'center',
+              lineBreak: false,
+            });
+            doc.restore();
+          }
+
+          doc.fontSize(titleFontSize).fillColor(isIntro ? veraGreen : darkGray).font('Helvetica-Bold');
+          doc.text(titleOnly, titleBlockX, titleBaseline, { width: titleBlockW, lineGap: 3 });
+
+          const bodyTop = bandBottom + BODY_GAP_AFTER_BAND;
+          renderRichBody(doc, innerBodyX, bodyTop, body, innerBodyW, bodyFontSize);
+
+          if (contactTone) {
+            const stripY = cardTop + cardH - 7;
+            doc.save();
+            doc.roundedRect(cardX + CARD_PAD, stripY, cardW - CARD_PAD * 2, 5, 2).fill(veraGreen).opacity(0.88);
+            doc.restore();
+          }
+
+          doc.y = cardTop + cardH + SECTION_AFTER;
+        };
+
+        const renderToc = () => {
+          const skipFirst = sections[0]?.title === 'BioVera Fresh';
+          const tocEntries = skipFirst ? sections.slice(1) : [...sections];
+          const colGap = 28;
+          const colW = (contentW - colGap) / 2;
+          const tocInnerW = contentW - 36;
+
+          let tocBodyH = 36;
+          doc.fontSize(9).fillColor(lightGray).font('Helvetica');
+          const tocLead =
+            locale === 'sr'
+              ? 'Pregled poglavlja programa za partnere.'
+              : 'Overview of chapters in this partner programme.';
+          tocBodyH += doc.heightOfString(tocLead, { width: tocInnerW }) + 18;
+
+          const perCol = Math.ceil(tocEntries.length / 2);
+          doc.fontSize(9.5).fillColor(bodyGray).font('Helvetica');
+          for (let r = 0; r < perCol; r++) {
+            const left = tocEntries[r]?.title ?? '';
+            const right = tocEntries[r + perCol]?.title ?? '';
+            const rowH =
+              Math.max(
+                left ? doc.heightOfString(left, { width: colW - 6 }) : 0,
+                right ? doc.heightOfString(right, { width: colW - 6 }) : 0,
+              ) + 7;
+            tocBodyH += rowH;
+          }
+          tocBodyH += 20;
+
+          const tocCardH = tocBodyH;
+          if (doc.y + tocCardH + SECTION_AFTER > contentBottom) {
+            startNewContentPage();
+          }
+
+          const tocTop = doc.y;
+          doc.save();
+          doc.roundedRect(MARGIN + 1, tocTop + 1, contentW, tocCardH, CARD_RADIUS).fill(shadowFill).opacity(0.45);
+          doc.restore();
+          doc.roundedRect(MARGIN, tocTop, contentW, tocCardH, CARD_RADIUS).fill('#fafdfb').stroke(cardStroke, 0.85);
+
+          let ty = tocTop + 18;
+          doc.fontSize(13).fillColor(veraGreen).font('Helvetica-Bold').text(tocTitle, MARGIN + 18, ty, {
+            width: tocInnerW,
+          });
+          ty += 24;
+          doc.fontSize(9).fillColor(lightGray).font('Helvetica').text(tocLead, MARGIN + 18, ty, {
+            width: tocInnerW,
+          });
+          ty += doc.heightOfString(tocLead, { width: tocInnerW }) + 14;
+
+          const leftX = MARGIN + 18;
+          const rightX = leftX + colW + colGap;
+          doc.fontSize(9.5).fillColor(bodyGray).font('Helvetica');
+          for (let r = 0; r < perCol; r++) {
+            const left = tocEntries[r]?.title ?? '';
+            const right = tocEntries[r + perCol]?.title ?? '';
+            const hL = left ? doc.heightOfString(left, { width: colW - 6 }) : 0;
+            const hR = right ? doc.heightOfString(right, { width: colW - 6 }) : 0;
+            const rowH = Math.max(hL, hR) + 7;
+            if (left) doc.text(left, leftX, ty, { width: colW - 6 });
+            if (right) doc.text(right, rightX, ty, { width: colW - 6 });
+            ty += rowH;
+          }
+
+          doc.y = tocTop + tocCardH + SECTION_AFTER;
+        };
+
+        // --- Cover ---
+        const bandH = 118;
+        doc.rect(0, 0, pageW, bandH).fill(bgGreen);
+        doc.rect(0, bandH - 14, pageW, 14).fill(bgGreenDeep).opacity(0.35);
+        doc.opacity(1);
+        doc.strokeColor(veraGreen).lineWidth(1.25).opacity(0.5);
+        doc.moveTo(0, bandH).lineTo(pageW, bandH).stroke();
+        doc.strokeColor('#000000').lineWidth(1).opacity(1);
+
+        const logoPath = this.resolveLogoPath();
         if (logoPath) {
           try {
-            doc.image(logoPath, 50, 14, { width: 220, height: 66, fit: [220, 66] });
+            doc.image(logoPath, MARGIN, 18, { width: 196, height: 58, fit: [196, 58] });
           } catch (e) {
             this.logger.warn('BioVera Fresh PDF: logo load failed', e);
-            doc.fontSize(28).fillColor(veraGreen).font('Helvetica-Bold').text('Bio Vera', 50, 36);
+            doc.fontSize(26).fillColor(veraGreen).font('Helvetica-Bold').text('Bio Vera', MARGIN, 40);
           }
         } else {
-          doc.fontSize(28).fillColor(veraGreen).font('Helvetica-Bold').text('Bio Vera', 50, 36);
+          doc.fontSize(26).fillColor(veraGreen).font('Helvetica-Bold').text('Bio Vera', MARGIN, 40);
         }
 
-        doc.fontSize(11).fillColor(lightGray).font('Helvetica').text(docTitle, 50, 88, {
-          width: doc.page.width - 100,
+        doc.fontSize(11).fillColor(veraGreenMuted).font('Helvetica-Bold').text(docTitle, MARGIN, 84, {
+          width: contentW,
         });
 
-        doc.y = 128;
-        const textWidth = doc.page.width - 100;
-        const bottomMargin = 55;
+        doc.y = bandH + 26;
 
-        doc.fontSize(20).fillColor(darkGray).font('Helvetica-Bold').text('BioVera Fresh', {
-          width: textWidth,
+        doc.fontSize(24).fillColor(darkGray).font('Helvetica-Bold').text('BioVera Fresh', {
+          width: contentW,
         });
-        doc.moveDown(0.45);
-        doc.fontSize(10)
+        doc.moveDown(0.35);
+        doc.fontSize(11)
           .fillColor(lightGray)
           .font('Helvetica')
           .text(
             locale === 'sr'
               ? 'Kontrolisana maloprodaja i franšiza uz Bio Vera mrežu.'
               : 'Controlled retail and franchise within the Bio Vera network.',
-            { width: textWidth },
+            { width: contentW, lineGap: 4 },
           );
         doc.moveDown(1);
 
@@ -102,46 +467,67 @@ export class BioVeraFreshService {
         if (heroImage) {
           try {
             const heroMaxH = 200;
-            if (doc.y + heroMaxH > doc.page.height - bottomMargin) {
-              doc.addPage();
-              doc.y = 50;
+            if (doc.y + heroMaxH > contentBottom) {
+              startNewContentPage();
             }
             const heroY = doc.y;
-            doc.image(heroImage, 50, heroY, {
-              fit: [textWidth, heroMaxH],
+            const heroW = contentW;
+            const rHero = 10;
+
+            doc.save();
+            doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).clip();
+            doc.image(heroImage, MARGIN, heroY, {
+              fit: [heroW, heroMaxH],
               align: 'center',
               valign: 'center',
             });
-            doc.y = heroY + heroMaxH + 14;
+            doc.restore();
+
+            doc.save();
+            doc.strokeColor(veraGreen).lineWidth(1.15).opacity(0.45);
+            doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).stroke();
+            doc.strokeColor(cardStroke).lineWidth(0.85).opacity(1);
+            doc.roundedRect(MARGIN, heroY, heroW, heroMaxH, rHero).stroke();
+            doc.restore();
+
+            doc.y = heroY + heroMaxH + 20;
           } catch (e) {
             this.logger.warn('BioVera Fresh PDF: hero image failed', e);
           }
         }
 
-        for (const section of sections) {
-          doc.fontSize(13).fillColor(veraGreen).font('Helvetica-Bold');
-          const titleH = doc.heightOfString(section.title, { width: textWidth });
-          doc.fontSize(10).fillColor(darkGray).font('Helvetica');
-          const bodyH = doc.heightOfString(section.body, { width: textWidth });
-          const blockH = titleH + bodyH + 36;
-          if (doc.y + blockH > doc.page.height - bottomMargin) {
-            doc.addPage();
-            doc.y = 50;
-          }
+        renderToc();
 
-          doc.fontSize(13).fillColor(veraGreen).font('Helvetica-Bold').text(section.title, { width: textWidth });
-          doc.moveDown(0.35);
-          doc.fontSize(10).fillColor(darkGray).font('Helvetica').text(section.body, { width: textWidth });
-          doc.moveDown(1.05);
-        }
-
-        if (doc.y + 24 > doc.page.height - bottomMargin) {
-          doc.addPage();
-          doc.y = 50;
-        }
-        doc.fontSize(8).fillColor(lightGray).font('Helvetica').text('biovera.app · Bio Vera Fresh', {
-          width: textWidth,
+        sections.forEach((section, index) => {
+          renderSectionCard(section.title, section.body, index);
         });
+
+        const range = doc.bufferedPageRange();
+        const totalPages = range.count;
+        for (let i = range.start; i < range.start + totalPages; i++) {
+          doc.switchToPage(i);
+          const n = i - range.start + 1;
+          const pageLabel =
+            locale === 'sr' ? `Strana ${n} od ${totalPages}` : `Page ${n} of ${totalPages}`;
+
+          doc.save();
+          doc.strokeColor(veraGreen).opacity(0.55).lineWidth(2);
+          doc.moveTo(MARGIN, pageH - 38).lineTo(pageW - MARGIN, pageH - 38).stroke();
+          doc.opacity(1).strokeColor('#000000').lineWidth(1);
+          doc.restore();
+
+          doc.fontSize(8).fillColor(lightGray).font('Helvetica');
+          doc.text('biovera.app', MARGIN + 4, pageH - 28, {
+            width: 140,
+            align: 'left',
+            lineBreak: false,
+          });
+          doc.text(pageLabel, MARGIN, pageH - 28, {
+            width: contentW,
+            align: 'right',
+            lineBreak: false,
+          });
+        }
 
         doc.end();
       } catch (error) {
