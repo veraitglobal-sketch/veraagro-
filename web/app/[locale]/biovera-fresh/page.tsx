@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Link2,
   Printer,
@@ -80,9 +79,9 @@ function sectionSlug(title: string, index: number): string {
 type AnchorRow = { slug: string; title: string; index: number };
 
 const TOC_LINK_CLASS =
-  "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
+  "group flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 text-left text-sm font-light text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25 focus-visible:ring-offset-2";
 const TOC_NUM_CLASS =
-  "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/[0.08] text-[11px] font-bold tabular-nums text-[#2D5A27]";
+  "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-[#2D5A27]/10 text-[11px] font-semibold tabular-nums text-[#2D5A27]";
 
 function TocNav({
   anchors,
@@ -165,8 +164,13 @@ export default function BioVeraFreshPage() {
   const contentsNavAria = t("bioVeraFresh.contentsNav");
   const pdfDocTitle = t("bioVeraFresh.pdfDocumentTitle");
 
+  const primaryBtnClass =
+    "inline-flex min-h-[48px] items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors shadow-sm hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-400 disabled:shadow-none";
+  const secondaryBtnClass =
+    "inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-800 rounded-lg hover:border-[#2D5A27]/40 transition-colors";
+
   return (
-    <div className="min-h-screen bg-[#f4f7f4] text-gray-900 biovera-fresh-root print:bg-white">
+    <div className="min-h-screen bg-white text-gray-900 biovera-fresh-root print:bg-white">
       <style jsx global>{`
         @media print {
           .biovera-fresh-root .bf-no-print {
@@ -225,58 +229,32 @@ export default function BioVeraFreshPage() {
 
       <a
         href="#biovera-fresh-document"
-        className="bf-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+        className="bf-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-20 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
         {t("bioVeraFresh.skipToContent")}
       </a>
 
-      <header className="bf-no-print fixed top-0 z-50 w-full border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md print:hidden">
-        <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between px-6 sm:h-[3.65rem] sm:px-8 lg:px-10">
-          <Link
-            href={loc("/")}
-            className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25"
+      {/* Hero — aligned with growers / for-buyers landing pages */}
+      <section className="bf-no-print border-b border-gray-200 pt-24 pb-16 px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/90 mb-4">
+            {t("bioVeraFresh.coverEyebrow")}
+          </p>
+          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">
+            {t("bioVeraFresh.coverTitle")}
+          </h1>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
+            {t("bioVeraFresh.coverSubtitle")}
+          </p>
+          <div className="mb-8 p-5 border border-gray-200 rounded-xl bg-gray-50/50 text-left max-w-2xl mx-auto">
+            <p className="text-gray-700 font-light leading-relaxed text-sm sm:text-[15px]">{t("bioVeraFresh.introNote")}</p>
+          </div>
+          <div
+            className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3"
+            role="region"
+            aria-label={`${t("bioVeraFresh.downloadProspectCta")} · ${t("bioVeraFresh.toolbarCopyLink")} · ${t("bioVeraFresh.toolbarPrintPdf")}`}
           >
-            <Image
-              src="/logo1.png"
-              alt={t("footer.logoAlt")}
-              width={64}
-              height={24}
-              className="h-6 w-auto"
-              priority
-            />
-            <span className="hidden border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400 sm:inline">
-              {t("bioVeraFresh.coverEyebrow")}
-            </span>
-          </Link>
-          <nav className="flex items-center gap-5 text-[13px] font-medium text-gray-600 sm:gap-7">
-            <Link href={loc("/growers")} className="hidden hover:text-[#2D5A27] sm:inline">
-              {t("nav.forGrowers")}
-            </Link>
-            <Link href={loc("/for-buyers")} className="hidden hover:text-[#2D5A27] md:inline">
-              {t("nav.forBuyers")}
-            </Link>
-            <Link href={loc("/contact")} className="font-semibold text-[#2D5A27] hover:text-[#23471f]">
-              {t("nav.contact")}
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <div
-        className="bf-no-print sticky top-14 z-40 border-b border-gray-200/90 bg-[#fafcfa]/96 backdrop-blur print:hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)] sm:top-[3.65rem]"
-        role="region"
-        aria-label={`${t("bioVeraFresh.downloadProspectCta")} · ${t("bioVeraFresh.toolbarCopyLink")} · ${t("bioVeraFresh.toolbarPrintPdf")}`}
-      >
-        <div className="h-[3px] w-full bg-[#2D5A27]" aria-hidden />
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p className="max-w-xl text-[13px] leading-snug text-gray-600">{t("bioVeraFresh.introNote")}</p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              disabled={pdfDownloading}
-              onClick={() => void downloadProspect()}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[#2D5A27] px-6 py-3 text-sm font-semibold text-white shadow-md shadow-[#2D5A27]/22 transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:bg-gray-400"
-            >
+            <button type="button" disabled={pdfDownloading} onClick={() => void downloadProspect()} className={primaryBtnClass}>
               {pdfDownloading ? (
                 <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
               ) : (
@@ -284,74 +262,51 @@ export default function BioVeraFreshPage() {
               )}
               {t("bioVeraFresh.downloadProspectCta")}
             </button>
-            <button
-              type="button"
-              onClick={copyPublicUrl}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-800 hover:border-[#2D5A27]/50"
-            >
+            <button type="button" onClick={copyPublicUrl} className={secondaryBtnClass}>
               <Link2 className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
               {copied ? t("bioVeraFresh.toolbarCopied") : t("bioVeraFresh.toolbarCopyLink")}
             </button>
-            <button
-              type="button"
-              onClick={openPrint}
-              aria-label={t("bioVeraFresh.toolbarPrintAria")}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-[13px] font-semibold text-gray-800 hover:border-[#2D5A27]/50"
-            >
+            <button type="button" onClick={openPrint} aria-label={t("bioVeraFresh.toolbarPrintAria")} className={secondaryBtnClass}>
               <Printer className="size-4 shrink-0 text-[#2D5A27]" aria-hidden />
               {t("bioVeraFresh.toolbarPrintPdf")}
             </button>
           </div>
+          <p className="mt-6 text-xs text-gray-500 font-light max-w-xl mx-auto leading-snug">{t("bioVeraFresh.pdfHint")}</p>
+          <p className="mt-4 text-xs text-gray-500 font-light max-w-xl mx-auto leading-relaxed">{t("bioVeraFresh.prospectNote")}</p>
         </div>
-        <p className="mx-auto max-w-[1240px] px-6 pb-2.5 text-[11px] leading-snug text-gray-500 sm:px-8 lg:px-10">
-          {t("bioVeraFresh.pdfHint")}
-        </p>
-      </div>
+      </section>
 
       <main
         id="biovera-fresh-document"
-        className="biovera-fresh-doc mx-auto max-w-[900px] px-5 pb-24 pt-[calc(8.25rem)] scroll-mt-24 sm:px-8 sm:pt-[8.85rem] print:mx-0 print:max-w-none print:px-4 print:pb-12 print:pt-8"
+        className="biovera-fresh-doc scroll-mt-28 print:scroll-mt-0"
         tabIndex={-1}
       >
-        <div className="bf-panel rounded-none border border-gray-200/90 bg-white shadow-sm sm:rounded-2xl print:shadow-none">
-          <header className="bf-cover px-6 py-10 sm:px-10 sm:py-11 print:border-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
-              {t("bioVeraFresh.coverEyebrow")}
-            </p>
-            <h1 className="bf-heading mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 sm:text-[2.1rem] print:text-[16pt]">
-              {t("bioVeraFresh.coverTitle")}
-            </h1>
-            <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 sm:text-[1.0625rem] print:text-[11pt]">
-              {t("bioVeraFresh.coverSubtitle")}
-            </p>
-            <div className="bf-no-print mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
-              <button
-                type="button"
-                disabled={pdfDownloading}
-                onClick={() => void downloadProspect()}
-                className="inline-flex min-h-[48px] shrink-0 items-center gap-2 rounded-full bg-[#2D5A27] px-6 py-3 text-sm font-semibold text-white shadow-md shadow-[#2D5A27]/22 transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:bg-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-              >
-                {pdfDownloading ? (
-                  <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
-                ) : (
-                  <Download className="size-4 shrink-0" aria-hidden />
-                )}
-                {t("bioVeraFresh.downloadProspectCta")}
-              </button>
-              <p className="text-xs leading-relaxed text-gray-500 sm:pt-2.5">{t("bioVeraFresh.prospectNote")}</p>
-            </div>
-          </header>
+        <section className="py-12 px-6 lg:px-8 border-t border-gray-200 print:border-0 print:py-0 print:px-4">
+          <div className="max-w-6xl mx-auto print:max-w-none">
+            <div className="bf-panel border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
+              {/* Print cover — hidden on screen (hero above duplicates messaging) */}
+              <header className="bf-cover hidden print:block px-6 py-10 sm:px-10 sm:py-11 print:border-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
+                  {t("bioVeraFresh.coverEyebrow")}
+                </p>
+                <h1 className="bf-heading mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 print:text-[16pt]">
+                  {t("bioVeraFresh.coverTitle")}
+                </h1>
+                <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">
+                  {t("bioVeraFresh.coverSubtitle")}
+                </p>
+              </header>
 
-          <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">
-            <aside className="bf-no-print mb-8 hidden border-t border-gray-100 bg-[#fafcfa]/75 px-5 py-5 sm:px-8 lg:col-span-4 lg:block lg:border-r lg:border-t-0 lg:px-6 lg:py-8">
-              <TocNav anchors={sectionAnchors} contentsTitle={contentsTitle} contentsNavAria={contentsNavAria} />
-            </aside>
+              <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-0 print:block">
+                <aside className="bf-no-print mb-0 hidden border-t border-gray-200 bg-gray-50/40 px-5 py-8 sm:px-8 lg:col-span-4 lg:block lg:border-r lg:border-t-0 lg:px-6 lg:py-10">
+                  <TocNav anchors={sectionAnchors} contentsTitle={contentsTitle} contentsNavAria={contentsNavAria} />
+                </aside>
 
-            <div className="lg:col-span-8">
-              <nav
-                className="bf-no-print border-t border-gray-100 bg-[#fafcfa]/75 px-5 py-4 sm:px-8 lg:hidden"
-                aria-label={contentsNavAria}
-              >
+                <div className="lg:col-span-8 print:w-full">
+                  <nav
+                    className="bf-no-print border-t border-gray-200 bg-gray-50/40 px-5 py-4 sm:px-8 lg:hidden"
+                    aria-label={contentsNavAria}
+                  >
                 <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
                   {contentsTitle}
                 </p>
@@ -367,81 +322,83 @@ export default function BioVeraFreshPage() {
                 </ul>
               </nav>
 
-              <div className="divide-y divide-gray-100">
-                {webSections.map((s, i) => {
-                  const id = sectionAnchors[i]?.slug ?? sectionSlug(s.title, i);
-                  return (
-                    <section
-                      key={id}
-                      id={id}
-                      className="bf-body scroll-mt-28 px-5 py-8 sm:px-9 sm:py-9 print:scroll-mt-0 print:px-0 print:py-4"
-                    >
-                      <h2 className="bf-heading text-lg font-semibold text-gray-900 sm:text-xl print:text-[12pt]">
-                        {s.title}
-                      </h2>
-                      <p className="mt-4 whitespace-pre-line text-[15px] leading-relaxed text-gray-600 sm:text-[0.9625rem] print:text-[11pt]">
+                  <div className="divide-y divide-gray-200">
+                    {webSections.map((s, i) => {
+                      const id = sectionAnchors[i]?.slug ?? sectionSlug(s.title, i);
+                      return (
+                        <section
+                          key={id}
+                          id={id}
+                          className="bf-body scroll-mt-28 px-5 py-8 sm:px-9 sm:py-10 print:scroll-mt-0 print:px-0 print:py-4"
+                        >
+                          <h2 className="bf-heading text-lg font-light text-gray-900 sm:text-xl print:text-[12pt]">
+                            {s.title}
+                          </h2>
+                          <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-gray-600 font-light sm:text-[15px] print:text-[11pt]">
+                            {s.body}
+                          </p>
+                        </section>
+                      );
+                    })}
+
+                    <section className="bf-no-print border-t border-gray-200 bg-white px-5 py-8 sm:px-9 print:hidden">
+                      <h2 className="text-lg font-light text-gray-900">{t("bioVeraFresh.ctaTitle")}</h2>
+                      <p className="mt-3 text-[15px] leading-relaxed text-gray-600 font-light">{t("bioVeraFresh.ctaBody")}</p>
+                      <Link
+                        href={loc("/contact")}
+                        className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-8 py-4 text-base font-medium text-white hover:bg-[#23471f] transition-colors shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+                      >
+                        {t("bioVeraFresh.ctaButton")}
+                      </Link>
+                    </section>
+                  </div>
+                </div>
+              </div>
+
+              {/* Full brochure text — hidden on screen, included when user prints / saves as PDF */}
+              <div className="bf-pdf-block hidden print:block border-t border-gray-200 px-5 py-8 sm:px-10 print:px-0">
+                <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
+                <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
+                <div className="mt-8 space-y-8 print:space-y-6">
+                  {pdfSections.map((s) => (
+                    <section key={s.title} className="bf-body">
+                      <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
+                      <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">
                         {s.body}
                       </p>
                     </section>
-                  );
-                })}
-
-                <section className="bf-no-print border-t border-gray-100 bg-[#fafcfa]/60 px-5 py-8 sm:px-9 print:hidden">
-                  <h2 className="text-lg font-semibold text-gray-900">{t("bioVeraFresh.ctaTitle")}</h2>
-                  <p className="mt-3 text-[15px] leading-relaxed text-gray-600">{t("bioVeraFresh.ctaBody")}</p>
-                  <Link
-                    href={loc("/contact")}
-                    className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-6 text-base font-semibold text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-                  >
-                    {t("bioVeraFresh.ctaButton")}
-                  </Link>
-                </section>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Full brochure text — hidden on screen, included when user prints / saves as PDF */}
-          <div className="bf-pdf-block hidden print:block border-t border-gray-200 px-5 py-8 sm:px-10 print:px-0">
-            <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
-            <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
-            <div className="mt-8 space-y-8 print:space-y-6">
-              {pdfSections.map((s) => (
-                <section key={s.title} className="bf-body">
-                  <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
-                  <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">
-                    {s.body}
-                  </p>
-                </section>
-              ))}
-            </div>
-          </div>
-        </div>
+        </section>
       </main>
 
       <div className="bf-no-print bg-white">
-        <section className="border-t border-gray-200 px-6 py-16 lg:px-8">
+        <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
           <div className="mx-auto max-w-6xl">
-            <div className="mb-12 text-center">
-              <h2 className="mb-3 text-2xl font-light text-gray-900">{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
-              <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-gray-600">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
+              <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
                 {t("bioVeraFresh.franchiseBlueprintLead")}
               </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {franchiseBlueprintItems.map((item, index) => {
                 const Icon = FRANCHISE_ICONS[index % FRANCHISE_ICONS.length];
                 return (
                   <div
                     key={`${item.title}-${index}`}
-                    className="rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-[#2D5A27]/40"
+                    className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27]/40 transition-colors bg-white"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="shrink-0 text-[#2D5A27]" aria-hidden>
+                    <div className="flex items-start mb-4">
+                      <div className="flex-shrink-0 text-[#2D5A27]" aria-hidden>
                         <Icon className="h-6 w-6" strokeWidth={2} />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="mb-2 text-base font-light text-gray-900">{item.title}</h3>
-                        <p className="text-sm font-light leading-relaxed text-gray-600">{item.body}</p>
+                      <div className="ml-4 min-w-0 flex-1">
+                        <h3 className="text-base font-light text-gray-900 mb-2">{item.title}</h3>
+                        <p className="text-sm text-gray-600 leading-relaxed font-light">{item.body}</p>
                       </div>
                     </div>
                   </div>
@@ -451,21 +408,21 @@ export default function BioVeraFreshPage() {
           </div>
         </section>
 
-        <section className="border-t border-gray-200 px-6 py-16 lg:px-8">
+        <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
           <div className="mx-auto max-w-6xl">
-            <div className="mb-12 text-center">
-              <h2 className="mb-3 text-2xl font-light text-gray-900">{t("bioVeraFresh.resourcesTitle")}</h2>
-              <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-gray-600">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.resourcesTitle")}</h2>
+              <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
                 {t("bioVeraFresh.resourcesLead")}
               </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {resourceItems.map((resource) => (
                 <div
                   key={resource.id}
-                  className="rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-[#2D5A27]/40"
+                  className="border border-gray-200 rounded-lg p-6 hover:border-[#2D5A27]/40 transition-colors bg-white"
                 >
-                  <div className="mb-4 flex items-start">
+                  <div className="flex items-start mb-4">
                     <div className="flex-shrink-0 text-[#2D5A27]" aria-hidden>
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -481,13 +438,13 @@ export default function BioVeraFreshPage() {
                       <p className="mb-4 text-sm font-light leading-relaxed text-gray-600">{resource.description}</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <span className="rounded bg-gray-100 px-2 py-1">{resource.type}</span>
+                          <span className="px-2 py-1 bg-gray-100 rounded">{resource.type}</span>
                           <span>{resource.size}</span>
                         </div>
                         {resource.id === "freshProspect" ? (
                           <button
                             type="button"
-                            className="flex items-center gap-1 text-sm font-medium text-[#2D5A27] transition-colors hover:text-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
+                            className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={pdfDownloading}
                             onClick={() => void downloadProspect()}
                           >

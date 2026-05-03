@@ -140,7 +140,7 @@ export default function Footer() {
                   href={loc('/biovera-fresh')}
                   className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
                 >
-                  {t('footer.bioVeraFresh')}
+                  {t('nav.freshConcept')}
                 </Link>
               </li>
               <li>
