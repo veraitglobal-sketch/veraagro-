@@ -39,7 +39,10 @@ function appendInvestorPlanCookies(res: ReturnType<typeof confidentialJsonRespon
   }
 }
 
-/** Lists tiers configured via ENV + markdown / URLs (same as grower). No JWT; availability ignores account-age tenure. */
+/**
+ * Confidential unlock API — colocated under investor deck (`/[locale]/investor-deck/business-plans/unlock`).
+ * No copy on this route; same JSON contract as former `/api/investor/business-plans`.
+ */
 export async function GET() {
   if (!isInvestorBusinessPlansPublicEnabled()) {
     return confidentialJsonResponse({ error: 'disabled' as const }, 404);
@@ -53,7 +56,6 @@ export async function GET() {
   });
 }
 
-/** `{ passwords?: { short?, medium?, long? } }` — investor path always satisfies tenure gates server-side. */
 export async function POST(request: NextRequest) {
   if (!isInvestorBusinessPlansPublicEnabled()) {
     return confidentialJsonResponse({ error: 'disabled' as const }, 404);

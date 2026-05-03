@@ -1,14 +1,10 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Footer from '@/components/Footer';
 import GrowerConfidentialTierCard, {
   type GrowerConfidentialTierId,
 } from '@/components/grower/GrowerConfidentialTierCard';
-import { Shield } from 'lucide-react';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 type TierAvailability = Record<GrowerConfidentialTierId, boolean>;
@@ -25,6 +21,7 @@ function internalPlanPath(loc: (p: string) => string, tier: GrowerConfidentialTi
 export default function InvestorBusinessPlansClient() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
+  const unlockEndpoint = useMemo(() => loc('/investor-deck/business-plans/unlock'), [loc]);
 
   const [shortPw, setShortPw] = useState('');
   const [mediumPw, setMediumPw] = useState('');
@@ -34,9 +31,7 @@ export default function InvestorBusinessPlansClient() {
   const [showLong, setShowLong] = useState(false);
 
   const [bootstrap, setBootstrap] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
-  const [bootstrapErrorRecoverable, setBootstrapErrorRecoverable] = useState(false);
   const [tiersConfigured, setTiersConfigured] = useState<TierAvailability | null>(null);
-  const [tiersAvailable, setTiersAvailable] = useState<TierAvailability | null>(null);
 
   const [unlocked, setUnlocked] = useState<Record<GrowerConfidentialTierId, TierUnlock | null>>({
     short: null,
@@ -50,9 +45,8 @@ export default function InvestorBusinessPlansClient() {
   const loadBootstrap = useCallback(async () => {
     setBootstrap('loading');
     setPageError(null);
-    setBootstrapErrorRecoverable(false);
     try {
-      const res = await fetch('/api/investor/business-plans', {
+      const res = await fetch(unlockEndpoint, {
         method: 'GET',
         cache: 'no-store',
       });
@@ -60,7 +54,6 @@ export default function InvestorBusinessPlansClient() {
 
       if (res.status === 404) {
         setPageError(t('investorBusinessPlans.sectionDisabled'));
-        setBootstrapErrorRecoverable(false);
         setBootstrap('error');
         return;
       }
@@ -80,19 +73,16 @@ export default function InvestorBusinessPlansClient() {
         typeof configured.long === 'boolean'
       ) {
         setTiersConfigured(configured);
-        setTiersAvailable(tiers);
         setBootstrap('ok');
       } else {
         setPageError(t('investorBusinessPlans.errorNetwork'));
-        setBootstrapErrorRecoverable(true);
         setBootstrap('error');
       }
     } catch {
       setPageError(t('investorBusinessPlans.errorNetwork'));
-      setBootstrapErrorRecoverable(true);
       setBootstrap('error');
     }
-  }, [t]);
+  }, [t, unlockEndpoint]);
 
   useEffect(() => {
     loadBootstrap();
@@ -100,16 +90,19 @@ export default function InvestorBusinessPlansClient() {
 
   const revokeTierSession = useCallback(async (tier: GrowerConfidentialTierId) => {
     try {
-      await fetch(`/api/investor/business-plans?tier=${encodeURIComponent(tier)}`, {
-        method: 'DELETE',
-        cache: 'no-store',
-        credentials: 'include',
-      });
+      await fetch(
+        `${unlockEndpoint}?tier=${encodeURIComponent(tier)}`,
+        {
+          method: 'DELETE',
+          cache: 'no-store',
+          credentials: 'include',
+        },
+      );
     } catch {
       /* still collapse UI */
     }
     setUnlocked((prev) => ({ ...prev, [tier]: null }));
-  }, []);
+  }, [unlockEndpoint]);
 
   const fetchUnlock = useCallback(
     async (tier: GrowerConfidentialTierId, password: string) => {
@@ -124,7 +117,7 @@ export default function InvestorBusinessPlansClient() {
             ...(tier === 'long' ? { long: password } : {}),
           },
         };
-        const res = await fetch('/api/investor/business-plans', {
+        const res = await fetch(unlockEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -173,7 +166,7 @@ export default function InvestorBusinessPlansClient() {
         setLoadingTier(null);
       }
     },
-    [loc, t],
+    [loc, t, unlockEndpoint],
   );
 
   const tiers = useMemo(
@@ -181,8 +174,6 @@ export default function InvestorBusinessPlansClient() {
       [
         {
           id: 'short' as const,
-          titleKey: 'grower.confidential.shortTitle',
-          hintKey: 'investorBusinessPlans.shortHint',
           password: shortPw,
           setPassword: setShortPw,
           show: showShort,
@@ -190,8 +181,6 @@ export default function InvestorBusinessPlansClient() {
         },
         {
           id: 'medium' as const,
-          titleKey: 'grower.confidential.mediumTitle',
-          hintKey: 'investorBusinessPlans.mediumHint',
           password: mediumPw,
           setPassword: setMediumPw,
           show: showMedium,
@@ -199,8 +188,6 @@ export default function InvestorBusinessPlansClient() {
         },
         {
           id: 'long' as const,
-          titleKey: 'grower.confidential.longTitle',
-          hintKey: 'investorBusinessPlans.longHint',
           password: longPw,
           setPassword: setLongPw,
           show: showLong,
@@ -212,15 +199,15 @@ export default function InvestorBusinessPlansClient() {
 
   const sharedCardStrings = useMemo(
     () => ({
-      unavailableLabel: t('investorBusinessPlans.tierUnavailable'),
-      passwordLabel: t('grower.confidential.passwordLabel'),
-      passwordPlaceholder: t('grower.confidential.passwordPlaceholder'),
-      unlockLabel: t('grower.confidential.unlock'),
-      unlockingLabel: t('grower.confidential.unlocking'),
+      unavailableLabel: '',
+      passwordLabel: t('investorBusinessPlans.passwordAriaLabel'),
+      passwordPlaceholder: '',
+      unlockLabel: t('investorBusinessPlans.submitAriaLabel'),
+      unlockingLabel: t('investorBusinessPlans.submitAriaLabel'),
       wrongPasswordLabel: t('grower.confidential.wrongPassword'),
       openPresentationLabel: t('grower.confidential.openPresentation'),
       openExternalLinkLabel: t('grower.confidential.openExternalLink'),
-      refreshClearsLabel: t('grower.confidential.refreshClears'),
+      refreshClearsLabel: '',
       lockAgainLabel: t('grower.confidential.lockAgain'),
       showPasswordLabel: t('grower.confidential.showPassword'),
       hidePasswordLabel: t('grower.confidential.hidePassword'),
@@ -230,135 +217,65 @@ export default function InvestorBusinessPlansClient() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
-                priority
-              />
-            </Link>
-            <nav className="flex items-center gap-8">
-              <Link href={loc('/investor-deck')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
-                {t('investorDeckPage.backToHub')}
-              </Link>
-              <Link href={loc('/')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
-                {t('nav.home')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {pageError ? (
+        <p className="sr-only" role="alert">
+          {pageError}
+        </p>
+      ) : null}
 
-      <main className="pb-24 pl-6 pr-6 pt-32 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="mb-3 text-4xl font-light text-gray-900">{t('investorBusinessPlans.pageTitle')}</h1>
-          <p className="mb-10 max-w-3xl text-lg font-light leading-relaxed text-gray-600">
-            {t('investorBusinessPlans.pageDescription')}
-          </p>
+      <div
+        className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-8 px-4 py-12"
+        aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
+      >
+        {bootstrap === 'loading' || bootstrap === 'idle'
+          ? [0, 1, 2].map((i) => (
+              <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-gray-100" aria-hidden />
+            ))
+          : bootstrap === 'ok'
+              ? tiers.map(({ id, password, setPassword, show, setShow }) => {
+                const secretsOk = tiersConfigured?.[id] ?? false;
+                const u = unlocked[id];
+                const busy = loadingTier === id;
 
-          <div className="mb-8 flex gap-3 rounded-xl border border-amber-200 bg-amber-50/90 p-4 sm:p-5">
-            <div className="hidden shrink-0 sm:flex sm:h-12 sm:w-12 sm:items-center sm:justify-center sm:rounded-lg sm:bg-amber-100/80">
-              <Shield className="h-7 w-7 text-amber-900/70" strokeWidth={1.75} aria-hidden />
-            </div>
-            <p className="text-base leading-relaxed text-amber-950">{t('investorBusinessPlans.ndWarning')}</p>
-          </div>
-
-          {pageError ? (
-            <div
-              className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-base leading-relaxed text-red-900 sm:p-5"
-              role="alert"
-            >
-              <p>{pageError}</p>
-              {bootstrap === 'error' && bootstrapErrorRecoverable ? (
-                <button
-                  type="button"
-                  onClick={() => loadBootstrap()}
-                  className="mt-4 inline-flex min-h-[44px] items-center rounded-lg border border-red-300 bg-white px-4 py-2 text-base font-medium text-red-900 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2"
-                >
-                  {t('investorBusinessPlans.retry')}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div
-            className="grid grid-cols-1 gap-4 lg:grid-cols-3"
-            aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
-            aria-label={
-              bootstrap === 'loading' || bootstrap === 'idle'
-                ? t('investorBusinessPlans.loadingSkeleton')
-                : undefined
-            }
-          >
-            {bootstrap === 'loading' || bootstrap === 'idle'
-              ? [0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="h-[280px] animate-pulse rounded-xl border border-gray-200 bg-gray-100/80 sm:h-[300px]"
-                    aria-hidden
+                return (
+                  <GrowerConfidentialTierCard
+                    key={id}
+                    tierId={id}
+                    title=""
+                    hint=""
+                    tierSecretsConfigured={secretsOk}
+                    tenureBlocked={false}
+                    unlockPresentationHref={u?.internalPath ?? null}
+                    unlockExternalHref={u?.externalUrl ?? null}
+                    password={password}
+                    passwordOnly
+                    onPasswordChange={(v) => {
+                      setPassword(v);
+                      if (errorTier === id) setErrorTier(null);
+                    }}
+                    showPassword={show}
+                    onToggleShowPassword={() => setShow((s) => !s)}
+                    wrongPassword={errorTier === id}
+                    loading={busy}
+                    onUnlock={() => fetchUnlock(id, password.trim())}
+                    onLockAgain={() => revokeTierSession(id)}
+                    unavailableLabel={sharedCardStrings.unavailableLabel}
+                    passwordLabel={sharedCardStrings.passwordLabel}
+                    passwordPlaceholder={sharedCardStrings.passwordPlaceholder}
+                    unlockLabel={sharedCardStrings.unlockLabel}
+                    unlockingLabel={sharedCardStrings.unlockingLabel}
+                    wrongPasswordLabel={sharedCardStrings.wrongPasswordLabel}
+                    openPresentationLabel={sharedCardStrings.openPresentationLabel}
+                    openExternalLinkLabel={sharedCardStrings.openExternalLinkLabel}
+                    refreshClearsLabel={sharedCardStrings.refreshClearsLabel}
+                    lockAgainLabel={sharedCardStrings.lockAgainLabel}
+                    showPasswordLabel={sharedCardStrings.showPasswordLabel}
+                    hidePasswordLabel={sharedCardStrings.hidePasswordLabel}
                   />
-                ))
-              : bootstrap === 'ok'
-                ? tiers.map(({ id, titleKey, hintKey, password, setPassword, show, setShow }) => {
-                    const secretsOk = tiersConfigured?.[id] ?? false;
-                    const unlockAllowed = tiersAvailable?.[id] ?? false;
-                    const u = unlocked[id];
-                    const busy = loadingTier === id;
-
-                    return (
-                      <GrowerConfidentialTierCard
-                        key={id}
-                        tierId={id}
-                        title={t(titleKey)}
-                        hint={t(hintKey)}
-                        tierSecretsConfigured={secretsOk}
-                        tenureBlocked={false}
-                        unlockPresentationHref={u?.internalPath ?? null}
-                        unlockExternalHref={u?.externalUrl ?? null}
-                        password={password}
-                        onPasswordChange={(v) => {
-                          setPassword(v);
-                          if (errorTier === id) setErrorTier(null);
-                        }}
-                        showPassword={show}
-                        onToggleShowPassword={() => setShow((s) => !s)}
-                        wrongPassword={errorTier === id}
-                        loading={busy}
-                        onUnlock={() => fetchUnlock(id, password.trim())}
-                        onLockAgain={() => revokeTierSession(id)}
-                        unavailableLabel={sharedCardStrings.unavailableLabel}
-                        passwordLabel={sharedCardStrings.passwordLabel}
-                        passwordPlaceholder={sharedCardStrings.passwordPlaceholder}
-                        unlockLabel={sharedCardStrings.unlockLabel}
-                        unlockingLabel={sharedCardStrings.unlockingLabel}
-                        wrongPasswordLabel={sharedCardStrings.wrongPasswordLabel}
-                        openPresentationLabel={sharedCardStrings.openPresentationLabel}
-                        openExternalLinkLabel={sharedCardStrings.openExternalLinkLabel}
-                        refreshClearsLabel={sharedCardStrings.refreshClearsLabel}
-                        lockAgainLabel={sharedCardStrings.lockAgainLabel}
-                        showPasswordLabel={sharedCardStrings.showPasswordLabel}
-                        hidePasswordLabel={sharedCardStrings.hidePasswordLabel}
-                      />
-                    );
-                  })
-                : null}
-          </div>
-
-          {bootstrap === 'ok' ? (
-            <p className="mt-8 max-w-3xl text-sm leading-relaxed text-gray-600">
-              {t('investorBusinessPlans.footerNote')}
-            </p>
-          ) : null}
-        </div>
-      </main>
-
-      <Footer />
+                );
+              })
+            : null}
+      </div>
     </div>
   );
 }

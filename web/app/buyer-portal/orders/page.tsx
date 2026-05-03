@@ -438,10 +438,13 @@ export default function OrdersPage() {
                     </div>
                     <p
                       className={`text-sm text-gray-600 font-light ${
-                        selectedOrder.status === 'APPROVED' ? 'mb-3' : 'mb-6'
+                        selectedOrder.status === 'APPROVED' ? 'mb-3' : 'mb-2'
                       }`}
                     >
                       {getBuyerOrderStatusDescription(selectedOrder.status)}
+                    </p>
+                    <p className="text-xs text-gray-500 font-light leading-relaxed mb-6">
+                      {t('buyerPortalOrders.transportStatusHint')}
                     </p>
                     {selectedOrder.status === 'APPROVED' && (
                       <PaymentInstructionsPanel

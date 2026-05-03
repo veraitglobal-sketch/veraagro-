@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   CreateQualityEntryDto,
   LogisticsHandoverDto,
@@ -33,7 +34,48 @@ export class QualityEntryService {
     'IN_PROGRESS',
   ]);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
+
+  /** Buyer inbox when missions.orderId ties this pickup to a portal order */
+  private async notifyBuyerFarmHandoverIfLinkedOrder(missionId: string): Promise<void> {
+    try {
+      const m = await this.prisma.missions.findUnique({
+        where: { id: missionId },
+        select: {
+          orderId: true,
+        },
+      });
+      const orderId = m?.orderId;
+      if (!orderId) return;
+
+      const order = await this.prisma.orders.findUnique({
+        where: { id: orderId },
+        select: {
+          buyerId: true,
+          orderNumber: true,
+          status: true,
+        },
+      });
+      if (!order || order.status === 'CANCELLED' || order.status === 'REFUNDED') return;
+
+      await this.notificationsService.create({
+        userId: order.buyerId,
+        type: 'SYSTEM',
+        title: 'Farm loading verification complete',
+        message: `${order.orderNumber}: temperature and cargo checks at the farm are recorded. The shipment can proceed to departure when logistics confirms.`,
+        actionUrl: `/buyer-portal/orders`,
+      });
+    } catch (e) {
+      this.logger.warn(
+        `notifyBuyerFarmHandoverIfLinkedOrder failed (mission=${missionId}): ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      );
+    }
+  }
 
   private stripDataUrlBase64(input: string): string {
     const m = input.trim().match(/^data:image\/\w+;base64,(.+)$/is);
@@ -626,7 +668,7 @@ export class QualityEntryService {
     }
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      const result = await this.prisma.$transaction(async (tx) => {
         const handover = await tx.logistics_handovers.create({
           data: {
             id: crypto.randomUUID(),
@@ -699,6 +741,10 @@ export class QualityEntryService {
             'Loading evidence saved (temperature, pallet and inside-truck photos). Mission is ready for loading.',
         };
       });
+
+      void this.notifyBuyerFarmHandoverIfLinkedOrder(dto.missionId);
+
+      return result;
     } catch (e: unknown) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         this.logger.error(`logisticsHandover Prisma ${e.code}: ${e.message} meta=${JSON.stringify(e.meta)}`);

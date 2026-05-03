@@ -17,6 +17,100 @@ import { InvoicesService } from '../invoices/invoices.service';
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
+  /**
+   * Buyer-safe logistics timeline: built from the latest mission linked to the order (cold chain)
+   * and/or the delivery record (last-mile driver). No farm destination or internal instructions.
+   */
+  private async buildBuyerShipmentTracking(
+    orderId: string,
+    orderCreatedAt: Date,
+  ): Promise<{
+    missionNumber: string | null;
+    missionStatus: string | null;
+    events: Array<{ code: string; at: string }>;
+  }> {
+    const events: Array<{ code: string; at: string }> = [];
+    const add = (code: string, d: Date | null | undefined) => {
+      if (!d || !(d instanceof Date) || Number.isNaN(d.getTime())) return;
+      const iso = d.toISOString();
+      events.push({ code, at: iso });
+    };
+
+    try {
+      const [mission, delivery] = await Promise.all([
+        this.prisma.missions.findFirst({
+          where: { orderId },
+          orderBy: { createdAt: 'desc' },
+          include: {
+            logistics_handovers: { select: { timestamp: true } },
+            border_wait_times: {
+              orderBy: { borderArrivalTime: 'asc' },
+              select: {
+                borderName: true,
+                borderArrivalTime: true,
+                borderExitTime: true,
+              },
+            },
+          },
+        }),
+        this.prisma.deliveries.findUnique({ where: { orderId } }),
+      ]);
+
+      if (mission?.status && mission.status !== 'CANCELLED') {
+        add('LINE_OPENED', mission.requestedAt);
+        add('LINEHAUL_ASSIGNED', mission.assignedAt ?? undefined);
+        add('LINEHAUL_ACCEPTED', mission.acceptedAt ?? undefined);
+
+        const handoverTs = mission.logistics_handovers?.timestamp;
+        add('LOADING_QUALITY_CHECK_COMPLETE', handoverTs ?? undefined);
+
+        add('DEPARTED_FARM', mission.pickedUpAt ?? undefined);
+
+        for (const bt of mission.border_wait_times ?? []) {
+          add('BORDER_STOP_ARRIVAL', bt.borderArrivalTime ?? undefined);
+          add('BORDER_STOP_DEPARTURE', bt.borderExitTime ?? undefined);
+        }
+
+        add('LINEHAUL_FINISHED', mission.completedAt ?? undefined);
+      }
+
+      if (delivery) {
+        add('DELIVERY_BOOKED', delivery.createdAt ?? undefined);
+        add('LAST_MILE_DISPATCHED', delivery.assignedAt ?? undefined);
+        add('SHIPMENT_COLLECTED', delivery.pickedUpAt ?? undefined);
+        add('SHIPMENT_ENTRY_TRANSIT_LINE', delivery.inTransitAt ?? undefined);
+        add('SHIPMENT_DROP_OFF_CONFIRMED', delivery.deliveredAt ?? undefined);
+      }
+
+      add('ORDER_RECORDED', orderCreatedAt);
+
+      const seen = new Set<string>();
+      const dedup = events.filter((e) => {
+        const k = `${e.code}|${e.at}`;
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+      dedup.sort((a, b) => a.at.localeCompare(b.at));
+      const missionNumber =
+        mission && mission.status !== 'CANCELLED' && typeof mission.missionNumber === 'string' && mission.missionNumber.trim().length > 0
+          ? mission.missionNumber.trim()
+          : null;
+      const missionStatus =
+        mission && mission.status !== 'CANCELLED' ? mission.status : null;
+      return {
+        missionNumber,
+        missionStatus,
+        events: dedup,
+      };
+    } catch (e) {
+      this.logger.warn(
+        `buildBuyerShipmentTracking failed for order ${orderId}: ${e instanceof Error ? e.message : String(e)}`,
+      );
+      return { missionNumber: null, missionStatus: null, events: [] };
+    }
+  }
+
   constructor(
     private prisma: PrismaService,
     private paymentsService: PaymentsService,
@@ -411,7 +505,9 @@ export class OrdersService {
       throw new BadRequestException('Access denied');
     }
 
-    return order;
+    const shipmentTracking = await this.buildBuyerShipmentTracking(order.id, order.createdAt);
+
+    return { ...order, shipmentTracking };
   }
 
   async initiatePayment(orderId: string, buyerId: string, paymentData: {

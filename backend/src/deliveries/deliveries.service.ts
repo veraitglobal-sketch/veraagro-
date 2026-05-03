@@ -166,13 +166,33 @@ export class DeliveriesService {
       throw new BadRequestException('Access denied');
     }
 
-    return this.prisma.deliveries.update({
+    const updated = await this.prisma.deliveries.update({
       where: { id: deliveryId },
       data: {
         status: 'IN_TRANSIT',
         inTransitAt: new Date(),
       },
     });
+    try {
+      const order = await this.prisma.orders.findUnique({
+        where: { id: updated.orderId },
+        select: { status: true },
+      });
+      const s = order?.status;
+      if (s && !['CANCELLED', 'REFUNDED', 'DELIVERED', 'COMPLETED'].includes(s)) {
+        await this.prisma.orders.update({
+          where: { id: updated.orderId },
+          data: { status: 'IN_TRANSIT' },
+        });
+      }
+    } catch (e) {
+      this.logger.warn(
+        `markInTransit: optional order bump failed for delivery ${deliveryId}: ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      );
+    }
+    return updated;
   }
 
   /**

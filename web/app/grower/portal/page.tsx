@@ -37,6 +37,9 @@ interface MissionTracker {
   quantity: number | null;
   unit: string | null;
   status: string;
+  buyerOrderNumber?: string | null;
+  buyerOrderStatus?: string | null;
+  buyerOrderId?: string | null;
   currentMilestone: string;
   milestones: Array<{
     name: string;
@@ -128,6 +131,15 @@ interface FinancialStatus {
   isDelivered: boolean;
   isApproved: boolean;
   deliveredAt: string | null;
+}
+
+function portalBuyerOrderStatusLabel(t: TFunction, status: string | null | undefined) {
+  const s = (status ?? '').trim();
+  if (!s) return '—';
+  const key = `adminPages.orderManagement.statuses.${s}`;
+  const tr = t(key);
+  if (tr !== key) return tr;
+  return s.replace(/_/g, ' ');
 }
 
 /** Backend milestone step labels (English) → grower i18n keys. */
@@ -452,6 +464,14 @@ export default function GrowerPortalPage() {
                           milestone: portalMilestoneLabel(t, String(mission.currentMilestone || '')),
                         })}
                       </p>
+                      {mission.buyerOrderNumber ? (
+                        <p className="mt-2 text-xs text-gray-700 leading-snug rounded-md border border-sky-100 bg-sky-50/90 px-2.5 py-2 font-medium text-sky-950">
+                          {t('growerPages.portalLinkedBuyerOrder', { order: mission.buyerOrderNumber })}{' '}
+                          <span className="font-semibold tabular-nums">
+                            ({portalBuyerOrderStatusLabel(t, mission.buyerOrderStatus)})
+                          </span>
+                        </p>
+                      ) : null}
                     </div>
                     <div className="text-right">
                       <span

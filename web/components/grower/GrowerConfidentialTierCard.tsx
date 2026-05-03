@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarClock, Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
+import { ArrowRight, CalendarClock, Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 
 export type GrowerConfidentialTierId = 'short' | 'medium' | 'long';
@@ -40,6 +40,8 @@ export type GrowerConfidentialTierCardProps = {
   hidePasswordLabel: string;
   /** Password matched but medium/long blocked by tenure (POST `tenureRejected`). */
   tenureNotice?: string | null;
+  /** When true: no titles, hints, or lock chrome — password field (and unlock links) only. */
+  passwordOnly?: boolean;
 };
 
 export default function GrowerConfidentialTierCard(props: GrowerConfidentialTierCardProps) {
@@ -73,6 +75,7 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     showPasswordLabel,
     hidePasswordLabel,
     tenureNotice,
+    passwordOnly,
   } = props;
 
   const inputId = `grower-confidential-pw-${tierId}`;
@@ -81,7 +84,18 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
 
   const unlocked = unlockPresentationHref || unlockExternalHref;
 
-  if (!tierSecretsConfigured) {
+  const btnPrimary =
+    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2';
+  const btnOutline =
+    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2';
+  const btnIconSubmit =
+    'inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg bg-[#2D5A27] text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+
+  if (passwordOnly && !tierSecretsConfigured) {
+    return null;
+  }
+
+  if (!passwordOnly && !tierSecretsConfigured) {
     return (
       <section
         aria-labelledby={`grower-confidential-title-${tierId}`}
@@ -106,7 +120,7 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     );
   }
 
-  if (tenureBlocked && tenureBlockedMessage) {
+  if (!passwordOnly && tenureBlocked && tenureBlockedMessage) {
     return (
       <section
         aria-labelledby={`grower-confidential-title-${tierId}`}
@@ -133,10 +147,92 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     );
   }
 
-  const btnPrimary =
-    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2';
-  const btnOutline =
-    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2';
+  if (passwordOnly) {
+    if (unlocked) {
+      return (
+        <div className="flex flex-wrap items-center gap-2">
+          {unlockPresentationHref ? (
+            <Link href={unlockPresentationHref} className={btnPrimary} aria-label={openPresentationLabel}>
+              <FileText className="h-5 w-5 shrink-0" aria-hidden />
+            </Link>
+          ) : null}
+          {unlockExternalHref ? (
+            <a
+              href={unlockExternalHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={unlockPresentationHref ? btnOutline : btnPrimary}
+              aria-label={openExternalLinkLabel}
+            >
+              <ExternalLink className="h-5 w-5 shrink-0" aria-hidden />
+            </a>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => void onLockAgain()}
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/30 focus-visible:ring-offset-2"
+            aria-label={lockAgainLabel}
+          >
+            <span className="text-lg leading-none" aria-hidden>
+              ×
+            </span>
+          </button>
+        </div>
+      );
+    }
+    return (
+      <form
+        className="flex flex-col gap-0"
+        onSubmit={(e: FormEvent) => {
+          e.preventDefault();
+          onUnlock();
+        }}
+        noValidate
+      >
+        <div className="flex gap-2">
+          <input
+            id={inputId}
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            value={password}
+            onChange={(e) => onPasswordChange(e.target.value)}
+            placeholder=""
+            aria-label={passwordLabel}
+            aria-invalid={wrongPassword}
+            disabled={loading}
+            className={`min-h-[48px] flex-1 rounded-lg border px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 disabled:bg-gray-50 disabled:text-gray-500 ${
+              wrongPassword ? 'border-red-400 ring-1 ring-red-200' : 'border-gray-300 focus:border-[#2D5A27]'
+            }`}
+          />
+          <button
+            type="button"
+            onClick={onToggleShowPassword}
+            disabled={loading}
+            aria-label={showPassword ? hidePasswordLabel : showPasswordLabel}
+            aria-pressed={showPassword}
+            className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+          </button>
+          <button
+            type="submit"
+            disabled={loading || !password.trim()}
+            aria-busy={loading}
+            aria-label={loading ? unlockingLabel : unlockLabel}
+            className={btnIconSubmit}
+          >
+            {loading ? (
+              <span className="h-5 w-5 animate-pulse rounded-full bg-white/80" aria-hidden />
+            ) : (
+              <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
+            )}
+          </button>
+        </div>
+      </form>
+    );
+  }
 
   return (
     <section

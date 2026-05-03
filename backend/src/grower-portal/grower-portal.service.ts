@@ -132,7 +132,7 @@ export class GrowerPortalService {
     };
   }
 
-  /** No buyer order ref or dock instructions on the grower portal — operations + logistics only. */
+  /** Grower-visible commerce fields plus linked buyer-order summary (operations often ties mission ↔ order — grower sees same status wording as portal). */
   private missionTrackerCommerceFieldsForGrower(mission: Parameters<
     GrowerPortalService['missionTrackerCommerceFields']
   >[0]) {
@@ -141,6 +141,9 @@ export class GrowerPortalService {
       productName: full.productName,
       quantity: full.quantity,
       unit: full.unit,
+      buyerOrderNumber: full.orderNumber,
+      buyerOrderStatus: full.orderStatus,
+      buyerOrderId: full.orderId,
     };
   }
 
@@ -349,6 +352,13 @@ export class GrowerPortalService {
       productName: commerce.productName,
       quantity: commerce.quantity,
       unit: commerce.unit,
+      ...(commerce.buyerOrderNumber
+        ? {
+            buyerOrderNumber: commerce.buyerOrderNumber,
+            buyerOrderStatus: commerce.buyerOrderStatus ?? null,
+            buyerOrderId: commerce.buyerOrderId ?? null,
+          }
+        : {}),
       status: mission.status,
       currentMilestone: '—',
       milestones: [],
@@ -725,6 +735,13 @@ export class GrowerPortalService {
       productName: commerce.productName,
       quantity: commerce.quantity,
       unit: commerce.unit,
+      ...(commerce.buyerOrderNumber
+        ? {
+            buyerOrderNumber: commerce.buyerOrderNumber,
+            buyerOrderStatus: commerce.buyerOrderStatus ?? null,
+            buyerOrderId: commerce.buyerOrderId ?? null,
+          }
+        : {}),
       status: mission.status,
       currentMilestone: currentMilestone?.name,
       milestones,

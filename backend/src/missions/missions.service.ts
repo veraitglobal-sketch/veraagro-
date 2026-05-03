@@ -8,7 +8,7 @@ import {
   forwardRef,
   Logger,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateMissionDto,
@@ -1011,7 +1011,151 @@ export class MissionsService {
       newValue: { status: updated.status },
     });
 
+    if (updated.orderId) {
+      void this.notifyLinkedBuyerShipmentMilestone(
+        updated.orderId,
+        'Carrier accepted your pickup',
+        'The assigned cold-chain partner has accepted this run. Your order timeline will update as the truck reaches the farm and loading checks complete.',
+      );
+    }
+
     return updated;
+  }
+
+  /** In-app inbox for buyer when a linked portal order (`missions.orderId`) exists — complements `shipmentTracking` on GET /orders/:id. */
+  private async notifyLinkedBuyerShipmentMilestone(
+    orderId: string | null | undefined,
+    title: string,
+    messageBody: string,
+  ): Promise<void> {
+    if (!orderId?.trim()) return;
+    try {
+      const order = await this.prisma.orders.findUnique({
+        where: { id: orderId },
+        select: { buyerId: true, orderNumber: true, status: true },
+      });
+      if (!order || order.status === 'CANCELLED' || order.status === 'REFUNDED') return;
+      await this.notificationsService.create({
+        userId: order.buyerId,
+        type: 'SYSTEM',
+        title,
+        message: messageBody.includes(order.orderNumber) ? messageBody : `${order.orderNumber}: ${messageBody}`,
+        actionUrl: `/buyer-portal/orders`,
+      });
+    } catch (e) {
+      this.logger.warn(
+        `notifyLinkedBuyerShipmentMilestone failed (orderId=${orderId}): ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+  }
+
+  /**
+   * When a mission is tied to a buyer order (`missions.orderId`), advance the buyer-facing
+   * order status alongside logistics lifecycle so the portal order timeline stays meaningful.
+   * Best-effort: does not downgrade or touch terminal/refunded orders; syncs matching `deliveries` row if present.
+   */
+  private async syncLinkedBuyerOrderAfterMissionLifecycle(
+    orderId: string | null | undefined,
+    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
+    at: Date,
+  ): Promise<void> {
+    if (!orderId?.trim()) {
+      return;
+    }
+    const RANK: Record<string, number> = {
+      PENDING: 10,
+      APPROVED: 20,
+      PAID: 30,
+      CONFIRMED: 40,
+      PICKED_UP: 50,
+      IN_TRANSIT: 60,
+      DELIVERED: 80,
+      COMPLETED: 90,
+      CANCELLED: -1,
+      REFUNDED: -1,
+    };
+    let desired: OrderStatus | null = null;
+    if (step === 'DEPART_FARM') {
+      desired = 'PICKED_UP';
+    } else if (step === 'START_TRANSIT' || step === 'COMPLETE_DELIVERY') {
+      desired = 'IN_TRANSIT';
+    }
+    if (!desired) {
+      return;
+    }
+
+    try {
+      const order = await this.prisma.orders.findUnique({
+        where: { id: orderId },
+        select: { id: true, buyerId: true, status: true, orderNumber: true },
+      });
+      if (!order) {
+        return;
+      }
+      const cur = String(order.status || '');
+      if (cur === 'CANCELLED' || cur === 'REFUNDED') {
+        return;
+      }
+      if (RANK[cur] >= RANK.DELIVERED || RANK[cur] < 0) {
+        return;
+      }
+      const nextRank = RANK[desired] ?? 0;
+      const curRank = RANK[cur] ?? 0;
+      if (nextRank <= curRank) {
+        // Already at least this far along (e.g. repeat calls)
+      } else {
+        await this.prisma.orders.update({
+          where: { id: order.id },
+          data: { status: desired, updatedAt: at },
+        });
+        try {
+          await this.notificationsService.create({
+            userId: order.buyerId,
+            type: 'SYSTEM',
+            title:
+              desired === 'PICKED_UP'
+                ? 'Order picked up from farm'
+                : 'Order moving toward destination',
+            message:
+              desired === 'PICKED_UP'
+                ? `${order.orderNumber}: load has departed the fulfilling farm — you will see Picked up / In transit on your order.`
+                : `${order.orderNumber}: cold-chain leg is progressing — status updated to In transit.`,
+            actionUrl: `/buyer-portal/orders`,
+          });
+        } catch (e) {
+          this.logger.warn(
+            `Buyer notification failed for mission→order sync (order=${order.orderNumber}): ${
+              e instanceof Error ? e.message : String(e)
+            }`,
+          );
+        }
+      }
+
+      const delivery = await this.prisma.deliveries.findUnique({
+        where: { orderId: order.id },
+      });
+      if (!delivery) {
+        return;
+      }
+      const dPatch: Prisma.deliveriesUpdateInput = { updatedAt: at };
+      if (step === 'DEPART_FARM') {
+        dPatch.status = 'PICKED_UP';
+        dPatch.pickedUpAt = at;
+      } else if (step === 'START_TRANSIT' || step === 'COMPLETE_DELIVERY') {
+        dPatch.status = 'IN_TRANSIT';
+        dPatch.inTransitAt = at;
+      }
+      await this.prisma.deliveries.update({
+        where: { id: delivery.id },
+        data: dPatch,
+      });
+    } catch (e) {
+      this.logger.warn(
+        `syncLinkedBuyerOrderAfterMissionLifecycle failed (orderId=${orderId}, step=${step}): ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      );
+    }
   }
 
   /**
@@ -1096,6 +1240,16 @@ export class MissionsService {
       oldValue: { status: oldStatus, step },
       newValue: { status: updated.status, step },
     });
+
+    await this.syncLinkedBuyerOrderAfterMissionLifecycle(updated.orderId, step, now);
+
+    if (updated.orderId && step === 'COMPLETE_DELIVERY') {
+      void this.notifyLinkedBuyerShipmentMilestone(
+        updated.orderId,
+        'Linehaul completed',
+        'The long-distance logistics leg for your order is marked complete. Any further leg to depot or retailer will still follow in your shipment timeline.',
+      );
+    }
 
     return updated;
   }
