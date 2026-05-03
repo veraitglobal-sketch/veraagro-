@@ -2739,7 +2739,7 @@
         },
         {
           "title": "Osigurano plaćanje",
-          "description": "Novac od kupca ostaje kod Bio Vere pod kontrolisanim obračunom dok dokumentacija, isporuka i provere programa ne potvrde da je roba prihvaćena i na redu — bez zatvaranja obaveza dok operativa i kvalitet ne daju „zeleno svetlo”. Zatim sledi obračun proizvodnje i logistike po ugovoru. Jaki i fer komercijalni uslovi — ne javna „tabela procenta”."
+          "description": "Novac ostaje kod Bio Vere do potvrđene isporuke i provera; zatim isplata proizvodnji i logistici po ugovoru."
         },
         {
           "title": "Digitalni rukovanje",
@@ -2754,14 +2754,14 @@
           "description": "Automatsko generisanje EU sertifikata i pasoša koji prate našu prodaju krajnjem kupcu."
         },
         {
-          "title": "Javna potvrda traga (Polygon, opciono)",
-          "description": "Gde program uključi dodatni sloj, ključni trag se može javno zapečatiti—kupac i revizor i dalje gledaju isti pasoš proizvoda."
+          "title": "Javna Polygon potvrda",
+          "description": "Kada je ovaj sloj u programu, trag se javno zapečaćuje na Polygonu; krajni kupac i revizor vide isto što i u prodajnom pasošu."
         }
       ]
     },
     "blockchain": {
       "title": "Zašto trag ostaje verodostojan",
-      "body": "Mi prodajemo robu i snosimo odgovornost pred kupcem. Ključni koraci su zabeleženi tako da kasnije niko ne menja već objavljeni trag. Gde konfiguracija dozvoljava, isti zapis se može dodatno javno zapečatiti na knjizi (npr. Polygon) radi nezavisne provere—transparentno i proverljivo, bez praznog marketinga.",
+      "body": "Mi prodajemo robu i snosimo odgovornost pred kupcem. Ključni koraci su zabeleženi tako da kasnije niko ne menja već objavljeni trag. Kad konfiguracija dopušta, isti zapis se dodatno može javno zapečatiti na Polygon mreži radi nezavisnog presjeka—transparentno i proverljivo.",
       "bullets": [
         "Trag koji se brani pred kupcem i revizorom",
         "Isti podaci u operaciji i u pasošu",

@@ -2738,7 +2738,7 @@
         },
         {
           "title": "Secured payment",
-          "description": "Buyer funds stay with Bio Vera under controlled settlement until documented delivery plus quality and programme checks confirm the load is good order—we don’t finalize goods payables before that gate. Shares for growers and logistics follow contract terms once verified. Strong, fair commercial terms, not a public percentage sheet."
+          "description": "Buyer funds stay with Bio Vera until delivery and conformity checks clear; payouts to growers and logistics follow agreed terms."
         },
         {
           "title": "Digital Handshake",
@@ -2753,8 +2753,8 @@
           "description": "Automated EU certificates and passports tied to the sales channel we operate for end customers."
         },
         {
-          "title": "Public dossier sealing (Polygon, optional)",
-          "description": "Where switched on for a programme tier, anchors give buyers and auditors a third-party checksum while the visible passport stays the merchant story."
+          "title": "Optional Polygon dossier anchoring",
+          "description": "When switched on for a programme tier, a public anchor links to the dossier; the buyer-visible passport stays the single story."
         }
       ]
     },
