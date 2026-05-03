@@ -36,20 +36,20 @@ function emptyTier(): PerTierUi {
   };
 }
 
-/** Bio Vera #2D5A27 + modern product / light-tech surfaces (depth, glass, mono ids) */
+/** Bio Vera — usklađeno sa `GrowerConfidentialTierCard` i .cursorrules (jednostavne kartice, #2D5A27) */
 const btnPrimary =
-  'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#2D5A27] px-5 py-3 text-base font-medium text-white shadow-[0_2px_8px_-2px_rgba(45,90,39,0.35)] transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/45 focus-visible:ring-offset-2';
+  'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2';
 const btnOutline =
-  'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-white/80 px-5 py-3 text-base font-medium text-gray-900 shadow-sm backdrop-blur-sm transition-colors hover:border-gray-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2';
+  'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2';
 const btnIconSubmit =
-  'inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl bg-[#2D5A27] text-white shadow-[0_2px_8px_-2px_rgba(45,90,39,0.35)] transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/45 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  'inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg bg-[#2D5A27] text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
 const inputClass =
-  'min-h-[48px] rounded-xl border border-gray-200 bg-white/90 px-4 py-3 text-base text-gray-900 shadow-sm backdrop-blur-sm transition-colors placeholder:text-gray-400 focus:border-[#2D5A27] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/22 disabled:bg-gray-50 disabled:text-gray-500';
+  'min-h-[48px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 transition-colors placeholder:text-gray-400 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 disabled:bg-gray-50 disabled:text-gray-500';
 
 const cardShell =
-  'flex min-w-0 flex-col gap-4 rounded-2xl border border-gray-200/80 bg-white/90 p-5 shadow-[0_4px_28px_-12px_rgba(15,23,42,0.1),0_0_0_1px_rgba(45,90,39,0.04)] backdrop-blur-[8px] sm:p-6';
+  'flex min-w-0 flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6';
 const tierIconBox =
-  'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#2D5A27]/22 bg-gradient-to-br from-[#2D5A27]/14 via-white/50 to-white/90 font-mono text-sm tabular-nums font-semibold tracking-tight text-[#163214] shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_1px_3px_rgba(45,90,39,0.08)]';
+  'flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-[#2D5A27]/10 text-sm font-semibold text-[#2D5A27]';
 
 const TIER_INDEX: Record<GrowerConfidentialTierId, string> = {
   short: '01',
@@ -365,19 +365,9 @@ export default function InvestorBusinessPlansClient() {
   }, [unlockEndpoint]);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#eef1ee]">
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(165deg,#f4f7f4_0%,#eef2ef_42%,#e8eeea_100%)]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 opacity-[0.45] bg-[linear-gradient(rgba(45,90,39,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(45,90,39,0.05)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_85%_60%_at_50%_-5%,#000_15%,transparent_70%)] bg-[length:40px_40px]"
-        aria-hidden
-      />
-
-      <header className="fixed top-0 z-50 w-full border-b border-gray-200/70 bg-white/75 backdrop-blur-md">
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#2D5A27]/20 to-transparent" aria-hidden />
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
             <Image
               src="/logo1.png"
@@ -388,17 +378,14 @@ export default function InvestorBusinessPlansClient() {
               priority
             />
           </Link>
-          <nav className="flex items-center gap-2 sm:gap-3">
+          <nav className="flex items-center gap-8">
             <Link
               href={loc('/investor-deck')}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#2D5A27]/[0.06] hover:text-[#23471f]"
+              className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]"
             >
               {t('investorDeckPage.backToHub')}
             </Link>
-            <Link
-              href={loc('/')}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#2D5A27]/[0.06] hover:text-[#23471f]"
-            >
+            <Link href={loc('/')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
               {t('nav.home')}
             </Link>
           </nav>
@@ -415,43 +402,28 @@ export default function InvestorBusinessPlansClient() {
       ) : null}
 
       <main
-        className="relative mx-auto w-full max-w-5xl px-5 pb-20 pt-24 sm:px-8"
+        className="mx-auto w-full max-w-4xl px-6 pb-16 pt-24 lg:px-8"
         aria-busy={bootstrap === 'loading' || bootstrap === 'idle'}
       >
-        <div className="relative mb-10 overflow-hidden rounded-2xl border border-gray-200/70 bg-gradient-to-b from-white/95 via-white/88 to-white/75 p-6 shadow-[0_4px_40px_-16px_rgba(45,90,39,0.14),0_0_0_1px_rgba(255,255,255,0.85)_inset] backdrop-blur-md sm:p-8">
-          <div
-            className="pointer-events-none absolute -right-24 -top-20 h-44 w-44 rounded-full bg-[#2D5A27]/[0.09] blur-3xl"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#2D5A27]/[0.06] blur-3xl"
-            aria-hidden
-          />
-          <div className="relative min-w-0">
-            <p className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-[#2D5A27]">
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-[#2D5A27] shadow-[0_0_10px_rgba(45,90,39,0.55)]"
-                aria-hidden
-              />
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#2D5A27]">
               {t('investorBusinessPlans.docSeriesEyebrow')}
             </p>
-            <h1 className="mt-4 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-700 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl">
+            <h1 className="mt-2 text-3xl font-light tracking-tight text-gray-900">
               {t('investorBusinessPlans.docSeriesTitle')}
             </h1>
-            <p className="mt-3 max-w-3xl text-base font-light leading-relaxed text-gray-600 sm:text-[1.05rem]">
+            <p className="mt-2 max-w-3xl text-base font-light leading-relaxed text-gray-700">
               {t('investorBusinessPlans.pageDescription')}
             </p>
           </div>
         </div>
 
         {bootstrap === 'loading' || bootstrap === 'idle' ? (
-          <div
-            className="h-72 animate-pulse rounded-2xl border border-gray-200/80 bg-gradient-to-br from-gray-100/90 via-white/60 to-[#e8efe9]/80 shadow-inner"
-            aria-hidden
-          />
+          <div className="h-64 animate-pulse rounded-xl border border-gray-200 bg-gray-100" aria-hidden />
         ) : bootstrap === 'ok' ? (
           !gateConfigured ? (
-            <div className="rounded-2xl border border-amber-200/80 bg-amber-50/95 p-6 text-center shadow-[0_4px_24px_-12px_rgba(180,83,9,0.15)] backdrop-blur-sm sm:text-left">
+            <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-6 shadow-sm">
               <p className="text-base leading-relaxed text-amber-950">{t('investorBusinessPlans.gateNotConfigured')}</p>
             </div>
           ) : (
@@ -463,8 +435,7 @@ export default function InvestorBusinessPlansClient() {
                     <Lock className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
                   </div>
                   <div className="min-w-0">
-                    <p className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[#23471f]">
-                      <span className="h-2 w-2 rounded-sm bg-[#2D5A27]/80" aria-hidden />
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#23471f]">
                       {t('investorBusinessPlans.docConfidentialBadge')}
                     </p>
                     <h2 id="investor-bp-bundle-title" className="mt-2 text-lg font-semibold leading-snug text-gray-900">
@@ -500,7 +471,7 @@ export default function InvestorBusinessPlansClient() {
                           onClick={() => setShowBundlePw((s) => !s)}
                           disabled={bundleBusy}
                           aria-label={showBundlePw ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                          className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white/90 text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 disabled:opacity-50"
+                          className="inline-flex min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
                         >
                           {showBundlePw ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
                         </button>
@@ -529,15 +500,13 @@ export default function InvestorBusinessPlansClient() {
               </section>
             ) : (
               <div className="min-w-0 space-y-6">
-                <p className="rounded-xl border border-gray-200/70 bg-white/50 px-4 py-3 text-sm font-medium leading-relaxed text-gray-700 shadow-sm backdrop-blur-sm sm:text-base sm:font-normal">
-                  {t('investorBusinessPlans.afterGateLead')}
-                </p>
+                <p className="text-base font-light leading-relaxed text-gray-700">{t('investorBusinessPlans.afterGateLead')}</p>
 
-                <div className="flex flex-col gap-3 rounded-2xl border border-gray-200/75 bg-white/55 p-2 shadow-[inset_0_2px_12px_rgba(15,23,42,0.04),0_4px_24px_-16px_rgba(45,90,39,0.08)] backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-3">
+                <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5">
                   <div
                     role="tablist"
                     aria-label={t('investorBusinessPlans.docPickerAria')}
-                    className="flex gap-1 overflow-x-auto rounded-xl bg-gray-950/[0.055] p-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden"
+                    className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden"
                   >
                     {TIER_IDS.map((tier) => {
                       const secretsOk = tiersConfigured?.[tier] ?? false;
@@ -552,22 +521,22 @@ export default function InvestorBusinessPlansClient() {
                           aria-selected={isActive}
                           disabled={!secretsOk}
                           onClick={() => setActiveTier(tier)}
-                          className={`inline-flex min-h-[44px] min-w-0 shrink-0 items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all duration-200 ${
+                          className={`inline-flex min-h-[48px] min-w-0 shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium transition-colors ${
                             !secretsOk
-                              ? 'cursor-not-allowed text-gray-400 opacity-60'
+                              ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'
                               : isActive
-                                ? 'bg-white text-[#163214] shadow-[0_2px_12px_-4px_rgba(45,90,39,0.2)] ring-1 ring-[#2D5A27]/18'
-                                : 'text-gray-600 hover:bg-white/70 hover:text-gray-900'
+                                ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#23471f] ring-1 ring-[#2D5A27]/20'
+                                : 'border-gray-200 bg-white text-gray-800 hover:border-gray-300 hover:bg-gray-50'
                           }`}
                         >
                           <span
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md font-mono text-xs font-semibold tabular-nums tracking-tight ${
-                              isActive ? 'bg-[#2D5A27] text-white shadow-sm' : 'bg-gray-200/80 text-[#1a3d17]'
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold ${
+                              isActive ? 'bg-[#2D5A27] text-white' : 'bg-gray-100 text-[#2D5A27]'
                             }`}
                           >
                             {TIER_INDEX[tier]}
                           </span>
-                          <span className="max-w-[9rem] truncate sm:max-w-[13rem]">{t(TITLE_KEY[tier])}</span>
+                          <span className="max-w-[9rem] truncate sm:max-w-[12rem]">{t(TITLE_KEY[tier])}</span>
                           {unlocked ? (
                             <Check className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden strokeWidth={2.5} />
                           ) : null}
@@ -593,14 +562,11 @@ export default function InvestorBusinessPlansClient() {
 
                   if (!secretsOk) {
                     return (
-                      <section
-                        className={`${cardShell} items-center justify-center border-dashed border-gray-300/90 bg-white/70 py-12 text-center`}
-                        aria-live="polite"
-                      >
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-200/90 bg-gradient-to-br from-gray-50 to-white shadow-inner">
-                          <Lock className="h-7 w-7 text-gray-400" strokeWidth={1.5} aria-hidden />
+                      <section className={`${cardShell} items-center justify-center py-12 text-center`} aria-live="polite">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50">
+                          <Lock className="h-6 w-6 text-gray-400" strokeWidth={1.75} aria-hidden />
                         </div>
-                        <p className="max-w-md text-base leading-relaxed text-gray-600">{t('investorBusinessPlans.tierUnavailable')}</p>
+                        <p className="max-w-md text-base leading-relaxed text-gray-700">{t('investorBusinessPlans.tierUnavailable')}</p>
                       </section>
                     );
                   }
@@ -611,13 +577,12 @@ export default function InvestorBusinessPlansClient() {
                         className={`${cardShell} min-h-[min(360px,48vh)] gap-0 overflow-hidden p-0 sm:min-h-[min(400px,52vh)]`}
                         aria-live="polite"
                       >
-                        <div className="flex flex-col gap-4 border-b border-gray-200/80 bg-gradient-to-r from-white/95 via-[#f9fbf9]/95 to-white/90 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                        <div className="flex flex-col gap-4 border-b border-gray-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                           <div className="flex min-w-0 items-start gap-3">
                             <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
                             <div className="min-w-0">
                               <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                              <p className="mt-1.5 inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#23471f]">
-                                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2D5A27]/85" aria-hidden />
+                              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
                                 {t('investorBusinessPlans.docConfidentialBadge')}
                               </p>
                             </div>
@@ -625,7 +590,7 @@ export default function InvestorBusinessPlansClient() {
                           <button
                             type="button"
                             onClick={() => void revokeTier(tier)}
-                            className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-gray-200/90 bg-white/90 px-4 py-2.5 text-base font-medium text-gray-800 shadow-sm backdrop-blur-sm transition-colors hover:border-gray-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 sm:w-auto"
+                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 sm:w-auto"
                           >
                             {t('grower.confidential.lockAgain')}
                           </button>
@@ -634,7 +599,7 @@ export default function InvestorBusinessPlansClient() {
                           {busy ? (
                             <p className="py-12 text-center text-sm text-gray-600">{t('investorBusinessPlans.docLoadingContent')}</p>
                           ) : ui.markdown ? (
-                            <div className="rounded-xl border border-gray-100/90 border-l-[3px] border-l-[#2D5A27]/40 bg-[linear-gradient(180deg,rgba(248,251,249,0.95)_0%,rgba(255,255,255,0.97)_60%)] px-3 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-5">
+                            <div className="rounded-lg bg-gray-50/60 px-2 py-4 sm:px-4">
                               <PartnerPlanProse markdown={ui.markdown} />
                             </div>
                           ) : ui.externalUrl ? (
@@ -646,7 +611,7 @@ export default function InvestorBusinessPlansClient() {
                             </div>
                           ) : null}
                         </div>
-                        <p className="border-t border-gray-200/80 bg-gray-50/40 px-5 py-4 text-center text-xs font-medium leading-relaxed text-gray-500 sm:px-6">
+                        <p className="border-t border-gray-200 px-5 py-4 text-center text-xs leading-relaxed text-gray-600 sm:px-6">
                           {t('investorBusinessPlans.planReaderFooter')}
                         </p>
                       </section>
@@ -660,8 +625,7 @@ export default function InvestorBusinessPlansClient() {
                           <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
                           <div className="min-w-0">
                             <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                            <p className="mt-1.5 inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#23471f]">
-                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2D5A27]/85" aria-hidden />
+                            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
                               {t('investorBusinessPlans.docConfidentialBadge')}
                             </p>
                             <p className="mt-3 text-base font-light leading-relaxed text-gray-700">{t(HINT_KEY[tier])}</p>
@@ -697,7 +661,7 @@ export default function InvestorBusinessPlansClient() {
                                 onClick={() => setTier(tier, { showPassword: !ui.showPassword })}
                                 disabled={busy}
                                 aria-label={ui.showPassword ? t('grower.confidential.hidePassword') : t('grower.confidential.showPassword')}
-                                className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border border-gray-200 bg-white/90 text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/35 focus-visible:ring-offset-2 disabled:opacity-50"
+                                className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 disabled:opacity-50"
                               >
                                 {ui.showPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
                               </button>
@@ -737,24 +701,23 @@ export default function InvestorBusinessPlansClient() {
                     <button
                       type="button"
                       onClick={() => setTier(tier, { phase: 'password' })}
-                      className="group w-full min-w-0 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
+                      className="group w-full min-w-0 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
                     >
                       <div
-                        className={`${cardShell} cursor-pointer transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-[#2D5A27]/25 group-hover:shadow-[0_12px_40px_-20px_rgba(45,90,39,0.22),0_0_0_1px_rgba(45,90,39,0.06)]`}
+                        className={`${cardShell} cursor-pointer transition-colors group-hover:border-gray-300 group-hover:bg-gray-50/40`}
                       >
                         <div className="flex items-start gap-3">
                           <span className={tierIconBox}>{TIER_INDEX[tier]}</span>
                           <div className="min-w-0 flex-1">
                             <h2 className="text-lg font-semibold leading-snug text-gray-900">{t(TITLE_KEY[tier])}</h2>
-                            <p className="mt-1.5 inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#23471f]">
-                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2D5A27]/85" aria-hidden />
+                            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#23471f]">
                               {t('investorBusinessPlans.docConfidentialBadge')}
                             </p>
                             <p className="mt-3 text-base font-light leading-relaxed text-gray-700">
                               {t('investorBusinessPlans.tierHintAfterGate')}
                             </p>
                           </div>
-                          <span className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#2D5A27]/20 bg-gradient-to-br from-[#2D5A27]/10 to-white/80 px-3 py-2 text-sm font-semibold text-[#163214] shadow-sm backdrop-blur-sm group-hover:border-[#2D5A27]/30">
+                          <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#23471f] group-hover:border-[#2D5A27]/30">
                             <FileText className="h-4 w-4 text-[#2D5A27]" aria-hidden />
                             {t('investorBusinessPlans.docUnlockCta')}
                           </span>
@@ -770,8 +733,8 @@ export default function InvestorBusinessPlansClient() {
               </div>
             )}
 
-            <div className="mt-12 rounded-xl border border-gray-200/60 bg-white/40 py-8 backdrop-blur-sm">
-              <p className="px-4 text-center text-sm font-light leading-relaxed text-gray-600">{t('investorBusinessPlans.footerNote')}</p>
+            <div className="mt-10 border-t border-gray-200 pt-8">
+              <p className="text-center text-sm font-light leading-relaxed text-gray-600">{t('investorBusinessPlans.footerNote')}</p>
             </div>
             <p className="sr-only">{t('investorBusinessPlans.ndWarning')}</p>
           </div>
