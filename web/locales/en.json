@@ -4299,96 +4299,100 @@
     "toolbarCopied": "Copied",
     "toolbarPrintPdf": "Save as PDF",
     "toolbarPrintAria": "Open print dialog to save as PDF",
-    "introNote": "Summary on this page; use Download for the full prospect PDF (same as other programme pages), or print if you prefer.",
-    "pdfHint": "Prefer a file? Use Download prospect PDF. You can still use Print → Save as PDF for the on-page layout including the appendix.",
+    "introNote": "Only highlights on this page. Full programme copy is in the prospect PDF or print appendix.",
+    "pdfHint": "Use Download prospect PDF for the complete document. Print still includes the full appendix.",
     "contentsTitle": "On this page",
     "contentsNav": "Jump to section",
     "skipToContent": "Skip to document",
     "coverEyebrow": "Controlled retail",
     "coverTitle": "BioVera Fresh",
-    "coverSubtitle": "An extra Bio Vera lane for verified fruit and vegetables—aligned with retail partners, not competing with them.",
+    "coverSubtitle": "Fresh fruit and vegetables straight from controlled production.",
     "pdfDocumentTitle": "Complete document — BioVera Fresh",
     "pdfDocumentSubtitle": "Full programme text for stakeholders, pilots, or archiving.",
-    "ctaTitle": "Interested in a franchise or a pilot store?",
-    "ctaBody": "Tell us about your location and capacity—we will connect you with the right programme contact.",
+    "ctaTitle": "Become a BioVera Fresh partner",
+    "ctaBody": "For a franchise or pilot store, send your location and capacity—we will guide you to the next step in the programme.",
     "ctaButton": "Contact Bio Vera",
     "webSections": [
       {
-        "title": "What BioVera Fresh is",
-        "body": "BioVera Fresh meets rising demand for goods from the Bio Vera network and more growers wanting to join. It is a controlled-quality retail concept—traceable shelf sales—not a replacement for your wholesale relationships."
+        "title": "BioVera Fresh",
+        "body": "Modern retail: producer → shopper with controlled quality, known origin and organised distribution."
       },
       {
-        "title": "Our goals",
-        "body": "• Reliable placement for network produce\n• Less shrink and surplus\n• Extra revenue through direct retail\n• Bring verified quality closer to shoppers"
+        "title": "The programme",
+        "body": "The natural extension of Bio Vera — reliable placement, less loss, a transparent model for shoppers."
       },
       {
-        "title": "How it works",
-        "body": "BioVera Fresh stores carry fruit and vegetables from the Bio Vera system, with known origin, quality gates cleared, and a clear line from farmer to buyer. Everything stays inside our controlled standards."
+        "title": "Flow & assortment",
+        "body": "• Grower network → Bio Vera standard → distribution → store\n• Fruit & veg, daily fruit salads, fresh juices, Bio Vera packs"
       },
       {
-        "title": "Relationship to the market",
-        "body": "Retail chains and distributors remain our primary partners. BioVera Fresh is additive: it stabilises placement, helps move surplus responsibly, and supports production continuity—expanded only where the market needs it."
+        "title": "Quality & pricing",
+        "body": "Controlled origin and daily checks. Stable prices; markdowns only by freshness / product condition."
       },
       {
-        "title": "Pricing and quality",
-        "body": "Prices stay stable; markdowns apply only when product condition or freshness requires it. Goods are sold honestly against their remaining freshness window."
-      },
-      {
-        "title": "Become a partner",
-        "body": "The BioVera Fresh franchise lets you build retail under Bio Vera rules—with assortment access, standards, and ops support. Details and economics are in the PDF appendix; start with Contact."
+        "title": "Partners & franchise",
+        "body": "Not competing with existing partners — an extra channel. Franchise: range, model, standards, support. Apply via Contact."
       }
     ],
     "pdfSections": [
       {
-        "title": "What BioVera Fresh is",
-        "body": "BioVera Fresh was developed in response to growing demand for products from the Bio Vera system and increasing farmer interest in cooperation. To enable stable placement of goods and secure an additional sales channel, we introduced the BioVera Fresh concept—a modern retail model based on controlled quality and direct connection between producers and the programme."
+        "title": "BioVera Fresh",
+        "body": "Fresh fruit and vegetables straight from controlled production.\n\nBioVera Fresh is a modern retail concept linking producers and end customers through controlled quality, known origin and organised distribution."
       },
       {
-        "title": "Our goal",
-        "body": "The BioVera Fresh programme aims to:\n• Enable reliable placement for products from our network\n• Reduce losses and surplus stock\n• Provide additional income through direct sales\n• Bring high-quality produce closer to end customers"
+        "title": "What BioVera Fresh is",
+        "body": "BioVera Fresh is the natural extension of the Bio Vera system.\n\nIt was developed in response to growing demand for quality products from our network and the need for stable, controlled placement of goods.\n\nOur goal is to provide a reliable sales channel, reduce losses and bring products closer to end customers through a modern, transparent model."
       },
       {
         "title": "How it works",
-        "body": "BioVera Fresh outlets offer:\n• Fruit and vegetables from the Bio Vera system\n• Products with known, documented origin\n• Goods that have passed programme quality controls\n• A transparent link between farmer and shopper\n\nAll products come from our controlled network and follow defined programme standards."
+        "body": "Products in the BioVera Fresh system follow a clearly defined flow:\n\n• production within the grower network\n• quality control through the Bio Vera standard\n• distribution through an organised system\n• sale in BioVera Fresh stores\n\nThis delivers consistent quality and trustworthy origin for every product."
       },
       {
-        "title": "Relationship to the market",
-        "body": "It is important to underline: our main partners remain retail chains and distributors. BioVera Fresh does not compete with existing buyers—it is an additional channel that stabilises the market, enables sale of surplus where appropriate, and supports continuity of production. Expansion of the BioVera Fresh network will be carefully controlled and aligned with real market needs."
+        "title": "What we offer",
+        "body": "BioVera Fresh stores offer:\n\n• fresh fruit and vegetables\n• fruit salads prepared daily\n• freshly squeezed juices\n• Bio Vera packs and curated selections\n\nAll products come from our network and meet defined quality standards."
       },
       {
-        "title": "Pricing and quality model",
-        "body": "BioVera Fresh applies a clear principle:\n• Prices remain stable\n• Discounts are used only when justified by the nature or freshness of the product\n• Goods are sold in line with their actual freshness\n\nThis preserves balance between quality and availability."
+        "title": "Standards and quality",
+        "body": "BioVera Fresh products are built on:\n\n• controlled origin\n• clearly defined production rules\n• daily quality checks\n• transparency towards shoppers\n\nOur focus is that every product keeps its value and freshness from production through to sale."
+      },
+      {
+        "title": "Pricing model",
+        "body": "Prices in BioVera Fresh stores remain stable and reflect product quality.\n\nDiscounts apply only in line with product nature and freshness, to keep the right balance between quality and availability."
+      },
+      {
+        "title": "Relationship with partners",
+        "body": "BioVera Fresh is not competition for existing partners.\n\nOur main partners remain retail chains, distributors and buyers with whom we build long-term collaboration.\n\nBioVera Fresh works as an additional channel that supports system stability, better use of produce and continuous distribution."
       },
       {
         "title": "Become a BioVera Fresh partner",
-        "body": "The BioVera Fresh franchise allows partners to become part of our system and grow their own retail business with Bio Vera support.\n\nAs a partner you receive:\n• Access to Bio Vera products and protocols\n• A clearly defined operating model\n• Workplace and quality standards\n• Support in development and operations\n\nFor commercial terms and territory discussion, use the contact options on this website."
+        "body": "BioVera Fresh lets partners join the system through a franchise model.\n\nAs a partner you receive:\n\n• access to Bio Vera products\n• a clearly defined business model\n• operational and quality standards\n• support in development and day-to-day operations\n\nIf you want to grow your own business with Bio Vera support, apply for partnership."
       }
     ],
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
-    "prospectNote": "The PDF includes the full BioVera Fresh programme text—goals, market role, pricing principles and partnership overview.",
+    "prospectNote": "The PDF contains the full narrative: concept, flow, assortment (including salads and juices), standards, pricing, partner relationship and franchise.",
     "franchiseBlueprintTitle": "How a BioVera Fresh franchise should look",
-    "franchiseBlueprintLead": "Pilot and rollout stores follow one recognisable recipe—so shoppers trust the brand, staff work efficiently, and cold-chain story stays visible.",
+    "franchiseBlueprintLead": "One recognisable store: clear brand, visible cold chain, clean operations.",
     "franchiseBlueprintItems": [
       {
-        "title": "Façade & primary signage",
-        "body": "Clean, light frontage with approved BioVera Fresh masthead, hours legible from the pavement, and controlled use of Vera green—no cluttered discount banners that fight the quality narrative."
+        "title": "Façade & signage",
+        "body": "Approved marks, legible hours—no noisy discount clutter."
       },
       {
-        "title": "Sales floor zoning",
-        "body": "Clear separation between ambient displays, chilled shelves for sensitive SKUs, and a fast “grab & go” lane where passports / QR story can be explained at the counter."
+        "title": "Floor zoning",
+        "body": "Ambient, chill and a quick lane for QR / passport at checkout."
       },
       {
-        "title": "Cold-chain visibility",
-        "body": "Glass-front chillers in good repair, monitored temperatures where required, and produce staged so freshness windows are honest—markdown logic matches what we publish in the programme."
+        "title": "Cold chain",
+        "body": "Working chillers, temperature rules, display matched to freshness."
       },
       {
-        "title": "Traceability touchpoints",
-        "body": "Batch QR or passport prompts at shelf edge or checkout, staff trained on the two-sentence Bio Vera story, and printed POS that matches current marketing templates."
+        "title": "Traceability",
+        "body": "QR or passport at shelf or till, short staff script, template POS."
       },
       {
-        "title": "Back-of-house & hygiene",
-        "body": "Dedicated hand-wash, separated receiving vs sales circulation where space allows, waste bins away from customer sightlines, and daily cleaning checklist aligned with partner ops manuals."
+        "title": "Hygiene",
+        "body": "Hand wash, receiving separated where possible, checklist-led cleaning."
       }
     ],
     "resourcesTitle": "Resources & downloads",
@@ -4397,7 +4401,7 @@
       {
         "id": "freshProspect",
         "title": "BioVera Fresh prospect",
-        "description": "Full narrative: goals, market positioning, pricing principles, franchise benefits and next steps.",
+        "description": "Full programme copy: concept, process, assortment, standards, pricing, partners and franchise.",
         "type": "PDF",
         "size": "~180 KB"
       }
