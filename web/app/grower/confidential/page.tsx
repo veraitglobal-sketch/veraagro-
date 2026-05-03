@@ -35,6 +35,8 @@ function internalPlanPath(tier: GrowerConfidentialTierId): string {
   return `/grower/confidential/plan/${tier}`;
 }
 
+const PRODUCER_LOGIN_CONFIDENTIAL = `/login/producer?returnTo=${encodeURIComponent('/grower/confidential')}`;
+
 export default function GrowerConfidentialPage() {
   const { t } = useTranslation();
   const navItems = useGrowerNavItems();
@@ -323,7 +325,7 @@ export default function GrowerConfidentialPage() {
   );
 
   return (
-    <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
+    <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo={PRODUCER_LOGIN_CONFIDENTIAL}>
       <SidebarLayout title={t('grower.nav.confidential')} navItems={navItems}>
         <GrowerPageShell>
           <GrowerPageHeader

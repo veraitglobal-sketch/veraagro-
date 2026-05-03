@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -23,11 +24,13 @@ type Props = {
 
 export default function PartnerPlanClientShell({ tier, markdown }: Props) {
   const { t } = useTranslation();
+  const pathname = usePathname() || `/grower/confidential/plan/${tier}`;
+  const producerLoginWithReturn = `/login/producer?returnTo=${encodeURIComponent(pathname)}`;
   const navItems = useGrowerNavItems();
   const title = t(TITLE_KEYS[tier]);
 
   return (
-    <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
+    <AuthGuard requiredRoles={['GROWER', 'FARMER']} redirectTo={producerLoginWithReturn}>
       <SidebarLayout title={title} navItems={navItems}>
         <GrowerPageShell>
           <div className="mb-6">
