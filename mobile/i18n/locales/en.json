@@ -831,6 +831,12 @@
     },
     "qualityEntry": {
       "screenTitle": "Quality entry",
+      "parcelHeading": "Parcel / crop block",
+      "allParcels": "All plots",
+      "parcelNotLinked": "No parcel linked",
+      "linkedPlot": "Linked plot",
+      "noParcelOnBatch": "This batch has no parcel on file — create lots from an approved parcel for full traceability.",
+      "needScoreOrNotes": "Enter a quality score (0–100), or notes, before saving.",
       "batchHeading": "Batch",
       "selectBatch": "Select a batch",
       "qualityScoreRange": "Quality score must be between 0 and 100",
@@ -1263,7 +1269,8 @@
       "allSent": "All sent",
       "itemsNotSent_one": "Could not send {{count}} item.",
       "itemsNotSent_other": "Could not send {{count}} items.",
-      "itemsNotSentHint": "Often: GPS outside the farm/parcel in the server — fix map or record on the plot; see errors on each pending entry."
+      "itemsNotSentHint": "Often: GPS outside the farm/parcel in the server — fix map or record on the plot; see errors on each pending entry.",
+      "fieldEntryNeedsParcelPlan": "This queued entry was saved before parcel and crop plan were required. Open the field diary, choose parcel and plan, and save again — or delete the old queue item from Home."
     },
     "fieldLogForm": {
       "introLead": "Log everything you do on the parcel (planting, fertilizing, spraying, harvest). Material barcode is optional when you use a tracked product; photo and GPS are required every time. Records feed traceability and the passport.",

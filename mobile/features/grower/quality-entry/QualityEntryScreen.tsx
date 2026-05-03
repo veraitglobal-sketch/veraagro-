@@ -55,7 +55,10 @@ export function QualityEntryScreen() {
           }}
         >
           <BatchSelector
-            batches={data.batches}
+            filteredBatches={data.filteredBatches}
+            parcelFilterOptions={data.parcelFilterOptions}
+            parcelFilterId={data.parcelFilterId}
+            setParcelFilterId={data.setParcelFilterId}
             selectedBatchId={data.selectedBatchId}
             setSelectedBatchId={data.setSelectedBatchId}
             loading={data.loading}

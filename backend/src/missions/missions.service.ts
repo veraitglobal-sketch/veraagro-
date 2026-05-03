@@ -318,23 +318,24 @@ export class MissionsService {
       throw new BadRequestException('Only growers (farmers) can create transport missions');
     }
 
-    // Get batch if provided
+    // Get batch if provided (internal UUID or public batchId e.g. BATCH-2026-0001)
     let batch = null;
     if (dto.batchId) {
-      batch = await this.prisma.batches.findUnique({
-        where: { id: dto.batchId },
+      const ref = dto.batchId.trim();
+      batch = await this.prisma.batches.findFirst({
+        where: { OR: [{ id: ref }, { batchId: ref }] },
         include: {
           estates: true,
         },
       });
       if (!batch) {
-        throw new NotFoundException(`Batch with ID ${dto.batchId} not found`);
+        throw new NotFoundException(`Batch not found`);
       }
 
       // Compliance + ownership only (do not block on virtual crate stock — that was stopping valid requests).
       // Material deduction can be tied to pickup/handover later; see deductMaterialsOnShipment for admin/logistics flows.
       try {
-        await this.materialControlService.validateBatchForShipment(dto.batchId, growerId, {
+        await this.materialControlService.validateBatchForShipment(batch.id, growerId, {
           requireCrateBalance: false,
         });
       } catch (error: unknown) {
@@ -387,7 +388,7 @@ export class MissionsService {
           id: crypto.randomUUID(),
           missionNumber,
           growerId,
-          batchId: dto.batchId,
+          batchId: batch?.id ?? null,
           harvestAnnouncementId: linkedHarvestId,
           pickupLocation: pickupLocation as any,
           pickupAddress: (dto.pickupAddress || '').trim() || '—',
@@ -1337,7 +1338,7 @@ export class MissionsService {
       await this.assertActiveLogisticsDriver(logisticsPartnerId, dto.logisticsDriverId.trim());
       assignedLogisticsDriverId = dto.logisticsDriverId.trim();
     }
-    return this.prisma.missions.update({
+    const updated = await this.prisma.missions.update({
       where: { id: missionId },
       data: {
         logisticsPartnerId,
@@ -1355,6 +1356,31 @@ export class MissionsService {
         assigned_logistics_driver: true,
       },
     });
+
+    try {
+      await this.notificationsGateway.notifyMissionUpdate(mission.growerId, updated);
+    } catch (e) {
+      this.logger.warn(`claim mission: notify grower failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    try {
+      await this.auditTrailService.createAuditTrail({
+        eventType: 'STATUS_CHANGE',
+        entityType: 'Mission',
+        entityId: missionId,
+        performedByUserId: logisticsPartnerId,
+        oldValue: { status: mission.status, logisticsPartnerId: mission.logisticsPartnerId },
+        newValue: {
+          status: 'ASSIGNED',
+          missionNumber: mission.missionNumber,
+          logisticsPartnerId,
+          claimedByPartner: true,
+        },
+      });
+    } catch (e) {
+      this.logger.warn(`claim mission: audit failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    return updated;
   }
 
   /** Logistics partners (for admin dispatch dropdown). */

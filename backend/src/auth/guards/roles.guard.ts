@@ -38,10 +38,12 @@ export class RolesGuard implements CanActivate {
       'DRIVER': 'LOGISTICS_PARTNER',
     };
 
-    // Map user roles to new role names
-    const mappedUserRoles = userRoles.map(role => roleMapping[role] || role);
+    // Map legacy role names onto newer guard checks; Prisma/UserRole still has both variants.
+    const mappedUserRoles = userRoles.map((role) => roleMapping[role] || role);
 
-    // Check if user has at least one of the required roles
-    return requiredRoles.some((requiredRole) => mappedUserRoles.includes(requiredRole));
+    /** Raw JWT roles plus mapped equivalents (PARTNER ⇒ must still match decorators that list PARTNER). */
+    const effectiveRoles = [...new Set([...userRoles, ...mappedUserRoles])];
+
+    return requiredRoles.some((requiredRole) => effectiveRoles.includes(requiredRole));
   }
 }

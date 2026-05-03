@@ -35,6 +35,11 @@ export class CreateQualityEntryDto {
   @IsString()
   batchId: string;
 
+  /** When sent, must match `batches.parcelId` — ties the submission to that plot/zasad in the UI. */
+  @IsOptional()
+  @IsString()
+  parcelId?: string;
+
   @IsOptional()
   @IsDateString()
   preCoolingStartTime?: string;

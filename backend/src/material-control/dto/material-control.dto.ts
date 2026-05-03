@@ -16,11 +16,21 @@ export class VerifyStickerRollDto {
 
   @IsString()
   batchId: string;
+
+  /** If sent, must match `batches.parcelId`. */
+  @IsOptional()
+  @IsString()
+  parcelId?: string;
 }
 
 export class UploadCompliancePhotosDto {
   @IsString()
   batchId: string;
+
+  /** If sent, must match `batches.parcelId`. */
+  @IsOptional()
+  @IsString()
+  parcelId?: string;
 
   @IsArray()
   @IsString({ each: true })

@@ -324,6 +324,18 @@ export class QualityEntryService {
       throw new ForbiddenException('You can only create quality entries for your own batches');
     }
 
+    const assertedParcelId = typeof dto.parcelId === 'string' ? dto.parcelId.trim() : '';
+    if (assertedParcelId) {
+      if (!batch.parcelId) {
+        throw new BadRequestException(
+          'This batch has no parcel on file. Omit parcel identifier or recreate the batch from an approved parcel.',
+        );
+      }
+      if (assertedParcelId !== batch.parcelId) {
+        throw new ForbiddenException('Selected parcel does not match this batch.');
+      }
+    }
+
     const batchIdFk = batch.id;
 
     const existing = await this.prisma.quality_entries.findUnique({
@@ -736,11 +748,18 @@ export class QualityEntryService {
   }
 
   /**
-   * Get quality entry for a batch
+   * Get quality entry for a batch (accepts internal batch UUID or public lot code BATCH-…).
    */
-  async getQualityEntry(batchId: string) {
+  async getQualityEntry(batchRef: string) {
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: batchRef }, { batchId: batchRef }] },
+      select: { id: true },
+    });
+    if (!batch?.id) {
+      return null;
+    }
     return this.prisma.quality_entries.findUnique({
-      where: { batchId },
+      where: { batchId: batch.id },
       include: {
         batches: {
           include: {
@@ -752,11 +771,18 @@ export class QualityEntryService {
   }
 
   /**
-   * Check if batch can create shipment (quality entry completed)
+   * Check if batch can create shipment (quality entry completed). Accepts internal id or BATCH-…
    */
-  async canCreateShipment(batchId: string): Promise<boolean> {
+  async canCreateShipment(batchRef: string): Promise<boolean> {
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: batchRef }, { batchId: batchRef }] },
+      select: { id: true },
+    });
+    if (!batch?.id) {
+      return false;
+    }
     const qualityEntry = await this.prisma.quality_entries.findUnique({
-      where: { batchId },
+      where: { batchId: batch.id },
     });
 
     return qualityEntry !== null && qualityEntry.status === 'COMPLETED';

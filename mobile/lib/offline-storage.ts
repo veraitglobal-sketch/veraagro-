@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { CreateHarvestPlanBody } from './api';
 
+/** Optional material kind captured with field log (offline row). */
+export type FieldLogMaterialKind = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+
 const PENDING_ENTRIES_KEY = 'pending_field_entries';
 const PENDING_HARVEST_KEY = 'pending_harvest_plans';
 const PENDING_PRODUCTS_KEY = 'pending_products';
@@ -14,6 +17,16 @@ export interface PendingFieldEntry {
   id: string;
   /** Set when saving so sync targets the same estate (avoids 403 if API returns estates in a different order). */
   estateId?: string;
+  /** Required for sync to `POST /growth-logs` (digital passport / parcel trail). */
+  parcelId?: string;
+  harvestAnnouncementId?: string;
+  /** Copied at save from the selected plan — used for client checks and sync payload. */
+  planAnnouncementType?: string;
+  materialKind?: FieldLogMaterialKind;
+  /** Free text merged into growth log notes; planting plans require min length server-side. */
+  journalNotes?: string;
+  /** Required when plan is PLANTING (server-validated). */
+  growthStage?: string;
   activityType: FieldActivityType;
   materialID?: string;
   photoUri: string;

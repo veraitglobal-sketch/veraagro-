@@ -60,7 +60,7 @@ export class MaterialControlController {
   }
 
   @Post('verify-sticker')
-  @Roles('GROWER')
+  @Roles('GROWER', 'FARMER', 'PARTNER')
   async verifyStickerRoll(
     @Body() dto: VerifyStickerRollDto,
     @GetUser() user: any,
@@ -69,7 +69,7 @@ export class MaterialControlController {
   }
 
   @Post('compliance-photos')
-  @Roles('GROWER')
+  @Roles('GROWER', 'FARMER', 'PARTNER')
   async uploadCompliancePhotos(
     @Body() dto: UploadCompliancePhotosDto,
     @GetUser() user: any,

@@ -1,4 +1,6 @@
 import { NextRequest } from 'next/server';
+import type { ConfidentialTier } from '@/lib/grower-confidential-types';
+import type { ConfidentialUnlockResponse } from '@/lib/grower-confidential-server';
 import {
   checkInviteGate,
   confidentialJsonResponse,
@@ -8,6 +10,12 @@ import {
   unlockFromPasswordBody,
   verifyGrowerJwt,
 } from '@/lib/grower-confidential-server';
+import {
+  createPartnerPlanUnlockToken,
+  hasPartnerPlanCookieSecret,
+  serializePartnerPlanClearCookie,
+  serializePartnerPlanSetCookie,
+} from '@/lib/partner-plan-cookie';
 
 async function requireGrowerAndGate(request: NextRequest) {
   if (!isConfidentialSectionEnabled()) {
@@ -31,6 +39,31 @@ async function requireGrowerAndGate(request: NextRequest) {
   return null;
 }
 
+const INTERNAL_KEYS: Array<{ tier: ConfidentialTier; flag: keyof ConfidentialUnlockResponse }> = [
+  { tier: 'short', flag: 'shortTermInternal' },
+  { tier: 'medium', flag: 'mediumTermInternal' },
+  { tier: 'long', flag: 'longTermInternal' },
+];
+
+function stripUnsettableInternalFlags(payload: ConfidentialUnlockResponse): ConfidentialUnlockResponse {
+  if (hasPartnerPlanCookieSecret()) return payload;
+  const next = { ...payload };
+  for (const { flag } of INTERNAL_KEYS) {
+    delete (next as Record<string, unknown>)[flag as string];
+  }
+  return next;
+}
+
+function appendPartnerPlanCookies(res: ReturnType<typeof confidentialJsonResponse>, payload: ConfidentialUnlockResponse) {
+  for (const { tier, flag } of INTERNAL_KEYS) {
+    if (!payload[flag]) continue;
+    const tok = createPartnerPlanUnlockToken(tier);
+    if (tok) {
+      res.headers.append('Set-Cookie', serializePartnerPlanSetCookie(tier, tok));
+    }
+  }
+}
+
 /** Lists which plans are configured (no URLs). Same auth + invite gate as POST. */
 export async function GET(request: NextRequest) {
   const deny = await requireGrowerAndGate(request);
@@ -43,7 +76,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
-/** Body: `{ passwords?: { short?, medium?, long? } }` — returns URLs only for matching tiers. */
+/** Body: `{ passwords?: { short?, medium?, long? } }` — returns URLs / internal flags for matching tiers; sets HttpOnly cookies for internal reader. */
 export async function POST(request: NextRequest) {
   const deny = await requireGrowerAndGate(request);
   if (deny) return deny;
@@ -56,5 +89,24 @@ export async function POST(request: NextRequest) {
   }
 
   const unlocked = unlockFromPasswordBody(parsed);
-  return confidentialJsonResponse(unlocked);
+  const payload = stripUnsettableInternalFlags(unlocked);
+  const res = confidentialJsonResponse(payload);
+  appendPartnerPlanCookies(res, payload);
+  return res;
+}
+
+/** Clears HttpOnly reader cookie for one tier (`?tier=short|medium|long`). */
+export async function DELETE(request: NextRequest) {
+  const deny = await requireGrowerAndGate(request);
+  if (deny) return deny;
+
+  const tierRaw = request.nextUrl.searchParams.get('tier');
+  if (tierRaw !== 'short' && tierRaw !== 'medium' && tierRaw !== 'long') {
+    return confidentialJsonResponse({ error: 'bad_request' as const }, 400);
+  }
+  const tier = tierRaw as ConfidentialTier;
+
+  const res = confidentialJsonResponse({ ok: true as const });
+  res.headers.append('Set-Cookie', serializePartnerPlanClearCookie(tier));
+  return res;
 }

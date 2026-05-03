@@ -5,7 +5,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from './api-url';
-import type { Estate } from './api';
+import { growthLogsAPI, type Estate } from './api';
+import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from './image-data-url';
+import { sha256HexFromImageUri } from './image-hash';
+import { getOrCreateDeviceId } from './device-id';
 import i18n from '../i18n/config';
 import { growerOfflineCache } from './grower-offline-cache';
 import { apiErrorMessage, axiosResponseStatus } from './api-error';
@@ -18,6 +21,20 @@ const syncApi = axios.create({
 });
 
 const SYNC_STATUS_KEY = 'sync_status';
+const MAX_FIELD_LOG_PHOTO_BYTES = 8 * 1024 * 1024;
+
+function buildFieldLogGrowthNotes(entry: PendingFieldEntry): string {
+  const lines: string[] = [];
+  lines.push(`[Field diary · ${entry.activityType}]`);
+  const mat = entry.materialID?.trim();
+  if (mat) {
+    const kind = entry.materialKind;
+    lines.push(kind ? `${kind}: ${mat}` : `Material: ${mat}`);
+  }
+  const jn = entry.journalNotes?.trim();
+  if (jn) lines.push(jn);
+  return lines.join('\n');
+}
 
 /** Queue items that still need upload (pending, failed retry, or stuck mid-sync after crash). */
 function needsSync(status: string | undefined): boolean {
@@ -131,17 +148,9 @@ export const syncService = {
         entry.status = 'syncing';
         await this.updateEntryStatus(entry.id, 'syncing');
 
-        // Map activity type to backend format (legacy Serbian labels kept for old offline data)
-        const activityTypeMap: Record<string, string> = {
-          Planting: 'SETVA',
-          Fertilizing: 'PRSKANJE',
-          Spraying: 'PRSKANJE',
-          Harvest: 'BERBA',
-          Setva: 'SETVA',
-          'Đubrenje': 'PRSKANJE',
-          Prskanje: 'PRSKANJE',
-          'Žetva': 'BERBA',
-        };
+        if (!entry.parcelId?.trim() || !entry.harvestAnnouncementId?.trim()) {
+          throw new Error(tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan'));
+        }
 
         // Prefer estate recorded at save time; use live list or last cached copy when offline.
         const { estatesAPI } = await import('./api');
@@ -164,29 +173,34 @@ export const syncService = {
           throw new Error('No estate found. Please create an estate first.');
         }
 
-        const entryData: Record<string, unknown> = {
-          type: activityTypeMap[entry.activityType] || 'PRSKANJE',
-          farmId: estateId,
-          data: {
-            date: entry.timestamp,
-            location: entry.location,
-            notes: `Offline entry synced at ${new Date().toISOString()}`,
-          },
-          createdAt: entry.timestamp,
-        };
-        const mat = entry.materialID?.trim();
-        if (mat) {
-          entryData.fertilizerBarcode = mat;
+        let imageDataUrl: string;
+        try {
+          imageDataUrl = await imageUriToJpegDataUrl(entry.photoUri);
+          assertDataUrlWithinSize(imageDataUrl, MAX_FIELD_LOG_PHOTO_BYTES);
+        } catch (e: unknown) {
+          const raw = e instanceof Error ? e.message : '';
+          if (raw === 'PHOTO_TOO_LARGE') {
+            throw new Error(tString(i18n.t, 'producer.growthJournalAlerts.photoLarge'));
+          }
+          throw new Error(apiErrorMessage(e, tString(i18n.t, 'producer.fieldLogAlerts.saveFailed')));
         }
 
-        // Get auth token
-        const token = await AsyncStorage.getItem('auth_token');
+        const imageHash = await sha256HexFromImageUri(entry.photoUri);
+        const deviceId = await getOrCreateDeviceId();
+        const notesMerged = buildFieldLogGrowthNotes(entry).trim();
 
-        // Send to backend
-        await syncApi.post('/field-entries', entryData, {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : undefined,
-          },
+        await growthLogsAPI.create({
+          estateId,
+          parcelId: entry.parcelId.trim(),
+          harvestAnnouncementId: entry.harvestAnnouncementId.trim(),
+          imageUrl: imageDataUrl,
+          imageHash,
+          gpsLatitude: entry.location.lat,
+          gpsLongitude: entry.location.lng,
+          deviceId,
+          deviceTimestamp: entry.timestamp,
+          notes: notesMerged || undefined,
+          growthStage: entry.growthStage?.trim() || undefined,
         });
 
         // Mark as synced

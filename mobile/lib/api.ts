@@ -798,6 +798,7 @@ export interface QualityEntry {
 export const qualityEntryAPI = {
   create: async (data: {
     batchId: string;
+    parcelId?: string;
     qualityScore?: number;
     notes?: string;
   }): Promise<QualityEntry> => {
@@ -1106,14 +1107,19 @@ export const materialControlAPI = {
     const response = await api.get(`/material-control/compliance-status/${encodeURIComponent(batchId)}`);
     return response.data;
   },
-  verifySticker: async (body: { batchId: string; stickerRollId: string }) => {
+  verifySticker: async (body: { batchId: string; stickerRollId: string; parcelId?: string | null }) => {
     const response = await api.post('/material-control/verify-sticker', body);
     return response.data;
   },
   /**
    * Same contract as web: `photos` = three data URLs in order PUNNETS, LABELING, PALLETIZATION.
    */
-  uploadCompliancePhotos: async (body: { batchId: string; stickerRollId: string; photos: string[] }) => {
+  uploadCompliancePhotos: async (body: {
+    batchId: string;
+    stickerRollId: string;
+    photos: string[];
+    parcelId?: string | null;
+  }) => {
     const response = await api.post('/material-control/compliance-photos', body, { timeout: 120000 });
     return response.data;
   },

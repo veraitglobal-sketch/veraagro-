@@ -36,7 +36,7 @@ export type GrowerNavItem = {
  * Full grower sidebar: same on every /grower/* page.
  * Order follows field workflow: dashboard → guide → parcels → plantings → materials →
  * batches (packed) → entry log → scan pallets → quality → compliance → education →
- * confidential partner plans → suppliers → transport → tracker → profile.
+ * confidential partner plans (`web/content/partner-plans/*.md` reader under `/grower/confidential/plan/*`) → suppliers → transport → tracker → profile.
  * Parity: mobile stack route `/education` + deep links (`grower-web-href-to-mobile`). Confidential plans are web-only for now.
  */
 export function buildGrowerNavItems(t: TFunction, locale: SiteLocale): GrowerNavItem[] {

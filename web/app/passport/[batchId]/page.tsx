@@ -33,6 +33,25 @@ interface GrowthLog {
   gpsLongitude?: number;
   gpsAccuracyM?: number | null;
 }
+
+interface PassportMaterialScan {
+  entryType: string;
+  scannedBarcode: string;
+  barcodeType: string;
+  isCompliant: boolean;
+  complianceStatus: string;
+  networkTimestamp: string;
+  deviceTimestamp: string;
+  relatedBatchId: string | null;
+  blockedReason: string | null;
+}
+
+interface ParcelSeedInfo {
+  serialNumber: string;
+  name: string;
+  batchNumber: string;
+  seedType: string;
+}
 interface HarvestAnnouncement {
   estimatedDate: string;
   actualDate: string | null;
@@ -94,7 +113,26 @@ interface PassportData {
     maxTemp?: number | null;
     avgTemp?: number | null;
     isWithinRange?: boolean | null;
-    temperatureData?: { timestamp: string; temperature: number; location?: string }[];
+    temperatureData?: {
+      timestamp: string;
+      temperature: number;
+      location?: string;
+      humidity?: number | null;
+      phase?: 'farm' | 'transport';
+      missionNumber?: string | null;
+    }[];
+    farmColdChain?: {
+      minTemp: number;
+      maxTemp: number;
+      avgTemp: number;
+      readingsCount: number;
+    } | null;
+    transportColdChain?: {
+      minTemp: number;
+      maxTemp: number;
+      avgTemp: number;
+      readingsCount: number;
+    } | null;
   } | null;
   freshness?: {
     remainingShelfLifeHours?: number;
@@ -111,6 +149,12 @@ interface PassportData {
     assignedAt?: string | null;
     acceptedAt?: string | null;
     logisticsPartner?: { name: string } | null;
+    logisticsHandover?: {
+      insideTruckTemperature: number;
+      timestamp: string;
+      status?: string;
+      notes?: string | null;
+    } | null;
     vehicle?: {
       vehicleNumber?: string;
       licensePlate?: string;
@@ -150,7 +194,15 @@ interface PassportData {
   treatments?: Treatment[];
   growthLogs?: GrowthLog[];
   harvestAnnouncements?: HarvestAnnouncement[];
-  qualityEntry?: { preCoolingStartTime: string; weatherAtHarvest: unknown; notes: string | null; status: string } | null;
+  qualityEntry?: {
+    preCoolingStartTime: string;
+    weatherAtHarvest: unknown;
+    weatherAtHarvestSummary?: string | null;
+    notes: string | null;
+    status: string;
+  } | null;
+  parcelSeed?: ParcelSeedInfo | null;
+  materialScans?: PassportMaterialScan[];
 }
 
 export default function ProductPassportPage() {
@@ -256,13 +308,38 @@ export default function ProductPassportPage() {
             arrival: arrived ? { estimated: arrived, location: 'European Market' } : null,
           };
         })(),
-        coldChain: apiData.coldChainProof ? {
-          minTemp: apiData.coldChainProof.minTemp,
-          maxTemp: apiData.coldChainProof.maxTemp,
-          avgTemp: apiData.coldChainProof.avgTemp,
-          isWithinRange: apiData.coldChainProof.isWithinRange,
-          temperatureData: apiData.coldChainProof.temperatureData?.map((d: { timestamp: string; temperature: number; location?: string }) => ({ timestamp: typeof d.timestamp === 'string' ? d.timestamp : new Date(d.timestamp).toISOString(), temperature: d.temperature, location: d.location })),
-        } : null,
+        coldChain: apiData.coldChainProof
+          ? {
+              minTemp: apiData.coldChainProof.minTemp,
+              maxTemp: apiData.coldChainProof.maxTemp,
+              avgTemp: apiData.coldChainProof.avgTemp,
+              isWithinRange: apiData.coldChainProof.isWithinRange,
+              farmColdChain: apiData.coldChainProof.farmColdChain ?? null,
+              transportColdChain: apiData.coldChainProof.transportColdChain ?? null,
+              temperatureData: apiData.coldChainProof.temperatureData?.map(
+                (d: {
+                  timestamp: string | Date;
+                  temperature: number;
+                  location?: string;
+                  humidity?: number | null;
+                  phase?: 'farm' | 'transport';
+                  missionNumber?: string | null;
+                }) => ({
+                  timestamp: typeof d.timestamp === 'string' ? d.timestamp : new Date(d.timestamp).toISOString(),
+                  temperature: d.temperature,
+                  location:
+                    typeof d.location === 'string'
+                      ? d.location
+                      : d.location != null
+                        ? String(d.location)
+                        : undefined,
+                  humidity: d.humidity ?? null,
+                  phase: d.phase,
+                  missionNumber: d.missionNumber ?? null,
+                }),
+              ),
+            }
+          : null,
         freshness: apiData.freshness ? { remainingShelfLifeHours: apiData.freshness.remainingShelfLifeHours, expiresAt: apiData.freshness.expiresAt != null ? (typeof apiData.freshness.expiresAt === 'string' ? apiData.freshness.expiresAt : new Date(apiData.freshness.expiresAt).toISOString()) : undefined, timestampHarvested: apiData.freshness.timestampHarvested != null ? (typeof apiData.freshness.timestampHarvested === 'string' ? apiData.freshness.timestampHarvested : new Date(apiData.freshness.timestampHarvested).toISOString()) : undefined, isExpired: apiData.freshness.isExpired } : null,
         sustainability: apiData.sustainability ? { totalDistanceKm: apiData.sustainability.totalDistanceKm, sustainabilityScore: apiData.sustainability.sustainabilityScore, route: apiData.sustainability.route } : null,
         missions: apiData.missions?.map((m: any) => ({
@@ -289,6 +366,17 @@ export default function ProductPassportPage() {
           })),
           pickedUpAt: m.pickedUpAt != null ? (typeof m.pickedUpAt === 'string' ? m.pickedUpAt : new Date(m.pickedUpAt).toISOString()) : null,
           deliveredAt: m.deliveredAt != null ? (typeof m.deliveredAt === 'string' ? m.deliveredAt : new Date(m.deliveredAt).toISOString()) : null,
+          logisticsHandover: m.logisticsHandover
+            ? {
+                insideTruckTemperature: m.logisticsHandover.insideTruckTemperature,
+                timestamp:
+                  typeof m.logisticsHandover.timestamp === 'string'
+                    ? m.logisticsHandover.timestamp
+                    : new Date(m.logisticsHandover.timestamp).toISOString(),
+                status: m.logisticsHandover.status,
+                notes: m.logisticsHandover.notes ?? null,
+              }
+            : null,
         })),
         protocol360: apiData.protocol360 || null,
         labReport: { url: apiData.labReport?.url || '#', available: apiData.labReport?.available !== false },
@@ -366,12 +454,41 @@ export default function ProductPassportPage() {
           status: h.status,
           notes: h.notes ?? null,
         })),
-        qualityEntry: apiData.qualityEntry ? {
-          preCoolingStartTime: typeof apiData.qualityEntry.preCoolingStartTime === 'string' ? apiData.qualityEntry.preCoolingStartTime : new Date(apiData.qualityEntry.preCoolingStartTime).toISOString(),
-          weatherAtHarvest: apiData.qualityEntry.weatherAtHarvest,
-          notes: apiData.qualityEntry.notes ?? null,
-          status: apiData.qualityEntry.status,
-        } : null,
+        qualityEntry: apiData.qualityEntry
+          ? {
+              preCoolingStartTime:
+                typeof apiData.qualityEntry.preCoolingStartTime === 'string'
+                  ? apiData.qualityEntry.preCoolingStartTime
+                  : new Date(apiData.qualityEntry.preCoolingStartTime).toISOString(),
+              weatherAtHarvest: apiData.qualityEntry.weatherAtHarvest,
+              weatherAtHarvestSummary: apiData.qualityEntry.weatherAtHarvestSummary ?? null,
+              notes: apiData.qualityEntry.notes ?? null,
+              status: apiData.qualityEntry.status,
+            }
+          : null,
+        parcelSeed: apiData.parcelSeed
+          ? {
+              serialNumber: String(apiData.parcelSeed.serialNumber ?? ''),
+              name: String(apiData.parcelSeed.name ?? ''),
+              batchNumber: String(apiData.parcelSeed.batchNumber ?? ''),
+              seedType: String(apiData.parcelSeed.seedType ?? ''),
+            }
+          : null,
+        materialScans: Array.isArray(apiData.materialScans)
+          ? apiData.materialScans.map((m: PassportMaterialScan & { networkTimestamp: string | Date; deviceTimestamp: string | Date }) => ({
+              entryType: m.entryType,
+              scannedBarcode: m.scannedBarcode,
+              barcodeType: m.barcodeType,
+              isCompliant: Boolean(m.isCompliant),
+              complianceStatus: m.complianceStatus,
+              networkTimestamp:
+                typeof m.networkTimestamp === 'string' ? m.networkTimestamp : new Date(m.networkTimestamp).toISOString(),
+              deviceTimestamp:
+                typeof m.deviceTimestamp === 'string' ? m.deviceTimestamp : new Date(m.deviceTimestamp).toISOString(),
+              relatedBatchId: m.relatedBatchId ?? null,
+              blockedReason: m.blockedReason ?? null,
+            }))
+          : [],
       };
       
       setData(passportData);
@@ -551,7 +668,7 @@ export default function ProductPassportPage() {
               )}
             </div>
             <div>
-              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">When harvested</p>
+              <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">{t('passportPublic.batchPage.whenHarvested')}</p>
               <p className="text-[15px] font-light text-gray-900">{data.harvest.when}</p>
               {data.harvest.period && (
                 <p className="text-[11px] font-light text-gray-600 mt-0.5">
@@ -561,6 +678,136 @@ export default function ProductPassportPage() {
             </div>
           </div>
         </motion.div>
+
+        {data.qualityEntry &&
+          (data.qualityEntry.weatherAtHarvestSummary ||
+            data.qualityEntry.notes ||
+            data.qualityEntry.preCoolingStartTime) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.035 }}
+            className="mb-10 pb-8 border-b border-gray-200"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Thermometer className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">
+                {t('passportPublic.batchPage.harvestConditionsEyebrow')}
+              </span>
+            </div>
+            <p className="text-xs font-light text-gray-600 mb-4">{t('passportPublic.batchPage.harvestConditionsIntro')}</p>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3 text-sm text-gray-800">
+              {data.qualityEntry.weatherAtHarvestSummary && (
+                <div>
+                  <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">
+                    {t('passportPublic.batchPage.harvestWeatherSummary')}
+                  </p>
+                  <p className="text-[14px] font-light text-gray-900">{data.qualityEntry.weatherAtHarvestSummary}</p>
+                </div>
+              )}
+              {data.qualityEntry.preCoolingStartTime && (
+                <div>
+                  <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">
+                    {t('passportPublic.batchPage.preCoolingTitle')}
+                  </p>
+                  <p className="font-mono text-xs text-gray-700">{formatDateTime(data.qualityEntry.preCoolingStartTime)}</p>
+                </div>
+              )}
+              {data.qualityEntry.notes?.trim() ? (
+                <div>
+                  <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-1">
+                    {t('passportPublic.batchPage.qualityNotes')}
+                  </p>
+                  <p className="text-[13px] font-light text-gray-700 whitespace-pre-wrap">{data.qualityEntry.notes}</p>
+                </div>
+              ) : null}
+            </div>
+          </motion.div>
+        )}
+
+        {data.parcelSeed && (data.parcelSeed.serialNumber || data.parcelSeed.name) ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.036 }}
+            className="mb-10 pb-8 border-b border-gray-200"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">
+                {t('passportPublic.batchPage.seedEyebrow')}
+              </span>
+            </div>
+            <p className="text-xs font-light text-gray-600 mb-4">{t('passportPublic.batchPage.seedIntro')}</p>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 grid sm:grid-cols-2 gap-3 text-sm">
+              <p>
+                <span className="text-gray-500 text-[11px]">{t('passportPublic.batchPage.seedSerial')}</span>
+                <br />
+                <span className="font-mono text-gray-900">{data.parcelSeed.serialNumber || '—'}</span>
+              </p>
+              <p>
+                <span className="text-gray-500 text-[11px]">{t('passportPublic.batchPage.seedName')}</span>
+                <br />
+                <span className="text-gray-900">{data.parcelSeed.name || '—'}</span>
+              </p>
+              <p>
+                <span className="text-gray-500 text-[11px]">{t('passportPublic.batchPage.seedBatchNum')}</span>
+                <br />
+                <span className="font-mono text-gray-900">{data.parcelSeed.batchNumber || '—'}</span>
+              </p>
+              <p>
+                <span className="text-gray-500 text-[11px]">{t('passportPublic.batchPage.seedType')}</span>
+                <br />
+                <span className="text-gray-900">{data.parcelSeed.seedType || '—'}</span>
+              </p>
+            </div>
+          </motion.div>
+        ) : null}
+
+        {data.materialScans && data.materialScans.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.037 }}
+            className="mb-10 pb-8 border-b border-gray-200"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Shield className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">
+                {t('passportPublic.batchPage.materialsEyebrow')}
+              </span>
+            </div>
+            <p className="text-xs font-light text-gray-600 mb-4">{t('passportPublic.batchPage.materialsIntro')}</p>
+            <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+              <div className="max-h-[360px] overflow-x-auto overflow-y-auto">
+                <table className="w-full text-left text-sm min-w-[720px]">
+                  <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
+                    <tr>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colMaterialTime')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colEntryType')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colBarcodeType')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colBarcode')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colCompliant')}</th>
+                      <th className="py-3 px-2 font-medium text-gray-700">{t('passportPublic.batchPage.colMaterialStatus')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {data.materialScans.map((row, i) => (
+                      <tr key={`${row.scannedBarcode}-${i}`} className="hover:bg-gray-50/50">
+                        <td className="py-2.5 px-2 font-mono text-xs whitespace-nowrap">{formatDateTime(row.networkTimestamp)}</td>
+                        <td className="py-2.5 px-2 text-gray-800">{row.entryType}</td>
+                        <td className="py-2.5 px-2 text-gray-700">{row.barcodeType}</td>
+                        <td className="py-2.5 px-2 font-mono text-xs text-gray-900">{row.scannedBarcode}</td>
+                        <td className="py-2.5 px-2">{row.isCompliant ? t('passportPublic.batchPage.yes') : t('passportPublic.batchPage.no')}</td>
+                        <td className="py-2.5 px-2 text-gray-700">{row.complianceStatus}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
 
         {/* 2b. Chronology – activities in order */}
         {(() => {
@@ -598,10 +845,11 @@ export default function ProductPassportPage() {
               g.gpsLatitude != null && g.gpsLongitude != null
                 ? `GPS: ${g.gpsLatitude.toFixed(5)}, ${g.gpsLongitude.toFixed(5)}${g.gpsAccuracyM != null ? ` (±${g.gpsAccuracyM}m)` : ''}`
                 : '';
+            const isFieldDiary = (g.notes || '').trim().startsWith('[Field diary');
             chronologyEvents.push({
               sortKey: new Date(g.networkTimestamp).getTime(),
               displayDate: formatDateTime(g.networkTimestamp),
-              label: 'Growth log',
+              label: isFieldDiary ? t('passportPublic.batchPage.activityFieldDiary') : t('passportPublic.batchPage.activityGrowthLog'),
               detail: [g.growthStage && `Stage: ${g.growthStage}`, g.notes, gGps, `Device: ${formatDateTime(g.deviceTimestamp)}`].filter(Boolean).join(' · ') || 'Field record',
             });
           });
@@ -625,10 +873,32 @@ export default function ProductPassportPage() {
             chronologyEvents.push({
               sortKey: new Date(data.qualityEntry.preCoolingStartTime).getTime(),
               displayDate: formatDateTime(data.qualityEntry.preCoolingStartTime),
-              label: 'Pre-cooling / quality check',
-              detail: `Status: ${data.qualityEntry.status}`,
+              label: t('passportPublic.batchPage.activityPrecooling'),
+              detail: [
+                `${t('passportPublic.batchPage.qualityStatus')}: ${data.qualityEntry.status}`,
+                data.qualityEntry.weatherAtHarvestSummary ||
+                  (data.qualityEntry.weatherAtHarvest != null
+                    ? `${t('passportPublic.batchPage.harvestWeather')}: ${typeof data.qualityEntry.weatherAtHarvest === 'object' ? JSON.stringify(data.qualityEntry.weatherAtHarvest) : String(data.qualityEntry.weatherAtHarvest)}`
+                    : ''),
+              ]
+                .filter(Boolean)
+                .join(' · '),
             });
           }
+          (data.missions || []).forEach((m) => {
+            const lh = m.logisticsHandover;
+            if (lh?.timestamp && lh.insideTruckTemperature != null) {
+              chronologyEvents.push({
+                sortKey: new Date(lh.timestamp).getTime(),
+                displayDate: formatDateTime(lh.timestamp),
+                label: t('passportPublic.batchPage.activityTruckLoadCold'),
+                detail: t('passportPublic.batchPage.truckLoadTempDetail', {
+                  temp: lh.insideTruckTemperature,
+                  mission: m.missionNumber || '—',
+                }),
+              });
+            }
+          });
           if (data.timeline?.verified) {
             chronologyEvents.push({
               sortKey: new Date(data.timeline.verified).getTime(),
@@ -755,36 +1025,127 @@ export default function ProductPassportPage() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Thermometer className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
-              <span className="text-[10px] font-light tracking-[0.2em] text-[gray-900]/60 uppercase">Cold chain & freshness</span>
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">
+                {t('passportPublic.batchPage.coldChainEyebrow')}
+              </span>
             </div>
             <div className="space-y-4">
               {data.coldChain && (
                 <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
-                  <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-2">Temperature</p>
+                  <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-2">
+                    {t('passportPublic.batchPage.coldChainOverall')}
+                  </p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                    {data.coldChain.minTemp != null && <p className="text-[gray-900]/80"><strong>Min:</strong> {data.coldChain.minTemp}°C</p>}
-                    {data.coldChain.maxTemp != null && <p className="text-[gray-900]/80"><strong>Max:</strong> {data.coldChain.maxTemp}°C</p>}
-                    {data.coldChain.avgTemp != null && <p className="text-[gray-900]/80"><strong>Avg:</strong> {Number(data.coldChain.avgTemp).toFixed(1)}°C</p>}
+                    {data.coldChain.minTemp != null && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.tempMin')}</strong> {data.coldChain.minTemp}°C
+                      </p>
+                    )}
+                    {data.coldChain.maxTemp != null && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.tempMax')}</strong> {data.coldChain.maxTemp}°C
+                      </p>
+                    )}
+                    {data.coldChain.avgTemp != null && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.tempAvg')}</strong>{' '}
+                        {Number(data.coldChain.avgTemp).toFixed(1)}°C
+                      </p>
+                    )}
                     {data.coldChain.isWithinRange !== undefined && data.coldChain.isWithinRange !== null && (
-                      <p className="text-[gray-900]/80 flex items-center gap-1">
-                        {data.coldChain.isWithinRange ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
-                        {data.coldChain.isWithinRange ? 'Within safe range' : 'Check logs'}
+                      <p className="text-gray-800 flex items-center gap-1">
+                        {data.coldChain.isWithinRange ? (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <AlertTriangle className="h-4 w-4 text-amber-600" />
+                        )}
+                        {data.coldChain.isWithinRange
+                          ? t('passportPublic.batchPage.withinRangeYes')
+                          : t('passportPublic.batchPage.withinRangeNo')}
                       </p>
                     )}
                   </div>
+                  {(data.coldChain.farmColdChain || data.coldChain.transportColdChain) && (
+                    <div className="mt-4 grid sm:grid-cols-2 gap-3 text-[12px] text-gray-700 border-t border-gray-200/80 pt-3">
+                      {data.coldChain.farmColdChain && (
+                        <div className="rounded-md bg-white/80 border border-gray-100 p-3">
+                          <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            {t('passportPublic.batchPage.coldChainFarm')}
+                          </p>
+                          <p>
+                            {t('passportPublic.batchPage.tempMin')}{' '}
+                            {data.coldChain.farmColdChain.minTemp}°C · {t('passportPublic.batchPage.tempMax')}{' '}
+                            {data.coldChain.farmColdChain.maxTemp}°C · {t('passportPublic.batchPage.tempAvg')}{' '}
+                            {Number(data.coldChain.farmColdChain.avgTemp).toFixed(1)}°C
+                          </p>
+                          <p className="text-[11px] text-gray-500 mt-1">
+                            {t('passportPublic.batchPage.readingsCount', {
+                              count: data.coldChain.farmColdChain.readingsCount,
+                            })}
+                          </p>
+                        </div>
+                      )}
+                      {data.coldChain.transportColdChain && (
+                        <div className="rounded-md bg-white/80 border border-gray-100 p-3">
+                          <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            {t('passportPublic.batchPage.coldChainTransport')}
+                          </p>
+                          <p>
+                            {t('passportPublic.batchPage.tempMin')}{' '}
+                            {data.coldChain.transportColdChain.minTemp}°C · {t('passportPublic.batchPage.tempMax')}{' '}
+                            {data.coldChain.transportColdChain.maxTemp}°C · {t('passportPublic.batchPage.tempAvg')}{' '}
+                            {Number(data.coldChain.transportColdChain.avgTemp).toFixed(1)}°C
+                          </p>
+                          <p className="text-[11px] text-gray-500 mt-1">
+                            {t('passportPublic.batchPage.readingsCount', {
+                              count: data.coldChain.transportColdChain.readingsCount,
+                            })}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   {data.coldChain.temperatureData && data.coldChain.temperatureData.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-2">Log ({data.coldChain.temperatureData.length} readings)</p>
-                      <div className="max-h-32 overflow-y-auto rounded border border-gray-100 bg-white">
+                      <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-2">
+                        {t('passportPublic.batchPage.tempLogTitle', { count: data.coldChain.temperatureData.length })}
+                      </p>
+                      <div className="max-h-40 overflow-y-auto rounded border border-gray-100 bg-white">
                         <table className="w-full text-[11px]">
-                          <thead><tr className="border-b border-gray-100"><th className="text-left py-1.5 px-2">Time</th><th className="text-left py-1.5 px-2">°C</th><th className="text-left py-1.5 px-2">Location</th></tr></thead>
+                          <thead>
+                            <tr className="border-b border-gray-100">
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colTime')}</th>
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colPhase')}</th>
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colTempC')}</th>
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colHumidity')}</th>
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colLocation')}</th>
+                              <th className="text-left py-1.5 px-2">{t('passportPublic.batchPage.colMission')}</th>
+                            </tr>
+                          </thead>
                           <tbody>
-                            {data.coldChain.temperatureData.slice(0, 20).map((row, i) => (
-                              <tr key={i} className="border-b border-gray-100 last:border-0"><td className="py-1 px-2">{formatDateTime(row.timestamp)}</td><td className="py-1 px-2">{row.temperature}</td><td className="py-1 px-2">{row.location || '—'}</td></tr>
+                            {data.coldChain.temperatureData.slice(0, 25).map((row, i) => (
+                              <tr key={i} className="border-b border-gray-100 last:border-0">
+                                <td className="py-1 px-2 whitespace-nowrap">{formatDateTime(row.timestamp)}</td>
+                                <td className="py-1 px-2">
+                                  {row.phase === 'transport'
+                                    ? t('passportPublic.batchPage.phaseTransport')
+                                    : t('passportPublic.batchPage.phaseFarm')}
+                                </td>
+                                <td className="py-1 px-2">{row.temperature}</td>
+                                <td className="py-1 px-2">{row.humidity != null ? `${row.humidity}%` : '—'}</td>
+                                <td className="py-1 px-2 max-w-[140px] truncate">{row.location || '—'}</td>
+                                <td className="py-1 px-2 font-mono text-[10px]">{row.missionNumber || '—'}</td>
+                              </tr>
                             ))}
                           </tbody>
                         </table>
-                        {data.coldChain.temperatureData.length > 20 && <p className="text-[10px] text-[gray-900]/50 px-2 py-1">+ {data.coldChain.temperatureData.length - 20} more</p>}
+                        {data.coldChain.temperatureData.length > 25 && (
+                          <p className="text-[10px] text-gray-500 px-2 py-1">
+                            {t('passportPublic.batchPage.moreReadings', {
+                              count: data.coldChain.temperatureData.length - 25,
+                            })}
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -792,12 +1153,35 @@ export default function ProductPassportPage() {
               )}
               {data.freshness && (
                 <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
-                  <p className="text-[9px] font-light text-[gray-900]/40 uppercase tracking-wider mb-2">Freshness</p>
+                  <p className="text-[9px] font-light text-gray-500 uppercase tracking-wider mb-2">
+                    {t('passportPublic.batchPage.freshnessEyebrow')}
+                  </p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                    {data.freshness.remainingShelfLifeHours != null && <p className="text-[gray-900]/80"><strong>Remaining:</strong> {Math.round(data.freshness.remainingShelfLifeHours)}h</p>}
-                    {data.freshness.expiresAt && <p className="text-[gray-900]/80"><strong>Use by:</strong> {formatDate(data.freshness.expiresAt)}</p>}
-                    {data.freshness.timestampHarvested && <p className="text-[gray-900]/80"><strong>Harvested at:</strong> {formatDateTime(data.freshness.timestampHarvested)}</p>}
-                    {data.freshness.isExpired != null && <p className="text-[gray-900]/80">{data.freshness.isExpired ? 'Expired' : 'Fresh'}</p>}
+                    {data.freshness.remainingShelfLifeHours != null && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.freshRemaining')}</strong>{' '}
+                        {Math.round(data.freshness.remainingShelfLifeHours)}h
+                      </p>
+                    )}
+                    {data.freshness.expiresAt && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.freshUseBy')}</strong>{' '}
+                        {formatDate(data.freshness.expiresAt)}
+                      </p>
+                    )}
+                    {data.freshness.timestampHarvested && (
+                      <p className="text-gray-800">
+                        <strong className="font-medium">{t('passportPublic.batchPage.freshHarvestedAt')}</strong>{' '}
+                        {formatDateTime(data.freshness.timestampHarvested)}
+                      </p>
+                    )}
+                    {data.freshness.isExpired != null && (
+                      <p className="text-gray-800">
+                        {data.freshness.isExpired
+                          ? t('passportPublic.batchPage.freshExpired')
+                          : t('passportPublic.batchPage.freshOk')}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}

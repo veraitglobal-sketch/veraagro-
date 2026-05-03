@@ -66,11 +66,54 @@ export function QualityForm({
             {selectedBatch.productName || t('producer.qualityEntry.product')}
           </Text>
         </View>
+        {(() => {
+          const est = selectedBatch.estates?.name?.trim();
+          const crop = selectedBatch.parcels?.cropType?.trim();
+          const code = selectedBatch.parcels?.publicCode?.trim();
+          const bits = [est, crop, code && code !== crop ? code : null].filter(Boolean) as string[];
+          const fallbackPid = selectedBatch.parcelId?.trim();
+          const plotText =
+            bits.length > 0
+              ? bits.join(' · ')
+              : fallbackPid
+                ? `${fallbackPid.slice(0, 8)}…`
+                : '';
+          if (plotText) {
+            return (
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '300',
+                  color: colors.text.secondary,
+                  marginTop: theme.spacing.xs,
+                  lineHeight: 18,
+                }}
+              >
+                {t('producer.qualityEntry.linkedPlot')}
+                {': '}
+                {plotText}
+              </Text>
+            );
+          }
+          return (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '300',
+                color: colors.warning,
+                marginTop: theme.spacing.xs,
+              }}
+            >
+              {t('producer.qualityEntry.noParcelOnBatch')}
+            </Text>
+          );
+        })()}
         {selectedBatch.quantity != null && (
           <Text style={{
             fontSize: 16,
             fontWeight: '300',
             color: colors.text.secondary,
+            marginTop: theme.spacing.sm,
           }}>
             {selectedBatch.quantity} {selectedBatch.unit || 'kg'}
           </Text>

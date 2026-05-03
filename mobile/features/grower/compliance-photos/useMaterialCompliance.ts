@@ -10,15 +10,44 @@ import {
 } from '../../../lib/api';
 import { assertDataUrlWithinSize, imageUriToJpegDataUrl } from '../../../lib/image-data-url';
 import { apiErrorMessage } from '../../../lib/api-error';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+import type { BatchItem, ParcelFilterOption } from '../quality-entry/useQualityEntryData';
+
+const PARCEL_NONE_KEY = '__none__';
+const PARCEL_ALL_KEY = 'all';
 
 export const COMPLIANCE_PHOTO_TYPES = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
 export type CompliancePhotoType = (typeof COMPLIANCE_PHOTO_TYPES)[number];
 
-export type BatchRow = { id: string; batchId: string; productName: string; quantity: number; unit?: string };
+export type BatchRow = BatchItem & {
+  batchId: string;
+  productName: string;
+  quantity: number;
+  unit?: string;
+};
+
+function mapBatchFromApi(b: Record<string, unknown>): BatchRow {
+  const parcels = b.parcels as { cropType?: string | null; publicCode?: string | null } | null | undefined;
+  const estates = b.estates as { name?: string } | null | undefined;
+  const parcelId = (b.parcelId as string | null | undefined) ?? undefined;
+  return {
+    id: String(b.id),
+    batchId: String(b.batchId ?? b.id),
+    productName: String(b.productName ?? ''),
+    quantity: typeof b.quantity === 'number' ? b.quantity : 0,
+    unit: b.unit as string | undefined,
+    parcelId,
+    parcels: parcels
+      ? { cropType: parcels.cropType ?? undefined, publicCode: parcels.publicCode ?? undefined }
+      : undefined,
+    estates: estates?.name ? { name: estates.name } : undefined,
+  };
+}
 
 export function useMaterialCompliance() {
   const { t } = useTranslation();
   const [batches, setBatches] = useState<BatchRow[]>([]);
+  const [parcelFilterId, setParcelFilterId] = useState<string>(PARCEL_ALL_KEY);
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState('');
@@ -34,22 +63,53 @@ export function useMaterialCompliance() {
   /** Narrows the sticker roll list (can be 1000+ SOLD rows). */
   const [labelRollFilter, setLabelRollFilter] = useState('');
 
+  const parcelFilterOptions = useMemo((): ParcelFilterOption[] => {
+    const opts: ParcelFilterOption[] = [{ id: PARCEL_ALL_KEY, label: t('producer.qualityEntry.allParcels') }];
+    const seen = new Set<string>();
+    seen.add(PARCEL_ALL_KEY);
+    for (const b of batches) {
+      const key = b.parcelId || PARCEL_NONE_KEY;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const crop = b.parcels?.cropType?.trim();
+      const code = b.parcels?.publicCode?.trim();
+      const est = b.estates?.name?.trim();
+      let label: string;
+      if (key === PARCEL_NONE_KEY) {
+        label = t('producer.qualityEntry.parcelNotLinked');
+      } else {
+        const parts = [est, crop || code].filter(Boolean);
+        label = parts.length > 0 ? parts.join(' · ') : key.slice(0, 8) + '…';
+      }
+      opts.push({ id: key, label });
+    }
+    return opts;
+  }, [batches, t]);
+
+  const filteredBatches = useMemo(() => {
+    if (parcelFilterId === PARCEL_ALL_KEY) return batches;
+    if (parcelFilterId === PARCEL_NONE_KEY) return batches.filter((b) => !b.parcelId);
+    return batches.filter((b) => b.parcelId === parcelFilterId);
+  }, [batches, parcelFilterId]);
+
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
     try {
-      const data = await batchesAPI.getAll();
-      const list = Array.isArray(data) ? data : [];
-      setBatches(
-        list
+      let raw: BatchRow[] = [];
+      try {
+        const data = await batchesAPI.getAll();
+        const list = Array.isArray(data) ? data : [];
+        raw = list
           .filter((b: { id?: string }) => b?.id)
-          .map((b: any) => ({
-            id: b.id,
-            batchId: b.batchId ?? b.id,
-            productName: b.productName ?? '',
-            quantity: b.quantity,
-            unit: b.unit,
-          })),
-      );
+          .map((b: Record<string, unknown>) => mapBatchFromApi(b));
+        await growerOfflineCache.saveBatches(list as unknown[]);
+      } catch {
+        const cached = await growerOfflineCache.loadBatches<Record<string, unknown>>();
+        raw = (cached ?? [])
+          .filter((b: { id?: string }) => b?.id)
+          .map((b) => mapBatchFromApi(b));
+      }
+      setBatches(raw);
     } catch {
       setBatches([]);
     } finally {
@@ -70,6 +130,13 @@ export function useMaterialCompliance() {
     void loadBatches();
     void loadLabelRolls();
   }, [loadBatches, loadLabelRolls]);
+
+  useEffect(() => {
+    setSelectedBatchId((prev) => {
+      if (prev && filteredBatches.some((b) => b.id === prev)) return prev;
+      return filteredBatches[0]?.id ?? '';
+    });
+  }, [filteredBatches]);
 
   const fetchStatus = useCallback(async (batchId: string) => {
     if (!batchId) {
@@ -144,6 +211,9 @@ export function useMaterialCompliance() {
     };
   }, [pickableRolls, labelRollFilter]);
 
+  const selectedBatch = batches.find((b) => b.id === selectedBatchId);
+  const parcelIdForLot = selectedBatch?.parcelId?.trim() || undefined;
+
   const onBatchChange = useCallback((id: string) => {
     setSelectedBatchId(id);
     setShowReplaceForm(false);
@@ -197,6 +267,7 @@ export function useMaterialCompliance() {
       await materialControlAPI.verifySticker({
         batchId: selectedBatchId,
         stickerRollId: stickerRollId.trim(),
+        parcelId: parcelIdForLot,
       });
       Alert.alert(t('alerts.success'), t('producer.compliance.batchForm.stickerVerified'));
     } catch (e: unknown) {
@@ -204,7 +275,7 @@ export function useMaterialCompliance() {
     } finally {
       setVerifying(false);
     }
-  }, [selectedBatchId, stickerRollId, t]);
+  }, [selectedBatchId, stickerRollId, parcelIdForLot, t]);
 
   const onSave = useCallback(async () => {
     if (!selectedBatchId) {
@@ -238,6 +309,7 @@ export function useMaterialCompliance() {
         batchId: selectedBatchId,
         stickerRollId: stickerRollId.trim(),
         photos: ordered as string[],
+        parcelId: parcelIdForLot,
       });
       Alert.alert(t('alerts.success'), t('producer.compliance.batchForm.saveSuccess'));
       setPhotos({});
@@ -248,9 +320,8 @@ export function useMaterialCompliance() {
     } finally {
       setSaving(false);
     }
-  }, [selectedBatchId, stickerRollId, photos, t, fetchStatus]);
+  }, [selectedBatchId, stickerRollId, photos, parcelIdForLot, t, fetchStatus]);
 
-  const selectedBatch = batches.find((b) => b.id === selectedBatchId);
   const showForm =
     Boolean(selectedBatchId) &&
     (complianceStatus == null || !complianceStatus.complete || showReplaceForm) &&
@@ -263,7 +334,11 @@ export function useMaterialCompliance() {
   }, [loadBatches, loadLabelRolls, selectedBatchId, fetchStatus]);
 
   return {
-    batches,
+    totalBatchCount: batches.length,
+    filteredBatches,
+    parcelFilterOptions,
+    parcelFilterId,
+    setParcelFilterId,
     batchesLoading,
     pickableRolls,
     labelRollFilter,

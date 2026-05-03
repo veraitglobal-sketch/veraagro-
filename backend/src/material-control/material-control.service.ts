@@ -8,6 +8,43 @@ export class MaterialControlService {
   constructor(private prisma: PrismaService) {}
 
   /**
+   * Lot (batch) the user may document: estate owner OR whoever harvested/packed (same as `/batches`).
+   * `batchRef` = internal UUID or public id e.g. BATCH-2026-0001.
+   */
+  private async resolveGrowerBatch(batchRef: string, userId: string) {
+    const batch = await this.prisma.batches.findFirst({
+      where: {
+        AND: [
+          { OR: [{ id: batchRef }, { batchId: batchRef }] },
+          {
+            OR: [{ harvestedByUserId: userId }, { estates: { ownerId: userId } }],
+          },
+        ],
+      },
+      include: {
+        compliance_photos: { orderBy: { uploadedAt: 'desc' } },
+      },
+    });
+    if (!batch) {
+      throw new NotFoundException('Batch not found or you do not have access');
+    }
+    return batch;
+  }
+
+  private assertParcelMatchesBatchOptional(parcelIdFromClient: string | undefined, batchParcelId: string | null) {
+    const asserted = typeof parcelIdFromClient === 'string' ? parcelIdFromClient.trim() : '';
+    if (!asserted) return;
+    if (!batchParcelId) {
+      throw new BadRequestException(
+        'This batch has no parcel on file. Omit parcel identifier or recreate the batch from an approved parcel.',
+      );
+    }
+    if (asserted !== batchParcelId) {
+      throw new ForbiddenException('Selected parcel does not match this batch.');
+    }
+  }
+
+  /**
    * Get available material types. If the catalog is empty (fresh DB / no seed), create the default
    * Bio Vera CRATE, LABEL, FILM products so the grower "Materials" page always has a dropdown.
    */
@@ -249,21 +286,14 @@ export class MaterialControlService {
    * One lot = one set of compliance photos + one label roll ID on file. Used to show "done" in the grower UI
    * and avoid re-doing the whole flow when everything is already submitted.
    */
-  async getComplianceBatchStatus(userId: string, batchInternalId: string) {
-    const batch = await this.prisma.batches.findFirst({
-      where: { id: batchInternalId, estates: { ownerId: userId } },
-      include: {
-        compliance_photos: { orderBy: { uploadedAt: 'desc' } },
-      },
-    });
-    if (!batch) {
-      throw new NotFoundException('Batch not found');
-    }
+  async getComplianceBatchStatus(userId: string, batchRef: string) {
+    const batch = await this.resolveGrowerBatch(batchRef, userId);
+    const batchInternalId = batch.id;
+
     const standard = await this.getBioVeraStandard();
     const required = standard.requiredPhotoTypes || ['PUNNETS', 'LABELING', 'PALLETIZATION'];
     const uploadedTypes = [...new Set(batch.compliance_photos.map((p) => p.photoType))];
     const missing = required.filter((t) => !uploadedTypes.includes(t));
-    // Resolve label roll: prefer explicit LABEL type; any inventory tied to this lot may be a label in edge cases
     const usedForLot = await this.prisma.material_inventory.findMany({
       where: { usedInBatchId: batchInternalId },
       include: { material_types: { select: { type: true } } },
@@ -287,7 +317,7 @@ export class MaterialControlService {
   }
 
   /**
-   * Verify sticker roll ID
+   * Verify sticker roll ID for a lot (same access as `/batches`: owner OR harvester).
    */
   async verifyStickerRoll(userId: string, dto: VerifyStickerRollDto) {
     const inventory = await this.prisma.material_inventory.findUnique({
@@ -309,39 +339,26 @@ export class MaterialControlService {
       throw new ForbiddenException('This sticker roll was not sold to you. Non-standard packaging detected.');
     }
 
+    const batch = await this.resolveGrowerBatch(dto.batchId, userId);
+    this.assertParcelMatchesBatchOptional(dto.parcelId, batch.parcelId);
+
     if (inventory.status === 'USED') {
-      if (inventory.usedInBatchId === dto.batchId && inventory.soldToUserId === userId) {
+      if (inventory.usedInBatchId === batch.id && inventory.soldToUserId === userId) {
         return {
           success: true,
           verified: true,
           stickerRollId: dto.stickerRollId,
-          batchId: dto.batchId,
+          batchId: batch.id,
         };
       }
       throw new BadRequestException('This sticker roll has already been used');
-    }
-
-    // Verify batch exists and belongs to user
-    const batch = await this.prisma.batches.findUnique({
-      where: { id: dto.batchId },
-      include: {
-        estates: true,
-      },
-    });
-
-    if (!batch) {
-      throw new NotFoundException('Batch not found');
-    }
-
-    if (batch.estates.ownerId !== userId) {
-      throw new ForbiddenException('You can only verify sticker rolls for your own batches');
     }
 
     return {
       success: true,
       verified: true,
       stickerRollId: dto.stickerRollId,
-      batchId: dto.batchId,
+      batchId: batch.id,
     };
   }
 
@@ -356,8 +373,9 @@ export class MaterialControlService {
   ) {
     const requireCrateBalance = options?.requireCrateBalance !== false;
 
-    const batch = await this.prisma.batches.findUnique({
-      where: { id: batchId },
+    const ref = batchId.trim();
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: ref }, { batchId: ref }] },
       include: {
         estates: true,
         compliance_photos: true,
@@ -368,9 +386,11 @@ export class MaterialControlService {
       throw new NotFoundException('Batch not found');
     }
 
-    if (batch.estates.ownerId !== userId) {
+    const canActOnBatch =
+      batch.estates.ownerId === userId || batch.harvestedByUserId === userId;
+    if (!canActOnBatch) {
       throw new ForbiddenException(
-        'This batch is not on your account. It must belong to your farm (estate owner).',
+        'This batch is not on your account. It must belong to your farm (estate owner) or you must be the harvester/packer on record.',
       );
     }
 
@@ -390,12 +410,23 @@ export class MaterialControlService {
 
     if (standard.requiresCompliancePhotos) {
       const requiredTypes = standard.requiredPhotoTypes || ['PUNNETS', 'LABELING', 'PALLETIZATION'];
-      const uploadedTypes = batch.compliance_photos.map((p) => p.photoType);
+      const uploadedTypes = [...new Set(batch.compliance_photos.map((p) => p.photoType))];
       const missingTypes = requiredTypes.filter((type) => !uploadedTypes.includes(type));
 
       if (missingTypes.length > 0) {
         errors.push(
           `Missing compliance photos: ${missingTypes.join(', ')}. Please upload all required photos before shipping.`
+        );
+      }
+
+      const usedForLot = await this.prisma.material_inventory.findMany({
+        where: { usedInBatchId: batch.id },
+        include: { material_types: { select: { type: true } } },
+      });
+      const labelRow = usedForLot.find((r) => r.material_types?.type === 'LABEL') ?? null;
+      if (!labelRow) {
+        errors.push(
+          'Official label roll is not registered for this lot. Complete compliance (verify sticker roll + photos) before requesting transport.'
         );
       }
     }
@@ -411,13 +442,17 @@ export class MaterialControlService {
   }
 
   /**
-   * Upload compliance photos
+   * Upload compliance photos (always stored on the resolved internal batch id).
    */
   async uploadCompliancePhotos(userId: string, dto: UploadCompliancePhotosDto) {
-    // Verify sticker roll first
+    const batch = await this.resolveGrowerBatch(dto.batchId, userId);
+    this.assertParcelMatchesBatchOptional(dto.parcelId, batch.parcelId);
+    const internalBatchId = batch.id;
+
     await this.verifyStickerRoll(userId, {
       stickerRollId: dto.stickerRollId,
-      batchId: dto.batchId,
+      batchId: internalBatchId,
+      parcelId: dto.parcelId,
     });
 
     const standard = await this.getBioVeraStandard();
@@ -429,11 +464,10 @@ export class MaterialControlService {
       );
     }
 
-    // Replace existing compliance rows for this batch (same types) so re-upload does not duplicate
     const photos = await this.prisma.$transaction(async (tx) => {
       await tx.compliance_photos.deleteMany({
         where: {
-          batchId: dto.batchId,
+          batchId: internalBatchId,
           photoType: { in: requiredTypes },
         },
       });
@@ -443,7 +477,7 @@ export class MaterialControlService {
           tx.compliance_photos.create({
             data: {
               id: crypto.randomUUID(),
-              batchId: dto.batchId,
+              batchId: internalBatchId,
               photoType: requiredTypes[index],
               photoUrl: photo,
               photoHash: this.generateHash(photo),
@@ -460,7 +494,7 @@ export class MaterialControlService {
     if (inv) {
       await this.prisma.material_inventory.update({
         where: { id: inv.id },
-        data: { status: 'USED', usedInBatchId: dto.batchId, usedAt: new Date() },
+        data: { status: 'USED', usedInBatchId: internalBatchId, usedAt: new Date() },
       });
     }
 

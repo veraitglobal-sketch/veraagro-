@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
@@ -21,6 +21,31 @@ const CLOUD_OPTIONS: { value: 'clear' | 'partly_cloudy' | 'cloudy' | 'overcast';
   { value: 'cloudy', labelKey: 'cloudCloudy' },
   { value: 'overcast', labelKey: 'cloudOvercast' },
 ];
+
+const PARCEL_FILTER_ALL = 'all';
+const PARCEL_FILTER_NONE = '__none__';
+
+type GrowerQualityBatchRow = {
+  id: string;
+  batchId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  parcelId?: string;
+  estateName?: string;
+  cropType?: string | null;
+  publicCode?: string | null;
+};
+
+function plotSummary(b: GrowerQualityBatchRow): string {
+  const crop = typeof b.cropType === 'string' ? b.cropType.trim() : '';
+  const code = typeof b.publicCode === 'string' ? b.publicCode.trim() : '';
+  const est = typeof b.estateName === 'string' ? b.estateName.trim() : '';
+  const bits = [est, crop || code].filter(Boolean);
+  if (bits.length) return bits.join(' · ');
+  if (b.parcelId) return `${b.parcelId.slice(0, 8)}…`;
+  return '';
+}
 
 export default function QualityEntryPage() {
   const { t } = useTranslation();
@@ -46,7 +71,8 @@ export default function QualityEntryPage() {
     fileInputRefs.current[index] = el;
   };
 
-  const [batches, setBatches] = useState<{ id: string; batchId: string; productName: string; quantity: number; unit: string }[]>([]);
+  const [batches, setBatches] = useState<GrowerQualityBatchRow[]>([]);
+  const [parcelFilter, setParcelFilter] = useState<string>(PARCEL_FILTER_ALL);
   const [batchesLoading, setBatchesLoading] = useState(true);
 
   useEffect(() => {
@@ -56,14 +82,22 @@ export default function QualityEntryPage() {
         const list = Array.isArray(data) ? data : [];
         setBatches(
           list
-            .filter((b: any) => b?.id)
-            .map((b: any) => ({
-            id: b.id,
-            batchId: b.batchId,
-            productName: b.productName,
-            quantity: b.quantity,
-            unit: b.unit || 'kg',
-          })),
+            .filter((b: Record<string, unknown>) => Boolean(b?.id))
+            .map((b: Record<string, unknown>) => {
+              const parcels = b.parcels as { cropType?: string | null; publicCode?: string | null } | null | undefined;
+              const estates = b.estates as { name?: string } | null | undefined;
+              return {
+                id: String(b.id),
+                batchId: String(b.batchId ?? ''),
+                productName: String(b.productName ?? ''),
+                quantity: typeof b.quantity === 'number' ? b.quantity : Number(b.quantity) || 0,
+                unit: (b.unit as string) || 'kg',
+                parcelId: typeof b.parcelId === 'string' && b.parcelId ? b.parcelId : undefined,
+                estateName: estates?.name,
+                cropType: parcels?.cropType ?? null,
+                publicCode: parcels?.publicCode ?? null,
+              };
+            }),
         );
       } catch {
         setBatches([]);
@@ -73,12 +107,36 @@ export default function QualityEntryPage() {
     })();
   }, []);
 
-  // Stale lot after status change / navigation: <select> value must still exist in options
+  const parcelFilterOptions = useMemo(() => {
+    const opts: { key: string; label: string }[] = [{ key: PARCEL_FILTER_ALL, label: fk('filterAllParcels') }];
+    const seen = new Set<string>();
+    seen.add(PARCEL_FILTER_ALL);
+    for (const b of batches) {
+      const key = b.parcelId || PARCEL_FILTER_NONE;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (key === PARCEL_FILTER_NONE) {
+        opts.push({ key, label: fk('parcelNotLinkedFilter') });
+        continue;
+      }
+      const label = plotSummary(b) || `${key.slice(0, 8)}…`;
+      opts.push({ key, label });
+    }
+    return opts;
+  }, [batches, fk]);
+
+  const visibleBatches = useMemo(() => {
+    if (parcelFilter === PARCEL_FILTER_ALL) return batches;
+    if (parcelFilter === PARCEL_FILTER_NONE) return batches.filter((b) => !b.parcelId);
+    return batches.filter((b) => b.parcelId === parcelFilter);
+  }, [batches, parcelFilter]);
+
+  // Stale selection when list or parcel filter changes
   useEffect(() => {
     if (!selectedBatch) return;
-    if (batches.some((b) => b.id === selectedBatch)) return;
+    if (visibleBatches.some((b) => b.id === selectedBatch)) return;
     setSelectedBatch('');
-  }, [batches, selectedBatch]);
+  }, [visibleBatches, selectedBatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -138,8 +196,24 @@ export default function QualityEntryPage() {
       return;
     }
 
+    const preParsed = new Date(formData.preCoolingStartTime);
+    if (!formData.preCoolingStartTime || Number.isNaN(preParsed.getTime())) {
+      setError(fk('errInvalidPreCooling'));
+      setSubmitting(false);
+      return;
+    }
+
+    const wTemp = Number.parseFloat(formData.weatherTemperature);
+    const wHum = Number.parseFloat(formData.weatherHumidity);
+    if (!Number.isFinite(wTemp) || !Number.isFinite(wHum)) {
+      setError(fk('errInvalidWeatherNumbers'));
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
+      const row = batches.find((b) => b.id === selectedBatch);
       const response = await fetch(`${WEB_API_BASE}/quality-entry`, {
         method: 'POST',
         headers: {
@@ -148,10 +222,11 @@ export default function QualityEntryPage() {
         },
         body: JSON.stringify({
           batchId: selectedBatch,
-          preCoolingStartTime: new Date(formData.preCoolingStartTime).toISOString(),
+          ...(row?.parcelId ? { parcelId: row.parcelId } : {}),
+          preCoolingStartTime: preParsed.toISOString(),
           weatherAtHarvest: {
-            temperature: parseFloat(formData.weatherTemperature),
-            humidity: parseFloat(formData.weatherHumidity),
+            temperature: wTemp,
+            humidity: wHum,
             cloudCover: formData.cloudCover,
           },
           visualGradePhotos: formData.visualGradePhotos,
@@ -222,36 +297,66 @@ export default function QualityEntryPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{fk('formSectionTitle')}</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Batch Selection */}
-            <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">
-                {fk('selectBatch')} *
-              </label>
-              {batchesLoading ? (
-                <p className="text-base text-gray-500">{fk('loadingBatches')}</p>
-              ) : batches.length === 0 ? (
-                <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
-                  {fk('noBatchesLead')}{' '}
-                  <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
-                    {fk('createBatchCta')}
-                  </Link>{' '}
-                  {fk('noBatchesTail')}
-                </p>
-              ) : (
-                <select
-                  value={selectedBatch}
-                  onChange={(e) => setSelectedBatch(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
-                >
-                  <option value="">{fk('selectBatchPlaceholder')}</option>
-                  {batches.map((batch) => (
-                    <option key={batch.id} value={batch.id}>
-                      {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit})
-                    </option>
-                  ))}
-                </select>
-              )}
+            {/* Parcel / plot → batch (lot) */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-base font-medium text-gray-700 mb-2">{fk('filterByParcel')} *</label>
+                {batchesLoading ? (
+                  <p className="text-base text-gray-500">{fk('loadingBatches')}</p>
+                ) : batches.length === 0 ? (
+                  <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                    {fk('noBatchesLead')}{' '}
+                    <Link href={growerHref('/grower/batches')} className="text-[#2D5A27] font-medium underline">
+                      {fk('createBatchCta')}
+                    </Link>{' '}
+                    {fk('noBatchesTail')}
+                  </p>
+                ) : (
+                  <select
+                    value={parcelFilter}
+                    onChange={(e) => setParcelFilter(e.target.value)}
+                    required
+                    className="w-full min-h-[48px] px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/25 focus:border-[#2D5A27]"
+                  >
+                    {parcelFilterOptions.map((opt) => (
+                      <option key={opt.key} value={opt.key}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <p className="mt-2 text-base text-gray-600 font-light leading-relaxed">{fk('filterByParcelLead')}</p>
+              </div>
+
+              <div>
+                <label className="block text-base font-medium text-gray-700 mb-2">
+                  {fk('selectBatch')} *
+                </label>
+                {batchesLoading || batches.length === 0 ? null : visibleBatches.length === 0 ? (
+                  <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                    {fk('noBatchesForParcel')}
+                  </p>
+                ) : (
+                  <select
+                    value={selectedBatch}
+                    onChange={(e) => setSelectedBatch(e.target.value)}
+                    required
+                    className="w-full min-h-[48px] px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/25 focus:border-[#2D5A27]"
+                  >
+                    <option value="">{fk('selectBatchPlaceholder')}</option>
+                    {visibleBatches.map((batch) => {
+                      const plot = plotSummary(batch);
+                      const plotSuffix = plot ? ` · ${plot}` : '';
+                      return (
+                        <option key={batch.id} value={batch.id}>
+                          {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit})
+                          {plotSuffix}
+                        </option>
+                      );
+                    })}
+                  </select>
+                )}
+              </div>
             </div>
 
             {/* Weather at Harvest */}

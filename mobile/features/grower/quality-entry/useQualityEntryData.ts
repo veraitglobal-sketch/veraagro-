@@ -9,12 +9,34 @@ import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 /** Batches where a new quality entry is not applicable (web may still list them). */
 const TERMINAL_BATCH_STATUSES = new Set(['DELIVERED', 'EXPIRED', 'RETURNED']);
 
+const PARCEL_NONE_KEY = '__none__';
+const PARCEL_ALL_KEY = 'all';
+
 function batchesEligibleForQualityList(raw: BatchItem[]): BatchItem[] {
   return raw.filter((b) => {
     if (!b?.id) return false;
     if (!b.status) return true;
     return !TERMINAL_BATCH_STATUSES.has(b.status);
   });
+}
+
+function mapBatchFromApi(b: Record<string, unknown>): BatchItem {
+  const parcels = b.parcels as { cropType?: string | null; publicCode?: string | null } | null | undefined;
+  const estates = b.estates as { name?: string } | null | undefined;
+  const parcelId = (b.parcelId as string | null | undefined) ?? undefined;
+  return {
+    id: String(b.id),
+    batchId: b.batchId as string | undefined,
+    status: b.status as string | undefined,
+    productName: b.productName as string | undefined,
+    quantity: typeof b.quantity === 'number' ? b.quantity : undefined,
+    unit: b.unit as string | undefined,
+    parcelId,
+    parcels: parcels
+      ? { cropType: parcels.cropType ?? undefined, publicCode: parcels.publicCode ?? undefined }
+      : undefined,
+    estates: estates?.name ? { name: estates.name } : undefined,
+  };
 }
 
 export interface BatchItem {
@@ -24,12 +46,22 @@ export interface BatchItem {
   productName?: string;
   quantity?: number;
   unit?: string;
+  parcelId?: string;
+  parcels?: { cropType?: string | null; publicCode?: string | null };
+  estates?: { name?: string };
+}
+
+export interface ParcelFilterOption {
+  id: typeof PARCEL_ALL_KEY | typeof PARCEL_NONE_KEY | string;
+  label: string;
 }
 
 export function useQualityEntryData() {
   const { t } = useTranslation();
   const router = useRouter();
   const [batches, setBatches] = useState<BatchItem[]>([]);
+  /** `all` = every plot; parcel UUID; `__none__` = lots without parcel on file */
+  const [parcelFilterId, setParcelFilterId] = useState<string>(PARCEL_ALL_KEY);
   const [selectedBatchId, setSelectedBatchId] = useState<string>('');
   const [qualityEntry, setQualityEntry] = useState<QualityEntry | null>(null);
   const [qualityScore, setQualityScore] = useState('');
@@ -38,31 +70,64 @@ export function useQualityEntryData() {
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const parcelFilterOptions = useMemo((): ParcelFilterOption[] => {
+    const opts: ParcelFilterOption[] = [{ id: PARCEL_ALL_KEY, label: t('producer.qualityEntry.allParcels') }];
+    const seen = new Set<string>();
+    seen.add(PARCEL_ALL_KEY);
+    for (const b of batches) {
+      const key = b.parcelId || PARCEL_NONE_KEY;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const crop = b.parcels?.cropType?.trim();
+      const code = b.parcels?.publicCode?.trim();
+      const est = b.estates?.name?.trim();
+      let label: string;
+      if (key === PARCEL_NONE_KEY) {
+        label = t('producer.qualityEntry.parcelNotLinked');
+      } else {
+        const parts = [est, crop || code].filter(Boolean);
+        label = parts.length > 0 ? parts.join(' · ') : key.slice(0, 8) + '…';
+      }
+      opts.push({ id: key, label });
+    }
+    return opts;
+  }, [batches, t]);
+
+  const filteredBatches = useMemo(() => {
+    if (parcelFilterId === PARCEL_ALL_KEY) return batches;
+    if (parcelFilterId === PARCEL_NONE_KEY) return batches.filter((b) => !b.parcelId);
+    return batches.filter((b) => b.parcelId === parcelFilterId);
+  }, [batches, parcelFilterId]);
+
   const loadBatches = useCallback(async () => {
     try {
       setLoading(true);
       let raw: BatchItem[] = [];
       try {
         const data = await batchesAPI.getAll();
-        raw = Array.isArray(data) ? data : [];
-        await growerOfflineCache.saveBatches(raw);
+        const arr = Array.isArray(data) ? data : [];
+        raw = arr.map((x) => mapBatchFromApi(x as Record<string, unknown>));
+        await growerOfflineCache.saveBatches(arr);
       } catch (error) {
         console.error('Error loading batches:', error);
-        const cached = await growerOfflineCache.loadBatches<BatchItem>();
-        raw = cached ?? [];
+        const cached = await growerOfflineCache.loadBatches<Record<string, unknown>>();
+        raw = (cached ?? []).map((x) => mapBatchFromApi(x));
       }
       const list = batchesEligibleForQualityList(raw);
       setBatches(list);
-      setSelectedBatchId((prev) => {
-        if (prev && list.some((b) => b.id === prev)) return prev;
-        return list[0]?.id ?? '';
-      });
     } catch (error) {
       console.error('Error loading batches:', error);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    setSelectedBatchId((prev) => {
+      if (prev && filteredBatches.some((b) => b.id === prev)) return prev;
+      return filteredBatches[0]?.id ?? '';
+    });
+  }, [filteredBatches]);
 
   const loadQualityEntry = useCallback(async () => {
     if (!selectedBatchId) return;
@@ -83,7 +148,7 @@ export function useQualityEntryData() {
 
   useEffect(() => {
     loadBatches();
-  }, []);
+  }, [loadBatches]);
 
   useEffect(() => {
     if (selectedBatchId) {
@@ -105,6 +170,8 @@ export function useQualityEntryData() {
     setRefreshing(false);
   }, [loadBatches, loadQualityEntry, selectedBatchId]);
 
+  const selectedBatch = batches.find((b) => b.id === selectedBatchId);
+
   const handleSave = useCallback(async () => {
     if (!selectedBatchId) {
       Alert.alert(t('error'), t('producer.qualityEntry.selectBatch'));
@@ -113,15 +180,26 @@ export function useQualityEntryData() {
     if (qualityEntry && qualityEntry.status !== 'DRAFT') {
       return;
     }
-    if (qualityScore && (isNaN(parseFloat(qualityScore)) || parseFloat(qualityScore) < 0 || parseFloat(qualityScore) > 100)) {
+    const scored = qualityScore.trim();
+    const parsedScore =
+      scored === '' ? Number.NaN : Number.parseFloat(scored.replace(',', '.'));
+    if (scored !== '' && (Number.isNaN(parsedScore) || parsedScore < 0 || parsedScore > 100)) {
       Alert.alert(t('error'), t('producer.qualityEntry.qualityScoreRange'));
+      return;
+    }
+    const hasScore = scored !== '' && !Number.isNaN(parsedScore);
+    const hasNotes = notes.trim().length > 0;
+    if (!hasScore && !hasNotes) {
+      Alert.alert(t('error'), t('producer.qualityEntry.needScoreOrNotes'));
       return;
     }
     try {
       setSaving(true);
+      const parcelId = selectedBatch?.parcelId?.trim();
       await qualityEntryAPI.create({
         batchId: selectedBatchId,
-        qualityScore: qualityScore ? parseFloat(qualityScore) : undefined,
+        ...(parcelId ? { parcelId } : {}),
+        qualityScore: hasScore ? parsedScore : undefined,
         notes: notes.trim() || undefined,
       });
       await loadQualityEntry();
@@ -145,15 +223,20 @@ export function useQualityEntryData() {
     } finally {
       setSaving(false);
     }
-  }, [selectedBatchId, qualityEntry, qualityScore, notes, loadQualityEntry, router, t]);
+  }, [selectedBatchId, selectedBatch, qualityEntry, qualityScore, notes, loadQualityEntry, router, t]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'DRAFT': return colors.warning;
-      case 'COMPLETED': return colors.accent;
-      case 'VERIFIED': return colors.primary;
-      case 'REJECTED': return colors.error;
-      default: return colors.text.secondary;
+      case 'DRAFT':
+        return colors.warning;
+      case 'COMPLETED':
+        return colors.accent;
+      case 'VERIFIED':
+        return colors.primary;
+      case 'REJECTED':
+        return colors.error;
+      default:
+        return colors.text.secondary;
     }
   };
 
@@ -167,10 +250,12 @@ export function useQualityEntryData() {
     return keys[status] ? t(keys[status]) : status;
   };
 
-  const selectedBatch = batches.find(b => b.id === selectedBatchId);
-
   return {
     batches,
+    filteredBatches,
+    parcelFilterId,
+    setParcelFilterId,
+    parcelFilterOptions,
     selectedBatchId,
     setSelectedBatchId,
     selectedBatch,

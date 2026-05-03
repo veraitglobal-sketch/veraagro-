@@ -85,6 +85,14 @@ export class QrService {
         },
         parcels: {
           include: {
+            seeds: {
+              select: {
+                serialNumber: true,
+                name: true,
+                batchNumber: true,
+                type: true,
+              },
+            },
             treatment_logs: { orderBy: { appliedAt: 'asc' } },
             growth_logs: { orderBy: { networkTimestamp: 'asc' } },
             harvest_announcements: { orderBy: { estimatedDate: 'asc' } },
@@ -109,6 +117,7 @@ export class QrService {
         quality_entries: true,
         missions: {
           include: {
+            logistics_handovers: true,
             users_missions_logisticsPartnerIdTousers: {
               select: {
                 firstName: true,
@@ -132,6 +141,35 @@ export class QrService {
         `No batch found for "${key}". Check the code on the label (e.g. BATCH-2026-…); links must match production data.`,
       );
     }
+
+    const relatedBatchMaterials = await this.prisma.compliance_logs.findMany({
+      where: { relatedBatchId: batch.id },
+      orderBy: { networkTimestamp: 'asc' },
+      take: 120,
+    });
+    const harvestAnchor = batch.harvestDate ? new Date(batch.harvestDate) : new Date();
+    const parcelWindowStart = new Date(harvestAnchor.getTime() - 60 * 86_400_000);
+    const parcelWindowEnd = new Date(harvestAnchor.getTime() + 14 * 86_400_000);
+    const parcelWindowMaterials =
+      batch.parcelId != null
+        ? await this.prisma.compliance_logs.findMany({
+            where: {
+              parcelId: batch.parcelId,
+              estateId: batch.estateId,
+              relatedBatchId: { not: batch.id },
+              networkTimestamp: { gte: parcelWindowStart, lte: parcelWindowEnd },
+            },
+            orderBy: { networkTimestamp: 'asc' },
+            take: 80,
+          })
+        : [];
+    const materialMerged = new Map<string, (typeof relatedBatchMaterials)[0]>();
+    for (const row of [...relatedBatchMaterials, ...parcelWindowMaterials]) {
+      materialMerged.set(row.id, row);
+    }
+    const complianceMaterialLogs = [...materialMerged.values()].sort(
+      (a, b) => a.networkTimestamp.getTime() - b.networkTimestamp.getTime(),
+    );
 
     // Calculate timeline
     const timeline = {
@@ -190,12 +228,37 @@ export class QrService {
     // Calculate sustainability score (lower distance = better score)
     const sustainabilityScore = Math.max(0, Math.min(100, 100 - (totalDistance / 10)));
 
-    // Get temperature data for cold chain proof
-    const temperatureData = batch.temperature_logs.map((log) => ({
-      timestamp: log.timestamp,
-      temperature: log.temperature,
-      location: log.location,
-    }));
+    const missionById = new Map((batch.missions ?? []).map((m) => [m.id, m]));
+    const temperatureReadingsDetailed = batch.temperature_logs.map((log) => {
+      const phase: 'farm' | 'transport' =
+        log.missionId != null && missionById.has(log.missionId) ? 'transport' : 'farm';
+      const mission = log.missionId ? missionById.get(log.missionId) : undefined;
+      let locationLabel = '—';
+      try {
+        if (typeof log.location === 'string') locationLabel = log.location;
+        else if (log.location != null) locationLabel = JSON.stringify(log.location);
+      } catch {
+        locationLabel = '—';
+      }
+      return {
+        timestamp: log.timestamp,
+        temperature: log.temperature,
+        humidity: log.humidity ?? null,
+        location: locationLabel,
+        phase,
+        missionNumber: mission?.missionNumber ?? null,
+      };
+    });
+    const numericsOk = temperatureReadingsDetailed.every((d) => Number.isFinite(d.temperature));
+    const temps = temperatureReadingsDetailed.map((d) => d.temperature).filter(Number.isFinite);
+    const farmTemps = temperatureReadingsDetailed
+      .filter((d) => d.phase === 'farm')
+      .map((d) => d.temperature)
+      .filter(Number.isFinite);
+    const transportTemps = temperatureReadingsDetailed
+      .filter((d) => d.phase === 'transport')
+      .map((d) => d.temperature)
+      .filter(Number.isFinite);
 
     // Check if batch is compromised
     const isCompromised = await this.checkBatchCompromised(batch.id);
@@ -240,13 +303,43 @@ export class QrService {
         address: undefined,
       },
       timeline,
-      coldChainProof: temperatureData.length > 0 ? {
-        temperatureData,
-        minTemp: Math.min(...temperatureData.map(d => d.temperature)),
-        maxTemp: Math.max(...temperatureData.map(d => d.temperature)),
-        avgTemp: temperatureData.reduce((sum, d) => sum + d.temperature, 0) / temperatureData.length,
-        isWithinRange: temperatureData.every(d => d.temperature >= 2 && d.temperature <= 8),
-      } : { temperatureData: [], minTemp: null, maxTemp: null, avgTemp: null, isWithinRange: null },
+      coldChainProof:
+        temps.length > 0
+          ? {
+              temperatureData: temperatureReadingsDetailed,
+              minTemp: Math.min(...temps),
+              maxTemp: Math.max(...temps),
+              avgTemp: temps.reduce((sum, x) => sum + x, 0) / temps.length,
+              isWithinRange: numericsOk ? temps.every((t) => t >= 2 && t <= 8) : null,
+              farmColdChain:
+                farmTemps.length > 0
+                  ? {
+                      minTemp: Math.min(...farmTemps),
+                      maxTemp: Math.max(...farmTemps),
+                      avgTemp: farmTemps.reduce((sum, x) => sum + x, 0) / farmTemps.length,
+                      readingsCount: farmTemps.length,
+                    }
+                  : null,
+              transportColdChain:
+                transportTemps.length > 0
+                  ? {
+                      minTemp: Math.min(...transportTemps),
+                      maxTemp: Math.max(...transportTemps),
+                      avgTemp:
+                        transportTemps.reduce((sum, x) => sum + x, 0) / transportTemps.length,
+                      readingsCount: transportTemps.length,
+                    }
+                  : null,
+            }
+          : {
+              temperatureData: [],
+              minTemp: null,
+              maxTemp: null,
+              avgTemp: null,
+              isWithinRange: null,
+              farmColdChain: null,
+              transportColdChain: null,
+            },
       sustainability: {
         totalDistanceKm: totalDistance.toFixed(2),
         sustainabilityScore: sustainabilityScore.toFixed(1),
@@ -297,6 +390,14 @@ export class QrService {
         })),
         pickedUpAt: m.pickedUpAt,
         deliveredAt: m.completedAt,
+        logisticsHandover: m.logistics_handovers
+          ? {
+              insideTruckTemperature: m.logistics_handovers.insideTruckTemperature,
+              timestamp: m.logistics_handovers.timestamp,
+              status: m.logistics_handovers.status,
+              notes: m.logistics_handovers.notes ?? null,
+            }
+          : null,
       })),
       farmer: {
         // Privacy protection: Only first name
@@ -360,13 +461,66 @@ export class QrService {
         status: h.status,
         notes: h.notes ?? null,
       })),
-      qualityEntry: batch.quality_entries ? {
-        preCoolingStartTime: batch.quality_entries.preCoolingStartTime,
-        weatherAtHarvest: batch.quality_entries.weatherAtHarvest,
-        notes: batch.quality_entries.notes ?? null,
-        status: batch.quality_entries.status,
-      } : null,
+      parcelSeed: batch.parcels?.seeds
+        ? {
+            serialNumber: batch.parcels.seeds.serialNumber,
+            name: batch.parcels.seeds.name,
+            batchNumber: batch.parcels.seeds.batchNumber,
+            seedType: batch.parcels.seeds.type,
+          }
+        : null,
+      /** Barcode / packaging / input scans linked to batch or parcel harvest window. */
+      materialScans: complianceMaterialLogs.map((m) => ({
+        entryType: m.entryType,
+        scannedBarcode: m.scannedBarcode,
+        barcodeType: m.barcodeType,
+        isCompliant: m.isCompliant,
+        complianceStatus: m.complianceStatus,
+        networkTimestamp: m.networkTimestamp,
+        deviceTimestamp: m.deviceTimestamp,
+        relatedBatchId: m.relatedBatchId,
+        blockedReason: m.blockedReason ?? null,
+      })),
+      qualityEntry: batch.quality_entries
+        ? {
+            preCoolingStartTime: batch.quality_entries.preCoolingStartTime,
+            weatherAtHarvest: batch.quality_entries.weatherAtHarvest,
+            weatherAtHarvestSummary: this.summarizeHarvestWeather(
+              batch.quality_entries.weatherAtHarvest,
+            ),
+            notes: batch.quality_entries.notes ?? null,
+            status: batch.quality_entries.status,
+          }
+        : null,
     };
+  }
+
+  /** Human-readable harvest-time weather for passports (JSON varies by client). */
+  private summarizeHarvestWeather(weather: unknown): string | null {
+    if (weather == null) return null;
+    if (typeof weather === 'string') return weather.trim() || null;
+    if (typeof weather === 'number') return `${weather} °C`;
+    if (typeof weather === 'object' && !Array.isArray(weather)) {
+      const o = weather as Record<string, unknown>;
+      const parts: string[] = [];
+      const tc = o.temperatureCelsius ?? o.temperature ?? o.airTempCelsius;
+      if (typeof tc === 'number') parts.push(`${tc} °C`);
+      if (typeof o.humidity === 'number') parts.push(`${o.humidity}% RH`);
+      if (typeof o.conditions === 'string' && o.conditions.trim()) parts.push(o.conditions.trim());
+      if (typeof o.sky === 'string' && o.sky.trim()) parts.push(o.sky.trim());
+      if (typeof o.wind === 'string' && o.wind.trim()) parts.push(`Wind: ${o.wind.trim()}`);
+      if (parts.length) return parts.join(' · ');
+      try {
+        return JSON.stringify(o);
+      } catch {
+        return null;
+      }
+    }
+    try {
+      return JSON.stringify(weather);
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -629,13 +783,49 @@ export class QrService {
         if (data.parcelInfo?.plantingDate) push(new Date(data.parcelInfo.plantingDate).getTime(), formatDateTime(data.parcelInfo.plantingDate), 'Planting', data.parcelInfo.cropType ? `Crop: ${data.parcelInfo.cropType}` : '—');
         if (data.parcelInfo?.expectedHarvestDate) push(new Date(data.parcelInfo.expectedHarvestDate).getTime(), formatDate(data.parcelInfo.expectedHarvestDate), 'Expected harvest', '—');
         (data.treatments || []).forEach((t: any) => push(new Date(t.appliedAt).getTime(), formatDateTime(t.appliedAt), 'Treatment', `${t.productName} · ${t.dosage}${t.reason ? ` · ${t.reason}` : ''}`));
-        (data.growthLogs || []).forEach((g: any) => push(new Date(g.networkTimestamp).getTime(), formatDateTime(g.networkTimestamp), 'Growth log', g.growthStage || g.notes || '—'));
+        (data.growthLogs || []).forEach((g: any) => {
+          const isFd = typeof g.notes === 'string' && g.notes.trim().startsWith('[Field diary');
+          const gGps =
+            g.gpsLatitude != null && g.gpsLongitude != null
+              ? `GPS: ${g.gpsLatitude.toFixed(5)}, ${g.gpsLongitude.toFixed(5)}`
+              : '';
+          push(
+            new Date(g.networkTimestamp).getTime(),
+            formatDateTime(g.networkTimestamp),
+            isFd ? 'Field diary' : 'Growth log',
+            [g.growthStage && `Stage: ${g.growthStage}`, g.notes, gGps].filter(Boolean).join(' · ') ||
+              'Field record',
+          );
+        });
         (data.harvestAnnouncements || []).forEach((h: any) => push(new Date(h.estimatedDate).getTime(), formatDate(h.estimatedDate), 'Harvest announcement', `${h.cropType} · ${h.status}`));
         if (data.timeline?.harvested) push(new Date(data.timeline.harvested).getTime(), formatDateTime(data.timeline.harvested), 'Harvested', data.origin?.harvestLocation ?? '—');
         if (data.qualityEntry?.preCoolingStartTime) push(new Date(data.qualityEntry.preCoolingStartTime).getTime(), formatDateTime(data.qualityEntry.preCoolingStartTime), 'Pre-cooling / quality', data.qualityEntry.status);
         if (data.timeline?.verified) push(new Date(data.timeline.verified).getTime(), formatDateTime(data.timeline.verified), 'Quality verified', '—');
-        if (data.timeline?.loaded) push(new Date(data.timeline.loaded).getTime(), formatDateTime(data.timeline.loaded), 'Picked up', data.missions?.[0]?.vehicle?.vehicleNumber ?? '—');
-        if (data.timeline?.arrived || data.missions?.[0]?.deliveredAt) push(new Date(data.timeline?.arrived || data.missions?.[0]?.deliveredAt).getTime(), formatDateTime(data.timeline?.arrived || data.missions?.[0]?.deliveredAt), 'Arrival', '—');
+        if (data.timeline?.loaded)
+          push(
+            new Date(data.timeline.loaded).getTime(),
+            formatDateTime(data.timeline.loaded),
+            'Picked up',
+            data.missions?.[0]?.vehicle?.vehicleNumber ?? '—',
+          );
+        (data.missions || []).forEach((mis: any) => {
+          const lh = mis.logisticsHandover;
+          if (lh?.timestamp && lh.insideTruckTemperature != null) {
+            push(
+              new Date(lh.timestamp).getTime(),
+              formatDateTime(lh.timestamp),
+              'Loading (cold chain)',
+              `Inside truck: ${lh.insideTruckTemperature} °C · mission ${mis.missionNumber ?? '—'}`,
+            );
+          }
+        });
+        if (data.timeline?.arrived || data.missions?.[0]?.deliveredAt)
+          push(
+            new Date(data.timeline?.arrived || data.missions?.[0]?.deliveredAt).getTime(),
+            formatDateTime(data.timeline?.arrived || data.missions?.[0]?.deliveredAt),
+            'Arrival',
+            '—',
+          );
         chronology.sort((a, b) => a.sortKey - b.sortKey);
 
         if (chronology.length > 0) {
@@ -688,6 +878,49 @@ export class QrService {
           doc.moveDown(1);
         }
 
+        if (data.parcelSeed?.serialNumber || data.parcelSeed?.name) {
+          checkPage(50);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4b. Registered seed / planting material', 50, doc.y);
+          doc.moveDown(0.5);
+          doc.fontSize(10).fillColor(darkGray)
+            .text(`Serial: ${data.parcelSeed.serialNumber ?? '—'}  ·  Name: ${data.parcelSeed.name ?? '—'}  ·  Seed batch: ${data.parcelSeed.batchNumber ?? '—'}  ·  Type: ${data.parcelSeed.seedType ?? '—'}`, 50, doc.y);
+          doc.y += 28;
+          doc.moveDown(0.5);
+        }
+
+        if (data.materialScans?.length > 0) {
+          checkPage(120);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4c. Material & barcode scans (batch / parcel window)', 50, doc.y);
+          doc.moveDown(0.5);
+          data.materialScans.slice(0, 25).forEach((scan: any) => {
+            checkPage(12);
+            doc.fontSize(8).fillColor(darkGray).text(
+              `${formatDateTime(scan.networkTimestamp)} · ${scan.entryType} · ${scan.barcodeType} · ${scan.scannedBarcode} · compliant: ${scan.isCompliant ? 'yes' : 'no'}`,
+              50,
+              doc.y,
+            );
+            doc.y += 11;
+          });
+          doc.y += 6;
+          doc.moveDown(0.5);
+        }
+
+        if (data.qualityEntry?.weatherAtHarvestSummary || data.qualityEntry?.notes) {
+          checkPage(50);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4d. Harvest conditions & quality intake', 50, doc.y);
+          doc.moveDown(0.5);
+          doc.fontSize(10).fillColor(darkGray);
+          if (data.qualityEntry.weatherAtHarvestSummary) {
+            doc.text(`Harvest weather snapshot: ${data.qualityEntry.weatherAtHarvestSummary}`, 50, doc.y);
+            doc.y += 14;
+          }
+          if (data.qualityEntry.notes) {
+            doc.text(`Notes: ${data.qualityEntry.notes}`, 50, doc.y, { width: doc.page.width - 100 });
+            doc.y += 22;
+          }
+          doc.moveDown(0.5);
+        }
+
         // 5. Cold chain & freshness
         if (data.coldChainProof && (data.coldChainProof.minTemp != null || data.coldChainProof.temperatureData?.length)) {
           checkPage(100);
@@ -701,7 +934,11 @@ export class QrService {
             doc.fontSize(9).fillColor(lightGray).text('Temperature log (first 15):', 50, doc.y);
             doc.y += 12;
             cc.temperatureData.slice(0, 15).forEach((row: any) => {
-              doc.fontSize(8).fillColor(darkGray).text(`${formatDateTime(row.timestamp)}  ${row.temperature} °C  ${row.location || '—'}`, 50, doc.y);
+              const hum = row.humidity != null ? ` · ${row.humidity}% RH` : '';
+              const ph = row.phase ? ` · ${row.phase}` : '';
+              const mn = row.missionNumber ? ` · ${row.missionNumber}` : '';
+              doc.fontSize(8).fillColor(darkGray)
+                .text(`${formatDateTime(row.timestamp)}  ${row.temperature} °C${hum}${ph}${mn}  ${row.location || '—'}`, 50, doc.y);
               doc.y += 10;
             });
             doc.y += 5;
@@ -732,7 +969,7 @@ export class QrService {
           doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('7. Missions', 50, doc.y);
           doc.moveDown(0.5);
           data.missions.forEach((m: any, i: number) => {
-            doc.fontSize(10).fillColor(darkGray).text(`${m.missionNumber || 'Mission ' + (i + 1)}  ·  ${m.status}  ·  Vehicle: ${m.vehicle?.vehicleNumber ?? m.vehicle?.licensePlate ?? '—'}  ·  Picked up: ${m.pickedUpAt ? formatDateTime(m.pickedUpAt) : '—'}  ·  Delivered: ${m.deliveredAt ? formatDateTime(m.deliveredAt) : '—'}`, 60, doc.y);
+            doc.fontSize(10).fillColor(darkGray).text(`${m.missionNumber || 'Mission ' + (i + 1)}  ·  ${m.status}  ·  Vehicle: ${m.vehicle?.vehicleNumber ?? m.vehicle?.licensePlate ?? '—'}  ·  Truck °C at load handover: ${m.logisticsHandover?.insideTruckTemperature ?? '—'}  ·  Picked up: ${m.pickedUpAt ? formatDateTime(m.pickedUpAt) : '—'}  ·  Delivered: ${m.deliveredAt ? formatDateTime(m.deliveredAt) : '—'}`, 60, doc.y);
             doc.y += 14;
           });
           doc.y += 8;

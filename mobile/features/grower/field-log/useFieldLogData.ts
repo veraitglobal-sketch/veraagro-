@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -7,16 +7,24 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
-import { estatesAPI, Estate, parcelsAPI, Parcel } from '../../../lib/api';
+import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI } from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
-import type { PendingFieldEntry } from '../../../lib/offline-storage';
+import type { PendingFieldEntry, FieldLogMaterialKind } from '../../../lib/offline-storage';
+
+/** Match server default (see `planting-progress.util` / PLANTING_PROGRESS_NOTES_MIN_LEN). */
+export const PLANTING_NOTES_MIN = 15;
+
+function growthStagePersistedFromForm(preset: string, custom: string): string | undefined {
+  if (preset === '__custom__') return custom.trim() || undefined;
+  return preset.trim() || undefined;
+}
 
 export type ActivityType = 'PLANTING' | 'FERTILIZING' | 'SPRAYING' | 'HARVEST';
 
 /** Barcode validation path — user taps first so we don't infer wrong from vague typing. */
-export type MaterialKindForLog = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+export type MaterialKindForLog = FieldLogMaterialKind;
 
 /** Maps UI activity to offline storage (English; sync maps to backend enums). */
 const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType']> = {
@@ -48,6 +56,16 @@ export function useFieldLogData() {
   const [estates, setEstates] = useState<Estate[]>([]);
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
   const [parcelsForGps, setParcelsForGps] = useState<Parcel[]>([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [selectedParcelId, setSelectedParcelId] = useState('');
+  const [selectedHarvestPlanId, setSelectedHarvestPlanId] = useState('');
+  const [parcelPlans, setParcelPlans] = useState<
+    { id: string; label: string; announcementType: string }[]
+  >([]);
+  const [growthStagePreset, setGrowthStagePreset] = useState('');
+  const [growthStageCustom, setGrowthStageCustom] = useState('');
+  const [journalNotes, setJournalNotes] = useState('');
+
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const currentEstateRef = useRef<Estate | null>(null);
   useEffect(() => {
@@ -96,6 +114,71 @@ export function useFieldLogData() {
       cancelled = true;
     };
   }, [currentEstate?.id]);
+
+  const approvedParcels = useMemo(
+    () => parcelsForGps.filter((p) => p.approvedAt),
+    [parcelsForGps],
+  );
+
+  const loadParcelPlans = useCallback(async () => {
+    if (!selectedParcelId) {
+      setParcelPlans([]);
+      setSelectedHarvestPlanId('');
+      return;
+    }
+    setPlansLoading(true);
+    try {
+      const raw = await harvestAnnouncementsAPI.getMy();
+      const arr = Array.isArray(raw) ? raw : [];
+      const forParcel = arr.filter(
+        (a: { parcelId: string; status: string }) =>
+          a.parcelId === selectedParcelId && a.status !== 'CANCELLED',
+      );
+      const options = forParcel.map(
+        (a: { id: string; announcementType: string; cropType: string; estimatedDate: string }) => {
+          const kind =
+            a.announcementType === 'PLANTING'
+              ? t('producer.growthJournal.planKindPlanting')
+              : t('producer.growthJournal.planKindHarvest');
+          const dateStr = a.estimatedDate ? String(a.estimatedDate).slice(0, 10) : '—';
+          return {
+            id: a.id,
+            announcementType: a.announcementType,
+            label: `${kind} · ${a.cropType} · ${dateStr}`,
+          };
+        },
+      );
+      setParcelPlans(options);
+      setSelectedHarvestPlanId((prev) => {
+        if (options.length === 0) return '';
+        return options.some((o) => o.id === prev) ? prev : options[0].id;
+      });
+    } catch {
+      setParcelPlans([]);
+      setSelectedHarvestPlanId('');
+    } finally {
+      setPlansLoading(false);
+    }
+  }, [selectedParcelId, t]);
+
+  useEffect(() => {
+    void loadParcelPlans();
+  }, [loadParcelPlans]);
+
+  const selectedHarvestPlan = useMemo(
+    () => parcelPlans.find((p) => p.id === selectedHarvestPlanId),
+    [parcelPlans, selectedHarvestPlanId],
+  );
+
+  useEffect(() => {
+    setSelectedParcelId('');
+  }, [currentEstate?.id]);
+
+  useEffect(() => {
+    setGrowthStagePreset('');
+    setGrowthStageCustom('');
+    setJournalNotes('');
+  }, [selectedParcelId]);
 
   useEffect(() => {
     const loc = locationRef.current;
@@ -241,6 +324,14 @@ export function useFieldLogData() {
     }, [getCurrentLocation]),
   );
 
+  const selectEstateById = useCallback(
+    (estateId: string) => {
+      const next = estates.find((e) => e.id === estateId);
+      if (next) setCurrentEstate(next);
+    },
+    [estates],
+  );
+
   const takePhoto = useCallback(async () => {
     try {
       const result = await ImagePicker.launchCameraAsync({
@@ -258,9 +349,21 @@ export function useFieldLogData() {
   const saveEntry = useCallback(async () => {
     try {
       setLoading(true);
+      const plan = selectedHarvestPlan;
+      const growthStageSaved =
+        plan?.announcementType === 'PLANTING'
+          ? growthStagePersistedFromForm(growthStagePreset, growthStageCustom)
+          : undefined;
+
       const entryId = await offlineStorage.savePendingEntry({
         activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
         estateId: currentEstate?.id,
+        parcelId: selectedParcelId,
+        harvestAnnouncementId: selectedHarvestPlanId,
+        planAnnouncementType: plan?.announcementType,
+        journalNotes: journalNotes.trim() || undefined,
+        growthStage: growthStageSaved,
+        materialKind: activityType !== 'HARVEST' ? materialKind : undefined,
         materialID: materialID || undefined,
         photoUri: photoUri!,
         location: location!,
@@ -295,14 +398,65 @@ export function useFieldLogData() {
       setLocation(null);
       setGpsWarning(false);
       setMaterialValid(null);
+      setGrowthStagePreset('');
+      setGrowthStageCustom('');
+      setJournalNotes('');
     } catch (error) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
     } finally {
       setLoading(false);
     }
-  }, [activityType, materialID, photoUri, location, currentEstate?.id, t]);
+  }, [
+    activityType,
+    materialID,
+    materialKind,
+    photoUri,
+    location,
+    currentEstate?.id,
+    selectedParcelId,
+    selectedHarvestPlanId,
+    selectedHarvestPlan,
+    growthStagePreset,
+    growthStageCustom,
+    journalNotes,
+    t,
+  ]);
 
   const handleSubmit = useCallback(async () => {
+    if (!currentEstate?.id) {
+      Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
+      return;
+    }
+    if (!selectedParcelId) {
+      Alert.alert(t('producer.growthJournalAlerts.parcelTitle'), t('producer.growthJournalAlerts.parcelBody'));
+      return;
+    }
+    if (plansLoading) {
+      return;
+    }
+    if (!selectedHarvestPlanId) {
+      Alert.alert(t('producer.growthJournalAlerts.planTitle'), t('producer.growthJournalAlerts.planBody'));
+      return;
+    }
+    const plan = parcelPlans.find((p) => p.id === selectedHarvestPlanId);
+    if (plan?.announcementType === 'PLANTING') {
+      const jn = journalNotes.trim();
+      if (jn.length < PLANTING_NOTES_MIN) {
+        Alert.alert(
+          t('producer.growthJournalAlerts.validationTitle'),
+          t('producer.growthJournalAlerts.plantingNotesTooShort', { min: PLANTING_NOTES_MIN }),
+        );
+        return;
+      }
+      const st = growthStagePersistedFromForm(growthStagePreset, growthStageCustom);
+      if (!st) {
+        Alert.alert(
+          t('producer.growthJournalAlerts.validationTitle'),
+          t('producer.growthJournalAlerts.plantingStageRequired'),
+        );
+        return;
+      }
+    }
     if (!activityType) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.selectActivity'));
       return;
@@ -327,10 +481,44 @@ export function useFieldLogData() {
       return;
     }
     await saveEntry();
-  }, [activityType, photoUri, location, materialID, materialValid, gpsWarning, saveEntry, t]);
+  }, [
+    currentEstate?.id,
+    selectedParcelId,
+    selectedHarvestPlanId,
+    plansLoading,
+    parcelPlans,
+    journalNotes,
+    growthStagePreset,
+    growthStageCustom,
+    activityType,
+    photoUri,
+    location,
+    materialID,
+    materialValid,
+    gpsWarning,
+    saveEntry,
+    t,
+  ]);
 
   return {
     router,
+    estates,
+    currentEstate,
+    selectEstateById,
+    approvedParcels,
+    selectedParcelId,
+    setSelectedParcelId,
+    parcelPlans,
+    selectedHarvestPlanId,
+    setSelectedHarvestPlanId,
+    selectedHarvestPlan,
+    plansLoading,
+    growthStagePreset,
+    setGrowthStagePreset,
+    growthStageCustom,
+    setGrowthStageCustom,
+    journalNotes,
+    setJournalNotes,
     activityType,
     setActivityType,
     materialID,

@@ -1,11 +1,14 @@
 import { timingSafeEqual } from 'crypto';
 import { NextResponse } from 'next/server';
 import { WEB_API_BASE } from '@/lib/api-base';
+import type { ConfidentialTier } from '@/lib/grower-confidential-types';
+import { hasPartnerPlanMarkdown } from '@/lib/partner-plan-content';
+import { hasPartnerPlanCookieSecret } from '@/lib/partner-plan-cookie';
+
+export type { ConfidentialTier } from '@/lib/grower-confidential-types';
 
 /** Echoed by GET so UI can explain invite links without exposing secrets. */
 export const CONFIDENTIAL_ACCESS_HEADER = 'x-grower-confidential-access';
-
-export type ConfidentialTier = 'short' | 'medium' | 'long';
 
 export type ConfidentialTierAvailability = Record<ConfidentialTier, boolean>;
 
@@ -16,6 +19,9 @@ export type ConfidentialUnlockResponse = {
   shortTermUrl?: string;
   mediumTermUrl?: string;
   longTermUrl?: string;
+  shortTermInternal?: boolean;
+  mediumTermInternal?: boolean;
+  longTermInternal?: boolean;
 };
 
 const TIER_ENV_KEYS: Record<ConfidentialTier, { urlKey: string; passKey: string }> = {
@@ -67,13 +73,23 @@ export function safeEqualUtf8(a: string, b: string): boolean {
   return timingSafeEqual(na, nb);
 }
 
-function readTierSecrets(tier: ConfidentialTier): { url: string; password: string } | null {
+/** Tier is available when password is set and (published markdown exists OR valid external URL). */
+function readTierSecrets(tier: ConfidentialTier): { url: string | null; password: string } | null {
   const { urlKey, passKey } = TIER_ENV_KEYS[tier];
-  const url = String(process.env[urlKey] ?? '').trim();
+  const urlRaw = String(process.env[urlKey] ?? '').trim();
   const password = String(process.env[passKey] ?? '').trim();
-  if (!url || !password) return null;
-  if (!isAllowedPartnerDocumentUrl(url)) return null;
-  return { url, password };
+  if (!password) return null;
+
+  const md = hasPartnerPlanMarkdown(tier);
+  const urlOk = urlRaw.length > 0 && isAllowedPartnerDocumentUrl(urlRaw);
+
+  if (!md && !urlOk) return null;
+
+  if (md && !urlOk && !hasPartnerPlanCookieSecret()) {
+    return null;
+  }
+
+  return { url: urlOk ? urlRaw : null, password };
 }
 
 export function getTierAvailability(): ConfidentialTierAvailability {
@@ -143,7 +159,14 @@ export function unlockFromPasswordBody(body: unknown): ConfidentialUnlockRespons
     const attempt = passwords[tier] ?? '';
     if (!attempt) return;
     if (!safeEqualUtf8(attempt, cfg.password)) return;
-    out[field] = cfg.url;
+    if (cfg.url) {
+      out[field] = cfg.url;
+    }
+    if (hasPartnerPlanMarkdown(tier)) {
+      if (tier === 'short') out.shortTermInternal = true;
+      if (tier === 'medium') out.mediumTermInternal = true;
+      if (tier === 'long') out.longTermInternal = true;
+    }
   };
 
   apply('short', 'shortTermUrl');

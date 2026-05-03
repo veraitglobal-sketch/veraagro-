@@ -15,6 +15,11 @@ const SESSION_GATE_KEY = 'grower_confidential_access_token';
 
 type TierAvailability = Record<GrowerConfidentialTierId, boolean>;
 
+type TierUnlock = {
+  internalPath: string | null;
+  externalUrl: string | null;
+};
+
 function authHeaders(): Record<string, string> | null {
   if (typeof window === 'undefined') return null;
   const token = localStorage.getItem('token');
@@ -24,6 +29,10 @@ function authHeaders(): Record<string, string> | null {
     Authorization: `Bearer ${token}`,
     ...(gateTok ? { 'X-Grower-Confidential-Access': gateTok } : {}),
   };
+}
+
+function internalPlanPath(tier: GrowerConfidentialTierId): string {
+  return `/grower/confidential/plan/${tier}`;
 }
 
 export default function GrowerConfidentialPage() {
@@ -42,7 +51,7 @@ export default function GrowerConfidentialPage() {
   const [tiersAvailable, setTiersAvailable] = useState<TierAvailability | null>(null);
   const [inviteGateActive, setInviteGateActive] = useState(false);
 
-  const [unlocked, setUnlocked] = useState<Record<GrowerConfidentialTierId, string | null>>({
+  const [unlocked, setUnlocked] = useState<Record<GrowerConfidentialTierId, TierUnlock | null>>({
     short: null,
     medium: null,
     long: null,
@@ -128,6 +137,25 @@ export default function GrowerConfidentialPage() {
     loadBootstrap();
   }, [loadBootstrap]);
 
+  const revokeTierSession = useCallback(
+    async (tier: GrowerConfidentialTierId) => {
+      const headers = authHeaders();
+      if (!headers) return;
+      try {
+        await fetch(`/api/grower/confidential-materials?tier=${encodeURIComponent(tier)}`, {
+          method: 'DELETE',
+          headers,
+          cache: 'no-store',
+          credentials: 'include',
+        });
+      } catch {
+        /* still collapse UI */
+      }
+      setUnlocked((prev) => ({ ...prev, [tier]: null }));
+    },
+    [],
+  );
+
   const fetchUnlock = useCallback(
     async (tier: GrowerConfidentialTierId, password: string) => {
       const headers = authHeaders();
@@ -154,8 +182,9 @@ export default function GrowerConfidentialPage() {
           },
           body: JSON.stringify(body),
           cache: 'no-store',
+          credentials: 'include',
         });
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
 
         if (res.status === 404) {
           setPageError(t('grower.confidential.sectionDisabled'));
@@ -170,16 +199,32 @@ export default function GrowerConfidentialPage() {
           return;
         }
 
+        const internal =
+          tier === 'short'
+            ? data.shortTermInternal === true
+            : tier === 'medium'
+              ? data.mediumTermInternal === true
+              : data.longTermInternal === true;
+
         const urlKey =
           tier === 'short' ? 'shortTermUrl' : tier === 'medium' ? 'mediumTermUrl' : 'longTermUrl';
-        const url = typeof data[urlKey] === 'string' ? (data[urlKey] as string) : '';
+        const externalUrl =
+          typeof data[urlKey] === 'string' && (data[urlKey] as string).trim().length > 0
+            ? (data[urlKey] as string)
+            : null;
 
-        if (!url) {
+        if (!internal && !externalUrl) {
           setErrorTier(tier);
           return;
         }
 
-        setUnlocked((prev) => ({ ...prev, [tier]: url }));
+        setUnlocked((prev) => ({
+          ...prev,
+          [tier]: {
+            internalPath: internal ? internalPlanPath(tier) : null,
+            externalUrl,
+          },
+        }));
         if (tier === 'short') setShortPw('');
         if (tier === 'medium') setMediumPw('');
         if (tier === 'long') setLongPw('');
@@ -234,7 +279,8 @@ export default function GrowerConfidentialPage() {
       unlockLabel: t('grower.confidential.unlock'),
       unlockingLabel: t('grower.confidential.unlocking'),
       wrongPasswordLabel: t('grower.confidential.wrongPassword'),
-      openDocumentLabel: t('grower.confidential.openDocument'),
+      openPresentationLabel: t('grower.confidential.openPresentation'),
+      openExternalLinkLabel: t('grower.confidential.openExternalLink'),
       refreshClearsLabel: t('grower.confidential.refreshClears'),
       lockAgainLabel: t('grower.confidential.lockAgain'),
       showPasswordLabel: t('grower.confidential.showPassword'),
@@ -303,7 +349,7 @@ export default function GrowerConfidentialPage() {
               : bootstrap === 'ok'
                 ? tiers.map(({ id, titleKey, hintKey, password, setPassword, show, setShow }) => {
                     const configured = tiersAvailable?.[id] ?? false;
-                    const url = unlocked[id];
+                    const u = unlocked[id];
                     const busy = loadingTier === id;
 
                     return (
@@ -313,7 +359,8 @@ export default function GrowerConfidentialPage() {
                         title={t(titleKey)}
                         hint={t(hintKey)}
                         tierConfigured={configured}
-                        unlockedUrl={url}
+                        unlockPresentationHref={u?.internalPath ?? null}
+                        unlockExternalHref={u?.externalUrl ?? null}
                         password={password}
                         onPasswordChange={(v) => {
                           setPassword(v);
@@ -324,14 +371,15 @@ export default function GrowerConfidentialPage() {
                         wrongPassword={errorTier === id}
                         loading={busy}
                         onUnlock={() => fetchUnlock(id, password.trim())}
-                        onLockAgain={() => setUnlocked((prev) => ({ ...prev, [id]: null }))}
+                        onLockAgain={() => revokeTierSession(id)}
                         unavailableLabel={sharedCardStrings.unavailableLabel}
                         passwordLabel={sharedCardStrings.passwordLabel}
                         passwordPlaceholder={sharedCardStrings.passwordPlaceholder}
                         unlockLabel={sharedCardStrings.unlockLabel}
                         unlockingLabel={sharedCardStrings.unlockingLabel}
                         wrongPasswordLabel={sharedCardStrings.wrongPasswordLabel}
-                        openDocumentLabel={sharedCardStrings.openDocumentLabel}
+                        openPresentationLabel={sharedCardStrings.openPresentationLabel}
+                        openExternalLinkLabel={sharedCardStrings.openExternalLinkLabel}
                         refreshClearsLabel={sharedCardStrings.refreshClearsLabel}
                         lockAgainLabel={sharedCardStrings.lockAgainLabel}
                         showPasswordLabel={sharedCardStrings.showPasswordLabel}

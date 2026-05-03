@@ -834,6 +834,12 @@
     },
     "qualityEntry": {
       "screenTitle": "Unos kvaliteta",
+      "parcelHeading": "Parcela / zasad",
+      "allParcels": "Sve parcele",
+      "parcelNotLinked": "Bez parcele",
+      "linkedPlot": "Povezana parcela",
+      "noParcelOnBatch": "Ovaj lot nema parcelu u sistemu — kreirajte partije sa odobrene parcele radi potpunog traga.",
+      "needScoreOrNotes": "Unesite ocenu kvaliteta (0–100) ili napomenu pre čuvanja.",
       "batchHeading": "Partija",
       "selectBatch": "Izaberi partiju",
       "qualityScoreRange": "Ocena kvaliteta mora biti između 0 i 100",
@@ -1269,7 +1275,8 @@
       "itemsNotSent_one": "Nije poslata {{count}} stavka.",
       "itemsNotSent_few": "Nije poslato {{count}} stavke.",
       "itemsNotSent_other": "Nije poslato {{count}} stavki.",
-      "itemsNotSentHint": "Često: GPS na serveru nije unutar njive/parcele — ispravi mapu ili unesi na parceli; detalj greške kod svakog unosa u Dnevniku."
+      "itemsNotSentHint": "Često: GPS na serveru nije unutar njive/parcele — ispravi mapu ili unesi na parceli; detalj greške kod svakog unosa u Dnevniku.",
+      "fieldEntryNeedsParcelPlan": "Ovaj unos je sačuvan pre nego što su parcela i plan useva postali obavezni. Otvori dnevnik unosa, izaberi parcelu i plan, pa sačuvaj ponovo — ili obriši stari red sa početne."
     },
     "fieldLogForm": {
       "introLead": "Unosite sve što radite na parceli (setva, đubrenje, prskanje, žetva). Barkod materijala je opciono kad koristite praćeni proizvod; fotografija i GPS su obavezni pri svakom unosu. Podaci grade tragabilnost i idu u pasoš.",

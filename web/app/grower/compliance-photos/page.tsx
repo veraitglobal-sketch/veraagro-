@@ -13,6 +13,39 @@ import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 const PHOTO_ORDER = ['PUNNETS', 'LABELING', 'PALLETIZATION'] as const;
 
+const PARCEL_NONE_KEY = '__none__';
+const PARCEL_ALL_KEY = 'all';
+
+type ComplianceBatchRow = {
+  id: string;
+  batchId: string;
+  productName: string;
+  quantity: number;
+  unit?: string;
+  parcelId?: string;
+  parcels?: { cropType?: string | null; publicCode?: string | null };
+  estates?: { name?: string };
+};
+
+function mapComplianceBatchRow(b: Record<string, unknown>): ComplianceBatchRow {
+  const parcels = b.parcels as ComplianceBatchRow['parcels'];
+  const estates = b.estates as { name?: string } | null | undefined;
+  const parcelId = (b.parcelId as string | undefined) ?? undefined;
+  return {
+    id: String(b.id),
+    batchId: String(b.batchId),
+    productName: String(b.productName ?? ''),
+    quantity: typeof b.quantity === 'number' ? b.quantity : 0,
+    unit: b.unit as string | undefined,
+    parcelId,
+    parcels:
+      parcels && typeof parcels === 'object'
+        ? { cropType: parcels?.cropType ?? undefined, publicCode: parcels?.publicCode ?? undefined }
+        : undefined,
+    estates: estates?.name?.trim() ? { name: estates.name } : undefined,
+  };
+}
+
 type LabelRoll = {
   serialNumber: string;
   status: string;
@@ -54,7 +87,7 @@ export default function CompliancePhotosPage() {
     if (typeof msg === 'string') return msg;
     return t('common.requestFailed');
   };
-  const [selectedBatch, setSelectedBatch] = useState<string>('');
+  const [selectedBatchId, setSelectedBatchId] = useState('');
   const [stickerRollId, setStickerRollId] = useState<string>('');
   const [photos, setPhotos] = useState<{ [key: string]: string }>({});
   const [uploading, setUploading] = useState(false);
@@ -62,9 +95,8 @@ export default function CompliancePhotosPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const [batches, setBatches] = useState<
-    { id: string; batchId: string; productName: string; quantity: number; unit?: string }[]
-  >([]);
+  const [batches, setBatches] = useState<ComplianceBatchRow[]>([]);
+  const [parcelFilterId, setParcelFilterId] = useState(PARCEL_ALL_KEY);
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [labelRolls, setLabelRolls] = useState<LabelRoll[]>([]);
   const [complianceStatus, setComplianceStatus] = useState<ComplianceStatus | null>(null);
@@ -86,6 +118,43 @@ export default function CompliancePhotosPage() {
         .map((r) => r.serialNumber)
     );
   }, [labelRolls, complianceStatus?.stickerRollId]);
+
+  const parcelFilterOptions = useMemo(() => {
+    const opts: { id: string; label: string }[] = [
+      { id: PARCEL_ALL_KEY, label: t('grower.compliancePhotos.allParcels') },
+    ];
+    const seen = new Set<string>([PARCEL_ALL_KEY]);
+    for (const b of batches) {
+      const key = b.parcelId || PARCEL_NONE_KEY;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      let label: string;
+      if (key === PARCEL_NONE_KEY) {
+        label = t('grower.compliancePhotos.parcelNotLinked');
+      } else {
+        const est = b.estates?.name?.trim();
+        const crop = b.parcels?.cropType?.trim();
+        const code = b.parcels?.publicCode?.trim();
+        const parts = [est, crop || code].filter(Boolean);
+        label = parts.length > 0 ? parts.join(' · ') : `${key.slice(0, 8)}…`;
+      }
+      opts.push({ id: key, label });
+    }
+    return opts;
+  }, [batches, t, i18n.language]);
+
+  const filteredBatches = useMemo(() => {
+    if (parcelFilterId === PARCEL_ALL_KEY) return batches;
+    if (parcelFilterId === PARCEL_NONE_KEY) return batches.filter((b) => !b.parcelId);
+    return batches.filter((b) => b.parcelId === parcelFilterId);
+  }, [batches, parcelFilterId]);
+
+  useEffect(() => {
+    setSelectedBatchId((prev) => {
+      if (prev && filteredBatches.some((b) => b.id === prev)) return prev;
+      return filteredBatches[0]?.id ?? '';
+    });
+  }, [filteredBatches]);
 
   const fetchComplianceStatus = useCallback(async (batchInternalId: string) => {
     setStatusLoading(true);
@@ -115,13 +184,7 @@ export default function CompliancePhotosPage() {
         setBatches(
           list
             .filter((b: { id?: string }) => b?.id)
-            .map((b: { id: string; batchId: string; productName: string; quantity: number; unit?: string }) => ({
-              id: b.id,
-              batchId: b.batchId,
-              productName: b.productName,
-              quantity: b.quantity,
-              unit: b.unit,
-            }))
+            .map((b: Record<string, unknown>) => mapComplianceBatchRow(b)),
         );
       } catch {
         setBatches([]);
@@ -155,25 +218,25 @@ export default function CompliancePhotosPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedBatch) {
+    if (!selectedBatchId) {
       setComplianceStatus(null);
       return;
     }
     let cancelled = false;
     (async () => {
       if (cancelled) return;
-      await fetchComplianceStatus(selectedBatch);
+      await fetchComplianceStatus(selectedBatchId);
     })();
     return () => {
       cancelled = true;
     };
-  }, [selectedBatch, fetchComplianceStatus]);
+  }, [selectedBatchId, fetchComplianceStatus]);
 
   useEffect(() => {
-    if (!selectedBatch) return;
-    if (batches.some((b) => b.id === selectedBatch)) return;
-    setSelectedBatch('');
-  }, [batches, selectedBatch]);
+    if (!selectedBatchId) return;
+    if (batches.some((b) => b.id === selectedBatchId)) return;
+    setSelectedBatchId('');
+  }, [batches, selectedBatchId]);
 
   useEffect(() => {
     if (!complianceStatus?.stickerRollId) return;
@@ -182,8 +245,11 @@ export default function CompliancePhotosPage() {
     }
   }, [complianceStatus?.stickerRollId, showReplaceForm]);
 
+  const selectedLotRow = batches.find((b) => b.id === selectedBatchId);
+  const parcelIdForApi = selectedLotRow?.parcelId?.trim() || undefined;
+
   const handleBatchChange = (id: string) => {
-    setSelectedBatch(id);
+    setSelectedBatchId(id);
     setShowReplaceForm(false);
     setPhotos({});
     setStickerRollId('');
@@ -210,7 +276,7 @@ export default function CompliancePhotosPage() {
   };
 
   const handleVerifySticker = async () => {
-    if (!selectedBatch || !stickerRollId) {
+    if (!selectedBatchId || !stickerRollId) {
       setError(t('grower.compliancePhotos.errors.selectBatchAndSticker'));
       return;
     }
@@ -225,7 +291,8 @@ export default function CompliancePhotosPage() {
         },
         body: JSON.stringify({
           stickerRollId,
-          batchId: selectedBatch,
+          batchId: selectedBatchId,
+          ...(parcelIdForApi ? { parcelId: parcelIdForApi } : {}),
         }),
       });
 
@@ -267,9 +334,10 @@ export default function CompliancePhotosPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          batchId: selectedBatch,
+          batchId: selectedBatchId,
           stickerRollId,
           photos: requiredPhotos.map((photo) => photos[photo.type]),
+          ...(parcelIdForApi ? { parcelId: parcelIdForApi } : {}),
         }),
       });
 
@@ -281,7 +349,7 @@ export default function CompliancePhotosPage() {
       setSuccess(t('grower.compliancePhotos.feedback.saveSuccess'));
       setPhotos({});
       setShowReplaceForm(false);
-      await fetchComplianceStatus(selectedBatch);
+      await fetchComplianceStatus(selectedBatchId);
     } catch (err: unknown) {
       setError(growerApiErrorOrT(err, t, 'grower.compliancePhotos.errors.genericUploadError'));
     } finally {
@@ -290,11 +358,9 @@ export default function CompliancePhotosPage() {
   };
 
   const showForm =
-    Boolean(selectedBatch) &&
+    Boolean(selectedBatchId) &&
     (complianceStatus == null || !complianceStatus.complete || showReplaceForm) &&
     !statusLoading;
-
-  const selectedBatchLabel = batches.find((b) => b.id === selectedBatch);
 
   return (
     <SidebarLayout title={t('grower.compliancePhotos.pageTitle')} navItems={navItems}>
@@ -354,8 +420,7 @@ export default function CompliancePhotosPage() {
             </p>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-base font-medium text-gray-700 mb-2">{t('grower.compliancePhotos.selectLot')}</label>
+          <div className="mb-6 space-y-4">
             {batchesLoading ? (
               <p className="text-base text-gray-500">{t('grower.compliancePhotos.loadingBatches')}</p>
             ) : batches.length === 0 ? (
@@ -367,26 +432,57 @@ export default function CompliancePhotosPage() {
                 {t('grower.compliancePhotos.noBatchesSuffix')}
               </p>
             ) : (
-              <select
-                value={selectedBatch}
-                onChange={(e) => handleBatchChange(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
-              >
-                <option value="">{t('grower.compliancePhotos.selectBatchPlaceholder')}</option>
-                {batches.map((batch) => (
-                  <option key={batch.id} value={batch.id}>
-                    {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit || t('common.unitKg')})
-                  </option>
-                ))}
-              </select>
+              <>
+                <div>
+                  <label className="block text-base font-medium text-gray-700 mb-2" htmlFor="compliance-parcel-filter">
+                    {t('grower.compliancePhotos.parcelFilterLabel')}
+                  </label>
+                  <select
+                    id="compliance-parcel-filter"
+                    value={parcelFilterId}
+                    onChange={(e) => setParcelFilterId(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent min-h-[48px] text-base"
+                  >
+                    {parcelFilterOptions.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-base font-medium text-gray-700 mb-2" htmlFor="compliance-batch">
+                    {t('grower.compliancePhotos.selectLotHeading')}
+                  </label>
+                  {filteredBatches.length === 0 ? (
+                    <p className="text-base text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                      {t('grower.compliancePhotos.noBatches')}
+                    </p>
+                  ) : (
+                    <select
+                      id="compliance-batch"
+                      value={selectedBatchId}
+                      onChange={(e) => handleBatchChange(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent min-h-[48px] text-base"
+                    >
+                      <option value="">{t('grower.compliancePhotos.selectBatchPlaceholder')}</option>
+                      {filteredBatches.map((batch) => (
+                        <option key={batch.id} value={batch.id}>
+                          {batch.batchId} — {batch.productName} ({batch.quantity} {batch.unit || t('common.unitKg')})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
-          {selectedBatch && statusLoading && (
+          {selectedBatchId && statusLoading && (
             <p className="text-base text-gray-500 mb-4">{t('grower.compliancePhotos.loadingStatus')}</p>
           )}
 
-          {selectedBatch && !statusLoading && complianceStatus?.complete && !showReplaceForm && (
+          {selectedBatchId && !statusLoading && complianceStatus?.complete && !showReplaceForm && (
             <div className="mb-6 rounded-xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div>
@@ -574,7 +670,7 @@ export default function CompliancePhotosPage() {
                   type="submit"
                   disabled={
                     uploading ||
-                    !selectedBatch ||
+                    !selectedBatchId ||
                     !stickerRollId ||
                     Object.keys(photos).length !== requiredPhotos.length
                   }
@@ -584,16 +680,16 @@ export default function CompliancePhotosPage() {
                     ? t('grower.compliancePhotos.uploading')
                     : t('grower.compliancePhotos.saveSubmit')}
                 </button>
-                {showReplaceForm && selectedBatchLabel && (
+                {showReplaceForm && selectedLotRow ? (
                   <p className="text-xs text-amber-800 mt-2">
-                    {t('grower.compliancePhotos.replaceWarning', { batchId: selectedBatchLabel.batchId })}
+                    {t('grower.compliancePhotos.replaceWarning', { batchId: selectedLotRow.batchId })}
                   </p>
-                )}
+                ) : null}
               </div>
             </form>
           )}
 
-          {selectedBatch && !statusLoading && complianceStatus === null && (
+          {selectedBatchId && !statusLoading && complianceStatus === null && (
             <p className="text-base text-amber-800">{t('grower.compliancePhotos.statusLoadError')}</p>
           )}
         </motion.div>

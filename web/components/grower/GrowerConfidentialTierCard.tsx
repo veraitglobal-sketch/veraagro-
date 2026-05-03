@@ -1,6 +1,7 @@
 'use client';
 
-import { Eye, EyeOff, ExternalLink, Lock } from 'lucide-react';
+import Link from 'next/link';
+import { Eye, EyeOff, ExternalLink, FileText, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 
 export type GrowerConfidentialTierId = 'short' | 'medium' | 'long';
@@ -10,7 +11,9 @@ export type GrowerConfidentialTierCardProps = {
   title: string;
   hint: string;
   tierConfigured: boolean;
-  unlockedUrl: string | null;
+  /** After unlock: in-app reader path (may coexist with external URL). */
+  unlockPresentationHref: string | null;
+  unlockExternalHref: string | null;
   password: string;
   onPasswordChange: (value: string) => void;
   showPassword: boolean;
@@ -18,14 +21,15 @@ export type GrowerConfidentialTierCardProps = {
   wrongPassword: boolean;
   loading: boolean;
   onUnlock: () => void;
-  onLockAgain: () => void;
+  onLockAgain: () => void | Promise<void>;
   unavailableLabel: string;
   passwordLabel: string;
   passwordPlaceholder: string;
   unlockLabel: string;
   unlockingLabel: string;
   wrongPasswordLabel: string;
-  openDocumentLabel: string;
+  openPresentationLabel: string;
+  openExternalLinkLabel: string;
   refreshClearsLabel: string;
   lockAgainLabel: string;
   showPasswordLabel: string;
@@ -38,7 +42,8 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     title,
     hint,
     tierConfigured,
-    unlockedUrl,
+    unlockPresentationHref,
+    unlockExternalHref,
     password,
     onPasswordChange,
     showPassword,
@@ -53,7 +58,8 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     unlockLabel,
     unlockingLabel,
     wrongPasswordLabel,
-    openDocumentLabel,
+    openPresentationLabel,
+    openExternalLinkLabel,
     refreshClearsLabel,
     lockAgainLabel,
     showPasswordLabel,
@@ -63,6 +69,8 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
   const inputId = `grower-confidential-pw-${tierId}`;
   const errorId = `grower-confidential-err-${tierId}`;
   const hintId = `grower-confidential-hint-${tierId}`;
+
+  const unlocked = unlockPresentationHref || unlockExternalHref;
 
   if (!tierConfigured) {
     return (
@@ -89,6 +97,11 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
     );
   }
 
+  const btnPrimary =
+    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2';
+  const btnOutline =
+    'inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2';
+
   return (
     <section
       aria-labelledby={`grower-confidential-title-${tierId}`}
@@ -111,21 +124,31 @@ export default function GrowerConfidentialTierCard(props: GrowerConfidentialTier
         </div>
       </div>
 
-      {unlockedUrl ? (
+      {unlocked ? (
         <div className="flex flex-col gap-3">
-          <a
-            href={unlockedUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
-          >
-            <ExternalLink className="h-5 w-5 shrink-0" aria-hidden />
-            {openDocumentLabel}
-          </a>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {unlockPresentationHref ? (
+              <Link href={unlockPresentationHref} className={btnPrimary}>
+                <FileText className="h-5 w-5 shrink-0" aria-hidden />
+                {openPresentationLabel}
+              </Link>
+            ) : null}
+            {unlockExternalHref ? (
+              <a
+                href={unlockExternalHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={unlockPresentationHref ? btnOutline : btnPrimary}
+              >
+                <ExternalLink className="h-5 w-5 shrink-0" aria-hidden />
+                {openExternalLinkLabel}
+              </a>
+            ) : null}
+          </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
             <button
               type="button"
-              onClick={onLockAgain}
+              onClick={() => void onLockAgain()}
               className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
             >
               {lockAgainLabel}

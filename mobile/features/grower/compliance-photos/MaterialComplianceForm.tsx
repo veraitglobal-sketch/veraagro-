@@ -21,6 +21,7 @@ import {
   type CompliancePhotoType,
   useMaterialCompliance,
 } from './useMaterialCompliance';
+import { BatchSelector } from '../quality-entry/BatchSelector';
 
 /**
  * Web-parity flow: one label roll + three required photos (PUNNETS, LABELING, PALLETIZATION) per batch.
@@ -106,7 +107,7 @@ export function MaterialComplianceForm() {
 
         {c.batchesLoading ? (
           <ActivityIndicator color={colors.primary} style={{ marginVertical: 24 }} />
-        ) : c.batches.length === 0 ? (
+        ) : c.totalBatchCount === 0 ? (
           <Text style={{ fontSize: 14, color: colors.text.secondary, lineHeight: 20 }}>
             {t('producer.compliance.batchForm.noBatches')}{' '}
             <Text
@@ -118,37 +119,15 @@ export function MaterialComplianceForm() {
             {t('producer.compliance.batchForm.noBatchesSuffix')}
           </Text>
         ) : (
-          <>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.tertiary, marginBottom: 8 }}>
-              {t('producer.compliance.batchForm.selectLot')}
-            </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
-              {c.batches.map((b) => {
-                const sel = c.selectedBatchId === b.id;
-                return (
-                  <TouchableOpacity
-                    key={b.id}
-                    onPress={() => c.setSelectedBatchId(b.id)}
-                    style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 8,
-                      borderRadius: theme.borderRadius.sm,
-                      borderWidth: 1,
-                      borderColor: sel ? colors.primary : colors.border,
-                      backgroundColor: sel ? `${colors.primary}12` : 'transparent',
-                    }}
-                  >
-                    <Text
-                      numberOfLines={2}
-                      style={{ fontSize: 15, color: sel ? colors.primary : colors.text.primary, maxWidth: 200 }}
-                    >
-                      {b.batchId} — {b.productName}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </>
+          <BatchSelector
+            filteredBatches={c.filteredBatches}
+            parcelFilterOptions={c.parcelFilterOptions}
+            parcelFilterId={c.parcelFilterId}
+            setParcelFilterId={c.setParcelFilterId}
+            selectedBatchId={c.selectedBatchId}
+            setSelectedBatchId={c.setSelectedBatchId}
+            loading={c.batchesLoading}
+          />
         )}
 
         {c.selectedBatchId && c.statusLoading ? (
