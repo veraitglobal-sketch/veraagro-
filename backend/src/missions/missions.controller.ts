@@ -28,9 +28,11 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class MissionsController {
   constructor(private readonly missionsService: MissionsService) {}
 
+  /**
+   * Create transport request (grower). Jwt only — `createMission()` enforces grower account and batch ownership.
+   * (Same pattern as harvest-announcements: mobile JWT role arrays must not block the flow because of guard drift.)
+   */
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('GROWER', 'FARMER')
   async createMission(@Request() req, @Body() dto: CreateMissionDto) {
     return this.missionsService.createMission(req.user.id, dto);
   }

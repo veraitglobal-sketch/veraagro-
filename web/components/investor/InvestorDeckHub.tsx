@@ -19,7 +19,7 @@ export function InvestorDeckHub() {
       </h2>
       <p className="mb-6 font-light leading-relaxed text-gray-600">{t("investorDeckPage.documentsLead")}</p>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2">
         <Link href={loc("/investor-deck/slides")} className={cardClass}>
           <h3 className="mb-2 text-xl font-medium text-gray-900">{t("footer.investorDeck")}</h3>
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardPitchDesc")}</p>

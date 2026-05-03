@@ -939,6 +939,8 @@ export const missionsAPI = {
     destinationAddress?: string;
     destinationCity?: string;
     loadInstructions?: string;
+    /** Links mission to grower harvest plan when ops requires CONFIRMED plan or to disambiguate parcels */
+    harvestAnnouncementId?: string;
   }): Promise<Mission> => {
     const response = await api.post('/missions', data);
     return response.data;

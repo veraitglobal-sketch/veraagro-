@@ -23,6 +23,7 @@ import { apiErrorMessage } from '../../../lib/api-error';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
+import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 
 type ParcelRow = {
   id: string;
@@ -44,28 +45,31 @@ async function fetchHarvestPlanRows(): Promise<HarvestPickRow[]> {
     .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'HARVEST')
     .map((h) => ({
       id: `local:${h.id}`,
-      parcelId: h.payload.parcelId,
+      parcelId: normalizeHarvestParcelId(h.payload.parcelId, null),
       cropType: h.payload.cropType,
       estimatedDate: h.payload.estimatedDate,
-    }));
+    }))
+    .filter((r) => r.parcelId.length > 0);
   let server: HarvestPickRow[] = [];
   try {
     const list = (await harvestAnnouncementsAPI.getMy()) as Array<{
       id: string;
-      parcelId: string;
+      parcelId?: string;
       announcementType?: string;
       cropType: string;
       estimatedDate: string;
+      parcel?: { id?: string } | null;
     }>;
     if (Array.isArray(list)) {
       server = list
         .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'HARVEST')
         .map((r) => ({
           id: r.id,
-          parcelId: r.parcelId,
+          parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel ?? null),
           cropType: r.cropType,
           estimatedDate: r.estimatedDate,
-        }));
+        }))
+        .filter((r) => r.parcelId.length > 0);
     }
   } catch {
     // offline
@@ -144,10 +148,11 @@ export default function CreateBatchScreen() {
     void load();
   }, [load]);
 
-  const harvestForParcel = useMemo(
-    () => harvestAnnouncements.filter((h) => h.parcelId === parcelId),
-    [harvestAnnouncements, parcelId],
-  );
+  const harvestForParcel = useMemo(() => {
+    const sel = normalizeHarvestParcelId(parcelId, null);
+    if (!sel) return [];
+    return harvestAnnouncements.filter((h) => normalizeHarvestParcelId(h.parcelId, null) === sel);
+  }, [harvestAnnouncements, parcelId]);
 
   const selectedParcel = useMemo(() => parcelsRows.find((r) => r.id === parcelId), [parcelsRows, parcelId]);
 
@@ -157,7 +162,9 @@ export default function CreateBatchScreen() {
       setSelectedHarvestPlanId(null);
       return;
     }
-    const list = harvestAnnouncements.filter((h) => h.parcelId === parcelId);
+    const list = harvestAnnouncements.filter(
+      (h) => normalizeHarvestParcelId(h.parcelId, null) === normalizeHarvestParcelId(parcelId, null),
+    );
     if (list.length === 0) {
       setSelectedHarvestPlanId(null);
       return;

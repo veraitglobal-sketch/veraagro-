@@ -1293,7 +1293,15 @@
       "addPhoto": "Add photo",
       "chooseFromGallery": "Choose from gallery instead",
       "getLocation": "Get current location",
-      "locationOk": "Location loaded"
+      "locationOk": "Location loaded",
+      "historyTitle": "Recent entries (this device)",
+      "historySubtitle": "Date, activity, and sync status. After a successful upload the row stays here as “Sent”.",
+      "historyEmpty": "Nothing logged yet on this phone — save an entry below.",
+      "histStatus_pending": "Queued",
+      "histStatus_syncing": "Uploading",
+      "histStatus_synced": "Sent",
+      "histStatus_error": "Error",
+      "histMaterial": "Material"
     },
     "fieldLogAlerts": {
       "permTitle": "Permissions",
@@ -1342,7 +1350,9 @@
       "saveFailed": "Failed to save growth log",
       "validationTitle": "Check your entry",
       "plantingNotesTooShort": "For plantings, describe progress with at least {{min}} characters (weather, changes, pests…).",
-      "plantingStageRequired": "For plantings, choose or enter a growth stage."
+      "plantingStageRequired": "For plantings, choose or enter a growth stage.",
+      "needPhotoTitle": "Photo for this entry",
+      "needPhotoBody": "The camera sheet may have closed without a photo. You can choose an existing photo, allow the camera in settings, or cancel and tap + again."
     },
     "estatesUi": {
       "deleteTitle": "Delete field",

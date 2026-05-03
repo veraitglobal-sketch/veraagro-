@@ -147,6 +147,7 @@ export const syncService = {
         // Mark as syncing
         entry.status = 'syncing';
         await this.updateEntryStatus(entry.id, 'syncing');
+        await offlineStorage.patchFieldLogHistory(entry.id, { status: 'syncing' });
 
         if (!entry.parcelId?.trim() || !entry.harvestAnnouncementId?.trim()) {
           throw new Error(tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan'));
@@ -203,6 +204,7 @@ export const syncService = {
           growthStage: entry.growthStage?.trim() || undefined,
         });
 
+        await offlineStorage.patchFieldLogHistory(entry.id, { status: 'synced', error: undefined });
         // Mark as synced
         await offlineStorage.removeEntry(entry.id);
         success++;
@@ -212,6 +214,7 @@ export const syncService = {
         entry.status = 'error';
         entry.error = msg;
         await this.updateEntryStatus(entry.id, 'error', msg);
+        await offlineStorage.patchFieldLogHistory(entry.id, { status: 'error', error: msg });
         failed++;
       }
     }

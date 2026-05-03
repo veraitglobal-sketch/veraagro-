@@ -8,6 +8,7 @@ import {
   ActivityType,
   MaterialKindForLog,
   PLANTING_NOTES_MIN,
+  historyActivityLabelKey,
 } from './useFieldLogData';
 import { GROWTH_STAGE_PRESETS } from '../growth-journal/AddGrowthLogModal';
 
@@ -27,7 +28,7 @@ const materialKindLabelKey: Record<MaterialKindForLog, string> = {
 };
 
 export default function EntryForm() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     router,
     estates,
@@ -65,7 +66,30 @@ export default function EntryForm() {
     handleSubmit,
     referenceRefreshing,
     refreshReferenceData,
+    localHistory,
   } = useFieldLogData();
+
+  const langSr = !!i18n.language?.startsWith('sr');
+
+  const formatHistoryWhen = (iso: string) => {
+    try {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return iso;
+      const tag = langSr ? 'sr-Latn' : 'en-GB';
+      return d.toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+    } catch {
+      return iso;
+    }
+  };
+
+  const historyStatusStyle = (
+    status: 'pending' | 'syncing' | 'synced' | 'error',
+  ): { bg: string; color: string } => {
+    if (status === 'synced') return { bg: `${theme.colors.success}18`, color: theme.colors.success };
+    if (status === 'error') return { bg: theme.colors.errorLight, color: theme.colors.error };
+    if (status === 'syncing') return { bg: `${theme.colors.primary}14`, color: theme.colors.primary };
+    return { bg: `${theme.colors.warning}20`, color: theme.colors.warning };
+  };
 
   const strictPlanting = selectedHarvestPlan?.announcementType === 'PLANTING';
   const growthStageReady = strictPlanting
@@ -140,6 +164,84 @@ export default function EntryForm() {
         >
           {t('producer.fieldLogForm.introLead')}
         </Text>
+
+        <View style={{ marginBottom: theme.spacing.lg }}>
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.xs,
+              letterSpacing: 0.2,
+            }}
+          >
+            {t('producer.fieldLogForm.historyTitle')}
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '300',
+              color: theme.colors.text.secondary,
+              lineHeight: 19,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            {t('producer.fieldLogForm.historySubtitle')}
+          </Text>
+          {localHistory.length === 0 ? (
+            <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.tertiary, fontStyle: 'italic' }}>
+              {t('producer.fieldLogForm.historyEmpty')}
+            </Text>
+          ) : (
+            localHistory.map((h) => {
+              const ss = historyStatusStyle(h.status);
+              return (
+                <View
+                  key={h.id}
+                  style={{
+                    marginBottom: theme.spacing.sm,
+                    padding: theme.spacing.sm,
+                    borderRadius: theme.borderRadius.md,
+                    borderWidth: 0.5,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.colors.surfaceElevated,
+                  }}
+                >
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary, flex: 1 }}>
+                      {formatHistoryWhen(h.timestamp)}
+                    </Text>
+                    <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: ss.bg }}>
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: ss.color }}>
+                        {t(`producer.fieldLogForm.histStatus_${h.status}`, { defaultValue: h.status })}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.primary, marginTop: 6 }}>
+                    {t(`producer.fieldLog.${historyActivityLabelKey(String(h.activityType))}`)}
+                  </Text>
+                  {h.growthStage ? (
+                    <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4 }}>{h.growthStage}</Text>
+                  ) : null}
+                  {h.journalNotesPreview.trim() ? (
+                    <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4, lineHeight: 19 }}>
+                      {h.journalNotesPreview}
+                      {h.journalNotesPreview.length >= 240 ? '…' : ''}
+                    </Text>
+                  ) : null}
+                  {h.materialID?.trim() ? (
+                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 6 }}>
+                      {t('producer.fieldLogForm.histMaterial')}: {h.materialID.trim()}
+                    </Text>
+                  ) : null}
+                  {h.status === 'error' && h.error ? (
+                    <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: 6, lineHeight: 17 }}>{h.error}</Text>
+                  ) : null}
+                </View>
+              );
+            })
+          )}
+        </View>
 
         {estates.length > 1 ? (
           <View style={{ marginBottom: theme.spacing.md }}>

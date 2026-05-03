@@ -18,11 +18,64 @@ import * as Location from 'expo-location';
 import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
-import { batchesAPI, missionsAPI } from '../../lib/api';
+import { batchesAPI, missionsAPI, harvestAnnouncementsAPI } from '../../lib/api';
+import { normalizeHarvestParcelId } from '../../features/grower/harvest/useHarvestData';
 import { apiErrorMessage, axiosResponseStatus } from '../../lib/api-error';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
-type BatchRow = { id: string; batchId?: string; productName?: string; quantity?: number; unit?: string; status?: string };
+type BatchRow = {
+  id: string;
+  batchId?: string;
+  parcelId?: string | null;
+  productName?: string;
+  quantity?: number;
+  unit?: string;
+  status?: string;
+};
+
+async function pickHarvestAnnouncementIdForParcel(
+  parcelId: string | null | undefined,
+): Promise<string | undefined> {
+  const pid = parcelId ? normalizeHarvestParcelId(parcelId, null) : '';
+  if (!pid) return undefined;
+  try {
+    const raw = await harvestAnnouncementsAPI.getMy();
+    const arr = Array.isArray(raw) ? raw : [];
+    type Ann = {
+      id: string;
+      status?: string;
+      createdAt?: string;
+      announcementType?: string;
+      parcelId?: string;
+      parcel?: { id?: string } | null;
+    };
+    const harvests: Ann[] = arr
+      .filter((a: Ann) => String(a.announcementType ?? '').toUpperCase() === 'HARVEST')
+      .filter(
+        (a: Ann) =>
+          normalizeHarvestParcelId(a.parcelId, a.parcel ?? null) === pid &&
+          typeof a.id === 'string' &&
+          !String(a.id).startsWith('local:'),
+      );
+    const rank = (s: string) => {
+      const u = String(s || '').toUpperCase();
+      if (u === 'CONFIRMED') return 0;
+      if (u === 'APPROVED') return 1;
+      return 2;
+    };
+    harvests.sort((a, b) => {
+      const rd = rank(String(a.status ?? '')) - rank(String(b.status ?? ''));
+      if (rd !== 0) return rd;
+      const ta = new Date(String(a.createdAt || 0)).getTime();
+      const tb = new Date(String(b.createdAt || 0)).getTime();
+      return tb - ta;
+    });
+    const id = harvests[0]?.id;
+    return typeof id === 'string' ? id : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function readyForTransport(b: BatchRow) {
   return b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED';
@@ -152,10 +205,13 @@ export default function MissionsCreateScreen() {
 
     setSubmitting(true);
     try {
+      const picked = batches.find((b) => b.id === batchId);
+      const harvestAnnouncementId = await pickHarvestAnnouncementIdForParcel(picked?.parcelId);
       await missionsAPI.create({
         batchId,
-        pickupLocation: { lat, lng, address: pickupAddress },
+        pickupLocation: { lat, lng, address: pickupAddress.trim() },
         pickupAddress: pickupAddress.trim(),
+        ...(harvestAnnouncementId ? { harvestAnnouncementId } : {}),
       });
       Alert.alert(t('producer.missionsCreate.successTitle'), t('producer.missionsCreate.successBody'), [
         { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Alert } from 'react-native';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +19,15 @@ const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
 /** Match server default PLANTING_PROGRESS_NOTES_MIN_LEN */
 const PLANTING_NOTES_MIN = 15;
 
+const MODAL_TO_CAMERA_DELAY_MS = 480;
+
+type PendingGrowthSubmission = {
+  filterEstate: string;
+  filterParcel: string;
+  activePlanId: string;
+  payload: { notes: string; growthStage: string | undefined };
+};
+
 export function useGrowthJournalData() {
   const { t } = useTranslation();
   const [logs, setLogs] = useState<GrowthLog[]>([]);
@@ -33,6 +42,16 @@ export function useGrowthJournalData() {
   const [parcelPlans, setParcelPlans] = useState<{ id: string; label: string; announcementType: string }[]>([]);
   const [activePlanId, setActivePlanId] = useState('');
   const [plansLoading, setPlansLoading] = useState(false);
+
+  const pendingSubmissionRef = useRef<PendingGrowthSubmission | null>(null);
+  const deferredCameraTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (deferredCameraTimerRef.current) clearTimeout(deferredCameraTimerRef.current);
+    },
+    [],
+  );
 
   const loadData = useCallback(async () => {
     try {
@@ -138,8 +157,144 @@ export function useGrowthJournalData() {
     void loadPlans();
   }, [loadPlans]);
 
+  const pickGrowthPhotoFromLibrary = useCallback(async (): Promise<ImagePicker.ImagePickerAsset | null> => {
+    try {
+      const library = await ImagePicker.getMediaLibraryPermissionsAsync();
+      let st = library.status;
+      if (st !== 'granted') {
+        const req = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        st = req.status;
+      }
+      if (st !== 'granted') {
+        Alert.alert(t('producer.fieldLogAlerts.galleryPermTitle'), t('producer.fieldLogAlerts.galleryPermBody'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => void Linking.openSettings() },
+        ]);
+        return null;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 0.72,
+      });
+      if (result.canceled || !result.assets[0]?.uri) return null;
+      return result.assets[0];
+    } catch (e: unknown) {
+      console.warn('growth journal gallery:', e);
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.galleryError'));
+      return null;
+    }
+  }, [t]);
+
+  const resolveGrowthJournalPhotoAsset = useCallback(async (): Promise<ImagePicker.ImagePickerAsset | null> => {
+    let camSt = (await ImagePicker.getCameraPermissionsAsync()).status;
+    if (camSt !== 'granted') {
+      ({ status: camSt } = await ImagePicker.requestCameraPermissionsAsync());
+    }
+
+    if (camSt === 'granted') {
+      try {
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: false,
+          quality: 0.72,
+        });
+        if (!result.canceled && result.assets[0]?.uri) {
+          return result.assets[0];
+        }
+      } catch (e: unknown) {
+        console.warn('Growth journal camera:', e);
+      }
+    }
+
+    return await new Promise<ImagePicker.ImagePickerAsset | null>((resolve) => {
+      Alert.alert(t('producer.growthJournalAlerts.needPhotoTitle'), t('producer.growthJournalAlerts.needPhotoBody'), [
+        { text: t('common.cancel'), style: 'cancel', onPress: () => resolve(null) },
+        {
+          text: t('producer.fieldLogAlerts.openSettings'),
+          onPress: () => {
+            void Linking.openSettings();
+            resolve(null);
+          },
+        },
+        {
+          text: t('producer.fieldLogAlerts.pickFromGallery'),
+          onPress: () => {
+            void pickGrowthPhotoFromLibrary().then((asset) => resolve(asset));
+          },
+        },
+      ]);
+    });
+  }, [pickGrowthPhotoFromLibrary, t]);
+
+  const completeGrowthLogAfterModalClose = useCallback(async () => {
+    const pending = pendingSubmissionRef.current;
+    pendingSubmissionRef.current = null;
+    if (!pending) return;
+
+    setUploading(true);
+    try {
+      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+      if (locationStatus !== 'granted') {
+        Alert.alert(t('producer.growthJournalAlerts.permTitle'), t('producer.growthJournalAlerts.permBody'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => void Linking.openSettings() },
+        ]);
+        return;
+      }
+
+      let location: { lat: number; lng: number };
+      try {
+        const loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      } catch {
+        Alert.alert(t('producer.growthJournalAlerts.gpsErrorTitle'), t('producer.growthJournalAlerts.gpsErrorBody'));
+        return;
+      }
+
+      const asset = await resolveGrowthJournalPhotoAsset();
+      if (!asset) return;
+
+      const imageDataUrl = await imageUriToJpegDataUrl(asset.uri);
+      try {
+        assertDataUrlWithinSize(imageDataUrl, MAX_GROWTH_PHOTO_BYTES);
+      } catch {
+        Alert.alert(t('error'), t('producer.growthJournalAlerts.photoLarge'));
+        return;
+      }
+
+      const imageHash = await sha256HexFromImageUri(asset.uri);
+      const deviceId = await getOrCreateDeviceId();
+      const deviceTimestamp = new Date().toISOString();
+      await growthLogsAPI.create({
+        estateId: pending.filterEstate,
+        parcelId: pending.filterParcel,
+        harvestAnnouncementId: pending.activePlanId,
+        imageUrl: imageDataUrl,
+        imageHash,
+        gpsLatitude: location.lat,
+        gpsLongitude: location.lng,
+        deviceId,
+        deviceTimestamp,
+        notes: pending.payload.notes.trim() || undefined,
+        growthStage: pending.payload.growthStage,
+      });
+      await loadLogs();
+      Alert.alert(t('producer.growthJournalAlerts.savedTitle'), t('producer.growthJournalAlerts.savedBody'));
+    } catch (e: unknown) {
+      const msg = apiErrorMessage(e, t('producer.growthJournalAlerts.saveFailed'));
+      Alert.alert(t('error'), msg);
+      console.error('Growth log submit:', e);
+    } finally {
+      setUploading(false);
+    }
+  }, [resolveGrowthJournalPhotoAsset, loadLogs, t]);
+
   const submitAddLog = useCallback(
     async (payload: { notes: string; growthStage: string | undefined }) => {
+      if (uploading) return;
       if (estates.length === 0) return;
       if (filterEstate === 'all' || !filterEstate) {
         Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
@@ -172,79 +327,29 @@ export function useGrowthJournalData() {
         }
       }
 
-      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-
-      if (cameraStatus !== 'granted' || locationStatus !== 'granted') {
-        Alert.alert(t('producer.growthJournalAlerts.permTitle'), t('producer.growthJournalAlerts.permBody'));
-        return;
-      }
-
-      let location: { lat: number; lng: number } | null = null;
-      try {
-        const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
-      } catch {
-        Alert.alert(t('producer.growthJournalAlerts.gpsErrorTitle'), t('producer.growthJournalAlerts.gpsErrorBody'));
-        return;
-      }
-
-      let result: ImagePicker.ImagePickerResult;
-      try {
-        result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 0.8,
-        });
-      } catch (error) {
-        console.error('Camera error:', error);
-        return;
-      }
-
-      if (result.canceled || !result.assets[0] || !location) return;
-      const asset = result.assets[0];
-
-      setUploading(true);
-      try {
-        const imageDataUrl = await imageUriToJpegDataUrl(asset.uri);
-        try {
-          assertDataUrlWithinSize(imageDataUrl, MAX_GROWTH_PHOTO_BYTES);
-        } catch {
-          Alert.alert(t('error'), t('producer.growthJournalAlerts.photoLarge'));
-          return;
-        }
-
-        const imageHash = await sha256HexFromImageUri(asset.uri);
-        const deviceId = await getOrCreateDeviceId();
-        const deviceTimestamp = new Date().toISOString();
-        await growthLogsAPI.create({
-          estateId: filterEstate,
-          parcelId: filterParcel,
-          harvestAnnouncementId: activePlanId,
-          imageUrl: imageDataUrl,
-          imageHash,
-          gpsLatitude: location.lat,
-          gpsLongitude: location.lng,
-          deviceId,
-          deviceTimestamp,
-          notes: payload.notes.trim() || undefined,
-          growthStage: payload.growthStage,
-        });
-        setAddModalVisible(false);
-        await loadLogs();
-        Alert.alert(t('producer.growthJournalAlerts.savedTitle'), t('producer.growthJournalAlerts.savedBody'));
-      } catch (e: unknown) {
-        const msg = apiErrorMessage(e, t('producer.growthJournalAlerts.saveFailed'));
-        Alert.alert(t('error'), msg);
-        console.error('Growth log submit:', e);
-      } finally {
-        setUploading(false);
-      }
+      pendingSubmissionRef.current = {
+        filterEstate,
+        filterParcel,
+        activePlanId,
+        payload,
+      };
+      setAddModalVisible(false);
+      if (deferredCameraTimerRef.current) clearTimeout(deferredCameraTimerRef.current);
+      deferredCameraTimerRef.current = setTimeout(() => {
+        deferredCameraTimerRef.current = null;
+        void completeGrowthLogAfterModalClose();
+      }, MODAL_TO_CAMERA_DELAY_MS);
     },
-    [estates.length, filterEstate, filterParcel, activePlanId, parcelPlans, loadLogs, t],
+    [
+      uploading,
+      estates.length,
+      filterEstate,
+      filterParcel,
+      activePlanId,
+      parcelPlans,
+      t,
+      completeGrowthLogAfterModalClose,
+    ],
   );
 
   const sortedLogs = [...logs].sort(

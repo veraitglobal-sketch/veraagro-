@@ -5,6 +5,8 @@ import type { CreateHarvestPlanBody } from './api';
 export type FieldLogMaterialKind = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
 
 const PENDING_ENTRIES_KEY = 'pending_field_entries';
+const FIELD_LOG_HISTORY_KEY = 'field_log_history_v1';
+const FIELD_LOG_HISTORY_MAX = 100;
 const PENDING_HARVEST_KEY = 'pending_harvest_plans';
 const PENDING_PRODUCTS_KEY = 'pending_products';
 const PENDING_COSTS_KEY = 'pending_costs';
@@ -37,6 +39,23 @@ export interface PendingFieldEntry {
     accuracy?: number;
   };
   timestamp: string;
+  status: 'pending' | 'syncing' | 'synced' | 'error';
+  error?: string;
+}
+
+/** Lightweight local history for Field log (survives sync success; device-only). */
+export interface FieldLogHistoryItem {
+  id: string;
+  timestamp: string;
+  activityType: FieldActivityType;
+  estateId?: string;
+  parcelId?: string;
+  harvestAnnouncementId?: string;
+  planAnnouncementType?: string;
+  journalNotesPreview: string;
+  growthStage?: string;
+  materialKind?: FieldLogMaterialKind;
+  materialID?: string;
   status: 'pending' | 'syncing' | 'synced' | 'error';
   error?: string;
 }
@@ -141,6 +160,7 @@ export const offlineStorage = {
       };
       entries.push(newEntry);
       await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(entries));
+      await this.upsertFieldLogHistoryFromPending(newEntry);
       return newEntry.id;
     } catch (error) {
       console.error('Error saving pending entry:', error);
@@ -157,6 +177,62 @@ export const offlineStorage = {
     } catch (error) {
       console.error('Error removing entry:', error);
       throw error;
+    }
+  },
+
+  async getFieldLogHistory(): Promise<FieldLogHistoryItem[]> {
+    try {
+      const data = await AsyncStorage.getItem(FIELD_LOG_HISTORY_KEY);
+      if (!data) return [];
+      const parsed: FieldLogHistoryItem[] = JSON.parse(data);
+      return parsed.map((h) => ({
+        ...h,
+        activityType: normalizeFieldActivity(String(h.activityType)),
+      }));
+    } catch (e) {
+      console.error('Error reading field log history:', e);
+      return [];
+    }
+  },
+
+  async upsertFieldLogHistoryFromPending(entry: PendingFieldEntry): Promise<void> {
+    try {
+      const item: FieldLogHistoryItem = {
+        id: entry.id,
+        timestamp: entry.timestamp,
+        activityType: entry.activityType,
+        estateId: entry.estateId,
+        parcelId: entry.parcelId,
+        harvestAnnouncementId: entry.harvestAnnouncementId,
+        planAnnouncementType: entry.planAnnouncementType,
+        journalNotesPreview: (entry.journalNotes ?? '').slice(0, 240),
+        growthStage: entry.growthStage,
+        materialKind: entry.materialKind,
+        materialID: entry.materialID,
+        status: entry.status,
+        error: entry.error,
+      };
+      const prev = await this.getFieldLogHistory();
+      const without = prev.filter((h) => h.id !== item.id);
+      const next = [item, ...without].slice(0, FIELD_LOG_HISTORY_MAX);
+      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
+    } catch (e) {
+      console.error('Error writing field log history:', e);
+    }
+  },
+
+  async patchFieldLogHistory(
+    entryId: string,
+    patch: Partial<Pick<FieldLogHistoryItem, 'status' | 'error' | 'timestamp'>>,
+  ): Promise<void> {
+    try {
+      const list = await this.getFieldLogHistory();
+      const idx = list.findIndex((h) => h.id === entryId);
+      if (idx === -1) return;
+      list[idx] = { ...list[idx], ...patch };
+      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(list));
+    } catch (e) {
+      console.error('Error patching field log history:', e);
     }
   },
 

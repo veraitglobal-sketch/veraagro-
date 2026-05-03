@@ -11,7 +11,7 @@ import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI } from 
 import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
-import type { PendingFieldEntry, FieldLogMaterialKind } from '../../../lib/offline-storage';
+import type { PendingFieldEntry, FieldLogMaterialKind, FieldLogHistoryItem } from '../../../lib/offline-storage';
 
 /** Match server default (see `planting-progress.util` / PLANTING_PROGRESS_NOTES_MIN_LEN). */
 export const PLANTING_NOTES_MIN = 15;
@@ -41,6 +41,17 @@ export const ACTIVITY_TYPES: { value: ActivityType }[] = [
   { value: 'HARVEST' },
 ];
 
+const FIELD_HISTORY_ACTIVITY_KEY: Record<string, string> = {
+  Planting: 'planting',
+  Fertilizing: 'fertilizing',
+  Spraying: 'spraying',
+  Harvest: 'harvest',
+};
+
+export function historyActivityLabelKey(activity: string): string {
+  return FIELD_HISTORY_ACTIVITY_KEY[activity] ?? 'spraying';
+}
+
 export function useFieldLogData() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -66,6 +77,8 @@ export function useFieldLogData() {
   const [growthStagePreset, setGrowthStagePreset] = useState('');
   const [growthStageCustom, setGrowthStageCustom] = useState('');
   const [journalNotes, setJournalNotes] = useState('');
+
+  const [localHistory, setLocalHistory] = useState<FieldLogHistoryItem[]>([]);
 
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const currentEstateRef = useRef<Estate | null>(null);
@@ -239,6 +252,11 @@ export function useFieldLogData() {
       setParcelsForGps([]);
     } finally {
       setReferenceRefreshing(false);
+      try {
+        setLocalHistory(await offlineStorage.getFieldLogHistory());
+      } catch {
+        setLocalHistory([]);
+      }
     }
   }, []);
 
@@ -310,6 +328,11 @@ export function useFieldLogData() {
     useCallback(() => {
       const check = async () => {
         try {
+          setLocalHistory(await offlineStorage.getFieldLogHistory());
+        } catch {
+          setLocalHistory([]);
+        }
+        try {
           const barcode = await AsyncStorage.getItem('last_scanned_barcode');
           if (barcode) {
             setMaterialID(barcode);
@@ -328,6 +351,14 @@ export function useFieldLogData() {
       void check();
     }, [getCurrentLocation]),
   );
+
+  const reloadLocalHistory = useCallback(async () => {
+    try {
+      setLocalHistory(await offlineStorage.getFieldLogHistory());
+    } catch {
+      setLocalHistory([]);
+    }
+  }, []);
 
   const selectEstateById = useCallback(
     (estateId: string) => {
@@ -464,6 +495,7 @@ export function useFieldLogData() {
       setGrowthStagePreset('');
       setGrowthStageCustom('');
       setJournalNotes('');
+      await reloadLocalHistory();
     } catch (error) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
     } finally {
@@ -483,6 +515,7 @@ export function useFieldLogData() {
     growthStageCustom,
     journalNotes,
     t,
+    reloadLocalHistory,
   ]);
 
   const handleSubmit = useCallback(async () => {
@@ -600,5 +633,7 @@ export function useFieldLogData() {
     handleSubmit,
     referenceRefreshing,
     refreshReferenceData,
+    localHistory,
+    reloadLocalHistory,
   };
 }

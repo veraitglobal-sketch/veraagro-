@@ -1299,7 +1299,15 @@
       "addPhoto": "Dodaj fotografiju",
       "chooseFromGallery": "Umetni iz galerije",
       "getLocation": "Trenutna lokacija",
-      "locationOk": "Lokacija učitana"
+      "locationOk": "Lokacija učitana",
+      "historyTitle": "Nedavni unosi (na ovom telefonu)",
+      "historySubtitle": "Datum, aktivnost i status slanja. Kad je poslato na server, ostaje ovde kao „Poslato”.",
+      "historyEmpty": "Još nema unosa na ovom uređaju — dodaj ispod.",
+      "histStatus_pending": "Čeka slanje",
+      "histStatus_syncing": "Šalje se…",
+      "histStatus_synced": "Poslato",
+      "histStatus_error": "Greška",
+      "histMaterial": "Materijal"
     },
     "fieldLogAlerts": {
       "permTitle": "Dozvole",
@@ -1348,7 +1356,9 @@
       "saveFailed": "Nije moguće sačuvati dnevnik rasta",
       "validationTitle": "Provera unosa",
       "plantingNotesTooShort": "Za zasad opiši napredak bar sa {{min}} znakova (vreme, promene, štetočine, zalivanje…).",
-      "plantingStageRequired": "Za zasad izaberi ili upiši fazu rasta."
+      "plantingStageRequired": "Za zasad izaberi ili upiši fazu rasta.",
+      "needPhotoTitle": "Potrebna je fotografija",
+      "needPhotoBody": "Kamera možda nije otvorila snimak. Izaberi sliku iz galerije, uključi kameru u podešavanjima ili otkaži i ponovo dodirni +."
     },
     "estatesUi": {
       "deleteTitle": "Obriši njivu",
