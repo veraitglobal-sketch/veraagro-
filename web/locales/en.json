@@ -4366,7 +4366,44 @@
     ],
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
-    "prospectNote": "The PDF includes the full BioVera Fresh programme text—goals, market role, pricing principles and partnership overview."
+    "prospectNote": "The PDF includes the full BioVera Fresh programme text—goals, market role, pricing principles and partnership overview.",
+    "franchiseBlueprintTitle": "How a BioVera Fresh franchise should look",
+    "franchiseBlueprintLead": "Pilot and rollout stores follow one recognisable recipe—so shoppers trust the brand, staff work efficiently, and cold-chain story stays visible.",
+    "franchiseBlueprintItems": [
+      {
+        "title": "Façade & primary signage",
+        "body": "Clean, light frontage with approved BioVera Fresh masthead, hours legible from the pavement, and controlled use of Vera green—no cluttered discount banners that fight the quality narrative."
+      },
+      {
+        "title": "Sales floor zoning",
+        "body": "Clear separation between ambient displays, chilled shelves for sensitive SKUs, and a fast “grab & go” lane where passports / QR story can be explained at the counter."
+      },
+      {
+        "title": "Cold-chain visibility",
+        "body": "Glass-front chillers in good repair, monitored temperatures where required, and produce staged so freshness windows are honest—markdown logic matches what we publish in the programme."
+      },
+      {
+        "title": "Traceability touchpoints",
+        "body": "Batch QR or passport prompts at shelf edge or checkout, staff trained on the two-sentence Bio Vera story, and printed POS that matches current marketing templates."
+      },
+      {
+        "title": "Back-of-house & hygiene",
+        "body": "Dedicated hand-wash, separated receiving vs sales circulation where space allows, waste bins away from customer sightlines, and daily cleaning checklist aligned with partner ops manuals."
+      }
+    ],
+    "resourcesTitle": "Resources & downloads",
+    "resourcesLead": "Essential programme PDFs for partners preparing a store pilot.",
+    "resourceItems": [
+      {
+        "id": "freshProspect",
+        "title": "BioVera Fresh prospect",
+        "description": "Full narrative: goals, market positioning, pricing principles, franchise benefits and next steps.",
+        "type": "PDF",
+        "size": "~180 KB"
+      }
+    ],
+    "resourceDownload": "Download",
+    "resourceDownloading": "Downloading…"
   },
   "projectOverview": {
     "toolbarCopyLink": "Copy link",

@@ -3,12 +3,57 @@
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Link2, Printer, Download, Loader2 } from "lucide-react";
+import {
+  Link2,
+  Printer,
+  Download,
+  Loader2,
+  Store,
+  LayoutGrid,
+  Thermometer,
+  QrCode,
+  ClipboardCheck,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import { siteLocaleFromLanguageTag } from "@/lib/i18n-routing";
 import { bioVeraFreshAPI } from "@/lib/api";
 import Footer from "@/components/Footer";
+
+function isFranchiseBlueprintList(x: unknown): x is { title: string; body: string }[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === "object" &&
+    x[0] !== null &&
+    "title" in x[0] &&
+    "body" in x[0] &&
+    typeof (x[0] as { title: string }).title === "string" &&
+    typeof (x[0] as { body: string }).body === "string"
+  );
+}
+
+function isFreshResourceItems(
+  x: unknown,
+): x is { id: string; title: string; description: string; type: string; size: string }[] {
+  return (
+    Array.isArray(x) &&
+    x.length > 0 &&
+    typeof x[0] === "object" &&
+    x[0] !== null &&
+    "id" in x[0] &&
+    "title" in x[0] &&
+    "description" in x[0]
+  );
+}
+
+const FRANCHISE_ICONS = [
+  Store,
+  LayoutGrid,
+  Thermometer,
+  QrCode,
+  ClipboardCheck,
+] as const;
 
 function isSection(x: unknown): x is { title: string; body: string } {
   return (
@@ -92,6 +137,12 @@ export default function BioVeraFreshPage() {
 
   const rawPdf = t("bioVeraFresh.pdfSections", { returnObjects: true });
   const pdfSections = Array.isArray(rawPdf) ? rawPdf.filter(isSection) : [];
+
+  const rawFranchise = t("bioVeraFresh.franchiseBlueprintItems", { returnObjects: true });
+  const franchiseBlueprintItems = isFranchiseBlueprintList(rawFranchise) ? rawFranchise : [];
+
+  const rawResources = t("bioVeraFresh.resourceItems", { returnObjects: true });
+  const resourceItems = isFreshResourceItems(rawResources) ? rawResources : [];
 
   const sectionAnchors = useMemo(
     () => webSections.map((s, i) => ({ slug: sectionSlug(s.title, i), title: s.title, index: i })),
@@ -366,6 +417,111 @@ export default function BioVeraFreshPage() {
           </div>
         </div>
       </main>
+
+      <div className="bf-no-print bg-white">
+        <section className="border-t border-gray-200 px-6 py-16 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-3 text-2xl font-light text-gray-900">{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
+              <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-gray-600">
+                {t("bioVeraFresh.franchiseBlueprintLead")}
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {franchiseBlueprintItems.map((item, index) => {
+                const Icon = FRANCHISE_ICONS[index % FRANCHISE_ICONS.length];
+                return (
+                  <div
+                    key={`${item.title}-${index}`}
+                    className="rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-[#2D5A27]/40"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="shrink-0 text-[#2D5A27]" aria-hidden>
+                        <Icon className="h-6 w-6" strokeWidth={2} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="mb-2 text-base font-light text-gray-900">{item.title}</h3>
+                        <p className="text-sm font-light leading-relaxed text-gray-600">{item.body}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-gray-200 px-6 py-16 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-3 text-2xl font-light text-gray-900">{t("bioVeraFresh.resourcesTitle")}</h2>
+              <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-gray-600">
+                {t("bioVeraFresh.resourcesLead")}
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {resourceItems.map((resource) => (
+                <div
+                  key={resource.id}
+                  className="rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-[#2D5A27]/40"
+                >
+                  <div className="mb-4 flex items-start">
+                    <div className="flex-shrink-0 text-[#2D5A27]" aria-hidden>
+                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h3 className="mb-2 text-base font-light text-gray-900">{resource.title}</h3>
+                      <p className="mb-4 text-sm font-light leading-relaxed text-gray-600">{resource.description}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span className="rounded bg-gray-100 px-2 py-1">{resource.type}</span>
+                          <span>{resource.size}</span>
+                        </div>
+                        {resource.id === "freshProspect" ? (
+                          <button
+                            type="button"
+                            className="flex items-center gap-1 text-sm font-medium text-[#2D5A27] transition-colors hover:text-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={pdfDownloading}
+                            onClick={() => void downloadProspect()}
+                          >
+                            {pdfDownloading ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                                {t("bioVeraFresh.resourceDownloading")}
+                              </>
+                            ) : (
+                              <>
+                                {t("bioVeraFresh.resourceDownload")}
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                  />
+                                </svg>
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <span className="text-sm font-medium text-gray-400">—</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
 
       <div className="bf-no-print">
         <Footer />

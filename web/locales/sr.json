@@ -4367,7 +4367,44 @@
     ],
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
-    "prospectNote": "PDF sadrži ceo tekst programa BioVera Fresh — ciljevi, uloga na tržištu, principi cena i pregled partnerstva."
+    "prospectNote": "PDF sadrži ceo tekst programa BioVera Fresh — ciljevi, uloga na tržištu, principi cena i pregled partnerstva.",
+    "franchiseBlueprintTitle": "Kako treba da izgleda BioVera Fresh franšiza",
+    "franchiseBlueprintLead": "Pilot i stalne prodavnice prate jedan prepoznatljiv recept — poverenje kupca, efikasan rad osoblja i vidljiva priča o hladnom lancu.",
+    "franchiseBlueprintItems": [
+      {
+        "title": "Fasada i glavna signalizacija",
+        "body": "Čist, svetao ulaz sa odobrenim BioVera Fresh oznakama, čitljivim radnim vremenom i kontrolisanim korišćenjem Vera zelene — bez natpisa koji ruše priču o kvalitetu."
+      },
+      {
+        "title": "Zone u prodajnom prostoru",
+        "body": "Jasna podela između ambijentalne izložbe, rashladnih vitrina za osetljive artikle i brze trake „uzmi i idi“ gde se na kasi može objasniti pasoš / QR."
+      },
+      {
+        "title": "Vidljivost hladnog lanca",
+        "body": "Vitrine sa staklom u dobrom stanju, praćenje temperature gde je propisano, izlaganje voća i povrća u skladu sa realnom svežinom — popusti samo kada to opravdava stanje robe."
+      },
+      {
+        "title": "Tačke tragljivosti",
+        "body": "QR na police ili kasu, obučeno osoblje za kratak Bio Vera uvod, štampani materijali usklađeni sa aktuelnim šablonima programa."
+      },
+      {
+        "title": "Magacin i higijena",
+        "body": "Posebno mesto za pranje ruku, razdvajanje prijema robe i kretanja kupaca gde prostor dozvoljava, kante van pogleda kupca i dnevni ček-lista čišćenja po operativnim uputstvima partnera."
+      }
+    ],
+    "resourcesTitle": "Resursi i preuzimanja",
+    "resourcesLead": "PDF dokumenti programa za partnere koji spremaju pilot prodavnicu.",
+    "resourceItems": [
+      {
+        "id": "freshProspect",
+        "title": "BioVera Fresh prospekt",
+        "description": "Ceo narativ: ciljevi, pozicija na tržištu, principi cena, benefiti franšize i sledeći koraci.",
+        "type": "PDF",
+        "size": "~180 KB"
+      }
+    ],
+    "resourceDownload": "Preuzmi",
+    "resourceDownloading": "Preuzimanje…"
   },
   "projectOverview": {
     "toolbarCopyLink": "Kopiraj link",
