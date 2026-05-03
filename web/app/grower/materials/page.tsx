@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, type FormEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, type FormEvent, type ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
@@ -11,6 +11,41 @@ import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPag
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import {
+  AlertTriangle,
+  Box,
+  ClipboardList,
+  ExternalLink,
+  Film,
+  Info,
+  Layers,
+  Loader2,
+  Package,
+  Search,
+  ShieldCheck,
+  ShoppingCart,
+  Tag,
+} from 'lucide-react';
+
+const inputClass =
+  'w-full min-h-[48px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-[#2D5A27] focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25';
+
+const btnPrimary =
+  'inline-flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#23471f] focus:outline-none focus:ring-2 focus:ring-[#2D5A27] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
+
+const sectionCard = 'rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6';
+
+function SectionTitle({ eyebrow, title, subtitle }: { eyebrow?: string; title: string; subtitle?: ReactNode }) {
+  return (
+    <div className="mb-5">
+      {eyebrow ? (
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#2D5A27]">{eyebrow}</p>
+      ) : null}
+      <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+      {subtitle ? <div className="mt-2 text-base font-light leading-relaxed text-gray-600">{subtitle}</div> : null}
+    </div>
+  );
+}
 
 function messageFromApiPayload(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
@@ -303,269 +338,345 @@ export default function GrowerMaterialsPage() {
     return (
       <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
         <GrowerPageShell>
-          <div className="flex min-h-[40vh] items-center justify-center text-base text-gray-500">
-            {t('growerPages.materialsLoading')}
+          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-base text-gray-600">
+            <Loader2 className="h-8 w-8 animate-spin text-[#2D5A27]" aria-hidden />
+            <span>{t('growerPages.materialsLoading')}</span>
           </div>
         </GrowerPageShell>
       </SidebarLayout>
     );
   }
 
+  const shortcutClass =
+    'inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-800 transition-colors hover:border-[#2D5A27]/40 hover:bg-[#f7faf6] focus:outline-none focus:ring-2 focus:ring-[#2D5A27] focus:ring-offset-2';
+
   return (
     <SidebarLayout title={t('grower.nav.materials')} navItems={navItems}>
-      <GrowerPageShell className="space-y-6">
+      <GrowerPageShell className="space-y-8">
         <GrowerPageHeader title={t('grower.nav.materials')} description={t('growerPages.materialsPageDescription')} />
 
         {balance &&
           balance.crateBalance === 0 &&
           balance.labelRollBalance === 0 &&
           balance.filmMeterBalance === 0 && (
-            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-base text-amber-950">
-              <p className="font-medium">{t('growerPages.materialsBalanceZeroTitle')}</p>
-              <p className="mt-1 font-light leading-relaxed">
+            <div className={`${sectionCard} border-amber-200 bg-amber-50/90`}>
+              <div className="flex gap-3">
+                <AlertTriangle className="mt-0.5 h-6 w-6 shrink-0 text-amber-700" aria-hidden />
+                <div>
+                  <p className="text-base font-semibold text-amber-950">{t('growerPages.materialsBalanceZeroTitle')}</p>
+                  <p className="mt-2 font-light leading-relaxed text-amber-950/90">
+                    <Trans
+                      i18nKey="growerPages.materialsBalanceZeroBody"
+                      components={[
+                        <Link
+                          key="0"
+                          href={loc('/grower/where-to-buy')}
+                          className="font-semibold text-[#23471f] underline decoration-[#23471f]/40 underline-offset-2 hover:decoration-[#23471f]"
+                        />,
+                      ]}
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+        <div className="space-y-4">
+          {error && (
+            <div className={`${sectionCard} border-red-200 bg-red-50/80`}>
+              <p className="text-base text-red-900">{error}</p>
+            </div>
+          )}
+          {typesError && (
+            <div className={`${sectionCard} border-amber-200 bg-amber-50/70`}>
+              <p className="text-base text-amber-950">{typesError}</p>
+            </div>
+          )}
+          {success && (
+            <div className={`${sectionCard} border-[#2D5A27]/25 bg-[#f7faf6]`}>
+              <p className="text-base font-medium text-[#1a3d17]">{success}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {[
+            {
+              value: balance?.crateBalance ?? 0,
+              label: t('growerPages.materialsStatCrate'),
+              icon: Box,
+              accent: 'text-gray-900',
+            },
+            {
+              value: balance?.labelRollBalance ?? 0,
+              label: t('growerPages.materialsStatRolls'),
+              icon: Tag,
+              accent: 'text-[#2D5A27]',
+            },
+            {
+              value: balance?.filmMeterBalance ?? 0,
+              label: t('growerPages.materialsStatFilm'),
+              icon: Film,
+              accent: 'text-emerald-800',
+            },
+          ].map(({ value, label, icon: Icon, accent }) => (
+            <div key={label} className={`${sectionCard} flex flex-col justify-between gap-3`}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className={`text-3xl font-semibold tabular-nums ${accent}`}>{value}</p>
+                  <p className="mt-1 text-base text-gray-600">{label}</p>
+                </div>
+                <span className="rounded-lg bg-gray-100 p-2.5 text-gray-600" aria-hidden>
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className={sectionCard}>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">{t('growerPages.materialsShortcuts')}</p>
+          <nav className="flex flex-wrap gap-2 sm:gap-3" aria-label={t('growerPages.materialsShortcuts')}>
+            <a href="#label-roll-ids" className={`${shortcutClass}`}>
+              <Layers className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              {t('growerPages.materialsShortcutLabelRolls')}
+            </a>
+            <a href="#supply-flow" className={`${shortcutClass}`}>
+              <Package className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              {t('growerPages.materialsShortcutSupplyPath')}
+            </a>
+            <Link href={loc('/grower/where-to-buy')} className={`${shortcutClass}`}>
+              <ShoppingCart className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              {t('growerPages.materialsShortcutSuppliers')}
+            </Link>
+            <Link href={loc('/grower/compliance-photos')} className={`${shortcutClass}`}>
+              <ClipboardList className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              {t('growerPages.materialsShortcutCompliance')}
+            </Link>
+            <Link href={loc('/contact')} className={`${shortcutClass}`}>
+              <ExternalLink className="h-4 w-4 shrink-0 text-[#2D5A27]" aria-hidden />
+              {t('growerPages.materialsShortcutHelp')}
+            </Link>
+          </nav>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
+          <div className={`${sectionCard} order-2 border-[#2D5A27]/15 lg:order-1`}>
+            <SectionTitle title={t('growerPages.materialsWhitelistTitle')} subtitle={t('growerPages.materialsWhitelistIntro')} />
+            <p className="mb-4 text-base font-medium text-gray-800">{t('growerPages.materialsWhitelistPickType')}</p>
+            <form onSubmit={submitWhitelistMaterial} className="space-y-5">
+              <div className="flex flex-wrap gap-2">
+                {(['SEED', 'FERTILIZER', 'PESTICIDE', 'OTHER'] as const).map((id) => {
+                  const on = wlType === id;
+                  const lblKey = `growerPages.materialsWhitelistType_${id}` as const;
+                  const lbl = t(lblKey);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => {
+                        setWlType(id);
+                        setWlErr(null);
+                        setWlOk(null);
+                      }}
+                      className={`min-h-[44px] rounded-lg px-4 py-2 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#2D5A27] focus:ring-offset-2 ${
+                        on
+                          ? 'bg-[#2D5A27] text-white shadow-sm'
+                          : 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50'
+                      }`}
+                    >
+                      {lbl !== lblKey ? lbl : id}
+                    </button>
+                  );
+                })}
+              </div>
+              {wlErr && (
+                <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-base text-red-900">{wlErr}</p>
+              )}
+              {wlOk && (
+                <p className="rounded-xl border border-[#2D5A27]/20 bg-[#f7faf6] px-4 py-3 text-base font-medium text-[#1a3d17]">
+                  {wlOk}
+                </p>
+              )}
+              <div className="space-y-5">
+                <div>
+                  <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-name">
+                    {t('growerPages.materialsWhitelistName')}
+                  </label>
+                  <input
+                    id="wl-name"
+                    type="text"
+                    required
+                    value={wlName}
+                    onChange={(e) => setWlName(e.target.value)}
+                    placeholder={wlNamePlaceholder}
+                    autoComplete="off"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-barcode">
+                    {t('growerPages.materialsWhitelistBarcode')}
+                  </label>
+                  <input
+                    id="wl-barcode"
+                    type="text"
+                    required
+                    minLength={3}
+                    value={wlBarcode}
+                    onChange={(e) => setWlBarcode(e.target.value)}
+                    placeholder={t('growerPages.materialsWhitelistBarcodePh')}
+                    autoComplete="off"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-mfg">
+                    {t('growerPages.materialsWhitelistManufacturer')}
+                  </label>
+                  <input
+                    id="wl-mfg"
+                    type="text"
+                    value={wlManufacturer}
+                    onChange={(e) => setWlManufacturer(e.target.value)}
+                    placeholder={t('growerPages.materialsWhitelistManufacturerPh')}
+                    autoComplete="off"
+                    className={inputClass}
+                  />
+                </div>
+                <button type="submit" disabled={wlSaving} className={btnPrimary}>
+                  {wlSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 shrink-0 animate-spin" aria-hidden />
+                      {t('growerPages.materialsWhitelistSaving')}
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="mr-2 h-5 w-5 shrink-0 opacity-95" aria-hidden />
+                      {t('growerPages.materialsWhitelistSave')}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className={`${sectionCard} order-1 lg:order-2`}>
+            <SectionTitle
+              title={t('growerPages.materialsPurchaseTitle')}
+              subtitle={
                 <Trans
-                  i18nKey="growerPages.materialsBalanceZeroBody"
+                  i18nKey="growerPages.materialsPurchaseIntro"
                   components={[
-                    <Link key="0" href={loc('/grower/where-to-buy')} className="font-semibold text-[#23471f] underline" />,
+                    <strong key="0" className="font-semibold text-gray-900" />,
+                    <strong key="1" className="font-semibold text-gray-900" />,
+                    <strong key="2" className="font-semibold text-gray-900" />,
                   ]}
                 />
-              </p>
-            </div>
-          )}
-
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-base text-red-800">{error}</p>
-          </div>
-        )}
-        {typesError && (
-          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <p className="text-base text-amber-950">{typesError}</p>
-          </div>
-        )}
-        {success && (
-          <div className="mb-6 rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] p-4">
-            <p className="text-base text-[#1a3d17]">{success}</p>
-          </div>
-        )}
-
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="text-2xl font-medium text-gray-900">{balance?.crateBalance ?? 0}</div>
-            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatCrate')}</div>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="text-2xl font-medium text-[#2D5A27]">{balance?.labelRollBalance ?? 0}</div>
-            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatRolls')}</div>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="text-2xl font-medium text-blue-600">{balance?.filmMeterBalance ?? 0}</div>
-            <div className="mt-1 text-base text-gray-600">{t('growerPages.materialsStatFilm')}</div>
-          </div>
-        </div>
-
-        <p className="text-base text-gray-600 flex flex-wrap items-center gap-x-1 gap-y-1">
-          <span className="text-gray-500">{t('growerPages.materialsShortcuts')}</span>
-          <span className="text-gray-300 hidden sm:inline">·</span>
-          <a href="#label-roll-ids" className="font-medium text-[#2D5A27] underline">
-            {t('growerPages.materialsShortcutLabelRolls')}
-          </a>
-          <span className="text-gray-300">·</span>
-          <a href="#supply-flow" className="font-medium text-[#2D5A27] underline">
-            {t('growerPages.materialsShortcutSupplyPath')}
-          </a>
-          <span className="text-gray-300">·</span>
-          <Link href={loc('/grower/where-to-buy')} className="font-medium text-[#2D5A27] underline">
-            {t('growerPages.materialsShortcutSuppliers')}
-          </Link>
-          <span className="text-gray-300">·</span>
-          <Link href={loc('/grower/compliance-photos')} className="font-medium text-[#2D5A27] underline">
-            {t('growerPages.materialsShortcutCompliance')}
-          </Link>
-          <span className="text-gray-300">·</span>
-          <Link href={loc('/contact')} className="font-medium text-[#2D5A27] underline">
-            {t('growerPages.materialsShortcutHelp')}
-          </Link>
-        </p>
-
-        <form
-          className="mb-6 rounded-xl border border-[#2D5A27]/20 bg-white p-6 shadow-sm"
-          onSubmit={submitWhitelistMaterial}
-        >
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsWhitelistTitle')}</h2>
-          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">{t('growerPages.materialsWhitelistIntro')}</p>
-          <p className="mb-3 text-base font-medium text-gray-800">{t('growerPages.materialsWhitelistPickType')}</p>
-          <div className="mb-6 flex flex-wrap gap-2">
-            {(['SEED', 'FERTILIZER', 'PESTICIDE', 'OTHER'] as const).map((id) => {
-              const on = wlType === id;
-              const lblKey = `growerPages.materialsWhitelistType_${id}` as const;
-              const lbl = t(lblKey);
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setWlType(id);
-                    setWlErr(null);
-                    setWlOk(null);
-                  }}
-                  className={`rounded-full px-4 py-2 text-base font-medium transition-colors ${
-                    on ? 'bg-[#2D5A27] text-white' : 'border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100'
-                  }`}
+              }
+            />
+            <div className="space-y-5">
+              <div>
+                <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="mat-product">
+                  {t('growerPages.materialsProductLabel')}
+                </label>
+                <select
+                  id="mat-product"
+                  value={selectedMaterial}
+                  onChange={(e) => setSelectedMaterial(e.target.value)}
+                  className={`${inputClass}`}
                 >
-                  {lbl !== lblKey ? lbl : id}
-                </button>
-              );
-            })}
-          </div>
-          {wlErr && (
-            <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-base text-red-800">{wlErr}</p>
-          )}
-          {wlOk && (
-            <p className="mb-4 rounded-lg border border-[#2D5A27]/20 bg-[#f7faf6] px-3 py-2 text-base text-[#1a3d17]">{wlOk}</p>
-          )}
-          <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-name">
-                {t('growerPages.materialsWhitelistName')}
-              </label>
-              <input
-                id="wl-name"
-                type="text"
-                required
-                value={wlName}
-                onChange={(e) => setWlName(e.target.value)}
-                placeholder={wlNamePlaceholder}
-                autoComplete="off"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-barcode">
-                {t('growerPages.materialsWhitelistBarcode')}
-              </label>
-              <input
-                id="wl-barcode"
-                type="text"
-                required
-                minLength={3}
-                value={wlBarcode}
-                onChange={(e) => setWlBarcode(e.target.value)}
-                placeholder={t('growerPages.materialsWhitelistBarcodePh')}
-                autoComplete="off"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="wl-mfg">
-                {t('growerPages.materialsWhitelistManufacturer')}
-              </label>
-              <input
-                id="wl-mfg"
-                type="text"
-                value={wlManufacturer}
-                onChange={(e) => setWlManufacturer(e.target.value)}
-                placeholder={t('growerPages.materialsWhitelistManufacturerPh')}
-                autoComplete="off"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={wlSaving}
-              className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {wlSaving ? t('growerPages.materialsWhitelistSaving') : t('growerPages.materialsWhitelistSave')}
-            </button>
-          </div>
-        </form>
-
-        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsPurchaseTitle')}</h2>
-          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
-            <Trans
-              i18nKey="growerPages.materialsPurchaseIntro"
-              components={[
-                <strong key="0" className="font-semibold text-gray-900" />,
-                <strong key="1" className="font-semibold text-gray-900" />,
-                <strong key="2" className="font-semibold text-gray-900" />,
-              ]}
-            />
-          </p>
-          <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-base font-medium text-gray-700">{t('growerPages.materialsProductLabel')}</label>
-              <select
-                value={selectedMaterial}
-                onChange={(e) => setSelectedMaterial(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]/50"
-              >
-                <option value="">{t('growerPages.materialsSelectPlaceholder')}</option>
-                {materialTypes.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {t('growerPages.materialsOptionLine', {
-                      name: type.name,
-                      price: type.unitPrice.toFixed(2),
-                      unit: type.unit,
-                    })}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-2 block text-base font-medium text-gray-700">{t('growerPages.materialsQuantityLabel')}</label>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                min="1"
-                max="200"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]/50"
-                placeholder={t('growerPages.materialsQuantityPlaceholder')}
-              />
-              <p className="mt-1 text-xs text-gray-500">{t('growerPages.materialsQuantityHint')}</p>
-            </div>
-            {selectedMaterial && quantity && (
-              <div className="rounded-lg bg-gray-50 p-4">
-                <p className="text-base text-gray-600">
-                  {t('growerPages.materialsTotalCost', {
-                    amount: (
-                      parseFloat(quantity) *
-                      (materialTypes.find((mt) => mt.id === selectedMaterial)?.unitPrice || 0)
-                    ).toFixed(2),
-                  })}
-                </p>
+                  <option value="">{t('growerPages.materialsSelectPlaceholder')}</option>
+                  {materialTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {t('growerPages.materialsOptionLine', {
+                        name: type.name,
+                        price: type.unitPrice.toFixed(2),
+                        unit: type.unit,
+                      })}
+                    </option>
+                  ))}
+                </select>
               </div>
-            )}
-            <button
-              type="button"
-              onClick={handlePurchase}
-              disabled={purchasing || !selectedMaterial || !quantity}
-              className="w-full rounded-lg bg-[#2D5A27] px-6 py-3 font-medium text-white transition-colors hover:bg-[#23471f] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {purchasing ? t('growerPages.materialsPurchasing') : t('growerPages.materialsPurchaseCta')}
-            </button>
+              <div>
+                <label className="mb-2 block text-base font-medium text-gray-700" htmlFor="mat-qty">
+                  {t('growerPages.materialsQuantityLabel')}
+                </label>
+                <input
+                  id="mat-qty"
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  min="1"
+                  max="200"
+                  className={inputClass}
+                  placeholder={t('growerPages.materialsQuantityPlaceholder')}
+                />
+                <p className="mt-2 text-sm text-gray-500">{t('growerPages.materialsQuantityHint')}</p>
+              </div>
+              {selectedMaterial && quantity ? (
+                <div className="rounded-xl border border-gray-100 bg-[#f7faf6] p-4">
+                  <p className="text-base text-gray-800">
+                    {t('growerPages.materialsTotalCost', {
+                      amount: (
+                        parseFloat(quantity) *
+                        (materialTypes.find((mt) => mt.id === selectedMaterial)?.unitPrice || 0)
+                      ).toFixed(2),
+                    })}
+                  </p>
+                </div>
+              ) : null}
+              <button
+                type="button"
+                onClick={handlePurchase}
+                disabled={purchasing || !selectedMaterial || !quantity}
+                className={`${btnPrimary}`}
+              >
+                {purchasing ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 shrink-0 animate-spin" aria-hidden />
+                    {t('growerPages.materialsPurchasing')}
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="mr-2 h-5 w-5 shrink-0 opacity-95" aria-hidden />
+                    {t('growerPages.materialsPurchaseCta')}
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
-        <div id="label-roll-ids" className="mb-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('growerPages.materialsLabelRollTitle')}</h2>
-          <p className="mb-4 text-base text-gray-500 font-light leading-relaxed">
-            <Trans
-              i18nKey="growerPages.materialsLabelRollIntro"
-              components={[
-                <strong key="0" className="font-semibold text-gray-900" />,
-                <Link key="1" href={loc('/grower/compliance-photos')} className="font-medium text-[#2D5A27] hover:underline" />,
-              ]}
-            />
-          </p>
-          {serialsError && <p className="mb-2 text-base text-amber-800">{serialsError}</p>}
+        <div id="label-roll-ids" className={sectionCard}>
+          <SectionTitle
+            title={t('growerPages.materialsLabelRollTitle')}
+            subtitle={
+              <Trans
+                i18nKey="growerPages.materialsLabelRollIntro"
+                components={[
+                  <strong key="0" className="font-semibold text-gray-900" />,
+                  <Link
+                    key="1"
+                    href={loc('/grower/compliance-photos')}
+                    className="font-semibold text-[#2D5A27] underline decoration-[#2D5A27]/35 underline-offset-2 hover:text-[#23471f]"
+                  />,
+                ]}
+              />
+            }
+          />
+          {serialsError ? (
+            <p className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950">{serialsError}</p>
+          ) : null}
           {labelRolls.length === 0 && !serialsError ? (
-            <p className="text-base text-gray-500">{t('growerPages.materialsLabelRollEmpty')}</p>
+            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
+              <Tag className="mx-auto mb-3 h-10 w-10 text-gray-400" aria-hidden />
+              <p className="text-base text-gray-600">{t('growerPages.materialsLabelRollEmpty')}</p>
+            </div>
           ) : (
-            <div className="space-y-3">
-              <p className="text-base text-gray-600">
-                <span className="font-medium text-gray-900">
+            <div className="space-y-4">
+              <p className="text-base leading-relaxed text-gray-700">
+                <span className="font-semibold text-gray-900">
                   {t('growerPages.materialsSerialOnFile', { count: labelRollStats.total })}
                 </span>
                 {labelRollStats.total > 0 ? (
@@ -575,7 +686,7 @@ export default function GrowerMaterialsPage() {
                     {labelRollStats.used > 0 ? (
                       <>
                         {', '}
-                        <span className="text-gray-600">{t('growerPages.materialsSerialUsed', { count: labelRollStats.used })}</span>
+                        <span className="text-gray-700">{t('growerPages.materialsSerialUsed', { count: labelRollStats.used })}</span>
                       </>
                     ) : null}
                     {labelRollStats.other > 0 ? (
@@ -589,73 +700,65 @@ export default function GrowerMaterialsPage() {
                 .
               </p>
               {labelRollStats.total > 0 && (
-                <div>
+                <div className="relative max-w-xl">
                   <label htmlFor="label-roll-search" className="sr-only">
                     {t('growerPages.materialsFindSerialLabel')}
                   </label>
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" aria-hidden />
                   <input
                     id="label-roll-search"
                     type="search"
                     value={labelRollFilter}
                     onChange={(e) => setLabelRollFilter(e.target.value)}
                     placeholder={t('growerPages.materialsSerialSearchPh')}
-                    className="w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 shadow-sm focus:border-[#2D5A27] focus:outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                    className={`${inputClass} pl-11`}
                   />
-                  {labelRollFilter.trim() && (
-                    <p className="mt-1.5 text-xs text-gray-500">
+                  {labelRollFilter.trim() ? (
+                    <p className="mt-2 text-sm text-gray-500">
                       {t('growerPages.materialsSerialMatch', { count: filteredLabelRolls.length })}
                     </p>
-                  )}
+                  ) : null}
                 </div>
               )}
               <div
-                className="max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-gray-50/50 sm:max-h-80"
+                className="overflow-hidden rounded-xl border border-gray-200 bg-gray-50/70 shadow-inner"
                 role="region"
                 aria-label={t('growerPages.materialsSerialListAria')}
               >
-                <ul className="divide-y divide-gray-100">
-                  {filteredLabelRolls.map((r) => (
-                    <li
-                      key={r.serialNumber}
-                      className="flex flex-wrap items-center justify-between gap-2 bg-white px-3 py-2 text-base sm:py-2.5"
-                    >
-                      <code className="break-all font-mono text-xs text-gray-900 sm:text-base">{r.serialNumber}</code>
-                      <span className="shrink-0 text-xs text-gray-500">
-                        {rollStatusLabel(r.status)}
-                        {r.soldAt ? ` · ${formatDateTime(r.soldAt)}` : ''}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {filteredLabelRolls.length === 0 && labelRollFilter.trim() && (
-                  <p className="p-3 text-base text-gray-500">{t('growerPages.materialsSerialNoMatch')}</p>
-                )}
+                <div className="max-h-80 overflow-y-auto">
+                  <ul className="divide-y divide-gray-100">
+                    {filteredLabelRolls.map((r) => (
+                      <li
+                        key={r.serialNumber}
+                        className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 transition-colors hover:bg-[#fafbf9] sm:flex-nowrap sm:py-3.5"
+                      >
+                        <code className="break-all font-mono text-xs text-gray-900 sm:text-sm">{r.serialNumber}</code>
+                        <span className="shrink-0 text-sm text-gray-600">
+                          {rollStatusLabel(r.status)}
+                          {r.soldAt ? ` · ${formatDateTime(r.soldAt)}` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {filteredLabelRolls.length === 0 && labelRollFilter.trim() ? (
+                    <p className="p-6 text-center text-base text-gray-600">{t('growerPages.materialsSerialNoMatch')}</p>
+                  ) : null}
+                </div>
               </div>
             </div>
           )}
         </div>
 
-        <div className="mb-6">
+        <div id="supply-flow" className="scroll-mt-6">
           <GrowerSupplyFlowCard context="materials" variant="collapsible" />
         </div>
 
-        <div className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-4">
-          <div className="flex items-start">
-            <svg
-              className="mr-3 mt-0.5 h-5 w-5 text-blue-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              aria-hidden
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
+        <div className={`${sectionCard} border-[#2D5A27]/25 bg-[#f7faf6]`}>
+          <div className="flex gap-4">
+            <Info className="mt-1 h-6 w-6 shrink-0 text-[#2D5A27]" aria-hidden />
             <div>
-              <p className="text-base font-medium text-blue-800">{t('growerPages.materialsImportantTitle')}</p>
-              <p className="mt-1 text-base text-blue-700 font-light leading-relaxed">{t('growerPages.materialsImportantBody')}</p>
+              <p className="text-base font-semibold text-[#143214]">{t('growerPages.materialsImportantTitle')}</p>
+              <p className="mt-2 text-base font-light leading-relaxed text-[#1a3820]">{t('growerPages.materialsImportantBody')}</p>
             </div>
           </div>
         </div>

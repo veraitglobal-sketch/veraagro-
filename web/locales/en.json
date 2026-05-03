@@ -3708,12 +3708,12 @@
     "pageTitle": "Investor materials",
     "backToHub": "All documents",
     "sectionDocumentsTitle": "Project documents",
-    "documentsLead": "Choose a card for the investor presentation, the project overview, the technical proposal, or password-gated partner business plans.",
-    "cardPitchDesc": "Slide-style narrative and optional video — use the toolbar to print or save as PDF.",
-    "cardProjectDesc": "Structured project summary: scope, roadmap, markets, and current status.",
-    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators.",
+    "documentsLead": "Choose a document below.",
+    "cardPitchDesc": "Slides and optional video; PDF from the toolbar.",
+    "cardProjectDesc": "Scope, roadmap, markets, status.",
+    "cardTechnicalDesc": "Architecture, compliance, offline operations.",
     "cardConfidentialTitle": "Confidential",
-    "cardConfidentialDesc": "Partner business plans (Parts 1–3 plus confidential supplement) — protected link; each section uses its own password from Bio Vera."
+    "cardConfidentialDesc": "Password-protected partner plans."
   },
   "investorBusinessPlans": {
     "passwordAriaLabel": "Password",

@@ -3738,12 +3738,12 @@
     "pageTitle": "Materijali za investitore",
     "backToHub": "Svi dokumenti",
     "sectionDocumentsTitle": "Dokumenti projekta",
-    "documentsLead": "Izaberite karticu za prezentaciju, pregled projekta, tehnički predlog ili zaštićene partnerske poslovne planove.",
-    "cardPitchDesc": "Narativ u slajd formatu i opcioni video — štampa ili PDF preko trake.",
-    "cardProjectDesc": "Strukturisan rezime: obim, plan, tržište i trenutni status.",
-    "cardTechnicalDesc": "Arhitektura, usklađenost, offline rad i prikladnost za programe.",
+    "documentsLead": "Izaberite dokument ispod.",
+    "cardPitchDesc": "Slajdovi i video; PDF preko trake.",
+    "cardProjectDesc": "Obim, plan, tržište, status.",
+    "cardTechnicalDesc": "Arhitektura, usklađenost, offline rad.",
     "cardConfidentialTitle": "Poverljivo",
-    "cardConfidentialDesc": "Partnerski poslovni planovi (delovi 1–3 i poverljivi dodatak) — zaštićen link; svaki deo ima svoju lozinku od Bio Vere."
+    "cardConfidentialDesc": "Zaštićeni partnerski planovi."
   },
   "investorBusinessPlans": {
     "passwordAriaLabel": "Lozinka",
