@@ -2,13 +2,15 @@ import { View, Text, ScrollView, TouchableOpacity, Switch, Alert, RefreshControl
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Bell, RefreshCw, Shield, Info } from 'lucide-react-native';
+import { ArrowLeft, Bell, RefreshCw, Shield, Info, Wifi } from 'lucide-react-native';
 import Constants from 'expo-constants';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../../lib/api-url';
+import { syncService } from '../../../lib/sync-service';
 
 const SETTINGS_KEYS = {
   NOTIFICATIONS: 'settings_notifications',
@@ -29,6 +31,8 @@ export default function SettingsScreen() {
   const [autoSync, setAutoSync] = useState(true);
   const [gpsAlways, setGpsAlways] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [connectionChecking, setConnectionChecking] = useState(false);
+  const [syncRetryBusy, setSyncRetryBusy] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   const loadSettings = useCallback(async () => {
@@ -82,6 +86,54 @@ export default function SettingsScreen() {
     saveSetting(SETTINGS_KEYS.GPS_ALWAYS, value);
   };
 
+  const testApiConnection = useCallback(async () => {
+    setConnectionChecking(true);
+    try {
+      const res = await fetch(`${API_URL.replace(/\/$/, '')}/health`, { method: 'GET' });
+      if (res.ok) {
+        Alert.alert(t('producer.settings.connectionTitle'), t('producer.settings.connectionOk', { status: res.status }));
+      } else {
+        Alert.alert(t('error'), t('producer.settings.connectionFail'));
+      }
+    } catch {
+      Alert.alert(t('error'), t('producer.settings.connectionFail'));
+    } finally {
+      setConnectionChecking(false);
+    }
+  }, [t]);
+
+  const retryOfflineSync = useCallback(async () => {
+    setSyncRetryBusy(true);
+    try {
+      const before = await syncService.getSyncStatus();
+      if (before.pendingCount === 0) {
+        Alert.alert(t('producer.settings.connectionTitle'), t('producer.settings.retrySyncNone'));
+        return;
+      }
+      const result = await syncService.syncAll();
+      const success =
+        result.entries.success +
+        result.products.success +
+        result.costs.success +
+        result.certificatePhotos.success +
+        result.harvestPlans.success;
+      const failed =
+        result.entries.failed +
+        result.products.failed +
+        result.costs.failed +
+        result.certificatePhotos.failed +
+        result.harvestPlans.failed;
+      Alert.alert(
+        t('producer.settings.connectionTitle'),
+        t('producer.settings.retrySyncDone', { success, failed }),
+      );
+    } catch {
+      Alert.alert(t('error'), t('producer.settings.connectionFail'));
+    } finally {
+      setSyncRetryBusy(false);
+    }
+  }, [t]);
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* Header */}
@@ -132,6 +184,86 @@ export default function SettingsScreen() {
           }}
         >
           <LanguageSettingsBlock />
+
+          <View
+            style={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.md,
+              marginBottom: theme.spacing.md,
+              borderWidth: 0.5,
+              borderColor: 'rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
+              <Wifi size={20} color={theme.colors.text.primary} strokeWidth={1} />
+              <Text
+                style={{
+                  marginLeft: theme.spacing.md,
+                  fontSize: 14,
+                  fontWeight: '600',
+                  color: theme.colors.text.primary,
+                }}
+              >
+                {t('producer.settings.connectionTitle')}
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '300',
+                color: theme.colors.text.secondary,
+                marginBottom: 4,
+              }}
+            >
+              {t('producer.settings.apiUrlLabel')}
+            </Text>
+            <Text
+              selectable
+              style={{
+                fontSize: 12,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.md,
+              }}
+            >
+              {API_URL}
+            </Text>
+            <TouchableOpacity
+              onPress={() => void testApiConnection()}
+              disabled={connectionChecking}
+              activeOpacity={0.7}
+              style={{
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                borderRadius: theme.borderRadius.md,
+                backgroundColor: theme.colors.primary,
+                marginBottom: theme.spacing.sm,
+                opacity: connectionChecking ? 0.6 : 1,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.background, textAlign: 'center' }}>
+                {t('producer.settings.testConnection')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => void retryOfflineSync()}
+              disabled={syncRetryBusy}
+              activeOpacity={0.7}
+              style={{
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                borderRadius: theme.borderRadius.md,
+                borderWidth: 0.5,
+                borderColor: theme.colors.primary,
+                opacity: syncRetryBusy ? 0.6 : 1,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, textAlign: 'center' }}>
+                {t('producer.settings.retrySyncNow')}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Notifications */}
           <View style={{

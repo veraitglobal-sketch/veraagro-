@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Camera } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../../lib/colors';
@@ -66,7 +66,7 @@ export default function GrowthJournalScreen() {
               backgroundColor: colors.primary,
               alignItems: 'center',
               justifyContent: 'center',
-              opacity: estates.length === 0 || uploading || !canAddLog ? 0.45 : 1,
+              opacity: uploading || !canAddLog ? 0.45 : 1,
             }}
           >
             <Camera size={20} color={colors.background} strokeWidth={1.5} />

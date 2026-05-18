@@ -527,8 +527,8 @@ export default function HarvestForm() {
         ) : null}
 
         <TouchableOpacity
-          onPress={h.handleSubmit}
-          disabled={!h.canSubmit}
+          onPress={() => void h.handleSubmit()}
+          disabled={h.loading}
           style={{
             backgroundColor: !h.canSubmit ? colors.surface : colors.accent,
             paddingVertical: 16,

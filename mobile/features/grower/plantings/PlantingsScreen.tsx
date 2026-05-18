@@ -1071,7 +1071,7 @@ export default function PlantingsScreen() {
                     ) : null}
                     <TouchableOpacity
                       onPress={() => void submitPlanting()}
-                      disabled={saving || !parcelChosen}
+                      disabled={saving}
                       style={{
                         paddingVertical: 14,
                         borderRadius: theme.borderRadius.md,

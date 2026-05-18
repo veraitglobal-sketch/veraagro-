@@ -18,11 +18,20 @@ async function bootstrap() {
       console.log('Migrations completed successfully');
     } catch (migrateError: unknown) {
       const msg = migrateError instanceof Error ? migrateError.message : String(migrateError);
-      if (process.env.NODE_ENV === 'production') {
-        console.error('Migration deploy failed in production:', msg);
+      const allowStartWithoutMigrate = process.env.ALLOW_START_WITHOUT_MIGRATE === 'true';
+      console.error('Migration deploy failed:', msg);
+      console.error(
+        'Fix: cd backend && npx prisma migrate deploy (same DATABASE_URL as this API).',
+      );
+      console.error(
+        'Verify: npx ts-node scripts/verify-db-schema-for-mobile.ts',
+      );
+      if (allowStartWithoutMigrate) {
+        console.warn('ALLOW_START_WITHOUT_MIGRATE=true — API starting anyway (schema may not match code).');
+      } else {
+        console.error('Refusing to start API until migrations apply. Set ALLOW_START_WITHOUT_MIGRATE=true only for emergency local debug.');
         process.exit(1);
       }
-      console.warn('Migration deploy failed, but continuing in dev:', msg);
     }
 
     // Create test users if database is empty (only in production for initial setup)

@@ -610,54 +610,41 @@ export function useFieldLogData() {
   ]);
 
   const handleSubmit = useCallback(async () => {
-    if (!selectedParcelId) {
-      Alert.alert(t('producer.growthJournalAlerts.parcelTitle'), t('producer.growthJournalAlerts.parcelBody'));
-      return;
-    }
-    if (!currentEstate?.id) {
-      Alert.alert(
-        t('producer.growthJournalAlerts.parcelTitle'),
-        t('producer.fieldLogAlerts.parcelContextMissing'),
-      );
-      return;
-    }
+    if (saveBusy) return;
+
+    const missing: string[] = [];
     if (plansLoading) {
-      return;
+      missing.push(t('producer.fieldLogForm.submitMissingLoadingPlans'));
+    }
+    if (!selectedParcelId || !currentEstate?.id) {
+      missing.push(
+        !currentEstate?.id
+          ? t('producer.fieldLogAlerts.parcelContextMissing')
+          : t('producer.fieldLogForm.submitMissingParcel'),
+      );
     }
     if (!selectedHarvestPlanId) {
-      Alert.alert(t('producer.growthJournalAlerts.planTitle'), t('producer.growthJournalAlerts.planBody'));
-      return;
+      missing.push(t('producer.fieldLogForm.submitMissingPlan'));
     }
     const plan = parcelPlans.find((p) => p.id === selectedHarvestPlanId);
     if (plan?.announcementType === 'PLANTING') {
-      const jn = journalNotes.trim();
-      if (jn.length < PLANTING_NOTES_MIN) {
-        Alert.alert(
-          t('producer.growthJournalAlerts.validationTitle'),
-          t('producer.growthJournalAlerts.plantingNotesTooShort', { min: PLANTING_NOTES_MIN }),
+      if (journalNotes.trim().length < PLANTING_NOTES_MIN) {
+        missing.push(
+          t('producer.fieldLogForm.submitMissingPlantingNotes', { min: PLANTING_NOTES_MIN }),
         );
-        return;
       }
-      const st = growthStagePersistedFromForm(growthStagePreset, growthStageCustom);
-      if (!st) {
-        Alert.alert(
-          t('producer.growthJournalAlerts.validationTitle'),
-          t('producer.growthJournalAlerts.plantingStageRequired'),
-        );
-        return;
+      if (!growthStagePersistedFromForm(growthStagePreset, growthStageCustom)) {
+        missing.push(t('producer.fieldLogForm.submitMissingGrowthStage'));
       }
     }
     if (!activityType) {
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.selectActivity'));
-      return;
+      missing.push(t('producer.fieldLogForm.submitMissingActivity'));
     }
     if (!photoUri) {
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.photoRequired'));
-      return;
+      missing.push(t('producer.fieldLogForm.submitMissingPhoto'));
     }
     if (!location) {
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.locationRequired'));
-      return;
+      missing.push(t('producer.fieldLogForm.submitMissingGps'));
     }
     const materialBarcodeActivities: ActivityType[] = ['PLANTING', 'FERTILIZING', 'SPRAYING'];
     if (
@@ -665,11 +652,19 @@ export function useFieldLogData() {
       materialID.trim() &&
       materialValid === false
     ) {
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.materialInvalid'));
+      missing.push(t('producer.fieldLogForm.submitMissingMaterial'));
+    }
+    if (missing.length > 0) {
+      Alert.alert(
+        t('producer.fieldLogForm.submitBlockedTitle'),
+        `${missing.join('\n')}\n\n${t('producer.fieldLogForm.submitTapHint')}`,
+      );
       return;
     }
+
     await saveEntry();
   }, [
+    saveBusy,
     currentEstate?.id,
     selectedParcelId,
     selectedHarvestPlanId,

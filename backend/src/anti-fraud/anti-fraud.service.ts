@@ -15,8 +15,11 @@ export class AntiFraudService {
   private readonly maxTimeOffset: number;
 
   constructor(private configService: ConfigService) {
+    // Default 48h: mobile field entries queue in AsyncStorage and sync later (offline-first).
+    // 300s rejected almost every delayed sync with "Device time mismatch".
     this.maxTimeOffset = parseInt(
-      this.configService.get<string>('MAX_TIME_OFFSET', '300'),
+      this.configService.get<string>('MAX_TIME_OFFSET', '172800'),
+      10,
     );
   }
 

@@ -291,9 +291,44 @@ export default function EntryForm() {
             {t('producer.fieldLogForm.chooserParcelHelp')}
           </Text>
           {approvedParcelOptions.length === 0 ? (
-            <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
-              {estates.length === 0 ? t('producer.fieldLogForm.chooserNoEstates') : t('producer.fieldLogForm.chooserParcelEmpty')}
-            </Text>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ fontSize: 14, fontWeight: '300', color: theme.colors.text.secondary, lineHeight: 20 }}>
+                {estates.length === 0 ? t('producer.fieldLogForm.chooserNoEstates') : t('producer.fieldLogForm.chooserParcelEmpty')}
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push('/(producer)/estates' as never)}
+                activeOpacity={0.7}
+                style={{
+                  alignSelf: 'flex-start',
+                  paddingVertical: theme.spacing.sm,
+                  paddingHorizontal: theme.spacing.md,
+                  borderRadius: theme.borderRadius.md,
+                  backgroundColor: theme.colors.primary,
+                }}
+              >
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.background }}>
+                  {t('producer.fieldLogForm.setupEstatesCta')}
+                </Text>
+              </TouchableOpacity>
+              {estates.length > 0 ? (
+                <TouchableOpacity
+                  onPress={() => router.push('/(producer)/plantings' as never)}
+                  activeOpacity={0.7}
+                  style={{
+                    alignSelf: 'flex-start',
+                    paddingVertical: theme.spacing.sm,
+                    paddingHorizontal: theme.spacing.md,
+                    borderRadius: theme.borderRadius.md,
+                    borderWidth: 0.5,
+                    borderColor: theme.colors.primary,
+                  }}
+                >
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }}>
+                    {t('producer.fieldLogForm.setupPlantingCta')}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
           ) : (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
               {approvedParcelOptions.map(({ parcel, estate }) => {
@@ -912,9 +947,23 @@ export default function EntryForm() {
           </TouchableOpacity>
         </View>
 
+        {submitBlocked && !saveBusy ? (
+          <Text
+            style={{
+              fontSize: 13,
+              color: theme.colors.text.secondary,
+              lineHeight: 19,
+              marginBottom: theme.spacing.sm,
+              textAlign: 'center',
+            }}
+          >
+            {t('producer.fieldLogForm.submitTapHint')}
+          </Text>
+        ) : null}
+
         <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={submitBlocked}
+          onPress={() => void handleSubmit()}
+          disabled={saveBusy}
           activeOpacity={0.7}
           style={{
             backgroundColor: submitBlocked ? theme.colors.surface : theme.colors.primary,

@@ -23,6 +23,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
+    "db:verify-mobile": "ts-node scripts/verify-db-schema-for-mobile.ts",
     "prisma:studio": "prisma studio",
     "create:users": "ts-node scripts/create-test-users.ts",
     "create:data": "ts-node scripts/create-test-data.ts",

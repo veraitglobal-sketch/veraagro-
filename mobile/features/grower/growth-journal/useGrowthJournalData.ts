@@ -332,7 +332,10 @@ export function useGrowthJournalData() {
   const submitAddLog = useCallback(
     async (payload: { notes: string; growthStage: string | undefined }) => {
       if (uploading) return;
-      if (estates.length === 0) return;
+      if (estates.length === 0) {
+        Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
+        return;
+      }
       if (filterEstate === 'all' || !filterEstate) {
         Alert.alert(t('producer.growthJournalAlerts.estateTitle'), t('producer.growthJournalAlerts.estateBody'));
         return;

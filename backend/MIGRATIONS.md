@@ -83,3 +83,23 @@ Stari `vera_insights_*_fkey` „already exists” u logu obično je posledica po
 ## Stare migracije u git istoriji
 
 Prethodni folderi su uklonjeni iz trenutnog stabla; vidi `git log -- backend/prisma/migrations` da pronađeš commit prije squash-a.
+
+## `migrate deploy` kaže „No pending“, ali mobilna app i dalje puca
+
+1. **Provjeri stvarnu šemu** (ne samo `migrate status`):
+
+   ```bash
+   cd backend
+   npm run db:verify-mobile
+   ```
+
+2. **Dupli redovi u `_prisma_migrations`** (jedan `finished_at` OK, jedan `rolled_back_at` / `finished_at` NULL) — deploy misli da je sve primijenjeno, ali Prisma/P3009 i logovi pokazuju failed migracije. Kolone često **postoje** (ručni SQL / repair). Očisti duplikate:
+
+   ```bash
+   npx prisma db execute --schema prisma/schema.prisma --file scripts/repair-prisma-migration-zombies.sql
+   npm run db:verify-mobile
+   ```
+
+3. **Isti `DATABASE_URL`** mora biti na Railway backend servisu, lokalnom `backend/.env` i u `psql` — inače „popravljaš“ pogrešnu bazu.
+
+4. API više **ne startuje** ako `migrate deploy` padne (osim `ALLOW_START_WITHOUT_MIGRATE=true` za hitan lokalni debug).

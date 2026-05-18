@@ -258,52 +258,56 @@ export function useHarvestData(
   }, [t]);
 
   const handleSubmit = useCallback(async () => {
+    if (loading) return;
+
+    const missing: string[] = [];
+    if (parcelsLoading) {
+      missing.push(t('producer.harvest.submitMissingLoading'));
+    }
+    if (!harvestDate?.trim()) {
+      missing.push(t('producer.harvest.submitMissingDate'));
+    }
     if (!parcelId) {
-      Alert.alert(t('error'), t('producer.harvest.selectParcel'));
-      return;
+      missing.push(t('producer.harvest.submitMissingParcel'));
+    }
+    if (!cropType.trim()) {
+      missing.push(t('producer.harvest.submitMissingCrop'));
     }
 
     const parcelChoice = approvedParcels.find((p) => p.id === parcelId);
 
     if (planMode === 'HARVEST') {
-      if (!parcelChoice?.harvestPlanEligible) {
-        Alert.alert(t('error'), t('producer.harvest.harvestNeedsApprovedParcel'));
-        return;
+      if (parcelId && !parcelChoice?.harvestPlanEligible) {
+        missing.push(t('producer.harvest.submitMissingApprovedParcel'));
       }
-      if (plantingsForParcel.length === 0) {
-        Alert.alert(t('error'), t('producer.harvest.noPlantingsForParcel'));
-        return;
+      if (parcelId && plantingsForParcel.length === 0) {
+        missing.push(t('producer.harvest.noPlantingsForParcel'));
       }
-      if (!selectedPlantingId || !plantingsForParcel.some((p) => p.id === selectedPlantingId)) {
-        Alert.alert(t('error'), t('producer.harvest.selectPlanting'));
-        return;
+      if (
+        parcelId &&
+        plantingsForParcel.length > 0 &&
+        (!selectedPlantingId || !plantingsForParcel.some((p) => p.id === selectedPlantingId))
+      ) {
+        missing.push(t('producer.harvest.submitMissingPlanting'));
+      }
+      const estQtyRaw = estimatedQuantity.trim();
+      const estQty = parseFloat(estQtyRaw);
+      if (!estQtyRaw || Number.isNaN(estQty) || estQty <= 0) {
+        missing.push(t('producer.harvest.submitMissingQuantity'));
       }
     }
 
-    if (!cropType.trim()) {
-      Alert.alert(t('error'), t('producer.harvest.enterCropType'));
+    if (missing.length > 0) {
+      Alert.alert(t('producer.harvest.submitBlockedTitle'), missing.join('\n'));
       return;
     }
 
     const datePart = harvestDate.trim();
-    if (!datePart) {
-      Alert.alert(t('error'), t('producer.harvest.dateRequired'));
-      return;
-    }
     const estimatedDateIso = `${datePart}T12:00:00.000Z`;
     const dateProbe = new Date(estimatedDateIso);
     if (Number.isNaN(dateProbe.getTime())) {
       Alert.alert(t('error'), t('producer.harvest.dateInvalid'));
       return;
-    }
-
-    if (planMode === 'HARVEST') {
-      const estQtyRaw = estimatedQuantity.trim();
-      const estQty = parseFloat(estQtyRaw);
-      if (!estQtyRaw || Number.isNaN(estQty) || estQty <= 0) {
-        Alert.alert(t('error'), t('producer.harvest.enterQuantity'));
-        return;
-      }
     }
 
     const buildNotes = () => {
@@ -412,6 +416,8 @@ export function useHarvestData(
 
     await run();
   }, [
+    loading,
+    parcelsLoading,
     approvedParcels,
     parcelId,
     planMode,
