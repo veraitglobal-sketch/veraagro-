@@ -26,7 +26,7 @@ export default function GrowerAppGuidePublicPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10 lg:px-8 lg:py-14">
+      <main className="mx-auto max-w-7xl px-6 py-10 lg:px-8 lg:py-14">
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
             {t('grower.appGuide.pageTitle')}
