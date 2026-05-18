@@ -135,11 +135,16 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Photo/screenshot quality — do not use crisp-edges globally (blurs phone UI captures). */
+/* App guide phone screenshots — smooth downscale, no transition blur. */
 img.grower-app-guide-screenshot {
   image-rendering: auto;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  transition: none !important;
+}
+
+@media print {
+  img.grower-app-guide-screenshot {
+    max-width: 320px !important;
+  }
 }
 
 /* Subtle shadows for depth */
