@@ -1,5 +1,5 @@
-/** Public URL prefix — files live in `web/public/docs/grower-app-guide/screens/`. */
-export const GROWER_APP_GUIDE_SCREEN_BASE = '/docs/grower-app-guide/screens';
+/** Public URL prefix — files live in `web/public/docs/grower-app-guide/`. */
+export const GROWER_APP_GUIDE_SCREEN_BASE = '/docs/grower-app-guide';
 
 export const GROWER_APP_GUIDE_PDF_PATH = '/docs/grower-app-guide/biovera-grower-app-uputstvo.pdf';
 
@@ -20,28 +20,28 @@ export type GrowerAppGuideStep = {
 export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   {
     id: 'welcome',
-    imageFile: '1.png',
+    imageFile: '1.PNG',
     titleKey: 'grower.appGuide.steps.welcome.title',
     leadKey: 'grower.appGuide.steps.welcome.lead',
     bulletKeys: ['grower.appGuide.steps.welcome.b1', 'grower.appGuide.steps.welcome.b2'],
   },
   {
     id: 'register',
-    imageFile: '2.png',
+    imageFile: '2.PNG',
     titleKey: 'grower.appGuide.steps.register.title',
     leadKey: 'grower.appGuide.steps.register.lead',
     bulletKeys: ['grower.appGuide.steps.register.b1', 'grower.appGuide.steps.register.b2'],
   },
   {
     id: 'login',
-    imageFile: '3.png',
+    imageFile: '3.PNG',
     titleKey: 'grower.appGuide.steps.login.title',
     leadKey: 'grower.appGuide.steps.login.lead',
     bulletKeys: ['grower.appGuide.steps.login.b1', 'grower.appGuide.steps.login.b2'],
   },
   {
     id: 'home',
-    imageFile: '4.png',
+    imageFile: '4.PNG',
     titleKey: 'grower.appGuide.steps.home.title',
     leadKey: 'grower.appGuide.steps.home.lead',
     bulletKeys: [
@@ -52,7 +52,7 @@ export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   },
   {
     id: 'field',
-    imageFile: '5.png',
+    imageFile: '5.PNG',
     titleKey: 'grower.appGuide.steps.field.title',
     leadKey: 'grower.appGuide.steps.field.lead',
     bulletKeys: [
@@ -66,7 +66,7 @@ export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   },
   {
     id: 'lots',
-    imageFile: '6.png',
+    imageFile: '6.jpeg',
     titleKey: 'grower.appGuide.steps.lots.title',
     leadKey: 'grower.appGuide.steps.lots.lead',
     bulletKeys: [
@@ -77,7 +77,7 @@ export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   },
   {
     id: 'suppliers',
-    imageFile: '7.png',
+    imageFile: '7.jpeg',
     titleKey: 'grower.appGuide.steps.suppliers.title',
     leadKey: 'grower.appGuide.steps.suppliers.lead',
     bulletKeys: [
@@ -88,14 +88,14 @@ export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   },
   {
     id: 'profile',
-    imageFile: '8.png',
+    imageFile: '8.jpeg',
     titleKey: 'grower.appGuide.steps.profile.title',
     leadKey: 'grower.appGuide.steps.profile.lead',
     bulletKeys: ['grower.appGuide.steps.profile.b1', 'grower.appGuide.steps.profile.b2'],
   },
   {
     id: 'wallet',
-    imageFile: '9.png',
+    imageFile: '9.jpeg',
     titleKey: 'grower.appGuide.steps.wallet.title',
     leadKey: 'grower.appGuide.steps.wallet.lead',
     bulletKeys: ['grower.appGuide.steps.wallet.b1', 'grower.appGuide.steps.wallet.b2'],
