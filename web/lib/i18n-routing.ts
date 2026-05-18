@@ -123,6 +123,11 @@ export function pathIsUnderPressPublicAssets(pathname: string): boolean {
   return /^\/press\/[^/]+\.[a-z0-9]{2,14}$/i.test(pathname);
 }
 
+/** Grower app guide screenshots and PDF under `public/docs/grower-app-guide/`. */
+export function pathIsUnderGrowerAppGuidePublicAssets(pathname: string): boolean {
+  return pathname.startsWith("/docs/grower-app-guide/");
+}
+
 export function pathnameStartsWithLocale(pathname: string): SiteLocale | null {
   const seg = pathname.split("/").filter(Boolean)[0];
   if (
@@ -149,12 +154,14 @@ export function stripLeadingSiteLocale(pathname: string): string {
 /** Whether middleware should prefix /en or /sr for this path when locale is missing. */
 export function pathNeedsLocaleRedirect(pathname: string): boolean {
   if (pathIsUnderPressPublicAssets(pathname)) return false;
+  if (pathIsUnderGrowerAppGuidePublicAssets(pathname)) return false;
   if (pathname === "/" || pathname === "") return true;
   const seg = pathname.split("/").filter(Boolean)[0];
   return LOCALIZED_FIRST_SEGMENTS.has(seg);
 }
 
 export function pathIsLocaleFree(pathname: string): boolean {
+  if (pathIsUnderGrowerAppGuidePublicAssets(pathname)) return true;
   const seg = pathname.split("/").filter(Boolean)[0];
   if (!seg) return false;
   return LOCALE_FREE_FIRST_SEGMENTS.has(seg);

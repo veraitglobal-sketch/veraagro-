@@ -20,28 +20,28 @@ export type GrowerAppGuideStep = {
 export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   {
     id: 'welcome',
-    imageFile: '1.PNG',
+    imageFile: '1.png',
     titleKey: 'grower.appGuide.steps.welcome.title',
     leadKey: 'grower.appGuide.steps.welcome.lead',
     bulletKeys: ['grower.appGuide.steps.welcome.b1', 'grower.appGuide.steps.welcome.b2'],
   },
   {
     id: 'register',
-    imageFile: '2.PNG',
+    imageFile: '2.png',
     titleKey: 'grower.appGuide.steps.register.title',
     leadKey: 'grower.appGuide.steps.register.lead',
     bulletKeys: ['grower.appGuide.steps.register.b1', 'grower.appGuide.steps.register.b2'],
   },
   {
     id: 'login',
-    imageFile: '3.PNG',
+    imageFile: '3.png',
     titleKey: 'grower.appGuide.steps.login.title',
     leadKey: 'grower.appGuide.steps.login.lead',
     bulletKeys: ['grower.appGuide.steps.login.b1', 'grower.appGuide.steps.login.b2'],
   },
   {
     id: 'home',
-    imageFile: '4.PNG',
+    imageFile: '4.png',
     titleKey: 'grower.appGuide.steps.home.title',
     leadKey: 'grower.appGuide.steps.home.lead',
     bulletKeys: [
@@ -52,7 +52,7 @@ export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   },
   {
     id: 'field',
-    imageFile: '5.PNG',
+    imageFile: '5.png',
     titleKey: 'grower.appGuide.steps.field.title',
     leadKey: 'grower.appGuide.steps.field.lead',
     bulletKeys: [

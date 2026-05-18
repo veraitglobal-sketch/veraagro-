@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImageOff } from 'lucide-react';
@@ -39,14 +38,16 @@ export function GrowerAppGuideStepCard({ step, index }: Props) {
         <div className="mx-auto lg:mx-0 shrink-0 w-full max-w-[280px]">
           <div className="rounded-[1.75rem] border-[6px] border-gray-900 bg-gray-900 overflow-hidden shadow-lg">
             {imgOk ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element -- static files from /public; avoids Next image edge cases
+              <img
                 src={src}
                 alt={t(step.titleKey)}
                 width={390}
                 height={844}
                 className="w-full h-auto block"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
                 onError={() => setImgOk(false)}
-                unoptimized
               />
             ) : (
               <div className="flex flex-col items-center justify-center gap-2 bg-gray-100 aspect-[390/844] px-4 text-center">
