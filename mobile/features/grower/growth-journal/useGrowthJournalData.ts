@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
-import * as ImagePicker from 'expo-image-picker';
+import type * as ImagePicker from 'expo-image-picker';
+import { pickFromCamera, pickFromGallery, scheduleAfterModalDismiss } from '../../../lib/camera-picker';
 import {
   growthLogsAPI,
   GrowthLog,
@@ -21,8 +22,6 @@ import { apiErrorMessage } from '../../../lib/api-error';
 const MAX_GROWTH_PHOTO_BYTES = 8 * 1024 * 1024;
 /** Match server default PLANTING_PROGRESS_NOTES_MIN_LEN */
 const PLANTING_NOTES_MIN = 15;
-
-const MODAL_TO_CAMERA_DELAY_MS = 480;
 
 type PendingGrowthSubmission = {
   filterEstate: string;
@@ -47,14 +46,13 @@ export function useGrowthJournalData() {
   const [plansLoading, setPlansLoading] = useState(false);
 
   const pendingSubmissionRef = useRef<PendingGrowthSubmission | null>(null);
-  const deferredCameraTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deferredCameraCancelRef = useRef<(() => void) | null>(null);
 
-  useEffect(
-    () => () => {
-      if (deferredCameraTimerRef.current) clearTimeout(deferredCameraTimerRef.current);
-    },
-    [],
-  );
+  useEffect(() => {
+    return () => {
+      deferredCameraCancelRef.current?.();
+    };
+  }, []);
 
   const loadData = useCallback(async () => {
     try {
@@ -194,55 +192,9 @@ export function useGrowthJournalData() {
     void loadPlans();
   }, [loadPlans]);
 
-  const pickGrowthPhotoFromLibrary = useCallback(async (): Promise<ImagePicker.ImagePickerAsset | null> => {
-    try {
-      const library = await ImagePicker.getMediaLibraryPermissionsAsync();
-      let st = library.status;
-      if (st !== 'granted') {
-        const req = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        st = req.status;
-      }
-      if (st !== 'granted') {
-        Alert.alert(t('producer.fieldLogAlerts.galleryPermTitle'), t('producer.fieldLogAlerts.galleryPermBody'), [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => void Linking.openSettings() },
-        ]);
-        return null;
-      }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 0.72,
-      });
-      if (result.canceled || !result.assets[0]?.uri) return null;
-      return result.assets[0];
-    } catch (e: unknown) {
-      console.warn('growth journal gallery:', e);
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.galleryError'));
-      return null;
-    }
-  }, [t]);
-
   const resolveGrowthJournalPhotoAsset = useCallback(async (): Promise<ImagePicker.ImagePickerAsset | null> => {
-    let camSt = (await ImagePicker.getCameraPermissionsAsync()).status;
-    if (camSt !== 'granted') {
-      ({ status: camSt } = await ImagePicker.requestCameraPermissionsAsync());
-    }
-
-    if (camSt === 'granted') {
-      try {
-        const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: false,
-          quality: 0.72,
-        });
-        if (!result.canceled && result.assets[0]?.uri) {
-          return result.assets[0];
-        }
-      } catch (e: unknown) {
-        console.warn('Growth journal camera:', e);
-      }
-    }
+    const asset = await pickFromCamera({ t, quality: 0.72 });
+    if (asset) return asset;
 
     return await new Promise<ImagePicker.ImagePickerAsset | null>((resolve) => {
       Alert.alert(t('producer.growthJournalAlerts.needPhotoTitle'), t('producer.growthJournalAlerts.needPhotoBody'), [
@@ -257,12 +209,12 @@ export function useGrowthJournalData() {
         {
           text: t('producer.fieldLogAlerts.pickFromGallery'),
           onPress: () => {
-            void pickGrowthPhotoFromLibrary().then((asset) => resolve(asset));
+            void pickFromGallery({ t, quality: 0.72 }).then((picked) => resolve(picked));
           },
         },
       ]);
     });
-  }, [pickGrowthPhotoFromLibrary, t]);
+  }, [t]);
 
   const completeGrowthLogAfterModalClose = useCallback(async () => {
     const pending = pendingSubmissionRef.current;
@@ -374,11 +326,11 @@ export function useGrowthJournalData() {
         payload,
       };
       setAddModalVisible(false);
-      if (deferredCameraTimerRef.current) clearTimeout(deferredCameraTimerRef.current);
-      deferredCameraTimerRef.current = setTimeout(() => {
-        deferredCameraTimerRef.current = null;
+      deferredCameraCancelRef.current?.();
+      deferredCameraCancelRef.current = scheduleAfterModalDismiss(() => {
+        deferredCameraCancelRef.current = null;
         void completeGrowthLogAfterModalClose();
-      }, MODAL_TO_CAMERA_DELAY_MS);
+      });
     },
     [
       uploading,

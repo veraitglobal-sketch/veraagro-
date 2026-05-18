@@ -9,12 +9,11 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Camera, Image as ImageIcon } from 'lucide-react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../../../lib/theme';
+import { pickFromCamera } from '../../../lib/camera-picker';
 
 interface Props {
   photoUri: string | null;
@@ -32,21 +31,10 @@ export default function StepCamera({
   const { t } = useTranslation();
 
   const pickImage = async (type: 'crate' | 'quality') => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('alerts.warning'), t('producer.scanner.cameraPermissionBody'));
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    if (!result.canceled && result.assets[0]) {
-      if (type === 'crate') onPhotoTaken(result.assets[0].uri);
-      else onQualityPhotoTaken(result.assets[0].uri);
-    }
+    const asset = await pickFromCamera({ t, quality: 0.8, allowsEditing: true });
+    if (!asset?.uri) return;
+    if (type === 'crate') onPhotoTaken(asset.uri);
+    else onQualityPhotoTaken(asset.uri);
   };
 
   return (

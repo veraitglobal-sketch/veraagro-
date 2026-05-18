@@ -43,7 +43,14 @@ export default function ProductsScreen() {
   );
 
   const productMetricRows = useMemo(
-    () => [{ key: 'lines', label: t('producer.products.deviceLinesMetric'), value: String(products.length) }],
+    () => [
+      {
+        key: 'lines',
+        type: 'count' as const,
+        label: t('producer.products.deviceLinesMetric'),
+        count: products.length,
+      },
+    ],
     [t, products.length],
   );
 

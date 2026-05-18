@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Alert, AppState, AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,6 +13,7 @@ import {
   notificationsAPI,
   Notification,
   parcelsAPI,
+  harvestAnnouncementsAPI,
 } from '../../../lib/api';
 import { syncService } from '../../../lib/sync-service';
 import { useSocket } from '../../../hooks/useSocket';
@@ -52,9 +53,35 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [offlineSyncLastError, setOfflineSyncLastError] = useState<string | null>(null);
   const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
   const [batchTotalCount, setBatchTotalCount] = useState(0);
+  const [harvestPlanCount, setHarvestPlanCount] = useState(0);
+  const [hasTransportRecord, setHasTransportRecord] = useState(false);
   const appStateRef = useRef(AppState.currentState);
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSyncTriggerRef = useRef(0);
+  const cacheHydratedRef = useRef(false);
+
+  /** Hydrate from disk before first paint when possible — avoids home layout pop-in. */
+  useLayoutEffect(() => {
+    if (cacheHydratedRef.current) return;
+    cacheHydratedRef.current = true;
+    void (async () => {
+      const [cachedEstates, cachedParcelStats] = await Promise.all([
+        growerOfflineCache.loadEstates(),
+        growerOfflineCache.loadParcelStats(),
+      ]);
+      if (cachedEstates?.length) {
+        setEstates(cachedEstates);
+      }
+      if (cachedParcelStats) {
+        setParcelSteps({
+          loaded: true,
+          total: cachedParcelStats.total,
+          pending: cachedParcelStats.pending,
+          approved: cachedParcelStats.approved,
+        });
+      }
+    })();
+  }, []);
 
   const scheduleOfflineSync = useCallback(() => {
     if (syncDebounceRef.current) clearTimeout(syncDebounceRef.current);
@@ -83,39 +110,49 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }, 2000);
   }, []);
 
-  const loadEstates = useCallback(async () => {
+  const loadEstates = useCallback(async (): Promise<Estate[]> => {
     try {
       const data = await estatesAPI.getAll();
       const list = Array.isArray(data) ? data : [];
       setEstates(list);
       await growerOfflineCache.saveEstates(list);
+      return list;
     } catch {
       const cached = await growerOfflineCache.loadEstates();
-      setEstates(cached ?? []);
+      const list = cached ?? [];
+      setEstates(list);
+      return list;
     }
   }, []);
 
-  const loadParcelSteps = useCallback(async () => {
+  const loadParcelSteps = useCallback(async (estateList?: Estate[]) => {
     try {
-      const list = await estatesAPI.getAll();
-      const estates = Array.isArray(list) ? list : [];
+      let rows: Estate[];
+      if (estateList !== undefined) {
+        rows = estateList;
+      } else {
+        const list = await estatesAPI.getAll();
+        rows = Array.isArray(list) ? list : [];
+      }
+      const parcelGroups = await Promise.all(
+        rows.map((e) => parcelsAPI.getByEstate(e.id).catch(() => [] as Awaited<ReturnType<typeof parcelsAPI.getByEstate>>)),
+      );
       let total = 0;
       let pending = 0;
       let approved = 0;
-      for (const e of estates) {
-        const parcels = await parcelsAPI.getByEstate(e.id).catch(() => []);
-        for (const p of parcels || []) {
+      for (const parcels of parcelGroups) {
+        for (const parcel of parcels || []) {
           total += 1;
-          if (p.approvedAt) {
-            approved += 1;
-          } else {
-            pending += 1;
-          }
+          if (parcel.approvedAt) approved += 1;
+          else pending += 1;
         }
       }
       setParcelSteps({ loaded: true, total, pending, approved });
+      await growerOfflineCache.saveParcelStats({ total, pending, approved });
     } catch {
-      setParcelSteps({ loaded: true, total: 0, pending: 0, approved: 0 });
+      setParcelSteps((prev) =>
+        prev.loaded ? prev : { loaded: true, total: 0, pending: 0, approved: 0 },
+      );
     }
   }, []);
 
@@ -149,7 +186,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const loadMissions = useCallback(async () => {
     try {
       const missions = await missionsAPI.getAll();
-      const active = (Array.isArray(missions) ? missions : []).filter((m: any) => {
+      const list = Array.isArray(missions) ? missions : [];
+      const active = list.filter((m: any) => {
         const s = String(m?.status || '').toUpperCase().replace(/\s+/g, '_');
         return (
           s === 'PENDING' ||
@@ -163,8 +201,21 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         );
       });
       setActiveMissions(active);
+      setHasTransportRecord(
+        list.some((m: any) => String(m?.status || '').toUpperCase().replace(/\s+/g, '_') !== 'CANCELLED'),
+      );
     } catch {
       setActiveMissions([]);
+      setHasTransportRecord(false);
+    }
+  }, []);
+
+  const loadHarvestPlans = useCallback(async () => {
+    try {
+      const raw = await harvestAnnouncementsAPI.getMy();
+      setHarvestPlanCount(Array.isArray(raw) ? raw.length : 0);
+    } catch {
+      setHarvestPlanCount(0);
     }
   }, []);
 
@@ -246,16 +297,17 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         loadNotifications(),
         loadFinancialData(),
         loadOrdersFinancial(),
+        loadHarvestPlans(),
       ]);
     } catch (e) {
       console.error('Error loading live data:', e);
     }
-  }, [loadMissions, loadBatches, loadNotifications, loadFinancialData, loadOrdersFinancial]);
+  }, [loadMissions, loadBatches, loadNotifications, loadFinancialData, loadOrdersFinancial, loadHarvestPlans]);
 
   const loadData = useCallback(async () => {
+    const estateList = await loadEstates();
     await Promise.all([
-      loadEstates(),
-      loadParcelSteps(),
+      loadParcelSteps(estateList),
       loadOfflinePending(),
       loadRecentEntries(),
       loadLiveData(),
@@ -390,5 +442,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     loadLiveData,
     batchesReadyForTransport,
     batchTotalCount,
+    harvestPlanCount,
+    hasTransportRecord,
   };
 }

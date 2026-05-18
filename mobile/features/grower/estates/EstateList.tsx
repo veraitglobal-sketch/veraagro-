@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, Edit, Trash2, Package } from 'lucide-react-native';
 import type { Estate } from '../../../lib/api';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi, growerStyles } from '../../../lib/grower-ui';
 
 export interface EstateListProps {
   estates: Estate[];
@@ -15,10 +16,6 @@ export interface EstateListProps {
   onDelete: (estate: Estate, e: { stopPropagation?: () => void }) => void;
 }
 
-/**
- * List of estate cards: loading, empty with "Add Estate" CTA, or list.
- * Receives data and handlers from useEstatesData and screen (router).
- */
 export function EstateList({
   estates,
   loading,
@@ -30,217 +27,168 @@ export function EstateList({
   onDelete,
 }: EstateListProps) {
   const { t } = useTranslation();
-  if (loading) {
+
+  if (loading && estates.length === 0) {
     return (
-      <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-        <Text style={{
-          color: theme.colors.text.secondary,
-          fontSize: 11,
-          fontWeight: '300',
-          letterSpacing: 0.3,
-        }}>
-          {t('producer.estates.loading')}
-        </Text>
+      <View style={styles.loading}>
+        <ActivityIndicator size="small" color={enterpriseColors.primary} />
+        <Text style={styles.loadingText}>{t('producer.estates.loading')}</Text>
       </View>
     );
   }
 
   if (estates.length === 0) {
     return (
-      <View style={{
-        backgroundColor: theme.colors.surface,
-        borderRadius: theme.borderRadius.md,
-        padding: theme.spacing.xl,
-        borderWidth: 0.5,
-        borderColor: 'rgba(0, 0, 0, 0.05)',
-        alignItems: 'center',
-      }}>
-        <MapPin size={48} color={theme.colors.text.tertiary} strokeWidth={1} />
-        <Text style={{
-          fontSize: 12,
-          fontWeight: '300',
-          color: theme.colors.text.primary,
-          marginTop: theme.spacing.md,
-          marginBottom: theme.spacing.xs,
-          letterSpacing: 0.3,
-          textAlign: 'center',
-        }}>
-          {t('producer.estates.listEmptyTitle')}
-        </Text>
-        <Text style={{
-          fontSize: 11,
-          fontWeight: '300',
-          color: theme.colors.text.secondary,
-          marginBottom: theme.spacing.lg,
-          letterSpacing: 0.2,
-          textAlign: 'center',
-        }}>
-          {t('producer.estates.listEmptySubtitle')}
-        </Text>
-        <TouchableOpacity
-          onPress={onPressNew}
-          activeOpacity={0.7}
-          style={{
-            paddingHorizontal: theme.spacing.lg,
-            paddingVertical: theme.spacing.md,
-            backgroundColor: theme.colors.primary,
-            borderRadius: theme.borderRadius.md,
-          }}
-        >
-          <Text style={{
-            color: theme.colors.background,
-            fontSize: 11,
-            fontWeight: '300',
-            letterSpacing: 0.3,
-          }}>
-            {t('producer.estates.newEstate')}
-          </Text>
+      <View style={growerUi.emptyCard}>
+        <MapPin size={40} color={enterpriseColors.gray600} strokeWidth={1.5} />
+        <Text style={styles.emptyTitle}>{t('producer.estates.listEmptyTitle')}</Text>
+        <Text style={styles.emptySubtitle}>{t('producer.estates.listEmptySubtitle')}</Text>
+        <TouchableOpacity onPress={onPressNew} activeOpacity={0.9} style={[growerUi.btnPrimary, styles.emptyBtn]}>
+          <Text style={growerUi.btnPrimaryText}>{t('producer.estates.newEstate')}</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={{ gap: theme.spacing.sm }}>
+    <View style={{ gap: 0 }}>
       {estates.map((estate) => {
         const parcels = estate.parcels ?? [];
         const parcelTotal = parcels.length;
         const parcelApproved = parcels.filter((p) => Boolean(p.approvedAt)).length;
+        const statusColor = getStatusColor(estate.status);
+
         return (
           <TouchableOpacity
             key={estate.id}
             onPress={() => onPressEstate(estate)}
-            activeOpacity={0.7}
-            style={{
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.md,
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.05)',
-            }}
+            activeOpacity={0.88}
+            style={growerUi.estateCard}
           >
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
-            <View style={{
-              width: 48,
-              height: 48,
-              borderRadius: theme.borderRadius.sm,
-              backgroundColor: `${getStatusColor(estate.status)}15`,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: theme.spacing.sm,
-            }}>
-              <MapPin size={24} color={getStatusColor(estate.status)} strokeWidth={1} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontSize: 12,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                marginBottom: theme.spacing.xs,
-                letterSpacing: 0.3,
-              }}>
-                {estate.name}
-              </Text>
-              {estate.location && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-                  <MapPin size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                  <Text style={{
-                    fontSize: 9,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    marginLeft: 4,
-                    letterSpacing: 0.2,
-                  }}>
+            <View style={styles.cardTop}>
+              <View style={[growerUi.tileIcon, { backgroundColor: `${statusColor}18` }]}>
+                <MapPin size={24} color={statusColor} strokeWidth={1.75} />
+              </View>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={growerUi.tileTitle} numberOfLines={1}>
+                  {estate.name}
+                </Text>
+                {estate.location ? (
+                  <Text style={growerUi.tileDesc} numberOfLines={1}>
                     {estate.location}
                   </Text>
-                </View>
-              )}
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, marginTop: theme.spacing.xs }}>
-                <View style={{
-                  paddingHorizontal: theme.spacing.xs,
-                  paddingVertical: 2,
-                  borderRadius: theme.borderRadius.sm,
-                  backgroundColor: `${getStatusColor(estate.status)}15`,
-                }}>
-                  <Text style={{
-                    fontSize: 9,
-                    fontWeight: '300',
-                    color: getStatusColor(estate.status),
-                    letterSpacing: 0.3,
-                  }}>
-                    {getStatusLabel(estate.status)}
-                  </Text>
-                </View>
-                {estate.calculatedArea > 0 && (
-                  <Text style={{
-                    fontSize: 9,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    letterSpacing: 0.2,
-                  }}>
-                    {estate.calculatedArea.toFixed(2)} m²
-                  </Text>
-                )}
-                {parcelTotal > 0 && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Package size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{
-                        fontSize: 9,
-                        fontWeight: '300',
-                        color: theme.colors.text.secondary,
-                        marginLeft: 4,
-                        letterSpacing: 0.2,
-                      }}>
-                        {t('producer.estates.parcelsWithCount', { count: parcelTotal })}
-                      </Text>
-                    </View>
-                    <Text style={{
-                      fontSize: 9,
-                      fontWeight: '300',
-                      color: theme.colors.text.secondary,
-                      letterSpacing: 0.2,
-                    }}>
-                      {t('producer.estates.approvedParcelsOfTotal', { approved: parcelApproved, total: parcelTotal })}
-                    </Text>
-                  </View>
-                )}
+                ) : null}
               </View>
-              {estate.daysRemaining !== undefined && estate.daysRemaining !== null && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: theme.spacing.xs }}>
-                  <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                  <Text style={{
-                    fontSize: 9,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    marginLeft: 4,
-                    letterSpacing: 0.2,
-                  }}>
-                    {t('producer.estates.listCertDaysRemaining', { count: estate.daysRemaining ?? 0 })}
+              <View style={styles.actions}>
+                <TouchableOpacity onPress={(e) => onPressEdit(estate, e)} hitSlop={8} accessibilityRole="button">
+                  <Edit size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={(e) => onDelete(estate, e)} hitSlop={8} accessibilityRole="button">
+                  <Trash2 size={20} color="#B91C1C" strokeWidth={1.75} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.metaRow}>
+              <View style={[growerStyles.statusPill, { backgroundColor: `${statusColor}18` }]}>
+                <Text style={[growerStyles.statusPillText, { color: statusColor }]}>
+                  {getStatusLabel(estate.status)}
+                </Text>
+              </View>
+              {estate.calculatedArea > 0 ? (
+                <Text style={styles.metaText}>{estate.calculatedArea.toFixed(0)} m²</Text>
+              ) : null}
+              {parcelTotal > 0 ? (
+                <View style={styles.parcelMeta}>
+                  <Package size={14} color={enterpriseColors.gray600} strokeWidth={1.5} />
+                  <Text style={styles.metaText}>
+                    {t('producer.estates.approvedParcelsOfTotal', {
+                      approved: parcelApproved,
+                      total: parcelTotal,
+                    })}
                   </Text>
                 </View>
-              )}
+              ) : null}
             </View>
-            <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-              <TouchableOpacity
-                onPress={(e) => onPressEdit(estate, e)}
-                activeOpacity={0.7}
-                style={{ padding: theme.spacing.xs }}
-              >
-                <Edit size={18} color={theme.colors.text.secondary} strokeWidth={1} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={(e) => onDelete(estate, e)}
-                activeOpacity={0.7}
-                style={{ padding: theme.spacing.xs }}
-              >
-                <Trash2 size={18} color={theme.colors.error} strokeWidth={1} />
-              </TouchableOpacity>
-            </View>
-          </View>
+
+            {estate.daysRemaining != null ? (
+              <View style={styles.daysRow}>
+                <Calendar size={14} color={enterpriseColors.gray600} strokeWidth={1.5} />
+                <Text style={styles.metaText}>
+                  {t('producer.estates.listCertDaysRemaining', { count: estate.daysRemaining ?? 0 })}
+                </Text>
+              </View>
+            ) : null}
           </TouchableOpacity>
         );
       })}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    paddingVertical: 48,
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    marginTop: 16,
+    textAlign: 'center',
+    letterSpacing: -0.3,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    marginTop: 8,
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 8,
+  },
+  emptyBtn: {
+    width: '100%',
+    marginTop: 4,
+  },
+  cardTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginBottom: 12,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingTop: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 10,
+  },
+  metaText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+  },
+  parcelMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  daysRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+  },
+});

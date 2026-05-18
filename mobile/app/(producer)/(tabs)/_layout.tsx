@@ -4,6 +4,7 @@ import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GrowerDashboardProvider } from '../../../contexts/GrowerDashboardContext';
 
 /**
  * Grower tabs: Home → Field (parcels & diary) → Chain (lots & transport) → Supplies → Profile.
@@ -14,6 +15,7 @@ export default function ProducerTabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
+    <GrowerDashboardProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
@@ -58,6 +60,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen
         name="field"
         options={{
+          headerShown: false,
           title: t('producer.tabs.fieldHub'),
           tabBarLabel: t('producer.tabs.field'),
           tabBarIcon: ({ color, size }) => <MapPin size={size || 22} color={color} strokeWidth={1.5} />,
@@ -82,6 +85,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          headerShown: false,
           title: t('producer.tabs.profile'),
           tabBarLabel: t('producer.tabs.profile'),
           tabBarIcon: ({ color, size }) => <User size={size || 22} color={color} strokeWidth={1.5} />,
@@ -98,5 +102,6 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen name="wallet" options={{ title: t('producer.tabs.wallet'), href: null }} />
       <Tabs.Screen name="settings" options={{ title: t('producer.tabs.settings'), href: null }} />
     </Tabs>
+    </GrowerDashboardProvider>
   );
 }

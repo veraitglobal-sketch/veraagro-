@@ -17,11 +17,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Wheat, Plus, X } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
+import { harvestAnnouncementsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
-import { apiErrorMessage, axiosLikeMessage, axiosResponseStatus, isLikelyNetworkError } from '../../../lib/api-error';
+import { apiErrorMessage, axiosLikeMessage, isLikelyNetworkError } from '../../../lib/api-error';
+import { usePlantingsData, type HaRow, type ParcelAug } from './usePlantingsData';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { theme } from '../../../lib/theme';
@@ -37,78 +38,6 @@ import { plantingFormDateToEstimatedIsoUtc } from './planting-estimated-date';
 import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 
-function explainHarvestAnnouncementsLoadFailure(
-  err: unknown,
-  translate: (key: string) => string,
-): string {
-  const code =
-    err && typeof err === 'object' && 'code' in err ? String((err as { code?: unknown }).code) : '';
-  if (code === 'ECONNABORTED' || (err instanceof Error && /timeout/i.test(err.message))) {
-    return translate('producer.plantings.announcementsLoadHintTimeout');
-  }
-  if (isLikelyNetworkError(err)) {
-    return translate('producer.plantings.announcementsLoadHintNetwork');
-  }
-  const status = axiosResponseStatus(err);
-  if (status === 401 || status === 403) {
-    return translate('producer.plantings.announcementsLoadHintSession');
-  }
-  if (status != null && status >= 500) {
-    const raw = (axiosLikeMessage(err) || apiErrorMessage(err, '') || '').trim();
-    if (raw.length > 0 && !/^internal\s+server\s*error$/i.test(raw)) {
-      return raw.length > 380 ? `${raw.slice(0, 377)}…` : raw;
-    }
-    return translate('producer.plantings.announcementsLoadHintServer');
-  }
-  const raw = (axiosLikeMessage(err) || apiErrorMessage(err, '') || '').trim();
-  if (raw.length > 2 && !/^error$/i.test(raw)) {
-    return raw.length > 380 ? `${raw.slice(0, 377)}…` : raw;
-  }
-  return translate('producer.plantings.announcementsLoadHintGeneric');
-}
-
-type EstateRow = { id: string; name: string };
-type ParcelAug = {
-  id: string;
-  cropType?: string | null;
-  approvedAt?: string | null;
-  status?: string | null;
-  estateId: string;
-  calculatedArea?: number;
-  estateName: string;
-};
-
-type HaRow = {
-  id: string;
-  parcelId: string;
-  announcementType: string;
-  cropType: string;
-  estimatedDate: string;
-  status: string;
-  notes?: string | null;
-  createdAt?: string;
-  estimatedQuantity?: number | null;
-  /** Local-only row from offline harvest-announcements queue */
-  localQueue?: {
-    pendingId: string;
-    queueStatus: 'pending' | 'syncing' | 'synced' | 'error';
-    queueError?: string;
-  };
-  plantingProgress?: {
-    intervalDays: number;
-    lastGrowthLogAt: string | null;
-    nextDueAt: string;
-    isOverdue: boolean;
-    daysOverdue: number;
-  } | null;
-  parcel?: {
-    id: string;
-    cropType?: string | null;
-    calculatedArea?: number;
-    estates?: { name: string } | null;
-  } | null;
-};
-
 function parcelLabelSnippet(ha: HaRow): string {
   const id = normalizeHarvestParcelId(ha.parcelId, ha.parcel ?? null);
   return id ? id.slice(0, 8) : '—';
@@ -120,14 +49,17 @@ export default function PlantingsScreen() {
   const p = useBioVeraScreenPadding();
   const langSr = !!i18n.language?.startsWith('sr');
 
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const {
+    loading,
+    refreshing,
+    err,
+    announcementsWarn,
+    announcementsWarnDetail,
+    announcements,
+    parcelList,
+    reload,
+  } = usePlantingsData();
   const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-  const [announcementsWarn, setAnnouncementsWarn] = useState<string | null>(null);
-  const [announcementsWarnDetail, setAnnouncementsWarnDetail] = useState<string | null>(null);
-  const [announcements, setAnnouncements] = useState<HaRow[]>([]);
-  const [parcelList, setParcelList] = useState<ParcelAug[]>([]);
 
   /** Add modal */
   const [addOpen, setAddOpen] = useState(false);
@@ -164,115 +96,6 @@ export default function PlantingsScreen() {
     [router, t],
   );
 
-  const load = useCallback(async () => {
-    setErr(null);
-    setAnnouncementsWarn(null);
-    setAnnouncementsWarnDetail(null);
-    try {
-      const estates = (await estatesAPI.getAll()) as EstateRow[];
-      const rows: ParcelAug[] = [];
-      for (const e of estates || []) {
-        const parcels = (await parcelsAPI.getByEstate(e.id).catch(() => [])) as Array<
-          ParcelAug & { calculatedArea?: number }
-        >;
-        for (const par of parcels || []) {
-          rows.push({
-            id: par.id,
-            cropType: par.cropType,
-            approvedAt: par.approvedAt,
-            status: par.status,
-            estateId: par.estateId,
-            calculatedArea: typeof par.calculatedArea === 'number' ? par.calculatedArea : undefined,
-            estateName: e.name,
-          });
-        }
-      }
-      setParcelList(rows);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : t('producer.plantings.loadError'));
-      setParcelList([]);
-      setAnnouncements([]);
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
-
-    try {
-      const list = (await harvestAnnouncementsAPI.getMy()) as HaRow[];
-      const serverRows = Array.isArray(list) ? list : [];
-
-      const pending = await offlineStorage.getPendingHarvestPlans();
-      const localPlantings: HaRow[] = pending
-        .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
-        .map((h) => {
-          const payload = h.payload;
-          const q = h.status;
-          const statusFlag =
-            q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
-          return {
-            id: `local:${h.id}`,
-            parcelId: normalizeHarvestParcelId(payload.parcelId, null) || String(payload.parcelId ?? ''),
-            announcementType: 'PLANTING',
-            cropType: payload.cropType,
-            estimatedDate: payload.estimatedDate,
-            status: statusFlag,
-            notes: payload.notes ?? null,
-            createdAt: h.createdAt,
-            estimatedQuantity: payload.estimatedQuantity ?? null,
-            localQueue: { pendingId: h.id, queueStatus: q, queueError: h.error },
-          };
-        });
-
-      setAnnouncements([...localPlantings, ...serverRows.map((r) => ({
-        ...r,
-        parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel ?? null) || r.parcelId,
-      }))]);
-    } catch (e: unknown) {
-      if (__DEV__) {
-        const msg =
-          axiosLikeMessage(e) ||
-          apiErrorMessage(e, '') ||
-          (e instanceof Error ? e.message : typeof e === 'string' ? e : '');
-        console.warn('[PlantingsScreen] harvest-announcements getMy failed:', msg || e);
-      }
-      try {
-        const pending = await offlineStorage.getPendingHarvestPlans();
-        const localOnly: HaRow[] = pending
-          .filter((h) => String(h.payload?.announcementType ?? '').toUpperCase() === 'PLANTING')
-          .map((h) => {
-            const payload = h.payload;
-            const q = h.status;
-            const statusFlag =
-              q === 'error' ? 'LOCAL_ERROR' : q === 'syncing' ? 'LOCAL_SYNCING' : 'LOCAL_QUEUED';
-            return {
-              id: `local:${h.id}`,
-              parcelId: normalizeHarvestParcelId(payload.parcelId, null) || String(payload.parcelId ?? ''),
-              announcementType: 'PLANTING',
-              cropType: payload.cropType,
-              estimatedDate: payload.estimatedDate,
-              status: statusFlag,
-              notes: payload.notes ?? null,
-              createdAt: h.createdAt,
-              estimatedQuantity: payload.estimatedQuantity ?? null,
-              localQueue: { pendingId: h.id, queueStatus: q, queueError: h.error },
-            };
-          });
-        setAnnouncements(localOnly);
-      } catch {
-        setAnnouncements([]);
-      }
-      setAnnouncementsWarn(t('producer.plantings.announcementsLoadWarn'));
-      setAnnouncementsWarnDetail(explainHarvestAnnouncementsLoadFailure(e, t));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [t]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
   const resetAddForm = useCallback(() => {
     setFormParcelId('');
     setSelectedVariety(null);
@@ -291,7 +114,6 @@ export default function PlantingsScreen() {
   }, [addOpen, parcelList]);
 
   const openAdd = useCallback(() => {
-    setErr(null);
     setAddFormErr(null);
     setSelectedVariety(null);
     setCustomCropOther('');
@@ -363,7 +185,7 @@ export default function PlantingsScreen() {
     }
     if (!parcelList.some((p) => p.id === formParcelId)) {
       setAddFormErr(t('producer.plantings.errSaveAccess'));
-      void load();
+      void reload();
       return;
     }
     if (!crop) {
@@ -394,7 +216,6 @@ export default function PlantingsScreen() {
     };
 
     setSaving(true);
-    setErr(null);
     try {
       if (!(await isDeviceOnline())) {
         await offlineStorage.savePendingHarvestPlan({ payload });
@@ -402,14 +223,14 @@ export default function PlantingsScreen() {
         Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
         setAddOpen(false);
         resetAddForm();
-        await load();
+        await reload();
         return;
       }
       await harvestAnnouncementsAPI.create(payload);
       Alert.alert(t('alerts.success'), t('producer.plantings.savedOk'));
       setAddOpen(false);
       resetAddForm();
-      await load();
+      await reload();
     } catch (e: unknown) {
       if (isLikelyNetworkError(e)) {
         try {
@@ -418,7 +239,7 @@ export default function PlantingsScreen() {
           Alert.alert(t('alerts.success'), t('producer.harvest.queuedOffline'));
           setAddOpen(false);
           resetAddForm();
-          await load();
+          await reload();
           return;
         } catch {
           // fall through
@@ -507,10 +328,7 @@ export default function PlantingsScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => {
-              setRefreshing(true);
-              void load();
-            }}
+            onRefresh={() => void reload()}
             tintColor={theme.colors.primary}
           />
         }

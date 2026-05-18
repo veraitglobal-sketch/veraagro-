@@ -59,14 +59,8 @@ export default function ProducerLayout() {
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />
         <Stack.Screen name="plantings" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="partner-orders"
-          options={{
-            headerShown: true,
-            title: i18n.t('navigation.partnerOrders'),
-            headerBackTitle: i18n.t('common.back'),
-          }}
-        />
+        <Stack.Screen name="partner-orders" options={{ headerShown: false }} />
+        <Stack.Screen name="partner-order/[orderId]" options={{ headerShown: false }} />
         <Stack.Screen name="vera-bag" />
         <Stack.Screen name="vera-insights" />
         <Stack.Screen name="plot-mapper" />

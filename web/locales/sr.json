@@ -755,6 +755,80 @@
       "fieldDiaryBody": "U aplikaciji birate njivu → parcelu → plan useva (zasad ili berba). Barkod materijala je opciono kad važi; fotografija + GPS obavezni pri svakom unosu — od prvog dana — i grade trag ka pasošu. Ovde je samo pregled po polju ili parceli.",
       "openParcels": "Idi na moje parcele"
     },
+    "appGuide": {
+      "pageTitle": "Kako koristiti aplikaciju",
+      "pageDescription": "Korak po korak kroz mobilnu Bio Vera aplikaciju za proizvođače — sa snimcima ekrana telefona.",
+      "hint": "Snimci ekrana se dodaju u folder projekta; dok slika nije tu, videćete naziv fajla koji treba uploadovati.",
+      "tocTitle": "Sadržaj",
+      "imagePending": "Dodajte snimak u folder (vidi README).",
+      "printPdf": "Štampaj / sačuvaj PDF",
+      "downloadPdf": "Preuzmi PDF",
+      "footer": "Za pravna pitanja i ugovor koristite pisana dokumenta Bio Vere. Ovo uputstvo je praktični vodič kroz aplikaciju.",
+      "openFromEducation": "Vodič za mobilnu aplikaciju (snimci ekrana)",
+      "steps": {
+        "welcome": {
+          "title": "Dobrodošli",
+          "lead": "Prvi ekran aplikacije Bio Vera — ulaz za partnere i proizvođače.",
+          "b1": "Izaberite prijavu ako već imate nalog.",
+          "b2": "Registracija je za nove partnere po uputstvu tima."
+        },
+        "register": {
+          "title": "Registracija",
+          "lead": "Otvaranje naloga proizvođača / partnera.",
+          "b1": "Unesite podatke koje vam je dao operativni tim.",
+          "b2": "Posle registracije čekate odobrenje pre punog pristupa."
+        },
+        "login": {
+          "title": "Prijava",
+          "lead": "Svakodnevni ulaz u aplikaciju.",
+          "b1": "Koristite e-poštu, korisničko ime ili partnerski kod.",
+          "b2": "Ne delite lozinku — nalog je vezan za vašu farmu."
+        },
+        "home": {
+          "title": "Početna",
+          "lead": "Kontrolna tabla — šta je sledeće i da li ima nesinhronizovanih unosa.",
+          "b1": "Kartica „Šta dalje” vodi na sledeći korak u sezoni.",
+          "b2": "Traka sinhronizacije šalje offline unose kad ima mreže.",
+          "b3": "Odavde idete na novčanik, uputstva i obaveštenja."
+        },
+        "field": {
+          "title": "Polje (tab)",
+          "lead": "Sve što radite na njivi — parcele, zasadi, dnevnik i terenski unos.",
+          "b1": "Moja polja / imanja — registracija i pregled parcela.",
+          "b2": "Parcele i zone — granice na mapi (GPS), čekanje odobrenja.",
+          "b3": "Moji zasadi — plan useva / berbe po parceli.",
+          "b4": "Dnevnik rasta — foto dokaz razvoja useva (obavezna slika).",
+          "b5": "Terenski dnevnik — setva, đubrenje, prskanje: barkod (kad važi) + foto + GPS.",
+          "b6": "Materijali — provera da je input na beloj listi."
+        },
+        "lots": {
+          "title": "Lotovi (tab)",
+          "lead": "Posle berbe — partije, kvalitet, pakovanje i transport.",
+          "b1": "Pregled lotova i statusa (pakovano, u hub-u, u transportu).",
+          "b2": "Kvalitet i fotografije usklađenosti ambalaže.",
+          "b3": "Zahtev za prevoz kad je roba spremna."
+        },
+        "suppliers": {
+          "title": "Snabdevači",
+          "lead": "Inputi (semena, ambalaža) od partnera na mapi.",
+          "b1": "Mapa snabdevača — pronađite partnera u blizini.",
+          "b2": "Porudžbine — tab Porudžbine (status, prijem na farmi).",
+          "b3": "Poruke — tab Poruke (chat sa snabdevačem, odvojeno od porudžbine)."
+        },
+        "profile": {
+          "title": "Profil",
+          "lead": "Vaš nalog, podešavanja i pregled novčanika.",
+          "b1": "Podaci farme i partnerski kod.",
+          "b2": "Obaveštenja i odjava."
+        },
+        "wallet": {
+          "title": "Novčanik",
+          "lead": "Pregled isplata i stanja po porudžbinama.",
+          "b1": "U escrow-u i dostupno za isplatu.",
+          "b2": "Detalji su usklađeni sa web kontrolnom tablom."
+        }
+      }
+    },
     "education": {
       "pageTitle": "Edukacija za proizvođače",
       "pageDescription": "Video vodiči, jasna pravila o odgovornosti za robu i etici u lancu Bio Vera. Ovde će biti objavljen materijal koji koristite uz praksu na polju i u pakovanju.",

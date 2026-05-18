@@ -17,9 +17,12 @@ import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
-import { ArrowLeft, MapPin, Truck } from 'lucide-react-native';
+import { MapPin } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
+import { enterpriseColors } from '../../lib/enterprise-ui';
+import { growerUi } from '../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
+import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import {
   batchesAPI,
   missionsAPI,
@@ -300,50 +303,20 @@ export default function MissionsCreateScreen() {
   if (initialBatchesLoading) {
     return (
       <SafeAreaView
-        style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}
+        style={{ flex: 1, backgroundColor: enterpriseColors.canvas, justifyContent: 'center' }}
         edges={['top', 'left', 'right']}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator size="large" color={enterpriseColors.primary} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
-      <View
-        style={{
-          paddingTop: theme.spacing.sm,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0,0,0,0.08)',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ marginRight: theme.spacing.md, minWidth: 44, minHeight: 44, justifyContent: 'center' }}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: '600',
-            color: theme.colors.text.primary,
-            flex: 1,
-            letterSpacing: 0.2,
-          }}
-        >
-          {t('producer.missionsCreate.title')}
-        </Text>
-      </View>
+    <SafeAreaView style={growerUi.canvas} edges={['left', 'right', 'bottom']}>
+      <GrowerStackHeader
+        title={t('navigation.requestTransport')}
+        subtitle={t('producer.missionsCreate.intro')}
+      />
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -354,9 +327,8 @@ export default function MissionsCreateScreen() {
           ref={scrollRef}
           style={{ flex: 1 }}
           contentContainerStyle={{
-            paddingTop: theme.spacing.md,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
+            ...growerUi.scrollContent,
+            paddingTop: 12,
             paddingBottom: theme.spacing.lg + keyboardPad,
           }}
           keyboardShouldPersistTaps="handled"
@@ -370,60 +342,16 @@ export default function MissionsCreateScreen() {
             />
           }
         >
-        <View
-          style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.06)',
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-          }}
-        >
-          <Text style={{ fontSize: 16, color: theme.colors.text.secondary, lineHeight: 24, marginBottom: theme.spacing.sm }}>
-            {t('producer.missionsCreate.intro')}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            backgroundColor: theme.colors.background,
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 0.5,
-            borderColor: `${theme.colors.primary}30`,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 10 }}>
-            {t('producer.missionsCreate.workflowTitle')}
-          </Text>
-          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: 8 }}>
+        <View style={growerUi.formPanel}>
+          <Text style={growerUi.sectionLabel}>{t('producer.missionsCreate.workflowTitle')}</Text>
+          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
             {t('producer.missionsCreate.workflowStep1')}
           </Text>
-          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: 8 }}>
+          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
             {t('producer.missionsCreate.workflowStep2')}
           </Text>
-          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
+          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
             {t('producer.missionsCreate.workflowStep3')}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            backgroundColor: 'rgba(15, 23, 42, 0.04)',
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(15, 23, 42, 0.12)',
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
-            {t('producer.missionsCreate.multiFarmTitle')}
-          </Text>
-          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
-            {t('producer.missionsCreate.multiFarmBody')}
           </Text>
         </View>
 
@@ -443,9 +371,7 @@ export default function MissionsCreateScreen() {
           </View>
         ) : (
           <View style={{ marginBottom: theme.spacing.lg, gap: theme.spacing.xs }}>
-            <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, textTransform: 'uppercase', fontWeight: '600', letterSpacing: 0.6 }}>
-              {t('producer.missionsCreate.batchLabel')}
-            </Text>
+            <Text style={growerUi.formLabel}>{t('producer.missionsCreate.batchLabel')}</Text>
             {batches.map((b) => {
               const selected = batchId === b.id;
               return (
@@ -455,10 +381,10 @@ export default function MissionsCreateScreen() {
                   activeOpacity={0.7}
                   style={{
                     padding: theme.spacing.md,
-                    borderRadius: theme.borderRadius.md,
+                    borderRadius: 12,
                     borderWidth: 1,
-                    borderColor: selected ? theme.colors.primary : 'rgba(0,0,0,0.08)',
-                    backgroundColor: selected ? `${theme.colors.primary}12` : theme.colors.background,
+                    borderColor: selected ? enterpriseColors.primary : enterpriseColors.gray200,
+                    backgroundColor: selected ? enterpriseColors.primaryTint : enterpriseColors.white,
                   }}
                 >
                   <Text style={{ fontSize: 17, color: theme.colors.text.primary, fontWeight: '600' }}>
@@ -545,22 +471,24 @@ export default function MissionsCreateScreen() {
             disabled={locLoading}
             activeOpacity={0.7}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
               alignSelf: 'flex-start',
               minHeight: 48,
               paddingVertical: 12,
-              paddingHorizontal: theme.spacing.md,
-              borderRadius: theme.borderRadius.md,
-              backgroundColor: `${theme.colors.primary}15`,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: enterpriseColors.primary,
+              backgroundColor: enterpriseColors.white,
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
             {locLoading ? (
-              <ActivityIndicator size="small" color={theme.colors.primary} style={{ marginRight: 8 }} />
+              <ActivityIndicator size="small" color={enterpriseColors.primary} style={{ marginRight: 8 }} />
             ) : (
-              <MapPin size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+              <MapPin size={18} color={enterpriseColors.primary} style={{ marginRight: 8 }} strokeWidth={1.5} />
             )}
-            <Text style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '600' }}>
+            <Text style={{ fontSize: 15, color: enterpriseColors.primary, fontWeight: '600' }}>
               {t('producer.missionsCreate.useMyLocation')}
             </Text>
           </TouchableOpacity>
@@ -580,78 +508,40 @@ export default function MissionsCreateScreen() {
           </Text>
         </View>
 
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.latitude')}
-        </Text>
+        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.latitude')}</Text>
         <TextInput
           value={pickupLat}
           onChangeText={setPickupLat}
           placeholder={t('producer.missionsCreate.latPlaceholder')}
+          placeholderTextColor={enterpriseColors.gray600}
           keyboardType="decimal-pad"
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            marginBottom: theme.spacing.md,
-            color: theme.colors.text.primary,
-          }}
+          style={growerUi.formInput}
         />
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.longitude')}
-        </Text>
+        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.longitude')}</Text>
         <TextInput
           value={pickupLng}
           onChangeText={setPickupLng}
           placeholder={t('producer.missionsCreate.lngPlaceholder')}
+          placeholderTextColor={enterpriseColors.gray600}
           keyboardType="decimal-pad"
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            marginBottom: theme.spacing.md,
-            color: theme.colors.text.primary,
-          }}
+          style={growerUi.formInput}
         />
-        <Text style={{ fontSize: 15, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-          {t('producer.missionsCreate.pickupAddress')}
-        </Text>
+        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.pickupAddress')}</Text>
         <TextInput
           value={pickupAddress}
           onChangeText={setPickupAddress}
           onFocus={scrollToBottomIfNeeded}
           placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
+          placeholderTextColor={enterpriseColors.gray600}
           multiline
-          style={{
-            borderWidth: 0.5,
-            borderColor: 'rgba(0,0,0,0.12)',
-            borderRadius: theme.borderRadius.md,
-            padding: 14,
-            fontSize: 17,
-            minHeight: 80,
-            textAlignVertical: 'top',
-            marginBottom: theme.spacing.lg,
-            color: theme.colors.text.primary,
-          }}
+          style={[growerUi.formInput, { minHeight: 88, textAlignVertical: 'top' }]}
         />
 
-        <View
-          style={{
-            marginBottom: theme.spacing.lg,
-            padding: theme.spacing.md,
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 1,
-            borderColor: 'rgba(45, 90, 39, 0.25)',
-            backgroundColor: 'rgba(247, 250, 246, 0.95)',
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }}>
+        <View style={growerUi.formPanel}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900 }}>
             {t('producer.missionsCreate.opsRouteBoxTitle')}
           </Text>
-          <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 8, lineHeight: 22 }}>
+          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 }}>
             {t('producer.missionsCreate.opsRouteBoxBody')}
           </Text>
         </View>
@@ -664,35 +554,28 @@ export default function MissionsCreateScreen() {
             paddingLeft: p.screenPaddingLeft,
             paddingRight: p.screenPaddingRight,
             borderTopWidth: 0.5,
-            borderTopColor: 'rgba(0,0,0,0.08)',
-            backgroundColor: theme.colors.background,
+            borderTopColor: enterpriseColors.gray200,
+            backgroundColor: enterpriseColors.white,
           }}
         >
           <TouchableOpacity
             onPress={submit}
             disabled={submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport}
-            activeOpacity={0.8}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              backgroundColor: theme.colors.primary,
-              borderRadius: theme.borderRadius.md,
-              paddingVertical: 17,
-              opacity: submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport ? 0.5 : 1,
-              minHeight: 54,
-            }}
+            activeOpacity={0.88}
+            style={[
+              growerUi.btnPrimary,
+              {
+                opacity:
+                  submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport
+                    ? 0.5
+                    : 1,
+              },
+            ]}
           >
             {submitting ? (
-              <ActivityIndicator color={theme.colors.text.inverse} />
+              <ActivityIndicator color={enterpriseColors.white} />
             ) : (
-              <>
-                <Truck size={22} color={theme.colors.text.inverse} strokeWidth={1.75} />
-                <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.inverse }}>
-                  {t('producer.missionsCreate.title')}
-                </Text>
-              </>
+              <Text style={growerUi.btnPrimaryText}>{t('producer.missionsCreate.submitCta')}</Text>
             )}
           </TouchableOpacity>
         </View>

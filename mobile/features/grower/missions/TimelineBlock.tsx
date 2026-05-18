@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Calendar, User, Truck, Clock } from 'lucide-react-native';
+import { Calendar, User, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import type { Mission } from '../../../lib/api';
@@ -126,19 +126,16 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
               >
                 {t('producer.missions.inTransit')}
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                <Truck size={14} color={colors.text.secondary} strokeWidth={1} />
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '300',
-                    color: colors.text.secondary,
-                    marginLeft: 4,
-                  }}
-                >
-                  {t('producer.missions.enRouteToDestination')}
-                </Text>
-              </View>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '300',
+                  color: colors.text.secondary,
+                  marginTop: 4,
+                }}
+              >
+                {t('producer.missions.enRouteToDestination')}
+              </Text>
             </View>
           </View>
         )}

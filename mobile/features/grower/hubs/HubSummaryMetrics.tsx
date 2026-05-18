@@ -1,67 +1,48 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { theme } from '../../../lib/theme';
+import { growerStyles, growerUi } from '../../../lib/grower-ui';
+import { AnimatedCountText } from '../../../components/grower/AnimatedCountText';
 
-export type HubMetricRow = { key: string; label: string; value: string };
+export type HubMetricRow =
+  | { key: string; label: string; type: 'count'; count: number; animate?: boolean }
+  | { key: string; label: string; type: 'ratio'; approved: number; total: number; animate?: boolean }
+  | { key: string; label: string; type: 'text'; value: string };
 
-/**
- * Compact snapshot above hub sections (counts from `useDashboardData`).
- */
-export function HubSummaryMetrics({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: HubMetricRow[];
-}) {
+function MetricValue({ row }: { row: HubMetricRow }) {
+  if (row.type === 'text') {
+    return <Text style={growerStyles.metricValue}>{row.value}</Text>;
+  }
+
+  if (row.type === 'count') {
+    return (
+      <AnimatedCountText
+        value={row.count}
+        style={growerStyles.metricValue}
+        animate={row.animate !== false}
+      />
+    );
+  }
+
+  const animate = row.animate !== false;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+      <AnimatedCountText value={row.approved} style={growerStyles.metricValue} animate={animate} />
+      <Text style={growerStyles.metricValue}>/</Text>
+      <AnimatedCountText value={row.total} style={growerStyles.metricValue} animate={animate} />
+    </View>
+  );
+}
+
+export function HubSummaryMetrics({ title, rows }: { title: string; rows: HubMetricRow[] }) {
   if (rows.length === 0) return null;
 
   return (
-    <View
-      style={{
-        borderRadius: theme.borderRadius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.border,
-        backgroundColor: theme.colors.surface,
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.sm,
-        marginBottom: theme.spacing.md,
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 11,
-          fontWeight: '700',
-          color: theme.colors.text.tertiary,
-          letterSpacing: 0.5,
-          textTransform: 'uppercase',
-          marginBottom: theme.spacing.xs,
-        }}
-      >
-        {title}
-      </Text>
+    <View style={growerUi.metricsCard}>
+      <Text style={growerStyles.metricsTitle}>{title}</Text>
       {rows.map((r) => (
-        <View
-          key={r.key}
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingVertical: 6,
-            gap: 12,
-          }}
-        >
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, flex: 1 }}>{r.label}</Text>
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: '600',
-              color: theme.colors.text.primary,
-              fontVariant: ['tabular-nums'],
-            }}
-          >
-            {r.value}
-          </Text>
+        <View key={r.key} style={growerStyles.metricRow}>
+          <Text style={growerStyles.metricLabel}>{r.label}</Text>
+          <MetricValue row={r} />
         </View>
       ))}
     </View>

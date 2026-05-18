@@ -8,18 +8,23 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Camera, ScanLine, Image as ImageIcon } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Camera, ScanLine, Image as ImageIcon, ChevronRight } from 'lucide-react-native';
 import * as Location from 'expo-location';
-import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from 'expo-router';
 import { seedsAPI, seedRegistrationsAPI } from '../lib/api';
 import { apiErrorMessage, axiosResponseStatus } from '../lib/api-error';
 import { markStepComplete } from '../lib/grower-journey';
-import { theme } from '../lib/theme';
+import { pickFromCamera } from '../lib/camera-picker';
+import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
+import { growerUi } from '../lib/grower-ui';
+import { GrowerStackHeader } from '../components/grower/GrowerStackHeader';
+import { useBioVeraScreenPadding } from '../lib/screen-insets';
 
 type Mode = 'select' | 'scan' | 'manual';
 
@@ -30,13 +35,13 @@ type Mode = 'select' | 'scan' | 'manual';
 export default function SeedRegistrationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [mode, setMode] = useState<Mode>('select');
   const [manualName, setManualName] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  // When returning from scanner, validate QR and show result
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -51,9 +56,18 @@ export default function SeedRegistrationScreen() {
             t('producer.scanner.successTitle'),
             t('growerJourney.step2.scanSuccess', { info }),
             [
-              { text: t('growerJourney.step2.addToProducts'), onPress: () => router.replace('/(producer)/(tabs)/products') },
-              { text: t('alerts.ok'), onPress: () => { AsyncStorage.removeItem('last_scanned_qr'); router.back(); } },
-            ]
+              {
+                text: t('growerJourney.step2.addToProducts'),
+                onPress: () => router.replace('/(producer)/(tabs)/products'),
+              },
+              {
+                text: t('alerts.ok'),
+                onPress: () => {
+                  void AsyncStorage.removeItem('last_scanned_qr');
+                  router.back();
+                },
+              },
+            ],
           );
         } catch (e: unknown) {
           await AsyncStorage.removeItem('last_scanned_qr');
@@ -64,7 +78,7 @@ export default function SeedRegistrationScreen() {
           }
         }
       })();
-    }, [])
+    }, [router, t]),
   );
 
   useEffect(() => {
@@ -79,7 +93,9 @@ export default function SeedRegistrationScreen() {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           });
-        } catch (_) {}
+        } catch {
+          // GPS optional until submit
+        }
       }
     })();
   }, []);
@@ -89,19 +105,8 @@ export default function SeedRegistrationScreen() {
   };
 
   const handleTakePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('error'), t('growerJourney.step2.cameraPermission'));
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: false,
-    });
-    if (!result.canceled && result.assets[0]) {
-      setPhotoUri(result.assets[0].uri);
-    }
+    const asset = await pickFromCamera({ t, quality: 0.8 });
+    if (asset?.uri) setPhotoUri(asset.uri);
   };
 
   const handleManualSubmit = async () => {
@@ -128,15 +133,13 @@ export default function SeedRegistrationScreen() {
       };
       try {
         await seedRegistrationsAPI.registerManual(payload);
-      } catch (_) {
+      } catch {
         // Backend may not have endpoint yet – treat as success (offline/queue later)
       }
       markStepComplete(2);
-      Alert.alert(
-        t('producer.scanner.successTitle'),
-        t('growerJourney.step2.manualSuccess'),
-        [{ text: t('alerts.ok'), onPress: () => router.back() }]
-      );
+      Alert.alert(t('producer.scanner.successTitle'), t('growerJourney.step2.manualSuccess'), [
+        { text: t('alerts.ok'), onPress: () => router.back() },
+      ]);
     } catch (e: unknown) {
       Alert.alert(t('error'), apiErrorMessage(e, t('growerJourney.step2.saveFailed')));
     } finally {
@@ -144,210 +147,165 @@ export default function SeedRegistrationScreen() {
     }
   };
 
+  const headerTitle =
+    mode === 'select'
+      ? t('growerJourney.step2.title')
+      : mode === 'scan'
+        ? t('growerJourney.step2.scanTitle')
+        : t('growerJourney.step2.manualTitle');
+
+  const goBack = useCallback(() => {
+    if (mode === 'select') router.back();
+    else setMode('select');
+  }, [mode, router]);
+
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => (mode === 'select' ? router.back() : setMode('select'))} style={styles.backBtn}>
-          <ArrowLeft size={22} color="#fff" strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          {mode === 'select' ? t('growerJourney.step2.title') : mode === 'scan' ? t('growerJourney.step2.scanTitle') : t('growerJourney.step2.manualTitle')}
-        </Text>
-        <View style={{ width: 44 }} />
-      </View>
+    <SafeAreaView style={growerUi.canvas} edges={['bottom']}>
+      <GrowerStackHeader
+        title={headerTitle}
+        subtitle={mode === 'select' ? t('growerJourney.step2.selectPrompt') : undefined}
+        onBack={goBack}
+      />
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={8}
+      >
+        <ScrollView
+          contentContainerStyle={[growerUi.scrollContent, { paddingBottom: p.bottomInset + 24 }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {mode === 'select' && (
+            <>
+              <TouchableOpacity style={growerUi.tile} onPress={handleOpenScanner} activeOpacity={0.7}>
+                <View style={growerUi.tileIcon}>
+                  <ScanLine size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
+                </View>
+                <View style={styles.tileText}>
+                  <Text style={growerUi.tileTitle}>{t('growerJourney.step2.scanVeraProduct')}</Text>
+                  <Text style={growerUi.tileDesc}>{t('growerJourney.step2.scanDesc')}</Text>
+                </View>
+                <ChevronRight size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+              </TouchableOpacity>
+              <TouchableOpacity style={growerUi.tile} onPress={() => setMode('manual')} activeOpacity={0.7}>
+                <View style={growerUi.tileIcon}>
+                  <Camera size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
+                </View>
+                <View style={styles.tileText}>
+                  <Text style={growerUi.tileTitle}>{t('growerJourney.step2.manualEntry')}</Text>
+                  <Text style={growerUi.tileDesc}>{t('growerJourney.step2.manualDesc')}</Text>
+                </View>
+                <ChevronRight size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+              </TouchableOpacity>
+            </>
+          )}
 
-      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
-        {mode === 'select' && (
-          <>
-            <Text style={styles.selectPrompt}>{t('growerJourney.step2.selectPrompt')}</Text>
-            <TouchableOpacity style={styles.optionCard} onPress={handleOpenScanner} activeOpacity={0.8}>
-              <View style={styles.optionIcon}>
-                <ScanLine size={28} color={theme.colors.primary} strokeWidth={1.5} />
-              </View>
-              <Text style={styles.optionTitle}>{t('growerJourney.step2.scanVeraProduct')}</Text>
-              <Text style={styles.optionDesc}>{t('growerJourney.step2.scanDesc')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionCard} onPress={() => setMode('manual')} activeOpacity={0.8}>
-              <View style={styles.optionIcon}>
-                <Camera size={28} color={theme.colors.primary} strokeWidth={1.5} />
-              </View>
-              <Text style={styles.optionTitle}>{t('growerJourney.step2.manualEntry')}</Text>
-              <Text style={styles.optionDesc}>{t('growerJourney.step2.manualDesc')}</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        {mode === 'manual' && (
-          <View style={styles.manualForm}>
-            <Text style={styles.label}>{t('growerJourney.step2.seedName')}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder={t('growerJourney.step2.seedNamePlaceholder')}
-              placeholderTextColor={theme.colors.text.tertiary}
-              value={manualName}
-              onChangeText={setManualName}
-              autoCapitalize="words"
-            />
-            <Text style={[styles.label, { marginTop: theme.spacing.lg }]}>
-              {t('growerJourney.step2.takePhotoBag')}
-            </Text>
-            <TouchableOpacity
-              style={[styles.photoBtn, photoUri && styles.photoBtnDone]}
-              onPress={handleTakePhoto}
-              activeOpacity={0.8}
-            >
-              {photoUri ? (
-                <>
-                  <ImageIcon size={32} color={theme.colors.success} strokeWidth={1.5} />
-                  <Text style={styles.photoBtnTextDone}>{t('growerJourney.step2.photoAdded')}</Text>
-                </>
-              ) : (
-                <>
-                  <Camera size={32} color={theme.colors.primary} strokeWidth={1.5} />
-                  <Text style={styles.photoBtnText}>{t('growerJourney.step2.takePhoto')}</Text>
-                </>
-              )}
-            </TouchableOpacity>
-            {location && (
-              <Text style={styles.gpsNote}>
-                {t('growerJourney.step2.gpsRecorded')}: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={[styles.submitBtn, loading && styles.submitBtnDisabled]}
-              onPress={handleManualSubmit}
-              disabled={loading}
-              activeOpacity={0.85}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.submitBtnText}>{t('growerJourney.step2.submit')}</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
-    </View>
+          {mode === 'manual' && (
+            <View style={growerUi.formPanel}>
+              <Text style={growerUi.formLabel}>{t('growerJourney.step2.seedName')}</Text>
+              <TextInput
+                style={growerUi.formInput}
+                placeholder={t('growerJourney.step2.seedNamePlaceholder')}
+                placeholderTextColor={enterpriseColors.gray600}
+                value={manualName}
+                onChangeText={setManualName}
+                autoCapitalize="words"
+              />
+              <Text style={growerUi.formLabel}>{t('growerJourney.step2.takePhotoBag')}</Text>
+              <TouchableOpacity
+                style={[styles.photoBtn, photoUri ? styles.photoBtnDone : null]}
+                onPress={handleTakePhoto}
+                activeOpacity={0.8}
+              >
+                {photoUri ? (
+                  <>
+                    <ImageIcon size={28} color={enterpriseColors.primary} strokeWidth={1.5} />
+                    <Text style={styles.photoDone}>{t('growerJourney.step2.photoAdded')}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Camera size={28} color={enterpriseColors.primary} strokeWidth={1.5} />
+                    <Text style={styles.photoCta}>{t('growerJourney.step2.takePhoto')}</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              {location ? (
+                <Text style={styles.gpsNote}>
+                  {t('growerJourney.step2.gpsRecorded')}: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
+                </Text>
+              ) : null}
+              <TouchableOpacity
+                style={[enterpriseUi.authSubmit, styles.submit, loading && styles.submitDisabled]}
+                onPress={handleManualSubmit}
+                disabled={loading}
+                activeOpacity={0.9}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={enterpriseUi.authSubmitText}>{t('growerJourney.step2.submit')}</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={goBack} style={styles.secondaryBack} activeOpacity={0.7}>
+                <Text style={styles.secondaryBackText}>{t('common.back')}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: theme.colors.primary,
-    paddingTop: 56,
-    paddingBottom: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.lg,
-  },
-  backBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  body: { flex: 1 },
-  bodyContent: { padding: theme.spacing.lg },
-  selectPrompt: {
-    fontSize: 15,
-    color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.lg,
-  },
-  optionCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  optionIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: theme.colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  optionTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-    marginBottom: 4,
-  },
-  optionDesc: {
-    fontSize: 14,
-    color: theme.colors.text.secondary,
-  },
-  manualForm: {},
-  label: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-    marginBottom: 6,
-  },
-  input: {
-    fontSize: 16,
-    color: theme.colors.text.primary,
-    paddingVertical: 12,
-    paddingHorizontal: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-  },
+  flex: { flex: 1 },
+  tileText: { flex: 1, minWidth: 0 },
   photoBtn: {
-    height: 120,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 2,
-    borderColor: theme.colors.border,
+    minHeight: 120,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 12,
+    backgroundColor: enterpriseColors.white,
   },
   photoBtnDone: {
-    borderColor: theme.colors.success,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    borderStyle: 'solid',
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
   },
-  photoBtnText: {
+  photoCta: {
     fontSize: 14,
-    color: theme.colors.primary,
     fontWeight: '500',
+    color: enterpriseColors.primary,
     marginTop: 8,
   },
-  photoBtnTextDone: {
+  photoDone: {
     fontSize: 14,
-    color: theme.colors.success,
     fontWeight: '500',
+    color: enterpriseColors.primary,
     marginTop: 8,
   },
   gpsNote: {
     fontSize: 12,
-    color: theme.colors.text.tertiary,
-    marginTop: theme.spacing.md,
+    color: enterpriseColors.gray600,
+    marginBottom: 16,
   },
-  submitBtn: {
-    marginTop: theme.spacing.xl,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.md,
+  submit: {
+    marginTop: 8,
+    marginBottom: 0,
+  },
+  submitDisabled: { opacity: 0.65 },
+  secondaryBack: {
     alignItems: 'center',
+    paddingVertical: 14,
+    marginTop: 4,
   },
-  submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+  secondaryBackText: {
+    fontSize: 15,
+    color: enterpriseColors.gray600,
   },
 });

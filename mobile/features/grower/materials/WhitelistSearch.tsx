@@ -1,8 +1,8 @@
-import { View, TextInput, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { MaterialFilterType } from './useMaterialsData';
 
 export interface WhitelistSearchProps {
@@ -12,10 +12,6 @@ export interface WhitelistSearchProps {
   setFilterType: (v: MaterialFilterType) => void;
 }
 
-/**
- * Search bar and type filters for whitelist materials.
- * Receives data from useMaterialsData (call hook in parent and pass props).
- */
 const FILTER_IDS: MaterialFilterType[] = ['all', 'FERTILIZER', 'PESTICIDE', 'SEED', 'OTHER'];
 
 export function WhitelistSearch({
@@ -25,83 +21,117 @@ export function WhitelistSearch({
   setFilterType,
 }: WhitelistSearchProps) {
   const { t } = useTranslation();
-  const FILTER_OPTIONS = FILTER_IDS.map((id) => ({
-    id,
-    label: id === 'all' ? t('producer.materials.all') : t(`producer.materials.${id.toLowerCase()}`),
-  }));
+  const p = useBioVeraScreenPadding();
+
+  const filterLabel = (id: MaterialFilterType) => {
+    switch (id) {
+      case 'all':
+        return t('producer.materials.all');
+      case 'FERTILIZER':
+        return t('producer.materials.fertilizer');
+      case 'PESTICIDE':
+        return t('producer.materials.pesticide');
+      case 'SEED':
+        return t('producer.materials.seed');
+      default:
+        return t('producer.materials.other');
+    }
+  };
+
+  const filterOptions = FILTER_IDS.map((id) => ({ id, label: filterLabel(id) }));
+
   return (
-    <>
-      {/* Search */}
-      <View
-        className="px-4 py-3 border-b-[0.5px]"
-        style={{
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          backgroundColor: colors.surface,
-          borderRadius: theme.borderRadius.sm,
-          borderWidth: 0.5,
-          borderColor: colors.border,
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.sm,
-        }}
-      >
-        <Search size={16} color={colors.text.secondary} strokeWidth={1} />
+    <View style={styles.wrap}>
+      <View style={[styles.searchRow, { paddingHorizontal: p.screenPaddingLeft }]}>
+        <Search size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder={t('producer.materials.searchPlaceholder')}
-          style={{
-            flex: 1,
-            fontSize: 13,
-            fontWeight: '300',
-            color: colors.text.primary,
-            marginLeft: theme.spacing.sm,
-          }}
+          placeholderTextColor={enterpriseColors.gray600}
+          style={styles.searchInput}
+          accessibilityLabel={t('producer.materials.searchPlaceholder')}
         />
-        </View>
       </View>
 
-      {/* Filters */}
-      <View
-        className="px-4 py-3 border-b-[0.5px]"
-        style={{
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-        }}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterScroll}
+        contentContainerStyle={[
+          styles.filterContent,
+          { paddingLeft: p.screenPaddingLeft, paddingRight: p.screenPaddingRight },
+        ]}
       >
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {FILTER_OPTIONS.map((f) => (
-              <TouchableOpacity
-                key={f.id}
-                onPress={() => setFilterType(f.id)}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: filterType === f.id ? colors.primary : colors.border,
-                  backgroundColor: filterType === f.id ? `${colors.primary}10` : 'transparent',
-                }}
-              >
-                <Text style={{
-                  fontSize: 16,
-                  fontWeight: '300',
-                  color: filterType === f.id ? colors.primary : colors.text.secondary,
-                  letterSpacing: 0.3,
-                }}>
-                  {f.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-    </>
+        {filterOptions.map((f) => {
+          const active = filterType === f.id;
+          return (
+            <TouchableOpacity
+              key={f.id}
+              onPress={() => setFilterType(f.id)}
+              activeOpacity={0.7}
+              style={[styles.filterChip, active && styles.filterChipActive]}
+            >
+              <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>{f.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: {
+    backgroundColor: enterpriseColors.white,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingTop: 12,
+    paddingBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '400',
+    color: enterpriseColors.gray900,
+    paddingVertical: 10,
+    letterSpacing: -0.15,
+  },
+  filterScroll: {
+    flexGrow: 0,
+  },
+  filterContent: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingBottom: 12,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    minHeight: 40,
+    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  },
+  filterChipActive: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
+  filterChipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.1,
+  },
+  filterChipTextActive: {
+    color: enterpriseColors.primary,
+    fontWeight: '600',
+  },
+});

@@ -755,6 +755,80 @@
       "fieldDiaryBody": "In the app you choose field → parcel → crop plan (planting or harvest). Material barcode is optional when relevant; photo + GPS are required on every entry — from day one — building traceability into the passport. This web page is read-only (review by field or parcel).",
       "openParcels": "Go to my parcels"
     },
+    "appGuide": {
+      "pageTitle": "How to use the app",
+      "pageDescription": "Step-by-step through the Bio Vera grower mobile app — with phone screenshots.",
+      "hint": "Screenshots are added to the project folder; until a file is present you will see the expected filename.",
+      "tocTitle": "Contents",
+      "imagePending": "Add this screenshot to the folder (see README).",
+      "printPdf": "Print / save as PDF",
+      "downloadPdf": "Download PDF",
+      "footer": "For legal and contract matters use formal Bio Vera documents. This guide is a practical walkthrough of the app.",
+      "openFromEducation": "Mobile app guide (screenshots)",
+      "steps": {
+        "welcome": {
+          "title": "Welcome",
+          "lead": "The first Bio Vera screen — entry for partners and growers.",
+          "b1": "Choose sign in if you already have an account.",
+          "b2": "Registration is for new partners as directed by the team."
+        },
+        "register": {
+          "title": "Register",
+          "lead": "Creating a grower / partner account.",
+          "b1": "Enter details provided by operations.",
+          "b2": "After registration you may wait for approval before full access."
+        },
+        "login": {
+          "title": "Sign in",
+          "lead": "Daily access to the app.",
+          "b1": "Use email, username, or partner code.",
+          "b2": "Do not share your password — the account is tied to your farm."
+        },
+        "home": {
+          "title": "Home",
+          "lead": "Dashboard — what to do next and offline sync.",
+          "b1": "The “What to do next” card points to the next seasonal step.",
+          "b2": "The sync strip uploads offline entries when online.",
+          "b3": "Shortcuts to wallet, instructions, and alerts."
+        },
+        "field": {
+          "title": "Field tab",
+          "lead": "Everything on the farm — parcels, plantings, journals, and field log.",
+          "b1": "My fields / estates — register and view parcels.",
+          "b2": "Parcels & zones — map boundaries (GPS), approval status.",
+          "b3": "My plantings — crop / harvest plan per parcel.",
+          "b4": "Growth journal — photo evidence of crop development.",
+          "b5": "Field log — sowing, fertilising, spraying: barcode (when required) + photo + GPS.",
+          "b6": "Materials — check inputs against the whitelist."
+        },
+        "lots": {
+          "title": "Lots tab",
+          "lead": "After harvest — batches, quality, packing, and transport.",
+          "b1": "Lot list and status (packed, in hub, in transit).",
+          "b2": "Quality and compliance packaging photos.",
+          "b3": "Request transport when goods are ready."
+        },
+        "suppliers": {
+          "title": "Suppliers",
+          "lead": "Inputs (seed, packaging) from partners on the map.",
+          "b1": "Suppliers map — find a partner nearby.",
+          "b2": "Orders tab — order status and received-at-farm.",
+          "b3": "Messages tab — chat with supplier (separate from the order list)."
+        },
+        "profile": {
+          "title": "Profile",
+          "lead": "Your account, settings, and wallet entry.",
+          "b1": "Farm details and partner code.",
+          "b2": "Notifications and sign out."
+        },
+        "wallet": {
+          "title": "Wallet",
+          "lead": "Payout overview and order-related balances.",
+          "b1": "In escrow and available balance.",
+          "b2": "Aligned with the grower dashboard on the web."
+        }
+      }
+    },
     "education": {
       "pageTitle": "Grower education",
       "pageDescription": "Short guides and videos about packing, legal responsibility for the goods you hand over, and ethics in the Bio Vera chain — use this alongside the app and Season instructions.",

@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert, Linking } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import * as ImagePicker from 'expo-image-picker';
+import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
 import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI } from '../../../lib/api';
@@ -471,76 +472,14 @@ export function useFieldLogData() {
   );
 
   const pickPhotoFromLibrary = useCallback(async () => {
-    try {
-      const library = await ImagePicker.getMediaLibraryPermissionsAsync();
-      let status = library.status;
-      if (status !== 'granted') {
-        const req = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        status = req.status;
-      }
-      if (status !== 'granted') {
-        Alert.alert(t('producer.fieldLogAlerts.galleryPermTitle'), t('producer.fieldLogAlerts.galleryPermBody'), [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => void Linking.openSettings() },
-        ]);
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 0.72,
-      });
-      if (!result.canceled && result.assets[0]?.uri) {
-        setPhotoUri(result.assets[0].uri);
-      }
-    } catch (e: unknown) {
-      console.warn('launchImageLibrary field log:', e);
-      Alert.alert(t('error'), t('producer.fieldLogAlerts.galleryError'));
-    }
+    const asset = await pickFromGallery({ t, quality: 0.72 });
+    if (asset?.uri) setPhotoUri(asset.uri);
   }, [t]);
 
   const takePhoto = useCallback(async () => {
-    try {
-      let status = (await ImagePicker.getCameraPermissionsAsync()).status;
-      if (status !== 'granted') {
-        ({ status } = await ImagePicker.requestCameraPermissionsAsync());
-      }
-      if (status !== 'granted') {
-        Alert.alert(t('producer.fieldLogAlerts.camPermTitle'), t('producer.fieldLogAlerts.camPermBody'), [
-          { text: t('common.cancel'), style: 'cancel' },
-          {
-            text: t('producer.fieldLogAlerts.openSettings'),
-            onPress: () => void Linking.openSettings(),
-          },
-          {
-            text: t('producer.fieldLogAlerts.pickFromGallery'),
-            onPress: () => void pickPhotoFromLibrary(),
-          },
-        ]);
-        return;
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 0.72,
-      });
-      if (!result.canceled && result.assets[0]?.uri) {
-        setPhotoUri(result.assets[0].uri);
-        return;
-      }
-    } catch (e: unknown) {
-      console.warn('launchCameraAsync field log:', e);
-      Alert.alert(t('producer.fieldLogAlerts.camFailedTitle'), t('producer.fieldLogAlerts.camFailedBody'), [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('producer.fieldLogAlerts.pickFromGallery'),
-          onPress: () => void pickPhotoFromLibrary(),
-        },
-      ]);
-    }
-  }, [pickPhotoFromLibrary, t]);
+    const asset = await pickFromCamera({ t, quality: 0.72 });
+    if (asset?.uri) setPhotoUri(asset.uri);
+  }, [t]);
 
   const saveEntry = useCallback(async () => {
     try {

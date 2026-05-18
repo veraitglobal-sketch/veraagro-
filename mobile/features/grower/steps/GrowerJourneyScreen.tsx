@@ -1,11 +1,22 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import { ListOrdered } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { estatesAPI, parcelsAPI } from '../../../lib/api';
 import { webGrowerHrefToMobilePath } from '../../../lib/grower-web-href-to-mobile';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 
 type JourneyLink = { label: string; href: string };
 type JourneyStep = {
@@ -36,6 +47,7 @@ type Props = {
 export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [hasParcel, setHasParcel] = useState(false);
@@ -55,9 +67,9 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
       let anyParcels = false;
       for (const e of list || []) {
         const parcels = await parcelsAPI.getByEstate(e.id).catch(() => []);
-        for (const p of parcels || []) {
+        for (const parcel of parcels || []) {
           anyParcels = true;
-          if (p.approvedAt) approved += 1;
+          if (parcel.approvedAt) approved += 1;
           else pending += 1;
         }
       }
@@ -95,8 +107,8 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
 
   if (!journey) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', padding: theme.spacing.lg }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <View style={[growerUi.canvas, styles.centered]}>
+        <ActivityIndicator size="large" color={enterpriseColors.primary} />
       </View>
     );
   }
@@ -104,146 +116,217 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
   const stepsCount = journey.steps.length;
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      contentContainerStyle={{ padding: theme.spacing.md, paddingBottom: 40 }}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
-    >
-      {showStatusBanner && loading ? (
-        <View style={{ paddingVertical: 16, alignItems: 'center' }}>
-          <ActivityIndicator size="small" color={theme.colors.primary} />
-        </View>
-      ) : null}
-
-      {showStatusBanner && !loading ? (
-        <View
-          style={{
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 1,
-            borderColor: theme.colors.warning + '55',
-            backgroundColor: theme.colors.warning + '18',
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary }}>
-            {t('grower.season.glanceTitle')}
-          </Text>
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 6, lineHeight: 20 }}>
-            {glanceBody}
-          </Text>
-          <TouchableOpacity onPress={() => router.push('/(producer)/estates')} style={{ marginTop: 10 }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary }}>
-              {t('grower.season.linkMyFields')} →
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
-      {/* Short chain — same bullets as web Steps page */}
-      <View
-        style={{
-          marginBottom: theme.spacing.lg,
-          padding: theme.spacing.md,
-          borderRadius: theme.borderRadius.md,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-          backgroundColor: theme.colors.surfaceElevated,
-        }}
+    <View style={growerUi.canvas}>
+      <GrowerTabHeader
+        title={t('producer.tabs.steps')}
+        subtitle={t('grower.season.introRibbon', { count: stepsCount })}
+      />
+      <ScrollView
+        contentContainerStyle={[growerUi.scrollContent, { paddingBottom: p.bottomInset + 24 }]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={enterpriseColors.primary} />
+        }
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.text.primary, marginBottom: 8 }}>
-          {journey.fullChainTitle}
-        </Text>
-        {journey.chainShort.map((row, idx) => (
-          <Text
-            key={idx}
-            style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: idx < journey.chainShort.length - 1 ? 10 : 0 }}
-          >
-            <Text style={{ fontWeight: '700', color: theme.colors.text.primary }}>{row.kicker}: </Text>
-            {row.text}
-          </Text>
-        ))}
-      </View>
+        {showStatusBanner && loading ? (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator size="small" color={enterpriseColors.primary} />
+          </View>
+        ) : null}
 
-      {/* My fields CTA — web parity */}
-      <View style={{ marginBottom: theme.spacing.lg }}>
-        <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.text.primary }}>{journey.intro.myFieldsCta.title}</Text>
-        <View style={{ marginTop: 6 }}>
-          <TouchableOpacity onPress={() => openHref(journey.intro.myFieldsCta.webHref)} hitSlop={8} accessibilityRole="link">
-            <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.primary }}>{journey.intro.myFieldsCta.linkLabel}</Text>
-          </TouchableOpacity>
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4, lineHeight: 20 }}>
-            {journey.intro.myFieldsCta.line}
-          </Text>
-        </View>
-      </View>
+        {showStatusBanner && !loading ? (
+          <View style={styles.glanceCard}>
+            <Text style={styles.glanceTitle}>{t('grower.season.glanceTitle')}</Text>
+            <Text style={styles.glanceBody}>{glanceBody}</Text>
+            <TouchableOpacity
+              onPress={() => router.push('/(producer)/estates')}
+              activeOpacity={0.7}
+              style={styles.glanceLink}
+            >
+              <Text style={styles.linkText}>
+                {t('grower.season.linkMyFields')}
+              </Text>
+              <ChevronRight size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
+            </TouchableOpacity>
+          </View>
+        ) : null}
 
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: theme.spacing.sm,
-          marginBottom: theme.spacing.lg,
-          padding: theme.spacing.md,
-          borderRadius: theme.borderRadius.md,
-          backgroundColor: theme.colors.primaryLight,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-        }}
-      >
-        <ListOrdered size={22} color={theme.colors.primary} style={{ marginTop: 2 }} />
-        <Text style={{ flex: 1, fontSize: 14, color: theme.colors.text.primary, lineHeight: 20 }}>
-          {t('grower.season.introRibbon', { count: stepsCount })}
-        </Text>
-      </View>
-
-      <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.tertiary, marginBottom: theme.spacing.sm, textTransform: 'uppercase', letterSpacing: 0.4 }}>
-        {t('producer.tabs.steps')}
-      </Text>
-
-      {journey.steps.map((s, i) => (
-        <View
-          key={`${s.title}-${i}`}
-          style={{
-            borderLeftWidth: 4,
-            borderLeftColor: theme.colors.primary + '55',
-            paddingLeft: theme.spacing.md,
-            marginBottom: theme.spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.text.tertiary, letterSpacing: 0.6 }}>
-            {t('grower.journey.stepNumber', { n: i + 1 })}
-          </Text>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 4 }}>
-            {s.title}
-          </Text>
-          {s.paragraphs?.map((p, j) => (
-            <Text key={j} style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 8, lineHeight: 20 }}>
-              {p}
-            </Text>
-          ))}
-          {s.links?.length > 0 ? (
-            <View style={{ marginTop: 10, gap: 8 }}>
-              {s.links.map((l) => {
-                const mobile = webGrowerHrefToMobilePath(l.href);
-                return mobile ? (
-                  <TouchableOpacity key={l.href + l.label} onPress={() => openHref(l.href)} activeOpacity={0.7}>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary }}>
-                      {l.label} →
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <Text key={l.href + l.label} style={{ fontSize: 13, color: theme.colors.text.tertiary }}>
-                    {l.label}
-                  </Text>
-                );
-              })}
+        <Text style={growerUi.sectionLabel}>{journey.fullChainTitle}</Text>
+        <View style={growerUi.card}>
+          {journey.chainShort.map((row, idx) => (
+            <View
+              key={row.kicker}
+              style={[styles.chainRow, idx < journey.chainShort.length - 1 && styles.chainRowBorder]}
+            >
+              <Text style={styles.chainKicker}>{row.kicker}</Text>
+              <Text style={styles.chainText}>{row.text}</Text>
             </View>
-          ) : null}
-          {s.footnote ? (
-            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, marginTop: 10, lineHeight: 18 }}>{s.footnote}</Text>
-          ) : null}
+          ))}
         </View>
-      ))}
-    </ScrollView>
+
+        <Text style={growerUi.sectionLabel}>{journey.intro.myFieldsCta.title}</Text>
+        <View style={growerUi.card}>
+          <Text style={styles.cardBody}>{journey.intro.myFieldsCta.line}</Text>
+          <TouchableOpacity
+            onPress={() => openHref(journey.intro.myFieldsCta.webHref)}
+            activeOpacity={0.7}
+            style={styles.inlineLink}
+            accessibilityRole="link"
+          >
+            <Text style={styles.linkText}>{journey.intro.myFieldsCta.linkLabel}</Text>
+            <ChevronRight size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={growerUi.sectionLabel}>{t('producer.tabs.steps')}</Text>
+        {journey.steps.map((s, i) => (
+          <View key={`${s.title}-${i}`} style={styles.stepCard}>
+            <Text style={styles.stepKicker}>{t('grower.journey.stepNumber', { n: i + 1 })}</Text>
+            <Text style={styles.stepTitle}>{s.title}</Text>
+            {s.paragraphs?.map((para, j) => (
+              <Text key={j} style={styles.stepPara}>
+                {para}
+              </Text>
+            ))}
+            {s.links?.length > 0 ? (
+              <View style={styles.linksBlock}>
+                {s.links.map((l) => {
+                  const mobile = webGrowerHrefToMobilePath(l.href);
+                  return mobile ? (
+                    <TouchableOpacity
+                      key={l.href + l.label}
+                      onPress={() => openHref(l.href)}
+                      activeOpacity={0.7}
+                      style={styles.inlineLink}
+                    >
+                      <Text style={styles.linkText}>{l.label}</Text>
+                      <ChevronRight size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
+                    </TouchableOpacity>
+                  ) : (
+                    <Text key={l.href + l.label} style={styles.mutedLink}>
+                      {l.label}
+                    </Text>
+                  );
+                })}
+              </View>
+            ) : null}
+            {s.footnote ? <Text style={styles.footnote}>{s.footnote}</Text> : null}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingRow: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  glanceCard: {
+    ...growerUi.card,
+    padding: 16,
+    marginBottom: 4,
+  },
+  glanceTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+    letterSpacing: 0.45,
+    textTransform: 'uppercase',
+  },
+  glanceBody: {
+    fontSize: 15,
+    color: enterpriseColors.gray700,
+    lineHeight: 22,
+    marginTop: 8,
+  },
+  glanceLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 2,
+  },
+  chainRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  chainRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
+  },
+  chainKicker: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    marginBottom: 4,
+  },
+  chainText: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    lineHeight: 20,
+  },
+  cardBody: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    lineHeight: 20,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 8,
+  },
+  inlineLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 14,
+    gap: 2,
+  },
+  linkText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+  },
+  stepCard: {
+    ...growerUi.card,
+    padding: 16,
+  },
+  stepKicker: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  stepTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    marginTop: 6,
+    letterSpacing: -0.2,
+  },
+  stepPara: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    marginTop: 8,
+    lineHeight: 20,
+  },
+  linksBlock: {
+    marginTop: 10,
+    gap: 4,
+  },
+  mutedLink: {
+    fontSize: 13,
+    color: enterpriseColors.gray600,
+    paddingVertical: 4,
+  },
+  footnote: {
+    fontSize: 13,
+    color: enterpriseColors.gray600,
+    marginTop: 10,
+    lineHeight: 18,
+  },
+});

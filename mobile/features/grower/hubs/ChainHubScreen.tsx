@@ -6,15 +6,16 @@ import {
   Package,
   Camera,
   ClipboardCheck,
-  Truck,
-  ListChecks,
   QrCode,
   ScanBarcode,
 } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { useAuth } from '../../../hooks/useAuth';
-import { useDashboardData } from '../dashboard/useDashboardData';
+import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
+import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
+import { EnterpriseListPanel } from '../../../components/grower/EnterpriseListPanel';
+import { growerUi } from '../../../lib/grower-ui';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { HubNavTile, HubSectionTitle } from './HubNavTile';
 import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
 
@@ -24,70 +25,69 @@ import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
 export default function ChainHubScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
-  const { user } = useAuth();
-  const data = useDashboardData(user);
+  const data = useGrowerDashboard();
+
+  const transportItems = [
+    {
+      key: 'create',
+      label: t('navigation.requestTransport'),
+      onPress: () => router.push('/(producer)/missions-create'),
+    },
+    {
+      key: 'list',
+      label: t('producer.hubs.chain.missionsTitle'),
+      onPress: () => router.push('/(producer)/missions'),
+    },
+  ];
 
   const metricRows = useMemo((): HubMetricRow[] => {
     return [
       {
         key: 'lots',
+        type: 'count',
         label: t('producer.hubs.metrics.lotsTotal'),
-        value: String(data.batchTotalCount),
+        count: data.batchTotalCount,
       },
       {
         key: 'ready',
+        type: 'count',
         label: t('producer.hubs.metrics.lotsReady'),
-        value: String(data.batchesReadyForTransport),
+        count: data.batchesReadyForTransport,
       },
       {
         key: 'missions',
+        type: 'count',
         label: t('producer.hubs.metrics.missionsActive'),
-        value: String(data.activeMissions.length),
+        count: data.activeMissions.length,
       },
     ];
   }, [t, data.batchTotalCount, data.batchesReadyForTransport, data.activeMissions.length]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingTop: theme.spacing.md,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={data.refreshing}
-            onRefresh={() => void data.onRefresh()}
-            tintColor={theme.colors.text.secondary}
-            colors={[theme.colors.primary]}
-          />
-        }
-      >
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: '700',
-            color: theme.colors.text.primary,
-            marginBottom: 6,
-          }}
-        >
-          {t('producer.hubs.chain.title')}
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: theme.colors.text.secondary,
-            lineHeight: 20,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('producer.hubs.chain.lead')}
-        </Text>
+    <ScrollView
+      style={growerUi.canvas}
+      contentContainerStyle={{ paddingBottom: Math.max(p.bottomInset, 16) + 12, flexGrow: 0 }}
+      contentInsetAdjustmentBehavior="never"
+      automaticallyAdjustContentInsets={false}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={data.refreshing}
+          onRefresh={() => void data.onRefresh()}
+          tintColor={enterpriseColors.primary}
+          colors={[enterpriseColors.primary]}
+        />
+      }
+    >
+      <GrowerTabHeader
+        title={t('producer.hubs.chain.title')}
+        subtitle={t('producer.hubs.chain.leadShort')}
+        style={{ paddingTop: insets.top + 6 }}
+      />
 
+      <View style={growerUi.scrollContent}>
         <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={metricRows} />
 
         <HubSectionTitle>{t('producer.hubs.chain.sectionLots')}</HubSectionTitle>
@@ -119,18 +119,7 @@ export default function ChainHubScreen() {
         />
 
         <HubSectionTitle>{t('producer.hubs.chain.sectionTransport')}</HubSectionTitle>
-        <HubNavTile
-          title={t('navigation.requestTransport')}
-          description={t('producer.hubs.chain.transportDesc')}
-          icon={Truck}
-          onPress={() => router.push('/(producer)/missions-create')}
-        />
-        <HubNavTile
-          title={t('producer.hubs.chain.missionsTitle')}
-          description={t('producer.hubs.chain.missionsDesc')}
-          icon={ListChecks}
-          onPress={() => router.push('/(producer)/missions')}
-        />
+        <EnterpriseListPanel items={transportItems} />
 
         <HubSectionTitle>{t('producer.hubs.chain.sectionBadges')}</HubSectionTitle>
         <HubNavTile
@@ -145,7 +134,7 @@ export default function ChainHubScreen() {
           icon={ScanBarcode}
           onPress={() => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } })}
         />
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 }

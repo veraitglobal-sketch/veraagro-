@@ -1,21 +1,17 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Download, MapPin, ChevronRight, Plus } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
+import { Plus, ChevronRight } from 'lucide-react-native';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { useMaterialsData } from './useMaterialsData';
 import { WhitelistSearch } from './WhitelistSearch';
 import { MaterialList } from './MaterialList';
 import { AddMaterialSheet } from './AddMaterialSheet';
 
-/**
- * Materials (whitelist) screen: header, search + filters, list with refresh.
- * Uses useMaterialsData once and passes data to WhitelistSearch and MaterialList.
- */
 export function MaterialsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -24,89 +20,11 @@ export function MaterialsScreen() {
   const [addOpen, setAddOpen] = useState(false);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      <BioVeraSubpageHeader
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader
         title={t('producer.materials.screenTitle')}
-        left="back"
-        right={
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <TouchableOpacity onPress={() => setAddOpen(true)} hitSlop={8} accessibilityLabel={t('producer.materials.addButton')}>
-              <Plus size={22} color={theme.colors.primary} strokeWidth={2} />
-            </TouchableOpacity>
-            {data.lastSync ? (
-              <TouchableOpacity onPress={data.loadMaterials} hitSlop={8} accessibilityLabel={t('producer.materials.loading')}>
-                <Download size={20} color={colors.text.secondary} strokeWidth={1} />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        }
+        subtitle={t('producer.materials.screenLeadShort')}
       />
-
-      <View
-        style={{
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingBottom: theme.spacing.sm,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => setAddOpen(true)}
-          activeOpacity={0.8}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingVertical: 16,
-            paddingHorizontal: theme.spacing.md,
-            minHeight: 52,
-            backgroundColor: `${theme.colors.primary}12`,
-            borderRadius: theme.borderRadius.lg,
-            borderWidth: 1,
-            borderColor: `${theme.colors.primary}35`,
-            marginBottom: theme.spacing.sm,
-            gap: 8,
-          }}
-        >
-          <Plus size={22} color={theme.colors.primary} strokeWidth={2} />
-          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.primary }}>{t('producer.materials.addButton')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push('/map')}
-          activeOpacity={0.75}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: theme.spacing.md,
-            backgroundColor: '#FFF7ED',
-            borderRadius: theme.borderRadius.lg,
-            borderWidth: 1,
-            borderColor: '#FDBA74',
-            gap: theme.spacing.sm,
-          }}
-        >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: theme.borderRadius.md,
-              backgroundColor: '#FFEDD5',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <MapPin size={22} color="#C2410C" strokeWidth={1.5} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, lineHeight: 22 }}>
-              {t('producer.materials.mapBannerTitle')}
-            </Text>
-            <Text style={{ fontSize: 15, color: theme.colors.primary, marginTop: 6, fontWeight: '600' }}>
-              {t('producer.materials.mapBannerCta')}
-            </Text>
-          </View>
-          <ChevronRight size={20} color={colors.text.secondary} strokeWidth={1.5} />
-        </TouchableOpacity>
-      </View>
 
       <WhitelistSearch
         searchQuery={data.searchQuery}
@@ -117,32 +35,52 @@ export function MaterialsScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
+        contentContainerStyle={{
+          ...growerUi.scrollContent,
+          paddingTop: 16,
+          paddingBottom: Math.max(p.bottomInset, 20) + 12,
+        }}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={data.refreshing}
             onRefresh={data.onRefresh}
-            tintColor={colors.primary}
+            tintColor={enterpriseColors.primary}
+            colors={[enterpriseColors.primary]}
           />
         }
       >
-        <View
-          style={{
-            paddingTop: theme.spacing.md,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-          }}
+        <TouchableOpacity
+          onPress={() => setAddOpen(true)}
+          activeOpacity={0.88}
+          style={growerUi.btnPrimary}
+          accessibilityRole="button"
         >
-          <MaterialList
-            filteredMaterials={data.filteredMaterials}
-            loading={data.loading}
-            searchQuery={data.searchQuery}
-            filterType={data.filterType}
-            lastSync={data.lastSync}
-            getTypeColor={data.getTypeColor}
-            getTypeLabel={data.getTypeLabel}
-          />
-        </View>
+          <Text style={growerUi.btnPrimaryText}>{t('producer.materials.addButton')}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push('/map')}
+          activeOpacity={0.72}
+          style={styles.mapLink}
+          accessibilityRole="button"
+        >
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={styles.mapLinkTitle}>{t('producer.materials.mapBannerTitle')}</Text>
+            <Text style={styles.mapLinkCta}>{t('producer.materials.mapBannerCta')}</Text>
+          </View>
+          <ChevronRight size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+        </TouchableOpacity>
+
+        <MaterialList
+          filteredMaterials={data.filteredMaterials}
+          loading={data.loading}
+          searchQuery={data.searchQuery}
+          filterType={data.filterType}
+          lastSync={data.lastSync}
+          getTypeColor={data.getTypeColor}
+          getTypeLabel={data.getTypeLabel}
+        />
       </ScrollView>
 
       <AddMaterialSheet
@@ -153,3 +91,32 @@ export function MaterialsScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mapLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: enterpriseColors.white,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: enterpriseColors.gray200,
+    gap: 8,
+  },
+  mapLinkTitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.15,
+    lineHeight: 20,
+  },
+  mapLinkCta: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+    marginTop: 4,
+  },
+});

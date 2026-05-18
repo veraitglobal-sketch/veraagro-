@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
+import { pickFromCamera } from '../../../lib/camera-picker';
 import {
   batchesAPI,
   materialControlAPI,
@@ -225,21 +225,11 @@ export function useMaterialCompliance() {
   const takePhoto = useCallback(
     async (type: CompliancePhotoType) => {
       if (picking) return;
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(t('producer.compliance.permissionsTitle'), t('producer.compliance.cameraPermissionRequired'));
-        return;
-      }
       setPicking(type);
       try {
-        const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 0.85,
-        });
-        if (result.canceled || !result.assets[0]) return;
-        const dataUrl = await imageUriToJpegDataUrl(result.assets[0].uri);
+        const picked = await pickFromCamera({ t, allowsEditing: true, quality: 0.85 });
+        if (!picked?.uri) return;
+        const dataUrl = await imageUriToJpegDataUrl(picked.uri);
         try {
           assertDataUrlWithinSize(dataUrl);
         } catch {

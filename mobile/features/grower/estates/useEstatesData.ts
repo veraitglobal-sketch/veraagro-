@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { estatesAPI, Estate } from '../../../lib/api';
@@ -17,12 +17,14 @@ function messageFromApiError(error: unknown): string | undefined {
 export function useEstatesData() {
   const { t } = useTranslation();
   const [estates, setEstates] = useState<Estate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const hasCacheRef = useRef(false);
 
   const loadEstates = useCallback(async (options?: { isPullRefresh?: boolean }) => {
+    const showBlockingLoader = !options?.isPullRefresh && !hasCacheRef.current;
     try {
-      if (!options?.isPullRefresh) {
+      if (showBlockingLoader) {
         setLoading(true);
       }
       try {
@@ -30,23 +32,37 @@ export function useEstatesData() {
         const list = Array.isArray(data) ? data : [];
         setEstates(list);
         await growerOfflineCache.saveEstates(list);
+        hasCacheRef.current = true;
       } catch (error) {
         const cached = await growerOfflineCache.loadEstates();
         setEstates(cached ?? []);
-        if (!cached) console.error('Error loading estates:', error);
+        if (cached !== null) hasCacheRef.current = true;
+        if (cached === null) console.error('Error loading estates:', error);
         if (options?.isPullRefresh) {
           Alert.alert(t('producer.estates.loadFailed'), t('producer.estatesUi.errNetwork'));
         }
       }
     } finally {
-      if (!options?.isPullRefresh) {
+      if (showBlockingLoader) {
         setLoading(false);
       }
     }
   }, [t]);
 
   useEffect(() => {
-    void loadEstates();
+    let cancelled = false;
+    void (async () => {
+      const cached = await growerOfflineCache.loadEstates();
+      if (cancelled) return;
+      if (cached !== null) {
+        setEstates(cached);
+        hasCacheRef.current = true;
+      }
+      await loadEstates();
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [loadEstates]);
 
   const onRefresh = useCallback(async () => {

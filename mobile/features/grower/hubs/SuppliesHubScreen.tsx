@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Package, Box, ShoppingBag, Bell } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { useAuth } from '../../../hooks/useAuth';
-import { useDashboardData } from '../dashboard/useDashboardData';
+import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { HubNavTile, HubSectionTitle } from './HubNavTile';
 import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
 
@@ -17,22 +16,23 @@ export default function SuppliesHubScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
-  const { user } = useAuth();
-  const data = useDashboardData(user);
+  const data = useGrowerDashboard();
 
   const metricRows = useMemo((): HubMetricRow[] => {
     const rows: HubMetricRow[] = [
       {
         key: 'estates',
+        type: 'count',
         label: t('producer.hubs.metrics.estates'),
-        value: String(data.estates.length),
+        count: data.estates.length,
       },
     ];
     if (data.unreadCount > 0) {
       rows.unshift({
         key: 'unread',
+        type: 'count',
         label: t('producer.hubs.metrics.unreadNotifications'),
-        value: String(data.unreadCount),
+        count: data.unreadCount,
       });
     }
     return rows;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import * as ImagePicker from 'expo-image-picker';
 import { Camera, X } from 'lucide-react-native';
+import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
 import { theme } from '../../../lib/theme';
 import { RequiredCert } from './useCertificationsData';
 import { PendingCertificatePhoto } from '../../../lib/offline-storage';
@@ -19,34 +19,13 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
   const [saving, setSaving] = useState(false);
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('producer.compliance.permissionsTitle'), t('producer.compliance.galleryPermissionRequired'));
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.8,
-    });
-    if (!result.canceled && result.assets[0]) {
-      setPhotoUri(result.assets[0].uri);
-    }
+    const asset = await pickFromGallery({ t, allowsEditing: true, quality: 0.8 });
+    if (asset?.uri) setPhotoUri(asset.uri);
   };
 
   const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('producer.compliance.permissionsTitle'), t('producer.compliance.cameraPermissionRequired'));
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 0.8,
-    });
-    if (!result.canceled && result.assets[0]) {
-      setPhotoUri(result.assets[0].uri);
-    }
+    const asset = await pickFromCamera({ t, allowsEditing: true, quality: 0.8 });
+    if (asset?.uri) setPhotoUri(asset.uri);
   };
 
   const handleSave = async () => {
