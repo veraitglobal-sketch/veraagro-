@@ -1,6 +1,9 @@
 import {
   offlineStorage,
   PendingFieldEntry,
+  isLegacyFieldLogEntry,
+  isLegacyFieldLogErrorMessage,
+  shouldRemoveLegacyFieldLogRow,
 } from './offline-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -22,6 +25,10 @@ const syncApi = axios.create({
 
 const SYNC_STATUS_KEY = 'sync_status';
 const MAX_FIELD_LOG_PHOTO_BYTES = 8 * 1024 * 1024;
+/** Prevent sync storms (socket reconnect + 30s timer) from hitting API rate limits. */
+const SYNC_COOLDOWN_MS = 45_000;
+let lastSyncAllAt = 0;
+let legacyReconcileDone = false;
 
 function buildFieldLogGrowthNotes(entry: PendingFieldEntry): string {
   const lines: string[] = [];
@@ -58,6 +65,18 @@ function needsSync(status: string | undefined): boolean {
   return status === 'pending' || status === 'error' || status === 'syncing';
 }
 
+function isUnrecoverableFieldEntry(entry: PendingFieldEntry): boolean {
+  return shouldRemoveLegacyFieldLogRow(entry);
+}
+
+async function reconcileLegacyQueueOnce(): Promise<number> {
+  const removed = await offlineStorage.reconcileLegacyFieldLogQueue();
+  if (removed > 0) {
+    console.log(`[field-entry sync] removed ${removed} legacy local row(s) (missing parcel/plan)`);
+  }
+  return removed;
+}
+
 async function peekFirstRecordedQueueError(): Promise<string | null> {
   try {
     const [entries, products, costs, certPhotos, harvests] = await Promise.all([
@@ -88,11 +107,24 @@ async function peekFirstRecordedQueueError(): Promise<string | null> {
   return null;
 }
 
+export interface SyncQueueBreakdown {
+  fieldLog: number;
+  products: number;
+  costs: number;
+  certificatePhotos: number;
+  harvestPlans: number;
+}
+
 export interface SyncStatus {
   lastSyncTime: string | null;
   pendingCount: number;
+  /** Field diary rows missing parcel/plan — will never upload until deleted locally. */
+  legacyFieldLogCount: number;
+  breakdown: SyncQueueBreakdown;
   syncing: boolean;
   lastError: string | null;
+  /** First concrete API/validation error from any queue (for alerts). */
+  firstQueueError: string | null;
 }
 
 /**
@@ -119,6 +151,8 @@ export const syncService = {
       const pendingHarvests = harvests.filter((h) => needsSync(h.status)).length;
       const pendingCount =
         pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests;
+      const legacyFieldLogCount = await offlineStorage.countLegacyFieldLogEntries();
+      const firstQueueError = await peekFirstRecordedQueueError();
 
       const statusData = await AsyncStorage.getItem(SYNC_STATUS_KEY);
       const status = statusData ? JSON.parse(statusData) : {};
@@ -126,16 +160,34 @@ export const syncService = {
       return {
         lastSyncTime: status.lastSyncTime || null,
         pendingCount,
+        legacyFieldLogCount,
+        breakdown: {
+          fieldLog: pendingEntries,
+          products: pendingProducts,
+          costs: pendingCosts,
+          certificatePhotos: pendingCertPhotos,
+          harvestPlans: pendingHarvests,
+        },
         syncing: status.syncing || false,
         lastError: status.lastError || null,
+        firstQueueError,
       };
     } catch (error) {
       console.error('Error getting sync status:', error);
       return {
         lastSyncTime: null,
         pendingCount: 0,
+        legacyFieldLogCount: 0,
+        breakdown: {
+          fieldLog: 0,
+          products: 0,
+          costs: 0,
+          certificatePhotos: 0,
+          harvestPlans: 0,
+        },
         syncing: false,
         lastError: null,
+        firstQueueError: null,
       };
     }
   },
@@ -144,9 +196,19 @@ export const syncService = {
    * Sync all pending entries to backend
    * @param updateGlobalLedger when false (`syncAll` path), avoids writing SYNC_STATUS halfway through a multi-queue flush
    */
+  async reconcileLegacyFieldLogQueueOnStartup(): Promise<number> {
+    if (legacyReconcileDone) return 0;
+    legacyReconcileDone = true;
+    return reconcileLegacyQueueOnce();
+  },
+
   async syncPendingEntries(updateGlobalLedger = true): Promise<{ success: number; failed: number }> {
+    await reconcileLegacyQueueOnce();
+
     const pending = await offlineStorage.getPendingEntries();
-    const pendingEntries = pending.filter((e) => needsSync(e.status));
+    const pendingEntries = pending.filter(
+      (e) => needsSync(e.status) && !isUnrecoverableFieldEntry(e),
+    );
 
     if (pendingEntries.length === 0) {
       return { success: 0, failed: 0 };
@@ -160,6 +222,15 @@ export const syncService = {
     let failed = 0;
 
     for (const entry of pendingEntries) {
+      if (isUnrecoverableFieldEntry(entry)) {
+        const msg = tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan');
+        entry.status = 'unrecoverable';
+        entry.error = msg;
+        await this.updateEntryStatus(entry.id, 'unrecoverable', msg);
+        await offlineStorage.patchFieldLogHistory(entry.id, { status: 'unrecoverable', error: msg });
+        continue;
+      }
+
       try {
         // Mark as syncing
         entry.status = 'syncing';
@@ -167,7 +238,12 @@ export const syncService = {
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'syncing' });
 
         if (!entry.parcelId?.trim() || !entry.harvestAnnouncementId?.trim()) {
-          throw new Error(tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan'));
+          const msg = tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan');
+          entry.status = 'unrecoverable';
+          entry.error = msg;
+          await this.updateEntryStatus(entry.id, 'unrecoverable', msg);
+          await offlineStorage.patchFieldLogHistory(entry.id, { status: 'unrecoverable', error: msg });
+          continue;
         }
 
         // Prefer estate recorded at save time; use live list or last cached copy when offline.
@@ -227,6 +303,20 @@ export const syncService = {
         success++;
       } catch (error: unknown) {
         const msg = apiErrorMessage(error, 'Sync failed');
+        if (
+          isLegacyFieldLogEntry(entry) ||
+          isLegacyFieldLogErrorMessage(msg) ||
+          isLegacyFieldLogErrorMessage(entry.error)
+        ) {
+          await offlineStorage.discardFieldLogQueueItem(entry.id);
+          continue;
+        }
+        if (msg.includes('429') || msg.toLowerCase().includes('too many')) {
+          entry.status = 'pending';
+          await this.updateEntryStatus(entry.id, 'pending', msg);
+          await offlineStorage.patchFieldLogHistory(entry.id, { status: 'pending', error: msg });
+          break;
+        }
         console.warn(`[field-entry sync] ${entry.id}: ${msg}`);
         entry.status = 'error';
         entry.error = msg;
@@ -304,12 +394,12 @@ export const syncService = {
       } catch (err: unknown) {
         const status = axiosResponseStatus(err);
         const isNotImplemented = status === 404 || status === 501;
-        await offlineStorage.updateProductStatus(
-          product.id,
-          'pending',
-          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
-        );
-        if (!isNotImplemented) failed++;
+        if (isNotImplemented) {
+          await offlineStorage.updateProductStatus(product.id, 'skipped', 'ENDPOINT_UNAVAILABLE');
+        } else {
+          await offlineStorage.updateProductStatus(product.id, 'error', apiErrorMessage(err, 'Sync failed'));
+          failed++;
+        }
       }
     }
     return { success, failed };
@@ -348,12 +438,12 @@ export const syncService = {
       } catch (err: unknown) {
         const status = axiosResponseStatus(err);
         const isNotImplemented = status === 404 || status === 501;
-        await offlineStorage.updateCostStatus(
-          cost.id,
-          'pending',
-          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
-        );
-        if (!isNotImplemented) failed++;
+        if (isNotImplemented) {
+          await offlineStorage.updateCostStatus(cost.id, 'skipped', 'ENDPOINT_UNAVAILABLE');
+        } else {
+          await offlineStorage.updateCostStatus(cost.id, 'error', apiErrorMessage(err, 'Sync failed'));
+          failed++;
+        }
       }
     }
     return { success, failed };
@@ -416,12 +506,16 @@ export const syncService = {
       } catch (err: unknown) {
         const status = axiosResponseStatus(err);
         const isNotImplemented = status === 404 || status === 501;
-        await offlineStorage.updateCertificatePhotoStatus(
-          photo.id,
-          'pending',
-          isNotImplemented ? undefined : apiErrorMessage(err, 'Sync failed')
-        );
-        if (!isNotImplemented) failed++;
+        if (isNotImplemented) {
+          await offlineStorage.updateCertificatePhotoStatus(photo.id, 'skipped', 'ENDPOINT_UNAVAILABLE');
+        } else {
+          await offlineStorage.updateCertificatePhotoStatus(
+            photo.id,
+            'error',
+            apiErrorMessage(err, 'Sync failed'),
+          );
+          failed++;
+        }
       }
     }
     return { success, failed };
@@ -437,6 +531,19 @@ export const syncService = {
     certificatePhotos: { success: number; failed: number };
     harvestPlans: { success: number; failed: number };
   }> {
+    const now = Date.now();
+    if (now - lastSyncAllAt < SYNC_COOLDOWN_MS) {
+      return {
+        entries: { success: 0, failed: 0 },
+        products: { success: 0, failed: 0 },
+        costs: { success: 0, failed: 0 },
+        certificatePhotos: { success: 0, failed: 0 },
+        harvestPlans: { success: 0, failed: 0 },
+      };
+    }
+    lastSyncAllAt = now;
+
+    await reconcileLegacyQueueOnce();
     await offlineStorage.resetStuckSyncingQueues();
     await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
 
@@ -485,6 +592,48 @@ export const syncService = {
     );
 
     return { entries, products, costs, certificatePhotos, harvestPlans };
+  },
+
+  /**
+   * Drop all unsent local rows so the device queue cannot loop forever.
+   */
+  async purgeLegacyFieldLogOnly(): Promise<number> {
+    const n = await offlineStorage.purgeLegacyFieldLogLocal();
+    if (n > 0) {
+      await AsyncStorage.setItem(
+        SYNC_STATUS_KEY,
+        JSON.stringify({
+          syncing: false,
+          lastSyncTime: new Date().toISOString(),
+          lastError: null,
+        }),
+      );
+    }
+    return n;
+  },
+
+  async purgeAllLocalQueues(): Promise<{
+    removed: Awaited<ReturnType<typeof offlineStorage.purgeAllUnsentLocalQueues>>;
+    totalRemoved: number;
+  }> {
+    await offlineStorage.purgeLegacyFieldLogLocal();
+    const removed = await offlineStorage.purgeAllUnsentLocalQueues();
+    const totalRemoved =
+      removed.fieldLogQueue +
+      removed.fieldLogHistory +
+      removed.harvestPlans +
+      removed.products +
+      removed.costs +
+      removed.certificatePhotos;
+    await AsyncStorage.setItem(
+      SYNC_STATUS_KEY,
+      JSON.stringify({
+        syncing: false,
+        lastSyncTime: new Date().toISOString(),
+        lastError: null,
+      }),
+    );
+    return { removed, totalRemoved };
   },
 
   /**

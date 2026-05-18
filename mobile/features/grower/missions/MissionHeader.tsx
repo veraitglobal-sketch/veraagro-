@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { router, useSegments } from 'expo-router';
+import { replaceToRoleHome } from '../../../lib/app-navigation';
 
 export default function MissionHeader() {
   const { t } = useTranslation();
@@ -14,8 +15,10 @@ export default function MissionHeader() {
       onBack={() => {
         if (router.canGoBack()) {
           router.back();
+        } else if (isLogistics) {
+          router.replace('/(logistics)');
         } else {
-          router.replace(isLogistics ? ('/(logistics)' as const) : '/');
+          replaceToRoleHome(segments);
         }
       }}
     />

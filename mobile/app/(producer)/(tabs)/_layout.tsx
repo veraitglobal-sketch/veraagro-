@@ -1,3 +1,4 @@
+import { StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +19,8 @@ export default function ProducerTabsLayout() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.text.tertiary,
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
-          borderTopWidth: 1,
+          backgroundColor: '#F9FAFB',
+          borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: theme.colors.border,
           height: 56 + insets.bottom,
           paddingBottom: Math.max(insets.bottom, 6),
@@ -48,6 +49,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          headerShown: false,
           title: t('producer.tabs.dashboard'),
           tabBarLabel: t('producer.tabs.home'),
           tabBarIcon: ({ color, size }) => <Home size={size || 22} color={color} strokeWidth={1.5} />,

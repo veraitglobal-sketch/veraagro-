@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Sprout, ChevronRight, Package, Truck } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { ChevronRight } from 'lucide-react-native';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { homeUi } from '../../../lib/home-ui';
 import { computeNextStep, type NextStep } from './computeNextStep';
 
 export interface NextStepCardProps {
@@ -83,9 +83,7 @@ function labelAndCta(
 
 export default function NextStepCard(props: NextStepCardProps) {
   const { t } = useTranslation();
-  if (!props.ready) {
-    return null;
-  }
+  if (!props.ready) return null;
 
   const step = computeNextStep({
     estateCount: props.estateCount,
@@ -96,69 +94,53 @@ export default function NextStepCard(props: NextStepCardProps) {
     offlinePending: props.offlinePending,
     batchesReadyForTransport: props.batchesReadyForTransport,
   });
-  if (!step) {
-    return null;
-  }
+  if (!step) return null;
 
   const { title, body, cta, onPress } = labelAndCta(t, step, props);
 
   return (
-    <View
-      style={{
-        borderRadius: theme.borderRadius.md,
-        borderWidth: 1.5,
-        borderColor: theme.colors.primary,
-        backgroundColor: theme.colors.primaryLight,
-        paddingVertical: theme.spacing.sm,
-        paddingHorizontal: theme.spacing.md,
-        marginBottom: theme.spacing.sm,
-      }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-        <View
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: theme.borderRadius.sm,
-            backgroundColor: theme.colors.background,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: theme.spacing.sm,
-          }}
-        >
-          {step.kind === 'log_work' ? (
-            <Package size={18} color={theme.colors.primary} strokeWidth={1.5} />
-          ) : step.kind === 'request_transport' || step.kind === 'missions' ? (
-            <Truck size={18} color={theme.colors.primary} strokeWidth={1.5} />
-          ) : (
-            <Sprout size={18} color={theme.colors.primary} strokeWidth={1.5} />
-          )}
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.6 }}>
-            {t('producer.dashboard.nextStep.eyebrow')}
-          </Text>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>{title}</Text>
-        </View>
+    <View style={homeUi.card}>
+      <View style={homeUi.cardAccent} />
+      <View style={styles.body}>
+        <Text style={styles.eyebrow}>{t('producer.dashboard.nextStep.eyebrow')}</Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.desc}>{body}</Text>
+        <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={homeUi.primaryCta} accessibilityRole="button">
+          <Text style={homeUi.primaryCtaText}>{cta}</Text>
+          <ChevronRight size={18} color={enterpriseColors.white} strokeWidth={2} />
+        </TouchableOpacity>
       </View>
-      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.sm }}>{body}</Text>
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.8}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: theme.colors.primary,
-          borderRadius: theme.borderRadius.md,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
-          minHeight: 48,
-        }}
-      >
-        <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.inverse }}>{cta}</Text>
-        <ChevronRight size={18} color={theme.colors.text.inverse} strokeWidth={2} />
-      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  body: {
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingTop: 12,
+    paddingBottom: 14,
+  },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.25,
+    marginBottom: 4,
+  },
+  desc: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    lineHeight: 20,
+    marginBottom: 10,
+  },
+});

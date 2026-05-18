@@ -14,9 +14,11 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Eye, EyeOff, Leaf, ChevronLeft } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
+import { AuthPanel, AuthScreenShell } from '../components/auth/AuthScreenShell';
+import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
 import { useAuth } from '../hooks/useAuth';
 import {
   getPostLoginPath,
@@ -25,12 +27,9 @@ import {
 } from '../lib/post-login-redirect';
 import { theme } from '../lib/theme';
 
-/**
- * Universal login — role after sign-in. Polished full-screen experience with depth, clear fields, and keyboard-safe layout.
- */
+/** Login — same enterprise shell as welcome (gray-50, white panel, Vera primary CTA). */
 export default function LoginScreen() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const rawParams = useLocalSearchParams<{ redirect?: string | string[]; partner?: string | string[] }>();
   const { login, logout } = useAuth();
@@ -46,6 +45,7 @@ export default function LoginScreen() {
   })();
   const partnerEntry: PartnerEntryRedirect =
     partnerMode && (redirectParam === 'estates/new' || redirectParam === 'estates') ? redirectParam : undefined;
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -63,11 +63,10 @@ export default function LoginScreen() {
       const response = await login(username.trim(), password);
       const path = getPostLoginPath(normalizeUserRoles(response.user), { partnerEntry });
       if (path) {
-        router.replace(path as any);
+        router.replace(path as never);
       } else {
         await logout();
         Alert.alert(t('error'), partnerMode ? t('partnerLogin.notProducerAccess') : t('login.noRoleForApp'));
-        return;
       }
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : t('login.failed');
@@ -77,90 +76,106 @@ export default function LoginScreen() {
     }
   }, [username, password, login, logout, router, t, partnerEntry, partnerMode]);
 
-  return (
-    <LinearGradient
-      colors={['#2f6b32', '#1e4a24', '#152e1a']}
-      start={{ x: 0.2, y: 0 }}
-      end={{ x: 0.9, y: 1 }}
-      style={styles.gradient}
-    >
-      <View style={[StyleSheet.absoluteFill, styles.ambient]} pointerEvents="none">
-        <View style={styles.orb1} />
-        <View style={styles.orb2} />
-      </View>
-
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
-      >
-        <ScrollView
-          contentContainerStyle={[
-            styles.scroll,
-            { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 28 },
-          ]}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+  const footer = (
+    <View style={styles.footer}>
+      {!partnerMode ? (
+        <TouchableOpacity
+          onPress={() => router.push('/buyer-register')}
+          activeOpacity={0.7}
+          style={styles.footerBtn}
         >
-          <TouchableOpacity
-            onPress={() => router.replace('/')}
-            style={[styles.backRow, { marginTop: 4 }]}
-            hitSlop={12}
-            accessibilityLabel={t('common.back')}
-            activeOpacity={0.7}
+          <Text style={styles.footerAccent}>{t('login.registerBuyer')}</Text>
+        </TouchableOpacity>
+      ) : null}
+      <TouchableOpacity onPress={() => router.replace('/')} activeOpacity={0.7} style={styles.footerBtn}>
+        <Text style={styles.footerMuted}>
+          {partnerMode ? t('partnerLogin.backToMarketplaceFull') : t('login.backToMarketplace')}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={enterpriseUi.authCanvas} edges={['top', 'bottom']}>
+      <StatusBar style="dark" />
+      <AuthScreenShell footer={footer}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scroll}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <ChevronLeft size={20} color="rgba(255,255,255,0.85)" strokeWidth={2} />
-            <Text style={styles.backText}>{t('common.back')}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.replace('/')}
+              style={styles.backRow}
+              hitSlop={12}
+              accessibilityLabel={t('common.back')}
+              activeOpacity={0.7}
+            >
+              <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+              <Text style={styles.backText}>{t('common.back')}</Text>
+            </TouchableOpacity>
 
-          <View style={styles.header}>
-            <View style={styles.logoRing}>
-              <View style={styles.logoInner}>
-                <Leaf size={32} color="#2D5A27" strokeWidth={1.5} />
+            <AuthPanel>
+              <View style={enterpriseUi.authPanelHeader}>
+                <View style={enterpriseUi.authRule} />
+                <Text style={enterpriseUi.authTitle} accessibilityRole="header">
+                  {partnerMode ? t('partnerLogin.title') : t('login.title')}
+                </Text>
+                <Text style={enterpriseUi.authSubtitle}>
+                  {partnerMode ? t('partnerLogin.subtitle') : t('login.subtitle')}
+                </Text>
               </View>
-            </View>
-            <Text style={styles.brand} accessibilityRole="header">
-              Bio Vera
-            </Text>
-            <Text style={styles.subtitle}>{partnerMode ? t('partnerLogin.subtitle') : t('login.subtitle')}</Text>
-          </View>
 
-          <View style={styles.card}>
-            <View style={styles.cardInner}>
-              <Text style={[styles.label, partnerMode && { marginBottom: 8 }]}>{partnerMode ? t('partnerLogin.username') : t('login.username')}</Text>
-              {partnerMode ? null : <Text style={styles.hint}>{t('login.usernameHelper')}</Text>}
-              <View style={[styles.inputWrap, userFocused && styles.inputWrapFocused]}>
+              <Text style={enterpriseUi.authLabel}>
+                {partnerMode ? t('partnerLogin.username') : t('login.username')}
+              </Text>
+              {!partnerMode ? <Text style={enterpriseUi.authHint}>{t('login.usernameHelper')}</Text> : null}
+              <View style={[enterpriseUi.authInput, userFocused && enterpriseUi.authInputFocused]}>
                 <TextInput
                   value={username}
                   onChangeText={setUsername}
-                  placeholder={partnerMode ? t('partnerLogin.usernamePlaceholder') : t('login.usernamePlaceholder')}
+                  placeholder={
+                    partnerMode ? t('partnerLogin.usernamePlaceholder') : t('login.usernamePlaceholder')
+                  }
                   placeholderTextColor={theme.colors.text.tertiary}
                   autoCapitalize="none"
                   autoCorrect={false}
                   keyboardType="email-address"
                   returnKeyType="next"
-                  onSubmitEditing={() => {
-                    // focus password — handled by user tapping
-                  }}
                   onFocus={() => setUserFocused(true)}
                   onBlur={() => setUserFocused(false)}
-                  style={styles.inputInCard}
+                  style={styles.input}
                 />
               </View>
 
-              <Text style={[styles.label, { marginTop: 18 }]}>{partnerMode ? t('partnerLogin.password') : t('login.password')}</Text>
-              <View style={[styles.inputWrap, styles.inputRow, passFocused && styles.inputWrapFocused]}>
+              <Text style={[enterpriseUi.authLabel, enterpriseUi.authFieldGap]}>
+                {partnerMode ? t('partnerLogin.password') : t('login.password')}
+              </Text>
+              <View
+                style={[
+                  enterpriseUi.authInput,
+                  styles.inputRow,
+                  passFocused && enterpriseUi.authInputFocused,
+                ]}
+              >
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
-                  placeholder={partnerMode ? t('partnerLogin.passwordPlaceholder') : t('login.passwordPlaceholder')}
+                  placeholder={
+                    partnerMode ? t('partnerLogin.passwordPlaceholder') : t('login.passwordPlaceholder')
+                  }
                   placeholderTextColor={theme.colors.text.tertiary}
                   secureTextEntry={!showPassword}
                   returnKeyType="go"
                   onSubmitEditing={handleLogin}
                   onFocus={() => setPassFocused(true)}
                   onBlur={() => setPassFocused(false)}
-                  style={styles.inputInCardFlex}
+                  style={styles.inputFlex}
                 />
                 <Pressable
                   onPress={() => setShowPassword((s) => !s)}
@@ -170,230 +185,104 @@ export default function LoginScreen() {
                   accessibilityLabel={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                 >
                   {showPassword ? (
-                    <EyeOff size={22} color={theme.colors.text.secondary} strokeWidth={1.5} />
+                    <EyeOff size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
                   ) : (
-                    <Eye size={22} color={theme.colors.text.secondary} strokeWidth={1.5} />
+                    <Eye size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
                   )}
                 </Pressable>
               </View>
 
-              <Pressable
+              <TouchableOpacity
                 onPress={handleLogin}
                 disabled={loading}
-                style={({ pressed }) => [
-                  styles.button,
-                  loading && styles.buttonDisabled,
-                  pressed && !loading && styles.buttonPressed,
-                ]}
+                activeOpacity={0.9}
+                style={[enterpriseUi.authSubmit, loading && styles.submitDisabled]}
                 accessibilityRole="button"
                 accessibilityState={{ busy: loading }}
               >
                 {loading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.buttonText}>
+                  <Text style={enterpriseUi.authSubmitText}>
                     {partnerMode ? t('partnerLogin.button') : t('login.button')}
                   </Text>
                 )}
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.footer}>
-            {partnerMode ? null : (
-              <>
-                <TouchableOpacity onPress={() => router.push('/buyer-register')} activeOpacity={0.75} style={styles.footerBtn}>
-                  <Text style={styles.linkStrong}>{t('login.registerBuyer')}</Text>
-                </TouchableOpacity>
-                <View style={styles.divider} />
-              </>
-            )}
-            <TouchableOpacity onPress={() => router.replace('/')} activeOpacity={0.75} style={styles.footerBtn}>
-              <Text style={partnerMode ? styles.linkStrong : styles.linkMuted}>
-                {partnerMode ? t('partnerLogin.backToMarketplaceFull') : t('login.backToMarketplace')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+              </TouchableOpacity>
+            </AuthPanel>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </AuthScreenShell>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
   flex: {
     flex: 1,
   },
-  ambient: {
-    overflow: 'hidden',
-  },
-  orb1: {
-    position: 'absolute',
-    top: '8%',
-    right: '-8%',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
-  },
-  orb2: {
-    position: 'absolute',
-    bottom: '20%',
-    left: '-12%',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
   scroll: {
     flexGrow: 1,
-    paddingHorizontal: theme.spacing.lg,
     justifyContent: 'center',
+    paddingVertical: 16,
   },
   backRow: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 20,
     gap: 2,
   },
   backText: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.88)',
-    fontWeight: '500',
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.1,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 28,
-  },
-  logoRing: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    padding: 3,
-    backgroundColor: 'rgba(255,255,255,0.22)',
-    marginBottom: 16,
-  },
-  logoInner: {
-    flex: 1,
-    borderRadius: 42,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.lg,
-  },
-  brand: {
-    fontSize: 32,
-    fontWeight: '300',
-    color: '#fff',
-    letterSpacing: -0.8,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: 'rgba(255, 255, 255, 0.88)',
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 12,
-  },
-  card: {
-    backgroundColor: theme.colors.background,
-    borderRadius: 20,
-    ...theme.shadows.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-  },
-  cardInner: {
-    padding: theme.spacing.lg,
-    paddingVertical: 24,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
+  input: {
+    fontSize: 16,
     color: theme.colors.text.primary,
-    letterSpacing: -0.2,
-  },
-  hint: {
-    fontSize: 12,
-    color: theme.colors.text.tertiary,
-    marginTop: 2,
-    marginBottom: 8,
-  },
-  inputWrap: {
-    borderWidth: 1.5,
-    borderColor: theme.colors.border,
-    borderRadius: 12,
-    backgroundColor: theme.colors.surface,
-  },
-  inputWrapFocused: {
-    borderColor: 'rgba(45, 90, 39, 0.5)',
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    minHeight: 48,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  inputInCard: {
-    fontSize: 16,
-    color: theme.colors.text.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  inputInCardFlex: {
+  inputFlex: {
     flex: 1,
     fontSize: 16,
     color: theme.colors.text.primary,
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 13,
+    minHeight: 48,
   },
   eyeBtn: {
     paddingRight: 12,
     paddingVertical: 8,
   },
-  button: {
-    backgroundColor: theme.colors.primary,
-    marginTop: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.sm,
-  },
-  buttonDisabled: {
+  submitDisabled: {
     opacity: 0.65,
   },
-  buttonPressed: {
-    opacity: 0.92,
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#fff',
-    letterSpacing: -0.2,
-  },
   footer: {
-    marginTop: 32,
     alignItems: 'center',
+    gap: 6,
+    paddingTop: 4,
   },
   footerBtn: {
-    paddingVertical: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
-  linkStrong: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.95)',
-    textDecorationLine: 'underline',
-  },
-  divider: {
-    width: 40,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    marginVertical: 12,
-  },
-  linkMuted: {
+  footerAccent: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+    textAlign: 'center',
+  },
+  footerMuted: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    textAlign: 'center',
   },
 });

@@ -97,6 +97,9 @@ export function useFieldLogData() {
   const [materialQuantity, setMaterialQuantity] = useState('');
 
   const [localHistory, setLocalHistory] = useState<FieldLogHistoryItem[]>([]);
+  const [pendingFieldCount, setPendingFieldCount] = useState(0);
+  const [legacyFieldCount, setLegacyFieldCount] = useState(0);
+  const [queueSyncBusy, setQueueSyncBusy] = useState(false);
 
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const selectedParcelIdRef = useRef('');
@@ -415,6 +418,29 @@ export function useFieldLogData() {
     }
   }, [t]);
 
+  const refreshPendingFieldCount = useCallback(async () => {
+    try {
+      const entries = await offlineStorage.getPendingEntries();
+      const n = entries.filter(
+        (e) => e.status === 'pending' || e.status === 'error' || e.status === 'syncing',
+      ).length;
+      setPendingFieldCount(n);
+      setLegacyFieldCount(await offlineStorage.countLegacyFieldLogEntries());
+    } catch {
+      setPendingFieldCount(0);
+      setLegacyFieldCount(0);
+    }
+  }, []);
+
+  const reloadLocalHistory = useCallback(async () => {
+    try {
+      setLocalHistory(await offlineStorage.getFieldLogHistory());
+    } catch {
+      setLocalHistory([]);
+    }
+    await refreshPendingFieldCount();
+  }, [refreshPendingFieldCount]);
+
   useFocusEffect(
     useCallback(() => {
       const check = async () => {
@@ -423,6 +449,7 @@ export function useFieldLogData() {
         } catch {
           setLocalHistory([]);
         }
+        await refreshPendingFieldCount();
         try {
           const barcode = await AsyncStorage.getItem('last_scanned_barcode');
           if (barcode) {
@@ -440,16 +467,8 @@ export function useFieldLogData() {
         } catch {}
       };
       void check();
-    }, [getCurrentLocation]),
+    }, [getCurrentLocation, refreshPendingFieldCount]),
   );
-
-  const reloadLocalHistory = useCallback(async () => {
-    try {
-      setLocalHistory(await offlineStorage.getFieldLogHistory());
-    } catch {
-      setLocalHistory([]);
-    }
-  }, []);
 
   const pickPhotoFromLibrary = useCallback(async () => {
     try {
@@ -609,6 +628,106 @@ export function useFieldLogData() {
     reloadLocalHistory,
   ]);
 
+  const syncQueueNow = useCallback(async () => {
+    if (queueSyncBusy) return;
+    const online = await isDeviceOnline();
+    if (!online) {
+      Alert.alert(t('error'), t('producer.fieldLogAlerts.saveQueuedWhenOnline'));
+      return;
+    }
+    setQueueSyncBusy(true);
+    try {
+      const result = await syncService.syncPendingEntries();
+      await reloadLocalHistory();
+      if (result.failed > 0) {
+        const status = await syncService.getSyncStatus();
+        Alert.alert(
+          t('producer.fieldLogAlerts.saveSyncFailedTitle'),
+          status.firstQueueError ?? t('producer.sync.itemsNotSentHint'),
+        );
+      } else if (result.success > 0) {
+        Alert.alert(t('alerts.success'), t('producer.fieldLogAlerts.saveSentNow'));
+      }
+    } finally {
+      setQueueSyncBusy(false);
+    }
+  }, [queueSyncBusy, t, reloadLocalHistory]);
+
+  const discardQueueItem = useCallback(
+    (id: string) => {
+      Alert.alert(
+        t('producer.fieldLogForm.discardQueueTitle'),
+        t('producer.fieldLogForm.discardQueueBody'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('producer.fieldLogForm.discardQueueConfirm'),
+            style: 'destructive',
+            onPress: () => {
+              void (async () => {
+                await offlineStorage.discardFieldLogQueueItem(id);
+                await reloadLocalHistory();
+              })();
+            },
+          },
+        ],
+      );
+    },
+    [t, reloadLocalHistory],
+  );
+
+  const purgeLegacyOnly = useCallback(() => {
+    if (legacyFieldCount === 0) return;
+    Alert.alert(
+      t('producer.fieldLogForm.discardAllTitle'),
+      t('producer.sync.legacyBanner', { count: legacyFieldCount }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.sync.purgeLegacyOnly'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              const n = await syncService.purgeLegacyFieldLogOnly();
+              await reloadLocalHistory();
+              Alert.alert(
+                t('alerts.success'),
+                t('producer.sync.clearLocalQueueDone', { count: n }),
+              );
+            })();
+          },
+        },
+      ],
+    );
+  }, [legacyFieldCount, t, reloadLocalHistory]);
+
+  const discardAllUnsentLocal = useCallback(() => {
+    if (pendingFieldCount === 0) return;
+    Alert.alert(
+      t('producer.fieldLogForm.discardAllTitle'),
+      t('producer.fieldLogForm.discardAllBody', { count: pendingFieldCount }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.fieldLogForm.discardAllConfirm'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              const { queueRemoved, historyRemoved } = await offlineStorage.purgeUnsentFieldLogLocal();
+              await reloadLocalHistory();
+              Alert.alert(
+                t('alerts.success'),
+                t('producer.sync.clearLocalQueueDone', {
+                  count: queueRemoved + historyRemoved,
+                }),
+              );
+            })();
+          },
+        },
+      ],
+    );
+  }, [pendingFieldCount, t, reloadLocalHistory]);
+
   const handleSubmit = useCallback(async () => {
     if (saveBusy) return;
 
@@ -722,5 +841,12 @@ export function useFieldLogData() {
     refreshReferenceData,
     localHistory,
     reloadLocalHistory,
+    pendingFieldCount,
+    legacyFieldCount,
+    queueSyncBusy,
+    syncQueueNow,
+    discardQueueItem,
+    discardAllUnsentLocal,
+    purgeLegacyOnly,
   };
 }

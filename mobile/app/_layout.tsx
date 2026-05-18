@@ -8,6 +8,7 @@ import '../i18n/config';
 import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
 import { theme } from '../lib/theme';
+import { syncService } from '../lib/sync-service';
 
 // RN 0.81+ deprecates built-in SafeAreaView; some deps still trigger this until they migrate.
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
@@ -31,6 +32,7 @@ const stackHeaderTitleStyle = {
 export default function RootLayout() {
   useEffect(() => {
     void applySavedLanguagePreference();
+    void syncService.reconcileLegacyFieldLogQueueOnStartup();
   }, []);
   return (
     <SafeAreaProvider>

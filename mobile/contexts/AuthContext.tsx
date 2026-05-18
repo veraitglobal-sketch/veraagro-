@@ -1,10 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { router } from 'expo-router';
 import { API_URL } from '../lib/api-url';
 import { axiosLikeMessage } from '../lib/api-error';
 import { setAuthUnauthorizedHandler } from '../lib/auth-events';
+import { replaceToSignIn } from '../lib/app-navigation';
 
 interface User {
   id: string;
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       void (async () => {
         await logout();
         try {
-          router.replace('/');
+          replaceToSignIn();
         } catch {
           // Navigator may not be ready on rare early ticks.
         }

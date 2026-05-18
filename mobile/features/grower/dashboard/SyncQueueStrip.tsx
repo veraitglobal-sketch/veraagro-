@@ -8,10 +8,14 @@ import { tString } from '../../../lib/i18n-strings';
 
 export interface SyncQueueStripProps {
   pendingCount: number;
+  legacyFieldLogCount?: number;
   syncing: boolean;
   lastError: string | null;
   onOpenFieldLog: () => void;
   onSyncNow: () => void;
+  /** Permanently remove unsent rows from this device (no server upload). */
+  onClearLocalQueue?: () => void;
+  onPurgeLegacyFieldLog?: () => void;
   /** Tighter layout for producer home (less vertical space). */
   compact?: boolean;
   /**
@@ -37,16 +41,19 @@ function humanizeStoredSyncError(
 
 export default function SyncQueueStrip({
   pendingCount,
+  legacyFieldLogCount = 0,
   syncing,
   lastError,
   onOpenFieldLog,
   onSyncNow,
+  onClearLocalQueue,
+  onPurgeLegacyFieldLog,
   compact = false,
   hideOpenLogCta = false,
 }: SyncQueueStripProps) {
   const { t } = useTranslation();
 
-  const show = pendingCount > 0 || syncing || Boolean(lastError);
+  const show = pendingCount > 0 || legacyFieldLogCount > 0 || syncing || Boolean(lastError);
   if (!show) return null;
 
   const padV = compact ? 6 : theme.spacing.sm;
@@ -164,6 +171,30 @@ export default function SyncQueueStrip({
             </TouchableOpacity>
           ) : null}
         </View>
+        {legacyFieldLogCount > 0 && onPurgeLegacyFieldLog ? (
+          <TouchableOpacity
+            onPress={onPurgeLegacyFieldLog}
+            disabled={syncing}
+            activeOpacity={0.75}
+            style={{ marginTop: 8, alignSelf: 'flex-start', opacity: syncing ? 0.5 : 1 }}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.error }}>
+              {t('producer.sync.purgeLegacyOnly')} ({legacyFieldLogCount})
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {onClearLocalQueue && (pendingCount > 0 || errorDisplay) ? (
+          <TouchableOpacity
+            onPress={onClearLocalQueue}
+            disabled={syncing}
+            activeOpacity={0.75}
+            style={{ marginTop: 8, alignSelf: 'flex-start', opacity: syncing ? 0.5 : 1 }}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.error }}>
+              {t('producer.sync.clearLocalQueue')}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }
@@ -267,6 +298,32 @@ export default function SyncQueueStrip({
             {t('producer.dashboard.syncStrip.openLog')}
           </Text>
           <ChevronRight size={18} color={theme.colors.primary} strokeWidth={2} />
+        </TouchableOpacity>
+      ) : null}
+
+      {legacyFieldLogCount > 0 && onPurgeLegacyFieldLog ? (
+        <TouchableOpacity
+          onPress={onPurgeLegacyFieldLog}
+          disabled={syncing}
+          activeOpacity={0.75}
+          style={{ paddingVertical: 8, minHeight: 40, opacity: syncing ? 0.5 : 1 }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.error }}>
+            {t('producer.sync.purgeLegacyOnly')} ({legacyFieldLogCount})
+          </Text>
+        </TouchableOpacity>
+      ) : null}
+
+      {onClearLocalQueue && (pendingCount > 0 || errorDisplay) ? (
+        <TouchableOpacity
+          onPress={onClearLocalQueue}
+          disabled={syncing}
+          activeOpacity={0.75}
+          style={{ paddingVertical: 8, minHeight: 40, opacity: syncing ? 0.5 : 1 }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.error }}>
+            {t('producer.sync.clearLocalQueue')}
+          </Text>
         </TouchableOpacity>
       ) : null}
     </View>

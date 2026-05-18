@@ -2,27 +2,27 @@ import { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  type TextStyle,
+  StyleSheet,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react-native';
-import { theme } from '../lib/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { ChevronLeft } from 'lucide-react-native';
+import { AuthPanel, AuthScreenShell } from '../components/auth/AuthScreenShell';
+import AuthTextField from '../components/auth/AuthTextField';
+import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
 import { markStepComplete } from '../lib/grower-journey';
 import { authAPI } from '../lib/api';
 import { apiErrorMessage } from '../lib/api-error';
+import { partnerSignInHref } from '../lib/post-login-redirect';
 
-/**
- * Grower registration – Faza 1 of Grower Journey
- * Registers via API, sends verification email. User must verify to activate account.
- */
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -59,11 +59,9 @@ export default function RegisterScreen() {
         totalHectares: ha,
       });
       await markStepComplete(1);
-      Alert.alert(
-        t('register.successTitle'),
-        t('register.checkEmailMessage'),
-        [{ text: 'OK', onPress: () => router.back() }]
-      );
+      Alert.alert(t('register.successTitle'), t('register.checkEmailMessage'), [
+        { text: t('common.ok'), onPress: () => router.replace(partnerSignInHref() as Href) },
+      ]);
     } catch (e: unknown) {
       Alert.alert(t('error'), apiErrorMessage(e, t('register.failed')));
     } finally {
@@ -71,132 +69,177 @@ export default function RegisterScreen() {
     }
   };
 
+  const footer = (
+    <View style={styles.footer}>
+      <Text style={styles.footerLead}>{t('register.hasAccount')}</Text>
+      <TouchableOpacity
+        onPress={() => router.replace(partnerSignInHref() as Href)}
+        activeOpacity={0.7}
+        style={styles.footerBtn}
+      >
+        <Text style={styles.footerAccent}>{t('register.signIn')}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={0}
-    >
-      <View
-        style={{
-          paddingTop: 56,
-          paddingBottom: theme.spacing.md,
-          paddingHorizontal: theme.spacing.lg,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: theme.colors.border,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={{ marginRight: theme.spacing.md }}>
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: theme.colors.text.primary }}>
-          {t('register.title')}
-        </Text>
-      </View>
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 48 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: theme.spacing.lg }}>
-          {t('register.subtitle')}
-        </Text>
-
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <Text style={labelStyle}>{t('register.firstName')}</Text>
-          <TextInput
-            value={firstName}
-            onChangeText={setFirstName}
-            placeholder={t('register.firstNamePlaceholder')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={inputStyle}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <Text style={labelStyle}>{t('register.lastName')}</Text>
-          <TextInput
-            value={lastName}
-            onChangeText={setLastName}
-            placeholder={t('register.lastNamePlaceholder')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={inputStyle}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <Text style={labelStyle}>{t('register.email')}</Text>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder={t('register.emailPlaceholder')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={inputStyle}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <Text style={labelStyle}>{t('register.hectares')}</Text>
-          <TextInput
-            value={hectares}
-            onChangeText={setHectares}
-            placeholder={t('register.hectaresPlaceholder')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={inputStyle}
-            keyboardType="decimal-pad"
-          />
-        </View>
-        <View style={{ marginBottom: theme.spacing.xl }}>
-          <Text style={labelStyle}>{t('register.password')}</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder={t('register.passwordPlaceholder')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={inputStyle}
-            secureTextEntry
-          />
-        </View>
-
-        <TouchableOpacity
-          onPress={handleRegister}
-          disabled={loading}
-          style={{
-            backgroundColor: theme.colors.primary,
-            paddingVertical: 14,
-            borderRadius: theme.borderRadius.lg,
-            alignItems: 'center',
-          }}
+    <SafeAreaView style={enterpriseUi.authCanvas} edges={['top', 'bottom']}>
+      <StatusBar style="dark" />
+      <AuthScreenShell footer={footer}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
         >
-          {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('register.submit')}</Text>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <ScrollView
+            contentContainerStyle={styles.scroll}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backRow}
+              hitSlop={12}
+              accessibilityLabel={t('common.back')}
+              activeOpacity={0.7}
+            >
+              <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+              <Text style={styles.backText}>{t('common.back')}</Text>
+            </TouchableOpacity>
+
+            <AuthPanel>
+              <View style={enterpriseUi.authPanelHeader}>
+                <View style={enterpriseUi.authRule} />
+                <Text style={enterpriseUi.authTitle} accessibilityRole="header">
+                  {t('register.title')}
+                </Text>
+                <Text style={enterpriseUi.authSubtitle}>{t('register.subtitle')}</Text>
+              </View>
+
+              <View style={styles.nameRow}>
+                <AuthTextField
+                  label={t('register.firstName')}
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  placeholder={t('register.firstNamePlaceholder')}
+                  autoCapitalize="words"
+                  containerStyle={styles.nameCol}
+                />
+                <AuthTextField
+                  label={t('register.lastName')}
+                  value={lastName}
+                  onChangeText={setLastName}
+                  placeholder={t('register.lastNamePlaceholder')}
+                  autoCapitalize="words"
+                  containerStyle={styles.nameCol}
+                />
+              </View>
+
+              <AuthTextField
+                label={t('register.email')}
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('register.emailPlaceholder')}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              <AuthTextField
+                label={t('register.hectares')}
+                hint={t('register.hectaresHint')}
+                value={hectares}
+                onChangeText={setHectares}
+                placeholder={t('register.hectaresPlaceholder')}
+                keyboardType="decimal-pad"
+              />
+
+              <AuthTextField
+                label={t('register.password')}
+                hint={t('register.passwordHint')}
+                value={password}
+                onChangeText={setPassword}
+                placeholder={t('register.passwordPlaceholder')}
+                secureTextEntry
+                containerStyle={styles.lastField}
+              />
+
+              <TouchableOpacity
+                onPress={handleRegister}
+                disabled={loading}
+                activeOpacity={0.9}
+                style={[enterpriseUi.authSubmit, loading && styles.submitDisabled]}
+                accessibilityRole="button"
+                accessibilityState={{ busy: loading }}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={enterpriseUi.authSubmitText}>{t('register.submit')}</Text>
+                )}
+              </TouchableOpacity>
+            </AuthPanel>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </AuthScreenShell>
+    </SafeAreaView>
   );
 }
 
-const labelStyle: TextStyle = {
-  fontSize: 12,
-  fontWeight: '500',
-  color: theme.colors.text.secondary,
-  marginBottom: 6,
-};
-const inputStyle: TextStyle = {
-  backgroundColor: theme.colors.surface,
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  borderRadius: theme.borderRadius.md,
-  paddingHorizontal: 14,
-  paddingVertical: 12,
-  fontSize: 16,
-  color: theme.colors.text.primary,
-};
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  scroll: {
+    flexGrow: 1,
+    paddingVertical: 12,
+    paddingBottom: 24,
+  },
+  backRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    gap: 2,
+  },
+  backText: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 2,
+  },
+  nameCol: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  lastField: {
+    marginBottom: 0,
+  },
+  submitDisabled: {
+    opacity: 0.65,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingTop: 4,
+    gap: 2,
+  },
+  footerLead: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+  },
+  footerBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  footerAccent: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+  },
+});

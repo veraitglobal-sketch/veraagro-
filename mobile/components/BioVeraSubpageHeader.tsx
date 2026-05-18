@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import type { ReactNode } from 'react';
-import { router } from 'expo-router';
+import { router, useSegments } from 'expo-router';
+import { replaceToRoleHome } from '../lib/app-navigation';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
@@ -26,6 +27,7 @@ export function BioVeraSubpageHeader({
   style,
 }: BioVeraSubpageHeaderProps) {
   const p = useBioVeraScreenPadding();
+  const segments = useSegments();
 
   return (
     <View
@@ -52,7 +54,7 @@ export function BioVeraSubpageHeader({
               if (router.canGoBack()) {
                 router.back();
               } else {
-                router.replace('/');
+                replaceToRoleHome(segments);
               }
             })
           }

@@ -92,6 +92,34 @@ export class MissionsService {
     return e instanceof Error && e.name === 'PrismaClientValidationError';
   }
 
+  private static isHarvestAnnouncementsSchemaError(e: unknown): boolean {
+    const code = MissionsService.prismaKnownRequestCode(e);
+    if (code !== 'P2021' && code !== 'P2022') {
+      return false;
+    }
+    const msg = (e instanceof Error ? e.message : String(e)).toLowerCase();
+    const meta = MissionsService.prismaErrorMeta(e);
+    const table = String(meta?.table ?? '').toLowerCase();
+    return table.includes('harvest_announcements') || msg.includes('harvest_announcements');
+  }
+
+  private static harvestSchemaUnavailableException(e: unknown): ServiceUnavailableException {
+    const code = MissionsService.prismaKnownRequestCode(e) ?? 'P2021';
+    const meta = MissionsService.prismaErrorMeta(e);
+    const target =
+      meta?.column != null
+        ? String(meta.column)
+        : meta?.table != null
+          ? `table ${String(meta.table)}`
+          : 'harvest_announcements';
+    return new ServiceUnavailableException(
+      'The API database is missing a table or column that the app expects. ' +
+        'This is not a problem with the pickup address you typed — the server must run the latest Prisma migrations. ' +
+        `Prisma ${code} (missing table: ${target}). ` +
+        'Administrator: in `backend/`, with production `DATABASE_URL`, run `npx prisma migrate deploy` and restart the API.',
+    );
+  }
+
   /**
    * JSON for POST /missions — explicit fields only. Spreading the full Prisma graph + JSON.stringify
    * has produced non-HttpException failures (response serialization) that surface as 500 "Internal server error".
@@ -207,6 +235,31 @@ export class MissionsService {
    * plan leaves link null so the unique constraint is not violated.
    */
   private async resolveHarvestAnnouncementIdForCreate(
+    growerId: string,
+    batch: { id: string; parcelId: string | null } | null,
+    dto: CreateMissionDto,
+  ): Promise<string | null> {
+    try {
+      return await this.resolveHarvestAnnouncementIdForCreateInner(growerId, batch, dto);
+    } catch (e: unknown) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      if (!MissionsService.isHarvestAnnouncementsSchemaError(e)) {
+        throw e;
+      }
+      const explicit = dto.harvestAnnouncementId?.trim();
+      if (explicit || this.requireConfirmedHarvestPlan()) {
+        throw MissionsService.harvestSchemaUnavailableException(e);
+      }
+      this.logger.warn(
+        'harvest_announcements unavailable (schema drift); transport will be created without harvest plan link',
+      );
+      return null;
+    }
+  }
+
+  private async resolveHarvestAnnouncementIdForCreateInner(
     growerId: string,
     batch: { id: string; parcelId: string | null } | null,
     dto: CreateMissionDto,
@@ -443,6 +496,9 @@ export class MissionsService {
           this.logger.error(
             `DB schema out of date (${code}): ${msg} meta=${JSON.stringify(meta ?? e)}`,
           );
+          if (MissionsService.isHarvestAnnouncementsSchemaError(e)) {
+            throw MissionsService.harvestSchemaUnavailableException(e);
+          }
           const target =
             meta?.column != null
               ? String(meta.column)

@@ -73,6 +73,13 @@ export default function EntryForm() {
     referenceRefreshing,
     refreshReferenceData,
     localHistory,
+    pendingFieldCount,
+    legacyFieldCount,
+    queueSyncBusy,
+    syncQueueNow,
+    discardQueueItem,
+    discardAllUnsentLocal,
+    purgeLegacyOnly,
   } = useFieldLogData();
 
   const langSr = !!i18n.language?.startsWith('sr');
@@ -89,10 +96,12 @@ export default function EntryForm() {
   };
 
   const historyStatusStyle = (
-    status: 'pending' | 'syncing' | 'synced' | 'error',
+    status: 'pending' | 'syncing' | 'synced' | 'error' | 'unrecoverable',
   ): { bg: string; color: string } => {
     if (status === 'synced') return { bg: `${theme.colors.success}18`, color: theme.colors.success };
-    if (status === 'error') return { bg: theme.colors.errorLight, color: theme.colors.error };
+    if (status === 'unrecoverable' || status === 'error') {
+      return { bg: theme.colors.errorLight, color: theme.colors.error };
+    }
     if (status === 'syncing') return { bg: `${theme.colors.primary}14`, color: theme.colors.primary };
     return { bg: `${theme.colors.warning}20`, color: theme.colors.warning };
   };
@@ -175,6 +184,99 @@ export default function EntryForm() {
           {t('producer.fieldLogForm.introLead')}
         </Text>
 
+        {legacyFieldCount > 0 ? (
+          <View
+            style={{
+              marginBottom: theme.spacing.md,
+              padding: theme.spacing.md,
+              borderRadius: theme.borderRadius.md,
+              borderWidth: 1,
+              borderColor: theme.colors.error,
+              backgroundColor: theme.colors.errorLight,
+            }}
+          >
+            <Text style={{ fontSize: 14, color: theme.colors.error, lineHeight: 20, marginBottom: 10 }}>
+              {t('producer.sync.legacyBanner', { count: legacyFieldCount })}
+            </Text>
+            <TouchableOpacity
+              onPress={purgeLegacyOnly}
+              activeOpacity={0.85}
+              style={{
+                backgroundColor: theme.colors.error,
+                borderRadius: theme.borderRadius.lg,
+                minHeight: 48,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>
+                {t('producer.sync.purgeLegacyOnly')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+
+        {pendingFieldCount > 0 ? (
+          <View
+            style={{
+              marginBottom: theme.spacing.md,
+              padding: theme.spacing.md,
+              borderRadius: theme.borderRadius.md,
+              borderWidth: 1,
+              borderColor: '#b45309',
+              backgroundColor: 'rgba(180, 83, 9, 0.08)',
+            }}
+          >
+            <Text style={{ fontSize: 14, color: theme.colors.text.primary, lineHeight: 20, marginBottom: 10 }}>
+              {t('producer.fieldLogForm.queueBanner', { count: pendingFieldCount })}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <TouchableOpacity
+                onPress={() => void syncQueueNow()}
+                disabled={queueSyncBusy}
+                activeOpacity={0.85}
+                style={{
+                  flex: 1,
+                  backgroundColor: theme.colors.primary,
+                  borderRadius: theme.borderRadius.lg,
+                  minHeight: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: queueSyncBusy ? 0.65 : 1,
+                }}
+              >
+                {queueSyncBusy ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>
+                    {t('producer.fieldLogForm.sendQueueNow')}
+                  </Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={discardAllUnsentLocal}
+                disabled={queueSyncBusy}
+                activeOpacity={0.85}
+                style={{
+                  flex: 1,
+                  borderRadius: theme.borderRadius.lg,
+                  minHeight: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 1,
+                  borderColor: theme.colors.error,
+                  backgroundColor: '#fff',
+                  opacity: queueSyncBusy ? 0.65 : 1,
+                }}
+              >
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.error, textAlign: 'center' }}>
+                  {t('producer.fieldLogForm.discardAllConfirm')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+
         <View style={{ marginBottom: theme.spacing.lg }}>
           <Text
             style={{
@@ -251,6 +353,17 @@ export default function EntryForm() {
                   ) : null}
                   {h.status === 'error' && h.error ? (
                     <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: 6, lineHeight: 17 }}>{h.error}</Text>
+                  ) : null}
+                  {(h.status === 'pending' || h.status === 'error' || h.status === 'unrecoverable') ? (
+                    <TouchableOpacity
+                      onPress={() => discardQueueItem(h.id)}
+                      style={{ marginTop: 8, alignSelf: 'flex-start' }}
+                      hitSlop={{ top: 8, bottom: 8, left: 4, right: 8 }}
+                    >
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.error }}>
+                        {t('producer.fieldLogForm.discardQueueConfirm')}
+                      </Text>
+                    </TouchableOpacity>
                   ) : null}
                 </View>
               );

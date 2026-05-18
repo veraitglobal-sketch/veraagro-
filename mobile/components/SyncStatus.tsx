@@ -15,8 +15,11 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>({
     lastSyncTime: null,
     pendingCount: 0,
+    legacyFieldLogCount: 0,
+    breakdown: { fieldLog: 0, products: 0, costs: 0, certificatePhotos: 0, harvestPlans: 0 },
     syncing: false,
     lastError: null,
+    firstQueueError: null,
   });
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
       } catch (error) {
         // Ignore
       }
-    }, 30000); // Try to sync every 30 seconds
+    }, 90_000); // Avoid API rate limits (429) from tight sync loops
     
     return () => {
       clearInterval(interval);

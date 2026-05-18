@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { CreateHarvestPlanBody } from './api';
+import i18n from '../i18n/config';
+import { tString } from './i18n-strings';
 
 /** Optional material kind captured with field log (offline row). */
 export type FieldLogMaterialKind = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
@@ -55,8 +57,36 @@ export interface PendingFieldEntry {
     accuracy?: number;
   };
   timestamp: string;
-  status: 'pending' | 'syncing' | 'synced' | 'error';
+  status: 'pending' | 'syncing' | 'synced' | 'error' | 'unrecoverable';
   error?: string;
+}
+
+/** Saved before parcel + crop plan were required — cannot be uploaded; delete locally only. */
+export function isLegacyFieldLogEntry(entry: Pick<PendingFieldEntry, 'parcelId' | 'harvestAnnouncementId'>): boolean {
+  return !entry.parcelId?.trim() || !entry.harvestAnnouncementId?.trim();
+}
+
+/** Stored error text from old app builds (EN/SR) — retry will never succeed. */
+export function isLegacyFieldLogErrorMessage(error: string | undefined): boolean {
+  if (!error?.trim()) return false;
+  const m = error.toLowerCase();
+  return (
+    m.includes('parcel and crop plan') ||
+    m.includes('parcele i plana') ||
+    m.includes('parcele i plan useva') ||
+    m.includes('saved before parcel') ||
+    m.includes('sačuvan pre nego') ||
+    m.includes('sačuvan bez parcele') ||
+    m.includes('delete the old queue item')
+  );
+}
+
+export function shouldRemoveLegacyFieldLogRow(entry: PendingFieldEntry): boolean {
+  return (
+    entry.status === 'unrecoverable' ||
+    isLegacyFieldLogEntry(entry) ||
+    (entry.status === 'error' && isLegacyFieldLogErrorMessage(entry.error))
+  );
 }
 
 /** Lightweight local history for Field log (survives sync success; device-only). */
@@ -75,7 +105,7 @@ export interface FieldLogHistoryItem {
   materialQuantity?: string;
   materialInputMethod?: FieldLogMaterialInputMethod;
   catalogMaterialName?: string;
-  status: 'pending' | 'syncing' | 'synced' | 'error';
+  status: 'pending' | 'syncing' | 'synced' | 'error' | 'unrecoverable';
   error?: string;
 }
 
@@ -90,7 +120,7 @@ export interface PendingProduct {
   unit: string;
   parcelOrEstate?: string;
   timestamp: string;
-  status: 'pending' | 'syncing' | 'synced' | 'error';
+  status: 'pending' | 'syncing' | 'synced' | 'error' | 'skipped';
   error?: string;
 }
 
@@ -103,7 +133,7 @@ export interface PendingCost {
   amount: number;
   currency?: string;
   timestamp: string;
-  status: 'pending' | 'syncing' | 'synced' | 'error';
+  status: 'pending' | 'syncing' | 'synced' | 'error' | 'skipped';
   error?: string;
 }
 
@@ -114,7 +144,7 @@ export interface PendingCertificatePhoto {
   certificateTitle: string;
   photoUri: string;
   timestamp: string;
-  status: 'pending' | 'syncing' | 'synced' | 'error';
+  status: 'pending' | 'syncing' | 'synced' | 'error' | 'skipped';
   error?: string;
 }
 
@@ -171,14 +201,78 @@ export const offlineStorage = {
       const data = await AsyncStorage.getItem(PENDING_ENTRIES_KEY);
       if (!data) return [];
       const parsed: PendingFieldEntry[] = JSON.parse(data);
-      return parsed.map((e) => ({
-        ...e,
-        activityType: normalizeFieldActivity(String(e.activityType)),
-      }));
+      let dirty = false;
+      const next = parsed.map((e) => {
+        const activityType = normalizeFieldActivity(String(e.activityType));
+        const row = { ...e, activityType };
+        if (
+          isLegacyFieldLogEntry(row) &&
+          row.status !== 'unrecoverable' &&
+          row.status !== 'synced'
+        ) {
+          dirty = true;
+          return {
+            ...row,
+            status: 'unrecoverable' as const,
+            error:
+              row.error?.trim() ||
+              tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan'),
+          };
+        }
+        return row;
+      });
+      if (dirty) {
+        await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(next));
+        for (const row of next) {
+          if (row.status === 'unrecoverable') {
+            await this.patchFieldLogHistory(row.id, {
+              status: 'unrecoverable',
+              error: row.error,
+            });
+          }
+        }
+      }
+      return next;
     } catch (error) {
       console.error('Error getting pending entries:', error);
       return [];
     }
+  },
+
+  /** Rows that can never upload (missing parcel/plan) — stop auto-sync loops. */
+  async countLegacyFieldLogEntries(): Promise<number> {
+    const entries = await this.getPendingEntries();
+    return entries.filter((e) => shouldRemoveLegacyFieldLogRow(e)).length;
+  },
+
+  /** Remove only legacy/unrecoverable field-log rows from this device. */
+  /**
+   * Drop every local field-log row that can never upload (missing parcel/plan or known legacy error).
+   * Called on app start and before sync to stop infinite WARN / 429 loops.
+   */
+  async reconcileLegacyFieldLogQueue(): Promise<number> {
+    const entries = await this.getPendingEntries();
+    const legacy = entries.filter((e) => shouldRemoveLegacyFieldLogRow(e));
+    if (legacy.length === 0) return 0;
+    for (const e of legacy) {
+      await this.discardFieldLogQueueItem(e.id);
+    }
+    return legacy.length;
+  },
+
+  async purgeLegacyFieldLogLocal(): Promise<number> {
+    const entries = await this.getPendingEntries();
+    const legacyIds = new Set(entries.filter((e) => shouldRemoveLegacyFieldLogRow(e)).map((e) => e.id));
+    if (legacyIds.size === 0) return 0;
+
+    const kept = entries.filter((e) => !legacyIds.has(e.id));
+    await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(kept));
+
+    const history = await this.getFieldLogHistory();
+    const historyNext = history.filter((h) => !legacyIds.has(h.id));
+    await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(historyNext));
+
+    return legacyIds.size;
   },
 
   // Save pending entry
@@ -211,6 +305,88 @@ export const offlineStorage = {
       console.error('Error removing entry:', error);
       throw error;
     }
+  },
+
+  /** Drop a queued field-log row and hide it from the pending upload count. */
+  async discardFieldLogQueueItem(id: string): Promise<void> {
+    await this.removeEntry(id);
+    try {
+      const list = await this.getFieldLogHistory();
+      const next = list.filter((h) => h.id !== id);
+      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
+    } catch (e) {
+      console.error('Error discarding field log history row:', e);
+    }
+  },
+
+  /**
+   * Remove every unsent field-log row from this phone (queue + local history except “sent”).
+   * Use when server will never accept old rows (no parcel/plan, wrong GPS, etc.).
+   */
+  async purgeUnsentFieldLogLocal(): Promise<{ queueRemoved: number; historyRemoved: number }> {
+    const entries = await this.getPendingEntries();
+    const queueRemoved = entries.length;
+    await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify([]));
+
+    const history = await this.getFieldLogHistory();
+    const kept = history.filter((h) => h.status === 'synced');
+    const historyRemoved = history.length - kept.length;
+    await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(kept));
+
+    return { queueRemoved, historyRemoved };
+  },
+
+  async purgeUnsentFieldLogLocalIncludingLegacy(): Promise<number> {
+    const legacy = await this.purgeLegacyFieldLogLocal();
+    const { queueRemoved, historyRemoved } = await this.purgeUnsentFieldLogLocal();
+    return legacy + queueRemoved + historyRemoved;
+  },
+
+  /**
+   * Clear all local upload queues (field diary, harvest plans, products, costs, cert photos).
+   * Does not touch synced server data — only AsyncStorage on this device.
+   */
+  async purgeAllUnsentLocalQueues(): Promise<{
+    fieldLogQueue: number;
+    fieldLogHistory: number;
+    harvestPlans: number;
+    products: number;
+    costs: number;
+    certificatePhotos: number;
+  }> {
+    const unsent = (status: string) =>
+      status === 'pending' || status === 'error' || status === 'syncing' || status === 'skipped';
+
+    const field = await this.purgeUnsentFieldLogLocal();
+
+    const harvests = await this.getPendingHarvestPlans();
+    const harvestKept = harvests.filter((h) => !unsent(h.status));
+    const harvestPlans = harvests.length - harvestKept.length;
+    await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(harvestKept));
+
+    const products = await this.getPendingProducts();
+    const productsKept = products.filter((p) => !unsent(p.status));
+    const productsRemoved = products.length - productsKept.length;
+    await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(productsKept));
+
+    const costs = await this.getPendingCosts();
+    const costsKept = costs.filter((c) => !unsent(c.status));
+    const costsRemoved = costs.length - costsKept.length;
+    await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(costsKept));
+
+    const certs = await this.getPendingCertificatePhotos();
+    const certsKept = certs.filter((c) => !unsent(c.status));
+    const certificatePhotos = certs.length - certsKept.length;
+    await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsKept));
+
+    return {
+      fieldLogQueue: field.queueRemoved,
+      fieldLogHistory: field.historyRemoved,
+      harvestPlans,
+      products: productsRemoved,
+      costs: costsRemoved,
+      certificatePhotos,
+    };
   },
 
   async getFieldLogHistory(): Promise<FieldLogHistoryItem[]> {

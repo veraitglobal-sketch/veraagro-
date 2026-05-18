@@ -1,45 +1,46 @@
-import React from 'react';
-import { View, ScrollView, RefreshControl, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, RefreshControl, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../../hooks/useAuth';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useDashboardData } from './useDashboardData';
 import DashboardHeader from './DashboardHeader';
 import NextStepCard from './NextStepCard';
 import SyncQueueStrip from './SyncQueueStrip';
-import DashboardHomeFinanceTeaser from './DashboardHomeFinanceTeaser';
 import { computeNextStep } from './computeNextStep';
 
+/**
+ * Home — single scroll, manual top inset only (iOS automatic scroll insets
+ * below a fixed header caused a large empty band above cards).
+ */
 export default function DashboardScreen() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
   const data = useDashboardData(user);
 
   const farmName = data.estates[0]?.name || t('producer.dashboard.defaultFarmName');
-
   const estateCount = data.estates.length;
   const ps = data.parcelSteps;
 
-  const nextStep =
-    ps.loaded
-      ? computeNextStep({
-          estateCount,
-          totalParcels: ps.total,
-          pendingApproval: ps.pending,
-          approved: ps.approved,
-          activeMissions: data.activeMissions.length,
-          offlinePending: data.offlinePending,
-          batchesReadyForTransport: data.batchesReadyForTransport,
-        })
-      : null;
+  const hideDuplicateFieldLogCta = data.offlinePending > 0 && ps.loaded && computeNextStep({
+    estateCount,
+    totalParcels: ps.total,
+    pendingApproval: ps.pending,
+    approved: ps.approved,
+    activeMissions: data.activeMissions.length,
+    offlinePending: data.offlinePending,
+    batchesReadyForTransport: data.batchesReadyForTransport,
+  })?.kind === 'log_work';
 
-  /** Next step card already has “Open field log” — avoid repeating it in the sync strip. */
-  const hideDuplicateFieldLogCta = data.offlinePending > 0 && nextStep?.kind === 'log_work';
+  const showSyncStrip =
+    data.offlinePending > 0 ||
+    data.legacyFieldLogPending > 0 ||
+    Boolean(data.offlineSyncLastError);
 
   const hasAlerts =
     data.unreadCount > 0 || data.activeMissions.length > 0 || data.activeBatches.length > 0;
@@ -61,149 +62,87 @@ export default function DashboardScreen() {
           .join(' · ')
       : '';
 
+  const statusLine =
+    ps.loaded && ps.total > 0
+      ? ps.pending > 0
+        ? t('producer.dashboard.homeStatusPending', {
+            approved: ps.approved,
+            total: ps.total,
+            pending: ps.pending,
+          })
+        : t('producer.dashboard.homeStatus', { approved: ps.approved, total: ps.total })
+      : ps.loaded && estateCount > 0
+        ? t('producer.dashboard.homeStatusNoParcels')
+        : null;
+
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      style={styles.screen}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { paddingBottom: Math.max(p.bottomInset, 12) + 8 },
+      ]}
+      contentInsetAdjustmentBehavior="never"
+      automaticallyAdjustContentInsets={false}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
       refreshControl={
         <RefreshControl
           refreshing={data.refreshing}
-          onRefresh={data.onRefresh}
-          tintColor={theme.colors.text.secondary}
-          colors={[theme.colors.primary]}
+          onRefresh={() => void data.onRefresh()}
+          tintColor={enterpriseColors.primary}
+          colors={[enterpriseColors.primary]}
         />
       }
     >
       <DashboardHeader
         farmName={farmName}
         partnerCode={user?.partnerCode}
-        connected={data.connected}
+        statusLine={statusLine}
+        refreshing={data.refreshing}
+        style={{ paddingTop: insets.top + 2 }}
       />
+
       <View
-        style={{
-          paddingTop: theme.spacing.sm,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
-        }}
+        style={[
+          styles.main,
+          { paddingLeft: p.screenPaddingLeft, paddingRight: p.screenPaddingRight },
+        ]}
       >
-        <SyncQueueStrip
-          pendingCount={data.offlinePending}
-          syncing={data.offlineSyncing}
-          lastError={data.offlineSyncLastError}
-          onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
-          onSyncNow={() => void data.onRefresh()}
-          hideOpenLogCta={hideDuplicateFieldLogCta}
-          compact
-        />
-        <NextStepCard
-          ready={ps.loaded}
-          estateCount={estateCount}
-          totalParcels={ps.total}
-          pendingApproval={ps.pending}
-          approved={ps.approved}
-          activeMissions={data.activeMissions.length}
-          offlinePending={data.offlinePending}
-          batchesReadyForTransport={data.batchesReadyForTransport}
-          onAddField={() => router.push('/(producer)/estates/new')}
-          onAddParcel={() => router.push('/(producer)/estates')}
-          onMissions={() => router.push('/(producer)/missions')}
-          onRequestTransport={() => router.push('/(producer)/missions-create')}
-          onSteps={() => router.push('/(producer)/(tabs)/steps')}
-          onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
-        />
-        <DashboardHomeFinanceTeaser
-          data={data.ordersFinancial}
-          onPress={() => router.push('/(producer)/(tabs)/wallet')}
-        />
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: theme.spacing.sm,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {(
-            [
-              { key: 'field', label: t('producer.tabs.field'), path: '/(producer)/(tabs)/field' as const },
-              { key: 'chain', label: t('producer.tabs.chain'), path: '/(producer)/(tabs)/chain' as const },
-              { key: 'sup', label: t('producer.tabs.supplies'), path: '/(producer)/(tabs)/supplies' as const },
-            ] as const
-          ).map((item) => (
-            <TouchableOpacity
-              key={item.key}
-              onPress={() => router.push(item.path)}
-              activeOpacity={0.75}
-              style={{
-                flexGrow: 1,
-                minWidth: '28%',
-                backgroundColor: theme.colors.surfaceElevated,
-                borderRadius: theme.borderRadius.md,
-                paddingVertical: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.sm,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.primary, textAlign: 'center' }}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <TouchableOpacity
-          onPress={() => router.push('/(producer)/(tabs)/steps')}
-          activeOpacity={0.75}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: theme.colors.surfaceElevated,
-            borderRadius: theme.borderRadius.md,
-            paddingVertical: theme.spacing.sm,
-            paddingHorizontal: theme.spacing.md,
-            marginBottom: theme.spacing.sm,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            minHeight: 48,
-          }}
-        >
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
-              {t('producer.dashboard.seasonGuideTitle')}
-            </Text>
-            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }} numberOfLines={2}>
-              {t('producer.dashboard.seasonGuideSubtitle')}
-            </Text>
-          </View>
-          <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push('/(producer)/education')}
-          activeOpacity={0.75}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: 'rgba(45, 90, 39, 0.06)',
-            borderRadius: theme.borderRadius.md,
-            paddingVertical: theme.spacing.sm,
-            paddingHorizontal: theme.spacing.md,
-            marginBottom: theme.spacing.sm,
-            borderWidth: 1,
-            borderColor: 'rgba(45, 90, 39, 0.2)',
-            minHeight: 48,
-          }}
-        >
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }}>
-              {t('producer.dashboard.educationBannerTitle')}
-            </Text>
-            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }} numberOfLines={2}>
-              {t('producer.dashboard.educationBannerSubtitle')}
-            </Text>
-          </View>
-          <ChevronRight size={22} color={theme.colors.primary} strokeWidth={2} style={{ marginLeft: 4 }} />
-        </TouchableOpacity>
+        {showSyncStrip ? (
+          <SyncQueueStrip
+            pendingCount={data.offlinePending}
+            legacyFieldLogCount={data.legacyFieldLogPending}
+            syncing={data.offlineSyncing}
+            lastError={data.offlineSyncLastError}
+            onOpenFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
+            onSyncNow={() => void data.onRefresh()}
+            onClearLocalQueue={data.onClearLocalQueue}
+            onPurgeLegacyFieldLog={data.onPurgeLegacyFieldLog}
+            hideOpenLogCta={hideDuplicateFieldLogCta}
+            compact
+          />
+        ) : null}
+
+        {ps.loaded ? (
+          <NextStepCard
+            ready
+            estateCount={estateCount}
+            totalParcels={ps.total}
+            pendingApproval={ps.pending}
+            approved={ps.approved}
+            activeMissions={data.activeMissions.length}
+            offlinePending={data.offlinePending}
+            batchesReadyForTransport={data.batchesReadyForTransport}
+            onAddField={() => router.push('/(producer)/estates/new')}
+            onAddParcel={() => router.push('/(producer)/estates')}
+            onMissions={() => router.push('/(producer)/missions')}
+            onRequestTransport={() => router.push('/(producer)/missions-create')}
+            onSteps={() => router.push('/(producer)/(tabs)/steps')}
+            onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
+          />
+        ) : null}
+
         {hasAlerts ? (
           <TouchableOpacity
             onPress={() => {
@@ -212,29 +151,49 @@ export default function DashboardScreen() {
               else router.push('/(producer)/batches');
             }}
             activeOpacity={0.75}
-            style={{
-              backgroundColor: theme.colors.primaryLight,
-              borderRadius: theme.borderRadius.md,
-              paddingVertical: theme.spacing.sm,
-              paddingHorizontal: theme.spacing.md,
-              marginBottom: theme.spacing.sm,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              minHeight: 0,
-            }}
+            style={styles.alertCard}
           >
-            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, marginBottom: 4 }}>
-              {t('producer.dashboard.farmer.alertsTitle')}
-            </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, lineHeight: 18 }}>
+            <Text style={styles.alertText} numberOfLines={2}>
               {alertLine}
             </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.primary, marginTop: 6, fontWeight: '600' }}>
-              {t('producer.dashboard.farmer.alertsOpen')}
-            </Text>
+            <Text style={styles.alertLink}>{t('producer.dashboard.farmer.alertsOpen')}</Text>
           </TouchableOpacity>
         ) : null}
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: enterpriseColors.canvas,
+  },
+  scrollContent: {
+    flexGrow: 0,
+  },
+  main: {
+    gap: 8,
+    paddingTop: 4,
+  },
+  alertCard: {
+    backgroundColor: enterpriseColors.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  alertText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    lineHeight: 18,
+  },
+  alertLink: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+    marginTop: 6,
+  },
+});

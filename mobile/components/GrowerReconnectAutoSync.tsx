@@ -6,6 +6,8 @@ import { syncService } from '../lib/sync-service';
  * When connectivity returns after being offline, flush the grower offline queue once
  * (respects AsyncStorage `settings_auto_sync === 'false'` inside syncService.startAutoSync).
  */
+let lastReconnectSyncAt = 0;
+
 export function GrowerReconnectAutoSync() {
   const { isOnline, isChecking } = useNetwork();
   const wasOfflineRef = useRef(false);
@@ -22,6 +24,9 @@ export function GrowerReconnectAutoSync() {
 
     wasOfflineRef.current = false;
     const id = setTimeout(() => {
+      const now = Date.now();
+      if (now - lastReconnectSyncAt < 45_000) return;
+      lastReconnectSyncAt = now;
       void syncService.startAutoSync();
     }, 600);
 

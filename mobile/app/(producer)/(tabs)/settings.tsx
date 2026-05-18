@@ -102,6 +102,33 @@ export default function SettingsScreen() {
     }
   }, [t]);
 
+  const clearLocalUploadQueue = useCallback(() => {
+    Alert.alert(
+      t('producer.sync.clearLocalQueueTitle'),
+      t('producer.sync.clearLocalQueueBody'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.sync.clearLocalQueue'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              try {
+                const { totalRemoved } = await syncService.purgeAllLocalQueues();
+                Alert.alert(
+                  t('alerts.success'),
+                  t('producer.sync.clearLocalQueueDone', { count: totalRemoved }),
+                );
+              } catch {
+                Alert.alert(t('error'), t('producer.settings.connectionFail'));
+              }
+            })();
+          },
+        },
+      ],
+    );
+  }, [t]);
+
   const retryOfflineSync = useCallback(async () => {
     setSyncRetryBusy(true);
     try {
@@ -111,6 +138,7 @@ export default function SettingsScreen() {
         return;
       }
       const result = await syncService.syncAll();
+      const after = await syncService.getSyncStatus();
       const success =
         result.entries.success +
         result.products.success +
@@ -123,9 +151,23 @@ export default function SettingsScreen() {
         result.costs.failed +
         result.certificatePhotos.failed +
         result.harvestPlans.failed;
+      const b = before.breakdown ?? after.breakdown;
+      const errorLine =
+        after.firstQueueError ??
+        after.lastError ??
+        (failed > 0 ? t('producer.sync.itemsNotSentHint') : t('producer.sync.allSent'));
       Alert.alert(
         t('producer.settings.connectionTitle'),
-        t('producer.settings.retrySyncDone', { success, failed }),
+        failed > 0 || after.pendingCount > 0
+          ? t('producer.settings.retrySyncDetail', {
+              fieldLog: b.fieldLog,
+              harvest: b.harvestPlans,
+              products: b.products,
+              costs: b.costs,
+              certs: b.certificatePhotos,
+              errorLine,
+            })
+          : t('producer.settings.retrySyncDone', { success, failed }),
       );
     } catch {
       Alert.alert(t('error'), t('producer.settings.connectionFail'));
@@ -256,11 +298,27 @@ export default function SettingsScreen() {
                 borderRadius: theme.borderRadius.md,
                 borderWidth: 0.5,
                 borderColor: theme.colors.primary,
+                marginBottom: theme.spacing.sm,
                 opacity: syncRetryBusy ? 0.6 : 1,
               }}
             >
               <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, textAlign: 'center' }}>
                 {t('producer.settings.retrySyncNow')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={clearLocalUploadQueue}
+              activeOpacity={0.7}
+              style={{
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                borderRadius: theme.borderRadius.md,
+                borderWidth: 0.5,
+                borderColor: theme.colors.error,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.error, textAlign: 'center' }}>
+                {t('producer.sync.clearLocalQueue')}
               </Text>
             </TouchableOpacity>
           </View>

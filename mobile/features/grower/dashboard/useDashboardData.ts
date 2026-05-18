@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
+import { Alert, AppState, AppStateStatus } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   estatesAPI,
@@ -27,6 +28,7 @@ export interface FinancialData {
 }
 
 export function useDashboardData(user: { id?: string; trustScore?: number; partnerCode?: string } | null) {
+  const { t } = useTranslation();
   const { connected, notifications: socketNotifications } = useSocket();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [trustScore, setTrustScore] = useState(75);
@@ -45,6 +47,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     approved: number;
   }>({ loaded: false, total: 0, pending: 0, approved: 0 });
   const [offlinePending, setOfflinePending] = useState(0);
+  const [legacyFieldLogPending, setLegacyFieldLogPending] = useState(0);
   const [offlineSyncing, setOfflineSyncing] = useState(false);
   const [offlineSyncLastError, setOfflineSyncLastError] = useState<string | null>(null);
   const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
@@ -58,7 +61,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     syncDebounceRef.current = setTimeout(async () => {
       syncDebounceRef.current = null;
       const now = Date.now();
-      if (now - lastSyncTriggerRef.current < 1500) return;
+      if (now - lastSyncTriggerRef.current < 45_000) return;
       lastSyncTriggerRef.current = now;
       try {
         await syncService.startAutoSync();
@@ -77,7 +80,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
           // ignore
         }
       }
-    }, 500);
+    }, 2000);
   }, []);
 
   const loadEstates = useCallback(async () => {
@@ -120,10 +123,12 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     try {
       const st = await syncService.getSyncStatus();
       setOfflinePending(st.pendingCount || 0);
+      setLegacyFieldLogPending(st.legacyFieldLogCount || 0);
       setOfflineSyncing(Boolean(st.syncing));
       setOfflineSyncLastError(st.lastError ?? null);
     } catch {
       setOfflinePending(0);
+      setLegacyFieldLogPending(0);
       setOfflineSyncing(false);
       setOfflineSyncLastError(null);
     }
@@ -308,6 +313,59 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }
   }, [loadData, loadOfflinePending]);
 
+  const onPurgeLegacyFieldLog = useCallback(() => {
+    if (legacyFieldLogPending === 0) return;
+    Alert.alert(
+      t('producer.fieldLogForm.discardAllTitle'),
+      t('producer.sync.legacyBanner', { count: legacyFieldLogPending }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.sync.purgeLegacyOnly'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              const n = await syncService.purgeLegacyFieldLogOnly();
+              await loadOfflinePending();
+              Alert.alert(
+                t('alerts.success'),
+                t('producer.sync.clearLocalQueueDone', { count: n }),
+              );
+            })();
+          },
+        },
+      ],
+    );
+  }, [legacyFieldLogPending, t, loadOfflinePending]);
+
+  const onClearLocalQueue = useCallback(() => {
+    if (offlinePending === 0 && legacyFieldLogPending === 0 && !offlineSyncLastError) return;
+    Alert.alert(
+      t('producer.sync.clearLocalQueueTitle'),
+      t('producer.sync.clearLocalQueueBody'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('producer.sync.clearLocalQueue'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              const { totalRemoved } = await syncService.purgeAllLocalQueues();
+              setOfflinePending(0);
+              setLegacyFieldLogPending(0);
+              setOfflineSyncLastError(null);
+              setOfflineSyncing(false);
+              Alert.alert(
+                t('alerts.success'),
+                t('producer.sync.clearLocalQueueDone', { count: totalRemoved }),
+              );
+            })();
+          },
+        },
+      ],
+    );
+  }, [offlinePending, offlineSyncLastError, t]);
+
   return {
     connected,
     estates,
@@ -321,10 +379,13 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     ordersFinancial,
     parcelSteps,
     offlinePending,
+    legacyFieldLogPending,
     offlineSyncing,
     offlineSyncLastError,
     refreshing,
     onRefresh,
+    onClearLocalQueue,
+    onPurgeLegacyFieldLog,
     loadData,
     loadLiveData,
     batchesReadyForTransport,

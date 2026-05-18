@@ -44,6 +44,7 @@ Sve migracije **posle** squash-a su **małe, imenovane** i vidi se tačno šta s
 | `20260703120000_bio_white_list_material_type` | Bio whitelist — tip materijala |
 | `20260704120000_align_logistics_handover_status_column` | Usklađivanje kolone statusa handover-a |
 | `20260705120000_deliveries_buyer_pickup_confirmed_at` | Dostave — potvrda pickup-a kupca |
+| `20260718120000_ensure_harvest_announcements_table` | Idempotentno kreira `harvest_announcements` + missions FK ako nedostaju |
 
 ## Kako proveriti šta je zaista primenjeno na serveru
 
