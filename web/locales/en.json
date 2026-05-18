@@ -739,6 +739,7 @@
       "qualityEntry": "Quality",
       "compliancePhotos": "Compliance (photos)",
       "education": "Education",
+      "appGuide": "App guide",
       "confidential": "Partner plans (protected)",
       "requestTransport": "Request transport",
       "missionTracker": "Transport missions",
@@ -759,6 +760,9 @@
       "pageTitle": "How to use the app",
       "pageDescription": "Step-by-step through the Bio Vera grower mobile app — with phone screenshots.",
       "hint": "Screenshots are added to the project folder; until a file is present you will see the expected filename.",
+      "hintLive": "Below are phone screenshots and short explanations for each step. For a PDF: use Print → Save as PDF.",
+      "pdfHowTo": "PDF: print this page and choose Save as PDF in your browser.",
+      "openPublicLink": "Open public link",
       "tocTitle": "Contents",
       "imagePending": "Add this screenshot to the folder (see README).",
       "printPdf": "Print / save as PDF",
@@ -3383,9 +3387,9 @@
       {
         "id": "mobileApp",
         "title": "Mobile app guide",
-        "description": "Step-by-step guide for using the Bio Vera mobile application for field management.",
-        "type": "PDF",
-        "size": "3.1 MB"
+        "description": "Step-by-step with phone screenshots — sign-in, field tab, lots, suppliers, wallet.",
+        "type": "Web",
+        "size": "9 steps"
       },
       {
         "id": "payment",
@@ -3405,6 +3409,8 @@
     "download": "Download",
     "downloading": "Downloading…",
     "downloadFailed": "Failed to download resource. Please try again.",
+    "viewGuideOnline": "Open guide (screenshots)",
+    "backToGrowers": "Back to growers",
     "comingSoon": "Coming soon",
     "applicationTitle": "Producer application",
     "applicationLead": "Apply to the Vera grower programme",

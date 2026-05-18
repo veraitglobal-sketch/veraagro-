@@ -55,6 +55,7 @@ export function buildGrowerNavItems(t: TFunction, locale: SiteLocale): GrowerNav
     { href: p('/grower/quality-entry'), label: t('grower.nav.qualityEntry'), icon: <CheckCircle className="w-5 h-5" /> },
     { href: p('/grower/compliance-photos'), label: t('grower.nav.compliancePhotos'), icon: <Camera className="w-5 h-5" /> },
     { href: p('/grower/education'), label: t('grower.nav.education'), icon: <GraduationCap className="w-5 h-5" /> },
+    { href: p('/grower/app-guide'), label: t('grower.nav.appGuide'), icon: <Smartphone className="w-5 h-5" /> },
     { href: p('/grower/confidential'), label: t('grower.nav.confidential'), icon: <Shield className="w-5 h-5" /> },
     { href: p('/grower/where-to-buy'), label: t('grower.nav.suppliersAndOrders'), icon: <ShoppingBag className="w-5 h-5" /> },
     { href: p('/grower/missions/create'), label: t('grower.nav.requestTransport'), icon: <Truck className="w-5 h-5" /> },

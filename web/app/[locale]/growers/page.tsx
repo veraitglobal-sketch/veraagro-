@@ -20,10 +20,12 @@ const DOWNLOAD_BY_ID: Record<string, () => Promise<void>> = {
   fieldManagement: growersAPI.downloadFieldManagementGuide,
   protocol: growersAPI.downloadProtocol,
   certification: growersAPI.downloadCertificationRequirements,
-  mobileApp: growersAPI.downloadMobileAppGuide,
   payment: growersAPI.downloadPaymentProcessGuide,
   quality: growersAPI.downloadQualityStandards,
 };
+
+/** Full screenshot guide lives on the web — not a separate PDF file yet. */
+const ONLINE_GUIDE_IDS = new Set(['mobileApp']);
 
 const RESOURCE_ICONS: React.ReactNode[] = [
   <svg key="i0" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -406,7 +408,17 @@ export default function GrowersPage() {
                         <span className="px-2 py-1 bg-gray-100 rounded">{resource.type}</span>
                         <span>{resource.size}</span>
                       </div>
-                      {DOWNLOAD_BY_ID[resource.id] ? (
+                      {ONLINE_GUIDE_IDS.has(resource.id) ? (
+                        <Link
+                          href={loc('/growers/mobile-app-guide')}
+                          className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1"
+                        >
+                          {t('growersPage.viewGuideOnline')}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </Link>
+                      ) : DOWNLOAD_BY_ID[resource.id] ? (
                         <button
                           type="button"
                           className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"

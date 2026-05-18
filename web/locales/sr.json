@@ -739,6 +739,7 @@
       "qualityEntry": "Kvalitet",
       "compliancePhotos": "Usklađenost (fotografije)",
       "education": "Edukacija",
+      "appGuide": "Vodič za aplikaciju",
       "confidential": "Partnerski planovi (zaštićeno)",
       "requestTransport": "Zahtev za transport",
       "missionTracker": "Lista transportnih misija",
@@ -759,6 +760,9 @@
       "pageTitle": "Kako koristiti aplikaciju",
       "pageDescription": "Korak po korak kroz mobilnu Bio Vera aplikaciju za proizvođače — sa snimcima ekrana telefona.",
       "hint": "Snimci ekrana se dodaju u folder projekta; dok slika nije tu, videćete naziv fajla koji treba uploadovati.",
+      "hintLive": "Ispod su snimci ekrana telefona i kratka objašnjenja za svaki korak. Za PDF: dugme „Štampaj” → „Sačuvaj kao PDF”.",
+      "pdfHowTo": "PDF: štampaj stranicu i izaberi „Sačuvaj kao PDF” u pregledaču.",
+      "openPublicLink": "Otvori javni link",
       "tocTitle": "Sadržaj",
       "imagePending": "Dodajte snimak u folder (vidi README).",
       "printPdf": "Štampaj / sačuvaj PDF",
@@ -3384,9 +3388,9 @@
       {
         "id": "mobileApp",
         "title": "Uputstvo za mobilnu aplikaciju",
-        "description": "Korak po korak: Bio Vera mobilna aplikacija za poljske zapise.",
-        "type": "PDF",
-        "size": "3,1 MB"
+        "description": "Korak po korak sa snimcima ekrana — prijava, polje, lotovi, snabdevači, novčanik.",
+        "type": "Web",
+        "size": "9 koraka"
       },
       {
         "id": "payment",
@@ -3406,6 +3410,8 @@
     "download": "Preuzmi",
     "downloading": "Preuzimanje…",
     "downloadFailed": "Preuzimanje nije uspelo. Pokušajte ponovo.",
+    "viewGuideOnline": "Otvori vodič (snimci ekrana)",
+    "backToGrowers": "Nazad na proizvođače",
     "comingSoon": "Uskoro",
     "applicationTitle": "Prijava proizvođača",
     "applicationLead": "Prijava za Vera program proizvodnje",

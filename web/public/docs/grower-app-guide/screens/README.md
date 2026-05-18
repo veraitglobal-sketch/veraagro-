@@ -12,17 +12,17 @@ Stranica: **`/grower/app-guide`**
 
 | Fajl | Ekran |
 |------|--------|
-| `1.PNG` | Welcome |
-| `2.PNG` | Registracija |
-| `3.PNG` | Prijava |
-| `4.PNG` | Početna (home) |
-| `5.PNG` | Polje (field tab) |
+| `1.png` | Welcome |
+| `2.png` | Registracija |
+| `3.png` | Prijava |
+| `4.png` | Početna (home) |
+| `5.png` | Polje (field tab) |
 | `6.jpeg` | Lotovi |
 | `7.jpeg` | Snabdevači |
 | `8.jpeg` | Profil |
 | `9.jpeg` | Novčanik |
 
-Ekstenzija mora tačno da odgovara (`.PNG` vs `.jpeg`). Na Linux/Vercel serveru velika/mala slova su bitna.
+Koristite **mala slova** u ekstenziji (`1.png` … `5.png`, `6.jpeg` … `9.jpeg`) — na Vercel/Linux serveru `1.PNG` i `1.png` nisu isti fajl.
 
 ## PDF
 
