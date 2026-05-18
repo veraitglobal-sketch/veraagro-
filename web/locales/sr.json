@@ -934,6 +934,24 @@
         "suppliers": {
           "title": "Snabdevači",
           "lead": "Inputi (semena, ambalaža) od partnera na mapi.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj deo aplikacije",
+              "body": "Ovde naručujete odobrene inpute (semena, ambalaža, batch ID) od Vera partnera na mapi. Porudžbina u aplikaciji povezuje se sa kasnijim terenskim unosom i tragom."
+            },
+            {
+              "heading": "Mapa snabdevača",
+              "body": "Prikaz partnera u blizini. Izaberite snabdevača, pogledajte ponudu i pokrenite porudžbinu. Koristite samo proizvode iz programa — van liste rizikujete blokadu unosa."
+            },
+            {
+              "heading": "Tab „Porudžbine”",
+              "body": "Pratite status svake porudžbine: naručeno, u pripremi, poslato, primljeno na farmi. Kada robu primite, potvrdite prijem u aplikaciji — to zatvara krug za audit."
+            },
+            {
+              "heading": "Tab „Poruke”",
+              "body": "Chat sa snabdevačem za pitanja o rokovima, dostavi ili šiframa proizvoda. Poruke su odvojene od liste porudžbina — porudžbinu ne otvarate preko chata."
+            }
+          ],
           "b1": "Mapa snabdevača — pronađite partnera u blizini.",
           "b2": "Porudžbine — tab Porudžbine (status, prijem na farmi).",
           "b3": "Poruke — tab Poruke (chat sa snabdevačem, odvojeno od porudžbine)."

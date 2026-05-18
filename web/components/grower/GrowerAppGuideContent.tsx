@@ -41,7 +41,7 @@ export function GrowerAppGuideContent({ toolbar, footerExtra }: Props) {
         </ol>
       </nav>
 
-      <div className="space-y-6 max-w-6xl">
+      <div className="space-y-8 max-w-7xl">
         {GROWER_APP_GUIDE_STEPS.map((step, index) => (
           <GrowerAppGuideStepCard key={step.id} step={step} index={index} />
         ))}
