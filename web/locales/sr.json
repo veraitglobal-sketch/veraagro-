@@ -767,6 +767,9 @@
       "tapToEnlarge": "Kliknite na ekran za uvećanje u punoj rezoluciji",
       "zoomLabel": "Uvećaj",
       "closeLightbox": "Zatvori",
+      "screenColumnLabel": "Ekran u aplikaciji",
+      "detailColumnLabel": "Detaljno objašnjenje",
+      "checklistTitle": "Kratka lista — šta zapamtiti",
       "tocTitle": "Sadržaj",
       "imagePending": "Dodajte snimak u folder (vidi README).",
       "printPdf": "Štampaj / sačuvaj PDF",
@@ -777,12 +780,48 @@
         "welcome": {
           "title": "Dobrodošli",
           "lead": "Prvi ekran aplikacije Bio Vera — ulaz za partnere i proizvođače.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Početni ekran Bio Vera mobilne aplikacije. Prikazuje brend i dve glavne opcije: ulaz za postojeće korisnike i put ka registraciji novog proizvođača u programu."
+            },
+            {
+              "heading": "Dugme „Prijava” (Log in)",
+              "body": "Koristite ako vam je tim već otvorio nalog i dobili ste pristupne podatke. Vodi na ekran za unos e-pošte ili korisničkog imena i lozinke."
+            },
+            {
+              "heading": "„Postani Vera proizvođač” (Become a Vera grower)",
+              "body": "Za nove partnere koji prvi put ulaze u program. Otvara formu za registraciju. Registracija obično ide uz uputstvo operativnog tima — ne šaljite podatke nasumično bez dogovora."
+            },
+            {
+              "heading": "Zašto je važno",
+              "body": "Sa ovog ekrana kreće ceo rad u aplikaciji: terenski unosi, porudžbine inputa, lotovi i sinhronizacija sa web portalom. Bez prijave nijedan podatak se ne vezuje za vašu farmu."
+            }
+          ],
           "b1": "Izaberite prijavu ako već imate nalog.",
           "b2": "Registracija je za nove partnere po uputstvu tima."
         },
         "register": {
           "title": "Registracija",
           "lead": "Otvaranje naloga proizvođača / partnera.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Forma za kreiranje naloga proizvođača (farmer account). Podaci koje unesete koriste se za identifikaciju farme u sistemu Bio Vera i kasniju verifikaciju od strane tima."
+            },
+            {
+              "heading": "Polja na formi",
+              "body": "Ime i prezime — kontakt osoba na farmi.\nE-pošta — za prijavu i obaveštenja; mora biti ispravna.\nHectares (hektari) — približna ukupna površina pod kulturom; dovoljna procena, ne mora biti tačna do decimale.\nLozinka — minimum 6 karaktera; čuvajte je privatno, ne delite sa drugim farmama."
+            },
+            {
+              "heading": "Dugme „Create account”",
+              "body": "Šalje prijavu na server. Ako je sve ispravno, dobijate potvrdu; pun pristup aplikaciji često stiže tek posle odobrenja naloga od strane Bio Vera tima."
+            },
+            {
+              "heading": "„Already have an account? Sign in”",
+              "body": "Ako ste se već registrovali, vratite se na prijavu umesto ponovne registracije — dupli nalozi otežavaju rad tima."
+            }
+          ],
           "b1": "Unesite podatke koje vam je dao operativni tim.",
           "b2": "Posle registracije čekate odobrenje pre punog pristupa."
         },
