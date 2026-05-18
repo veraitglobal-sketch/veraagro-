@@ -132,6 +132,12 @@ const nextConfig: NextConfig = {
         destination: "/:locale/investor-deck/slides",
         permanent: true,
       },
+      /** Grower app guide — locale-free `/grower/*` is rewritten by middleware. */
+      {
+        source: "/:locale/growers/mobile-app-guide",
+        destination: "/:locale/grower/mobile-app-guide",
+        permanent: false,
+      },
     ];
   },
   async headers() {

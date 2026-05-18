@@ -410,7 +410,7 @@ export default function GrowersPage() {
                       </div>
                       {ONLINE_GUIDE_IDS.has(resource.id) ? (
                         <Link
-                          href={loc('/growers/mobile-app-guide')}
+                          href={loc('/grower/mobile-app-guide')}
                           className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1"
                         >
                           {t('growersPage.viewGuideOnline')}

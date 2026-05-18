@@ -33,7 +33,7 @@ export default function GrowerAppGuidePage() {
                   {t('grower.appGuide.printPdf')}
                 </button>
                 <Link
-                  href={loc('/growers/mobile-app-guide')}
+                  href={loc('/grower/mobile-app-guide')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex min-h-[44px] items-center rounded-lg border border-[#2D5A27]/30 bg-white px-4 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
