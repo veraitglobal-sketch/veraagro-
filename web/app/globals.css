@@ -135,10 +135,11 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Improved image rendering */
-img {
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+/* Photo/screenshot quality — do not use crisp-edges globally (blurs phone UI captures). */
+img.grower-app-guide-screenshot {
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Subtle shadows for depth */

@@ -763,6 +763,8 @@
       "hintLive": "Below are phone screenshots and short explanations for each step. For a PDF: use Print → Save as PDF.",
       "pdfHowTo": "PDF: print this page and choose Save as PDF in your browser.",
       "openPublicLink": "Open public link",
+      "enlargeScreenshot": "Open screenshot at full size",
+      "tapToEnlarge": "Tap the screen to enlarge (full resolution)",
       "tocTitle": "Contents",
       "imagePending": "Add this screenshot to the folder (see README).",
       "printPdf": "Print / save as PDF",
