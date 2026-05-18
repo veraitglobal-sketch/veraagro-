@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
+import { useParams } from "next/navigation";
 
-/** Four document cards — pitch, overview, technical, password-gated partner plans (`/investor-deck/business-plans`). */
+/** Document cards — pitch, overview, technical, PDF full texts (DE), password-gated plans. */
 export function InvestorDeckHub() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "sr";
+  const showDeFullTexts = locale === "de";
 
   const cardClass =
     "block rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-colors hover:border-[#2D5A27] hover:bg-[#2D5A27]/10";
@@ -39,6 +43,27 @@ export function InvestorDeckHub() {
           <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardConfidentialTitle")}</h3>
           <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardConfidentialDesc")}</p>
         </Link>
+
+        {showDeFullTexts ? (
+          <>
+            <Link href={loc("/investor-deck/documents/projektbeschreibung-2026")} className={cardClass}>
+              <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardFullProjektDesc")}</h3>
+              <p className="text-sm font-light leading-relaxed text-gray-600">
+                {t("investorDeckPage.cardFullProjektDescBody")}
+              </p>
+            </Link>
+            <Link href={loc("/investor-deck/documents/businessplan-2026")} className={cardClass}>
+              <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardFullBusinessplanDesc")}</h3>
+              <p className="text-sm font-light leading-relaxed text-gray-600">
+                {t("investorDeckPage.cardFullBusinessplanDescBody")}
+              </p>
+            </Link>
+            <Link href={loc("/investor-deck/documents/pitch-deck-2026")} className={cardClass}>
+              <h3 className="mb-2 text-xl font-medium text-gray-900">{t("investorDeckPage.cardFullPitchDesc")}</h3>
+              <p className="text-sm font-light leading-relaxed text-gray-600">{t("investorDeckPage.cardFullPitchDescBody")}</p>
+            </Link>
+          </>
+        ) : null}
       </div>
     </section>
   );

@@ -1,0 +1,199 @@
+{
+  "projectOverview": {
+    "coverEyebrow": "Projektbeschreibung",
+    "coverTitle": "Bio Vera — Vertically Integrated Agrifood Traceability Platform",
+    "coverSubtitle": "Förderantrag — Vertikal integrierte AgriTech-Plattform · Jovica Mihajlovic · Vera IT · Rehrstieg 16d, 21147 Hamburg · Mai 2026",
+    "introNote": "Vollständige Projektbeschreibung gemäß Förderantrag 2026. Navigation über das Inhaltsverzeichnis; PDF über die Druckfunktion des Browsers.",
+    "sections": [
+      {
+        "title": "1. Executive Summary",
+        "body": "1. Executive Summary\nBio  Vera  ist  eine  vertikal  integrierte  AgriTech-Plattform,  die  den  gesamten\nLieferkettenprozess  für  frisches  Obst  und  Gemüse  digitalisiert  —  von  der\nVertragslandwirtschaft in Südosteuropa über Qualitätskontrolle, Verpackung und gekühlten\nTransport  bis  zur  Lieferung  an  deutsche  Einzelhändler.  Jede  Einheit  wird  mit  einer\neindeutigen  Batch_ID  nachverfolgt  und  in  einem  EU-konformen  digitalen  Produktpass\ndokumentiert.\nGründer: Jovica Mihajlovic, 3+ Jahre praktische Entwicklungserfahrung, autodidaktischer\nEntwickler mit vier live Produkten, Sitz in Hamburg.\nMarkt: EU-Frischwarenmarkt €90 Mrd./Jahr. Deutschland größter Importeur mit €25+ Mrd.\nund  über  50%  Importquote.  EU  Digital  Product  Passport  Verordnung  ab  2027  wird\nlückenlose Rückverfolgbarkeit vorschreiben.\nInnovation: Sechs  Innovationsschichten  —  End-to-End  Batch-Traceability,  Blockchain-\nverankerte Custody Records (Polygon), Multi-Stakeholder Anti-Fraud System (GPS/Device-\nID/Kamera), Escrow-basiertes Settlement (48h Erzeuger-Payout), vertikale Integration ohne\neigene Farmen sowie strenge eigene Qualitätsstandards (MRL bei 70% der EU-Grenzen).\nFörderbedarf: €150.000  für  12  Monate  —  Entwicklung  der  Mobile  App  (iOS/Android),\nPilotbetrieb  mit  15  Vertragslandwirten  in  Südosteuropa,  erste  Lieferungen  an  deutsche\nAbnehmer und Aufbau des Vertriebsteams."
+      },
+      {
+        "title": "2. Beschreibung des Unternehmens",
+        "body": "2. Beschreibung des Unternehmens\n2.1 Unternehmensprofil\nFeld Details\nFirma Vera IT — Jovica Mihajlovic (Einzelunternehmen / Gewerbe)\nGründungsdatum03.07.2025\nAdresse Rehrstieg 16d, 21147 Hamburg\nTelefon +49 155 63740470\nE-Mail info@verait.de / info@biovera.app\nWebseiten verait.de · biovera.app · getfadeapp.com · reinallround.de\nMitarbeiter 1 (Gründer, Vollzeit)\nUmsatz €0 (Pre-Revenue — das Unternehmen befindet sich in der Aufbauphase)\nRechtsform Einzelunternehmen (Gewerbeanmeldung)\n2.2 Unternehmensgegenstand\nVera  IT  ist  ein  technologiegetriebenes  Einzelunternehmen  mit  Sitz  in  Hamburg.  Das\nUnternehmen  entwickelt  innovative  digitale  Produkte  in  den  Bereichen  Künstliche\nIntelligenz, Mobile Apps und Plattformentwicklung. Der Tätigkeitsschwerpunkt liegt auf der\nKonzeption,  Entwicklung  und  dem  Betrieb  von  Softwareplattformen  für  verschiedene\nBranchen.\nDas  aktuelle  Hauptprojekt  Bio  Vera  (biovera.app)  ist  eine  vertikal  integrierte  AgriTech-\nPlattform,  die  erstmals  den  gesamten  Agrar-Lebensmittel-Lieferkettenprozess  in  einem\ndurchgängig  digitalen  System  abbildet.  Bio  Vera  ist  dabei  nicht  Vermittler,  sondern\nVerkäufer und Lieferant (Seller and Supplier of Record) — das Unternehmen kontrolliert die\ngesamte Wertschöpfungskette digital."
+      },
+      {
+        "title": "3. Produkt & Dienstleistung",
+        "body": "3. Produkt & Dienstleistung\n3.1 Plattformübersicht\nBio Vera digitalisiert die Lieferkette für frisches Obst, Gemüse und Getreide vom Feld bis\nzum Regal. Das System umfasst folgende Kernkomponenten:\nBatch_ID-Rückverfolgbarkeitssystem\nJede Kiste erhält eine eindeutige Batch_ID. Der Trace läuft vom Feld über Verpackung,\nTransport bis zur Lieferung in einem durchgängigen operativen System. Jeder Scan, jede\nÜbergabe und jede Qualitätsprüfung wird dokumentiert und ist rückverfolgbar.\nDigitaler Produktpass (Farmer-Pass)\nEU-konforme  digitale  Zertifikate,  die  Herkunft,  Erntedatum,  Kaltketteninformationen  und\nCompliance-Daten  enthalten.  Physisches  Etikett  auf  jeder  Kiste.  QR-Scan  zeigt  dem\nVerbraucher: Erzeuger (Name und Foto), verwendete Substanzen und Dünger, Erntedatum,\nLieferdatum, Compliance-Status (70%-MRL). Der Farmer-Pass ist gleichzeitig der digitale\nProduktpass — EU-konform und bereit für die DPP-Verordnung ab 2027.\nSmart-Lock System\nKisten sind an Chargen gebunden: QR-Scans plus GPS-Bestätigungen landen in einer\noperativen Akte. Jeder Übergabepunkt wird mit Zeitstempel, Standort und Verantwortlichem\ndokumentiert.\nGesichertes Zahlungssystem (Escrow)\nKäufer-Gelder  bleiben  bei  Bio  Vera,  bis  Lieferung  und  Konformitätsprüfungen\nabgeschlossen sind. Auszahlungen an Erzeuger erfolgen innerhalb von 48 Stunden nach\nbestätigter Lieferung — im Vergleich zu 60–90 Tagen Zahlungsziel im Branchenstandard\nein signifikanter Vorteil für Landwirte.\nAnti-Fraud Protection\nDreischichtiges Sicherheitssystem: GPS-Zeitstempel, Device-ID-Tracking und Kamera-only-\nErfassung  (keine  manuellen  Uploads).  Manipulationen  entlang  der  Lieferkette  werden\nsystemisch ausgeschlossen.\n\nOptionale Polygon-Blockchain-Verankerung\nWenn  aktiviert,  verankert  das  System  einen  kryptografischen  Fingerprint  des  Chargen-\nDossiers auf der Polygon-Blockchain. Dies ermöglicht unabhängige Überprüfbarkeit durch\nRegulierungsbehörden  und  Einzelhändler,  ohne  dass  die  gesamte\nLieferkettendokumentation öffentlich zugänglich wird.\nKI-Analytics\nIntelligente  Datenanalyse  für  Ernte-Prognosen,  bildbasierte  Qualitätsbewertung  und\nSupply-Chain-Optimierung.  Anomalie-Erkennung  identifiziert  Abweichungen  in  der\nLieferkette in Echtzeit.\n3.2 Produktpalette\nKategorie Sorten\nObst (13\nSorten)\nHimbeeren, Brombeeren, Heidelbeeren, Erdbeeren, Äpfel, Birnen, Pflaumen,\nPfirsiche, Aprikosen, Kirschen, Trauben, Johannisbeeren, Stachelbeeren\nGemüse (18\nSorten)\nUmfangreiche Palette saisonaler Gemüsesorten aus dem Anbaukorridor\nSüdosteuropa — u.a. Tomaten, Gurken, Kartoffeln, Paprika\nGetreide (3\nSorten)\nAusgewählte Getreidesorten für den europäischen Markt\nPrinzip: Frisch, ohne Einfrieren. Kühlkette ausschließlich für den Transport — Geschmack,\nTextur und Nährwert bleiben wie auf dem Feld. Kein Temperaturschock.\nFokus Jahr 1: Himbeere, Sauerkirsche, Kirsche, Brombeere (Produkte mit hoher Marge)\nsowie Tomate und Gurke. Die Erzeugerregionen in Südosteuropa bieten ideale klimatische\nBedingungen für diese Produkte.\n3.3 Vier-Stakeholder-Modell\nStakeholder Rolle Bio Vera Mehrwert\nGrowers\n(Erzeuger)\nVertragsanbau nach Bio Vera\nStandards. MRL bei 70% der EU-\nGrenzen, standardisierte Kisten,\nAgronomy-Checkpoints.\nGesicherte Bezahlung in 48h,\nkostenlose Zertifizierung, Work-\nBonus für Compliance, stabiler\nAbsatzkanal\nDigitaler Produktpass pro Charge,\nEU-DPP-ready, keine versteckten\n\nBuyers\n(Käufer)\nEinzelhändler und Großhändler kaufen\ndirekt von Bio Vera mit vollständiger\nRückverfolgbarkeit.\nZwischenhändler, Dashboard mit\nKatalog\nSuppliers\n(Lieferanten)\nSaatgut, Pflanzenschutz,\nVerpackungsmaterial — zugelassene\nInputs für das Bio Vera Programm.\nVerifizierte Lieferkette,\nstandardisierte Bestellprozesse,\nZugang zum Erzeuger-Netzwerk\nLogistics\n(Logistik)\nGekühlter Transport mit GPS-Tracking\nund Smart-Lock-System.\nTransparente Auftragsabwicklung,\nautomatisierte Scan-Validierung,\ngesicherte Zahlung\n3.4 Verpackungskonzept\nNachhaltige Papierverpackung mit integriertem Rückverfolgbarkeitssystem. Jede Kiste trägt\ndie Bio Vera-Marke und einen eindeutigen QR-Code — den Farmer-Pass.\nKraft-Papier-Karton — nachhaltig, recyclebar\nIntegrierter QR-Farmer-Pass\nVerschiedene Größen (per Kilogramm, 500g, 1kg)\nBio Vera Branding auf jeder Einheit\nVariante Beschreibung Kosten/\nEinheit\nBio Fresh\nConcept\nKraft-Karton für Bio Vera Fresh Stores. Premium-Ausführung\nmit Fenster, Griffen, Branding.\n0,30–0,45\nEUR\nRetail-\nVerpackung\nBio Vera Kartons mit QR — für Supermarkt-Regale. Optimiert\nfür Kosten-Nutzen.\nmax. 0,15\nEUR\n3.5 Operativer Ablauf (Lieferkette)\nVertragsanbau: Farmer baut nach Bio Vera Standards an (MRL 70%, Checkpoint-\nSystem)\nErnte & Verpackung: Farmer verpackt direkt auf der Farm: Retail-Karton (Bio\nVera Branding, verschiedene Größen, Kraft-Papier) oder Industrie-Verpackung.\nQR-Code wird aufgeklebt.\nQualitätskontrolle: Bio Vera Agent vor Ort prüft Qualität, stempelt Badge,\nfotografiert. Eigener Qualitätsstandard: maximal 70% der EU-\nRückstandshöchstmenge.\n•\n•\n•\n•"
+      },
+      {
+        "title": "4. Innovation & Alleinstellungsmerkmale",
+        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem EU Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist weltweit einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
+      },
+      {
+        "title": "5. Markt & Wettbewerb",
+        "body": "5. Markt & Wettbewerb\n5.1 Marktübersicht\nKennzahl Wert Quelle\nEU-Frischwarenmarkt (Obst & Gemüse)ca. €90 Mrd./JahrEurostat 2024\nDeutschland: Importvolumen Frischwareca. €25+ Mrd./JahrDestatis / AMI 2024\nDeutsche Importquote Obst & Gemüse> 50% BMEL Ernährungsbericht\nVerbraucher: Herkunft-Transparenz wichtig73% Eurobarometer 2024\nEU Digital Product Passport Pflicht ab 2027 EU-Verordnung 2024/1781\n5.2 Geschäftskorridor: Südosteuropa → Deutschland\nBio Vera fokussiert auf den Korridor Südosteuropa → Deutschland. Dieser Korridor ist\nstrategisch bedeutsam:\nHohe Bodenqualität: Fruchtbare Böden im pannonischen Becken, ideale\nklimatische Bedingungen für Obst- und Gemüseanbau\nKostenstruktur: Niedrigere Produktionskosten bei vergleichbarer Qualität\nermöglichen wettbewerbsfähige Preise im deutschen Markt\nSaisonale Komplementarität: Frühere Erntezeitpunkte ergänzen den\nmitteleuropäischen Anbau\nEU-Integration: Wachsende EU-Integration der Westbalkan-Staaten schafft\nregulatorische Angleichung\nBestehende Logistikrouten: Etablierte Transportwege, die durch Digitalisierung\noptimiert werden können\n5.3 Unit Economics (Beispiel: Äpfel)\nPosition EUR/kg Anteil\nFarmer-Zahlung 0,60–0,70 ~50%\nVerpackung (Retail-Karton) ~0,15 ~12%\n•\n•\n•\n•\n•\n\nLogistik + Operativ 0,10–0,15 ~10%\nGesamtkosten ~0,90 ~72%\nVerkaufspreis (Retail) ~1,30 100%\nBio Vera Marge ~0,40 ~30%\nFarmer-Vorteil: Der Markt-Abnahmepreis für Äpfel in Südosteuropa liegt bei ca. 0,25–0,35\nEUR/kg. Bio Vera zahlt 0,60–0,70 EUR/kg — mehr als das Doppelte. Farmer produzieren\nfür Bio Vera, weil es sich finanziell lohnt.\n5.4 Logistik-Kalkulation\nPosition Wert\nLKW-Kapazität ~23.000 kg\nStrecke Erzeugerregion → Deutschland ~1.200–1.500 km\nKosten pro km 1,30–1,70 EUR\nKosten pro Fahrt (Ø 1.300 km) ~1.950 EUR\nKosten pro kg ~0,085 EUR\n5.5 Wettbewerbsvergleich\nMerkmal Traditionelle\nLieferkette\nAgrar-\nMarktplätze Bio Vera\nRückverfolgbarkeitPapierbasiert,\nlückenhaft\nTeilweise digital End-to-End, Echtzeit\nQualitätskontrolle Stichproben Keine (Vermittler)Eigene Agenten vor Ort\nZahlungssicherheit60–90 Tage\nZahlungsziel\nVariabel Escrow, 48h Payout\nBlockchain Keine Selten Polygon (optional)\nZwischenhändler 3–5 1 (Plattform) 0 (vertikale Integration)\nDigitaler\nProduktpass\nNicht vorhanden Nicht vorhandenStandard, jede Charge\n\nAnti-Fraud Manuell BewertungssystemGPS + Device-ID +\nKamera\n5.6 Zielkunden\nPrimär  (B2B): Deutsche  Einzelhandelsketten  (Rewe,  Edeka,  ALDI,  Lidl),  Großhändler\n(Metro), Gastro-Lieferanten (HoReCa-Bereich).\nSekundär: Bio-Supermärkte, Spezialhandel, Foodservice-Unternehmen."
+      },
+      {
+        "title": "6. Vermarktungsstrategie",
+        "body": "6. Vermarktungsstrategie\n6.1 Go-to-Market-Plan\nPhase ZeitraumAktivitäten Ziele\nPhase 1:\nPilot\n2026 15 Vertragsfarmer in Südosteuropa onboarden. Erste\nLieferungen an 2–3 deutsche Abnehmer. Referenz-\nCases aufbauen.\n€50k–100k\nUmsatz\nPhase 2:\nWachstum\n2027 50+ Erzeuger in Südosteuropa. Direktverträge mit\nEinzelhandelsketten. Partner-API für ERP-Integration.\n€500k–1M\nUmsatz\nPhase 3:\nSkalierung\n2028 Multi-Region-Expansion. IoT-Sensorintegration. KI-\nbasierte Vorhersagemodelle. Weitere EU-Korridore.\n€2M–5M\nUmsatz\n6.2 Vertriebskanäle\nDirekter B2B-Vertrieb: Persönliche Akquise bei Einkaufsabteilungen deutscher\nEinzelhandelsketten und Großhändler\nDigitale Plattform: biovera.app für Registrierung, Bestellung, Pre-Order und\nBatch-Tracking\nMessen & Events: Fruit Logistica (Berlin), Anuga (Köln), BioFach (Nürnberg) —\ndie wichtigsten Branchenmessen für Frischware in Europa\nNetzwerk-Effekte: Zufriedene Käufer als Referenzen, Erzeuger werben weitere\nErzeuger über das Programm\n6.3 Preismodell\nBio Vera operiert als Verkäufer und Lieferant (Seller of Record). Die Marge entsteht aus der\nDifferenz zwischen Einkaufspreis (Erzeuger + Logistik) und Verkaufspreis (Einzelhandel).\nDurch  den  Wegfall  von  3–5  Zwischenhändlern  können  sowohl  wettbewerbsfähige\nEinzelhandelspreise als auch faire Erzeugerpreise realisiert werden.\n6.4 Umsatzströme\nKerngeschäft: Verkauf von Frischprodukten an B2B-Abnehmer (Marge ~30%)\n•\n•\n•\n•\n•\n\nSupplier-Geschäft: Dünger, Saatgut, Verpackung (Kraft-Kartons, verschiedene\nGrößen) und Batch-IDs. Eingekauft bei regionalen Vertragsherstellern. Distribuiert\nüber Supplier-Netzwerk. Eigene Marge.\nBio Vera Fresh Stores: Verpackte Premiumprodukte in Bio Vera Kartons —\nRetail-Qualität (ab Phase 2)\n•\n•"
+      },
+      {
+        "title": "7. Gründerprofil",
+        "body": "7. Gründerprofil\nJovica Mihajlovic — Gründer & CEO\nFeld Details\nName Jovica Mihajlovic\nStandort Hamburg, Deutschland (Hauptwohnsitz)\nErfahrung 3+ Jahre praktische Entwicklungserfahrung (Autodidakt)\nStudium Kommunikation & Öffentlichkeitsarbeit, Philosophische Fakultät,\nUniversität Niš\nUnternehmensgründung03.07.2025 — Vera IT (Gewerbe, Hamburg)\nPortfolio — Bewiesene Umsetzungskompetenz\nJovica  Mihajlovic  hat  vier  digitale  Produkte  eigenständig  konzipiert,  entwickelt  und  live\ngebracht:\n1.  Vera  IT (verait.de)  —  Künstliche  Intelligenz  Agentur  Hamburg.  Dienstleistungen:  KI-\nIntegration,  Machine  Learning,  Mobile  Apps,  Software-  und  Webentwicklung  für\nUnternehmen in Hamburg und Deutschland.\n2.  Fade (getfadeapp.com)  —  Weltweit  einsetzbare  Salon-Booking-App  mit  Loyalty-\nPunktesystem pro Salon, QR-Check-in, Kartenentdeckung, Chat und Owner-Dashboard.\nVerfügbar auf iOS und Android mit Subscription-Modell (Starter/Medium/Pro).\n3.  ReinAllround (reinallround.de)  —  Gebäudereinigungsservice  in  Hamburg  mit  24h-\nVerfügbarkeit,  digitalem  Buchungssystem  und  16+  Einsatzbereichen.  Online-\nTerminbuchung und Direktkontakt.\n4.  Bio  Vera (biovera.app)  —  AgriTech-Plattform  für  rückverfolgbare  Frischprodukte.\nWebplattform  mit  Backend-API,  Benutzer-Dashboard,  Pre-Order-System  und  vier\nStakeholder-Bereichen.\nRelevanz für Bio Vera\nPraktische Entwicklungskompetenz: Eigenständige Entwicklung komplexer\nWeb- und Mobile-Plattformen von der Architektur bis zum Deployment\n•\n\nMulti-Stakeholder-Architektur: Fade zeigt die Fähigkeit, Plattformen mit\nverschiedenen Nutzergruppen (Kunden, Salon-Inhaber, Mitarbeiter) zu bauen\nProduktdesign: Nutzerzentrierte UX/UI-Entwicklung — alle vier Produkte sind live\nund nutzbar\nKenntnis des südosteuropäischen Agrarmarktes und des deutschen\nEinzelhandels: Verständnis beider Märkte ermöglicht die Brückenfunktion der\nPlattform\nKommunikation: Studium in Kommunikation & PR — essentiell für Stakeholder-\nManagement und B2B-Vertrieb im Agrarsektor\nKI & Blockchain: Praktische Erfahrung mit ML-Systemen und Polygon Smart\nContracts durch Vera IT\nGeplante Teamergänzung\nRolle Zeitpunkt Aufgabe\nMobile-App-Entwickler\n(Freelance)\nMonat 1–6iOS/Android-Entwicklung, React Native/Flutter\nAgrar-/QA-Spezialist (Teilzeit)Monat 3–\n10\nQualitätssicherung, Erzeuger-Betreuung vor\nOrt\nBusiness Development (Teilzeit)Monat 5–\n12\nEinzelhandelskontakte Deutschland, Messen\nOperatives Team in der Erzeugerregion\nRolle Beschreibung Kosten\nAgent (Qualitätskontrolle) ~20 Farmer pro Agent ~1.000 EUR/Monat\n•\n•\n•\n•\n•"
+      },
+      {
+        "title": "8. Projektbeschreibung & Meilensteine",
+        "body": "8. Projektbeschreibung & Meilensteine\n8.1 Projektdefinition\nProjekttitel: Bio Vera — Markteinführung einer vertikalen digitalen Lieferketten-Plattform\nfür rückverfolgbare Frischprodukte im EU-Korridor Südosteuropa–Deutschland\nProjektdauer: 12 Monate\nProjektziel: Entwicklung und Markteinführung der Bio Vera Mobile App (iOS/Android) sowie\nDurchführung eines Pilotprojekts mit mindestens 15 Vertragslandwirten in Südosteuropa\nund ersten Lieferungen an deutsche Abnehmer.\n8.2 Ausgangssituation\nDie Bio Vera Webplattform (biovera.app) ist als Informations- und Konzeptplattform mit\nfunktionalem  Backend-API  aufgebaut.  Die  Kernarchitektur  (Batch-Tracking,  digitaler\nProduktpass, Escrow-Logik) ist konzipiert und in der Webapplikation prototypisch integriert.\nDie Roadmap auf biovera.app zeigt: Q1–Q2 2026 (Backend API, Web App, Core Features,\nKI Analytics, Polygon) sind als abgeschlossen markiert.\nNoch nicht realisiert (= Gegenstand dieses Projekts):\nNative Mobile App für alle Stakeholder (Erzeuger, Käufer, Logistik, Lieferanten)\nPilotbetrieb mit realen Vertragslandwirten und realer Ware\nMarkteinführung und erste B2B-Kundenakquise in Deutschland\nKI-gestützte Qualitätsbewertung im Feldeinsatz\nIntegration mit bestehenden ERP-Systemen deutscher Einzelhändler\nAufbau des Vertriebs- und Betreuungsteams\n8.3 Ablaufplan und Meilensteine\nPhase Monat Meilensteine Ergebnis\nPhase 1: App-\nEntwicklung\n1 M1: UX/UI Design für Mobile App\nabgeschlossen\nFunktionsfähige Mobile App\n(iOS + Android)\n3 M2: MVP Mobile App fertig\n(React Native/Flutter)\n•\n•\n•\n•\n•\n•\n\n4 M3: Beta-Test mit 5 Testnutzern\nabgeschlossen\nPhase 2: Pilot-\nVorbereitung\n4 M4: 15 Vertragsfarmer in\nSüdosteuropa unter Vertrag\nOperatives Pilotprojekt\n5 M5: Logistikpartner für\nKühlketten-Transport gesichert\n6 M6: Erste Ware geerntet und im\nSystem erfasst\nPhase 3:\nMarkteinführung\n7 M7: Erste Lieferung an\ndeutschen Abnehmer\nValidiertes Geschäftsmodell\n8 M8: Polygon-Blockchain-\nAnchoring live mit Pilotdaten\n9 M9: 3+ B2B-Kunden mit\nBestellung oder Letter of Intent\nPhase 4: Skalierung 10 M10: KI-Modul für\nQualitätsprognose integriert\nSkalierungsbereite Plattform\n11 M11: Partner-API dokumentiert\nund integrationsbereit\n12 M12: Geschäftsplan für\nExpansion 2027 fertiggestellt"
+      },
+      {
+        "title": "9. Finanz- & Personalplan",
+        "body": "9. Finanz- & Personalplan\n9.1 Kostenplan (12 Monate)\nKostenart Betrag (€) Anteil\nSysteme & Plattform (App + Tech)\nMobile-App-Entwickler (Freelance, 6 Mon.) 18.000 12,0%\nCloud-Hosting (Hetzner, 12 Mon. × €50) 600 0,4%\nBlockchain-Infrastruktur (Polygon Gas/Nodes) 200 0,1%\nApple Developer Program (€99/Jahr) 99 0,1%\nGoogle Play Registrierung (einmalig €25) 25 0,0%\nQR-Etiketten & Prototyp-Kartons 3.000 2,0%\nVerpackungsmaterial (Kraft-Kartons, 10.000 Stk.) 4.500 3,0%\nIT-Sicherheit & Monitoring 800 0,5%\nDomain, SSL, E-Mail-Infrastruktur 500 0,3%\nSonstige Entwicklung (Testing, CI/CD) 4.500 3,0%\nSumme Systeme & Plattform 32.224 21,5%\nOperativer Pilotbetrieb\n1 Agent vor Ort (8 Mon. × €1.000) 8.000 5,3%\nLeasing Kühlfahrzeug (Pilotphase, 5 Mon.) 3.500 2,3%\nBetriebsmittel Pilotbetrieb 1.500 1,0%\nSumme Operativer Pilotbetrieb 13.000 8,7%\nMarkterschließung & Vertrieb\nBusiness Development (Teilzeit, 6 Mon.) 12.000 8,0%\nMessen & Events (Fruit Logistica, Anuga) 4.000 2,7%\nMarketing & Vertrieb 2.000 1,3%\nReisekosten (Farmer-Onboarding, Partnertreffen) 6.000 4,0%\n\nSumme Markterschließung 24.000 16,0%\nPersonal (operativ)\nGründer Jovica Mihajlovic (Vollzeit, 12 Mon.) 36.000 24,0%\nAgrar-/QA-Spezialist (Teilzeit, 8 Mon.) 16.000 10,7%\nBüro & Co-Working Hamburg 4.000 2,7%\nKommunikation & Telefon 1.200 0,8%\nBuchhaltung & Steuerberatung 2.400 1,6%\nVersicherungen (Betriebs-, Haftpflicht) 2.400 1,6%\nFahrzeugbetrieb (Kraftstoff, Wartung) 2.000 1,3%\nSumme Personal (operativ) 64.000 42,7%\nRecht & Zertifizierung\nGlobalG.A.P. Zertifizierung (Gruppenverfahren) 5.000 3,3%\nRechtsberatung (Verträge, AGB, EU-Compliance) 4.000 2,7%\nSumme Recht & Zertifizierung 9.000 6,0%\nPuffer\nPuffer / Unvorhergesehenes 7.776 5,2%\nGESAMT 150.000 100%\n9.2 Finanzierungsplan\nQuelle Betrag (€) Anteil\nÖffentliche Förderung 135.000 90%\nEigenmittel 15.000 10%\nGESAMT 150.000 100%\nEigenmittel-Einsatz: Der Gründer investiert eigene Mittel in 1–2 gebrauchte Mercedes\nSprinter  Kühlfahrzeuge  (bis  3,5t,  B-Führerschein).  Diese  dienen  als  operative\nLogistikinfrastruktur für die letzte Meile — Lieferung an Einzelhändler, HoReCa und Bio"
+      },
+      {
+        "title": "10. Risiken & Mitigation",
+        "body": "10. Risiken & Mitigation\nRisiko Wahrsch.AuswirkungMitigation\nFarmer-Adoption\nzu langsam\nMittel Hoch Kostenlose Zertifizierung und Onboarding. Work-\nBonus für Compliance. 48h-Payout als starker\nAnreiz. Persönliche Betreuung vor Ort (Agent).\nCash-Flow-LückeHoch Hoch Schrittweiser Aufbau mit begrenztem Volumen.\nPre-Order-System für Liquiditätsplanung.\nFactoring als Option für Forderungen gegenüber\nEinzelhandel.\nLogistik-Ausfälle Mittel Hoch Redundante Transportpartner. Smart-Lock und\nGPS-Monitoring. Temperaturüberwachung (IoT\nab 2027). Transportversicherung.\nEinzelhandel-\nZugang\nMittel Hoch Fruit Logistica und Anuga als Kontaktplattform.\nDigitaler Produktpass als Alleinstellungsmerkmal.\nEU DPP-Vorschrift erhöht Nachfrage. Referenz-\nCases aus Pilotphase.\nRegulatorische\nÄnderungen\nNiedrig Mittel EU DPP-Verordnung kommt Bio Vera entgegen.\nPlattform ist compliance-ready. Eigene\nStandards (70% MRL) strenger als gesetzlich.\nTechnischer\nAusfall\nNiedrig Hoch Cloud-Infrastruktur mit Redundanz.\nAutomatisierte Backups. Mobile App mit Offline-\nFähigkeit für ländliche Gebiete.\nSaisonale\nSchwankungen\nHoch Mittel Diversifiziertes Portfolio (34 Produkte).\nErntekalender über 9 Monate. Pre-Order-\nPlanung für saisonale Spitzen."
+      },
+      {
+        "title": "11. Nachhaltigkeit & SDGs",
+        "body": "11. Nachhaltigkeit & UN-\nNachhaltigkeitsziele (SDGs)\nBio Vera adressiert direkt mehrere Nachhaltigkeitsziele der Vereinten Nationen:\nSDG Ziel Beitrag von Bio Vera\nSDG\n2\nKein Hunger Effizientere Lieferketten reduzieren\nLebensmittelverschwendung. Rückverfolgbarkeit ermöglicht\nschnelles Eingreifen bei Qualitätsproblemen. Frischware\nkommt schneller und sicherer beim Verbraucher an.\nSDG\n8\nMenschenwürdige Arbeit\nund Wirtschaftswachstum\nFaire, gesicherte Bezahlung für Erzeuger in 48h. Stabile\nAbsatzkanäle für Kleinbauern. Wirtschaftswachstum in\nländlichen Regionen Südosteuropas.\nSDG\n9\nIndustrie, Innovation und\nInfrastruktur\nDigitalisierung der Agrar-Lieferkette. Blockchain, KI und IoT\nals digitale Infrastruktur. Technologietransfer Südosteuropa–\nEU.\nSDG\n12\nNachhaltiger Konsum und\nProduktion\nTransparenz für Verbraucher über Herkunft und Qualität.\nDigitaler Produktpass macht Nachhaltigkeit überprüfbar.\nWeniger Lebensmittelverluste durch bessere Logistik.\nSDG\n13\nMaßnahmen zum\nKlimaschutz\nOptimierte Logistikrouten reduzieren CO₂-Emissionen.\nEffiziente Kühlkette vermeidet Energieverschwendung.\nDatengetriebene Landwirtschaft reduziert\nRessourceneinsatz.\nStandortrelevanz Hamburg\nDeutschlands größter Hafen: Zentraler Umschlagplatz für Lebensmittelimporte in\nEuropa\nEdeka-Zentrale: Einer der größten deutschen Einzelhändler hat seinen Hauptsitz\nin Hamburg\nFoodTech-Ökosystem: Wachsende Startup-Szene in den Bereichen FoodTech,\nAgriTech und Logistik\nHamburger Hafen als Hub: Bio Vera nutzt Hamburg als strategischen Hub für\nden Korridor Südosteuropa → Deutschland\nInternationalität: Hamburgs internationale Handelsausrichtung passt ideal zum\ngrenzüberschreitenden Geschäftsmodell\n•\n•\n•\n•\n•"
+      }
+    ],
+    "founderParagraphs": [
+      "Jovica Mihajlovic — Gründer & CEO. Standort Hamburg. 3+ Jahre praktische Entwicklungserfahrung (Autodidakt). Studium: Kommunikation & Öffentlichkeitsarbeit, Universität Niš. Vera IT gegründet 03.07.2025.",
+      "Vier live Produkte: Vera IT (verait.de), Fade (getfadeapp.com), ReinAllround (reinallround.de), Bio Vera (biovera.app).",
+      "Relevanz: Multi-Stakeholder-Plattformen, KI & Blockchain (Polygon), Brücke zwischen südosteuropäischem Agrarmarkt und deutschem Einzelhandel."
+    ]
+  },
+  "pitchDeck": {
+    "coverEyebrow": "Förderantrag 2026",
+    "coverTitle": "Bio Vera — Vertically Integrated Agrifood Traceability Platform",
+    "coverSubtitle": "Vom Feld zum Regal — lückenlos digital nachverfolgt · Jovica Mihajlovic · Vera IT · Hamburg",
+    "introNote": "Investor Deck gemäß Pitch Deck v4 (2026).",
+    "heroTechPill": "Farmer-Pass · Escrow · 70%-MRL · Polygon",
+    "narrativeEyebrow": "Kontext",
+    "narrativeTitle": "Europas Frischwarenlieferkette braucht Transparenz",
+    "narrativeParagraphs": [
+      "Europas Frischwarenlieferkette ist blind und langsam: 3–5 Zwischenhändler zwischen Feld und Regal.",
+      "Keine durchgängige Rückverfolgbarkeit. Erzeuger warten 60–90 Tage auf Zahlung.",
+      "Die EU verschärft die Transparenzanforderungen — die Branche ist nicht bereit.",
+      "€90 Mrd. EU-Frischwarenmarkt. Über 50% deutsche Importquote. 73% Verbraucher wollen Herkunft wissen.",
+      "Bio Vera ist Verkäufer und Lieferant — kein Marktplatz."
+    ],
+    "whyTitle": "Das Problem",
+    "whyLead": "3–5 Zwischenhändler. Keine Rückverfolgbarkeit. 60–90 Tage Zahlungsziel.",
+    "whyBullets": [
+      "PROBLEM 01 — Intransparenz: Papierbasierte Dokumentation mit Lücken.",
+      "PROBLEM 02 — Zahlungsunsicherheit: 60–90 Tage Zahlungsziel für kleine Erzeuger.",
+      "PROBLEM 03 — Regulierungsdruck: EU General Food Law, Farm-to-Fork, Einzelhandelsstandards."
+    ],
+    "solutionTitle": "Die Lösung",
+    "solutionLead": "Bio Vera — vertikal integriert, vollständig digital, ohne eigene Farmen.",
+    "chainTitle": "Der komplette Flow — von der Saat bis zum Regal",
+    "chainSteps": [
+      "01 Preisfestlegung — Abnahmepreise pro kg vor der Saison.",
+      "02 Input-Beschaffung — Saatgut, Dünger, Verpackung, Batch-IDs per App.",
+      "03 Registrierung & Anbau — Foto, GPS, Validierung.",
+      "04 Laufende Kontrolle — Agent besucht, prüft, berät.",
+      "05 Ernte & QA — Qualitätsprüfung, Batch-ID-Verifikation.",
+      "06 Verpackung auf der Farm — QR-Code aufgeklebt.",
+      "07 Verladen & Transport — Badge, Kühlkette, Bio Vera zahlt.",
+      "08 Lieferung & Escrow — 24h Prüfrist, 48h Auszahlung an Farmer."
+    ],
+    "howItWorksEyebrow": "Ökosystem",
+    "howItWorksTitle": "Fünf Rollen, eine Plattform",
+    "howItWorksLead": "Alle produzieren für Bio Vera — jeder hat seine Marge, Bio Vera ist der Endverkäufer.",
+    "howItWorksPhases": [
+      {
+        "title": "01 SUPPLIER",
+        "body": "Saatgut, Dünger, Verpackung, Batch-IDs. Eigener Store."
+      },
+      {
+        "title": "02 FARMER",
+        "body": "Inputs per App. Mobil dokumentieren. Verpacken. QR. Badge-Rückgabe."
+      },
+      {
+        "title": "03 AGENT",
+        "body": "Fest angestellt. QA vor Ort. Batch-ID verifizieren."
+      },
+      {
+        "title": "04 LOGISTIK",
+        "body": "Externe Fahrer, später eigene Kühlflotte. Bio Vera zahlt."
+      },
+      {
+        "title": "05 KÄUFER",
+        "body": "Retail, HoReCa, Bio Vera Fresh. 24h-Prüffrist."
+      }
+    ],
+    "plainLanguageEyebrow": "Geschäftsmodell",
+    "plainLanguageTitle": "Drei Erlösströme, drei Vertriebskanäle",
+    "plainLanguageIntro": "Bio Vera ist Endverkäufer — Marke, Qualität, Absatz.",
+    "plainLanguageCards": [
+      {
+        "title": "01 Frischprodukte",
+        "body": "Eigenmarke an Retail, HoReCa, Franchise. Farmer-Preis pro kg vorab definiert."
+      },
+      {
+        "title": "02 Betriebsmittel",
+        "body": "Dünger, Saatgut, Verpackung, Batch-IDs über Supplier-Netzwerk."
+      },
+      {
+        "title": "03 Bio Vera Fresh",
+        "body": "1–3 Stores pro Land. Anfangs keine Franchisegebühr."
+      }
+    ],
+    "advantagesTitle": "Innovation & USP",
+    "advantagesEyebrow": "Innovation",
+    "advantages": [
+      {
+        "title": "Batch-Traceability",
+        "body": "QR Farmer-Pass End-to-End."
+      },
+      {
+        "title": "Blockchain",
+        "body": "Polygon, öffentlich überprüfbar."
+      },
+      {
+        "title": "Anti-Fraud",
+        "body": "GPS, Device-ID, Kamera beim Verladen."
+      },
+      {
+        "title": "Mobile-First",
+        "body": "App für Farmer, Web für andere Rollen."
+      },
+      {
+        "title": "Vertikal ohne Land",
+        "body": "Digitale Kontrolle ohne eigene Farmen."
+      },
+      {
+        "title": "Escrow 48h",
+        "body": "24h Käufer-Prüfrist, 48h Farmer-Payout."
+      }
+    ],
+    "techTitle": "Kernfunktionen",
+    "techLead": "Farmer-Pass, Escrow, Anti-Fraud, 70%-MRL.",
+    "techItems": [
+      {
+        "title": "Farmer-Pass (QR)",
+        "body": "Erzeuger, Substanzen, Ernte- und Lieferdatum. EU-konform."
+      },
+      {
+        "title": "Escrow",
+        "body": "48h Auszahlung statt 60–90 Tagen."
+      },
+      {
+        "title": "Anti-Fraud & Blockchain",
+        "body": "Polygon. Badge-Siegel."
+      },
+      {
+        "title": "70%-MRL",
+        "body": "Max. 70% der EU-Rückstandshöchstmenge."
+      }
+    ],
+    "transparencyTitle": "Verpackung & Farmer-Pass",
+    "transparencyBullets": [
+      "Kraft-Papier-Karton, Sichtfenster, Bio Vera Branding From Origins to Shelf.",
+      "QR Farmer-Pass: Erzeuger, Substanzen, Erntedatum, 70%-MRL.",
+      "Badge = Integritätssiegel. Polygon-Verankerung pro Batch-ID."
+    ],
+    "financeTitle": "Finanzplan 12 Monate",
+    "financeLead": "Gesamt €150.000 (90% Förderung, 10% Eigenmittel).",
+    "financeBullets": [
+      "Personal €94.000 · Technologie €14.000 · Markt €24.000 · Recht €9.000 · Puffer €9.000.",
+      "Pilot Umsatz Mon. 7–12: €50k–100k. Jahr 2: €500k–1M. Jahr 3: €2M–5M."
+    ],
+    "detailSpecTitle": "Anhang — Markt, Wettbewerb, Traction, Roadmap",
+    "detailSpecLead": "Pitch Deck 2026 v4 — Detailfolien."
+  }
+}

@@ -25,7 +25,7 @@ export async function GET(_req: Request, ctx: RouteCtx) {
     return NextResponse.json({ error: 'disabled' as const }, { status: 404 });
   }
 
-  const { tier: raw } = await ctx.params;
+  const { locale, tier: raw } = await ctx.params;
   const tier = parseTier(raw);
   if (!tier) {
     return NextResponse.json({ error: 'bad_request' as const }, { status: 400 });
@@ -41,7 +41,7 @@ export async function GET(_req: Request, ctx: RouteCtx) {
     return NextResponse.json({ error: 'unauthorized' as const }, { status: 401 });
   }
 
-  const markdown = readPartnerPlanMarkdown(tier);
+  const markdown = readPartnerPlanMarkdown(tier, locale);
   if (!markdown) {
     return NextResponse.json({ error: 'not_found' as const }, { status: 404 });
   }

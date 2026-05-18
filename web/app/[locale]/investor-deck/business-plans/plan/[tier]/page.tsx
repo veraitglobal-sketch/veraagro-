@@ -29,7 +29,7 @@ export default async function InvestorBusinessPlanPage({ params }: PageProps) {
   const tier = parseTier(tierRaw);
   if (!tier) notFound();
 
-  const markdown = readPartnerPlanMarkdown(tier);
+  const markdown = readPartnerPlanMarkdown(tier, locale);
   if (!markdown) notFound();
 
   const jar = await cookies();

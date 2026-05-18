@@ -2848,7 +2848,15 @@
     "documentsLead": "Wählen Sie eine Karte für die Präsentation, die strukturierte Projektübersicht oder den technischen Antrag.",
     "cardPitchDesc": "Geschichte im Slide‑Format und optionales Video — über die Toolbar drucken oder als PDF speichern.",
     "cardProjectDesc": "Strukturierte Projektzusammenfassung: Umfang, Roadmap, Märkte und aktueller Stand.",
-    "cardTechnicalDesc": "Architektur, Compliance, Offline‑First‑Betrieb und Programm‑Passung für Evaluatorinnen und Evaluatoren."
+    "cardTechnicalDesc": "Architektur, Compliance, Offline‑First‑Betrieb und Programm‑Passung für Evaluatorinnen und Evaluatoren.",
+    "cardConfidentialTitle": "Businessplan (vertraulich)",
+    "cardConfidentialDesc": "Kurz-, Mittel- und Langfassung — Langfassung auf Deutsch gemäß Businessplan 2026 (PDF).",
+    "cardFullProjektDesc": "Volltext Projektbeschreibung 2026",
+    "cardFullProjektDescBody": "Wortgetreuer Volltext aus der Projektbeschreibung (Förderantrag, 26 Seiten).",
+    "cardFullBusinessplanDesc": "Volltext Businessplan 2026",
+    "cardFullBusinessplanDescBody": "Vollständiger Businessplan aus dem PDF (34 Kapitel).",
+    "cardFullPitchDesc": "Volltext Pitch Deck v4",
+    "cardFullPitchDescBody": "Alle 18 Folien als durchsuchbarer Text."
   },
   "pitchDeck": {
     "toolbarCopyLink": "Link kopieren",
@@ -2856,489 +2864,276 @@
     "toolbarPrintPdf": "Als PDF speichern",
     "toolbarPrintAria": "Druckdialog öffnen — PDF speichern",
     "toolbarHint": "Tipp für PDFs: Im Druckdialog „Als PDF speichern“ wählen — praktisch für Kolleginnen und Kollegen, die ein Anhang bevorzugen.",
-    "introNote": "Zuerst lesbarer Kontext — wie Nahrungsmittel heute in Europa fließen und wo Bio Vera hineinpasst — dann, wie die Plattform in der Praxis arbeitet. Link fürs Gremium teilen oder ein PDF beigelegen.",
-    "heroTechPill": "Protocol 360 · Integrity Guard · QR-Reisepass",
-    "narrativeEyebrow": "Ausgangsbild",
-    "narrativeTitle": "Europas Ernährungswirtschaft braucht weiter klarere Wege zum Vertrauen",
+    "introNote": "Investor Deck gemäß Pitch Deck v4 (2026).",
+    "heroTechPill": "Farmer-Pass · Escrow · 70%-MRL · Polygon",
+    "narrativeEyebrow": "Kontext",
+    "narrativeTitle": "Europas Frischwarenlieferkette braucht Transparenz",
     "narrativeParagraphs": [
-      "Wenn man Europa heute betrachtet, ist Landwirtschaft nach wie vor einer der wichtigsten Pfeiler der Wirtschaft.",
-      "Aber der Weg von Lebensmitteln über Märkte… ist oft nicht so klar wie er sein sollte.",
-      "Produkte werden täglich über Regionen und Grenzen hinweg gehandelt — und doch fällt es in vielen Fällen schwer nachzuvollziehen, wo sie wirklich herkommen, wie sie erzeugt wurden und wer dahintersteht.",
-      "Gleichzeitig bleiben viele kleinere Produzentinnen und Produzenten außen vor.",
-      "Nicht, weil sie nicht mehr liefern könnten — sondern weil ihnen ein zuverlässiger Marktzugang fehlt.",
-      "Und ohne diese Sicherheit wird Wachstum zum Risiko.",
-      "So bleibt das System zerfasert.\nUnd Vertrauen wächst nur begrenzt.",
-      "Hier kommt Bio Vera ins Spiel.",
-      "Bio Vera verbindet Landwirtinnen, Landwirte und Einkäufer über eine digitale Plattform, auf der jedes Produkt nachvollziehbar, verifizierbar und verständlich wird.",
-      "Kein Rätselraten. Keine unnötigen Zwischenlagen.",
-      "Sondern direkter, transparenter Handel — gestützt durch echte Daten.",
-      "Für Erzeuger heißt das: Zuversicht, weiter zu investieren und zu wachsen.\nFür Einkäufer: genau zu wissen, was sie beziehen.",
-      "Und für das System insgesamt: sich auf etwas zuzubewegen, das offener, zuverlässiger und fairer ist.",
-      "Das bauen wir mit Bio Vera."
+      "Europas Frischwarenlieferkette ist blind und langsam: 3–5 Zwischenhändler zwischen Feld und Regal.",
+      "Keine durchgängige Rückverfolgbarkeit. Erzeuger warten 60–90 Tage auf Zahlung.",
+      "Die EU verschärft die Transparenzanforderungen — die Branche ist nicht bereit.",
+      "€90 Mrd. EU-Frischwarenmarkt. Über 50% deutsche Importquote. 73% Verbraucher wollen Herkunft wissen.",
+      "Bio Vera ist Verkäufer und Lieferant — kein Marktplatz."
     ],
-    "plainLanguageEyebrow": "In wenigen Worten",
-    "plainLanguageTitle": "Was wir sind — wie Geschäfte laufen — welchen Nutzen das bringt",
-    "plainLanguageIntro": "Bevor jemand in den Anhang eintaucht, müssen meist drei Dinge sitzen: was das Ganze ist, wie eine normale Handelswoche sich anfühlt, und welche Ergebnisse Partner wirklich interessieren — die nächsten drei Karten sind dafür.",
+    "plainLanguageEyebrow": "Geschäftsmodell",
+    "plainLanguageTitle": "Drei Erlösströme, drei Vertriebskanäle",
+    "plainLanguageIntro": "Bio Vera ist Endverkäufer — Marke, Qualität, Absatz.",
     "plainLanguageCards": [
       {
-        "title": "Was Bio Vera ist",
-        "body": "Bio Vera ist eine vernetzte Ernährungskette mit gemeinsamen Bio‑Ready‑Regeln und einem gemeinsamen Technologie-Rückgrat für das „langweilige“ Vertrauen. Betriebe, Verpackung, Spedition, Lieferanten und Einzelhandel schreiben dieselbe Geschichte: Parzellen, Inputs, Feldtagebücher, Chargen, Lieferungen, Gelder und schließlich der QR-Code am Regal. Weniger zählt der glänzende PDF-Bericht — mehr zählen Spuren, die standhalten: Barcode, Parzellengrenze, Zeitstempel, wer die Kiste hielt, als es warm wurde."
+        "title": "01 Frischprodukte",
+        "body": "Eigenmarke an Retail, HoReCa, Franchise. Farmer-Preis pro kg vorab definiert."
       },
       {
-        "title": "Wie der Handel auf der Plattform läuft",
-        "body": "Das kommerzielle Leben folgt einem Kreislauf, den die meisten Teams instinktiv kennen: zugelassene Inputs kaufen (inkl. programmpreisiertes Saatgut und optionaler Versicherung), im Feld mit GPS innerhalb der Parzelle belegen, Chargen nach Protocol 360 erzeugen, sie per Missionen versenden, in denen die Verantwortung wirklich wechselt, und beim Käufer abschließen. Geld fällt nicht als eine undurchsichtige Summe an — Freigaben sind gestaffelt, damit Betrieb, Transport, Programme (inkl. Vera‑Arbeitsboni, wo vorgesehen) und die steuerlichen Beine über Grenzen hinweg für Finanzen lesbar bleiben."
+        "title": "02 Betriebsmittel",
+        "body": "Dünger, Saatgut, Verpackung, Batch-IDs über Supplier-Netzwerk."
       },
       {
-        "title": "Worauf wir optimieren",
-        "body": "Beim Audit reicht eine Chargen-ID und ein chronologischer Strahl statt drei Abteilungen um Anhänge zu betteln. Am Regal muss das, was der QR sagt, mit dem stehen, was im Backoffice liegt. Betriebe bekommen Werkzeuge, die schwache LTE überstehen, und Auszahlungen, die nicht nachträglich improvisiert werden. Wenn die Kühlkette kippt, bleibt die Verantwortung dokumentiert statt in Chatverläufen. Und wenn die Führung fragt „was ist wirklich passiert?“, gibt es eine gemeinsame Zeitachse für Qualität, Logistik und Finanzen."
+        "title": "03 Bio Vera Fresh",
+        "body": "1–3 Stores pro Land. Anfangs keine Franchisegebühr."
       }
     ],
     "videoTitle": "Bio Vera — kurzer Pitch-Überblick",
     "videoCaption": "Ein kurzer Begleiter zu dieser Seite: die Idee hinter Bio Vera, warum transparenter Handel für Betriebe und Einkäufer zählt und wie eine Plattform rückverfolgbare, verifizierte Produkte von Anfang bis Ende trägt.",
     "videoPlaceholderTitle": "Video hier einbinden",
     "videoPlaceholderBody": "Auf YouTube oder Vimeo veröffentlichen (öffentlich oder „nicht gelistet“), NEXT_PUBLIC_PITCH_DECK_VIDEO_URL in Ihrer Deployment-Umgebung setzen, neu deployen — dieser Bereich zeigt den eingebetteten Player.",
-    "howItWorksEyebrow": "So läuft es in der Praxis",
-    "howItWorksTitle": "Vom Betriebspolygon bis zum QR im Regal — ein durchgängiger Faden",
-    "howItWorksLead": "Niemand liest bei lauwarmem Kaffee siebzehn Architekturbilder — deshalb die Reihenfolge, wie Teams sie tagtäglich erleben: Inputs und Grenzen, verlässliche Feldtagebücher, überprüfbare Paletten, Lkw, die Übergaben so dokumentieren, dass Finanz mitbekommt — erst dann digitale Reisepässe und Auszahlungssplits, die Bücher schließen. Rollen unterscheiden sich, Fakten teilen denselben Strom. Jede Kontrollschraube im Detail gewünscht? Im Anhang: vierzehn tragfähige Säulen.",
+    "howItWorksEyebrow": "Ökosystem",
+    "howItWorksTitle": "Fünf Rollen, eine Plattform",
+    "howItWorksLead": "Alle produzieren für Bio Vera — jeder hat seine Marge, Bio Vera ist der Endverkäufer.",
     "howItWorksPhases": [
       {
-        "title": "Betriebe, Saatgutlogik und Schutz vor unzulässigen Aufwendungen",
-        "body": "Jeder Betrieb sitzt auf einem GIS-Polygon, das sich dokumentieren lässt. Vera-Partner-Konditionen passen sich an, wenn Programmzuordnungen wechseln; Saatgutflüsse können bei passenden Programmen optional Versicherung mitnehmen. Alles, was wie chemischer Input wirkt, prüft zuerst die Weißliste — einen zweifelhaften Barcode einmal zu stoppen ist günstiger, als später Monatenlang Fakten zu rekonstruieren."
+        "title": "01 SUPPLIER",
+        "body": "Saatgut, Dünger, Verpackung, Batch-IDs. Eigener Store."
       },
       {
-        "title": "Feldfahrten sind offline tragfähig — GPS bleibt auf der Parzelle",
-        "body": "Techniker führen Tagebuch ohne Netz; sobald Funk wieder da ist, synchronisiert das Gerät. Koordinaten müssen im Polygon liegen — später zählen Satellitenmessungen, nicht die lauteste Erinnerung beim Obststreifen."
+        "title": "02 FARMER",
+        "body": "Inputs per App. Mobil dokumentieren. Verpacken. QR. Badge-Rückgabe."
       },
       {
-        "title": "Verpackung erzeugt beschriftete Chargen mit Protocol‑360‑Tiefe",
-        "body": "Die Packstraße ist kein Bühnenstück fürs Audit — sie gibt Chargen-IDs weiter, von denen alle darunterliegenden Etappen profitieren. Wo Biologie zählt, bleiben Spuren dort; beim Material schauen Einkauf und Qualität konkret hin. Wer Vera-Material-Anforderungen erfüllt, bekommt keinen „Spendeneffekt“, sondern ökonomisch saubere Vera-Boni, die mit Belegen stehen, die auch vor skeptischem QA haltbar sind."
+        "title": "03 AGENT",
+        "body": "Fest angestellt. QA vor Ort. Batch-ID verifizieren."
       },
       {
-        "title": "Lkw folgen Missionen — nicht Gerüchten",
-        "body": "Abholungen, Zwischenstopps und Unterschriften sind festgelegt — wer welche Palette wann in der Hand hatte, bleibt beantwortbar, besonders wenn die Kühlkette ins Schlingern gerät. Telemetrie sitzt in derselben Missionsstory, die Kategorieverantwortliche ohnehin lesen — weniger Anhang-Dschungel im Postfach."
+        "title": "04 LOGISTIK",
+        "body": "Externe Fahrer, später eigene Kühlflotte. Bio Vera zahlt."
       },
       {
-        "title": "Kundinnen scannen QR; Finanzen folgen demselben Ablauf",
-        "body": "Regal-QR bündelt Herkunft, Zertifikate, Transportkorridore und Kühlmomente ohne erfundene Finanzmetaphern. Auszahlungen sind bewusst gestaffelt — Betrieb, Transport, Vera-Boni wo vorgesehen, Saatgutmargen und Versicherungsanteile behalten ihre Belege. Steuerliche Unterschiede zwischen Export und EU-Regal bleiben im Modell statt Erklärungsnot am Quartalsende."
+        "title": "05 KÄUFER",
+        "body": "Retail, HoReCa, Bio Vera Fresh. 24h-Prüffrist."
       }
     ],
-    "coverEyebrow": "Investor-Deck",
-    "coverTitle": "Eine Betriebsschiene für Erzeuger, Einkauf und Logistikpartner",
-    "coverSubtitle": "Bio Vera ist der Ort, an dem Erzeuger und Einkäufer mit den gleichen Bio‑Ready‑Regeln arbeiten — Sitzplatz am Tisch verdient Verhalten entlang der Daten, nicht nur eine Markierung auf der Karte. Ein Stack hält Karten, Feldnotizen, Kartonprüfungen, Lkw-Übergaben und Retail-QR-Pässe stimmig zueinander.Vera-Partner-Saatgutpreise, optionale Versicherung zu qualifizierten Käufen und Vera-Verpackungsboni hängen an Nachweisen, nicht an Wunschdenken.Zugelassene Inputs, GPS innerhalb der Parzelle, Palettenidentität, Kühlverläufe und Auszahlungslinien sind weniger Lagerfeuergeschichten in Tabellen und Chats — sondern eine gemeinsame Datenachse.",
-    "whyTitle": "Warum Rückverfolgbarkeit mit dem Audit härter wird — und warum das gut ist",
-    "whyLead": "Niemand gewinnt, wenn Einkauf heldenhafte PDF-Jagd spielt, Agronomie widersprüchliche Wahrheiten offline führt und keine Verbindung gibt. Bio Vera existiert, weil schlechtes Netz kein Verdikt über sorgfältige Feldbücher sein darf — und weil jede Sendung mit Geisterdaten zu rekonstruieren nur operatives Tempo verschleiert.",
+    "coverEyebrow": "Förderantrag 2026",
+    "coverTitle": "Bio Vera — Vertically Integrated Agrifood Traceability Platform",
+    "coverSubtitle": "Vom Feld zum Regal — lückenlos digital nachverfolgt · Jovica Mihajlovic · Vera IT · Hamburg",
+    "whyTitle": "Das Problem",
+    "whyLead": "3–5 Zwischenhändler. Keine Rückverfolgbarkeit. 60–90 Tage Zahlungsziel.",
     "whyBullets": [
-      "Gebrochene Ordner heilen nicht von selbst vor Zertifikatserneuerung — sie rotten unbemerkt weiter, bis sie jemand teuer bemerkt.",
-      "Der Handel erwartet eine Barcode-Story, die ein zynischer Scan übersteht; leere Phrase bricht schneller als reifes Gemüse auf.",
-      "Wenn Verantwortung, Qualität und Finanzen sich nur einmal pro Quartal die Hand geben, wittern Prüferinnen den Bruch bevor KPI-Folien gedruckt werden.",
-      "Drei halbe Wahrheiten über dieselbe Palette explodieren Finance-Bürokraft — eine gemeinsame Datenachse amortisiert Fleißarbeit."
+      "PROBLEM 01 — Intransparenz: Papierbasierte Dokumentation mit Lücken.",
+      "PROBLEM 02 — Zahlungsunsicherheit: 60–90 Tage Zahlungsziel für kleine Erzeuger.",
+      "PROBLEM 03 — Regulierungsdruck: EU General Food Law, Farm-to-Fork, Einzelhandelsstandards."
     ],
-    "solutionTitle": "Mehr als Listings — Feld, Fracht und Treasury in einem Band",
-    "solutionLead": "Wir verbinden Agronomie, Kühlkosten-Einbindung und gestaffelte Abwicklung, damit Vertrieb, Compliance und Finanzen über einen kohärenten Datensatz vom Anbau bis zum Scan am Regal diskutieren. Feldtelefon und Lager-Dashboard ziehen dieselben APIs — keine parallelen Geschichten mehr.",
-    "chainTitle": "Die vertikale Schleife von Anfang bis Ende",
+    "solutionTitle": "Die Lösung",
+    "solutionLead": "Bio Vera — vertikal integriert, vollständig digital, ohne eigene Farmen.",
+    "chainTitle": "Der komplette Flow — von der Saat bis zum Regal",
     "chainSteps": [
-      "Saatgutökonomie — differenzierte Vera-Partner-Konditionen für registrierte Betriebe",
-      "Versicherung — optional bei qualifizierten Saatgutkäufen wo Programme es zulassen",
-      "Anbau — Tagebücher im Betriebspolygon; disziplinierte Barcodes",
-      "Verpackung — Protocol‑360‑Tiefe plus Vera‑Arbeitsboni mit haltbaren Nachweisen",
-      "Logistik — Missionen, Übergaben, Paletten ohne erzählerische Waisen",
-      "Handel — QR am Regal mit Herkunftszertifikaten und Kühlmomente"
+      "01 Preisfestlegung — Abnahmepreise pro kg vor der Saison.",
+      "02 Input-Beschaffung — Saatgut, Dünger, Verpackung, Batch-IDs per App.",
+      "03 Registrierung & Anbau — Foto, GPS, Validierung.",
+      "04 Laufende Kontrolle — Agent besucht, prüft, berät.",
+      "05 Ernte & QA — Qualitätsprüfung, Batch-ID-Verifikation.",
+      "06 Verpackung auf der Farm — QR-Code aufgeklebt.",
+      "07 Verladen & Transport — Badge, Kühlkette, Bio Vera zahlt.",
+      "08 Lieferung & Escrow — 24h Prüfrist, 48h Auszahlung an Farmer."
     ],
-    "advantagesEyebrow": "Nutzen hängt von der Rolle ab",
-    "advantagesTitle": "Wer profitiert",
+    "advantagesEyebrow": "Innovation",
+    "advantagesTitle": "Innovation & USP",
     "advantages": [
       {
-        "title": "Erzeuger & Betriebe",
-        "body": "Geräte puffern bei schwachem LTE weiter alles lokal; später fühlt sich Sync wie Ebbe statt Beichte an. Kritische Inputs lehnen zweifelhafte Barcodes ab, Parzellen-GPS verwirft Fotos vom falschen Hang."
+        "title": "Batch-Traceability",
+        "body": "QR Farmer-Pass End-to-End."
       },
       {
-        "title": "Handel & Einkauf",
-        "body": "Kategoriegespräche entwachsen Screenshot-Graberei — digitale Pässe zeigen Kühlverlauf, Zertifikate und Geografie ruhig in einem Bild, wenn Geduld am Käufer dünn wird."
+        "title": "Blockchain",
+        "body": "Polygon, öffentlich überprüfbar."
       },
       {
-        "title": "Spedition & Logistikpartner",
-        "body": "Missionen wirken wie Regieanweisung: Wer unterschreibt welche Palette, wenn Kühlaggregat hustet — ohne nachträglich neue Begriffe am Lkw-Stau zu erfinden."
+        "title": "Anti-Fraud",
+        "body": "GPS, Device-ID, Kamera beim Verladen."
       },
       {
-        "title": "Einnahmenteilung",
-        "body": "Saatgut, Versicherung, Fracht, Plattform und Vera-Boni sitzen sauber getrennt — niemand verwandelt Fremdmarge zur Geisterbuchung."
+        "title": "Mobile-First",
+        "body": "App für Farmer, Web für andere Rollen."
       },
       {
-        "title": "Compliance & Assurance",
-        "body": "Anhängsel sind weniger jährliche Schatzsuche weil Estate-IDs und Charge-IDs der Wahrheit verankern — Auditors scrollen Chronologie statt Slack-Verhandlung."
+        "title": "Vertikal ohne Land",
+        "body": "Digitale Kontrolle ohne eigene Farmen."
       },
       {
-        "title": "Marke & Ursprung",
-        "body": "Regalstorys hören auf zu kokettieren — Herkunft, Zertifikate und Transport teilen dasselbe Nervensystem, mit dem Compliance prahlt."
+        "title": "Escrow 48h",
+        "body": "24h Käufer-Prüfrist, 48h Farmer-Payout."
       }
     ],
-    "techTitle": "Technik, die mit dem Feld mitgeht — nicht dagegen arbeitet",
-    "techLead": "Betrieb und Lager schauen wenigstens einmal dieselben Ansichten — Offline-Robustheit ist kein Folienversprechen, sondern Notwendigkeit wenn Erntewochen ohne verlässliches WLAN laufen.",
+    "techTitle": "Kernfunktionen",
+    "techLead": "Farmer-Pass, Escrow, Anti-Fraud, 70%-MRL.",
     "techItems": [
       {
-        "title": "Offline-first Feldaufnahme",
-        "body": "Kritische Augenblicke liegen erst auf dem Gerät, bis das Signal zurückkommt — kein neurotisches Zweittippen mehr, sobald Drescher unter dem Hügel verschwindet."
+        "title": "Farmer-Pass (QR)",
+        "body": "Erzeuger, Substanzen, Ernte- und Lieferdatum. EU-konform."
       },
       {
-        "title": "Integrity Guard",
-        "body": "Weißlisten-Barcodes und GPS innerhalb der Parzellen fangen kreative Erfassung, bevor sie zu CFO-Entschuldigungen eskaliert."
+        "title": "Escrow",
+        "body": "48h Auszahlung statt 60–90 Tagen."
       },
       {
-        "title": "Protocol 360",
-        "body": "Strukturierte Prüfen vom Boden über die Packstraße bis kühlgeführt geben Qualitätsteams eine Story, die sich vor den Kunden verteidigen lässt."
+        "title": "Anti-Fraud & Blockchain",
+        "body": "Polygon. Badge-Siegel."
       },
       {
-        "title": "Sicherheit & Zugriffssteuerung",
-        "body": "Rollen, gesunde Limits und durchsuchbare Protokolle halten mehrparteiliches Netze lesbar, wenn Schnittstellen spinnt."
-      },
-      {
-        "title": "Analytik ohne Schatten-Tabellen",
-        "body": "Weil Missionen, Chargen und Abwicklung gemeinsame IDs haben, mutieren Liege- oder Driftmaße nicht je Abteilung — Finanz nickt, Betrieb nickt, weniger Pivot-Horror."
+        "title": "70%-MRL",
+        "body": "Max. 70% der EU-Rückstandshöchstmenge."
       }
     ],
-    "transparencyTitle": "Wofür Einzelhandelskunden guten Gewissens ankaufen sollten",
+    "transparencyTitle": "Verpackung & Farmer-Pass",
     "transparencyBullets": [
-      "Der QR-Code zeigt konkret Gesichter, Zertifikate und Routenschritte auf — knapp faktenbezogen und verlässlich verlinkbar.",
-      "Kühlketten-Verlauf und Verantwortung stehen bei der Geografie auf derselben Seite — statt höflicher Ignorierung in zwei getrennten Präsentationen.",
-      "Bio‑Ready‑Formulierung auf der Verpackung hängt nicht losgelöst von dem, was der Betrieb dokumentiert.",
-      "Großwortige Claims ohne Belege fallen weg — Ruf weiter unten in der Lieferkette verdient ebenfalls Schutz."
+      "Kraft-Papier-Karton, Sichtfenster, Bio Vera Branding From Origins to Shelf.",
+      "QR Farmer-Pass: Erzeuger, Substanzen, Erntedatum, 70%-MRL.",
+      "Badge = Integritätssiegel. Polygon-Verankerung pro Batch-ID."
     ],
-    "financeTitle": "Geldflüsse ohne monolithische Vernebelung",
-    "financeLead": "Gestaffelte Eskro-Phasen erlauben es der Finanz klar darzulegen wer welchen Teil verdient hat — ohne freitagnachts Held zu spielen indem unzusammenhängende Zeilen künstlich verheiratet werden.",
+    "financeTitle": "Finanzplan 12 Monate",
+    "financeLead": "Gesamt €150.000 (90% Förderung, 10% Eigenmittel).",
     "financeBullets": [
-      "Vera‑Partner‑Saatkalkulation liegt ab Kauftag einen — Überraschungsfußnoten entfallen bei Auszahlungen.",
-      "Versicherungsprogramme weisen ihre Plattform-Provision dort transparent aus, wo sie aktiv werden.",
-      "Grenzüberschreitende Umsatzsteuer-Verläufe bekommen die Zuordnung die sie brauchen — Reporting-Teams sind still dankbar.",
-      "Fahrerhonorare und Plattformmarge bleiben sauber getrennt, damit Abgleich kein Theater wird."
+      "Personal €94.000 · Technologie €14.000 · Markt €24.000 · Recht €9.000 · Puffer €9.000.",
+      "Pilot Umsatz Mon. 7–12: €50k–100k. Jahr 2: €500k–1M. Jahr 3: €2M–5M."
     ],
     "detailSpecEyebrow": "Wenn jedes Detail zählt",
     "appendixWatermark": "Anhang — Tiefe für Operatorinnen",
-    "detailSpecTitle": "Erweiterter Programmüberblick — alle vierzehn Säulen",
-    "detailSpecLead": "Sie haben die Erzählung gelesen; das ist die Werkstatt-Anleitung. Wir schrieben sie wie Partner Onboarding, Audit-Überleben und die Weiterentwicklung der Plattform: Inputs, Karten, Integrity Guard, Protocol 360, Offline-Erfassung, Missionen, Pässe, Abwicklung, Lieferanten-Kataloge, Sicherheitslage, Engineering und Arbeitslayouts pro Rolle. Blättern oder drucken — praktisch gedacht, nicht dekorativ.",
+    "detailSpecTitle": "Anhang — Markt, Wettbewerb, Traction, Roadmap",
+    "detailSpecLead": "Pitch Deck 2026 v4 — Detailfolien.",
     "detailSections": [
       {
-        "title": "1. Saatgut, Versicherung und kontrollierte Inputs",
+        "title": "Markt — Deutschland",
         "items": [
           {
-            "heading": "Vera-Partner-Saatgutkonditionen",
-            "body": "Teilnehmer am Programm bezahlen Konditionen abweichend vom Standardkatalog-Saatgut. Die Differenz speist Modelle, die Auszahlungen an Betriebe und Margen beim Saatgut transparent zusammenhalten."
+            "heading": "Korridor",
+            "body": "Südosteuropa → Deutschland: Serbien, Rumänien, Westbalkan — hohe Bodenqualität, niedrigere Kosten, saisonale Komplementarität."
           },
           {
-            "heading": "Versicherung zusammen mit Saatkäufen",
-            "body": "Wählen Betriebe Absicherung kann eine Police qualifizierte Saatkäufe begleiten; Provision wird als der Plattform zuordenbare Einnahme ausgewiesen."
+            "heading": "Vergleich",
+            "body": "Traditionell: papierbasiert, 3–5 Zwischenhändler, 60–90 Tage Zahlung. Bio Vera: End-to-End digital, 0 Zwischenhändler, Escrow 48h, Polygon, Farmer-Pass, 70% MRL."
           },
           {
-            "heading": "Input-Integrität vor Feldeinsatz",
-            "body": "Dünge- und Pflanzenschutzmittel validieren gegen Weißlisten. Fehlende Barcodes lösen Blocks statt stille Aktenführung."
-          },
-          {
-            "heading": "Globale Partnerschaft, einheitliches Regelwerk",
-            "body": "Geografie ist offen; Onboarding behält Vera-Partner-Logik, Weißlisten-Durchsetzung und Audit Disziplin bei."
-          },
-          {
-            "heading": "Saatgut-Kohorten-Nachverfolgung",
-            "body": "Qualifizierende Prozesse binden gekauftes Saatgut an Kohorten-IDs damit Revisoren Sorte, Tarife und versicherte Lose ohne Lieferung-für-Lieferung Papierjagd verbinden."
+            "heading": "Zielkunden",
+            "body": "REWE · EDEKA · ALDI · LIDL · METRO. B2B Einkaufsabteilungen. Standortvorteil Hamburg."
           }
         ]
       },
       {
-        "title": "2. Betriebe, Kultivierungs-Berichte und Grenzen",
+        "title": "Marktgröße TAM · SAM · SOM",
         "items": [
           {
-            "heading": "Polygon-basierte Validierung",
-            "body": "Betriebspolygone definieren GPS-Checks; Feldnachweise beziehen sich nur auf Parzellen mit Vertrag – nicht Nachbarflächen."
+            "heading": "TAM €90 Mrd.",
+            "body": "EU-Frischwarenmarkt Obst, Gemüse, Getreide."
           },
           {
-            "heading": "Feld-Chronologie statt Schnappschuss-Compliance",
-            "body": "Tagesbücher sammeln Wachstumshinweise, Kontrollen und Fotos chronologisch – für kontinuierliche Assurance statt hektischer Jahressammlungen."
+            "heading": "SAM €8 Mrd.",
+            "body": "Korridor Südosteuropa → Deutschland."
           },
           {
-            "heading": "Verantwortung auf Geräte-Ebene",
-            "body": "Gerät-Fingerprints ergänzen Richtlinien damit Teams wissen welches Mobilgerät welchen Nachweis trug."
-          },
-          {
-            "heading": "Grenzführung",
-            "body": "Polygon-Änderungen folgen geführtem Onboarding – nur aktive Parzellen berechtigen saisonlang GPS-Spuren."
-          },
-          {
-            "heading": "Zertifikat-Metadaten an Quelle",
-            "body": "Betriebsdokumentation fließt ohne Doppelarbeit in Käuferdossiers neben Feldnotizen."
+            "heading": "SOM €1–2M",
+            "body": "Jahr 1–2: 15 Vertragsfarmer, 3–4 Sorten, erste B2B-Kunden DE, Pilot ab Monat 7."
           }
         ]
       },
       {
-        "title": "3. Integrity Guard — Enforcement Leitplan",
+        "title": "Wettbewerb",
         "items": [
           {
-            "heading": "Weißliste ↔ Barcode-Parität",
-            "body": "Biologische Chemie-SKUs matchen Weißlisten; unzulässige Chemie wird nicht zu konformen Events gewaschen."
+            "heading": "Moat",
+            "body": "Vertikale Integration + Blockchain + eigene Agenten + Franchise in einem System."
           },
           {
-            "heading": "Koordinaten-Treue",
-            "body": "Feldeinträge respektieren Betriebspolygone; fehlerhafte GPS-Daten gelten nicht als verifizierter Nachweis."
-          },
-          {
-            "heading": "Sperre mit Rückverfolgung",
-            "body": "Ablehnungen gehen in strukturiertes Review über – die Lücke zwischen „blockiert“ und konsequenter Nacharbeit schließt sich."
-          },
-          {
-            "heading": "Saatgut- und Verpackungs-Barcodes",
-            "body": "Saatgut und zugelassene Verpackungs-SKUs referenzieren Autoritätskatalog; unauflösbare Scans stoppen vor Compliance-Narrative."
-          },
-          {
-            "heading": "Admin-Oberflächen für Ausnahmen",
-            "body": "Policy-Teams sehen blockierte Versuche mit Zeitstempel, Identität und SKU – Ausnahmen bleiben selten, klar, zuordenbar."
+            "heading": "Differenzierung",
+            "body": "End-to-End Traceability, Polygon, QA-Agenten, Escrow 48h, Farmer-Pass, Bio Vera Fresh, Badge-Siegel — kein direkter Wettbewerber mit diesem Modell."
           }
         ]
       },
       {
-        "title": "4. Protocol 360 — gestufte Qualitätssicherung",
+        "title": "Traction & Validierung",
         "items": [
           {
-            "heading": "Feld- und Bodenfürsorge",
-            "body": "Erste Schicht zeigt Pflege (Boden, Monitoring) passend zu Käuferspezifikationen."
+            "heading": "Plattform",
+            "body": "LIVE: Webplattform biovera.app. DEV: Mobile App iOS + Android. ANTRAG: Öffentliche Förderung Mai 2026."
           },
           {
-            "heading": "Packhaus-Biometrie",
-            "body": "Zweite Schicht prüft Kaliber, visuelle Konformität und Folienintaktheit bevor Paletten die Anbauregion verlassen."
-          },
-          {
-            "heading": "Kühlketten-Narrativ",
-            "body": "Dritte Schicht verfolgt Kühlverpflichtungen Ende-zu-Ende – Telemetrie plus Übergaben entlang der Korridore."
-          },
-          {
-            "heading": "Abweichungen und Nacharbeit sichtbar",
-            "body": "Bei Fehlpass bleiben Abweichungen an Chargen und Checkpunkten verknüpft – Käufer sehen Auflösung statt Lücken."
+            "heading": "Markt",
+            "body": "+30–50% erwartete Einkommenssteigerung (Farmer-Gespräche). 15 Vertragsfarmer Ziel Jahr 1. 34 Produkte im Katalog."
           }
         ]
       },
       {
-        "title": "5. Verpackung, Chargen und Vera-Arbeitsbonus",
+        "title": "Projektplan 12 Monate",
         "items": [
           {
-            "heading": "Chargen-IDs verbinden Finanz und Sichtbarkeit",
-            "body": "Jede Charge trägt Kennungen durch Materialkontrolle, Transport und Pässe – kein Schatten-SKU."
+            "heading": "Phase 1 Monat 1–4",
+            "body": "App & Infrastruktur: Mobile MVP, Farmer-Workflow, Supplier-Karte, Beta 5 Nutzer."
           },
           {
-            "heading": "Vera-Bonus-Bedingungen",
-            "body": "Arbeitsboni honoriieren materiell konforme Durchsätze und Verpackungsnachweise – Anreize folgen Prüfung statt Willkür."
+            "heading": "Phase 2 Monat 3–6",
+            "body": "15 Vertragsfarmer, Supplier-Netzwerk, Agenten, Logistik + Kühlfahrzeuge."
           },
           {
-            "heading": "MaterialControl-Spur",
-            "body": "Lieferanten, Zertifikate und Konformitätserklärungen laufen für Käufernachweis zusammen."
+            "heading": "Phase 3 Monat 6–10",
+            "body": "Erste Lieferung DE, 3+ B2B-Kunden, Farmer-Pass live, Polygon live."
           },
           {
-            "heading": "Ernte-zu-Charge-Kontinuität",
-            "body": "Erntefenster und Felderträge füttern Chargenidentitäten – Regal-Pässe erben Agronomie-Chronologie nicht nur Packzeitstempel."
-          },
-          {
-            "heading": "Bonus-Governance",
-            "body": "Vera-Bonus-Trigger referenzieren verifizierte Materialnachweise; Reviews können Logik nachspielen ohne Ermessen."
+            "heading": "Phase 4 Monat 10–12",
+            "body": "Zentrum 2 RO & BG, Franchise-Gespräche, Partner-API, Geschäftsplan 2027."
           }
         ]
       },
       {
-        "title": "6. Offline-first Felderfassung",
+        "title": "Risiken & Mitigation",
         "items": [
           {
-            "heading": "Lokale Persistenz",
-            "body": "Web nutzt ausdauernde Browser-DB; Expo/SQLite hält Spitzen ohne WAN."
+            "heading": "Finanzierung",
+            "body": "Mitigation: IFB, DBU, BMEL DIP — mehrere Förderanträge."
           },
           {
-            "heading": "Sync-Orchestrierung",
-            "body": "Automatische Sync sobald Transport da; Konflikte landen bei Bedienern statt stiller Überschreibung."
+            "heading": "Produktionspartner",
+            "body": "Parallele Gespräche, Direktbeziehungen Farmer als Backup."
           },
           {
-            "heading": "Resilienz",
-            "body": "SLAs erwarten ländlichen Funkausfall; Verfügbarkeit sinngemäß auch bei intermittierenden Teams."
+            "heading": "Regulatorik",
+            "body": "Plattform übertrifft EU-Anforderungen, 70%-MRL strenger als gesetzlich."
           },
           {
-            "heading": "Idempotente Ingestion",
-            "body": "Retries und Doppeluploads konvergieren deterministisch – fragiles Netz forkt keine Chargenhistorie."
+            "heading": "Skalierung",
+            "body": "Bewusst klein starten (15 Farmer), erst validieren dann skalieren."
           }
         ]
       },
       {
-        "title": "7. Logistikmissionen, Custody-Kontrolle",
+        "title": "Team & Gründer",
         "items": [
           {
-            "heading": "Missionenschema",
-            "body": "Missionen bündeln Routen, Abholungen, Manifeste, Checkpoints und Eskalation – wer wann Custody hatte bleibt ohne Grabung beantwortbar."
+            "heading": "Jovica Mihajlovic",
+            "body": "Gründer · CEO · Vera IT · Hamburg. 3+ Jahre Entwicklung, 4 Produkte live. Studium Kommunikation & PR, Universität Niš."
           },
           {
-            "heading": "Übergabe-Bestätigungen",
-            "body": "Digitale Abnahmen markieren Haftungswechsel zwischen Betrieb, Hubs, Flotten und Handover nahe Handel."
-          },
-          {
-            "heading": "Standortintelligenz",
-            "body": "Positionsprotokolle orientieren Dispatch zu Verspätung, Abweichung und Kühl-Drift bevor Käufer alarmieren."
-          },
-          {
-            "heading": "Mehrbeinige Partnerarbeitsräume",
-            "body": "Dispatcher, Flotten, Zwischenempfänger und letzte Meile teilen rollenspezifische Oberflächen mit identischen Missions-IDs."
-          },
-          {
-            "heading": "Ausnahme-Runbooks in Missionen",
-            "body": "Temperatur oder verpasste Übergaben erzeugen strukturierte Eskalation an Chargen gekoppelt – QA reagiert mit Evidenz statt Screenshots."
+            "heading": "Einstellungen",
+            "body": "Priorität 1: Agrar-Spezialist/Kommerzialisierung. Priorität 2: Marketing-Experte. Extern: Mobile-Entwickler Freelance."
           }
         ]
       },
       {
-        "title": "8. QR-Pass und transparenter Käuferblick",
+        "title": "Bio Vera Fresh — Franchise",
         "items": [
           {
-            "heading": "Pass-Schema",
-            "body": "Pässe verdichten Betriebsidentität, Zertifikate Kühlsegmente und Narrative passend für gehobene Einzelhandels-QA bei Wahrhaftigkeit gegenüber jedem globalen Käufer."
+            "heading": "Store-Layout",
+            "body": "Links: lose Frischware. Mitte: Premium-Kartons. Rechts: Säfte & Salate + Kasse."
           },
           {
-            "heading": "Kategorie-Material",
-            "body": "Ein-Link-Zusammenfassungen beschleunigen Due-Diligence-Pakete für Supermärkte, Foodservice und Spezialhandel."
-          },
-          {
-            "heading": "Öffentliche Integrität",
-            "body": "Nur maschinengestützte Aussagen dominieren – übertriebene Farm-to-Fork-Worte ohne Belege scheitern."
-          },
-          {
-            "heading": "Live-Kontext wenn aktiv",
-            "body": "Mit Telemetrie können Pässe Frische oder ETA-ähnliche Hinweise an Custody-Protokolle knüpfen – dennoch nur innerhalb faktischer Daten."
-          }
-        ]
-      },
-      {
-        "title": "9. Eskro, Auszahlungssplits und Mehrparteien-Finanzen",
-        "items": [
-          {
-            "heading": "Eskro-Stufen",
-            "body": "Käuferzahlungen landen vor Wasserfall-Auszahlungen in Zwischenstaaten – enterprise-taugliche Kontrollen."
-          },
-          {
-            "heading": "Wasserfall-Bestandteile",
-            "body": "Betriebsauszahlungen, Vera-Bonus-Pools, Fracht, Saatgutmargen, Versicherungsprovisionen und Plattformumschläge tragen je nachvollziehbare Konten im steuerlogiknahen Modell."
-          },
-          {
-            "heading": "Fahrerökonomie einbezogen",
-            "body": "Fahrerhonorare bleiben bei Reviews explizit neben Betriebs- und Plattformanteilen."
-          },
-          {
-            "heading": "Order-zu-Charge-Abgleich",
-            "body": "Orders referenzieren Chargen damit Rechnung, Gutschrift und Freigabe dieselben Bestandsobjekte treffen die Finanzanalyse."
-          },
-          {
-            "heading": "Periodenlesbarkeit",
-            "body": "Weil Komponenten früh separiert werden reconciliert CFO-Saisonprogramme ohne Umkehr-Mixed-Line-Rechnungen."
-          }
-        ]
-      },
-      {
-        "title": "10. Lieferanten-Storefronts entlang der Weißliste",
-        "items": [
-          {
-            "heading": "Kontrolliertes Merchandising",
-            "body": "Kataloge folgen denselben Integritätsregeln wie Feldinputs – Graumarkt-Chemie landet nicht in Vera-qualifizierten Warenkörben."
-          },
-          {
-            "heading": "Beschaffung für Betriebe",
-            "body": "Verknüpfte Journeys erlauben Verpackung, Jungpflanzen und zugelassene Inputs ohne Programmverstöße."
-          },
-          {
-            "heading": "SKU-Auslauf und Substitution",
-            "body": "Wenn Chemie- oder Verpackungszeilen auslaufen, respektieren Storefronts Supersession statt veraltete Kataloglinien leise zu verkaufen."
-          },
-          {
-            "heading": "Preis- und Partner-Overlays",
-            "body": "Vera-Partner sehen anspruchsbewusstes Merchandising auf Weißlisten-Wahrheit – ohne Widerspruch zwischen Shop und Abrechnung."
-          },
-          {
-            "heading": "Rechnungsabgleich",
-            "body": "Lieferantenrechnungen können dieselben Artikel-IDs nutzen die Integrity Guard im Feld erkennt – Lücke zwischen Einkauf und Compliance schließt sich."
-          }
-        ]
-      },
-      {
-        "title": "11. Identität, RBAC, API-Sicherheit und Observability",
-        "items": [
-          {
-            "heading": "Mehrrollen-Mandantenfähigkeit",
-            "body": "Nutzer wandern zwischen Erzeuger, Einkauf, Logistik, Lieferanten und Administrator-Kontexten mit Policies und strikter Trennung."
-          },
-          {
-            "heading": "JWT plus Rate Limits",
-            "body": "REST profitiert von JWT-Schutz und gedrosselten Endpunkten gegen Skriptabus."
-          },
-          {
-            "heading": "Logging und Incident-Lineage",
-            "body": "Server-Logs unterstützen Trace-IDs und Prisma-Diagnostik, sodass Incident-Teams Zeitachsen rasch rekonstruieren."
-          },
-          {
-            "heading": "Eingabevalidierung überall",
-            "body": "Controller prüfen zentral, sodass keine Alternativpfade die Integrity-Guard-Semantik umgehen."
-          },
-          {
-            "heading": "Gehärtete Sessions, optional MFA",
-            "body": "Authentifizierung entspricht Multi-Tenant-SaaS-Erwartungen; privilegierte Rollen erhalten strengere Hürden, wo das Deployment MFA aktiviert."
-          }
-        ]
-      },
-      {
-        "title": "12. Engineering-Fundament und Kanalparität",
-        "items": [
-          {
-            "heading": "Datenebene",
-            "body": "PostgreSQL sichert den maßgeblichen Systemzustand; Prisma-Migrationen sind idempotent, falls sich historisch Umgebungen auseinanderentwickelt haben."
-          },
-          {
-            "heading": "Modulare NestJS-Services",
-            "body": "Controller und Services respektieren Domänengrenzen (Finanzen, Betriebe, Chargen, Missionen) mit klaren Grenzen und Health-Probes."
-          },
-          {
-            "heading": "Web- und Expo-Parität",
-            "body": "Next.js zeigt Marketing sowie Dashboards; Expo (RN) spiegelt Grower-Ergonomie mit Übersetzungspflicht gemäß den Workspace-Vorgaben."
-          },
-          {
-            "heading": "Locale-Routing",
-            "body": "Lokalisierte Marketing-Routen arbeiten mit Middleware und Cookies, damit mehrsprachige Partner konsistente URLs bookmarken ohne locale-neutrale Apps zu brechen."
-          },
-          {
-            "heading": "API-Verträge",
-            "body": "Domänenmodule stellen stabile REST-Schnittstellen für Betriebe, Chargen, Missionen und Finanzkonsumenten bereit; additive Änderungen bewahren Mobile-Web-Parität über Releases."
-          }
-        ]
-      },
-      {
-        "title": "13. Operationale Rollen und Arbeitsräume",
-        "items": [
-          {
-            "heading": "Erzeuger- und Packhaus-Bedienstete",
-            "body": "Expo (RN) priorisiert haptische, offline-sichere Abläufe für Betriebe, Tagebücher, Parzellennachweise, Ernte und Verpackungsübergänge — parallel zur Anspruchslogik auf responsiven Grower-Dashboards."
-          },
-          {
-            "heading": "Logistik, Fuhrpartner und Empfänger",
-            "body": "Spezialdashboards für Missionen, Fahrerzuweisungen, Checkpoints, Übergaben und Eskalation — ohne Daten fremder Betriebe mandantenübergreifend zu leaken."
-          },
-          {
-            "heading": "Händler und Kategoriemanagement",
-            "body": "Einkaufstools zeigen Pässe, Dossiers und Auftragsstatus entlang autoritativer Chargenchroniken statt Mikrosites ohne Ausführungswahrheit."
-          },
-          {
-            "heading": "Programm-Administratorinnen",
-            "body": "Interne Teams moderieren mit Katalog-Governance und Ausnahmen; Audit-Spuren gewährleisten, dass Richtlinienänderungen kanalübergreifend vorhersehbar ausrollen."
-          }
-        ]
-      },
-      {
-        "title": "14. Evidence-Pakete, QA-Kontingenz",
-        "items": [
-          {
-            "heading": "Strukturierte Qualitäts- und Compliance-Artefakte",
-            "body": "Qualitätsnarrative, Fotos wo Programme es verlangen, GPS-Stempel und Checkpoints ordnen sich chronologischen Dossiers (Betrieb und Charge) zu — ohne handgefertigte Tabellen pro Einzelhändler."
-          },
-          {
-            "heading": "Gezielte Eindämmung",
-            "body": "Unveränderliche Chargenlinie ermöglicht enge Holds: Teams korrelieren Verdachtsmengen über IDs, die Logistik und Finanz teilen, statt unbestimmte SKUs pauschal abzuschalten."
-          },
-          {
-            "heading": "Querschnittsreviews",
-            "body": "Weil Finanzen, QA und Missionen denselben ID-Satz nutzen, quantifizieren Quartalsreviews Leckagen, Abweichungen und Bonuseffekte aus demselben Datenbestand, dem die Geschäftsleitung für regulatorische Verteidigung vertraut."
+            "heading": "Konditionen",
+            "body": "1 Person pro Laden, nur Bio Vera-Produkte, anfangs keine Franchisegebühr, 1–3 Stores pro Land."
           }
         ]
       }
@@ -3360,47 +3155,55 @@
     "contentsTitle": "Inhalt",
     "contentsNav": "Zu Abschnitt springen",
     "skipToContent": "Zum Dokument springen",
-    "introNote": "Knappe Projektzusammenfassung für Gutachter und Fördermittelgeber. Navigation über das Inhaltsverzeichnis; PDF-Anhänge über die Druckfunktion des Browsers.",
+    "introNote": "Vollständige Projektbeschreibung gemäß Förderantrag 2026. Navigation über das Inhaltsverzeichnis; PDF über die Druckfunktion des Browsers.",
     "pdfLimitHint": "Umfang und Layout sind für formale Einreichungen bewusst begrenzt. Bannergrafiken können in der Bereitstellung angepasst werden.",
-    "coverEyebrow": "Projektüberblick",
-    "coverTitle": "Bio Vera — Projektüberblick",
-    "coverSubtitle": "Vertikal integriertes Agrar-Food-Netzwerk nach Bio‑Ready‑Regeln: ein durchgängiger Nachweisweg von Feldpolygonen bis zum Handels-QR‑Pass unter einheitlicher Software.",
+    "coverEyebrow": "Projektbeschreibung",
+    "coverTitle": "Bio Vera — Vertically Integrated Agrifood Traceability Platform",
+    "coverSubtitle": "Förderantrag — Vertikal integrierte AgriTech-Plattform · Jovica Mihajlovic · Vera IT · Rehrstieg 16d, 21147 Hamburg · Mai 2026",
     "sections": [
       {
-        "title": "Introduction (Einführung)",
-        "body": "Bio Vera entwickelt ein digital geführtes Agrar-Food-Netzwerk, das vorsichtige Produzentinnen, Logistik und Handel unter gemeinsamen Bio‑Ready‑Transparenzpflichten bündelt. Fokus ist ein korridorweites Vertrauen: Produktion Südosteuropa trifft EU‑Konformitätsanforderungen ohne parallele Spreadsheet‑Wahrheiten."
+        "title": "1. Executive Summary",
+        "body": "1. Executive Summary\nBio  Vera  ist  eine  vertikal  integrierte  AgriTech-Plattform,  die  den  gesamten\nLieferkettenprozess  für  frisches  Obst  und  Gemüse  digitalisiert  —  von  der\nVertragslandwirtschaft in Südosteuropa über Qualitätskontrolle, Verpackung und gekühlten\nTransport  bis  zur  Lieferung  an  deutsche  Einzelhändler.  Jede  Einheit  wird  mit  einer\neindeutigen  Batch_ID  nachverfolgt  und  in  einem  EU-konformen  digitalen  Produktpass\ndokumentiert.\nGründer: Jovica Mihajlovic, 3+ Jahre praktische Entwicklungserfahrung, autodidaktischer\nEntwickler mit vier live Produkten, Sitz in Hamburg.\nMarkt: EU-Frischwarenmarkt €90 Mrd./Jahr. Deutschland größter Importeur mit €25+ Mrd.\nund  über  50%  Importquote.  EU  Digital  Product  Passport  Verordnung  ab  2027  wird\nlückenlose Rückverfolgbarkeit vorschreiben.\nInnovation: Sechs  Innovationsschichten  —  End-to-End  Batch-Traceability,  Blockchain-\nverankerte Custody Records (Polygon), Multi-Stakeholder Anti-Fraud System (GPS/Device-\nID/Kamera), Escrow-basiertes Settlement (48h Erzeuger-Payout), vertikale Integration ohne\neigene Farmen sowie strenge eigene Qualitätsstandards (MRL bei 70% der EU-Grenzen).\nFörderbedarf: €150.000  für  12  Monate  —  Entwicklung  der  Mobile  App  (iOS/Android),\nPilotbetrieb  mit  15  Vertragslandwirten  in  Südosteuropa,  erste  Lieferungen  an  deutsche\nAbnehmer und Aufbau des Vertriebsteams."
       },
       {
-        "title": "Problem",
-        "body": "Im Lebensmittelhandel reißen noch immer Datenfäden: Inputs und Chemie werden uneinheitlich erzählt; Einkauf und QS jagen Screenshots statt Zeitachsen; leistungsfähige Betriebe scheitern ohne teures Papiergeklimper am Markteintritt; Kühlkette und Treasury sprechen selten dieselbe Geschichte."
+        "title": "2. Beschreibung des Unternehmens",
+        "body": "2. Beschreibung des Unternehmens\n2.1 Unternehmensprofil\nFeld Details\nFirma Vera IT — Jovica Mihajlovic (Einzelunternehmen / Gewerbe)\nGründungsdatum03.07.2025\nAdresse Rehrstieg 16d, 21147 Hamburg\nTelefon +49 155 63740470\nE-Mail info@verait.de / info@biovera.app\nWebseiten verait.de · biovera.app · getfadeapp.com · reinallround.de\nMitarbeiter 1 (Gründer, Vollzeit)\nUmsatz €0 (Pre-Revenue — das Unternehmen befindet sich in der Aufbauphase)\nRechtsform Einzelunternehmen (Gewerbeanmeldung)\n2.2 Unternehmensgegenstand\nVera  IT  ist  ein  technologiegetriebenes  Einzelunternehmen  mit  Sitz  in  Hamburg.  Das\nUnternehmen  entwickelt  innovative  digitale  Produkte  in  den  Bereichen  Künstliche\nIntelligenz, Mobile Apps und Plattformentwicklung. Der Tätigkeitsschwerpunkt liegt auf der\nKonzeption,  Entwicklung  und  dem  Betrieb  von  Softwareplattformen  für  verschiedene\nBranchen.\nDas  aktuelle  Hauptprojekt  Bio  Vera  (biovera.app)  ist  eine  vertikal  integrierte  AgriTech-\nPlattform,  die  erstmals  den  gesamten  Agrar-Lebensmittel-Lieferkettenprozess  in  einem\ndurchgängig  digitalen  System  abbildet.  Bio  Vera  ist  dabei  nicht  Vermittler,  sondern\nVerkäufer und Lieferant (Seller and Supplier of Record) — das Unternehmen kontrolliert die\ngesamte Wertschöpfungskette digital."
       },
       {
-        "title": "Solution (Lösung)",
-        "body": "Ein gemeinsames Rückgrat über Betriebe, Integrity‑Guard‑Scans, Protocol‑360‑Chargensignaturen, Kühl‑Missionen mit Abnahmen, QR‑Pässe und gestaffelte Settlement‑Logiken – Auditors, Feldpersonal und Finanz sprechen denselben Chargencode."
+        "title": "3. Produkt & Dienstleistung",
+        "body": "3. Produkt & Dienstleistung\n3.1 Plattformübersicht\nBio Vera digitalisiert die Lieferkette für frisches Obst, Gemüse und Getreide vom Feld bis\nzum Regal. Das System umfasst folgende Kernkomponenten:\nBatch_ID-Rückverfolgbarkeitssystem\nJede Kiste erhält eine eindeutige Batch_ID. Der Trace läuft vom Feld über Verpackung,\nTransport bis zur Lieferung in einem durchgängigen operativen System. Jeder Scan, jede\nÜbergabe und jede Qualitätsprüfung wird dokumentiert und ist rückverfolgbar.\nDigitaler Produktpass (Farmer-Pass)\nEU-konforme  digitale  Zertifikate,  die  Herkunft,  Erntedatum,  Kaltketteninformationen  und\nCompliance-Daten  enthalten.  Physisches  Etikett  auf  jeder  Kiste.  QR-Scan  zeigt  dem\nVerbraucher: Erzeuger (Name und Foto), verwendete Substanzen und Dünger, Erntedatum,\nLieferdatum, Compliance-Status (70%-MRL). Der Farmer-Pass ist gleichzeitig der digitale\nProduktpass — EU-konform und bereit für die DPP-Verordnung ab 2027.\nSmart-Lock System\nKisten sind an Chargen gebunden: QR-Scans plus GPS-Bestätigungen landen in einer\noperativen Akte. Jeder Übergabepunkt wird mit Zeitstempel, Standort und Verantwortlichem\ndokumentiert.\nGesichertes Zahlungssystem (Escrow)\nKäufer-Gelder  bleiben  bei  Bio  Vera,  bis  Lieferung  und  Konformitätsprüfungen\nabgeschlossen sind. Auszahlungen an Erzeuger erfolgen innerhalb von 48 Stunden nach\nbestätigter Lieferung — im Vergleich zu 60–90 Tagen Zahlungsziel im Branchenstandard\nein signifikanter Vorteil für Landwirte.\nAnti-Fraud Protection\nDreischichtiges Sicherheitssystem: GPS-Zeitstempel, Device-ID-Tracking und Kamera-only-\nErfassung  (keine  manuellen  Uploads).  Manipulationen  entlang  der  Lieferkette  werden\nsystemisch ausgeschlossen.\n\nOptionale Polygon-Blockchain-Verankerung\nWenn  aktiviert,  verankert  das  System  einen  kryptografischen  Fingerprint  des  Chargen-\nDossiers auf der Polygon-Blockchain. Dies ermöglicht unabhängige Überprüfbarkeit durch\nRegulierungsbehörden  und  Einzelhändler,  ohne  dass  die  gesamte\nLieferkettendokumentation öffentlich zugänglich wird.\nKI-Analytics\nIntelligente  Datenanalyse  für  Ernte-Prognosen,  bildbasierte  Qualitätsbewertung  und\nSupply-Chain-Optimierung.  Anomalie-Erkennung  identifiziert  Abweichungen  in  der\nLieferkette in Echtzeit.\n3.2 Produktpalette\nKategorie Sorten\nObst (13\nSorten)\nHimbeeren, Brombeeren, Heidelbeeren, Erdbeeren, Äpfel, Birnen, Pflaumen,\nPfirsiche, Aprikosen, Kirschen, Trauben, Johannisbeeren, Stachelbeeren\nGemüse (18\nSorten)\nUmfangreiche Palette saisonaler Gemüsesorten aus dem Anbaukorridor\nSüdosteuropa — u.a. Tomaten, Gurken, Kartoffeln, Paprika\nGetreide (3\nSorten)\nAusgewählte Getreidesorten für den europäischen Markt\nPrinzip: Frisch, ohne Einfrieren. Kühlkette ausschließlich für den Transport — Geschmack,\nTextur und Nährwert bleiben wie auf dem Feld. Kein Temperaturschock.\nFokus Jahr 1: Himbeere, Sauerkirsche, Kirsche, Brombeere (Produkte mit hoher Marge)\nsowie Tomate und Gurke. Die Erzeugerregionen in Südosteuropa bieten ideale klimatische\nBedingungen für diese Produkte.\n3.3 Vier-Stakeholder-Modell\nStakeholder Rolle Bio Vera Mehrwert\nGrowers\n(Erzeuger)\nVertragsanbau nach Bio Vera\nStandards. MRL bei 70% der EU-\nGrenzen, standardisierte Kisten,\nAgronomy-Checkpoints.\nGesicherte Bezahlung in 48h,\nkostenlose Zertifizierung, Work-\nBonus für Compliance, stabiler\nAbsatzkanal\nDigitaler Produktpass pro Charge,\nEU-DPP-ready, keine versteckten\n\nBuyers\n(Käufer)\nEinzelhändler und Großhändler kaufen\ndirekt von Bio Vera mit vollständiger\nRückverfolgbarkeit.\nZwischenhändler, Dashboard mit\nKatalog\nSuppliers\n(Lieferanten)\nSaatgut, Pflanzenschutz,\nVerpackungsmaterial — zugelassene\nInputs für das Bio Vera Programm.\nVerifizierte Lieferkette,\nstandardisierte Bestellprozesse,\nZugang zum Erzeuger-Netzwerk\nLogistics\n(Logistik)\nGekühlter Transport mit GPS-Tracking\nund Smart-Lock-System.\nTransparente Auftragsabwicklung,\nautomatisierte Scan-Validierung,\ngesicherte Zahlung\n3.4 Verpackungskonzept\nNachhaltige Papierverpackung mit integriertem Rückverfolgbarkeitssystem. Jede Kiste trägt\ndie Bio Vera-Marke und einen eindeutigen QR-Code — den Farmer-Pass.\nKraft-Papier-Karton — nachhaltig, recyclebar\nIntegrierter QR-Farmer-Pass\nVerschiedene Größen (per Kilogramm, 500g, 1kg)\nBio Vera Branding auf jeder Einheit\nVariante Beschreibung Kosten/\nEinheit\nBio Fresh\nConcept\nKraft-Karton für Bio Vera Fresh Stores. Premium-Ausführung\nmit Fenster, Griffen, Branding.\n0,30–0,45\nEUR\nRetail-\nVerpackung\nBio Vera Kartons mit QR — für Supermarkt-Regale. Optimiert\nfür Kosten-Nutzen.\nmax. 0,15\nEUR\n3.5 Operativer Ablauf (Lieferkette)\nVertragsanbau: Farmer baut nach Bio Vera Standards an (MRL 70%, Checkpoint-\nSystem)\nErnte & Verpackung: Farmer verpackt direkt auf der Farm: Retail-Karton (Bio\nVera Branding, verschiedene Größen, Kraft-Papier) oder Industrie-Verpackung.\nQR-Code wird aufgeklebt.\nQualitätskontrolle: Bio Vera Agent vor Ort prüft Qualität, stempelt Badge,\nfotografiert. Eigener Qualitätsstandard: maximal 70% der EU-\nRückstandshöchstmenge.\n•\n•\n•\n•"
       },
       {
-        "title": "Product (Produkt)",
-        "body": "Responsive Grower-/Supplier-Web, Expo-Mobile für Teams mit schwacher Netzanbindung Logistik-/Mission-Dashboards, Käufertooling und Admin‑Governance – Offline‑First Persistenz gefolgt von deterministischem Sync."
+        "title": "4. Innovation & Alleinstellungsmerkmale",
+        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem EU Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist weltweit einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
       },
       {
-        "title": "Market",
-        "body": "Beachhead: Produzentinnen im Balkan‑Korridor und EU‑Kategorieinkauf mit Kühl-/QA‑Nachweispflicht; Skalierung partnerweise statt diffuser Massenliste."
+        "title": "5. Markt & Wettbewerb",
+        "body": "5. Markt & Wettbewerb\n5.1 Marktübersicht\nKennzahl Wert Quelle\nEU-Frischwarenmarkt (Obst & Gemüse)ca. €90 Mrd./JahrEurostat 2024\nDeutschland: Importvolumen Frischwareca. €25+ Mrd./JahrDestatis / AMI 2024\nDeutsche Importquote Obst & Gemüse> 50% BMEL Ernährungsbericht\nVerbraucher: Herkunft-Transparenz wichtig73% Eurobarometer 2024\nEU Digital Product Passport Pflicht ab 2027 EU-Verordnung 2024/1781\n5.2 Geschäftskorridor: Südosteuropa → Deutschland\nBio Vera fokussiert auf den Korridor Südosteuropa → Deutschland. Dieser Korridor ist\nstrategisch bedeutsam:\nHohe Bodenqualität: Fruchtbare Böden im pannonischen Becken, ideale\nklimatische Bedingungen für Obst- und Gemüseanbau\nKostenstruktur: Niedrigere Produktionskosten bei vergleichbarer Qualität\nermöglichen wettbewerbsfähige Preise im deutschen Markt\nSaisonale Komplementarität: Frühere Erntezeitpunkte ergänzen den\nmitteleuropäischen Anbau\nEU-Integration: Wachsende EU-Integration der Westbalkan-Staaten schafft\nregulatorische Angleichung\nBestehende Logistikrouten: Etablierte Transportwege, die durch Digitalisierung\noptimiert werden können\n5.3 Unit Economics (Beispiel: Äpfel)\nPosition EUR/kg Anteil\nFarmer-Zahlung 0,60–0,70 ~50%\nVerpackung (Retail-Karton) ~0,15 ~12%\n•\n•\n•\n•\n•\n\nLogistik + Operativ 0,10–0,15 ~10%\nGesamtkosten ~0,90 ~72%\nVerkaufspreis (Retail) ~1,30 100%\nBio Vera Marge ~0,40 ~30%\nFarmer-Vorteil: Der Markt-Abnahmepreis für Äpfel in Südosteuropa liegt bei ca. 0,25–0,35\nEUR/kg. Bio Vera zahlt 0,60–0,70 EUR/kg — mehr als das Doppelte. Farmer produzieren\nfür Bio Vera, weil es sich finanziell lohnt.\n5.4 Logistik-Kalkulation\nPosition Wert\nLKW-Kapazität ~23.000 kg\nStrecke Erzeugerregion → Deutschland ~1.200–1.500 km\nKosten pro km 1,30–1,70 EUR\nKosten pro Fahrt (Ø 1.300 km) ~1.950 EUR\nKosten pro kg ~0,085 EUR\n5.5 Wettbewerbsvergleich\nMerkmal Traditionelle\nLieferkette\nAgrar-\nMarktplätze Bio Vera\nRückverfolgbarkeitPapierbasiert,\nlückenhaft\nTeilweise digital End-to-End, Echtzeit\nQualitätskontrolle Stichproben Keine (Vermittler)Eigene Agenten vor Ort\nZahlungssicherheit60–90 Tage\nZahlungsziel\nVariabel Escrow, 48h Payout\nBlockchain Keine Selten Polygon (optional)\nZwischenhändler 3–5 1 (Plattform) 0 (vertikale Integration)\nDigitaler\nProduktpass\nNicht vorhanden Nicht vorhandenStandard, jede Charge\n\nAnti-Fraud Manuell BewertungssystemGPS + Device-ID +\nKamera\n5.6 Zielkunden\nPrimär  (B2B): Deutsche  Einzelhandelsketten  (Rewe,  Edeka,  ALDI,  Lidl),  Großhändler\n(Metro), Gastro-Lieferanten (HoReCa-Bereich).\nSekundär: Bio-Supermärkte, Spezialhandel, Foodservice-Unternehmen."
       },
       {
-        "title": "Business Model",
-        "body": "Programmökonomik mit Vera‑Partner‑Inputs und optional gekoppelter Versicherung, wo erlaubt; Vera‑Boni geknüpft an Materialnachweise; korridorbezogene Transportkalkulation sowie escrow‑segmentierte Auszahlungen für Erzeugung, Logistik und Plattform."
+        "title": "6. Vermarktungsstrategie",
+        "body": "6. Vermarktungsstrategie\n6.1 Go-to-Market-Plan\nPhase ZeitraumAktivitäten Ziele\nPhase 1:\nPilot\n2026 15 Vertragsfarmer in Südosteuropa onboarden. Erste\nLieferungen an 2–3 deutsche Abnehmer. Referenz-\nCases aufbauen.\n€50k–100k\nUmsatz\nPhase 2:\nWachstum\n2027 50+ Erzeuger in Südosteuropa. Direktverträge mit\nEinzelhandelsketten. Partner-API für ERP-Integration.\n€500k–1M\nUmsatz\nPhase 3:\nSkalierung\n2028 Multi-Region-Expansion. IoT-Sensorintegration. KI-\nbasierte Vorhersagemodelle. Weitere EU-Korridore.\n€2M–5M\nUmsatz\n6.2 Vertriebskanäle\nDirekter B2B-Vertrieb: Persönliche Akquise bei Einkaufsabteilungen deutscher\nEinzelhandelsketten und Großhändler\nDigitale Plattform: biovera.app für Registrierung, Bestellung, Pre-Order und\nBatch-Tracking\nMessen & Events: Fruit Logistica (Berlin), Anuga (Köln), BioFach (Nürnberg) —\ndie wichtigsten Branchenmessen für Frischware in Europa\nNetzwerk-Effekte: Zufriedene Käufer als Referenzen, Erzeuger werben weitere\nErzeuger über das Programm\n6.3 Preismodell\nBio Vera operiert als Verkäufer und Lieferant (Seller of Record). Die Marge entsteht aus der\nDifferenz zwischen Einkaufspreis (Erzeuger + Logistik) und Verkaufspreis (Einzelhandel).\nDurch  den  Wegfall  von  3–5  Zwischenhändlern  können  sowohl  wettbewerbsfähige\nEinzelhandelspreise als auch faire Erzeugerpreise realisiert werden.\n6.4 Umsatzströme\nKerngeschäft: Verkauf von Frischprodukten an B2B-Abnehmer (Marge ~30%)\n•\n•\n•\n•\n•\n\nSupplier-Geschäft: Dünger, Saatgut, Verpackung (Kraft-Kartons, verschiedene\nGrößen) und Batch-IDs. Eingekauft bei regionalen Vertragsherstellern. Distribuiert\nüber Supplier-Netzwerk. Eigene Marge.\nBio Vera Fresh Stores: Verpackte Premiumprodukte in Bio Vera Kartons —\nRetail-Qualität (ab Phase 2)\n•\n•"
       },
       {
-        "title": "Current status",
-        "body": "Produktive Software für Betriebe, Integrity‑Guard‑Feldaufnahme, Pack-/Chargenbildung, Missionen und Pässe im gestuften Rollout; parallel Pilotkohorten, Logistikbündnisse und Härtung der Käuferoberflächen."
+        "title": "7. Gründerprofil",
+        "body": "7. Gründerprofil\nJovica Mihajlovic — Gründer & CEO\nFeld Details\nName Jovica Mihajlovic\nStandort Hamburg, Deutschland (Hauptwohnsitz)\nErfahrung 3+ Jahre praktische Entwicklungserfahrung (Autodidakt)\nStudium Kommunikation & Öffentlichkeitsarbeit, Philosophische Fakultät,\nUniversität Niš\nUnternehmensgründung03.07.2025 — Vera IT (Gewerbe, Hamburg)\nPortfolio — Bewiesene Umsetzungskompetenz\nJovica  Mihajlovic  hat  vier  digitale  Produkte  eigenständig  konzipiert,  entwickelt  und  live\ngebracht:\n1.  Vera  IT (verait.de)  —  Künstliche  Intelligenz  Agentur  Hamburg.  Dienstleistungen:  KI-\nIntegration,  Machine  Learning,  Mobile  Apps,  Software-  und  Webentwicklung  für\nUnternehmen in Hamburg und Deutschland.\n2.  Fade (getfadeapp.com)  —  Weltweit  einsetzbare  Salon-Booking-App  mit  Loyalty-\nPunktesystem pro Salon, QR-Check-in, Kartenentdeckung, Chat und Owner-Dashboard.\nVerfügbar auf iOS und Android mit Subscription-Modell (Starter/Medium/Pro).\n3.  ReinAllround (reinallround.de)  —  Gebäudereinigungsservice  in  Hamburg  mit  24h-\nVerfügbarkeit,  digitalem  Buchungssystem  und  16+  Einsatzbereichen.  Online-\nTerminbuchung und Direktkontakt.\n4.  Bio  Vera (biovera.app)  —  AgriTech-Plattform  für  rückverfolgbare  Frischprodukte.\nWebplattform  mit  Backend-API,  Benutzer-Dashboard,  Pre-Order-System  und  vier\nStakeholder-Bereichen.\nRelevanz für Bio Vera\nPraktische Entwicklungskompetenz: Eigenständige Entwicklung komplexer\nWeb- und Mobile-Plattformen von der Architektur bis zum Deployment\n•\n\nMulti-Stakeholder-Architektur: Fade zeigt die Fähigkeit, Plattformen mit\nverschiedenen Nutzergruppen (Kunden, Salon-Inhaber, Mitarbeiter) zu bauen\nProduktdesign: Nutzerzentrierte UX/UI-Entwicklung — alle vier Produkte sind live\nund nutzbar\nKenntnis des südosteuropäischen Agrarmarktes und des deutschen\nEinzelhandels: Verständnis beider Märkte ermöglicht die Brückenfunktion der\nPlattform\nKommunikation: Studium in Kommunikation & PR — essentiell für Stakeholder-\nManagement und B2B-Vertrieb im Agrarsektor\nKI & Blockchain: Praktische Erfahrung mit ML-Systemen und Polygon Smart\nContracts durch Vera IT\nGeplante Teamergänzung\nRolle Zeitpunkt Aufgabe\nMobile-App-Entwickler\n(Freelance)\nMonat 1–6iOS/Android-Entwicklung, React Native/Flutter\nAgrar-/QA-Spezialist (Teilzeit)Monat 3–\n10\nQualitätssicherung, Erzeuger-Betreuung vor\nOrt\nBusiness Development (Teilzeit)Monat 5–\n12\nEinzelhandelskontakte Deutschland, Messen\nOperatives Team in der Erzeugerregion\nRolle Beschreibung Kosten\nAgent (Qualitätskontrolle) ~20 Farmer pro Agent ~1.000 EUR/Monat\n•\n•\n•\n•\n•"
       },
       {
-        "title": "Roadmap",
-        "body": "Kurzfristig: mehr Pilotbetriebe, tiefere Kühlinstrumentierung, bessere Dossier-Tools, automatisierte Auszahlungsnarrative. Mittelfristig: dichtere, whitelist-konforme Supplier-Stores, mehr Retail-SKU-Programme, erweiterte zertifizierte Speditionskreise."
+        "title": "8. Projektbeschreibung & Meilensteine",
+        "body": "8. Projektbeschreibung & Meilensteine\n8.1 Projektdefinition\nProjekttitel: Bio Vera — Markteinführung einer vertikalen digitalen Lieferketten-Plattform\nfür rückverfolgbare Frischprodukte im EU-Korridor Südosteuropa–Deutschland\nProjektdauer: 12 Monate\nProjektziel: Entwicklung und Markteinführung der Bio Vera Mobile App (iOS/Android) sowie\nDurchführung eines Pilotprojekts mit mindestens 15 Vertragslandwirten in Südosteuropa\nund ersten Lieferungen an deutsche Abnehmer.\n8.2 Ausgangssituation\nDie Bio Vera Webplattform (biovera.app) ist als Informations- und Konzeptplattform mit\nfunktionalem  Backend-API  aufgebaut.  Die  Kernarchitektur  (Batch-Tracking,  digitaler\nProduktpass, Escrow-Logik) ist konzipiert und in der Webapplikation prototypisch integriert.\nDie Roadmap auf biovera.app zeigt: Q1–Q2 2026 (Backend API, Web App, Core Features,\nKI Analytics, Polygon) sind als abgeschlossen markiert.\nNoch nicht realisiert (= Gegenstand dieses Projekts):\nNative Mobile App für alle Stakeholder (Erzeuger, Käufer, Logistik, Lieferanten)\nPilotbetrieb mit realen Vertragslandwirten und realer Ware\nMarkteinführung und erste B2B-Kundenakquise in Deutschland\nKI-gestützte Qualitätsbewertung im Feldeinsatz\nIntegration mit bestehenden ERP-Systemen deutscher Einzelhändler\nAufbau des Vertriebs- und Betreuungsteams\n8.3 Ablaufplan und Meilensteine\nPhase Monat Meilensteine Ergebnis\nPhase 1: App-\nEntwicklung\n1 M1: UX/UI Design für Mobile App\nabgeschlossen\nFunktionsfähige Mobile App\n(iOS + Android)\n3 M2: MVP Mobile App fertig\n(React Native/Flutter)\n•\n•\n•\n•\n•\n•\n\n4 M3: Beta-Test mit 5 Testnutzern\nabgeschlossen\nPhase 2: Pilot-\nVorbereitung\n4 M4: 15 Vertragsfarmer in\nSüdosteuropa unter Vertrag\nOperatives Pilotprojekt\n5 M5: Logistikpartner für\nKühlketten-Transport gesichert\n6 M6: Erste Ware geerntet und im\nSystem erfasst\nPhase 3:\nMarkteinführung\n7 M7: Erste Lieferung an\ndeutschen Abnehmer\nValidiertes Geschäftsmodell\n8 M8: Polygon-Blockchain-\nAnchoring live mit Pilotdaten\n9 M9: 3+ B2B-Kunden mit\nBestellung oder Letter of Intent\nPhase 4: Skalierung 10 M10: KI-Modul für\nQualitätsprognose integriert\nSkalierungsbereite Plattform\n11 M11: Partner-API dokumentiert\nund integrationsbereit\n12 M12: Geschäftsplan für\nExpansion 2027 fertiggestellt"
       },
       {
-        "title": "Impact",
-        "body": "Strukturierte Traceability senkt Auditkosten, verbessert die Preisfindung dokumentationsfähiger Betriebe und verankert Kühl- und Herkunftsdaten dort, wo Verbrauchervertrauen entsteht."
+        "title": "9. Finanz- & Personalplan",
+        "body": "9. Finanz- & Personalplan\n9.1 Kostenplan (12 Monate)\nKostenart Betrag (€) Anteil\nSysteme & Plattform (App + Tech)\nMobile-App-Entwickler (Freelance, 6 Mon.) 18.000 12,0%\nCloud-Hosting (Hetzner, 12 Mon. × €50) 600 0,4%\nBlockchain-Infrastruktur (Polygon Gas/Nodes) 200 0,1%\nApple Developer Program (€99/Jahr) 99 0,1%\nGoogle Play Registrierung (einmalig €25) 25 0,0%\nQR-Etiketten & Prototyp-Kartons 3.000 2,0%\nVerpackungsmaterial (Kraft-Kartons, 10.000 Stk.) 4.500 3,0%\nIT-Sicherheit & Monitoring 800 0,5%\nDomain, SSL, E-Mail-Infrastruktur 500 0,3%\nSonstige Entwicklung (Testing, CI/CD) 4.500 3,0%\nSumme Systeme & Plattform 32.224 21,5%\nOperativer Pilotbetrieb\n1 Agent vor Ort (8 Mon. × €1.000) 8.000 5,3%\nLeasing Kühlfahrzeug (Pilotphase, 5 Mon.) 3.500 2,3%\nBetriebsmittel Pilotbetrieb 1.500 1,0%\nSumme Operativer Pilotbetrieb 13.000 8,7%\nMarkterschließung & Vertrieb\nBusiness Development (Teilzeit, 6 Mon.) 12.000 8,0%\nMessen & Events (Fruit Logistica, Anuga) 4.000 2,7%\nMarketing & Vertrieb 2.000 1,3%\nReisekosten (Farmer-Onboarding, Partnertreffen) 6.000 4,0%\n\nSumme Markterschließung 24.000 16,0%\nPersonal (operativ)\nGründer Jovica Mihajlovic (Vollzeit, 12 Mon.) 36.000 24,0%\nAgrar-/QA-Spezialist (Teilzeit, 8 Mon.) 16.000 10,7%\nBüro & Co-Working Hamburg 4.000 2,7%\nKommunikation & Telefon 1.200 0,8%\nBuchhaltung & Steuerberatung 2.400 1,6%\nVersicherungen (Betriebs-, Haftpflicht) 2.400 1,6%\nFahrzeugbetrieb (Kraftstoff, Wartung) 2.000 1,3%\nSumme Personal (operativ) 64.000 42,7%\nRecht & Zertifizierung\nGlobalG.A.P. Zertifizierung (Gruppenverfahren) 5.000 3,3%\nRechtsberatung (Verträge, AGB, EU-Compliance) 4.000 2,7%\nSumme Recht & Zertifizierung 9.000 6,0%\nPuffer\nPuffer / Unvorhergesehenes 7.776 5,2%\nGESAMT 150.000 100%\n9.2 Finanzierungsplan\nQuelle Betrag (€) Anteil\nÖffentliche Förderung 135.000 90%\nEigenmittel 15.000 10%\nGESAMT 150.000 100%\nEigenmittel-Einsatz: Der Gründer investiert eigene Mittel in 1–2 gebrauchte Mercedes\nSprinter  Kühlfahrzeuge  (bis  3,5t,  B-Führerschein).  Diese  dienen  als  operative\nLogistikinfrastruktur für die letzte Meile — Lieferung an Einzelhändler, HoReCa und Bio"
+      },
+      {
+        "title": "10. Risiken & Mitigation",
+        "body": "10. Risiken & Mitigation\nRisiko Wahrsch.AuswirkungMitigation\nFarmer-Adoption\nzu langsam\nMittel Hoch Kostenlose Zertifizierung und Onboarding. Work-\nBonus für Compliance. 48h-Payout als starker\nAnreiz. Persönliche Betreuung vor Ort (Agent).\nCash-Flow-LückeHoch Hoch Schrittweiser Aufbau mit begrenztem Volumen.\nPre-Order-System für Liquiditätsplanung.\nFactoring als Option für Forderungen gegenüber\nEinzelhandel.\nLogistik-Ausfälle Mittel Hoch Redundante Transportpartner. Smart-Lock und\nGPS-Monitoring. Temperaturüberwachung (IoT\nab 2027). Transportversicherung.\nEinzelhandel-\nZugang\nMittel Hoch Fruit Logistica und Anuga als Kontaktplattform.\nDigitaler Produktpass als Alleinstellungsmerkmal.\nEU DPP-Vorschrift erhöht Nachfrage. Referenz-\nCases aus Pilotphase.\nRegulatorische\nÄnderungen\nNiedrig Mittel EU DPP-Verordnung kommt Bio Vera entgegen.\nPlattform ist compliance-ready. Eigene\nStandards (70% MRL) strenger als gesetzlich.\nTechnischer\nAusfall\nNiedrig Hoch Cloud-Infrastruktur mit Redundanz.\nAutomatisierte Backups. Mobile App mit Offline-\nFähigkeit für ländliche Gebiete.\nSaisonale\nSchwankungen\nHoch Mittel Diversifiziertes Portfolio (34 Produkte).\nErntekalender über 9 Monate. Pre-Order-\nPlanung für saisonale Spitzen."
+      },
+      {
+        "title": "11. Nachhaltigkeit & SDGs",
+        "body": "11. Nachhaltigkeit & UN-\nNachhaltigkeitsziele (SDGs)\nBio Vera adressiert direkt mehrere Nachhaltigkeitsziele der Vereinten Nationen:\nSDG Ziel Beitrag von Bio Vera\nSDG\n2\nKein Hunger Effizientere Lieferketten reduzieren\nLebensmittelverschwendung. Rückverfolgbarkeit ermöglicht\nschnelles Eingreifen bei Qualitätsproblemen. Frischware\nkommt schneller und sicherer beim Verbraucher an.\nSDG\n8\nMenschenwürdige Arbeit\nund Wirtschaftswachstum\nFaire, gesicherte Bezahlung für Erzeuger in 48h. Stabile\nAbsatzkanäle für Kleinbauern. Wirtschaftswachstum in\nländlichen Regionen Südosteuropas.\nSDG\n9\nIndustrie, Innovation und\nInfrastruktur\nDigitalisierung der Agrar-Lieferkette. Blockchain, KI und IoT\nals digitale Infrastruktur. Technologietransfer Südosteuropa–\nEU.\nSDG\n12\nNachhaltiger Konsum und\nProduktion\nTransparenz für Verbraucher über Herkunft und Qualität.\nDigitaler Produktpass macht Nachhaltigkeit überprüfbar.\nWeniger Lebensmittelverluste durch bessere Logistik.\nSDG\n13\nMaßnahmen zum\nKlimaschutz\nOptimierte Logistikrouten reduzieren CO₂-Emissionen.\nEffiziente Kühlkette vermeidet Energieverschwendung.\nDatengetriebene Landwirtschaft reduziert\nRessourceneinsatz.\nStandortrelevanz Hamburg\nDeutschlands größter Hafen: Zentraler Umschlagplatz für Lebensmittelimporte in\nEuropa\nEdeka-Zentrale: Einer der größten deutschen Einzelhändler hat seinen Hauptsitz\nin Hamburg\nFoodTech-Ökosystem: Wachsende Startup-Szene in den Bereichen FoodTech,\nAgriTech und Logistik\nHamburger Hafen als Hub: Bio Vera nutzt Hamburg als strategischen Hub für\nden Korridor Südosteuropa → Deutschland\nInternationalität: Hamburgs internationale Handelsausrichtung passt ideal zum\ngrenzüberschreitenden Geschäftsmodell\n•\n•\n•\n•\n•"
       }
     ],
     "founderTitle": "Gründer",
@@ -3409,11 +3212,9 @@
     "founderPhotoCaption": "Jovica Mihajlović · Gründer · Bio Vera",
     "founderPhotoHint": "Verwenden Sie eine scharfe, drucktaugliche Aufnahme; eine Ursprungsbreite um 2400 px oder größer eignet sich für Hochauflösungs-Displays und exportierte PDFs.",
     "founderParagraphs": [
-      "Bio Vera wurde von Jovica Mihajlović gegründet, einem serbischen Staatsangehörigen mit Sitz in Hamburg, Deutschland; dort lebt und arbeitet er seit fünf Jahren.",
-      "Er hat einen Bachelor in Kommunikation und Öffentlichkeitsarbeit von der Universität Niš absolviert — Grundlage für sein Verständnis von Kommunikation, Markenpositionierung und nutzerzentriertem Denken.",
-      "In den letzten Jahren hat er die Vera-Marke im IT-Sektor weiterentwickelt und Erfahrung mit digitalen Diensten und plattformbasierten Lösungen gesammelt.",
-      "Mit Bio Vera bringt er diese Expertise in die Agrar-/Food-Domäne ein und fokussiert eine transparente, skalierbare digitale Infrastruktur für Lebensmittel-Lieferketten.",
-      "Seine Arbeit folgt einer langfristigen Vision: Industrien über Vertrauen, Effizienz und digitale Innovation verbinden und das Vera-Ökosystem schrittweise in weitere Bereiche auszubauen."
+      "Jovica Mihajlovic — Gründer & CEO. Standort Hamburg. 3+ Jahre praktische Entwicklungserfahrung (Autodidakt). Studium: Kommunikation & Öffentlichkeitsarbeit, Universität Niš. Vera IT gegründet 03.07.2025.",
+      "Vier live Produkte: Vera IT (verait.de), Fade (getfadeapp.com), ReinAllround (reinallround.de), Bio Vera (biovera.app).",
+      "Relevanz: Multi-Stakeholder-Plattformen, KI & Blockchain (Polygon), Brücke zwischen südosteuropäischem Agrarmarkt und deutschem Einzelhandel."
     ],
     "seeAlsoEyebrow": "Verwandtes",
     "seeAlsoBody": "Für die ausführlichere Investorenlinie, technischen Anhang und optional eingebettetes Video öffnen Sie das Investor Deck.",
