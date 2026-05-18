@@ -828,12 +828,48 @@
         "login": {
           "title": "Prijava",
           "lead": "Svakodnevni ulaz u aplikaciju.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Standardna prijava za postojeće korisnike. Svaki dan počinjete ovde — bez prijave ne možete unositi podatke sa njive niti videti porudžbine i lotove."
+            },
+            {
+              "heading": "Šta unosite",
+              "body": "E-pošta ili korisničko ime — ono što vam je dodeljeno pri aktivaciji naloga.\nLozinka — ista koju ste postavili pri registraciji ili koju vam je tim poslao."
+            },
+            {
+              "heading": "Bezbednost",
+              "body": "Nalog je vezan za jednu farmu i jednu odgovornost u lancu. Ne delite lozinku sa radnicima koji nisu ovlašćeni; za pomoć na terenu koristite uputstva tima, ne zajednički nalog."
+            },
+            {
+              "heading": "Ako prijava ne uspe",
+              "body": "Proverite mrežu, tačnost e-pošte i lozinke. Ako i dalje ne radi, obratite se operativnom timu — možda nalog još nije odobren ili je lozinka resetovana."
+            }
+          ],
           "b1": "Koristite e-poštu, korisničko ime ili partnerski kod.",
           "b2": "Ne delite lozinku — nalog je vezan za vašu farmu."
         },
         "home": {
           "title": "Početna",
           "lead": "Kontrolna tabla — šta je sledeće i da li ima nesinhronizovanih unosa.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Glavna kontrolna tabla posle prijave. Ovde vidite šta sistem od vas očekuje u sezoni, da li imate podataka koji čekaju slanje na server i brze prečice ka važnim delovima aplikacije."
+            },
+            {
+              "heading": "„Šta dalje” / sledeći korak",
+              "body": "Kartica koja vodi na aktuelni zadatak u programu (npr. registracija parcele, terenski unos, pakovanje). Pratite je redom — preskakanje koraka može blokirati kasnije faze (lot, transport)."
+            },
+            {
+              "heading": "Sinhronizacija (offline)",
+              "body": "Ako ste radili bez interneta, ovde vidite koliko unosa čeka slanje. Kada se pojavi mreža, pokrenite sinhronizaciju i sačekajte potvrdu — tek tada podaci ulaze u zvanični trag proizvodnje."
+            },
+            {
+              "heading": "Prečice i obaveštenja",
+              "body": "Odavde ulazite u novčanik, uputstva, obaveštenja tima i druge tabove (Polje, Lotovi, Snabdevači). Početna je „centar” — ne morate sve raditi odavde, ali je dobro proveriti je jednom dnevno."
+            }
+          ],
           "b1": "Kartica „Šta dalje” vodi na sledeći korak u sezoni.",
           "b2": "Traka sinhronizacije šalje offline unose kad ima mreže.",
           "b3": "Odavde idete na novčanik, uputstva i obaveštenja."
@@ -841,6 +877,28 @@
         "field": {
           "title": "Polje (tab)",
           "lead": "Sve što radite na njivi — parcele, zasadi, dnevnik i terenski unos.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je tab „Polje”",
+              "body": "Centralno mesto za sve što se dešava na njivi pre berbe: imanja, parcele, zasade, dnevnik rasta i terenski dnevnik (setva, đubrenje, zaštita). Većina compliance dokaza nastaje ovde."
+            },
+            {
+              "heading": "Moja polja / imanja",
+              "body": "Registrujete farmu kao celinu i vidite listu imanja povezanih sa vašim nalogom. Bez registrovanog imanja i parcele kasniji GPS unosi mogu biti odbijeni."
+            },
+            {
+              "heading": "Parcele i zone",
+              "body": "Na mapi crtate ili potvrđujete granice parcele (poligon). Sistem proverava da li ste fizički na parceli pri unosu. Status „čeka odobrenje” znači da tim još nije potvrdio granice."
+            },
+            {
+              "heading": "Moji zasadi",
+              "body": "Za svaku parcelu definišete kulturu, sezonu i plan berbe. Zasadi povezuju terenske unose sa konkretnim usevom — važno za trag od semena do robe."
+            },
+            {
+              "heading": "Dnevnik rasta i terenski dnevnik",
+              "body": "Dnevnik rasta: periodične fotografije razvoja useva.\nTerenski dnevnik: svaka značajna radnja (setva, đubrenje, prskanje) sa fotografijom, GPS koordinatom i, gde važi, skeniranjem barkoda sa ambalaže inputa. Input mora biti na beloj listi — sistem blokira neodobrene proizvode."
+            }
+          ],
           "b1": "Moja polja / imanja — registracija i pregled parcela.",
           "b2": "Parcele i zone — granice na mapi (GPS), čekanje odobrenja.",
           "b3": "Moji zasadi — plan useva / berbe po parceli.",
@@ -851,6 +909,24 @@
         "lots": {
           "title": "Lotovi (tab)",
           "lead": "Posle berbe — partije, kvalitet, pakovanje i transport.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je tab „Lotovi”",
+              "body": "Posle berbe prelazite sa „polja” na „robu”: svaka partija (lot) dobija identitet u sistemu — status, kvalitet, ambalaža i veza sa transportom."
+            },
+            {
+              "heading": "Lista lotova i statusi",
+              "body": "Vidite sve partije i gde su u procesu: u pripremi, spakovano, u hub-u, u transportu, isporučeno. Boja ili oznaka statusa pomaže da ne pošaljete istu robu dva puta."
+            },
+            {
+              "heading": "Kvalitet i usklađenost ambalaže",
+              "body": "Unosite ili priložite fotografije kvaliteta i pakovanja prema programu Bio Vera. Neusklađena ambalaža može smanjiti bonus ili blokirati otpremu."
+            },
+            {
+              "heading": "Transport",
+              "body": "Kad je lot spreman i dokumentovan, podnesete zahtev za prevoz. Vozač i hub vide lot u svom delu aplikacije — vi ne završavate proces dok se roba ne preuzme i ne skenira na sledećoj stanici."
+            }
+          ],
           "b1": "Pregled lotova i statusa (pakovano, u hub-u, u transportu).",
           "b2": "Kvalitet i fotografije usklađenosti ambalaže.",
           "b3": "Zahtev za prevoz kad je roba spremna."
@@ -865,12 +941,40 @@
         "profile": {
           "title": "Profil",
           "lead": "Vaš nalog, podešavanja i pregled novčanika.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ekran profila",
+              "body": "Lični i poslovni podaci vašeg naloga: ime farme, kontakt, partnerski kod, jezik i obaveštenja. Odavde se odjavljujete sa uređaja koji ne koristite više."
+            },
+            {
+              "heading": "Podaci farme",
+              "body": "Proverite da su naziv farme, adresa i partnerski kod tačni — greške otežavaju isplate i komunikaciju sa timom. Za izmene kontaktirajte operativni tim ako polje nije editabilno."
+            },
+            {
+              "heading": "Obaveštenja i bezbednost",
+              "body": "Uključite obaveštenja za porudžbine, odobrenja parcela i poruke. Uvek se odjavite na zajedničkim telefonima/tabletima na farmi."
+            }
+          ],
           "b1": "Podaci farme i partnerski kod.",
           "b2": "Obaveštenja i odjava."
         },
         "wallet": {
           "title": "Novčanik",
           "lead": "Pregled isplata i stanja po porudžbinama.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je novčanik",
+              "body": "Finansijski pregled vezan za vašu proizvodnju u programu Bio Vera: šta je u escrow-u (čeka uslove isplate), šta je dostupno i istorija po lotovima ili porudžbinama."
+            },
+            {
+              "heading": "Escrow i dostupno",
+              "body": "Escrow: iznos koji je rezervisan dok se ne ispune uslovi (npr. potvrda isporuke, kvalitet).\nDostupno: iznos koji možete očekivati u isplati prema pravilima programa. Iznosi na telefonu treba da se poklapaju sa web kontrolnom tablom — ako ne, sinhronizujte i kontaktirajte tim."
+            },
+            {
+              "heading": "Kada proveravati",
+              "body": "Posle zatvaranja lota, prijema robe od kupca i na kraju meseca. Novčanik nije zamena za ugovor — za sporazume i reklamacije i dalje važe pisana pravila Bio Vere."
+            }
+          ],
           "b1": "U escrow-u i dostupno za isplatu.",
           "b2": "Detalji su usklađeni sa web kontrolnom tablom."
         }
