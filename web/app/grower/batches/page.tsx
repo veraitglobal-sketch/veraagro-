@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -12,19 +12,23 @@ import { useAuth } from '@/lib/auth';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 import {
+  getBatchStatusLabel,
+  lotStatusBucket,
+  lotStatusPillClass,
+  type LotFilter,
+} from '@/lib/batch-status-i18n';
+import {
   Package,
   Plus,
   Search,
-  Filter,
-  Calendar,
   MapPin,
   TrendingUp,
   AlertCircle,
   CheckCircle,
   Clock,
-  Eye,
   Truck,
   QrCode,
+  ChevronRight,
 } from 'lucide-react';
 
 
@@ -67,15 +71,11 @@ export default function GrowerBatchesPage() {
   const navItems = useGrowerNavItems();
   const { user } = useAuth();
   const [batches, setBatches] = useState<Batch[]>([]);
-  const [filteredBatches, setFilteredBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Filters
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [productFilter, setProductFilter] = useState<string>('all');
-  const [showFilters, setShowFilters] = useState(false);
+  const [lotFilter, setLotFilter] = useState<LotFilter>('all');
   
   // Selected batch for details
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
@@ -94,10 +94,6 @@ export default function GrowerBatchesPage() {
     loadBatches();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [batches, searchTerm, statusFilter, productFilter]);
-
   const loadBatches = async () => {
     try {
       setLoading(true);
@@ -105,7 +101,6 @@ export default function GrowerBatchesPage() {
       const data = await batchesAPI.getAll();
       const rows = Array.isArray(data) ? data : [];
       setBatches(rows);
-      setFilteredBatches(rows);
     } catch (err: unknown) {
       console.error('Error loading batches:', err);
       setError(growerApiErrorOrT(err, t, 'growerPages.loadFailed'));
@@ -114,33 +109,33 @@ export default function GrowerBatchesPage() {
     }
   };
 
-  const applyFilters = () => {
-    const safe = Array.isArray(batches) ? batches : [];
-    let filtered = [...safe];
+  const lotCounts = useMemo(() => {
+    const c = { all: batches.length, here: 0, moving: 0, done: 0 };
+    for (const b of batches) {
+      const bucket = lotStatusBucket(b.status);
+      if (bucket !== 'all') c[bucket] += 1;
+    }
+    return c;
+  }, [batches]);
+
+  const filteredBatches = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
+    return batches.filter((batch) => {
+      if (lotFilter !== 'all' && lotStatusBucket(batch.status) !== lotFilter) return false;
+      if (!q) return true;
+      const bid = String(batch.batchId ?? '').toLowerCase();
+      const pname = String(batch.productName ?? '').toLowerCase();
+      const ename = String(batch.estates?.name ?? '').toLowerCase();
+      return bid.includes(q) || pname.includes(q) || ename.includes(q);
+    });
+  }, [batches, searchTerm, lotFilter]);
 
-    // Search filter
-    if (q) {
-      filtered = filtered.filter((batch) => {
-        const bid = String(batch.batchId ?? '').toLowerCase();
-        const pname = String(batch.productName ?? '').toLowerCase();
-        const ename = String(batch.estates?.name ?? '').toLowerCase();
-        return bid.includes(q) || pname.includes(q) || ename.includes(q);
-      });
-    }
-
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((batch) => String(batch.status ?? '') === statusFilter);
-    }
-
-    // Product filter
-    if (productFilter !== 'all') {
-      filtered = filtered.filter((batch) => String(batch.productName ?? '') === productFilter);
-    }
-
-    setFilteredBatches(filtered);
-  };
+  const lotFilterChips: { id: LotFilter; label: string; count: number }[] = [
+    { id: 'all', label: t('growerPages.allStatuses'), count: lotCounts.all },
+    { id: 'here', label: t('growerPages.filterHere'), count: lotCounts.here },
+    { id: 'moving', label: t('growerPages.filterMoving'), count: lotCounts.moving },
+    { id: 'done', label: t('growerPages.filterDone'), count: lotCounts.done },
+  ];
 
   const handleViewDetails = async (batch: Batch) => {
     setSelectedBatch(batch);
@@ -205,22 +200,8 @@ export default function GrowerBatchesPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toUpperCase()) {
-      case 'HARVESTED':
-        return 'bg-[#e8f0e6] text-[#1a3d17] border-[#2D5A27]/25';
-      case 'IN_TRANSIT':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'AT_HUB':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'DELIVERED':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'SOLD':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+  const getStatusColor = (status: string) =>
+    `inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border ${lotStatusPillClass(status)}`;
 
   const getStatusIcon = (status: string) => {
     switch (status?.toUpperCase()) {
@@ -238,15 +219,6 @@ export default function GrowerBatchesPage() {
         return <Clock className="w-4 h-4" />;
     }
   };
-
-  const uniqueProducts = Array.from(
-    new Set(batches.map((b) => b.productName).filter((x): x is string => typeof x === 'string' && x.length > 0)),
-  ).sort();
-  const uniqueStatuses = Array.from(
-    new Set(batches.map((b) => b.status).filter((x): x is string => typeof x === 'string' && x.length > 0)),
-  ).sort();
-
-  const formatStatusLabel = (status: string | null | undefined) => String(status ?? '').replace(/_/g, ' ');
 
   if (loading) {
     return (
@@ -269,25 +241,15 @@ export default function GrowerBatchesPage() {
         <GrowerPageShell>
           <GrowerPageHeader
             title={t('grower.nav.myBatches')}
-            description={t('growerPages.batchesDescription')}
+            description={t('growerPages.batchesLeadOneLine')}
             right={
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <Link
-                  href={loc('/grower/fields')}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('growerPages.addLotCta')}
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="inline-flex min-h-[48px] items-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
-                >
-                  <Filter className="mr-2 h-4 w-4" />
-                  {t('growerPages.filters')}
-                </button>
-              </div>
+              <Link
+                href={loc('/grower/fields')}
+                className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-5 py-3 text-base font-medium text-white transition-colors hover:bg-[#23471f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {t('growerPages.addLotCta')}
+              </Link>
             }
           />
 
@@ -319,181 +281,90 @@ export default function GrowerBatchesPage() {
             </div>
           )}
 
-          {/* Filters */}
-          {showFilters && (
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Search */}
-                <div>
-                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.search')}</label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder={t('growerPages.searchBatchesPlaceholder')}
-                      className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Status Filter */}
-                <div>
-                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.status')}</label>
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
+          <div className="mb-5 max-w-3xl space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden />
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t('growerPages.searchBatchesPlaceholder')}
+                className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-base focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/25"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {lotFilterChips.map((chip) => {
+                const sel = lotFilter === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    onClick={() => setLotFilter(chip.id)}
+                    className={`min-h-[44px] rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                      sel
+                        ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#2D5A27]'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                    }`}
                   >
-                    <option value="all">{t('growerPages.allStatuses')}</option>
-                    {uniqueStatuses.map((status) => (
-                      <option key={status} value={status}>
-                        {formatStatusLabel(status)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Product Filter */}
-                <div>
-                  <label className="block text-base font-medium text-gray-700 mb-2">{t('growerPages.product')}</label>
-                  <select
-                    value={productFilter}
-                    onChange={(e) => setProductFilter(e.target.value)}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-transparent"
-                  >
-                    <option value="all">{t('growerPages.allProducts')}</option>
-                    {uniqueProducts.map((product) => (
-                      <option key={product} value={product}>
-                        {product}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Clear Filters */}
-              {(searchTerm || statusFilter !== 'all' || productFilter !== 'all') && (
-                <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setStatusFilter('all');
-                    setProductFilter('all');
-                  }}
-                  className="mt-4 inline-flex min-h-[44px] items-center text-base text-[#2D5A27] hover:text-[#23471f] font-medium"
-                >
-                  {t('growerPages.clearFilters')}
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="text-2xl font-medium text-gray-900">{batches.length}</div>
-              <div className="text-base text-gray-600 mt-1">{t('growerPages.totalBatches')}</div>
-            </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="text-2xl font-medium text-[#2D5A27]">
-                {batches.filter((b) => b.status === 'HARVESTED').length}
-              </div>
-              <div className="text-base text-gray-600 mt-1">{t('growerPages.harvested')}</div>
-            </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="text-2xl font-medium text-blue-600">
-                {batches.filter((b) => b.status === 'IN_TRANSIT').length}
-              </div>
-              <div className="text-base text-gray-600 mt-1">{t('growerPages.inTransit')}</div>
-            </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="text-2xl font-medium text-purple-600">
-                {batches.filter((b) => b.status === 'SOLD').length}
-              </div>
-              <div className="text-base text-gray-600 mt-1">{t('growerPages.sold')}</div>
+                    {chip.label}
+                    {chip.count > 0 ? ` (${chip.count})` : ''}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Batches List */}
-          <div className="bg-white rounded-lg border border-gray-200">
+          {filteredBatches.length > 0 ? (
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              {t('growerPages.listCountLabel', { count: filteredBatches.length })}
+            </p>
+          ) : null}
+
+          <div className="max-w-3xl space-y-2">
             {filteredBatches.length > 0 ? (
-              <div className="divide-y divide-gray-200">
-                {filteredBatches.map((batch) => (
-                  <div
+              filteredBatches.map((batch) => {
+                const bucket = lotStatusBucket(batch.status);
+                const accent =
+                  bucket === 'done' ? 'border-gray-300' : bucket === 'moving' ? 'border-blue-500' : 'border-[#2D5A27]';
+                const metaParts = [
+                  `${batch.quantity} ${batch.unit}`,
+                  batch.batchId,
+                  batch.harvestDate
+                    ? new Date(batch.harvestDate).toLocaleDateString(undefined, {
+                        day: 'numeric',
+                        month: 'short',
+                      })
+                    : null,
+                  batch.estates?.name || null,
+                ].filter(Boolean);
+
+                return (
+                  <button
                     key={batch.id}
-                    className="p-6 hover:bg-gray-50 transition-colors"
+                    type="button"
+                    onClick={() => handleViewDetails(batch)}
+                    className={`flex w-full min-h-[64px] items-center gap-3 rounded-xl border border-gray-200 border-l-4 bg-white p-4 text-left shadow-sm transition-colors hover:border-[#2D5A27]/30 ${accent}`}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            {batch.batchId}
-                          </h3>
-                          <span
-                            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold border ${getStatusColor(
-                              batch.status
-                            )}`}
-                          >
-                            {getStatusIcon(batch.status)}
-                            {formatStatusLabel(batch.status)}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                          <div className="flex items-center gap-2 text-base text-gray-600">
-                            <Package className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium text-gray-900">{batch.productName}</span>
-                            <span className="text-gray-500">
-                              • {batch.quantity} {batch.unit}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-base text-gray-600">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span>
-                              {t('growerPages.harvestedOn')}{' '}
-                              {new Date(batch.harvestDate).toLocaleDateString()}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-base text-gray-600">
-                            <MapPin className="w-4 h-4 text-gray-400" />
-                            <span>
-                              {batch.estates?.name || t('growerPages.na')}
-                              {(batch.parcels?.cropType || batch.parcels?.name)
-                                ? ` • ${batch.parcels?.cropType || batch.parcels?.name}`
-                                : ''}
-                            </span>
-                          </div>
-                        </div>
-
-                        {batch.hubs && (
-                          <div className="mt-2 text-base text-gray-600">
-                            <span className="font-medium">{t('growerPages.currentLocation')}</span>{' '}
-                            {batch.hubs.name}
-                            {batch.hubs.city && `, ${batch.hubs.city}`}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 ml-4">
-                        <button
-                          onClick={() => handleViewDetails(batch)}
-                          className="inline-flex items-center min-h-[48px] px-4 py-3 bg-[#2D5A27] text-white text-base font-medium rounded-lg hover:bg-[#23471f] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          {t('growerPages.viewDetails')}
-                        </button>
-                      </div>
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/10">
+                      <Package className="h-5 w-5 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
                     </div>
-                  </div>
-                ))}
-              </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-base font-semibold text-gray-900">{batch.productName}</span>
+                        <span className={getStatusColor(batch.status)}>
+                          {getBatchStatusLabel(t, batch.status)}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 truncate text-sm text-gray-600">{metaParts.join(' · ')}</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden />
+                  </button>
+                );
+              })
             ) : (
-              <div className="text-center py-12">
-                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-base text-gray-600 font-light max-w-md mx-auto">
+              <div className="rounded-xl border border-gray-200 bg-white py-12 text-center shadow-sm">
+                <Package className="mx-auto mb-4 h-12 w-12 text-gray-400" strokeWidth={1.25} aria-hidden />
+                <p className="mx-auto max-w-md text-base font-light text-gray-600">
                   {batches.length === 0 ? t('growerPages.noBatches') : t('growerPages.noBatchesFilter')}
                 </p>
               </div>
@@ -552,7 +423,7 @@ export default function GrowerBatchesPage() {
                               )}`}
                             >
                               {getStatusIcon(selectedBatch.status)}
-                              {formatStatusLabel(selectedBatch.status)}
+                              {getBatchStatusLabel(t, selectedBatch.status)}
                             </span>
                           </div>
                         </div>

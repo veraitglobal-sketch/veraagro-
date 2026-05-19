@@ -12,7 +12,8 @@ import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { syncService } from '../../../lib/sync-service';
-import { apiErrorMessage, isLikelyNetworkError, axiosResponseStatus } from '../../../lib/api-error';
+import { apiErrorMessage, isLikelyNetworkError, axiosResponseStatus, axiosLikeMessage } from '../../../lib/api-error';
+import { mapPlantingSaveError } from '../plantings/map-planting-save-error';
 import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
 
 export type HarvestPlanMode = 'PLANTING' | 'HARVEST';
@@ -400,14 +401,17 @@ export function useHarvestData(
             // fall through
           }
         }
-        const raw = apiErrorMessage(e, t('producer.harvest.saveFailed'));
+        const raw =
+          axiosLikeMessage(e) || apiErrorMessage(e, e instanceof Error ? e.message : '');
         const st = axiosResponseStatus(e);
         const looksInternal =
           st === 500 ||
           st === 502 ||
           st === 503 ||
           /internal\s*server\s*error/i.test(raw);
-        const msg = looksInternal ? t('producer.harvest.serverError') : raw;
+        const msg = looksInternal
+          ? t('producer.harvest.serverError')
+          : mapPlantingSaveError(raw, t);
         Alert.alert(t('error'), msg);
       } finally {
         setLoading(false);

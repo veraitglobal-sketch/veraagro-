@@ -1,21 +1,42 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
-import { ArrowLeft, Package, QrCode, Calendar, Plus } from 'lucide-react-native';
+import { Package, Plus, ChevronRight } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
+import { BioVeraSubpageHeader } from '../../components/BioVeraSubpageHeader';
+import { enterpriseColors } from '../../lib/enterprise-ui';
+import { growerUi, growerStyles } from '../../lib/grower-ui';
+import { HubSectionTitle } from '../../features/grower/hubs/HubNavTile';
 
-/**
- * Batches Screen
- * List of all batches with status and traceability
- * Grower-friendly typography and tap targets (readable labels, ≥44pt actions).
- */
+type LotFilter = 'all' | 'here' | 'moving' | 'done';
+
+function statusBucket(status: string): LotFilter {
+  const s = String(status ?? '').toUpperCase();
+  if (s === 'DELIVERED') return 'done';
+  if (s === 'IN_HUB' || s === 'IN_TRANSIT') return 'moving';
+  if (s === 'PACKED' || s === 'QUALITY_VERIFIED' || s === 'HARVESTED') return 'here';
+  return 'here';
+}
+
+function bucketAccent(bucket: LotFilter): string {
+  if (bucket === 'done') return enterpriseColors.gray600;
+  if (bucket === 'moving') return '#1D4ED8';
+  return enterpriseColors.primary;
+}
+
+function bucketTint(bucket: LotFilter): string {
+  if (bucket === 'done') return `${enterpriseColors.gray600}18`;
+  if (bucket === 'moving') return '#1D4ED818';
+  return `${enterpriseColors.primary}12`;
+}
+
 export default function BatchesScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
@@ -23,7 +44,7 @@ export default function BatchesScreen() {
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'PACKED' | 'IN_HUB' | 'IN_TRANSIT' | 'DELIVERED'>('all');
+  const [filter, setFilter] = useState<LotFilter>('all');
 
   const loadBatches = useCallback(async () => {
     try {
@@ -38,14 +59,12 @@ export default function BatchesScreen() {
     }
   }, []);
 
-  /** Load on focus and when coming back to this screen (e.g. after logistics updated status). */
   useFocusEffect(
     useCallback(() => {
       void loadBatches();
     }, [loadBatches]),
   );
 
-  /** Real-time: home tab keeps one socket; when batch status changes (hub, transit, delivered), reload. */
   useEffect(() => {
     return onBatchListRefreshRequest(() => {
       void loadBatches();
@@ -60,279 +79,212 @@ export default function BatchesScreen() {
     setRefreshing(false);
   };
 
-  const filteredBatches = filter === 'all' 
-    ? batches 
-    : batches.filter(b => b.status === filter);
+  const filteredBatches = useMemo(() => {
+    if (filter === 'all') return batches;
+    return batches.filter((b) => statusBucket(b.status) === filter);
+  }, [batches, filter]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PACKED':
-      case 'QUALITY_VERIFIED':
-        return theme.colors.accent;
-      case 'IN_HUB': return theme.colors.warning;
-      case 'IN_TRANSIT': return theme.colors.primary;
-      case 'DELIVERED': return theme.colors.success || theme.colors.primary;
-      case 'RETURNED': return theme.colors.warning;
-      case 'EXPIRED': return theme.colors.text.secondary;
-      default: return theme.colors.text.secondary;
+  const counts = useMemo(() => {
+    const c = { all: batches.length, here: 0, moving: 0, done: 0 };
+    for (const b of batches) {
+      const bucket = statusBucket(b.status);
+      if (bucket !== 'all') c[bucket] += 1;
     }
-  };
+    return c;
+  }, [batches]);
 
-  const getStatusLabel = (status: string) => getBatchStatusLabel(t, status);
+  const filters: { id: LotFilter; label: string; count?: number }[] = [
+    { id: 'all', label: t('common.all'), count: counts.all },
+    { id: 'here', label: t('producer.batches.filterHere'), count: counts.here },
+    { id: 'moving', label: t('producer.batches.filterMoving'), count: counts.moving },
+    { id: 'done', label: t('producer.batches.filterDone'), count: counts.done },
+  ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Header */}
-      <View style={{
-        paddingTop: p.headerTop,
-        paddingBottom: theme.spacing.md,
-        paddingLeft: p.screenPaddingLeft,
-        paddingRight: p.screenPaddingRight,
-        backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          style={{ marginRight: theme.spacing.md, minWidth: 44, minHeight: 44, justifyContent: 'center' }}
-        >
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text style={{
-          fontSize: 20,
-          fontWeight: '600',
-          color: theme.colors.text.primary,
-          letterSpacing: 0.2,
-          flex: 1,
-        }}>
-          {t('producer.batches.listScreenTitle')}
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.push('/(producer)/batch-new')}
-          accessibilityRole="button"
-          accessibilityLabel={t('producer.batches.createFabA11y')}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Plus size={26} color={theme.colors.primary} strokeWidth={2} />
-        </TouchableOpacity>
-      </View>
+    <View style={growerUi.canvas}>
+      <BioVeraSubpageHeader
+        title={t('producer.batches.listScreenTitle')}
+        left="back"
+        right={
+          <TouchableOpacity
+            onPress={() => router.push('/(producer)/batch-new')}
+            accessibilityLabel={t('producer.batches.createFabA11y')}
+            hitSlop={12}
+            style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+          >
+            <Plus size={26} color={enterpriseColors.primary} strokeWidth={2} />
+          </TouchableOpacity>
+        }
+      />
 
-      {/* Filters */}
-      <View style={{
-        paddingLeft: p.screenPaddingLeft,
-        paddingRight: p.screenPaddingRight,
-        paddingVertical: theme.spacing.sm,
-        backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-      }}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {([
-              { id: 'all' as const, label: t('common.all') },
-              { id: 'PACKED' as const, label: t('producer.batches.filterPacked') },
-              { id: 'IN_HUB' as const, label: t('producer.batches.filterInHub') },
-              { id: 'IN_TRANSIT' as const, label: t('producer.batches.filterInTransit') },
-              { id: 'DELIVERED' as const, label: t('producer.batches.filterDelivered') },
-            ]).map((f) => (
-              <TouchableOpacity
-                key={f.id}
-                onPress={() => setFilter(f.id)}
-                activeOpacity={0.7}
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  minHeight: 44,
-                  justifyContent: 'center',
-                  borderRadius: theme.borderRadius.md,
-                  borderWidth: 0.5,
-                  borderColor: filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
-                  backgroundColor: filter === f.id ? `${theme.colors.primary}10` : 'transparent',
-                }}
-              >
-                <Text style={{
-                  fontSize: 15,
-                  fontWeight: '600',
-                  color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                  letterSpacing: 0.2,
-                }}>
-                  {f.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-
-      {/* Batches List */}
       <ScrollView
         style={{ flex: 1 }}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={enterpriseColors.primary} />
         }
+        contentContainerStyle={[
+          growerUi.scrollContent,
+          { paddingBottom: Math.max(p.bottomInset, theme.spacing.lg) },
+        ]}
       >
-        <View
-          style={{
-            paddingTop: theme.spacing.md,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-          }}
-        >
-          {loading ? (
-            <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-              <Text style={{
-                color: theme.colors.text.secondary,
-                fontSize: 16,
-                fontWeight: '500',
-                letterSpacing: 0.2,
-              }}>
-                {t('producer.batches.loading')}
-              </Text>
-            </View>
-          ) : filteredBatches.length === 0 ? (
-            <View style={{
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.xl,
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.05)',
-              alignItems: 'center',
-            }}>
-              <Package size={40} color={theme.colors.text.tertiary} strokeWidth={1.25} />
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: theme.colors.text.secondary,
-                marginTop: theme.spacing.sm,
-                letterSpacing: 0.2,
-                textAlign: 'center',
-                lineHeight: 24,
-                paddingHorizontal: theme.spacing.md,
-              }}>
-                {t('producer.batches.emptyList')}
-              </Text>
-            </View>
-          ) : (
-            <View style={{ gap: theme.spacing.sm }}>
-              {filteredBatches.map((batch, index) => {
-                const rowKey = String(batch.id ?? batch.batchId ?? '');
-                const displayId = batch.batchId || (batch.id ? String(batch.id).slice(0, 8) : '');
-                const detailRef = batch.id ?? batch.batchId;
-                return (
+        <Text style={[growerUi.pageLead, { marginTop: 0, marginBottom: 14 }]}>
+          {t('producer.batches.listLeadOneLine')}
+        </Text>
+
+        <View style={styles.filterRow}>
+          {filters.map((f) => {
+            const sel = filter === f.id;
+            return (
+              <TouchableOpacity
+                key={f.id}
+                onPress={() => setFilter(f.id)}
+                activeOpacity={0.85}
+                style={[styles.filterChip, sel && styles.filterChipOn]}
+              >
+                <Text style={[styles.filterChipText, sel && styles.filterChipTextOn]}>
+                  {f.label}
+                  {f.count != null && f.count > 0 ? ` (${f.count})` : ''}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {!loading && filteredBatches.length > 0 ? (
+          <HubSectionTitle>
+            {t('producer.batches.listCountLabel', { count: filteredBatches.length })}
+          </HubSectionTitle>
+        ) : null}
+
+        {loading ? (
+          <Text style={styles.mutedCenter}>{t('producer.batches.loading')}</Text>
+        ) : filteredBatches.length === 0 ? (
+          <View style={growerUi.emptyCard}>
+            <Package size={40} color={enterpriseColors.gray600} strokeWidth={1.25} />
+            <Text style={styles.emptyText}>
+              {filter === 'all' ? t('producer.batches.emptyList') : t('producer.batches.emptyFilter')}
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/(producer)/batch-new')}
+              style={styles.emptyCta}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.emptyCtaText}>{t('producer.batches.createFabA11y')}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={{ gap: 0 }}>
+            {filteredBatches.map((batch, index) => {
+              const rowKey = String(batch.id ?? batch.batchId ?? '');
+              const displayId = batch.batchId || (batch.id ? String(batch.id).slice(0, 8) : '');
+              const detailRef = batch.id ?? batch.batchId;
+              const product = batch.productName || t('producer.batches.product');
+              const bucket = statusBucket(batch.status);
+              const accent = bucketAccent(bucket);
+              const metaParts = [
+                batch.quantity ? `${batch.quantity} ${batch.unit || 'kg'}` : null,
+                displayId || null,
+                batch.harvestDate
+                  ? new Date(batch.harvestDate).toLocaleDateString(dateLocale, {
+                      day: 'numeric',
+                      month: 'short',
+                    })
+                  : null,
+              ].filter(Boolean);
+
+              return (
                 <TouchableOpacity
                   key={rowKey || displayId || `batch-row-${index}`}
                   onPress={() => {
                     if (detailRef) router.push(`/(producer)/batch/${detailRef}`);
                   }}
-                  activeOpacity={0.7}
-                  style={{
-                    backgroundColor: theme.colors.surface,
-                    borderRadius: theme.borderRadius.md,
-                    padding: theme.spacing.md + 2,
-                    borderWidth: 0.5,
-                    borderColor: 'rgba(0, 0, 0, 0.05)',
-                    minHeight: 88,
-                  }}
+                  activeOpacity={0.88}
+                  style={[
+                    growerUi.tile,
+                    {
+                      borderLeftWidth: 4,
+                      borderLeftColor: accent,
+                      marginBottom: 10,
+                    },
+                  ]}
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
-                    <View style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${getStatusColor(batch.status)}15`,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: theme.spacing.sm,
-                    }}>
-                      <Package size={22} color={getStatusColor(batch.status)} strokeWidth={1.5} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-                        <QrCode size={18} color={theme.colors.text.secondary} strokeWidth={1.5} />
-                        <Text style={{
-                          fontSize: 17,
-                          fontWeight: '600',
-                          color: theme.colors.text.primary,
-                          marginLeft: theme.spacing.xs,
-                          letterSpacing: 0.2,
-                        }}>
-                          {displayId}
+                  <View style={[growerUi.tileIcon, { backgroundColor: bucketTint(bucket) }]}>
+                    <Package size={22} color={accent} strokeWidth={1.75} />
+                  </View>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <View style={styles.titleRow}>
+                      <Text style={growerUi.tileTitle} numberOfLines={1}>
+                        {product}
+                      </Text>
+                      <View style={[growerStyles.statusPill, { backgroundColor: bucketTint(bucket) }]}>
+                        <Text style={[growerStyles.statusPillText, { color: accent }]}>
+                          {getBatchStatusLabel(t, batch.status)}
                         </Text>
                       </View>
-                      <Text style={{
-                        fontSize: 15,
-                        fontWeight: '500',
-                        color: theme.colors.text.secondary,
-                        letterSpacing: 0.1,
-                      }}>
-                        {batch.productName || t('producer.batches.product')}
-                      </Text>
-                      {batch.quantity && (
-                        <Text style={{
-                          fontSize: 15,
-                          fontWeight: '400',
-                          color: theme.colors.text.secondary,
-                          marginTop: 4,
-                          letterSpacing: 0.1,
-                        }}>
-                          {batch.quantity} {batch.unit || 'kg'}
-                        </Text>
-                      )}
                     </View>
-                    <View style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 8,
-                      borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${getStatusColor(batch.status)}15`,
-                    }}>
-                      <Text style={{
-                        fontSize: 13,
-                        fontWeight: '600',
-                        color: getStatusColor(batch.status),
-                        letterSpacing: 0.2,
-                      }}>
-                        {getStatusLabel(batch.status)}
+                    {metaParts.length > 0 ? (
+                      <Text style={growerUi.tileDesc} numberOfLines={1}>
+                        {metaParts.join(' · ')}
                       </Text>
-                    </View>
+                    ) : null}
                   </View>
-
-                  {batch.harvestDate && (
-                    <View style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: theme.spacing.xs,
-                    }}>
-                      <Calendar size={16} color={theme.colors.text.secondary} strokeWidth={1.5} />
-                      <Text style={{
-                        fontSize: 14,
-                        fontWeight: '500',
-                        color: theme.colors.text.secondary,
-                        marginLeft: 6,
-                        letterSpacing: 0.1,
-                      }}>
-                        {`${t('producer.batches.harvestLabel')}: ${new Date(batch.harvestDate).toLocaleDateString(dateLocale)}`}
-                      </Text>
-                    </View>
-                  )}
+                  <ChevronRight size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
                 </TouchableOpacity>
-                );
-              })}
-            </View>
-          )}
-        </View>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 4,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    minHeight: 44,
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  },
+  filterChipOn: { borderColor: enterpriseColors.primary, backgroundColor: `${enterpriseColors.primary}10` },
+  filterChipText: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray600 },
+  filterChipTextOn: { color: enterpriseColors.primary },
+  mutedCenter: {
+    padding: 32,
+    textAlign: 'center',
+    fontSize: 16,
+    color: theme.colors.text.secondary,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: enterpriseColors.gray600,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginTop: 12,
+  },
+  emptyCta: {
+    marginTop: 16,
+    backgroundColor: enterpriseColors.primary,
+    borderRadius: 12,
+    paddingHorizontal: 24,
+    minHeight: 48,
+    justifyContent: 'center',
+  },
+  emptyCtaText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+});

@@ -90,7 +90,7 @@ export function useFieldLogData() {
   const [selectedParcelId, setSelectedParcelId] = useState('');
   const [selectedHarvestPlanId, setSelectedHarvestPlanId] = useState('');
   const [parcelPlans, setParcelPlans] = useState<
-    { id: string; label: string; announcementType: string }[]
+    { id: string; label: string; announcementType: string; cropType: string }[]
   >([]);
   const [growthStagePreset, setGrowthStagePreset] = useState('');
   const [growthStageCustom, setGrowthStageCustom] = useState('');
@@ -180,6 +180,12 @@ export function useFieldLogData() {
     return out;
   }, [estates, parcelsByEstate]);
 
+  /** One farm / one parcel — pick automatically so the farmer taps less. */
+  useEffect(() => {
+    if (selectedParcelId || approvedParcelOptions.length !== 1) return;
+    setSelectedParcelId(approvedParcelOptions[0].parcel.id);
+  }, [approvedParcelOptions, selectedParcelId]);
+
   useEffect(() => {
     if (!selectedParcelId) {
       setCurrentEstate(null);
@@ -220,6 +226,7 @@ export function useFieldLogData() {
           return {
             id: a.id,
             announcementType: a.announcementType,
+            cropType: a.cropType ?? '',
             label: `${kind} · ${a.cropType} · ${dateStr}`,
           };
         },
@@ -361,6 +368,13 @@ export function useFieldLogData() {
     else if (activityType === 'FERTILIZING') setMaterialKind('FERTILIZER');
     else if (activityType === 'SPRAYING') setMaterialKind('PESTICIDE');
   }, [activityType]);
+
+  /** Planting logs need a growth stage — default so the farmer does not hunt for it. */
+  useEffect(() => {
+    if (activityType === 'PLANTING' && !growthStagePreset && !growthStageCustom.trim()) {
+      setGrowthStagePreset('Setva');
+    }
+  }, [activityType, growthStagePreset, growthStageCustom]);
 
   const validateMaterial = useCallback(async () => {
     if (!materialID.trim()) {
@@ -685,7 +699,7 @@ export function useFieldLogData() {
       missing.push(t('producer.fieldLogForm.submitMissingPlan'));
     }
     const plan = parcelPlans.find((p) => p.id === selectedHarvestPlanId);
-    if (plan?.announcementType === 'PLANTING') {
+    if (plan?.announcementType === 'PLANTING' && activityType === 'PLANTING') {
       if (journalNotes.trim().length < PLANTING_NOTES_MIN) {
         missing.push(
           t('producer.fieldLogForm.submitMissingPlantingNotes', { min: PLANTING_NOTES_MIN }),

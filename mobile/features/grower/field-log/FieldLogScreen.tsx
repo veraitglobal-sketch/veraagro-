@@ -1,9 +1,8 @@
-import EntryForm from './EntryForm';
+import FieldLogWizard from './FieldLogWizard';
 
 /**
- * Field Log – offline-first field work entries.
- * Delegates to EntryForm in this folder.
+ * Field Log – offline-first field work entries (step wizard).
  */
 export default function FieldLogScreen() {
-  return <EntryForm />;
+  return <FieldLogWizard />;
 }

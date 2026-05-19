@@ -95,8 +95,9 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Vertically integrated agrifood operator: Bio Vera sells branded produce to downstream customers while running the programme—inputs, QA, crates, refrigerated legs and Batch_ID dossiers throughout. Vera grower programme with selective onboarding, packaging rails and coordinated pickup.",
-    "ldJsonDescription": "Bio Vera is an integrated agrifood company that sells branded product and manages the contracted grower corridor with trace-at-every-step Batch dossiers—not an open reseller marketplace.",
+    "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf",
+    "siteDescription": "Bio Vera operates the full agrifood chain: certified cultivation, QA, packing, cold logistics and Batch_ID traceability. Open grower programme across 30+ countries.",
+    "ldJsonDescription": "Bio Vera operates the full agrifood chain with Batch_ID traceability from field to shelf—certified cultivation, QA, packing and cold logistics under one vertically integrated operator.",
     "keywords": [
       "Bio Vera",
       "Integrated food supply chain",
@@ -1003,7 +1004,10 @@
     "education": {
       "pageTitle": "Grower education",
       "pageDescription": "Short guides and videos about packing, legal responsibility for the goods you hand over, and ethics in the Bio Vera chain — use this alongside the app and Season instructions.",
+      "pageLeadOneLine": "Packing, goods responsibility, and ethics — open a topic for details.",
       "comingSoon": "Videos and extra links will appear here gradually. Check back when you prepare a new shipment; urgent notices also arrive through the platform.",
+      "comingSoonShort": "Videos arrive gradually; urgent notices also through the platform.",
+      "topicsTitle": "Topics",
       "videoSectionTitle": "Packing & video guides",
       "videoSectionIntro": "How to pack, label, and tie serials to your lot before transport.",
       "videoBullet1": "Prep packaging and cold-chain protection",
@@ -1022,7 +1026,8 @@
       "moreSectionIntro": "FAQs and tips that complement the steps in app and browser.",
       "moreBullet1": "Keeping paperwork and proofs that travel with each lot",
       "moreBullet2": "What to check when onboarding new crates or packing materials",
-      "footerNote": "Binding legal and financial wording always comes from Bio Vera or your legal adviser. This page outlines topics only — escalate specific cases with a written reply from operations."
+      "footerNote": "Binding legal and financial wording always comes from Bio Vera or your legal adviser. This page outlines topics only — escalate specific cases with a written reply from operations.",
+      "footerNoteShort": "Binding wording comes from Bio Vera in writing; this page is a topic overview."
     },
     "confidential": {
       "pageTitle": "Partner business plans",
@@ -2647,6 +2652,19 @@
     "labelHarvestDate": "Harvest date *",
     "creating": "Creating…",
     "batchesDescription": "Lots (batches in the system) are packed harvest units for traceability and passports. Add them under My parcels on an approved parcel (Create batch), not from this list alone.",
+    "batchesLeadOneLine": "Packed goods = a lot with QR code; then packing photos and transport request.",
+    "filterHere": "With me",
+    "filterMoving": "In transit",
+    "filterDone": "Delivered",
+    "listCountLabel": "{{count}} lots",
+    "batchStatusPacked": "Packed",
+    "batchStatusInHub": "At hub",
+    "batchStatusInTransit": "In transit",
+    "batchStatusDelivered": "Delivered",
+    "batchStatusReturned": "Returned",
+    "batchStatusExpired": "Expired",
+    "batchStatusQualityVerified": "Quality verified",
+    "batchStatusHarvested": "Harvested",
     "filters": "Filters",
     "search": "Search",
     "searchBatchesPlaceholder": "Search by lot ID, product, estate…",
@@ -3184,9 +3202,8 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertically Integrated",
-      "title2": "Agrifood Company",
-      "subtitle": "Bio Vera sells branded fresh produce across the corridor we operate—contracted cultivation, QA, packing and refrigerated delivery with Batch_ID trace from parcel to checkout. Interested estates can become Vera growers with standard crates, agronomy checkpoints and routed logistics once approved—selective programme with team-led onboarding review.",
+      "title": "Vertically Integrated Agrifood Company",
+      "subtitle": "Bio Vera sells branded fresh produce through a chain we operate end to end — contracted cultivation, quality assurance, packing and refrigerated delivery with Batch_ID traceability from parcel to checkout. Estates meeting our standards can apply to the grower programme regardless of country.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for 2026 is open",
@@ -3204,64 +3221,56 @@
     "partnersLine": "Trusted every day by leading agricultural organizations",
     "vision": {
       "title": "Our Vision",
-      "intro": "We build trust from parcel to shelf: clear rules for growers in our programme, controlled quality, and customers who buy from Bio Vera.",
+      "intro": "We build trust from parcel to shelf: clear rules for growers in our programme, controlled quality checks at every node, and buyers who purchase directly from Bio Vera.",
       "cards": [
         {
           "title": "Transparency",
-          "description": "Every step from field to shelf stays in one dossier that sales, QA and auditors can reconcile."
+          "description": "Every step from field to shelf stays in one dossier. Sales, QA and auditors reconcile the same record."
         },
         {
           "title": "Security",
-          "description": "Access controls and fraud safeguards—the same dossier backs the loads our commercial teams sell and deliver."
+          "description": "Access controls and anti-fraud safeguards protect the dossier that backs every load we sell and deliver."
         },
         {
-          "title": "EU documentation",
-          "description": "Automated EU certificates and digital passports that support the placements and compliance our sales team stands behind."
+          "title": "EU Documentation",
+          "description": "Automated EU certificates and digital product passports support the compliance our commercial teams stand behind."
         }
       ]
     },
     "features": {
       "title": "Core Features",
-      "intro": "How we run day to day—cultivation to protocol, packaging, logistics, delivery, and settlement in one chain coordinated by Bio Vera.",
+      "intro": "",
       "list": [
         {
           "title": "Smart-Lock System",
-          "description": "Crates tie to batches: scans plus GPS confirmations land in one operating file."
+          "description": "Cultivation, protocol, packaging, logistics, delivery and settlement run in one coordinated chain."
         },
         {
-          "title": "Batch tracking",
-          "description": "Every crate has a Batch_ID; the same trace runs from parcel to delivery inside our operating system."
+          "title": "Batch Tracking",
+          "description": "Every crate carries a Batch_ID. The same trace runs from parcel to delivery inside our operating system."
         },
         {
-          "title": "Secured payment",
-          "description": "Buyer funds stay with Bio Vera until delivery and conformity checks clear; payouts to growers and logistics follow agreed terms."
-        },
-        {
-          "title": "Digital Handshake",
-          "description": "Customer scans QR code to confirm delivery. Automatic payment release."
+          "title": "Secured Payment",
+          "description": "Buyer funds stay with Bio Vera until delivery and conformity checks clear. Payouts to growers and logistics follow agreed terms."
         },
         {
           "title": "Anti-Fraud Protection",
-          "description": "GPS timestamp, device ID tracking, camera-only capture. Impossible to falsify."
+          "description": "GPS timestamp, device ID tracking, camera-only capture. Records cannot be falsified after the fact."
         },
         {
-          "title": "EU digital passport",
-          "description": "Automated EU certificates and passports tied to the sales channel we operate for end customers."
+          "title": "EU Digital Passport",
+          "description": "Automated certificates and passports tied to the sales channel we operate for end customers."
         },
         {
-          "title": "Optional Polygon dossier anchoring",
-          "description": "When switched on for a programme tier, a public anchor links to the dossier; the buyer-visible passport stays the single story."
+          "title": "Optional Polygon Anchoring",
+          "description": "When activated for a programme tier, a public anchor links the dossier to an immutable record on Polygon."
         }
       ]
     },
     "blockchain": {
-      "title": "Why custody records stick",
-      "body": "We sell the goods, so reputational risk is ours. Operational teams log each transition so downstream parties cannot quietly rewrite yesterday’s custody story. Programme configurations may additionally publish fingerprints to public ledgers such as Polygon for independent spot checks—meaning every scan still matches what finance and QA already accepted.",
-      "bullets": [
-        "Operational trail that survives buyer questions",
-        "Same evidence in the ERP story and shopper passport",
-        "Optional ledger checksum when regulators or retailers ask for third-party footing"
-      ]
+      "title": "Why Custody Records Stick",
+      "body": "We sell the goods, so reputational risk is ours. Operational teams log each transition so downstream parties cannot rewrite yesterday's custody story.",
+      "bullets": []
     },
     "roadmap": {
       "title": "Roadmap",
@@ -3318,7 +3327,7 @@
     },
     "products": {
       "title": "Browse Products",
-      "subtitle": "Catalogue SKUs Bio Vera sells with full batch dossiers behind each line.",
+      "subtitle": "Fresh fruit, vegetables and cereals Bio Vera sells with full batch dossiers behind each line.",
       "fruits": "Fruits",
       "vegetables": "Vegetables",
       "grains": "Grains"
@@ -3332,102 +3341,77 @@
     "help": "Questions? We’re here to help."
   },
   "forBuyersPage": {
+    "metaTitle": "Buy Traceable Fresh Produce | Bio Vera for Buyers",
+    "metaDescription": "Order certified fresh fruit, vegetables and cereals with full Batch_ID traceability. Digital product passport, harvest calendar, and secured payment. Register for dashboard access.",
     "title": "For Buyers",
-    "heroLead": "Buy produce from Bio Vera: certified origins and traceable batch history. Full catalogue and ordering live in your dashboard after registration.",
-    "notShopBody": "We are not a standard online store. We work with a clear, transparent process: you see what we offer, you provide your company and contact details and consent, and we take every request seriously. Read how we operate below and, when ready, express your interest at the bottom of the page so we can get in touch.",
+    "heroLead": "Buy produce from Bio Vera: certified origins and traceable batch history from field to your facility. Full catalogue, pricing and ordering are available in your dashboard after registration.",
+    "notShopBody": "We are not a standard online store. You provide your company details and consent; we review every enquiry. Registered buyers access the dashboard with real-time stock, harvest calendars and batch passports.",
     "linkHowWeOperate": "How we operate",
     "linkExpressInterest": "Express your interest",
     "placeOrder": "Place order",
     "preOrder2026": "Pre-order 2026",
-    "purchasesTitle": "How purchases work",
-    "purchasesLead": "From registration to delivery: a simple, transparent process.",
+    "purchasesTitle": "How Purchases Work",
+    "purchasesLead": "",
     "purchasesSteps": [
       {
-        "title": "Register or log in",
-        "body": "Create a buyer account or sign in. Your dashboard gives you access to the full product catalog and ordering tools."
+        "title": "Register or Log In",
+        "body": "Create a buyer account. Your dashboard gives access to the full product catalogue and ordering tools."
       },
       {
-        "title": "Browse and order",
-        "body": "In the dashboard you can browse by category (fruits, vegetables, cereals, other), see origin, harvest info, and pricing. Place direct orders or use Pre-order 2026 for seasonal planning."
+        "title": "Browse and Order",
+        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use Pre-order 2026 for seasonal planning."
       },
       {
-        "title": "Confirm and pay",
-        "body": "Orders are confirmed in Bio Vera. Payment and delivery terms are clear; we work with secure, traceable flows from farm to you."
+        "title": "Confirm and Pay",
+        "body": "Payment and delivery terms are confirmed in the system. Funds are held securely until delivery and verification clear."
       },
       {
-        "title": "Delivery and traceability",
-        "body": "Track your batch via the digital passport. You see where it was harvested, when (harvest period), and how it was handled until delivery."
+        "title": "Delivery and Traceability",
+        "body": "Track your batch via its digital passport: where it was harvested, when, and how it was handled until delivery."
       }
     ],
-    "productsTitle": "Products we offer",
-    "productsLead": "We deliver a wide range of fresh fruit and vegetables (and cereals) to European markets. The full, up-to-date list with varieties, availability, and prices is in your dashboard after registration.",
+    "productsTitle": "Products We Offer",
+    "productsLead": "13 fruit varieties, 18 vegetable varieties and 3 cereal lines. Full list with current availability and pricing in the buyer dashboard.",
     "productCategoryLabels": [
       "Fruits",
       "Vegetables",
-      "Cereals",
-      "Other"
+      "Cereals"
     ],
     "productsNote": "Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.",
     "harvestCalendarTitle": "Harvest calendar",
     "packagingTitle": "Packaging",
-    "packagingLead": "We use standardized, traceable packaging that meets food safety and quality requirements.",
-    "packagingList": [
-      "Bio Vera reusable crates with integrated QR codes where applicable.",
-      "Packaging types and options are visible per product in your dashboard.",
-      "Compliance with our packaging standards is verified; work bonus applies for proper use."
-    ],
+    "packagingLead": "Standardised, traceable packaging meeting food safety and EU quality requirements.",
+    "packagingList": [],
     "operateTitle": "How we operate",
     "operateInformator": "Buyer information (informator)",
-    "operateLead": "We run a vertically integrated chain: from seed and cultivation to packaging, logistics, and delivery to retail.",
-    "operateList": [
-      "One trace from growers in our programme to customers who purchase from Bio Vera—fewer shadow intermediaries with clear accountability on our side.",
-      "Every batch is documented: harvest date, origin, and handling are recorded and visible.",
-      "Cold chain and logistics are managed to keep produce fresh from field to destination.",
-      "We work with clear pricing and secured settlement: funds stay guarded through Bio Vera until delivery and conformity checks clear, then partners are paid under agreed terms—reducing company risk until we know the shipment is acceptable."
-    ],
-    "securityTitle": "Security and safeguards",
-    "securityLead": "We protect quality, payments, and data so you can order with confidence.",
+    "operateLead": "",
+    "operateList": [],
+    "securityTitle": "Security and Safeguards",
+    "securityLead": "",
     "securityCards": [
       {
         "title": "Payments",
-        "desc": "Structured cash flow: buyer funds remain secured with Bio Vera until accepted handover plus conformity checks—we don’t treat the goods as payable until verification shows they meet programme standards. Then payouts to growers and logistics follow contract. Bio Vera is seller and supplier of record—no hidden fees; agreements sit with us, not buried in a pseudo-marketplace."
+        "desc": "Buyer funds remain secured with Bio Vera until accepted handover plus conformity checks. Goods are not payable until verification confirms programme standards."
       },
       {
-        "title": "Contracts & compliance",
-        "desc": "Orders and pre-orders are documented. We enforce quality and packaging standards and verify compliance before release."
+        "title": "Contracts and Compliance",
+        "desc": "Orders and pre-orders are documented. Quality and packaging standards are enforced and verified before release."
       },
       {
-        "title": "Quality control",
-        "desc": "Field and quality checks, barcode and GPS validation, and approved inputs only. Unauthorized or non-compliant batches are blocked."
+        "title": "Quality Control",
+        "desc": "Field and quality checks, barcode and GPS validation, approved inputs only. Non-compliant batches are blocked."
       },
       {
         "title": "Traceability",
-        "desc": "Every batch has a unique ID and digital passport. You can verify origin, harvest date, and journey at any time."
+        "desc": "Every batch has a unique ID and digital passport. Verify origin, harvest date and journey at any time."
       }
     ],
     "valueTitle": "What you get with Bio Vera",
-    "valueLead": "Our fruit and vegetables are fresh-harvested, traceable, and backed by a full digital passport.",
-    "valueBlocks": [
-      {
-        "title": "Our fruit and vegetables",
-        "body": "Comes from contract growers supplying our commercial programme—the same checkpoints our sales team defends when we invoice retailers."
-      },
-      {
-        "title": "Fresh harvested",
-        "body": "Harvests are planned and reported; we aim to move produce from field to market without unnecessary delay so you receive fresh product."
-      },
-      {
-        "title": "Product passport",
-        "body": "Each batch has a digital passport with full information: where it was harvested (region, farm), when (harvest date and period), cold chain, compliance, and the full journey from field to delivery."
-      },
-      {
-        "title": "Origin and producer",
-        "body": "You see the farm, region, and producer behind each product. Certifications and quality entries are available in the dashboard when you order."
-      }
-    ],
+    "valueLead": "",
+    "valueBlocks": [],
     "ctaRepeat": "Ready to order or plan for 2026?",
-    "interestTitle": "Express your interest",
-    "interestLead": "So we can take your request seriously, please leave your company and contact details and confirm that you have read how we operate and agree to be contacted.",
+    "interestTitle": "Express Your Interest",
+    "interestLead": "Leave your company and contact details. We review every enquiry and respond within two business days.",
     "interestThanks": "Thank you.",
     "interestThanksBody": "We have received your details and will be in touch. If you have not yet registered, you can do so to access the full catalog and place orders once your profile is complete.",
     "interestRegisterLink": "Register as buyer",
@@ -3447,52 +3431,54 @@
     "required": "*"
   },
   "growersPage": {
+    "metaTitle": "Grower Programme | Bio Vera — Join From 30+ Countries",
+    "metaDescription": "Become a Vera grower: fixed pricing, logistics priority, group GlobalG.A.P. IFA v6 certification, secured settlement. Open to estates following Bio Vera standards worldwide.",
     "title": "For Growers",
-    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup paperwork and settlement as part of the load we merchandise to retailers. Screening is deliberate—capacity, geography and conformance must align for contracted supply.",
+    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup, paperwork and settlement as part of the loads we merchandise to retailers. Screening is deliberate — capacity, geography and conformity to our standards determine acceptance.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
-    "whoCanApplyTitle": "Who can apply",
-    "whoCanApplyLead": "The programme currently accepts estates in the countries listed below pending capacity checks. Same playbook, same certification spine.",
-    "countriesLine": "Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Montenegro, Netherlands, North Macedonia, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Spain, Sweden",
-    "valuePropositionTitle": "The value proposition",
-    "valuePropositionLead": "What we offer",
+    "whoCanApplyTitle": "Who Can Apply",
+    "whoCanApplyLead": "The programme accepts estates in 30+ countries pending capacity checks. Same playbook, same certification spine. Any estate willing to follow Bio Vera standards can apply regardless of current certification status.",
+    "countriesLine": "",
+    "valuePropositionTitle": "The Value Proposition",
+    "valuePropositionLead": "",
     "valueItems": [
       {
-        "title": "Fixed pricing",
-        "body": "Seasonal price stability. No middleman, no daily price fluctuations. Secure your revenue with predictable pricing throughout the season."
+        "title": "Fixed Pricing",
+        "body": "Seasonal price stability. No middleman, no daily fluctuations. Predictable revenue throughout the season."
       },
       {
-        "title": "Logistics priority",
-        "body": "Our refrigerated fleet picks up your goods at the exact scheduled minute. Zero wait time. Your harvest gets priority treatment from field to market."
+        "title": "Logistics Priority",
+        "body": "Our refrigerated fleet picks up at the scheduled time. Your harvest gets priority treatment from field to market."
       },
       {
-        "title": "Automated payments",
-        "body": "Funds are reserved upon field verification and released within 48 hours of Hub arrival. No payment delays, no cash flow worries."
+        "title": "Automated Payments",
+        "body": "Funds are reserved upon field verification and released within 48 hours of hub arrival."
       }
     ],
     "protocolTitle": "The Bio Vera Protocol",
-    "protocolLead": "Strict standards for estates shipping into Bio Vera inventories",
+    "protocolLead": "",
     "protocolItems": [
       {
-        "title": "Digital scheduling",
-        "body": "All harvests must be announced 24h in advance via the app. Real-time start/stop harvest reporting is mandatory."
+        "title": "Digital Scheduling",
+        "body": "All harvests announced 24 hours in advance via the app. Real-time start and stop reporting is mandatory."
       },
       {
-        "title": "Quality verification",
-        "body": "Our field coordinators have the final authority to approve or reject batches on-site based on Bio Vera's visual and chemical standards."
+        "title": "Quality Verification",
+        "body": "Field coordinators approve or reject batches on-site based on Bio Vera visual and chemical standards."
       },
       {
-        "title": "Smart packaging",
-        "body": "Use only Bio Vera reusable crates with integrated QR codes. No manual repacking allowed."
+        "title": "Smart Packaging",
+        "body": "Bio Vera reusable crates with integrated QR codes only. No manual repacking."
       },
       {
-        "title": "Full transparency",
-        "body": "Soil and spray logs must be uploaded digitally before the season starts."
+        "title": "Full Transparency",
+        "body": "Soil and spray logs uploaded digitally before the season starts."
       }
     ],
-    "groupCertTitle": "Group certification",
-    "groupCertSubtitle": "Group Certification Option 2",
-    "groupCertBody": "Vera Agrar holds the certification for every partner programme. Bio Vera bears the paperwork and expenses while you onboard into structured German placements under our corridor—not a standalone marketplace hustle.",
+    "groupCertTitle": "Group Certification",
+    "groupCertSubtitle": "",
+    "groupCertBody": "Vera Agrar holds the GlobalG.A.P. IFA v6 group certification. Bio Vera bears the paperwork and audit expenses while you onboard into structured placements under our corridor.",
     "technicalStandardsTitle": "Technical standards",
     "tableColCategory": "Category",
     "tableColStandard": "Standard",
@@ -3510,8 +3496,8 @@
         "standard": "Direct packaging at farm in Vera packaging"
       }
     ],
-    "paymentGuaranteedBold": "Guaranteed payment:",
-    "paymentGuaranteedRest": "Payment is secured by contracts with German retail chains (60-90 days).",
+    "paymentGuaranteedBold": "",
+    "paymentGuaranteedRest": "Payment secured by contracts with retail chains at 60–90 day terms.",
     "applyCertCta": "Apply for Vera Group Certification 2026",
     "resourcesTitle": "Resources & downloads",
     "resourcesLead": "Essential documents and guides for growers",
@@ -3579,10 +3565,10 @@
     "viewGuideOnline": "Open guide (screenshots)",
     "backToGrowers": "Back to growers",
     "comingSoon": "Coming soon",
-    "applicationTitle": "Producer application",
-    "applicationLead": "Apply to the Vera grower programme",
+    "applicationTitle": "Producer Application",
+    "applicationLead": "Apply to the Vera grower programme. Upload required documents and our team reviews within five business days.",
     "successTitle": "Application submitted!",
-    "successBody": "Thank you for your interest. We'll review your application and contact you within 3-5 business days.",
+    "successBody": "Thank you for your interest. We will review your application and contact you within five business days.",
     "farmNameLabel": "Farm name *",
     "farmNamePlaceholder": "Enter your farm name",
     "contactPersonLabel": "Contact person *",
@@ -3629,63 +3615,55 @@
     ]
   },
   "logisticsPartnerPage": {
-    "title": "For logistics",
-    "heroLead": "Become a contracted Bio Vera carrier in our cold chain—regular missions, Vera fleet rules and the same batch story we present to paying customers.",
+    "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
+    "metaDescription": "Join Bio Vera's contracted cold chain network. Regular missions, route optimisation, fast payment on delivery. Small fleets, large companies and independent drivers welcome.",
+    "title": "For Logistics Partners",
+    "heroLead": "Become a contracted Bio Vera carrier in our cold chain — regular missions, Vera fleet rules and the same batch traceability we present to paying customers.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
-    "prospectNote": "The prospect PDF includes our branded truck design and complete program details",
-    "whoCanApplyTitle": "Who can apply",
-    "whoCanApplyLead": "Logistics partners can apply from the same countries where we have growers. Anyone who meets the conditions below can become a Vera logistics partner.",
-    "countriesLine": "Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Montenegro, Netherlands, North Macedonia, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Spain, Sweden",
-    "whoCanApplyLine2": "We work with <s1>small companies</s1>, <s2>large transport companies</s2>, and <s3>independent drivers</s3>. The only requirement is that you can meet our cold chain and tracking standards below.",
-    "fleetPolicyTitle": "Bio Vera fleet standards & registering vehicles",
-    "fleetPolicyP1": "Under a new Bio Vera logistics rule, we are developing and operating our own branded vehicle fleet alongside contracted partners. Vehicles that carry Vera loads must visibly and technically fit that programme—consistent identity on the road, one cold-chain doctrine, auditable telemetry.",
-    "fleetPolicyP2": "Applying to register additional vehicles on Bio Vera logistics is only possible where there is full compliance with Bio Vera fleet requirements: prescribed truck exterior and liveries, cleanliness and sealing of the cargo compartment, refrigeration and Bio Vera-approved sensors, GPS and handover tooling, plus every other mandatory standard communicated in prospectuses and partner manuals. Vehicles that cannot meet these requirements will not be approved.",
-    "fleetStandardsBullets": [
-      "Exterior and graphics: Vera-approved livery, signage and markings (see prospect PDF)",
-      "Temperature control: refrigerated body within the mandated band; verified before route assignment",
-      "Telematics: Bio Vera sensor kit/GPS workflow as documented; no unauthorised substitutes",
-      "Cargo-area hygiene & seals aligned with published organic cold-chain rules for Vera partners",
-      "All other technical checks published for the Vera fleet programme remain binding"
-    ],
-    "conditionsTitle": "Conditions to become a Vera logistics partner",
-    "conditionsLead": "You must meet the following. We accept small fleets, large companies, and independent drivers.",
-    "needLine": "You need <s1>cooling/refrigeration systems</s1> (cold chain), digital tracking, and reliable delivery. We accept <s2>small companies</s2>, <s3>large companies</s3>, and <s4>independent drivers</s4>.",
+    "prospectNote": "",
+    "whoCanApplyTitle": "Who Can Apply",
+    "whoCanApplyLead": "Logistics partners can apply from the same 30+ countries where we have growers. Small companies, large transport operators and independent drivers qualify provided they meet our cold chain and tracking standards.",
+    "countriesLine": "",
+    "whoCanApplyLine2": "",
+    "fleetPolicyTitle": "Fleet Standards",
+    "fleetPolicyP1": "Vehicles carrying Vera loads must meet prescribed exterior and livery requirements.",
+    "fleetPolicyP2": "Registration of additional vehicles is subject to full compliance with Bio Vera fleet specifications.",
+    "fleetStandardsBullets": [],
+    "conditionsTitle": "Conditions",
+    "conditionsLead": "",
+    "needLine": "",
     "requirementItems": [
       {
-        "title": "Bio Vera: from orchard to shelf",
-        "body": "Complete end-to-end responsibility from farm pickup to retail shelf delivery. You guarantee full cold chain integrity, GPS tracking, and digital handover at every stage. No partial deliveries — you are responsible for the entire journey from field to final destination."
+        "title": "Cold Chain",
+        "body": "Mandatory refrigeration unit maintaining 0°C to +12°C for organic product transport. Required for all partners regardless of fleet size."
       },
       {
-        "title": "Cooling systems (cold chain)",
-        "body": "Mandatory refrigeration unit capable of maintaining temperatures between 0°C and +12°C for organic product transport. Required for all partners. We accept small vans, medium trucks, and large transport vehicles — company size does not matter."
-      },
-      {
-        "title": "Digital tracking",
-        "body": "Mandatory installation of Bio Vera sensors for real-time temperature monitoring and GPS tracking. Same requirement for independent drivers, small companies, and large logistics partners."
+        "title": "Digital Tracking",
+        "body": "Mandatory Bio Vera sensors for real-time temperature monitoring and GPS tracking. Same requirement for every partner tier."
       },
       {
         "title": "Reliability",
-        "body": "High trust score and strict adherence to in-time delivery deadlines. Consistent performance is essential for long-term partnerships."
+        "body": "High trust score and strict adherence to delivery deadlines. Consistent performance is essential for long-term contracts."
       }
     ],
-    "whatYouGetTitle": "What you get",
-    "whatYouGetLead": "Benefits of carrying Bio Vera loads",
+    "whatYouGetTitle": "What You Get",
+    "whatYouGetLead": "",
     "benefitItems": [
       {
-        "title": "Route optimization",
-        "body": "Our software reduces empty kilometers through intelligent route planning, maximizing your fleet efficiency and profitability."
+        "title": "Route Optimisation",
+        "body": "Our software reduces empty kilometres through intelligent route planning, maximising fleet efficiency."
       },
       {
-        "title": "Fast payment",
-        "body": "Immediate payment upon completed delivery. No waiting periods or delayed settlements. Your cash flow stays healthy."
+        "title": "Fast Payment",
+        "body": "Payment upon completed delivery. No waiting periods or delayed settlements."
       },
       {
-        "title": "Long-term contracts",
-        "body": "Stable volume commitments with predictable revenue streams. Build sustainable growth with reliable partnerships."
+        "title": "Long-Term Contracts",
+        "body": "Stable volume commitments with predictable revenue streams."
       }
     ],
-    "fuelTitle": "Illustrative fuel savings",
+    "fuelTitle": "",
     "fuelLead": "Move the slider to choose an assumed fuel saving. Bars use one baseline: grey is before optimisation (100%); green scales to remaining fuel bill (100% minus your saving). Euros below assume €10,000/month in fuel spend today.",
     "fuelSavingsLabel": "Assumed fuel savings",
     "fuelDisclaimer": "Illustrative only—not a personalised quote or guarantee. Actual savings depend on lanes, payloads, dwell time and fuel price.",
@@ -3697,8 +3675,8 @@
     "yearlySavings": "Annualised savings snapshot",
     "before": "Baseline (today)",
     "after": "After optimisation",
-    "resourcesTitle": "Resources & downloads",
-    "resourcesLead": "Essential documents and guides for logistics partners",
+    "resourcesTitle": "",
+    "resourcesLead": "",
     "resourceItems": [
       {
         "id": "prospect",
@@ -3747,8 +3725,8 @@
     "downloading": "Downloading…",
     "downloadFailed": "Failed to download resource. Please try again.",
     "comingSoon": "Coming soon",
-    "applicationTitle": "Partner application",
-    "applicationLead": "Apply to become a Bio Vera logistics partner",
+    "applicationTitle": "Partner Application",
+    "applicationLead": "Specify number of vans and trucks. Upload fleet documentation. Agree to install Bio Vera sensors on all vehicles used for our deliveries.",
     "successTitle": "Application submitted!",
     "successBody": "Thank you for your interest. We'll review your application and contact you within 3-5 business days.",
     "companyNameLabel": "Company name *",

@@ -1,153 +1,80 @@
 {
+  "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
+  "metaDescription": "Distribute Bio Vera products and packaging to our grower network. Guaranteed offtake, stable pricing, integrated return logistics. Apply for national coverage.",
   "hero": {
     "title": "For Our Suppliers",
-    "subtitle": "Become a Bio Vera supplier: sell our products and our packaging to growers in your country. You get guaranteed offtake from our producers, and you support them with on-site advice and training.",
+    "subtitle": "Become a Bio Vera supplier: sell our products and packaging to growers in your country. You get guaranteed offtake from our producer network and support them with on-site training and advice.",
     "downloadPdf": "Download Prospect PDF",
     "downloadFail": "Failed to download prospect. Please try again."
   },
   "whoApply": {
-    "title": "Who should apply",
-    "intro": "Our suppliers sell Bio Vera products and Bio Vera packaging in their country. We prefer partners who already work in agriculture and have a strong presence across the country.",
-    "bullets": [
-      "You sell our products (seeds, inputs) to growers",
-      "You sell our packaging to producers",
-      "Ideally you already work in agriculture",
-      "Wide presence in your country is an advantage"
-    ]
+    "title": "Who Should Apply",
+    "intro": "We prefer partners already working in agriculture with strong national presence. You sell Bio Vera products and Bio Vera packaging in your country.",
+    "bullets": []
   },
   "yourRole": {
-    "title": "Your role",
-    "intro": "As our supplier you advise and train users on the ground. You are the local point of contact for producers and support them with on-site guidance. You also procure packaging for our users – including boxes for packing produce – so they have what they need locally.",
-    "bullets": [
-      "On-site advising and training of users",
-      "Procure packaging for our users (e.g. boxes for packing)",
-      "First point of contact for farmers in your region",
-      "Physical verification of received goods"
-    ]
+    "title": "Your Role",
+    "intro": "As our supplier you advise and train growers on the ground. You are the local point of contact, procure packaging for our users, and maintain inventory tracked through the Vera Admin Dashboard.",
+    "bullets": []
   },
   "benefits": {
-    "title": "What you get",
-    "subtitle": "Benefits of becoming a Bio Vera supplier",
+    "title": "What You Get",
+    "subtitle": "",
     "cards": [
       {
-        "title": "Guaranteed offtake",
-        "description": "Guaranteed offtake from our producers in your country. Our growers source from approved suppliers – you get stable demand and predictable revenue."
+        "title": "Guaranteed Offtake",
+        "description": "Our growers source from approved suppliers. Stable demand and predictable revenue."
       },
       {
-        "title": "Our products & packaging",
-        "description": "You sell Bio Vera products and Bio Vera packaging. One brand, one standard, full traceability via QR and the Vera system."
+        "title": "Price Stability",
+        "description": "Pre-agreed pricing structure. No fluctuations or per-transaction negotiations."
       },
       {
-        "title": "Price stability",
-        "description": "Pre-agreed pricing structure. No price fluctuations or negotiations per transaction. Predictable margins."
+        "title": "Integrated Logistics",
+        "description": "Seeds and fertilizers delivered on return trips from our logistics network. Fewer empty kilometres, lower costs."
       },
       {
-        "title": "Integrated logistics",
-        "description": "Receive seeds and fertilizers on return trips from our logistics network. Fewer empty kilometers, lower costs."
+        "title": "National Coverage",
+        "description": "Expand your reach and represent Bio Vera across your country."
       },
       {
-        "title": "National coverage preferred",
-        "description": "We prefer suppliers with strong national presence. Expand your reach and represent Bio Vera across your country."
-      },
-      {
-        "title": "Exclusive market access",
-        "description": "Direct access to our producer network and to the German market through our vertically integrated chain."
+        "title": "Exclusive Market Access",
+        "description": "Direct access to our producer network and to European retail through our vertically integrated chain."
       }
     ]
   },
   "howItWorks": {
     "title": "How It Works",
-    "subtitle": "Understanding the Bio Vera supply chain",
-    "supplyChainTitle": "Supply Chain Process",
-    "steps": [
-      {
-        "title": "Sourcing from approved partners",
-        "body": "Suppliers procure goods from our approved partners within the country. They also source packaging (e.g. boxes for packing) for our users. Seeds, fertilizers, and packaging meet Bio Vera specifications."
-      },
-      {
-        "title": "Agreed Pricing Structure",
-        "body": "All products are sold at pre-agreed prices. This ensures price stability for growers and predictable revenue for suppliers. No price fluctuations or negotiations per transaction."
-      },
-      {
-        "title": "Distribution to Growers",
-        "body": "Suppliers distribute products to Bio Vera certified growers in their region. Every transaction is tracked through QR codes, ensuring complete traceability from supplier to field."
-      },
-      {
-        "title": "Digital Tracking & Compliance",
-        "body": "All inventory movements are recorded in the Vera Admin Dashboard. Suppliers maintain real-time visibility of stock levels, and the system automatically alerts when inventory falls below 20% threshold."
-      }
-    ],
-    "forSuppliersPanelTitle": "For Suppliers",
-    "forSuppliersPanelIntro": "As a supplier, you purchase from our approved partners and sell to growers at the agreed price. You maintain local inventory, procure packaging (e.g. boxes) for our users, and provide regional support to farmers.",
-    "forSuppliersPanelBullets": [
-      "Purchase from approved partners",
-      "Maintain secure storage facilities",
-      "Procure packaging (e.g. boxes for packing) for our users",
-      "Distribute to growers at fixed prices",
-      "Track all transactions via QR codes"
-    ]
+    "subtitle": "Suppliers procure from our approved partners, distribute to certified growers at pre-agreed prices. Every transaction tracked through QR codes. Inventory movements recorded in real time with automatic alerts at 20% threshold.",
+    "supplyChainTitle": "",
+    "steps": [],
+    "forSuppliersPanelTitle": "",
+    "forSuppliersPanelIntro": "",
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
-    "title": "Program Requirements",
-    "subtitle": "What we expect from our suppliers",
-    "supplierHeading": "For Suppliers",
-    "cards": [
-      {
-        "title": "Vera Resources Storage",
-        "description": "Obligation to provide dry and secure storage space for Vera seeds, fertilizers, and packaging materials."
-      },
-      {
-        "title": "QR Code Issuance",
-        "description": "Supplier cannot issue goods without scanning the QR code from the farmer's app. This is the only way to track consumption per hectare."
-      },
-      {
-        "title": "Local Support",
-        "description": "Supplier is the first point of contact for farmers in their region. They perform physical verification of received goods and provide on-site advice and training."
-      },
-      {
-        "title": "Inventory Reporting",
-        "description": "System must automatically notify headquarters in Hamburg when inventory falls below 20%."
-      }
-    ],
-    "commonLabel": "Common Obligation:",
-    "commonBody": "All partners must use the Vera Admin Dashboard to record every entry and exit of goods. No 'paperwork' – everything must be in the digital system."
+    "title": "Programme Requirements",
+    "subtitle": "Dry, secure storage for Vera seeds, fertilizers and packaging. QR scanning mandatory for every dispatch. Physical verification of received goods. Digital-only record keeping through the Vera Admin Dashboard.",
+    "supplierHeading": "",
+    "cards": [],
+    "commonLabel": "",
+    "commonBody": ""
   },
   "logistics": {
-    "title": "Vera Logistics Advantage",
-    "subtitle": "Smart return logistics system",
-    "noEmptyTitle": "No Empty Return Trips",
-    "steps": [
-      {
-        "title": "Pickup & Delivery",
-        "body": "Driver picks up products from growers and delivers them to the buyer's address."
-      },
-      {
-        "title": "Return Pickup",
-        "body": "On the return trip, the driver picks up our Vera seeds and fertilizers from our partners."
-      },
-      {
-        "title": "Distribution to Suppliers",
-        "body": "The driver delivers Vera seeds and fertilizers directly to our suppliers on the return route, eliminating empty kilometers."
-      }
-    ],
-    "supplierColumnTitle": "For Suppliers",
-    "supplierColumnIntro": "Receive regular deliveries of Vera seeds and fertilizers directly from our partners, delivered by our logistics network on return trips.",
-    "supplierColumnBullets": [
-      "No need to arrange separate transport for incoming goods",
-      "Reduced logistics costs through integrated system",
-      "Regular, predictable delivery schedule"
-    ],
-    "systemColumnTitle": "System Benefits",
-    "systemColumnIntro": "Our smart logistics system ensures maximum efficiency by eliminating empty return trips and optimizing every kilometer of transport.",
-    "systemColumnBullets": [
-      "Zero empty kilometers on return trips",
-      "Reduced fuel costs and environmental impact",
-      "Faster delivery times through optimized routes"
-    ]
+    "title": "",
+    "subtitle": "",
+    "noEmptyTitle": "",
+    "steps": [],
+    "supplierColumnTitle": "",
+    "supplierColumnIntro": "",
+    "supplierColumnBullets": [],
+    "systemColumnTitle": "",
+    "systemColumnIntro": "",
+    "systemColumnBullets": []
   },
   "application": {
     "title": "Supplier Application",
-    "intro": "Apply online (no self-service store login). You receive a reference code to track your application. Our team will contact you to schedule a meeting; when you are approved we create your partner store account.",
+    "intro": "Apply online. You receive a reference code to track your application. Our team contacts you to schedule a meeting; upon approval we create your partner store account.",
     "linkCheckStatus": "Check status with your reference",
     "linkPartnerLogin": "Partner store login",
     "receivedTitle": "Application received",

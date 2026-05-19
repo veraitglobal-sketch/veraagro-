@@ -250,7 +250,13 @@ export class HarvestAnnouncementsService {
         earliestHarvest = phi.date;
         reason = phi.reason;
       } catch (e) {
-        this.logger.error(`getEarliestHarvestDate failed for parcel ${dto.parcelId}`, e);
+        const errText = e instanceof Error ? e.message : String(e);
+        const prismaCode =
+          e && typeof e === 'object' && 'code' in e ? String((e as { code?: string }).code) : '';
+        this.logger.error(
+          `getEarliestHarvestDate failed parcelId=${dto.parcelId} prismaCode=${prismaCode} err=${errText}`,
+          e instanceof Error ? e.stack : undefined,
+        );
         throw new BadRequestException(
           'Could not verify chemical withdrawal period (PHI). Try again or contact support.',
         );

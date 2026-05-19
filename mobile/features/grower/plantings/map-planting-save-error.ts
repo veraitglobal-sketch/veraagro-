@@ -48,8 +48,14 @@ export function mapPlantingSaveError(raw: string | undefined | null, t: TFunctio
     return t('producer.plantings.errSavePhiCheckFailed');
   }
 
-  if (low.includes('harvest blocked')) {
-    return t('producer.plantings.errSaveHarvestBlockedPhi', { detail: s.length > 400 ? `${s.slice(0, 397)}…` : s });
+  if (low.includes('harvest blocked') || low.includes('earliest harvest date')) {
+    const dateMatch = s.match(/(\d{4}-\d{2}-\d{2})/);
+    if (dateMatch) {
+      return t('producer.plantings.errSaveHarvestBlockedPhi', { detail: dateMatch[1] });
+    }
+    return t('producer.plantings.errSaveHarvestBlockedPhi', {
+      detail: s.length > 120 ? `${s.slice(0, 117)}…` : s,
+    });
   }
 
   if (low.includes('invalid announcement type')) {
