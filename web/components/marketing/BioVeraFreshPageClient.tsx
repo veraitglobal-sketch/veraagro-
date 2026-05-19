@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Link2,
@@ -14,7 +14,8 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useLocalizedHref } from "@/hooks/useLocalizedHref";
+import type { SiteLocale } from "@/i18n/config";
+import { useLocalizedHref, useLocaleFromPath } from "@/hooks/useLocalizedHref";
 import { bioVeraFreshAPI } from "@/lib/api";
 import Footer from "@/components/Footer";
 
@@ -89,11 +90,23 @@ function sectionSlug(title: string, index: number): string {
   return `bf-${base}`;
 }
 
-export default function BioVeraFreshPageClient() {
-  const { t } = useTranslation();
+export default function BioVeraFreshPageClient({
+  initialLocale,
+}: Readonly<{ initialLocale?: SiteLocale }> = {}) {
+  const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
+  const localeFromPath = useLocaleFromPath();
+  const activeLocale = initialLocale ?? localeFromPath;
   const [copied, setCopied] = useState(false);
   const [pdfDownloading, setPdfDownloading] = useState(false);
+
+  useLayoutEffect(() => {
+    if ((i18n.resolvedLanguage || i18n.language) !== activeLocale) {
+      void i18n.changeLanguage(activeLocale);
+    }
+  }, [activeLocale, i18n]);
+
+  const localeSynced = (i18n.resolvedLanguage || i18n.language) === activeLocale;
 
   const downloadProspect = useCallback(async () => {
     setPdfDownloading(true);
@@ -146,6 +159,10 @@ export default function BioVeraFreshPageClient() {
   const franchiseBlueprintTitle = t("bioVeraFresh.franchiseBlueprintTitle");
   const resourcesTitle = t("bioVeraFresh.resourcesTitle");
   const showToolbar = Boolean(toolbarCopyLink || toolbarPrintPdf);
+
+  if (!localeSynced) {
+    return <div className="min-h-screen bg-white" aria-busy="true" />;
+  }
 
   return (
     <div className="min-h-screen bg-white text-gray-900 biovera-fresh-root print:bg-white">

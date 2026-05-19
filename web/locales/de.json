@@ -1832,9 +1832,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertikal Integriertes Agrifood-Unternehmen",
-      "title2": "Vom Feld bis ins Regal — Ohne Zwischenhändler",
-      "subtitle": "Ein Versorgungskanal. Eine Batch_ID. Lückenlose Rückverfolgbarkeit von der Ernte bis zur Auslieferung an den deutschen Einzelhandel.",
+      "title1": "Vertikal integriertes",
+      "title2": "Agrifood-Unternehmen",
+      "subtitle": "Vom Feld bis ins Regal — ohne Zwischenhändler.\n\nEin Versorgungskanal. Eine Batch_ID. Lückenlose Rückverfolgbarkeit von der Ernte bis zur Auslieferung an den deutschen Einzelhandel.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
@@ -2517,123 +2517,6 @@
     "ctaBody": "Ob Erzeuger, Lieferant, Transportpartner oder Einkäufer — dieselben Regeln von der Parzelle bis zur Abrechnung.",
     "ctaProducer": "Bio Vera Erzeuger werden",
     "ctaContact": "Kontakt"
-  },
-  "bioVeraFresh": {
-    "toolbarCopyLink": "",
-    "toolbarCopied": "Kopiert",
-    "toolbarPrintPdf": "",
-    "toolbarPrintAria": "Druckdialog öffnen oder als PDF speichern",
-    "introNote": "Ein modernes Einzelhandelskonzept für frisches Obst und Gemüse. Direkte Erzeugeranbindung, standardisierte Qualität, maximale Verwertung jedes Kilogramms.",
-    "pdfHint": "",
-    "contentsTitle": "",
-    "contentsNav": "Zum Abschnitt springen",
-    "skipToContent": "Zum Dokument springen",
-    "coverEyebrow": "Direkt. Frisch. Kontrolliert.",
-    "coverTitle": "BioVera Fresh — Fachgeschäft für Frisches Obst und Gemüse",
-    "coverSubtitle": "",
-    "heroImageAlt": "BioVera Fresh Einzelhandelskonzept — frische Produkte",
-    "pdfDocumentTitle": "Vollständiges Dokument — BioVera Fresh",
-    "pdfDocumentSubtitle": "Gesamter Programmtext für Partner, Piloten oder Archiv.",
-    "ctaTitle": "BioVera Fresh Partner werden",
-    "ctaBody": "Kontaktieren Sie das Bio Vera Team. Das Programm-PDF umfasst alle 14 Kapitel: Einführung, Markt, Konzept, Betrieb, Ertragsmodell, Investition, Voraussetzungen und Wachstum.",
-    "ctaButton": "Bio Vera kontaktieren",
-    "webSections": [
-      {
-        "title": "Zwei Zonen",
-        "body": "Frischetheke — Obst, Gemüse, Abwiegen, BioVera-Packungen.\n\nFresh-Counter — Säfte, Obstsalate, sichtbare Zubereitung. Schlankes Team, klare Abläufe, niedrige Komplexität."
-      },
-      {
-        "title": "Für wen",
-        "body": "Für Unternehmer, Investoren und Standortbetreiber, die ein stabiles Lebensmittel-Einzelhandelskonzept suchen."
-      }
-    ],
-    "pdfSections": [
-      {
-        "title": "BioVera Fresh",
-        "body": "Modernes Konzept für den Verkauf frischer Produkte.\n\nDirekt. Frisch. Kontrolliert.\n\nBioVera Fresh ist ein zeitgemäßes Obst- und Gemüse-Einzelhandelsmodell mit direkter Erzeugeranbindung, kontrollierter Qualität und maximaler Produktverwertung."
-      },
-      {
-        "title": "1. Einführung",
-        "body": "BioVera Fresh entstand als Antwort auf den wachsenden Bedarf an organisiertem, transparentem und effizientem Verkauf frischer Produkte.\n\nIn traditionellen Systemen geht viel Wert durch schwache Organisation, unvorhersehbare Nachfrage und fehlende Kontrolle verloren.\n\nBioVera Fresh setzt einen neuen Standard — Produktion und Markt werden über eine kontrollierte Kette mit stabiler Qualität und minimalen Verlusten verbunden."
-      },
-      {
-        "title": "2. Marktproblem",
-        "body": "Der Obst- und Gemüsemarkt steht vor strukturellen Herausforderungen:\n\n• fragmentierte Distribution\n• hohe Schwundquoten\n• unklare Herkunft\n• volatile Preise\n• schwache Qualitätskontrolle\n\nDas erzeugt Unsicherheit für Erzeuger, Partner und Konsumenten."
-      },
-      {
-        "title": "3. Die BioVera Antwort",
-        "body": "BioVera Fresh führt ein klares, kontrolliertes Modell ein:\n\n• direkte Verbindung zwischen Erzeuger und Handel\n• standardisierte Produktqualität\n• organisierte Distribution\n• kontrollierte Filialformate\n• maximale Verwertung jeder Lieferung\n\nVerluste sinken, der Gesamtwert der Ware steigt."
-      },
-      {
-        "title": "4. Filialkonzept",
-        "body": "Eine BioVera Fresh Filiale ist modern, funktional und einfach — mit zwei Kernzonen:\n\nFrischetheke\n• frisches Obst und Gemüse\n• klare Präsentation\n• Verkauf nach Gewicht\n• BioVera Verpackungen\n\nFresh-Counter\n• frisch gepresste Säfte\n• Obstsalate\n• Zubereitung vor dem Kunden\n\nZusätzlich\n• kleiner Verzehrraum\n• schneller, unkomplizierter Service"
-      },
-      {
-        "title": "5. Systemablauf",
-        "body": "BioVera Fresh folgt einem einfachen, effizienten Ablauf:\n\n• Produktion im Erzeugernetzwerk\n• Qualitätskontrolle nach BioVera Standard\n• Distribution über organisiertes System\n• Verkauf in BioVera Fresh Filialen\n\nDas Modell liefert Stabilität, Kontrolle und Transparenz in jedem Schritt."
-      },
-      {
-        "title": "6. Warenführung",
-        "body": "Kernvorteil ist disziplinierte Sortimentsführung:\n\n• frischeste Ware hat Priorität in der Theke\n• der Fresh-Counter steigert Wert durch Säfte und Salate nach definiertem Qualitätsstandard\n• Ware unter BioVera Standard erreicht den Kunden nicht\n\nErgebnis:\n\n• minimaler Schwund\n• hohe Verwertung\n• Mehrwert über das Sortiment"
-      },
-      {
-        "title": "7. Ertragsmodell",
-        "body": "Partner erzielen Erlöse aus mehreren Quellen:\n\n1. Obst- und Gemüseverkauf\n• stabiler Umsatz\n• kontinuierliche Nachfrage\n• Basisertrag\n\n2. Frisch gepresste Säfte\n• hohe Marge\n• schnelle Rotation\n• Zusatzertrag\n\n3. Obstsalate\n• Premium-Produkt\n• höherer Warenkorb\n• zusätzliche Profitabilität\n\nGemeinsam entsteht ein stabiles, skalierbares Ertragsmodell."
-      },
-      {
-        "title": "8. Betriebsmodell",
-        "body": "BioVera Fresh ist leicht zu betreiben:\n\n• schlankes Team (z. B. zwei Mitarbeitende)\n• klare Schichten und Routinen\n• schnelle Tagesorganisation\n• geringe betriebliche Komplexität\n\nDas ermöglicht einen schnellen Start und effizienten Tagesbetrieb."
-      },
-      {
-        "title": "9. Vorteile für Partner",
-        "body": "Als BioVera Fresh Partner erhalten Sie:\n\n• Zugang zu BioVera Lieferungen\n• fertiges Betriebsmodell\n• Qualitäts- und Servicestandards\n• Unterstützung bei Start und Wachstum\n• verlässliche Belieferung\n• wiedererkennbare Marke"
-      },
-      {
-        "title": "10. Investition",
-        "body": "Die Investition hängt ab von:\n\n• Filialgröße\n• Standort\n• Ausstattung\n\nDas Modell ist auf vergleichsweise schnelle Amortisation bei stabilem Betrieb ausgelegt."
-      },
-      {
-        "title": "11. Verhältnis zum Markt",
-        "body": "BioVera Fresh konkurriert nicht mit bestehenden Partnern.\n\nRetail-Ketten und Distributoren bleiben Kernpartner; BioVera Fresh ist ein Zusatzkanal, der:\n\n• den Markt stabilisiert\n• Überschussmengen aufnimmt\n• Produktionskontinuität unterstützt"
-      },
-      {
-        "title": "12. Wachstum",
-        "body": "BioVera Fresh ist Teil einer breiteren europäischen Expansion.\n\nGeplant sind:\n\n• neue Standorte\n• Ausbau des Partnernetzwerks\n• höhere Erzeugerleistung\n• stärkere Distribution"
-      },
-      {
-        "title": "13. Wer kann Partner werden",
-        "body": "Partner können sein:\n\n• Unternehmer\n• Investoren\n• Standortbetreiber\n• Operatoren mit Interesse an stabilem Lebensmittel-Einzelhandel"
-      },
-      {
-        "title": "14. BioVera Fresh Partner werden",
-        "body": "Wenn Sie Teil eines modernen Frische-Einzelhandelssystems werden und Ihr Geschäft mit BioVera-Unterstützung aufbauen möchten, kontaktieren Sie uns."
-      },
-      {
-        "title": "Kontakt",
-        "body": "Für weitere Informationen wenden Sie sich an das Bio Vera Team.\n\nE-Mail: contact@biovera.app\nTelefon: +49 155 63740470\nWeb: https://biovera.app"
-      }
-    ],
-    "downloadProspectCta": "Prospekt-PDF herunterladen",
-    "downloadProspectError": "Download fehlgeschlagen. Bitte erneut versuchen.",
-    "prospectNote": "",
-    "franchiseBlueprintTitle": "",
-    "franchiseBlueprintLead": "",
-    "franchiseBlueprintItems": [],
-    "resourcesTitle": "",
-    "resourcesLead": "",
-    "resourceItems": [
-      {
-        "id": "freshProspect",
-        "title": "BioVera Fresh Prospekt",
-        "description": "Vollständiger Text: Einführung, Markt, Lösung, Filialkonzept, Ablauf, Warenführung, Ertrag, Betrieb, Vorteile, Investition, Marktbezug, Wachstum, Partnerprofil und Kontakt.",
-        "type": "PDF",
-        "size": "~180 KB"
-      }
-    ],
-    "resourceDownload": "Herunterladen",
-    "resourceDownloading": "Wird heruntergeladen…",
-    "metaTitle": "BioVera Fresh | Fachgeschäft für Frisches Obst & Gemüse — Franchise",
-    "metaDescription": "Modernes Fachgeschäft für frisches Obst und Gemüse. Direkte Erzeugeranbindung, kontrollierte Qualität, organisierter Vertrieb. Werden Sie BioVera Fresh Partner."
   },
   "helpCenterPage": {
     "title": "Hilfecenter",

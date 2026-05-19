@@ -19,28 +19,12 @@
   "ctaButton": "Contactar Bio Vera",
   "webSections": [
     {
-      "title": "Problema del mercado",
-      "body": "La distribución tradicional de productos frescos está fragmentada: altas mermas, origen poco claro, precios volátiles, control de calidad débil."
+      "title": "Dos zonas",
+      "body": "Mostrador fresco — frutas, verduras, venta a peso, envases BioVera.\n\nFresh counter — zumos frescos, ensaladas de fruta, preparación visible. Equipo reducido, rutinas claras, baja complejidad."
     },
     {
-      "title": "La respuesta BioVera",
-      "body": "Enlace directo productor–retail. Calidad estandarizada. Distribución organizada. Formatos de tienda controlados. Máximo aprovechamiento de cada kilogramo."
-    },
-    {
-      "title": "Cómo es la tienda",
-      "body": "Dos zonas en un mismo espacio:\n\nZona retail — frutas y verduras frescas, exposición clara, venta a peso, envases BioVera.\n\nZona Fresh — zumos frescos, ensaladas de fruta, preparación visible. Servicio rápido, alto tráfico."
-    },
-    {
-      "title": "Operaciones e ingresos",
-      "body": "Surtilo planificado y rotación constante reducen mermas. Ingresos: ventas, zumos frescos, ensaladas, eventos estacionales. Equipo reducido, rutinas claras, baja complejidad."
-    },
-    {
-      "title": "Estándares",
-      "body": "Señalización aprobada, cadena de frío visible, equipos conformes. Verificación QR en estantería o caja. Limpieza según checklist."
-    },
-    {
-      "title": "Quién puede ser socio",
-      "body": "Emprendedores, inversores, propietarios de locales y operadores que buscan un concepto estable de retail alimentario."
+      "title": "Para quién",
+      "body": "Emprendedores, inversores, operadores de locales y socios que buscan un concepto estable de retail alimentario."
     }
   ],
   "pdfSections": [
@@ -111,7 +95,7 @@
   ],
   "downloadProspectCta": "Descargar prospecto PDF",
   "downloadProspectError": "Error al descargar. Inténtelo de nuevo.",
-  "prospectNote": "The downloadable PDF is in English, like our other official partner prospects. It contains the full prospect (14 chapters), contact details and print-ready copy.",
+  "prospectNote": "",
   "franchiseBlueprintTitle": "",
   "franchiseBlueprintLead": "",
   "franchiseBlueprintItems": [],

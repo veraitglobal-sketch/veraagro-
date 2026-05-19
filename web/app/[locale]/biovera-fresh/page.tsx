@@ -46,6 +46,12 @@ export async function generateMetadata({
   return bioVeraFreshMetadata(locale);
 }
 
-export default function BioVeraFreshPage() {
-  return <BioVeraFreshPageClient />;
+export default async function BioVeraFreshPage({
+  params,
+}: Readonly<{
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: loc } = await params;
+  const locale: SiteLocale = isSiteLocale(loc) ? loc : 'en';
+  return <BioVeraFreshPageClient initialLocale={locale} />;
 }

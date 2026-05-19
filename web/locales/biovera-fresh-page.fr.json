@@ -19,28 +19,12 @@
   "ctaButton": "Contacter Bio Vera",
   "webSections": [
     {
-      "title": "Problème du marché",
-      "body": "La distribution traditionnelle des produits frais est fragmentée : pertes élevées, origine floue, prix volatils, contrôle qualité faible."
+      "title": "Deux zones",
+      "body": "Comptoir frais — fruits, légumes, vente au poids, emballages BioVera.\n\nFresh counter — jus frais, salades de fruits, préparation visible. Équipe réduite, routines claires, faible complexité."
     },
     {
-      "title": "La réponse BioVera",
-      "body": "Lien direct producteur–retail. Qualité standardisée. Distribution organisée. Formats de magasin contrôlés. Valorisation maximale de chaque kilogramme."
-    },
-    {
-      "title": "Le magasin",
-      "body": "Deux zones en un seul espace :\n\nZone retail — fruits et légumes frais, mise en avant claire, vente au poids, emballages BioVera.\n\nZone Fresh — jus frais, salades de fruits, préparation visible. Service rapide, forte fréquentation."
-    },
-    {
-      "title": "Opérations et revenus",
-      "body": "Assortiment planifié et rotation régulière réduisent les pertes. Revenus : ventes produits, jus frais, salades de fruits, événements saisonniers. Équipe réduite, routines claires, faible complexité."
-    },
-    {
-      "title": "Standards",
-      "body": "Signalétique approuvée, chaîne du froid visible, équipements conformes. Vérification QR en rayon ou en caisse. Nettoyage selon checklist."
-    },
-    {
-      "title": "Qui peut devenir partenaire",
-      "body": "Entrepreneurs, investisseurs, propriétaires de sites, opérateurs recherchant un concept retail alimentaire stable."
+      "title": "Pour qui",
+      "body": "Entrepreneurs, investisseurs, exploitants de sites et partenaires recherchant un concept retail alimentaire stable."
     }
   ],
   "pdfSections": [
@@ -111,7 +95,7 @@
   ],
   "downloadProspectCta": "Télécharger le prospect PDF",
   "downloadProspectError": "Échec du téléchargement. Veuillez réessayer.",
-  "prospectNote": "The downloadable PDF is in English, like our other official partner prospects. It contains the full prospect (14 chapters), contact details and print-ready copy.",
+  "prospectNote": "",
   "franchiseBlueprintTitle": "",
   "franchiseBlueprintLead": "",
   "franchiseBlueprintItems": [],
