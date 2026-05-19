@@ -138,6 +138,12 @@ const nextConfig: NextConfig = {
         destination: "/:locale/grower/mobile-app-guide",
         permanent: false,
       },
+      /** Sitemap / SEO alias for logistics partner marketing page (locale-free app lives at /logistics-partner). */
+      {
+        source: "/:locale/logistics",
+        destination: "/logistics-partner",
+        permanent: true,
+      },
     ];
   },
   async headers() {

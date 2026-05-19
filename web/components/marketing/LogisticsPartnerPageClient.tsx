@@ -71,10 +71,19 @@ function isStringArray(x: unknown): x is string[] {
   return Array.isArray(x) && x.every((item) => typeof item === 'string');
 }
 
-export default function LogisticsPartnerPage() {
+export default function LogisticsPartnerPageClient() {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
   const numLocale = numberIntlLocaleFromLanguageTag(i18n.language);
+
+  const prospectNote = t('logisticsPartnerPage.prospectNote');
+  const countriesLine = t('logisticsPartnerPage.countriesLine');
+  const whoCanApplyLine2 = t('logisticsPartnerPage.whoCanApplyLine2');
+  const conditionsLead = t('logisticsPartnerPage.conditionsLead');
+  const needLine = t('logisticsPartnerPage.needLine');
+  const whatYouGetLead = t('logisticsPartnerPage.whatYouGetLead');
+  const fuelTitle = t('logisticsPartnerPage.fuelTitle');
+  const resourcesTitle = t('logisticsPartnerPage.resourcesTitle');
 
   const requirementItems = useMemo(() => {
     const raw = t('logisticsPartnerPage.requirementItems', { returnObjects: true });
@@ -234,26 +243,32 @@ export default function LogisticsPartnerPage() {
               <Download className="w-4 h-4" />
               {t('logisticsPartnerPage.downloadProspectCta')}
             </button>
-            <p className="text-xs text-gray-500 mt-4 font-light">{t('logisticsPartnerPage.prospectNote')}</p>
+            {prospectNote ? (
+              <p className="text-xs text-gray-500 mt-4 font-light">{prospectNote}</p>
+            ) : null}
           </div>
         </div>
       </section>
 
       <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-xl font-light text-gray-900 mb-1">{t('logisticsPartnerPage.whoCanApplyTitle')}</h2>
-          <p className="text-sm text-gray-500 font-light mb-4">{t('logisticsPartnerPage.whoCanApplyLead')}</p>
-          <p className="text-sm text-gray-600 font-light leading-relaxed mb-6">{t('logisticsPartnerPage.countriesLine')}</p>
-          <p className="text-sm text-gray-600 font-light">
-            <Trans
-              i18nKey="logisticsPartnerPage.whoCanApplyLine2"
-              components={{
-                s1: <strong className="font-semibold text-gray-800" />,
-                s2: <strong className="font-semibold text-gray-800" />,
-                s3: <strong className="font-semibold text-gray-800" />,
-              }}
-            />
-          </p>
+          <h2 className="text-xl font-light text-gray-900 mb-4">{t('logisticsPartnerPage.whoCanApplyTitle')}</h2>
+          <p className="text-sm text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">{t('logisticsPartnerPage.whoCanApplyLead')}</p>
+          {countriesLine ? (
+            <p className="text-sm text-gray-600 font-light leading-relaxed mt-6">{countriesLine}</p>
+          ) : null}
+          {whoCanApplyLine2 ? (
+            <p className="text-sm text-gray-600 font-light mt-6">
+              <Trans
+                i18nKey="logisticsPartnerPage.whoCanApplyLine2"
+                components={{
+                  s1: <strong className="font-semibold text-gray-800" />,
+                  s2: <strong className="font-semibold text-gray-800" />,
+                  s3: <strong className="font-semibold text-gray-800" />,
+                }}
+              />
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -281,21 +296,25 @@ export default function LogisticsPartnerPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.conditionsTitle')}</h2>
-            <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.conditionsLead')}</p>
+            {conditionsLead ? (
+              <p className="text-base text-gray-600 font-light">{conditionsLead}</p>
+            ) : null}
           </div>
 
-          <p className="text-sm text-gray-600 font-light text-center mb-10 max-w-2xl mx-auto">
-            <Trans
-              i18nKey="logisticsPartnerPage.needLine"
-              components={{
-                s1: <strong className="font-semibold text-gray-800" />,
-                s2: <strong className="font-semibold text-gray-800" />,
-                s3: <strong className="font-semibold text-gray-800" />,
-                s4: <strong className="font-semibold text-gray-800" />,
-              }}
-            />
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {needLine ? (
+            <p className="text-sm text-gray-600 font-light text-center mb-10 max-w-2xl mx-auto">
+              <Trans
+                i18nKey="logisticsPartnerPage.needLine"
+                components={{
+                  s1: <strong className="font-semibold text-gray-800" />,
+                  s2: <strong className="font-semibold text-gray-800" />,
+                  s3: <strong className="font-semibold text-gray-800" />,
+                  s4: <strong className="font-semibold text-gray-800" />,
+                }}
+              />
+            </p>
+          ) : null}
+          <div className="grid md:grid-cols-3 gap-8">
             {requirementItems.map((item, index) => (
               <div key={index} className="border-b border-[#2D5A27]/30 pb-8">
                 <h3 className="text-lg font-light text-gray-900 mb-3">{item.title}</h3>
@@ -310,7 +329,9 @@ export default function LogisticsPartnerPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.whatYouGetTitle')}</h2>
-            <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.whatYouGetLead')}</p>
+            {whatYouGetLead ? (
+              <p className="text-base text-gray-600 font-light">{whatYouGetLead}</p>
+            ) : null}
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -324,10 +345,11 @@ export default function LogisticsPartnerPage() {
         </div>
       </section>
 
+      {fuelTitle ? (
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.fuelTitle')}</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">{fuelTitle}</h2>
             <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.fuelLead')}</p>
             <p className="text-sm text-gray-500 font-light mt-3">{t('logisticsPartnerPage.fuelDisclaimer')}</p>
           </div>
@@ -396,12 +418,16 @@ export default function LogisticsPartnerPage() {
           </div>
         </div>
       </section>
+      ) : null}
 
+      {resourcesTitle && resourceItems.length > 0 ? (
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.resourcesTitle')}</h2>
-            <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.resourcesLead')}</p>
+            <h2 className="text-2xl font-light text-gray-900 mb-3">{resourcesTitle}</h2>
+            {t('logisticsPartnerPage.resourcesLead') ? (
+              <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.resourcesLead')}</p>
+            ) : null}
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -459,6 +485,7 @@ export default function LogisticsPartnerPage() {
           </div>
         </div>
       </section>
+      ) : null}
 
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-3xl mx-auto">

@@ -3202,7 +3202,8 @@
   },
   "home": {
     "hero": {
-      "title": "Vertically Integrated Agrifood Company",
+      "title1": "Vertically Integrated",
+      "title2": "Agrifood Company",
       "subtitle": "Bio Vera sells branded fresh produce through a chain we operate end to end — contracted cultivation, quality assurance, packing and refrigerated delivery with Batch_ID traceability from parcel to checkout. Estates meeting our standards can apply to the grower programme regardless of country.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
@@ -3925,54 +3926,56 @@
     "errorFallback": "Could not submit. Try again later or email us at info@biovera.app"
   },
   "aboutPage": {
+    "metaTitle": "About Bio Vera | Integrated Agrifood Operator, Hamburg",
+    "metaDescription": "Bio Vera transforms agriculture through vertical integration. Grower programmes, field QA, packing and cold logistics to EU retailers with full batch traceability.",
     "heroTitle": "About Bio Vera",
-    "heroSubtitle": "Transforming agriculture through technology, transparency, and trust",
-    "missionTitle": "Our mission",
-    "missionP1": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing, and logistics, and sells branded food to end customers—all with a single compliance narrative from field to shelf.",
-    "missionP2": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and shoppers see verifiable origin and quality.",
-    "visionTitle": "Our vision",
-    "visionP1": "To lead Europe’s vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf.",
-    "visionP2": "We envision a future where every product on the shelf has a complete digital passport, where farmers receive fair compensation for their work, and where consumers can trust the origin and quality of what they purchase.",
-    "valuesTitle": "Our values",
+    "heroSubtitle": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing and logistics, and sells branded produce to end customers — all on a single batch dossier per load.",
+    "missionTitle": "Our Mission",
+    "missionP1": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.",
+    "missionP2": "",
+    "visionTitle": "Our Vision",
+    "visionP1": "To lead Europe's vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf. Every product with a complete digital passport, every farmer fairly compensated, every consumer able to trust the origin.",
+    "visionP2": "",
+    "valuesTitle": "Our Values",
     "valueCards": [
       {
         "title": "Transparency",
         "description": "Complete visibility into every step of the supply chain, from field to shelf. No hidden processes, no obscured origins."
       },
       {
-        "title": "Quality first",
-        "description": "Rigorous quality standards that exceed industry expectations. Every product verified through our Protocol 360 system."
+        "title": "Quality First",
+        "description": "Rigorous standards exceeding industry expectations. Every product verified through our Protocol 360 system."
       },
       {
-        "title": "Fair compensation",
-        "description": "Ensuring farmers receive fair prices for their products while maintaining competitive market rates."
+        "title": "Fair Compensation",
+        "description": "Farmers receive fair prices for their products while maintaining competitive market rates."
       },
       {
         "title": "Sustainability",
-        "description": "Promoting sustainable farming practices and reducing waste through efficient supply chain management."
+        "description": "Sustainable farming practices and reduced waste through efficient supply chain management."
       }
     ],
-    "whatWeDoTitle": "What we do",
+    "whatWeDoTitle": "What We Do",
     "whatWeDoItems": [
       {
-        "title": "Complete traceability",
-        "body": "Every product gets a digital passport with proof of origin, journey, and quality. The QR on the box shows the estate in our programme that grew the batch."
+        "title": "Complete Traceability",
+        "body": "Every product gets a digital passport with proof of origin, journey and quality. The QR on the crate shows which estate in our programme grew the batch."
       },
       {
-        "title": "Quality assurance",
-        "body": "Our Protocol 360 system ensures three-tier quality control: field-level soil analysis, biometric scanning at packaging, and cold chain monitoring during transport."
+        "title": "Quality Assurance",
+        "body": "Protocol 360: field-level soil analysis, biometric scanning at packaging, cold chain monitoring during transport."
       },
       {
-        "title": "Selling and sourcing",
-        "body": "We sell to downstream customers while growers fulfil contracted production—not a shopper-to-farmer marketplace. Shorter accountable chain, fair grower incentives, freshness and clarity at retail."
+        "title": "Selling and Sourcing",
+        "body": "We sell to downstream customers while growers fulfil contracted production. Shorter accountable chain, fair grower incentives, freshness and clarity at retail."
       },
       {
-        "title": "EU compliance",
-        "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for seamless access to markets around the world."
+        "title": "EU Compliance",
+        "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for EU market access."
       }
     ],
-    "ctaTitle": "Become part of the Vera corridor",
-    "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera, the playbook from parcel to payout stays the same.",
+    "ctaTitle": "Become Part of the Vera Corridor",
+    "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera — the playbook from parcel to payout stays the same.",
     "ctaProducer": "Become a Vera grower",
     "ctaContact": "Contact us"
   },
@@ -4532,44 +4535,48 @@
     "ctaInvestors": "Investor resources"
   },
   "bioVeraFresh": {
-    "toolbarCopyLink": "Copy link",
+    "toolbarCopyLink": "",
     "toolbarCopied": "Copied",
-    "toolbarPrintPdf": "Save as PDF",
+    "toolbarPrintPdf": "",
     "toolbarPrintAria": "Open print dialog to save as PDF",
-    "introNote": "Only highlights on this page. Full programme copy is in the prospect PDF or print appendix.",
-    "pdfHint": "Use Download prospect PDF for the complete document. Print still includes the full appendix.",
-    "contentsTitle": "On this page",
+    "introNote": "A modern concept for selling fresh produce. Direct grower ties, controlled quality and maximum utilisation — built for organised, transparent, efficient retail.",
+    "pdfHint": "",
+    "contentsTitle": "",
     "contentsNav": "Jump to section",
     "skipToContent": "Skip to document",
     "coverEyebrow": "Direct. Fresh. Controlled.",
     "coverTitle": "BioVera Fresh",
-    "coverSubtitle": "A modern concept for selling fresh produce.",
+    "coverSubtitle": "",
     "heroImageAlt": "BioVera Fresh retail concept — fresh produce presentation",
     "pdfDocumentTitle": "Complete document — BioVera Fresh",
     "pdfDocumentSubtitle": "Full programme text for stakeholders, pilots, or archiving.",
-    "ctaTitle": "Become a BioVera Fresh partner",
-    "ctaBody": "If you want to join a modern fresh-food retail system and grow your own business with BioVera support, get in touch—we’ll guide you to the next step.",
+    "ctaTitle": "Become a BioVera Fresh Partner",
+    "ctaBody": "Contact the Bio Vera team. The full programme PDF covers all 14 chapters: introduction, market context, store concept, operations, earnings model, investment, eligibility and growth roadmap.",
     "ctaButton": "Contact Bio Vera",
     "webSections": [
       {
-        "title": "BioVera Fresh",
-        "body": "A modern concept for fresh produce — Direct. Fresh. Controlled.\n\nContemporary fruit-and-vegetable retail: direct grower ties, controlled quality and maximum utilisation."
+        "title": "Market Gap",
+        "body": "Traditional fresh produce distribution is fragmented: high shrink, unclear origin, volatile pricing, weak quality control. This creates uncertainty for retailers, waste for producers and low trust for consumers."
       },
       {
-        "title": "Introduction",
-        "body": "Built for organised, transparent, efficient selling. Instead of value lost to chaos in the chain — a clear standard linking farms and the market."
+        "title": "The BioVera Answer",
+        "body": "Direct link between growers and retail. Standardised product quality. Organised distribution. Controlled store formats. Maximum utilisation of every kilogram produced."
       },
       {
-        "title": "Market gap & BioVera answer",
-        "body": "Challenges: fragmented distribution, shrink, unclear origin, volatile prices, weak QC.\n\nOur model: direct grower-to-sale links, standardised quality, organised distribution and stores — less waste, higher value."
+        "title": "Store Layout",
+        "body": "Two zones work as one unit:\n\nRetail zone — fresh fruit and vegetables, clear merchandising, sold-by-weight service, BioVera packs.\n\nFresh zone — juices, fruit salads and visible preparation. Quick service, high footfall."
       },
       {
-        "title": "Store layout & flow",
-        "body": "Two zones work as one unit. The retail side focuses on fresh produce, sold-by-weight service and BioVera packs. The Fresh counter handles juices, fruit salads and visible preparation, with quick service throughout.\n\nFlow: grower network → BioVera standard → distribution → BioVera Fresh store."
+        "title": "Operations and Earnings",
+        "body": "Planned assortment and steady rotation cut waste. Revenue streams: produce sales, fresh juices, fruit salads, seasonal events. Lean crew, clear routines, low operational complexity."
       },
       {
-        "title": "Operations, earnings & partners",
-        "body": "Planned assortment and steady rotation cut waste and lift utilisation: fresh produce on the retail floor, plus a Fresh counter where juices and salads are prepared to a clear quality standard. Revenue blends shelf sales with the Fresh offer, while operations stay lean with a small team.\n\nNot competing with core retail partners — an extra channel. Contact us to enter the programme."
+        "title": "Store Standards",
+        "body": "Approved signage, visible cold chain, clean operations. Working chillers with temperature rules. QR or passport verification at shelf or till. Checklist-led cleaning."
+      },
+      {
+        "title": "Who Can Partner",
+        "body": "Entrepreneurs, investors, site owners, operators seeking a resilient food-retail concept."
       }
     ],
     "pdfSections": [
@@ -4641,32 +4648,11 @@
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "prospectNote": "The downloadable PDF is in English, like our other official partner prospects. It contains the full prospect (14 chapters), contact details and print-ready copy.",
-    "franchiseBlueprintTitle": "How a BioVera Fresh franchise should look",
-    "franchiseBlueprintLead": "One recognisable store: clear brand, visible cold chain, clean operations.",
-    "franchiseBlueprintItems": [
-      {
-        "title": "Façade & signage",
-        "body": "Approved marks, legible hours—no noisy discount clutter."
-      },
-      {
-        "title": "Floor zoning",
-        "body": "Ambient, chill and a quick lane for QR / passport at checkout."
-      },
-      {
-        "title": "Cold chain",
-        "body": "Working chillers, temperature rules, display matched to freshness."
-      },
-      {
-        "title": "Traceability",
-        "body": "QR or passport at shelf or till, short staff script, template POS."
-      },
-      {
-        "title": "Hygiene",
-        "body": "Hand wash, receiving separated where possible, checklist-led cleaning."
-      }
-    ],
-    "resourcesTitle": "Resources & downloads",
-    "resourcesLead": "Essential programme PDF for partners preparing a store pilot. Press imagery is on the press kit page.",
+    "franchiseBlueprintTitle": "",
+    "franchiseBlueprintLead": "",
+    "franchiseBlueprintItems": [],
+    "resourcesTitle": "",
+    "resourcesLead": "",
     "resourceItems": [
       {
         "id": "freshProspect",
@@ -4677,7 +4663,9 @@
       }
     ],
     "resourceDownload": "Download",
-    "resourceDownloading": "Downloading…"
+    "resourceDownloading": "Downloading…",
+    "metaTitle": "BioVera Fresh | Farm-to-Shelf Retail Concept",
+    "metaDescription": "A controlled fresh produce retail model: direct grower ties, standardised quality, organised distribution. Partner with Bio Vera to open a BioVera Fresh store."
   },
   "projectOverview": {
     "toolbarCopyLink": "Copy link",

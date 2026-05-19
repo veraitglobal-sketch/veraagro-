@@ -59,7 +59,11 @@ export default function HomePageClient() {
   const featureList = t('home.features.list', { returnObjects: true }) as FeatureItem[];
   const roadmapPhases = t('home.roadmap.phases', { returnObjects: true }) as RoadmapPhase[];
   const blockchainBullets = t('home.blockchain.bullets', { returnObjects: true }) as string[];
-  const heroTitle = t('home.hero.title');
+  const title1 = t('home.hero.title1');
+  const title2 = t('home.hero.title2');
+  const titleFallback = t('home.hero.title');
+  const heroUsesSplitTitle =
+    title1 !== 'home.hero.title1' && title2 !== 'home.hero.title2';
   const featuresIntro = t('home.features.intro');
 
   useEffect(() => {
@@ -81,7 +85,14 @@ export default function HomePageClient() {
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
-              {heroTitle}
+              {heroUsesSplitTitle ? (
+                <>
+                  <span className="block">{title1}</span>
+                  <span className="block">{title2}</span>
+                </>
+              ) : (
+                titleFallback
+              )}
             </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
               {t('home.hero.subtitle')}
