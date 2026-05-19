@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Bio Vera liefert frisches Obst und Gemüse mit lückenloser Chargenrückverfolgung. GlobalG.A.P. IFA v6 zertifiziert, Kühlkette überwacht, digitaler Produktpass. Sitz in Hamburg.",
-    "ldJsonDescription": "Ein vertikal integriertes landwirtschaftliches Netzwerk. Vom Feld bis zum Käufer mit rückverfolgbaren Chargen, Bio-Ready-Zertifizierung und digitalem Nachweis. Offen für Produzenten weltweit.",
+    "siteDescription": "Bio Vera verkauft markenfrisches Obst und Gemüse über eine Kette, die wir end-to-end betreiben — vertraglicher Anbau, Qualitätssicherung, Verpackung und gekühlte Lieferung mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Betriebe, die unsere Standards erfüllen, können sich unabhängig vom Land für das Erzeugerprogramm bewerben.",
+    "ldJsonDescription": "Vertikal integriertes Agrifood-Unternehmen: Bio Vera verkauft markenfrisches Obst und Gemüse über eine end-to-end betriebene Kette mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Erzeugerprogramm unabhängig vom Land geöffnet.",
     "keywords": [
       "Bio Vera",
       "Landwirtschaftliches Netzwerk",
@@ -112,7 +112,7 @@
       "Lebensmitteltransparenz"
     ],
     "ldJsonContactType": "Kundendienst",
-    "homeTitle": "Bio Vera | Lieferant Frisches Obst & Gemüse — Rückverfolgbarkeit vom Erzeuger bis Regal"
+    "homeTitle": "Bio Vera | Frisches Obst & Gemüse mit voller Rückverfolgbarkeit"
   },
   "chat": {
     "needHelp": "Brauchen Sie Hilfe?",
@@ -1834,7 +1834,7 @@
     "hero": {
       "title1": "Vertikal integriertes",
       "title2": "Agrifood-Unternehmen",
-      "subtitle": "Vom Feld bis ins Regal — ohne Zwischenhändler.\n\nEin Versorgungskanal. Eine Batch_ID. Lückenlose Rückverfolgbarkeit von der Ernte bis zur Auslieferung an den deutschen Einzelhandel.",
+      "subtitle": "Bio Vera verkauft markenfrisches Obst und Gemüse über eine Kette, die wir end-to-end betreiben — vertraglicher Anbau, Qualitätssicherung, Verpackung und gekühlte Lieferung mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Betriebe, die unsere Standards erfüllen, können sich unabhängig vom Land für das Erzeugerprogramm bewerben.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
@@ -1852,19 +1852,19 @@
     "partnersLine": "Führende Agrarorganisationen vertrauen uns tagtäglich",
     "vision": {
       "title": "Unsere Vision",
-      "intro": "Ein transparenter Versorgungskanal, in dem Erzeuger den Preis vor der Ernte kennen, Einkäufer die Herkunft vor der Bestellung prüfen und Verbraucher jedes Produkt im Regal verifizieren können.",
+      "intro": "Wir bauen Vertrauen vom Parzell bis ins Regal: klare Regeln für Erzeuger in unserem Programm, kontrollierte Qualitätsprüfungen an jedem Schritt und Einkäufer, die direkt bei Bio Vera beschaffen.",
       "cards": [
         {
           "title": "Transparenz",
-          "description": "Jeder Schritt vom Feld bis zum Regal in einem Dossier. Vertrieb, Qualitätssicherung und Auditoren arbeiten mit demselben Datensatz."
+          "description": "Jeder Schritt vom Feld bis ins Regal steht in einem Dossier. Vertrieb, Qualitätssicherung und Auditoren nutzen denselben Datensatz."
         },
         {
           "title": "Sicherheit",
-          "description": "Zugriffskontrollen und Betrugsschutz sichern die Integrität jeder Lieferung, die wir verkaufen."
+          "description": "Zugriffskontrollen und Betrugsschutz sichern das Dossier hinter jeder Lieferung, die wir verkaufen und ausliefern."
         },
         {
           "title": "EU-Dokumentation",
-          "description": "Automatisierte EU-Zertifikate und digitale Produktpässe — Compliance, die den Anforderungen der Verordnung (EG) Nr. 178/2002 und dem kommenden DPP-Mandat entspricht."
+          "description": "Automatisierte EU-Zertifikate und digitale Produktpässe unterstützen die Compliance, für die unser Vertriebsteam einsteht."
         }
       ]
     },
@@ -1874,34 +1874,38 @@
       "list": [
         {
           "title": "Smart-Lock-System",
-          "description": "Anbau, Protokoll, Verpackung, Logistik, Lieferung und Abrechnung in einer koordinierten Kette."
+          "description": "Anbau, Protokoll, Verpackung, Logistik, Lieferung und Abrechnung — in einer koordinierten Kette."
         },
         {
-          "title": "Chargenrückverfolgung",
-          "description": "Jede Kiste trägt eine Batch_ID. Dieselbe Rückverfolgbarkeit läuft vom Feld bis zur Auslieferung."
+          "title": "Chargenverfolgung",
+          "description": "Jede Kiste trägt eine Batch_ID. Dieselbe Rückverfolgung läuft vom Parzell bis zur Lieferung in unserem Betriebssystem."
         },
         {
           "title": "Gesicherte Zahlung",
-          "description": "Käufergelder verbleiben bei Bio Vera bis Lieferung und Konformitätsprüfung abgeschlossen sind."
+          "description": "Käufergelder verbleiben bei Bio Vera, bis Lieferung und Konformitätsprüfung abgeschlossen sind. Auszahlungen an Erzeuger und Logistik folgen vereinbarten Bedingungen."
         },
         {
           "title": "Betrugsschutz",
-          "description": "GPS-Zeitstempel, Geräte-ID-Verfolgung, kamerabasierte Erfassung. Nachträgliche Änderungen ausgeschlossen."
+          "description": "GPS-Zeitstempel, Geräte-ID-Verfolgung, ausschließlich Kameraerfassung. Datensätze können nachträglich nicht gefälscht werden."
         },
         {
-          "title": "Digitaler Produktpass",
-          "description": "Automatisierte Zertifikate und Pässe — vorbereitet auf die EU-DPP-Pflicht ab 2027."
+          "title": "EU-Digitalpass",
+          "description": "Automatisierte Zertifikate und Pässe, gebunden an den Vertriebskanal, den wir für Endkunden betreiben."
+        },
+        {
+          "title": "Optionale Polygon-Verankerung",
+          "description": "Wenn für eine Programmstufe aktiviert, verknüpft ein öffentlicher Anker das Dossier mit einem unveränderlichen Eintrag auf Polygon."
         }
       ]
     },
     "blockchain": {
-      "title": "Warum Herkunftsdaten belastbar bleiben",
-      "body": "Wir verkaufen die Ware und tragen die Verantwortung gegenüber Käufern. Operative Teams erfassen jeden Übergang, damit nachträglich niemand den bereits veröffentlichten Nachweis ändern kann.",
+      "title": "Warum Custody-Datensätze bestehen bleiben",
+      "body": "Wir verkaufen die Ware, das Reputationsrisiko tragen wir. Operative Teams protokollieren jeden Übergang, damit nachgelagerte Parteien die gestrige Custody-Geschichte nicht umschreiben können.",
       "bullets": []
     },
     "roadmap": {
       "title": "Roadmap",
-      "subtitle": "Wo wir stehen und wohin wir gehen.",
+      "subtitle": "Wo wir jetzt stehen und wohin wir gehen.",
       "statusCompleted": "Abgeschlossen",
       "statusInProgress": "In Arbeit",
       "statusPlanned": "Geplant",
@@ -1953,8 +1957,8 @@
       ]
     },
     "products": {
-      "title": "Sortiment",
-      "subtitle": "13 Obstsorten, 18 Gemüsesorten und 3 Getreidesorten mit vollständigem Chargendossier hinter jeder Position.",
+      "title": "Produkte entdecken",
+      "subtitle": "Frisches Obst, Gemüse und Getreide, die Bio Vera mit vollständigem Chargendossier hinter jeder Position verkauft.",
       "fruits": "Obst",
       "vegetables": "Gemüse",
       "grains": "Getreide"

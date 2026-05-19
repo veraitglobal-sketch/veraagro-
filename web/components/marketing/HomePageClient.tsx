@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -26,7 +26,8 @@ import dynamic from 'next/dynamic';
 
 const VeraAIChatbotInline = dynamic(() => import('@/components/VeraAIChatbotInline'), { ssr: false });
 import Footer from '@/components/Footer';
-import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { useLocalizedHref, useLocaleFromPath } from '@/hooks/useLocalizedHref';
+import type { SiteLocale } from '@/i18n/config';
 
 type VisionCard = { title: string; description: string };
 type FeatureItem = { title: string; description: string };
@@ -43,11 +44,54 @@ const PRODUCT_CATS: { id: 'fruits' | 'vegetables' | 'grains'; icon: LucideIcon }
   { id: 'grains', icon: Wheat },
 ];
 
-export default function HomePageClient() {
+export type HomeHeroInitial = {
+  title1: string;
+  title2: string;
+  subtitle: string;
+  browseProducts: string;
+  becomeProducer: string;
+  preOrder: string;
+  preOrderAria: string;
+};
+
+export default function HomePageClient({
+  initialLocale,
+  initialHero,
+}: Readonly<{ initialLocale?: SiteLocale; initialHero?: HomeHeroInitial }> = {}) {
   const { t, i18n } = useTranslation();
   const loc = useLocalizedHref();
+  const localeFromPath = useLocaleFromPath();
+  const activeLocale = initialLocale ?? localeFromPath;
   const [showPreOrderInfo, setShowPreOrderInfo] = useState(false);
   const preOrderRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if ((i18n.resolvedLanguage || i18n.language) !== activeLocale) {
+      void i18n.changeLanguage(activeLocale);
+    }
+  }, [activeLocale, i18n]);
+
+  const localeSynced = (i18n.resolvedLanguage || i18n.language) === activeLocale;
+
+  const heroTitle1 = localeSynced ? t('home.hero.title1') : (initialHero?.title1 ?? t('home.hero.title1'));
+  const heroTitle2 = localeSynced ? t('home.hero.title2') : (initialHero?.title2 ?? t('home.hero.title2'));
+  const heroSubtitle = localeSynced ? t('home.hero.subtitle') : (initialHero?.subtitle ?? t('home.hero.subtitle'));
+  const heroBrowseProducts = localeSynced ? t('home.hero.browseProducts') : (initialHero?.browseProducts ?? t('home.hero.browseProducts'));
+  const heroBecomeProducer = localeSynced ? t('home.hero.becomeProducer') : (initialHero?.becomeProducer ?? t('home.hero.becomeProducer'));
+  const heroPreOrder = localeSynced ? t('home.hero.preOrder') : (initialHero?.preOrder ?? t('home.hero.preOrder'));
+  const heroPreOrderAria = localeSynced ? t('home.hero.preOrderAria') : (initialHero?.preOrderAria ?? t('home.hero.preOrderAria'));
+  const titleFallback = t('home.hero.title');
+  const heroUsesSplitTitle =
+    heroTitle1 !== 'home.hero.title1' && heroTitle2 !== 'home.hero.title2';
+
+  useEffect(() => {
+    if (!showPreOrderInfo) return;
+    const close = (e: MouseEvent) => {
+      if (preOrderRef.current && !preOrderRef.current.contains(e.target as Node)) setShowPreOrderInfo(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [showPreOrderInfo]);
 
   const statLabels = t('home.statLabels', { returnObjects: true }) as string[];
   const statRows = useMemo(
@@ -59,21 +103,11 @@ export default function HomePageClient() {
   const featureList = t('home.features.list', { returnObjects: true }) as FeatureItem[];
   const roadmapPhases = t('home.roadmap.phases', { returnObjects: true }) as RoadmapPhase[];
   const blockchainBullets = t('home.blockchain.bullets', { returnObjects: true }) as string[];
-  const title1 = t('home.hero.title1');
-  const title2 = t('home.hero.title2');
-  const titleFallback = t('home.hero.title');
-  const heroUsesSplitTitle =
-    title1 !== 'home.hero.title1' && title2 !== 'home.hero.title2';
   const featuresIntro = t('home.features.intro');
 
-  useEffect(() => {
-    if (!showPreOrderInfo) return;
-    const close = (e: MouseEvent) => {
-      if (preOrderRef.current && !preOrderRef.current.contains(e.target as Node)) setShowPreOrderInfo(false);
-    };
-    document.addEventListener('click', close);
-    return () => document.removeEventListener('click', close);
-  }, [showPreOrderInfo]);
+  if (!localeSynced && !initialHero) {
+    return <div className="min-h-screen bg-white" aria-busy="true" />;
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -87,16 +121,16 @@ export default function HomePageClient() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl !font-light text-gray-900 mb-4 md:mb-6 leading-tight tracking-tight">
               {heroUsesSplitTitle ? (
                 <>
-                  {title1}
+                  {heroTitle1}
                   <br />
-                  <span className="font-light">{title2}</span>
+                  <span className="font-light">{heroTitle2}</span>
                 </>
               ) : (
                 titleFallback
               )}
             </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed whitespace-pre-line">
-              {t('home.hero.subtitle')}
+              {heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -104,13 +138,13 @@ export default function HomePageClient() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
-                {t('home.hero.browseProducts')}
+                {heroBrowseProducts}
               </Link>
               <Link
                 href={loc('/growers')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
-                {t('home.hero.becomeProducer')}
+                {heroBecomeProducer}
               </Link>
             </div>
             <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
@@ -118,13 +152,13 @@ export default function HomePageClient() {
                 href={`${loc('/login')}?returnTo=${encodeURIComponent('/pre-order-2026')}`}
                 className="text-sm font-light text-gray-500 hover:text-[#2D5A27] transition-colors"
               >
-                {t('home.hero.preOrder')}
+                {heroPreOrder}
               </Link>
               <button
                 type="button"
                 onClick={() => setShowPreOrderInfo((v) => !v)}
                 className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#2D5A27]/30 bg-transparent text-[#2D5A27] transition hover:border-[#2D5A27]/50 hover:bg-[#2D5A27]/5 focus:outline-none focus:ring-1 focus:ring-[#2D5A27]/20"
-                aria-label={t('home.hero.preOrderAria')}
+                aria-label={heroPreOrderAria}
               >
                 <HelpCircle className="h-3 w-3" strokeWidth={2} />
               </button>

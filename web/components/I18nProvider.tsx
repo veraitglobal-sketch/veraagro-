@@ -1,7 +1,7 @@
 "use client";
 
 import { I18nextProvider } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import i18n, { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
 import { pathnameStartsWithLocale } from "@/lib/i18n-routing";
@@ -27,48 +27,68 @@ function isStoredLocale(v: string | null): v is SiteLocale {
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const urlLocale = pathnameStartsWithLocale(pathname ?? "/");
+  const [localeReady, setLocaleReady] = useState(
+    () => !urlLocale || (i18n.resolvedLanguage || i18n.language) === urlLocale,
+  );
+
+  useLayoutEffect(() => {
+    if (!urlLocale) {
+      setLocaleReady(true);
+      return;
+    }
+    if ((i18n.resolvedLanguage || i18n.language) === urlLocale) {
+      setLocaleReady(true);
+      syncDocumentLang(urlLocale);
+      return;
+    }
+    let cancelled = false;
+    void i18n.changeLanguage(urlLocale).then(() => {
+      if (cancelled) return;
+      try {
+        localStorage.setItem(LOCALE_STORAGE_KEY, urlLocale);
+      } catch {
+        /* ignore */
+      }
+      syncDocumentLang(urlLocale);
+      setLocaleReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [urlLocale]);
 
   useEffect(() => {
-    let cancelled = false;
-    /** URL prefix (`/fr/...`) wins over localStorage so locale switch + refresh stay consistent. */
     const handler = (lng: string) => syncDocumentLang(lng);
     i18n.on("languageChanged", handler);
 
     void (async () => {
-      const fromUrl = pathnameStartsWithLocale(pathname ?? "/");
+      if (urlLocale) return;
       try {
-        if (fromUrl) {
-          await i18n.changeLanguage(fromUrl);
-          if (cancelled) return;
-          try {
-            localStorage.setItem(LOCALE_STORAGE_KEY, fromUrl);
-          } catch {
-            /* ignore */
-          }
-          syncDocumentLang(fromUrl);
+        const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+        if (isStoredLocale(stored)) {
+          await i18n.changeLanguage(stored);
+          syncDocumentLang(stored);
         } else {
-          try {
-            const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-            if (isStoredLocale(stored)) {
-              await i18n.changeLanguage(stored);
-              if (!cancelled) syncDocumentLang(stored);
-            } else if (!cancelled) {
-              syncDocumentLang(i18n.language);
-            }
-          } catch {
-            if (!cancelled) syncDocumentLang(i18n.language);
-          }
+          syncDocumentLang(i18n.language);
         }
       } catch {
-        if (!cancelled) syncDocumentLang(i18n.language);
+        syncDocumentLang(i18n.language);
       }
     })();
 
     return () => {
-      cancelled = true;
       i18n.off("languageChanged", handler);
     };
-  }, [pathname, i18n]);
+  }, [urlLocale]);
+
+  if (urlLocale && !localeReady) {
+    return (
+      <I18nextProvider i18n={i18n}>
+        <div className="min-h-screen bg-white" aria-busy="true" />
+      </I18nextProvider>
+    );
+  }
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
