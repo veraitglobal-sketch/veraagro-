@@ -84,11 +84,12 @@ export default function HomePageClient() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 md:mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl !font-light text-gray-900 mb-4 md:mb-6 leading-tight tracking-tight">
               {heroUsesSplitTitle ? (
                 <>
-                  <span className="block">{title1}</span>
-                  <span className="block">{title2}</span>
+                  {title1}
+                  <br />
+                  <span className="font-light">{title2}</span>
                 </>
               ) : (
                 titleFallback
