@@ -1,11 +1,26 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Award, Camera, Check, Clock } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Camera, Check, Clock } from 'lucide-react-native';
 import { useCertificationsData, CertStatus } from './useCertificationsData';
 import CertificatePhotoUpload from './CertificatePhotoUpload';
-import { theme } from '../../../lib/theme';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerStyles, growerUi } from '../../../lib/grower-ui';
 import type { RequiredCert } from './useCertificationsData';
+
+function statusPillStyle(status: CertStatus) {
+  if (status === 'done') {
+    return { bg: enterpriseColors.primaryTint, text: enterpriseColors.primary };
+  }
+  if (status === 'pending') {
+    return { bg: enterpriseColors.gray100, text: enterpriseColors.gray700 };
+  }
+  return { bg: enterpriseColors.gray100, text: enterpriseColors.gray600 };
+}
 
 function CertRow({
   cert,
@@ -23,34 +38,42 @@ function CertRow({
     pending: t('producer.certifications.pending'),
     done: t('producer.certifications.done'),
   };
+  const tone = statusPillStyle(status);
+
   return (
-    <View style={styles.card}>
+    <View style={[enterpriseUi.inAppPanel, styles.card]}>
       <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>{cert.title}</Text>
-        <View style={[styles.badge, status === 'done' && styles.badgeDone, status === 'pending' && styles.badgePending]}>
+        <Text style={enterpriseUi.navRowTitle}>{cert.title}</Text>
+        <View style={[growerStyles.statusPill, { backgroundColor: tone.bg }]}>
           {status === 'done' ? (
-            <Check size={14} color={theme.colors.text.inverse} strokeWidth={2} />
+            <Check size={14} color={tone.text} strokeWidth={2} />
           ) : status === 'pending' ? (
-            <Clock size={14} color={theme.colors.warning} strokeWidth={1} />
+            <Clock size={14} color={tone.text} strokeWidth={1.5} />
           ) : null}
-          <Text style={[styles.badgeText, status === 'done' && styles.badgeTextDone, status === 'pending' && styles.badgeTextPending]}>
-            {statusLabel[status]}
-          </Text>
+          <Text style={[growerStyles.statusPillText, { color: tone.text }]}>{statusLabel[status]}</Text>
         </View>
       </View>
-      {cert.description ? <Text style={styles.cardDesc}>{cert.description}</Text> : null}
-      {status !== 'done' && (
-        <TouchableOpacity style={styles.uploadBtn} onPress={onUpload}>
-          <Camera size={18} color={theme.colors.primary} strokeWidth={1} />
-          <Text style={styles.uploadBtnText}>{t('producer.certifications.sendPhoto')}</Text>
+      {cert.description ? (
+        <Text style={[enterpriseUi.navRowSubtitle, styles.cardDesc]}>{cert.description}</Text>
+      ) : null}
+      {status !== 'done' ? (
+        <TouchableOpacity
+          style={[enterpriseUi.authBtnPrimary, styles.uploadBtn]}
+          onPress={onUpload}
+          activeOpacity={0.88}
+        >
+          <Camera size={18} color={enterpriseColors.white} strokeWidth={1.5} />
+          <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.certifications.sendPhoto')}</Text>
         </TouchableOpacity>
-      )}
+      ) : null}
     </View>
   );
 }
 
 export default function CertificationsScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { requiredCerts, pendingPhotos, loading, listRefreshing, load, getStatusForCert, addPhoto } =
     useCertificationsData();
   const [uploadingCert, setUploadingCert] = useState<RequiredCert | null>(null);
@@ -64,12 +87,24 @@ export default function CertificationsScreen() {
       await addPhoto(entry);
       setUploadingCert(null);
     },
-    [addPhoto]
+    [addPhoto],
   );
+
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/profile');
+    }
+  };
+
+  const pendingCount = pendingPhotos.filter((p) => p.status === 'pending').length;
+  const listBottomPad = Math.max(insets.bottom, 12) + 58 + (pendingCount > 0 ? 56 : 16);
 
   if (uploadingCert) {
     return (
-      <View style={styles.container}>
+      <View style={growerUi.canvas}>
+        <GrowerStackHeader title={uploadingCert.title} onBack={() => setUploadingCert(null)} />
         <CertificatePhotoUpload
           cert={uploadingCert}
           onSave={handleSavePhoto}
@@ -80,24 +115,24 @@ export default function CertificationsScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Award size={28} color={theme.colors.primary} strokeWidth={1.5} />
-        <Text style={styles.title}>{t('producer.tabs.certifications')}</Text>
-        <Text style={styles.subtitle}>{t('producer.certifications.subtitle')}</Text>
-      </View>
-
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader
+        title={t('producer.tabs.certifications')}
+        subtitle={t('producer.certifications.subtitle')}
+        onBack={goBack}
+      />
       <FlatList
         data={requiredCerts}
         keyExtractor={(item) => item.id}
-        onRefresh={refreshList}
+        onRefresh={() => void refreshList()}
         refreshing={listRefreshing}
+        style={styles.flex}
+        contentContainerStyle={[styles.list, { paddingBottom: listBottomPad }]}
         ListHeaderComponent={
           loading && !listRefreshing ? (
-            <ActivityIndicator style={{ paddingVertical: 12 }} color={theme.colors.primary} />
+            <ActivityIndicator style={{ paddingVertical: 12 }} color={enterpriseColors.primary} />
           ) : null
         }
-        contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <CertRow
             cert={item}
@@ -106,73 +141,48 @@ export default function CertificationsScreen() {
             t={t}
           />
         )}
+        showsVerticalScrollIndicator={false}
       />
-
-      {pendingPhotos.length > 0 && (
-        <View style={styles.pendingBar}>
-          <Text style={styles.pendingText}>
-            {t('producer.certifications.photosPending', { count: pendingPhotos.filter((p) => p.status === 'pending').length })}
-          </Text>
+      {pendingCount > 0 ? (
+        <View style={[styles.pendingWrap, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+          <EnterpriseNotice title={t('producer.certifications.photosPending', { count: pendingCount })} />
         </View>
-      )}
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: { padding: theme.spacing.md },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary, marginTop: 8 },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: 4 },
-  list: { padding: theme.spacing.md, paddingBottom: 100 },
+  flex: { flex: 1 },
+  list: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+  },
   card: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-    borderWidth: 0.5,
-    borderColor: theme.colors.border,
+    padding: 16,
+    marginBottom: 10,
   },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  cardTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, flex: 1 },
-  badge: {
+  cardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 10,
   },
-  badgeDone: { backgroundColor: theme.colors.successLight, borderColor: theme.colors.success },
-  badgePending: { backgroundColor: theme.colors.warningLight, borderColor: theme.colors.warning },
-  badgeText: { fontSize: 12, color: theme.colors.text.secondary },
-  badgeTextDone: { color: theme.colors.success },
-  badgeTextPending: { color: theme.colors.warning },
-  cardDesc: { fontSize: 14, color: theme.colors.text.secondary, marginTop: 4 },
+  cardDesc: {
+    marginTop: 6,
+  },
   uploadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: theme.borderRadius.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.primary,
+    minHeight: 48,
+    marginTop: 14,
   },
-  uploadBtnText: { fontSize: 14, color: theme.colors.primary, fontWeight: '500' },
-  pendingBar: {
+  pendingWrap: {
     position: 'absolute',
+    left: 20,
+    right: 20,
     bottom: 0,
-    left: 0,
-    right: 0,
-    padding: theme.spacing.sm,
-    backgroundColor: theme.colors.warningLight,
-    borderTopWidth: 0.5,
-    borderTopColor: theme.colors.warning,
   },
-  pendingText: { fontSize: 13, color: theme.colors.warning, textAlign: 'center' },
 });

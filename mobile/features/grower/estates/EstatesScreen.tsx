@@ -1,7 +1,6 @@
 import { View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Plus } from 'lucide-react-native';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
@@ -15,7 +14,6 @@ import type { Estate } from '../../../lib/api';
 export function EstatesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
   const data = useEstatesData();
 
@@ -28,11 +26,10 @@ export function EstatesScreen() {
         <GrowerTabHeader
           title={t('producer.estates.myFields')}
           subtitle={
-            data.estates.length === 0 && !data.loading
+            data.ready && data.estates.length === 0
               ? t('producer.estates.listEmptySubtitle')
               : undefined
           }
-          style={{ paddingTop: insets.top + 6 }}
           right={
             <TouchableOpacity
               onPress={() => router.push('/(producer)/estates/new')}
@@ -50,7 +47,7 @@ export function EstatesScreen() {
       <View style={[growerUi.scrollContent, { paddingTop: 8 }]}>
         <EstateList
           estates={data.estates}
-          loading={data.loading}
+          ready={data.ready}
           getStatusColor={data.getStatusColor}
           getStatusLabel={data.getStatusLabel}
           onPressEstate={(estate: Estate) => router.push(`/(producer)/estates/${estate.id}`)}

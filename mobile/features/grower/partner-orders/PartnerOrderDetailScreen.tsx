@@ -63,8 +63,10 @@ export default function PartnerOrderDetailScreen() {
 
   const openMessages = () => {
     if (!resolved) return;
-    const threadQ = resolved.threadId ? `?threadId=${encodeURIComponent(resolved.threadId)}` : '';
-    router.push(`/b2b-supplier/${encodeURIComponent(resolved.supplierUserId)}${threadQ}` as Href);
+    const threadQ = resolved.threadId ? `&threadId=${encodeURIComponent(resolved.threadId)}` : '';
+    router.push(
+      `/b2b-supplier/${encodeURIComponent(resolved.supplierUserId)}?panel=messages${threadQ}` as Href,
+    );
   };
 
   const openStore = () => {

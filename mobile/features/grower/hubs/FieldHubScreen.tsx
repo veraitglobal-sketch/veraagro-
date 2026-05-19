@@ -2,30 +2,23 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
-import {
-  MapPin,
-  ListOrdered,
-  Leaf,
-  ClipboardList,
-  Wheat,
-  Sprout,
-  Scan,
-} from 'lucide-react-native';
-import { growerUi } from '../../../lib/grower-ui';
+import { TabRootBody } from '../../../components/enterprise/TabRootBody';
+import { EnterpriseNavSection } from '../../../components/enterprise/EnterpriseNavSection';
+import { MapPin, ListOrdered, Leaf, ClipboardList, Wheat, Scan, Sprout } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
-import { HubNavTile, HubSectionTitle } from './HubNavTile';
-import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
+import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
+import { HubMetricsStrip } from './HubMetricsStrip';
+import type { HubMetricRow } from './HubSummaryMetrics';
 
 export default function FieldHubScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
   const data = useGrowerDashboard();
+  const tabRefresh = useGrowerTabRefresh();
 
   const metricRows = useMemo((): HubMetricRow[] => {
     const rows: HubMetricRow[] = [
@@ -52,7 +45,7 @@ export default function FieldHubScreen() {
         count: data.offlinePending,
       });
     }
-    return rows;
+    return rows.slice(0, 3);
   }, [
     t,
     data.estates.length,
@@ -64,70 +57,75 @@ export default function FieldHubScreen() {
 
   return (
     <EnterpriseScreen
-      refreshing={data.refreshing}
-      onRefresh={() => void data.onRefresh()}
+      fillViewport
+      withTopWash
+      refreshing={tabRefresh.refreshing}
+      onRefresh={() => void tabRefresh.onRefresh()}
       contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
       header={
         <GrowerTabHeader
           title={t('producer.hubs.field.title')}
           subtitle={t('producer.hubs.field.leadShort')}
-          style={{ paddingTop: insets.top + 6 }}
         />
       }
     >
-      <View style={growerUi.scrollContent}>
-        <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={metricRows} />
-
-        <HubSectionTitle>{t('producer.hubs.field.sectionFarm')}</HubSectionTitle>
-      <HubNavTile
-        title={t('producer.hubs.field.estatesTitle')}
-        description={t('producer.hubs.field.estatesDesc')}
-        icon={MapPin}
-        onPress={() => router.push('/(producer)/estates')}
-      />
-      <HubNavTile
-        title={t('producer.hubs.field.plotMapperTitle')}
-        description={t('producer.hubs.field.plotMapperDesc')}
-        icon={Scan}
-        onPress={() => router.push('/(producer)/plot-mapper')}
-      />
-
-      <HubSectionTitle>{t('producer.hubs.field.sectionSeason')}</HubSectionTitle>
-      <HubNavTile
-        title={t('producer.hubs.field.plantingsTitle')}
-        description={t('producer.hubs.field.plantingsDesc')}
-        icon={Leaf}
-        onPress={() => router.push('/(producer)/plantings')}
-      />
-      <HubNavTile
-        title={t('producer.tabs.harvest')}
-        description={t('producer.hubs.field.harvestDesc')}
-        icon={Wheat}
-        onPress={() => router.push('/(producer)/(tabs)/harvest')}
-      />
-      <HubNavTile
-        title={t('producer.hubs.field.growthJournalTitle')}
-        description={t('producer.hubs.field.growthJournalDesc')}
-        icon={Sprout}
-        onPress={() => router.push('/(producer)/growth-journal')}
-      />
-
-      <HubSectionTitle>{t('producer.hubs.field.sectionRecords')}</HubSectionTitle>
-      <HubNavTile
-        title={t('producer.tabs.fieldLog')}
-        description={t('producer.hubs.field.fieldLogDesc')}
-        icon={ClipboardList}
-        onPress={() => router.push('/(producer)/(tabs)/field-log')}
-      />
-
-      <HubSectionTitle>{t('producer.hubs.field.sectionGuide')}</HubSectionTitle>
-      <HubNavTile
-        title={t('producer.tabs.steps')}
-        description={t('producer.hubs.field.stepsDesc')}
-        icon={ListOrdered}
-        onPress={() => router.push('/(producer)/(tabs)/steps')}
-      />
-      </View>
+      <TabRootBody>
+        <HubMetricsStrip rows={metricRows} />
+        <EnterpriseNavSection
+          title={t('producer.hubs.field.sectionFarm')}
+          items={[
+              {
+                key: 'field-log',
+                title: t('producer.tabs.fieldLog'),
+                subtitle: t('producer.hubs.field.fieldLogDesc'),
+                icon: ClipboardList,
+                onPress: () => router.push('/(producer)/(tabs)/field-log'),
+              },
+              {
+                key: 'estates',
+                title: t('producer.hubs.field.estatesTitle'),
+                subtitle: t('producer.hubs.field.estatesDesc'),
+                icon: MapPin,
+                onPress: () => router.push('/(producer)/estates'),
+              },
+              {
+                key: 'plot',
+                title: t('producer.hubs.field.plotMapperTitle'),
+                subtitle: t('producer.hubs.field.plotMapperDesc'),
+                icon: Scan,
+                onPress: () => router.push('/(producer)/plot-mapper'),
+              },
+              {
+                key: 'plantings',
+                title: t('producer.hubs.field.plantingsTitle'),
+                subtitle: t('producer.hubs.field.plantingsDesc'),
+                icon: Leaf,
+                onPress: () => router.push('/(producer)/plantings'),
+              },
+              {
+                key: 'harvest',
+                title: t('producer.tabs.harvest'),
+                subtitle: t('producer.hubs.field.harvestDesc'),
+                icon: Wheat,
+                onPress: () => router.push('/(producer)/(tabs)/harvest'),
+              },
+              {
+                key: 'journal',
+                title: t('producer.hubs.field.growthJournalTitle'),
+                subtitle: t('producer.hubs.field.growthJournalDesc'),
+                icon: Sprout,
+                onPress: () => router.push('/(producer)/growth-journal'),
+              },
+              {
+                key: 'steps',
+                title: t('producer.tabs.steps'),
+                subtitle: t('producer.hubs.field.stepsDesc'),
+                icon: ListOrdered,
+                onPress: () => router.push('/(producer)/(tabs)/steps'),
+              },
+            ]}
+        />
+      </TabRootBody>
     </EnterpriseScreen>
   );
 }

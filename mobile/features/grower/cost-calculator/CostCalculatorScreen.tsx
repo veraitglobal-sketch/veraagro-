@@ -1,14 +1,21 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Calculator, Plus } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Plus } from 'lucide-react-native';
 import { useCostCalculatorData } from './useCostCalculatorData';
 import CostEntryForm from './CostEntryForm';
 import CostList from './CostList';
-import { theme } from '../../../lib/theme';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { HubMetricsStrip } from '../hubs/HubMetricsStrip';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 
 export default function CostCalculatorScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { costs, products, loading, listRefreshing, load, addCost } = useCostCalculatorData();
   const [showForm, setShowForm] = useState(false);
 
@@ -21,84 +28,98 @@ export default function CostCalculatorScreen() {
       await addCost(entry);
       setShowForm(false);
     },
-    [addCost]
+    [addCost],
+  );
+
+  const metricRows = useMemo(
+    () => [
+      {
+        key: 'costs',
+        type: 'count' as const,
+        label: t('producer.costCalculator.costLinesMetric'),
+        count: costs.length,
+      },
+    ],
+    [t, costs.length],
+  );
+
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/profile');
+    }
+  };
+
+  const listBottomPad = Math.max(insets.bottom, 12) + 58 + 16;
+
+  const listHeader = (
+    <View style={styles.headerBlock}>
+      <HubMetricsStrip rows={metricRows} />
+      <TouchableOpacity
+        onPress={() => setShowForm(true)}
+        activeOpacity={0.88}
+        style={[enterpriseUi.authBtnPrimary, styles.addBtn]}
+      >
+        <Plus size={22} color={enterpriseColors.white} strokeWidth={1.5} />
+        <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.costCalculator.addCostAmount')}</Text>
+      </TouchableOpacity>
+      {products.length > 0 ? (
+        <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>
+          {t('producer.costCalculator.productsTransferNote')}
+        </Text>
+      ) : null}
+      {showForm ? (
+        <View style={[enterpriseUi.authPanel, styles.formCard]}>
+          <CostEntryForm onSubmit={handleAddCost} onCancel={() => setShowForm(false)} />
+        </View>
+      ) : null}
+      <Text style={[enterpriseUi.inAppSectionLabel, styles.listTitle]}>
+        {t('producer.costCalculator.costListTitle')}
+      </Text>
+    </View>
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('producer.costCalculator.title')}</Text>
-        <Text style={styles.subtitle}>{t('producer.costCalculator.subtitle')}</Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.bigButton}
-        onPress={() => setShowForm(true)}
-      >
-        <Plus size={28} color={theme.colors.text.inverse} strokeWidth={1.5} />
-        <Text style={styles.bigButtonText}>{t('producer.costCalculator.addCostAmount')}</Text>
-      </TouchableOpacity>
-
-      {products.length > 0 && (
-        <View style={styles.productsHint}>
-          <Text style={styles.productsHintText}>
-            {t('producer.costCalculator.productsTransferNote')}
-          </Text>
-        </View>
-      )}
-
-      {showForm && (
-        <View style={styles.formCard}>
-          <CostEntryForm
-            onSubmit={handleAddCost}
-            onCancel={() => setShowForm(false)}
-          />
-        </View>
-      )}
-
-      <View style={styles.listHeader}>
-        <Calculator size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.listTitle}>{t('producer.costCalculator.costListTitle')}</Text>
-      </View>
-      <CostList costs={costs} loading={loading} listRefreshing={listRefreshing} onRefresh={refreshList} />
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader
+        title={t('producer.costCalculator.title')}
+        subtitle={t('producer.costCalculator.screenLeadShort')}
+        onBack={goBack}
+      />
+      <CostList
+        costs={costs}
+        loading={loading}
+        listRefreshing={listRefreshing}
+        onRefresh={refreshList}
+        ListHeaderComponent={listHeader}
+        contentPaddingBottom={listBottomPad}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm, paddingBottom: theme.spacing.md },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: 4 },
-  bigButton: {
+  headerBlock: {
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 16,
-    marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    minHeight: 56,
-  },
-  bigButtonText: { fontSize: 18, fontWeight: '600', color: theme.colors.text.inverse },
-  productsHint: { marginHorizontal: theme.spacing.md, marginBottom: theme.spacing.sm },
-  productsHintText: { fontSize: 13, color: theme.colors.text.tertiary },
-  formCard: {
-    marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 0.5,
-    borderColor: theme.colors.border,
-  },
-  listHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 8,
-    paddingHorizontal: theme.spacing.md,
-    marginBottom: 8,
+    minHeight: 52,
+    marginBottom: 12,
   },
-  listTitle: { ...theme.typography.body, fontWeight: '600', color: theme.colors.text.primary },
+  hint: {
+    marginBottom: 12,
+  },
+  formCard: {
+    marginBottom: 14,
+  },
+  listTitle: {
+    marginTop: 4,
+    marginBottom: 10,
+  },
 });

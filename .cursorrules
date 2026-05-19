@@ -282,6 +282,10 @@ Before marking a feature as complete:
    - Touch-friendly
    - Works on tablets/phones
 
+### Mobile grower scroll budget (mandatory)
+
+Before adding blocks to Home or any tab root screen, read `mobile/docs/MOBILE_SCROLL_BUDGET.md`. Tab roots: fillViewport + scroll. Use `premiumSurface` ONLY for BioVeraProvenanceRibbon — lists use white `inAppPanel`. Premium = few distinct moments, not repeated green cards.
+
 ### BioVera UI consistency (mandatory for web grower/producer)
 
 New or refactored pages must match existing grower shells — do not invent one-off card/button styles.

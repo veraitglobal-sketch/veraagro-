@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { MapPin, Calendar, Package, Edit, Trash2 } from 'lucide-react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
 import { colors } from '../../../lib/colors';
@@ -9,6 +9,8 @@ import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../lib/api';
+import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
 /**
@@ -20,32 +22,50 @@ export default function EstateDetailsScreen() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [estate, setEstate] = useState<Estate | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { estates: dashboardEstates } = useGrowerDashboard();
+  const seeded =
+    dashboardEstates.find((e) => e.id === id) ?? null;
+  const [estate, setEstate] = useState<Estate | null>(seeded);
+  const [loading, setLoading] = useState(!seeded);
   const [refreshing, setRefreshing] = useState(false);
 
+  useLayoutEffect(() => {
+    if (estate || !id) return;
+    let cancelled = false;
+    void growerOfflineCache.loadEstates().then((cached) => {
+      if (cancelled || !cached) return;
+      const found = cached.find((e) => e.id === id);
+      if (found) {
+        setEstate(found);
+        setLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, estate]);
+
   useEffect(() => {
-    if (id) {
-      loadEstate();
-    }
+    if (id) void loadEstate({ background: Boolean(estate) });
   }, [id]);
 
-  const loadEstate = async () => {
+  const loadEstate = async (opts?: { background?: boolean }) => {
     if (!id) return;
+    const background = opts?.background === true;
+    if (!background) setLoading(true);
     try {
-      setLoading(true);
       const data = await estatesAPI.getOne(id);
       setEstate(data);
     } catch (error) {
       console.error('Error loading estate:', error);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadEstate();
+    await loadEstate({ background: true });
     setRefreshing(false);
   };
 

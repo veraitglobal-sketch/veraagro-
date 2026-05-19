@@ -283,6 +283,13 @@ export const syncService = {
         const deviceId = await getOrCreateDeviceId();
         const notesMerged = buildFieldLogGrowthNotes(entry).trim();
 
+        const usesMaterial =
+          entry.activityType === 'Planting' ||
+          entry.activityType === 'Fertilizing' ||
+          entry.activityType === 'Spraying';
+        const materialBarcode = entry.materialID?.trim() ?? '';
+        const materialKind = entry.materialKind;
+
         await growthLogsAPI.create({
           estateId,
           parcelId: entry.parcelId.trim(),
@@ -295,6 +302,13 @@ export const syncService = {
           deviceTimestamp: entry.timestamp,
           notes: notesMerged || undefined,
           growthStage: entry.growthStage?.trim() || undefined,
+          ...(usesMaterial && materialBarcode && materialKind
+            ? {
+                materialBarcode,
+                materialKind,
+                requiresMaterialBarcode: true,
+              }
+            : {}),
         });
 
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'synced', error: undefined });

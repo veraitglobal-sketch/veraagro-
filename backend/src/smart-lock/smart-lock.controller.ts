@@ -14,15 +14,27 @@ export class SmartLockController {
       gpsLatitude: number;
       gpsLongitude: number;
       parcelId?: string;
+      deviceId?: string;
     },
     @Request() req: any,
   ) {
+    if (body.parcelId?.trim()) {
+      return this.smartLockService.ensureSeedLinkedToParcel({
+        inputSerialNumber: body.inputSerialNumber,
+        userId: req.user.id,
+        parcelId: body.parcelId.trim(),
+        gpsLatitude: body.gpsLatitude,
+        gpsLongitude: body.gpsLongitude,
+        deviceId: body.deviceId,
+      });
+    }
     return this.smartLockService.validateAndLinkSeed(
       body.inputSerialNumber,
       req.user.id,
       body.gpsLatitude,
       body.gpsLongitude,
-      body.parcelId,
+      undefined,
+      body.deviceId,
     );
   }
 

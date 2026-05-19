@@ -12,14 +12,15 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   RefreshControl,
+  StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { MapPin } from 'lucide-react-native';
-import { enterpriseColors } from '../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
+import { EnterpriseNotice } from '../../components/enterprise/EnterpriseNotice';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import {
@@ -103,6 +104,7 @@ export default function MissionsCreateScreen() {
   const [locLoading, setLocLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
+  const [showManualGps, setShowManualGps] = useState(false);
   const [batchId, setBatchId] = useState('');
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
@@ -139,11 +141,6 @@ export default function MissionsCreateScreen() {
     !packagingComplianceLoading &&
     packagingCompliance != null &&
     !packagingCompliance.complete;
-
-  const photoTypeLabel = useCallback(
-    (code: string) => t(`producer.compliance.batchForm.photoTypes.${code}.label`, { defaultValue: code }),
-    [t],
-  );
 
   const loadBatches = useCallback(async (mode: 'initial' | 'refresh' = 'initial') => {
     if (mode === 'refresh') setListRefreshing(true);
@@ -192,6 +189,7 @@ export default function MissionsCreateScreen() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setLocationHint(t('producer.missionsCreate.locationHintDenied'));
+        setShowManualGps(true);
         return;
       }
       const pos = await Location.getCurrentPositionAsync({
@@ -218,6 +216,7 @@ export default function MissionsCreateScreen() {
       }
     } catch {
       setLocationHint(t('producer.missionsCreate.locationHintFailed'));
+      setShowManualGps(true);
     } finally {
       setLocLoading(false);
     }
@@ -299,22 +298,37 @@ export default function MissionsCreateScreen() {
     }
   };
 
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/missions');
+    }
+  };
+
+  const hasGps = pickupLat.trim() !== '' && pickupLng.trim() !== '' && !Number.isNaN(parseFloat(pickupLat));
+
   if (initialBatchesLoading) {
     return (
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: enterpriseColors.canvas, justifyContent: 'center' }}
-        edges={['top', 'left', 'right']}
-      >
-        <ActivityIndicator size="large" color={enterpriseColors.primary} />
-      </SafeAreaView>
+      <View style={growerUi.canvas}>
+        <GrowerStackHeader
+          title={t('navigation.requestTransport')}
+          subtitle={t('producer.missionsCreate.introShort')}
+          onBack={goBack}
+        />
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color={enterpriseColors.primary} />
+        </View>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={growerUi.canvas} edges={['left', 'right', 'bottom']}>
+    <View style={growerUi.canvas}>
       <GrowerStackHeader
         title={t('navigation.requestTransport')}
-        subtitle={t('producer.missionsCreate.intro')}
+        subtitle={t('producer.missionsCreate.introShort')}
+        onBack={goBack}
       />
 
       <KeyboardAvoidingView
@@ -341,58 +355,37 @@ export default function MissionsCreateScreen() {
             />
           }
         >
-        <View style={growerUi.formPanel}>
-          <Text style={growerUi.sectionLabel}>{t('producer.missionsCreate.workflowTitle')}</Text>
-          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
-            {t('producer.missionsCreate.workflowStep1')}
-          </Text>
-          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
-            {t('producer.missionsCreate.workflowStep2')}
-          </Text>
-          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginTop: 8 }}>
-            {t('producer.missionsCreate.workflowStep3')}
-          </Text>
-        </View>
-
         {batches.length === 0 ? (
-          <View style={{ marginBottom: 24 }}>
-            <Text style={{ fontSize: 16, color: enterpriseColors.gray600, lineHeight: 24 }}>
-              {t('producer.missionsCreate.noBatchesBody')}
-            </Text>
+          <View style={growerUi.emptyCard}>
+            <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missionsCreate.noBatchesBody')}</Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batch-new')}
-              style={[growerUi.btnPrimary, { marginTop: 16 }]}
+              style={[enterpriseUi.authBtnPrimary, styles.emptyCta]}
               activeOpacity={0.88}
             >
-              <Text style={growerUi.btnPrimaryText}>
-                {t('producer.missionsCreate.openBatchesCta')}
-              </Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.openBatchesCta')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{ marginBottom: 24, gap: 4 }}>
-            <Text style={growerUi.formLabel}>{t('producer.missionsCreate.batchLabel')}</Text>
+          <View style={styles.section}>
+            <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.missionsCreate.batchLabel')}</Text>
             {batches.map((b) => {
               const selected = batchId === b.id;
               return (
                 <TouchableOpacity
                   key={b.id}
                   onPress={() => setBatchId(b.id)}
-                  activeOpacity={0.7}
-                  style={{
-                    padding: 16,
-                    minHeight: 64,
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    borderColor: selected ? enterpriseColors.primary : enterpriseColors.gray200,
-                    backgroundColor: selected ? enterpriseColors.primaryTint : enterpriseColors.white,
-                    justifyContent: 'center',
-                  }}
+                  activeOpacity={0.82}
+                  style={[
+                    enterpriseUi.inAppPanel,
+                    styles.batchRow,
+                    selected && styles.batchRowSelected,
+                  ]}
                 >
-                  <Text style={{ fontSize: 17, color: enterpriseColors.gray900, fontWeight: '600' }}>
-                    {b.productName || t('producer.missionsCreate.productFallback')} — {b.batchId || b.id.slice(0, 8)}…
+                  <Text style={enterpriseUi.navRowTitle}>
+                    {b.productName || t('producer.missionsCreate.productFallback')} · {b.batchId || b.id.slice(0, 8)}
                   </Text>
-                  <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 6 }}>
+                  <Text style={[enterpriseUi.navRowSubtitle, styles.batchMeta]}>
                     {b.quantity} {b.unit} · {getBatchStatusLabel(t, b.status)}
                   </Text>
                 </TouchableOpacity>
@@ -402,186 +395,197 @@ export default function MissionsCreateScreen() {
         )}
 
         {batches.length > 0 && batchId ? (
-          <View style={{ marginBottom: 16 }}>
+          <View style={styles.section}>
             {packagingComplianceLoading ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <View style={styles.inlineStatus}>
                 <ActivityIndicator size="small" color={enterpriseColors.primary} />
-                <Text style={{ fontSize: 15, color: enterpriseColors.gray600 }}>
+                <Text style={enterpriseUi.navRowSubtitle}>
                   {t('producer.missionsCreate.packagingComplianceChecking')}
                 </Text>
               </View>
             ) : packagingCompliance && !packagingCompliance.complete ? (
-              <View
-                style={{
-                  padding: 16,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: 'rgba(245, 158, 11, 0.5)',
-                  backgroundColor: 'rgba(251, 191, 36, 0.12)',
-                }}
-              >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: enterpriseColors.gray900, marginBottom: 8 }}>
-                  {t('producer.missionsCreate.packagingComplianceTitle')}
-                </Text>
-                <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginBottom: 8 }}>
-                  {t('producer.missionsCreate.packagingComplianceWhy')}
-                </Text>
-                {packagingCompliance.missingPhotoTypes.length > 0 ? (
-                  <Text style={{ fontSize: 14, color: enterpriseColors.gray900, marginBottom: 6, lineHeight: 20 }}>
-                    <Text style={{ fontWeight: '600' }}>{t('producer.missionsCreate.packagingComplianceMissingPhotos')} </Text>
-                    {packagingCompliance.missingPhotoTypes.map((c) => photoTypeLabel(c)).join(' · ')}
-                  </Text>
-                ) : null}
-                {!packagingCompliance.stickerRollId ? (
-                  <Text style={{ fontSize: 14, color: enterpriseColors.gray900, marginBottom: 8, lineHeight: 20 }}>
-                    {t('producer.missionsCreate.packagingComplianceMissingSticker')}
-                  </Text>
-                ) : null}
-                <TouchableOpacity
-                  onPress={() => router.push('/(producer)/compliance-photos')}
-                  style={{
-                    marginTop: 8,
-                    alignSelf: 'flex-start',
-                    paddingVertical: 12,
-                    paddingHorizontal: 16,
-                    borderRadius: 12,
-                    backgroundColor: enterpriseColors.primary,
-                    minHeight: 48,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: enterpriseColors.white }}>
-                    {t('producer.missionsCreate.openPackagingCompliance')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <EnterpriseNotice
+                title={t('producer.missionsCreate.packagingComplianceTitle')}
+                body={t('producer.missionsCreate.packagingComplianceBodyShort')}
+                onPress={() => router.push('/(producer)/compliance-photos')}
+                actionLabel={t('producer.missionsCreate.openPackagingCompliance')}
+              />
             ) : packagingCompliance?.complete ? (
-              <Text style={{ fontSize: 15, color: '#059669', fontWeight: '500' }}>
-                {t('producer.missionsCreate.packagingComplianceOk')}
-              </Text>
+              <Text style={styles.okLine}>{t('producer.missionsCreate.packagingComplianceOk')}</Text>
             ) : (
-              <Text style={{ fontSize: 13, color: enterpriseColors.gray600, lineHeight: 18 }}>
+              <Text style={enterpriseUi.navRowSubtitle}>
                 {t('producer.missionsCreate.packagingComplianceUnchecked')}
               </Text>
             )}
           </View>
         ) : null}
 
-        <View style={{ marginBottom: 16 }}>
-          <TouchableOpacity
-            onPress={getCurrentLocation}
-            disabled={locLoading}
-            activeOpacity={0.7}
-            style={{
-              alignSelf: 'flex-start',
-              minHeight: 48,
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: enterpriseColors.primary,
-              backgroundColor: enterpriseColors.white,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            {locLoading ? (
-              <ActivityIndicator size="small" color={enterpriseColors.primary} style={{ marginRight: 8 }} />
+        {batches.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.missionsCreate.pickupAddress')}</Text>
+            <TouchableOpacity
+              onPress={() => void getCurrentLocation()}
+              disabled={locLoading}
+              activeOpacity={0.88}
+              style={[enterpriseUi.authBtnPrimary, styles.locationBtn]}
+            >
+              {locLoading ? (
+                <ActivityIndicator size="small" color={enterpriseColors.white} />
+              ) : (
+                <>
+                  <MapPin size={20} color={enterpriseColors.white} strokeWidth={1.5} />
+                  <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.useMyLocation')}</Text>
+                </>
+              )}
+            </TouchableOpacity>
+            {hasGps ? (
+              <Text style={enterpriseUi.navRowSubtitle}>
+                {t('producer.missionsCreate.gpsSaved')}: {parseFloat(pickupLat).toFixed(5)}, {parseFloat(pickupLng).toFixed(5)}
+              </Text>
+            ) : null}
+            {locationHint ? <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>{locationHint}</Text> : null}
+            {!showManualGps ? (
+              <TouchableOpacity onPress={() => setShowManualGps(true)} activeOpacity={0.72} style={styles.linkBtn}>
+                <Text style={styles.linkText}>{t('producer.missionsCreate.manualGpsToggle')}</Text>
+              </TouchableOpacity>
             ) : (
-              <MapPin size={18} color={enterpriseColors.primary} style={{ marginRight: 8 }} strokeWidth={1.5} />
+              <>
+                <Text style={growerUi.formLabel}>{t('producer.missionsCreate.latitude')}</Text>
+                <TextInput
+                  value={pickupLat}
+                  onChangeText={setPickupLat}
+                  placeholder={t('producer.missionsCreate.latPlaceholder')}
+                  placeholderTextColor={enterpriseColors.gray600}
+                  keyboardType="decimal-pad"
+                  style={growerUi.formInput}
+                />
+                <Text style={growerUi.formLabel}>{t('producer.missionsCreate.longitude')}</Text>
+                <TextInput
+                  value={pickupLng}
+                  onChangeText={setPickupLng}
+                  placeholder={t('producer.missionsCreate.lngPlaceholder')}
+                  placeholderTextColor={enterpriseColors.gray600}
+                  keyboardType="decimal-pad"
+                  style={growerUi.formInput}
+                />
+              </>
             )}
-            <Text style={{ fontSize: 15, color: enterpriseColors.primary, fontWeight: '600' }}>
-              {t('producer.missionsCreate.useMyLocation')}
-            </Text>
-          </TouchableOpacity>
-          {locationHint ? (
-            <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 }}>{locationHint}</Text>
-          ) : null}
-          <Text
-            style={{
-              fontSize: 14,
-              color: enterpriseColors.gray600,
-              marginTop: 8,
-              lineHeight: 20,
-              opacity: 0.95,
-            }}
-          >
-            {t('producer.missionsCreate.pickupCoordsFreedomNote')}
-          </Text>
-        </View>
-
-        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.latitude')}</Text>
-        <TextInput
-          value={pickupLat}
-          onChangeText={setPickupLat}
-          placeholder={t('producer.missionsCreate.latPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          keyboardType="decimal-pad"
-          style={growerUi.formInput}
-        />
-        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.longitude')}</Text>
-        <TextInput
-          value={pickupLng}
-          onChangeText={setPickupLng}
-          placeholder={t('producer.missionsCreate.lngPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          keyboardType="decimal-pad"
-          style={growerUi.formInput}
-        />
-        <Text style={growerUi.formLabel}>{t('producer.missionsCreate.pickupAddress')}</Text>
-        <TextInput
-          value={pickupAddress}
-          onChangeText={setPickupAddress}
-          onFocus={scrollToBottomIfNeeded}
-          placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          multiline
-          style={[growerUi.formInput, { minHeight: 88, textAlignVertical: 'top' }]}
-        />
-
-        <View style={growerUi.formPanel}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900 }}>
-            {t('producer.missionsCreate.opsRouteBoxTitle')}
-          </Text>
-          <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 }}>
-            {t('producer.missionsCreate.opsRouteBoxBody')}
-          </Text>
-        </View>
+            <TextInput
+              value={pickupAddress}
+              onChangeText={setPickupAddress}
+              onFocus={scrollToBottomIfNeeded}
+              placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
+              placeholderTextColor={enterpriseColors.gray600}
+              multiline
+              style={[growerUi.formInput, styles.addressInput]}
+            />
+          </View>
+        ) : null}
 
         </ScrollView>
-        <View
-          style={{
-            paddingTop: 16,
-            paddingBottom: Math.max(p.bottomInset, 16),
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            borderTopWidth: 0.5,
-            borderTopColor: enterpriseColors.gray200,
-            backgroundColor: enterpriseColors.white,
-          }}
-        >
+        <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 16) }]}>
           <TouchableOpacity
-            onPress={submit}
+            onPress={() => void submit()}
             disabled={submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport}
             activeOpacity={0.88}
             style={[
-              growerUi.btnPrimary,
-              {
-                opacity:
-                  submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport
-                    ? 0.5
-                    : 1,
-              },
+              enterpriseUi.authBtnPrimary,
+              styles.submitBtn,
+              (submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport) &&
+                styles.submitBtnDisabled,
             ]}
           >
             {submitting ? (
               <ActivityIndicator color={enterpriseColors.white} />
             ) : (
-              <Text style={growerUi.btnPrimaryText}>{t('producer.missionsCreate.submitCta')}</Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.submitCta')}</Text>
             )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  section: {
+    marginBottom: 20,
+  },
+  batchRow: {
+    padding: 16,
+    minHeight: 72,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+  },
+  batchRowSelected: {
+    borderWidth: 1.5,
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
+  batchMeta: {
+    marginTop: 4,
+  },
+  emptyCta: {
+    marginTop: 16,
+    minHeight: 52,
+    justifyContent: 'center',
+  },
+  inlineStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  okLine: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+  },
+  locationBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    minHeight: 52,
+    marginBottom: 10,
+  },
+  hint: {
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  linkBtn: {
+    minHeight: 44,
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  linkText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.primary,
+  },
+  addressInput: {
+    minHeight: 88,
+    textAlignVertical: 'top',
+    marginTop: 8,
+  },
+  footer: {
+    paddingTop: 16,
+    paddingHorizontal: 20,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  },
+  submitBtn: {
+    minHeight: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  submitBtnDisabled: {
+    opacity: 0.5,
+  },
+});

@@ -6,13 +6,22 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { colors } from '../../../lib/colors';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import { useHarvestData, CROP_TYPES } from './useHarvestData';
+
+const STEPS = 3;
 
 export default function HarvestForm() {
   const { t, i18n } = useTranslation();
@@ -42,6 +51,20 @@ export default function HarvestForm() {
   }, [router]);
 
   const h = useHarvestData(prefillIntent, onPrefillConsumed);
+  const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    setStep(1);
+  }, [h.planMode]);
+
+  useEffect(() => {
+    if (!prefillIntent?.parcelId) return;
+    if (prefillIntent.plantingId && h.harvestDetailsReady) {
+      setStep(3);
+    } else if (h.parcelId) {
+      setStep(2);
+    }
+  }, [prefillIntent, h.parcelId, h.harvestDetailsReady]);
 
   const formatPlanDate = (iso: string) => {
     try {
@@ -54,24 +77,52 @@ export default function HarvestForm() {
     }
   };
 
-  const showHarvestPlantingStep = h.planMode === 'HARVEST' && !!h.parcelId;
-  const showPlantingCropStep = h.planMode === 'PLANTING' && !!h.parcelId;
-  const showQuantityAndRest = !!h.parcelId && h.harvestDetailsReady;
+  const insets = useSafeAreaInsets();
+  const tabBarPad = 58 + Math.max(insets.bottom, 6);
+  const selectedParcel = h.approvedParcels.find((p) => p.id === h.parcelId);
+  const progressPct = step / STEPS;
+
+  const step1Ok =
+    Boolean(h.parcelId) && (h.planMode === 'PLANTING' || h.selectedParcelHarvestEligible);
+  const step2Ok =
+    h.planMode === 'HARVEST'
+      ? h.plantingsForParcel.length > 0 &&
+        Boolean(h.selectedPlantingId) &&
+        h.plantingsForParcel.some((p) => p.id === h.selectedPlantingId)
+      : Boolean(h.cropType.trim());
+
+  const headerSubtitle = t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.surface }}
-      refreshControl={
-        <RefreshControl
-          refreshing={h.parcelsRefreshing}
-          onRefresh={h.refreshParcels}
-          tintColor={colors.accent}
-          colors={[colors.accent]}
-        />
-      }
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={{ padding: 16 }}>
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader title={t('producer.tabs.harvest')} subtitle={headerSubtitle} />
+
+      <View style={styles.progressWrap}>
+        <View style={enterpriseUi.progressTrack}>
+          <View style={[enterpriseUi.progressFill, { width: `${progressPct * 100}%` }]} />
+        </View>
+      </View>
+
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+      >
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={[growerUi.scrollContent, { paddingBottom: tabBarPad + 88 }]}
+          refreshControl={
+            <RefreshControl
+              refreshing={h.parcelsRefreshing}
+              onRefresh={h.refreshParcels}
+              tintColor={colors.accent}
+              colors={[colors.accent]}
+            />
+          }
+          keyboardShouldPersistTaps="handled"
+        >
+        {step === 1 ? (
+        <>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
           <TouchableOpacity
             onPress={() => h.setPlanMode('PLANTING')}
@@ -104,10 +155,6 @@ export default function HarvestForm() {
             </Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 16, lineHeight: 18 }}>
-          {h.planMode === 'PLANTING' ? t('producer.harvest.planIntroPlanting') : t('producer.harvest.planIntroHarvest')}
-        </Text>
-
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 10 }}>
             {t('producer.harvest.stepParcel')}
@@ -119,6 +166,26 @@ export default function HarvestForm() {
               <ActivityIndicator size="small" color={colors.accent} />
             ) : h.approvedParcels.length === 0 ? (
               <Text style={{ fontSize: 14, color: colors.error }}>{t('producer.harvest.noApprovedParcels')}</Text>
+            ) : h.parcelId && selectedParcel ? (
+              <View>
+                <View
+                  style={{
+                    paddingHorizontal: 14,
+                    paddingVertical: 12,
+                    borderRadius: 8,
+                    borderWidth: 0.5,
+                    borderColor: colors.accent,
+                    backgroundColor: colors.accent,
+                  }}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: colors.background }} numberOfLines={2}>
+                    {selectedParcel.label}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => h.setParcelId('')} style={{ marginTop: 10, minHeight: 44, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.accent }}>{t('producer.harvest.changeParcel')}</Text>
+                </TouchableOpacity>
+              </View>
             ) : (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {h.approvedParcels.map((p) => (
@@ -130,31 +197,16 @@ export default function HarvestForm() {
                       paddingVertical: 10,
                       borderRadius: 8,
                       borderWidth: 0.5,
-                      backgroundColor: h.parcelId === p.id ? colors.accent : colors.background,
-                      borderColor: h.parcelId === p.id ? colors.accent : colors.border,
+                      backgroundColor: colors.background,
+                      borderColor: colors.border,
                       maxWidth: '100%',
                     }}
                   >
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: h.parcelId === p.id ? colors.background : colors.text.primary,
-                      }}
-                      numberOfLines={2}
-                    >
+                    <Text style={{ fontSize: 12, color: colors.text.primary }} numberOfLines={2}>
                       {p.label}
                     </Text>
                     {!p.harvestPlanEligible ? (
-                      <Text
-                        style={{
-                          fontSize: 10,
-                          marginTop: 4,
-                          color: h.parcelId === p.id ? colors.background : colors.text.secondary,
-                          opacity: h.parcelId === p.id ? 0.9 : 1,
-                          lineHeight: 14,
-                        }}
-                        numberOfLines={3}
-                      >
+                      <Text style={{ fontSize: 10, marginTop: 4, color: colors.text.secondary, lineHeight: 14 }} numberOfLines={2}>
                         {t('producer.harvest.parcelPendingHarvestOnly')}
                       </Text>
                     ) : null}
@@ -168,8 +220,19 @@ export default function HarvestForm() {
               </Text>
             ) : null}
         </View>
+        </>
+        ) : null}
 
-        {showHarvestPlantingStep ? (
+        {step > 1 && selectedParcel ? (
+          <View style={[enterpriseUi.inAppPanel, styles.contextChip]}>
+            <MapPin size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+            <Text style={styles.contextText} numberOfLines={2}>
+              {selectedParcel.label}
+            </Text>
+          </View>
+        ) : null}
+
+        {step === 2 && h.planMode === 'HARVEST' ? (
           <View style={{ marginBottom: 16 }}>
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 10 }}>
               {t('producer.harvest.stepPlanting')}
@@ -246,7 +309,7 @@ export default function HarvestForm() {
           </View>
         ) : null}
 
-        {showPlantingCropStep ? (
+        {step === 2 && h.planMode === 'PLANTING' ? (
           <View style={{ marginBottom: 16 }}>
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 10 }}>
               {t('producer.harvest.stepCropPlanting')}
@@ -276,23 +339,15 @@ export default function HarvestForm() {
           </View>
         ) : null}
 
-        {h.planMode === 'HARVEST' && h.selectedPlantingId && h.cropType.trim() ? (
-          <View
-            style={{
-              marginBottom: 16,
-              padding: 12,
-              borderRadius: 8,
-              borderWidth: 0.5,
-              borderColor: colors.border,
-              backgroundColor: colors.background,
-            }}
-          >
-            <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: 6 }}>{t('producer.harvest.cropFromPlanting')}</Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text.primary }}>{h.cropType}</Text>
+        {step === 3 && h.planMode === 'HARVEST' && h.cropType.trim() ? (
+          <View style={[enterpriseUi.inAppPanel, styles.contextChip, { marginBottom: 12 }]}>
+            <Text style={styles.contextText} numberOfLines={1}>
+              {h.cropType}
+            </Text>
           </View>
         ) : null}
 
-        {showQuantityAndRest ? (
+        {step === 3 ? (
           <>
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 12 }}>
               {h.planMode === 'HARVEST' ? t('producer.harvest.stepHarvestDetails') : t('producer.harvest.stepPlantingDetails')}
@@ -525,38 +580,109 @@ export default function HarvestForm() {
             </View>
           </>
         ) : null}
+        </ScrollView>
 
-        <TouchableOpacity
-          onPress={() => void h.handleSubmit()}
-          disabled={h.loading}
-          style={{
-            backgroundColor: !h.canSubmit ? colors.surface : colors.accent,
-            paddingVertical: 16,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-            alignItems: 'center',
-            opacity: h.loading ? 0.5 : 1,
-            borderWidth: 0.5,
-            borderColor: colors.accent,
-          }}
-          activeOpacity={0.7}
-        >
-          {h.loading ? (
-            <ActivityIndicator color={colors.background} />
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + tabBarPad }]}>
+          {step > 1 ? (
+            <TouchableOpacity onPress={() => setStep((s) => s - 1)} style={styles.footerBack}>
+              <Text style={styles.footerBackText}>{t('producer.fieldLogForm.wizardBack')}</Text>
+            </TouchableOpacity>
           ) : (
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: h.canSubmit ? colors.background : colors.text.secondary,
-                letterSpacing: 0.3,
-              }}
-            >
-              {h.planMode === 'PLANTING' ? t('producer.harvest.sendPlanPlanting') : t('producer.harvest.sendPlanHarvest')}
-            </Text>
+            <View style={styles.footerSpacer} />
           )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          {step < STEPS ? (
+            <TouchableOpacity
+              onPress={() => setStep((s) => s + 1)}
+              disabled={step === 1 ? !step1Ok : !step2Ok}
+              style={[
+                enterpriseUi.authBtnPrimary,
+                styles.footerPrimary,
+                (step === 1 ? !step1Ok : !step2Ok) && styles.footerDisabled,
+              ]}
+              activeOpacity={0.88}
+            >
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => void h.handleSubmit()}
+              disabled={h.loading || !h.canSubmit}
+              style={[
+                enterpriseUi.authBtnPrimary,
+                styles.footerPrimary,
+                (!h.canSubmit || h.loading) && styles.footerDisabled,
+              ]}
+              activeOpacity={0.88}
+            >
+              {h.loading ? (
+                <ActivityIndicator color={enterpriseColors.white} />
+              ) : (
+                <Text style={enterpriseUi.authBtnPrimaryText}>
+                  {h.planMode === 'PLANTING' ? t('producer.harvest.sendPlanPlanting') : t('producer.harvest.sendPlanHarvest')}
+                </Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  progressWrap: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    backgroundColor: enterpriseColors.canvas,
+  },
+  contextChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+  },
+  contextText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.15,
+  },
+  footer: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    backgroundColor: enterpriseColors.canvas,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+  },
+  footerSpacer: {
+    width: 88,
+  },
+  footerPrimary: {
+    flex: 1,
+    minHeight: 52,
+    justifyContent: 'center',
+  },
+  footerDisabled: {
+    opacity: 0.5,
+  },
+  footerBack: {
+    minHeight: 52,
+    paddingHorizontal: 18,
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  },
+  footerBackText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.2,
+  },
+});

@@ -17,7 +17,73 @@ export const enterpriseColors = {
   gray200: '#E5E7EB',
   gray100: '#F3F4F6',
   white: '#FFFFFF',
+  /** Signature tint — ONLY BioVeraProvenanceRibbon (do not reuse on lists/menus). */
+  premiumTintBg: 'rgba(45, 90, 39, 0.05)',
+  premiumTintBorder: 'rgba(45, 90, 39, 0.14)',
+  /** Errors — text / icons only; never full red panels on tab roots. */
+  destructive: '#991B1B',
+  destructiveTint: 'rgba(153, 27, 27, 0.08)',
 } as const;
+
+/** Enterprise palette — no blue/amber status rainbows. */
+export type EnterpriseValueTone = 'default' | 'primary' | 'muted' | 'pending';
+
+export function enterpriseValueColor(tone: EnterpriseValueTone): string {
+  switch (tone) {
+    case 'primary':
+      return enterpriseColors.primary;
+    case 'pending':
+      return enterpriseColors.gray700;
+    case 'muted':
+      return enterpriseColors.gray600;
+    default:
+      return enterpriseColors.gray900;
+  }
+}
+
+export type EnterpriseLotBucket = 'here' | 'moving' | 'done';
+
+export function enterpriseLotBucketStyle(bucket: EnterpriseLotBucket): { accent: string; tint: string } {
+  switch (bucket) {
+    case 'done':
+      return { accent: enterpriseColors.gray700, tint: enterpriseColors.gray100 };
+    case 'moving':
+      return { accent: enterpriseColors.gray900, tint: enterpriseColors.gray100 };
+    case 'here':
+    default:
+      return { accent: enterpriseColors.primary, tint: enterpriseColors.primaryTint };
+  }
+}
+
+export function enterpriseEstateStatusColor(status: string): string {
+  switch (status) {
+    case 'CERTIFIED':
+      return enterpriseColors.primary;
+    case 'ACTIVE':
+      return enterpriseColors.gray900;
+    case 'PENDING_SETUP':
+      return enterpriseColors.gray600;
+    default:
+      return enterpriseColors.gray600;
+  }
+}
+
+export function enterpriseOrderStatusColor(status: string): string {
+  switch (status) {
+    case 'DELIVERED':
+      return enterpriseColors.primary;
+    case 'CANCELLED':
+      return enterpriseColors.destructive;
+    case 'PENDING':
+      return enterpriseColors.gray600;
+    case 'CONFIRMED':
+    case 'PREPARING':
+    case 'IN_TRANSIT':
+      return enterpriseColors.gray900;
+    default:
+      return enterpriseColors.gray600;
+  }
+}
 
 export const enterpriseUi = {
   screen: {
@@ -54,6 +120,145 @@ export const enterpriseUi = {
     letterSpacing: 0.6,
     textTransform: 'uppercase',
   } as TextStyle,
+
+  /** In-app section titles — sentence case, private-banking tone. */
+  inAppSectionLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.1,
+    marginBottom: 10,
+    marginLeft: 2,
+  } as TextStyle,
+
+  inAppTitle: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.65,
+    lineHeight: 34,
+  } as TextStyle,
+
+  inAppLead: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    lineHeight: 22,
+    marginTop: 8,
+    letterSpacing: -0.12,
+  } as TextStyle,
+
+  /** Home-only trust ribbon — never use for nav/KPI/menus (premium = rare). */
+  premiumSurface: {
+    width: '100%',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: enterpriseColors.premiumTintBorder,
+    backgroundColor: enterpriseColors.premiumTintBg,
+    overflow: 'hidden',
+  } as ViewStyle,
+
+  premiumIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: enterpriseColors.white,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: enterpriseColors.gray200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  } as ViewStyle,
+
+  premiumLead: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.2,
+    lineHeight: 20,
+  } as TextStyle,
+
+  premiumSub: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    lineHeight: 18,
+    letterSpacing: -0.05,
+  } as TextStyle,
+
+  kpiValue: {
+    fontSize: 26,
+    fontWeight: '300',
+    color: enterpriseColors.gray900,
+    fontVariant: ['tabular-nums'],
+    letterSpacing: -0.6,
+  } as TextStyle,
+
+  kpiLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.05,
+    marginBottom: 8,
+  } as TextStyle,
+
+  /** White panel on canvas — light elevation (enterprise, not flat). */
+  inAppPanel: {
+    width: '100%',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+    overflow: 'hidden',
+    shadowColor: '#111827',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.045,
+    shadowRadius: 10,
+    elevation: 2,
+  } as ViewStyle,
+
+  navRowIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: enterpriseColors.white,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  } as ViewStyle,
+
+  kpiValueAccent: {
+    fontSize: 26,
+    fontWeight: '300',
+    color: enterpriseColors.primary,
+    fontVariant: ['tabular-nums'],
+    letterSpacing: -0.6,
+  } as TextStyle,
+
+  navRowTitle: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.28,
+    lineHeight: 22,
+  } as TextStyle,
+
+  navRowSubtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    marginTop: 3,
+    lineHeight: 19,
+  } as TextStyle,
+
+  navPanel: {
+    width: '100%',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+    overflow: 'hidden',
+  } as ViewStyle,
 
   card: {
     backgroundColor: enterpriseColors.white,
@@ -326,7 +531,7 @@ export const enterpriseUi = {
     width: 52,
     height: 52,
     borderRadius: 12,
-    backgroundColor: enterpriseColors.primaryTint,
+    backgroundColor: enterpriseColors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
@@ -362,10 +567,13 @@ export function growerTabScreenOptions(insets: { bottom: number }) {
   return {
     tabBarActiveTintColor: enterpriseColors.primary,
     tabBarInactiveTintColor: enterpriseColors.gray600,
+    /** Height/padding handled by custom GrowerTabBar — avoid double spacing. */
     tabBarStyle: {
-      ...enterpriseUi.tabBar,
+      position: 'absolute',
+      backgroundColor: 'transparent',
+      borderTopWidth: 0,
+      elevation: 0,
       height: 58 + Math.max(insets.bottom, 6),
-      paddingBottom: Math.max(insets.bottom, 6),
     },
     tabBarLabelStyle: enterpriseUi.tabBarLabel,
     tabBarIconStyle: { marginTop: 0 },

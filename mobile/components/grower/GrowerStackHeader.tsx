@@ -33,11 +33,7 @@ export function GrowerStackHeader({ title, subtitle, onBack }: Props) {
         <Text style={growerUi.pageTitle} numberOfLines={2} accessibilityRole="header">
           {title}
         </Text>
-        {subtitle ? (
-          <Text style={growerUi.pageLead} numberOfLines={2}>
-            {subtitle}
-          </Text>
-        ) : null}
+        {subtitle ? <Text style={growerUi.pageLead}>{subtitle}</Text> : null}
       </View>
     </View>
   );

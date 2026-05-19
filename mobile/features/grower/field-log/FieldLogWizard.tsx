@@ -11,10 +11,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { useTranslation } from 'react-i18next';
-import { Camera, MapPin, Check, ScanLine, Sprout, ClipboardList } from 'lucide-react-native';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { Camera, MapPin, Check, ScanLine, Sprout } from 'lucide-react-native';
+import { enterpriseColors, enterpriseUi, enterpriseStyles } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import {
   useFieldLogData,
@@ -38,32 +39,69 @@ const activityLabelKey: Record<ActivityType, string> = {
 
 const MATERIAL_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'SPRAYING']);
 
-const STEP_ACCENTS = [enterpriseColors.gray600, enterpriseColors.primary, enterpriseColors.primary] as const;
-
-function StepChrome({
-  step,
-  icon,
-  title,
-}: {
-  step: number;
-  icon: React.ReactNode;
-  title: string;
-}) {
+function StepPanel({ step, title }: { step: number; title: string }) {
   const { t } = useTranslation();
   return (
-    <View style={[styles.stepChrome, { borderLeftColor: STEP_ACCENTS[step - 1] }]}>
-      <Text style={styles.stepFraction}>
-        {t('producer.fieldLogForm.farmerStepFraction', { step, total: STEPS })}
-      </Text>
-      <View style={styles.stepTitleRow}>
-        {icon}
-        <Text style={styles.stepTitle}>{title}</Text>
+    <View style={[enterpriseUi.authPanel, styles.stepPanel]}>
+      <View style={enterpriseStyles.stepAccent} />
+      <View style={styles.stepInner}>
+        <Text style={enterpriseUi.inAppSectionLabel}>
+          {t('producer.fieldLogForm.farmerStepFraction', { step, total: STEPS })}
+        </Text>
+        <Text style={enterpriseUi.inAppTitle}>{title}</Text>
       </View>
     </View>
   );
 }
 
-/** 1. Parcela → 2. Zasad (usev) → 3. Rad + slika */
+function SelectCard({
+  selected,
+  onPress,
+  title,
+  subtitle,
+  icon: Icon,
+}: {
+  selected: boolean;
+  onPress: () => void;
+  title: string;
+  subtitle?: string;
+  icon?: typeof MapPin;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.82}
+      style={[
+        enterpriseUi.inAppPanel,
+        styles.selectCard,
+        selected && styles.selectCardOn,
+      ]}
+    >
+      <View style={styles.selectRow}>
+        {Icon ? (
+          <View style={[enterpriseUi.navRowIcon, selected && styles.selectIconOn]}>
+            <Icon
+              size={20}
+              color={selected ? enterpriseColors.primary : enterpriseColors.gray600}
+              strokeWidth={1.5}
+            />
+          </View>
+        ) : null}
+        <View style={styles.selectCopy}>
+          <Text style={[enterpriseUi.navRowTitle, selected && styles.selectTitleOn]}>{title}</Text>
+          {subtitle ? (
+            <Text style={enterpriseUi.navRowSubtitle} numberOfLines={2}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+        {selected ? <Check size={22} color={enterpriseColors.primary} strokeWidth={2} /> : null}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+/** 1. Parcela → 2. Zasad → 3. Rad + slika + GPS */
 export default function FieldLogWizard() {
   const { t, i18n } = useTranslation();
   const [step, setStep] = useState(1);
@@ -103,8 +141,7 @@ export default function FieldLogWizard() {
     data.plansLoading ||
     (strictPlanting && (data.journalNotes.trim().length < PLANTING_NOTES_MIN || !growthStageReady)) ||
     (MATERIAL_ACTIVITIES.has(data.activityType as ActivityType) &&
-      Boolean(data.materialID.trim()) &&
-      data.materialValid === false);
+      (!data.materialID.trim() || data.materialValid !== true));
 
   const step1Ok = Boolean(data.selectedParcelId);
   const step2Ok = Boolean(data.selectedHarvestPlanId) && !data.plansLoading;
@@ -125,9 +162,19 @@ export default function FieldLogWizard() {
     } as never);
   };
 
+  const headerSubtitle = t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
+
+  const progressPct = step / STEPS;
+
   return (
     <View style={growerUi.canvas}>
-      <BioVeraSubpageHeader title={t('producer.tabs.fieldLog')} left="back" />
+      <GrowerStackHeader title={t('producer.tabs.fieldLog')} subtitle={headerSubtitle} />
+
+      <View style={styles.progressWrap}>
+        <View style={enterpriseUi.progressTrack}>
+          <View style={[enterpriseUi.progressFill, { width: `${progressPct * 100}%` }]} />
+        </View>
+      </View>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -136,7 +183,7 @@ export default function FieldLogWizard() {
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[growerUi.scrollContent, { paddingBottom: 110 }]}
+          contentContainerStyle={[growerUi.scrollContent, { paddingBottom: 120 }]}
           refreshControl={
             <RefreshControl
               refreshing={data.referenceRefreshing}
@@ -146,26 +193,20 @@ export default function FieldLogWizard() {
           }
         >
           {data.pendingFieldCount > 0 ? (
-            <TouchableOpacity
-              onPress={() => void data.syncQueueNow()}
-              disabled={data.queueSyncBusy}
-              style={styles.queuePill}
-            >
-              <Text style={styles.queuePillText}>
-                {t('producer.fieldLogForm.queuePill', { count: data.pendingFieldCount })}
-              </Text>
-              {data.queueSyncBusy ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.queuePillAction}>{t('producer.fieldLogForm.sendQueueNow')}</Text>
-              )}
-            </TouchableOpacity>
+            <EnterpriseNotice
+              title={t('producer.fieldLogForm.queuePill', { count: data.pendingFieldCount })}
+              body={t('producer.fieldLogForm.queueBannerShort', { count: data.pendingFieldCount })}
+              onPress={data.queueSyncBusy ? undefined : () => void data.syncQueueNow()}
+              actionLabel={
+                data.queueSyncBusy ? undefined : t('producer.fieldLogForm.sendQueueNow')
+              }
+            />
           ) : null}
 
           {step > 1 && selectedParcelOpt ? (
-            <View style={styles.contextPill}>
-              <MapPin size={16} color={enterpriseColors.primary} />
-              <Text style={styles.contextPillText} numberOfLines={1}>
+            <View style={[enterpriseUi.inAppPanel, styles.contextChip]}>
+              <MapPin size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+              <Text style={styles.contextText} numberOfLines={1}>
                 {selectedParcelOpt.parcel.cropType || selectedParcelOpt.parcel.id.slice(0, 8)}
                 {' · '}
                 {selectedParcelOpt.estate.name}
@@ -174,9 +215,9 @@ export default function FieldLogWizard() {
           ) : null}
 
           {step > 2 && selectedPlan ? (
-            <View style={[styles.contextPill, styles.contextPillGreen]}>
-              <Sprout size={16} color={enterpriseColors.primary} />
-              <Text style={styles.contextPillText} numberOfLines={1}>
+            <View style={[enterpriseUi.inAppPanel, styles.contextChip]}>
+              <Sprout size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+              <Text style={styles.contextText} numberOfLines={1}>
                 {selectedPlan.cropType || selectedPlan.label}
               </Text>
             </View>
@@ -184,41 +225,31 @@ export default function FieldLogWizard() {
 
           {step === 1 ? (
             <>
-              <StepChrome
-                step={1}
-                icon={<MapPin size={26} color={STEP_ACCENTS[0]} strokeWidth={2} />}
-                title={t('producer.fieldLogForm.farmerStepParcel')}
-              />
+              <StepPanel step={1} title={t('producer.fieldLogForm.farmerStepParcel')} />
               {data.approvedParcelOptions.length === 0 ? (
-                <TouchableOpacity
+                <SelectCard
+                  selected={false}
                   onPress={() => data.router.push('/(producer)/estates' as never)}
-                  style={styles.parcelCard}
-                >
-                  <Text style={styles.parcelCardTitle}>{t('producer.fieldLogForm.setupEstatesCta')}</Text>
-                </TouchableOpacity>
+                  title={t('producer.fieldLogForm.setupEstatesCta')}
+                  icon={MapPin}
+                />
               ) : (
                 data.approvedParcelOptions.map(({ parcel, estate }) => {
                   const sel = data.selectedParcelId === parcel.id;
                   const title =
                     parcel.cropType || t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) });
                   return (
-                    <TouchableOpacity
+                    <SelectCard
                       key={parcel.id}
+                      selected={sel}
                       onPress={() => {
                         data.setSelectedParcelId(parcel.id);
                         data.setSelectedHarvestPlanId('');
                       }}
-                      style={[styles.parcelCard, sel && styles.parcelCardOn]}
-                    >
-                      <View style={styles.parcelCardInner}>
-                        <MapPin size={22} color={sel ? '#fff' : STEP_ACCENTS[0]} strokeWidth={2} />
-                        <View style={{ flex: 1 }}>
-                          <Text style={[styles.parcelCardTitle, sel && styles.parcelCardTitleOn]}>{title}</Text>
-                          <Text style={[styles.parcelCardSub, sel && styles.parcelCardSubOn]}>{estate.name}</Text>
-                        </View>
-                        {sel ? <Check size={24} color="#fff" strokeWidth={2.5} /> : null}
-                      </View>
-                    </TouchableOpacity>
+                      title={title}
+                      subtitle={estate.name}
+                      icon={MapPin}
+                    />
                   );
                 })
               )}
@@ -227,47 +258,43 @@ export default function FieldLogWizard() {
 
           {step === 2 ? (
             <>
-              <StepChrome
-                step={2}
-                icon={<Sprout size={26} color={STEP_ACCENTS[1]} strokeWidth={2} />}
-                title={t('producer.fieldLogForm.farmerStepCrop')}
-              />
+              <StepPanel step={2} title={t('producer.fieldLogForm.farmerStepCrop')} />
               {data.plansLoading ? (
                 <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
               ) : data.parcelPlans.length === 0 ? (
-                <View style={styles.emptyCrop}>
-                  <Text style={styles.emptyCropText}>{t('producer.fieldLogForm.farmerNoPlanting')}</Text>
-                  <TouchableOpacity onPress={goAddPlanting} style={styles.addCropBtn}>
-                    <Sprout size={22} color="#fff" />
-                    <Text style={styles.addCropBtnText}>{t('producer.fieldLogForm.farmerAddPlanting')}</Text>
+                <View style={[enterpriseUi.authPanel, styles.emptyCrop]}>
+                  <Text style={enterpriseUi.inAppLead}>{t('producer.fieldLogForm.farmerNoPlanting')}</Text>
+                  <TouchableOpacity onPress={goAddPlanting} style={enterpriseUi.authBtnPrimary}>
+                    <View style={styles.addCropInner}>
+                      <Sprout size={20} color={enterpriseColors.white} strokeWidth={1.5} />
+                      <Text style={enterpriseUi.authBtnPrimaryText}>
+                        {t('producer.fieldLogForm.farmerAddPlanting')}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               ) : (
                 data.parcelPlans.map((plan) => {
                   const sel = data.selectedHarvestPlanId === plan.id;
-                  const isPlanting = plan.announcementType === 'PLANTING';
                   return (
-                    <TouchableOpacity
+                    <SelectCard
                       key={plan.id}
+                      selected={sel}
                       onPress={() => data.setSelectedHarvestPlanId(plan.id)}
-                      style={[styles.cropCard, sel && styles.cropCardOn]}
-                    >
-                      <Text style={[styles.cropName, sel && styles.cropNameOn]}>
-                        {plan.cropType || plan.label}
-                      </Text>
-                      <Text style={[styles.cropMeta, sel && styles.cropMetaOn]}>
-                        {isPlanting
+                      title={plan.cropType || plan.label}
+                      subtitle={
+                        plan.announcementType === 'PLANTING'
                           ? t('producer.fieldLogForm.farmerCropKindPlanting')
-                          : t('producer.fieldLogForm.farmerCropKindHarvest')}
-                      </Text>
-                      {sel ? <Check size={22} color="#fff" style={styles.cropCheck} /> : null}
-                    </TouchableOpacity>
+                          : t('producer.fieldLogForm.farmerCropKindHarvest')
+                      }
+                      icon={Sprout}
+                    />
                   );
                 })
               )}
               {data.parcelPlans.length > 0 ? (
-                <TouchableOpacity onPress={goAddPlanting} style={styles.linkAddCrop}>
-                  <Text style={styles.linkAddCropText}>+ {t('producer.fieldLogForm.farmerAddPlanting')}</Text>
+                <TouchableOpacity onPress={goAddPlanting} style={styles.linkAdd}>
+                  <Text style={styles.linkAddText}>+ {t('producer.fieldLogForm.farmerAddPlanting')}</Text>
                 </TouchableOpacity>
               ) : null}
             </>
@@ -275,11 +302,7 @@ export default function FieldLogWizard() {
 
           {step === 3 ? (
             <>
-              <StepChrome
-                step={3}
-                icon={<ClipboardList size={26} color={STEP_ACCENTS[2]} strokeWidth={2} />}
-                title={t('producer.fieldLogForm.farmerStepWork')}
-              />
+              <StepPanel step={3} title={t('producer.fieldLogForm.farmerStepWork')} />
 
               {data.gpsWarning ? (
                 <Text style={styles.gpsWarn}>{t('producer.fieldLogForm.gpsWarnShort')}</Text>
@@ -291,9 +314,9 @@ export default function FieldLogWizard() {
                   <TouchableOpacity
                     key={type.value}
                     onPress={() => data.setActivityType(type.value)}
-                    style={[styles.workBtn, sel && styles.workBtnOn]}
+                    style={[growerUi.filterChip, styles.workChip, sel && growerUi.filterChipOn]}
                   >
-                    <Text style={[styles.workBtnText, sel && styles.workBtnTextOn]}>
+                    <Text style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}>
                       {t(`producer.fieldLog.${activityLabelKey[type.value]}`)}
                     </Text>
                   </TouchableOpacity>
@@ -302,23 +325,35 @@ export default function FieldLogWizard() {
 
               {data.activityType ? (
                 <>
-                  <TouchableOpacity onPress={data.takePhoto} style={styles.heroBtn} activeOpacity={0.85}>
-                    <Camera size={30} color="#fff" strokeWidth={1.5} />
-                    <Text style={styles.heroBtnText}>
+                  <TouchableOpacity
+                    onPress={data.takePhoto}
+                    style={[enterpriseUi.authBtnPrimary, styles.photoBtn]}
+                    activeOpacity={0.88}
+                  >
+                    <Camera size={24} color={enterpriseColors.white} strokeWidth={1.5} />
+                    <Text style={[enterpriseUi.authBtnPrimaryText, styles.photoBtnText]}>
                       {data.photoUri
                         ? t('producer.fieldLogForm.photoLoaded')
                         : t('producer.fieldLogForm.farmerTapPhoto')}
                     </Text>
-                    {data.photoUri ? <Check size={24} color="#fff" strokeWidth={2} /> : null}
+                    {data.photoUri ? <Check size={22} color={enterpriseColors.white} strokeWidth={2} /> : null}
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     onPress={data.getCurrentLocation}
                     disabled={data.gpsLoading}
-                    style={[styles.gpsBtn, data.location && styles.gpsBtnOk]}
+                    style={[
+                      enterpriseUi.inAppPanel,
+                      styles.gpsRow,
+                      data.location && styles.gpsRowOk,
+                    ]}
                   >
-                    <MapPin size={22} color={data.location ? enterpriseColors.primary : enterpriseColors.gray900} />
-                    <Text style={styles.gpsBtnText}>
+                    <MapPin
+                      size={20}
+                      color={data.location ? enterpriseColors.primary : enterpriseColors.gray600}
+                      strokeWidth={1.5}
+                    />
+                    <Text style={enterpriseUi.navRowTitle}>
                       {data.location
                         ? t('producer.fieldLogForm.locationOk')
                         : t('producer.fieldLogForm.farmerTapGps')}
@@ -326,24 +361,24 @@ export default function FieldLogWizard() {
                     {data.gpsLoading ? (
                       <ActivityIndicator color={enterpriseColors.primary} />
                     ) : data.location ? (
-                      <Check size={20} color={enterpriseColors.primary} />
+                      <Check size={20} color={enterpriseColors.primary} strokeWidth={2} />
                     ) : null}
                   </TouchableOpacity>
 
                   <TouchableOpacity onPress={() => setShowOptional((v) => !v)} style={styles.optionalToggle}>
-                    <Text style={styles.optionalToggleText}>
+                    <Text style={enterpriseUi.inAppSectionLabel}>
                       {showOptional ? '▾' : '▸'} {t('producer.fieldLogForm.farmerOptional')}
                     </Text>
                   </TouchableOpacity>
 
                   {showOptional ? (
-                    <View style={styles.optionalBox}>
+                    <View style={[enterpriseUi.authPanel, styles.optionalBox]}>
                       {MATERIAL_ACTIVITIES.has(data.activityType as ActivityType) ? (
                         <TouchableOpacity
                           onPress={() => data.router.push('/(producer)/scanner')}
                           style={styles.scanRow}
                         >
-                          <ScanLine size={22} color={enterpriseColors.primary} />
+                          <ScanLine size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
                           <TextInput
                             style={styles.scanInput}
                             placeholder={t('producer.fieldLogForm.materialPlaceholder')}
@@ -354,7 +389,7 @@ export default function FieldLogWizard() {
                         </TouchableOpacity>
                       ) : null}
                       <TextInput
-                        style={styles.notesInput}
+                        style={[growerUi.formInput, styles.notesInput]}
                         value={data.journalNotes}
                         onChangeText={data.setJournalNotes}
                         placeholder={
@@ -388,11 +423,8 @@ export default function FieldLogWizard() {
 
         <View style={styles.footer}>
           {step > 1 ? (
-            <TouchableOpacity
-              onPress={() => setStep((s) => s - 1)}
-              style={styles.footerSecondary}
-            >
-              <Text style={styles.footerSecondaryText}>{t('producer.fieldLogForm.wizardBack')}</Text>
+            <TouchableOpacity onPress={() => setStep((s) => s - 1)} style={styles.footerBack}>
+              <Text style={styles.footerBackText}>{t('producer.fieldLogForm.wizardBack')}</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.footerSpacer} />
@@ -402,22 +434,27 @@ export default function FieldLogWizard() {
               onPress={() => setStep((s) => s + 1)}
               disabled={step === 1 ? !step1Ok : !step2Ok}
               style={[
+                enterpriseUi.authBtnPrimary,
                 styles.footerPrimary,
-                (step === 1 ? !step1Ok : !step2Ok) && { opacity: 0.45 },
+                (step === 1 ? !step1Ok : !step2Ok) && styles.footerDisabled,
               ]}
             >
-              <Text style={styles.footerPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
             </TouchableOpacity>
           ) : data.activityType ? (
             <TouchableOpacity
               onPress={() => void data.handleSubmit()}
               disabled={data.saveBusy}
-              style={[styles.footerPrimary, (data.saveBusy || submitBlocked) && { opacity: 0.55 }]}
+              style={[
+                enterpriseUi.authBtnPrimary,
+                styles.footerPrimary,
+                (data.saveBusy || submitBlocked) && styles.footerDisabled,
+              ]}
             >
               {data.saveBusy ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={enterpriseColors.white} />
               ) : (
-                <Text style={styles.footerPrimaryText}>{t('producer.fieldLogForm.farmerSave')}</Text>
+                <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerSave')}</Text>
               )}
             </TouchableOpacity>
           ) : (
@@ -430,159 +467,148 @@ export default function FieldLogWizard() {
 }
 
 const styles = StyleSheet.create({
-  stepChrome: {
-    borderLeftWidth: 5,
-    paddingLeft: 14,
-    marginBottom: 18,
-    marginTop: 4,
+  progressWrap: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    backgroundColor: enterpriseColors.canvas,
   },
-  stepFraction: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray600, marginBottom: 6 },
-  stepTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  stepTitle: { fontSize: 22, fontWeight: '800', color: enterpriseColors.gray900, flex: 1 },
-  contextPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+  stepPanel: {
+    marginBottom: 14,
+    overflow: 'hidden',
+    position: 'relative',
   },
-  contextPillGreen: { borderColor: `${enterpriseColors.primary}40`, backgroundColor: `${enterpriseColors.primary}08` },
-  contextPillText: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900, flex: 1 },
-  queuePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#B45309',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    minHeight: 48,
-    marginBottom: 12,
-    gap: 8,
+  stepInner: {
+    paddingLeft: 8,
   },
-  queuePillText: { color: '#fff', fontSize: 15, fontWeight: '600', flex: 1 },
-  queuePillAction: { color: '#fff', fontSize: 15, fontWeight: '700', textDecorationLine: 'underline' },
-  parcelCard: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#CBD5E1',
-    padding: 16,
+  selectCard: {
+    marginBottom: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     minHeight: 72,
-    marginBottom: 12,
   },
-  parcelCardOn: { backgroundColor: '#475569', borderColor: '#475569' },
-  parcelCardInner: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  parcelCardTitle: { fontSize: 20, fontWeight: '600', color: enterpriseColors.gray900 },
-  parcelCardTitleOn: { color: '#fff' },
-  parcelCardSub: { fontSize: 15, color: enterpriseColors.gray600, marginTop: 4 },
-  parcelCardSubOn: { color: 'rgba(255,255,255,0.85)' },
-  cropCard: {
-    backgroundColor: `${enterpriseColors.primary}0A`,
-    borderRadius: 16,
-    borderWidth: 2,
+  selectCardOn: {
     borderColor: enterpriseColors.primary,
-    padding: 18,
-    minHeight: 80,
-    marginBottom: 12,
-    justifyContent: 'center',
+    borderWidth: 1.5,
+    backgroundColor: enterpriseColors.primaryTint,
   },
-  cropCardOn: { backgroundColor: enterpriseColors.primary },
-  cropName: { fontSize: 22, fontWeight: '600', color: enterpriseColors.primary },
-  cropNameOn: { color: '#fff' },
-  cropMeta: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray600, marginTop: 6 },
-  cropMetaOn: { color: 'rgba(255,255,255,0.9)' },
-  cropCheck: { position: 'absolute', top: 14, right: 14 },
-  emptyCrop: { alignItems: 'center', paddingVertical: 20, gap: 16 },
-  emptyCropText: { fontSize: 17, color: enterpriseColors.gray600, textAlign: 'center', lineHeight: 24 },
-  addCropBtn: {
+  selectRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  selectIconOn: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.white,
+  },
+  selectCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  selectTitleOn: {
+    color: enterpriseColors.primary,
+  },
+  contextChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 14,
-    paddingHorizontal: 24,
-    minHeight: 60,
-    justifyContent: 'center',
-  },
-  addCropBtnText: { fontSize: 18, fontWeight: '600', color: '#fff' },
-  linkAddCrop: { paddingVertical: 12, alignItems: 'center' },
-  linkAddCropText: { fontSize: 17, fontWeight: '600', color: enterpriseColors.primary },
-  workBtn: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
-    minHeight: 58,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     marginBottom: 10,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
   },
-  workBtnOn: { backgroundColor: enterpriseColors.primary, borderColor: enterpriseColors.primary },
-  workBtnText: { fontSize: 17, fontWeight: '600', color: enterpriseColors.gray900, textAlign: 'center' },
-  workBtnTextOn: { color: '#fff' },
-  gpsWarn: { fontSize: 15, fontWeight: '600', color: '#B45309', marginBottom: 12 },
-  heroBtn: {
+  contextText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.15,
+  },
+  emptyCrop: {
+    alignItems: 'stretch',
+    gap: 16,
+    marginBottom: 12,
+  },
+  addCropInner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 16,
-    minHeight: 68,
-    marginTop: 8,
-    marginBottom: 10,
-    paddingHorizontal: 16,
+    gap: 10,
   },
-  heroBtnText: { fontSize: 18, fontWeight: '600', color: '#fff' },
-  gpsBtn: {
-    flexDirection: 'row',
+  linkAdd: {
+    paddingVertical: 12,
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
-    minHeight: 56,
-    paddingHorizontal: 16,
     marginBottom: 8,
   },
-  gpsBtnOk: { borderColor: enterpriseColors.primary },
-  gpsBtnText: { flex: 1, fontSize: 17, fontWeight: '600', color: enterpriseColors.gray900 },
-  optionalToggle: { paddingVertical: 10 },
-  optionalToggleText: { fontSize: 16, fontWeight: '600', color: enterpriseColors.gray600 },
-  optionalBox: { marginBottom: 8 },
+  linkAddText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+    letterSpacing: -0.2,
+  },
+  workChip: {
+    marginBottom: 10,
+    minHeight: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gpsWarn: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray700,
+    marginBottom: 12,
+    lineHeight: 21,
+  },
+  photoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  photoBtnText: {
+    flex: 0,
+  },
+  gpsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    minHeight: 56,
+    marginBottom: 8,
+  },
+  gpsRowOk: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
+  optionalToggle: {
+    paddingVertical: 10,
+    marginBottom: 4,
+  },
+  optionalBox: {
+    marginBottom: 8,
+    gap: 4,
+  },
   scanRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    paddingHorizontal: 12,
-    minHeight: 52,
+    gap: 10,
     marginBottom: 8,
-    gap: 8,
   },
-  scanInput: { flex: 1, fontSize: 17, color: enterpriseColors.gray900 },
-  notesInput: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    padding: 12,
-    fontSize: 17,
-    minHeight: 72,
-    textAlignVertical: 'top',
+  scanInput: {
+    flex: 1,
+    fontSize: 16,
     color: enterpriseColors.gray900,
+    minHeight: 44,
+  },
+  notesInput: {
+    marginBottom: 0,
+    minHeight: 88,
+    textAlignVertical: 'top',
   },
   saveHint: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '400',
     color: enterpriseColors.gray600,
     textAlign: 'center',
     marginTop: 12,
@@ -602,24 +628,28 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
   },
-  footerSpacer: { width: 72 },
+  footerSpacer: {
+    width: 88,
+  },
   footerPrimary: {
     flex: 1,
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 14,
-    minHeight: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  footerPrimaryText: { fontSize: 18, fontWeight: '600', color: '#fff' },
-  footerSecondary: {
-    minHeight: 56,
-    paddingHorizontal: 16,
+  footerDisabled: {
+    opacity: 0.5,
+  },
+  footerBack: {
+    minHeight: 52,
+    paddingHorizontal: 18,
     justifyContent: 'center',
-    borderRadius: 14,
-    borderWidth: 2,
+    borderRadius: 12,
+    borderWidth: 1,
     borderColor: enterpriseColors.gray200,
     backgroundColor: enterpriseColors.white,
   },
-  footerSecondaryText: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900 },
+  footerBackText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.2,
+  },
 });

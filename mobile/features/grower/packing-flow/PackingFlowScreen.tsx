@@ -1,9 +1,5 @@
 /**
  * Packing Flow – Step-by-step wizard
- * Step 1: Manual (Packaging instructions)
- * Step 2: Camera (Photo crates + Final quality check – top layer, no mold/foreign bodies)
- * Step 3: GPS/Timestamp (Automatic log)
- * + Batch Sticker Scan: Bio Vera QR on pallet (farmer confirms they packed it)
  */
 
 import React, { useState } from 'react';
@@ -18,32 +14,28 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  FileText,
-  Camera,
-  MapPin,
-  ChevronRight,
-  Check,
-  ArrowLeft,
-} from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FileText, Camera, MapPin, Check } from 'lucide-react-native';
+import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import StepInstructions from './StepInstructions';
 import StepCamera from './StepCamera';
 import StepGps, { type GpsCapturePayload } from './StepGps';
-import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import { batchesAPI } from '../../../lib/api';
-import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 
 const STEPS = [
   { id: 'instructions', icon: FileText, titleKey: 'packingFlow.step1.title' },
   { id: 'camera', icon: Camera, titleKey: 'packingFlow.step2.title' },
   { id: 'gps', icon: MapPin, titleKey: 'packingFlow.step3.title' },
-];
+] as const;
 
 export default function PackingFlowScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const p = useBioVeraScreenPadding();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ batchId?: string }>();
   const [step, setStep] = useState(0);
   const [instructionsViewed, setInstructionsViewed] = useState(false);
@@ -69,7 +61,7 @@ export default function PackingFlowScreen() {
     if (step < STEPS.length - 1) {
       setStep((s) => s + 1);
     } else {
-      handleSubmit();
+      void handleSubmit();
     }
   };
 
@@ -82,18 +74,10 @@ export default function PackingFlowScreen() {
     else router.back();
   };
 
-  const finishAndLeave = () => {
-    router.back();
-  };
-
   const handleSubmit = async () => {
     setSubmitting(true);
     if (!batchRef) {
-      Alert.alert(
-        t('alerts.warning'),
-        t('packingFlow.needBatch'),
-        [{ text: t('common.ok') }],
-      );
+      Alert.alert(t('alerts.warning'), t('packingFlow.needBatch'), [{ text: t('common.ok') }]);
       setSubmitting(false);
       return;
     }
@@ -129,57 +113,40 @@ export default function PackingFlowScreen() {
   };
 
   const footerPadding = {
-    paddingBottom: p.bottomInset + theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingLeft: Math.max(theme.spacing.md, p.screenPaddingLeft),
-    paddingRight: Math.max(theme.spacing.md, p.screenPaddingRight),
+    paddingBottom: Math.max(insets.bottom, 12) + 12,
+    paddingHorizontal: 20,
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header — same top inset as BioVeraSubpageHeader (notch/status bar safe) */}
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: p.headerTop,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-          },
-        ]}
-      >
-        <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
-          <ArrowLeft size={24} color={theme.colors.text.primary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('packingFlow.title')}</Text>
-      </View>
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader title={t('packingFlow.title')} onBack={handleBack} />
 
       {!flowComplete && !batchRef ? (
-        <View style={styles.needBatchRibbon}>
-          <Text style={styles.needBatchRibbonText}>{t('packingFlow.needBatchBanner')}</Text>
+        <View style={styles.noticeWrap}>
+          <EnterpriseNotice title={t('packingFlow.needBatchBanner')} />
         </View>
       ) : null}
 
       {flowComplete ? (
         <>
           <ScrollView
-            style={styles.content}
-            contentContainerStyle={[styles.contentInner, styles.successScroll]}
+            style={styles.flex}
+            contentContainerStyle={[growerUi.scrollContent, styles.successScroll]}
             keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
             <View style={styles.successIconWrap}>
-              <Check size={40} color="#fff" strokeWidth={2.5} />
+              <Check size={40} color={enterpriseColors.white} strokeWidth={2.5} />
             </View>
-            <Text style={styles.successTitle}>{t('packingFlow.successTitle')}</Text>
-            <Text style={styles.successBody}>
+            <Text style={growerUi.pageTitle}>{t('packingFlow.successTitle')}</Text>
+            <Text style={[growerUi.pageLead, styles.successBody]}>
               {successPhotosSaved ? t('packingFlow.successBodyWithPhotos') : t('packingFlow.successBodyLocationOnly')}
             </Text>
-            <Text style={styles.successHint}>{t('packingFlow.successHint')}</Text>
+            <Text style={enterpriseUi.navRowSubtitle}>{t('packingFlow.successHint')}</Text>
           </ScrollView>
           <View style={[styles.footer, footerPadding]}>
-            <TouchableOpacity style={styles.nextBtn} onPress={finishAndLeave} activeOpacity={0.85}>
-              <Text style={styles.nextBtnText}>{t('packingFlow.finishButton')}</Text>
-              <ChevronRight size={20} color="#fff" />
+            <TouchableOpacity style={enterpriseUi.authBtnPrimary} onPress={handleBack} activeOpacity={0.88}>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('packingFlow.finishButton')}</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -192,16 +159,26 @@ export default function PackingFlowScreen() {
               const active = i === step;
               return (
                 <View key={s.id} style={styles.stepDotWrap}>
-                  <View style={[styles.stepDot, done && styles.stepDotDone, active && styles.stepDotActive]}>
+                  <View
+                    style={[
+                      styles.stepDot,
+                      done && styles.stepDotDone,
+                      active && !done && styles.stepDotActive,
+                    ]}
+                  >
                     {done ? (
-                      <Check size={16} color="#fff" strokeWidth={2} />
+                      <Check size={16} color={enterpriseColors.white} strokeWidth={2} />
                     ) : (
-                      <Icon size={16} color={active ? theme.colors.primary : theme.colors.text.tertiary} />
+                      <Icon
+                        size={16}
+                        color={active ? enterpriseColors.primary : enterpriseColors.gray600}
+                        strokeWidth={1.5}
+                      />
                     )}
                   </View>
-                  {i < STEPS.length - 1 && (
+                  {i < STEPS.length - 1 ? (
                     <View style={[styles.stepLine, i < step && styles.stepLineDone]} />
-                  )}
+                  ) : null}
                 </View>
               );
             })}
@@ -209,46 +186,45 @@ export default function PackingFlowScreen() {
           <Text style={styles.stepLabel}>{t(STEPS[step].titleKey)}</Text>
 
           <ScrollView
-            style={styles.content}
+            style={styles.flex}
             contentContainerStyle={styles.contentInner}
             keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {currentStepId === 'instructions' && (
+            {currentStepId === 'instructions' ? (
               <StepInstructions onViewed={() => setInstructionsViewed(true)} />
-            )}
-            {currentStepId === 'camera' && (
+            ) : null}
+            {currentStepId === 'camera' ? (
               <StepCamera
                 photoUri={photoUri}
                 qualityPhotoUri={qualityPhotoUri}
                 onPhotoTaken={setPhotoUri}
                 onQualityPhotoTaken={setQualityPhotoUri}
               />
-            )}
-            {currentStepId === 'gps' && (
+            ) : null}
+            {currentStepId === 'gps' ? (
               <StepGps
                 onCaptured={(capture) => {
                   setGpsPayload(capture);
                   setGpsCaptured(true);
                 }}
               />
-            )}
+            ) : null}
           </ScrollView>
 
           <View style={[styles.footer, footerPadding]}>
             <TouchableOpacity
-              style={[styles.nextBtn, (!canProceed || submitting) && styles.nextBtnDisabled]}
+              style={[enterpriseUi.authBtnPrimary, styles.nextBtn, (!canProceed || submitting) && styles.nextBtnDisabled]}
               onPress={handleNext}
               disabled={!canProceed || submitting}
+              activeOpacity={0.88}
             >
               {submitting ? (
-                <ActivityIndicator color="#fff" size="small" />
+                <ActivityIndicator color={enterpriseColors.white} size="small" />
               ) : (
-                <>
-                  <Text style={styles.nextBtnText}>
-                    {step < STEPS.length - 1 ? t('common.next') : t('packingFlow.submit')}
-                  </Text>
-                  <ChevronRight size={20} color="#fff" />
-                </>
+                <Text style={enterpriseUi.authBtnPrimaryText}>
+                  {step < STEPS.length - 1 ? t('common.next') : t('packingFlow.submit')}
+                </Text>
               )}
             </TouchableOpacity>
           </View>
@@ -259,117 +235,93 @@ export default function PackingFlowScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: theme.spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  needBatchRibbon: {
-    backgroundColor: `${theme.colors.warning}24`,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.border,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-  },
-  needBatchRibbonText: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: theme.colors.text.primary,
-    lineHeight: 20,
-    textAlign: 'center',
+  flex: { flex: 1 },
+  noticeWrap: {
+    paddingHorizontal: 20,
+    paddingBottom: 8,
   },
   successScroll: {
     alignItems: 'center',
-    paddingTop: theme.spacing.xl,
+    paddingTop: 24,
   },
   successIconWrap: {
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: theme.colors.success,
+    backgroundColor: enterpriseColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing.lg,
-  },
-  successTitle: {
-    ...theme.typography.h3,
-    color: theme.colors.text.primary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: 20,
   },
   successBody: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: theme.colors.text.secondary,
     textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: theme.spacing.md,
-    paddingHorizontal: theme.spacing.sm,
+    marginBottom: 12,
   },
-  successHint: {
-    fontSize: 14,
-    fontWeight: '300',
-    color: theme.colors.text.tertiary,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: theme.spacing.sm,
-  },
-  backBtn: { padding: theme.spacing.sm, marginRight: theme.spacing.sm },
-  headerTitle: { ...theme.typography.h3, color: theme.colors.text.primary },
   stepper: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    backgroundColor: enterpriseColors.white,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
   },
-  stepDotWrap: { flexDirection: 'row', alignItems: 'center' },
+  stepDotWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   stepDot: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: enterpriseColors.white,
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: enterpriseColors.gray200,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepDotDone: { backgroundColor: theme.colors.success, borderColor: theme.colors.success },
-  stepDotActive: { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight },
+  stepDotDone: {
+    backgroundColor: enterpriseColors.primary,
+    borderColor: enterpriseColors.primary,
+  },
+  stepDotActive: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
   stepLine: {
     width: 40,
     height: 2,
-    backgroundColor: theme.colors.border,
+    backgroundColor: enterpriseColors.gray200,
     marginHorizontal: 4,
   },
-  stepLineDone: { backgroundColor: theme.colors.success },
-  stepLabel: {
-    ...theme.typography.body,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.md,
+  stepLineDone: {
+    backgroundColor: enterpriseColors.primary,
   },
-  content: { flex: 1 },
-  contentInner: { padding: theme.spacing.md, paddingBottom: theme.spacing['2xl'] },
+  stepLabel: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    textAlign: 'center',
+    marginVertical: 12,
+    paddingHorizontal: 20,
+  },
+  contentInner: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
   footer: {
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
   },
   nextBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    minHeight: 52,
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 16,
-    borderRadius: theme.borderRadius.md,
-    minHeight: 56,
+    alignItems: 'center',
   },
-  nextBtnDisabled: { opacity: 0.5 },
-  nextBtnText: { fontSize: 18, fontWeight: '600', color: '#fff' },
+  nextBtnDisabled: {
+    opacity: 0.5,
+  },
 });

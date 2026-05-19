@@ -1,6 +1,12 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ComplianceService } from '../compliance/compliance.service';
+import {
+  MaterialBarcodeValidationService,
+  materialKindForFieldEntry,
+} from '../compliance/material-barcode-validation.service';
+import { GrowthLogTreatmentSyncService } from '../treatment-logs/growth-log-treatment-sync.service';
+import { SmartLockService } from '../smart-lock/smart-lock.service';
 import { GeometryUtil, type Point } from '../common/utils/geometry.util';
 import * as crypto from 'crypto';
 
@@ -18,6 +24,9 @@ export class SyncService {
   constructor(
     private prisma: PrismaService,
     private complianceService: ComplianceService,
+    private materialBarcodeValidation: MaterialBarcodeValidationService,
+    private growthLogTreatmentSync: GrowthLogTreatmentSyncService,
+    private smartLockService: SmartLockService,
   ) {}
 
   /** Normalize estate `polygonCoordinates` JSON to { lat, lng }[] for point-in-polygon. */
@@ -222,6 +231,58 @@ export class SyncService {
           });
         } catch (error) {
           this.logger.warn('ComplianceLog model not found. Entry logged but not persisted.', error);
+        }
+
+        const dataExtra = entry.data as { parcelId?: string; parcel_id?: string };
+        const syncParcelId =
+          typeof dataExtra.parcelId === 'string'
+            ? dataExtra.parcelId.trim()
+            : typeof dataExtra.parcel_id === 'string'
+              ? dataExtra.parcel_id.trim()
+              : '';
+
+        if (
+          entry.type === 'SETVA' &&
+          entry.seedSerialNumber?.trim() &&
+          syncParcelId &&
+          entry.data.location?.lat != null &&
+          entry.data.location?.lng != null
+        ) {
+          try {
+            await this.smartLockService.ensureSeedLinkedToParcel({
+              inputSerialNumber: entry.seedSerialNumber.trim(),
+              userId,
+              parcelId: syncParcelId,
+              gpsLatitude: entry.data.location.lat,
+              gpsLongitude: entry.data.location.lng,
+              deviceId: entry.deviceId || entry.deviceFingerprint,
+            });
+          } catch (linkErr: unknown) {
+            const reason = linkErr instanceof Error ? linkErr.message : 'Seed link to parcel failed';
+            result.failed++;
+            result.failedEntries.push({ id: entry.id || 'unknown', reason });
+            continue;
+          }
+        }
+
+        if (
+          entry.type === 'PRSKANJE' &&
+          entry.fertilizerBarcode?.trim() &&
+          entry.data.location?.lat != null &&
+          entry.data.location?.lng != null
+        ) {
+          if (syncParcelId) {
+            await this.growthLogTreatmentSync.recordPesticideApplication({
+              userId,
+              parcelId: syncParcelId,
+              materialBarcode: entry.fertilizerBarcode.trim(),
+              deviceTimestamp: entryDate,
+              gpsLatitude: entry.data.location.lat,
+              gpsLongitude: entry.data.location.lng,
+              deviceId: entry.deviceId || entry.deviceFingerprint,
+              notes: entry.data.notes,
+            });
+          }
         }
 
         result.synced++;

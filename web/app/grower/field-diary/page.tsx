@@ -142,11 +142,10 @@ export default function GrowerFieldDiaryPage() {
             description={t('growerPages.fieldDiaryPageLead')}
           />
 
-          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#2D5A27]/[0.07] px-4 py-4 space-y-2 text-base text-gray-900">
+          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#2D5A27]/[0.07] px-4 py-3 text-base text-gray-900">
             <p className="font-semibold text-[#1a3817]">{t('growerPages.fieldDiarySyncedTitle')}</p>
-            <p className="text-gray-700 font-light leading-relaxed">{t('growerPages.fieldDiarySyncedBody')}</p>
-            <p className="text-gray-700 font-light border-t border-[#2D5A27]/15 pt-3 mt-2 leading-relaxed">
-              {t('growerPages.fieldDiaryMobileEntryHint')}
+            <p className="mt-1 text-gray-700 font-light leading-snug">
+              {t('growerPages.fieldDiarySyncedBody')} {t('growerPages.fieldDiaryMobileEntryHint')}
             </p>
           </div>
 

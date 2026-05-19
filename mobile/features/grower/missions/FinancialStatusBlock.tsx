@@ -1,14 +1,13 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Euro } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { MissionDetailSection } from './MissionDetailSection';
 
 interface FinancialStatusBlockProps {
   financial: {
     totalAmount?: number;
-    /** @deprecated use paidAmount */
     farmerPayout?: number;
     paidAmount?: number;
     pendingAmount?: number;
@@ -19,10 +18,20 @@ interface FinancialStatusBlockProps {
   } | null;
 }
 
+function MoneyRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <View style={styles.moneyRow}>
+      <Text style={enterpriseUi.navRowSubtitle}>{label}</Text>
+      <Text style={[enterpriseUi.navRowTitle, accent && { color: enterpriseColors.primary }]}>{value}</Text>
+    </View>
+  );
+}
+
 export default function FinancialStatusBlock({ financial }: FinancialStatusBlockProps) {
   const { t } = useTranslation();
   const priceLocale = useAppLocaleTag();
   if (!financial) return null;
+
   const released =
     typeof financial.paidAmount === 'number'
       ? financial.paidAmount
@@ -31,147 +40,37 @@ export default function FinancialStatusBlock({ financial }: FinancialStatusBlock
         : null;
   const inEscrow = financial.inEscrowAmount ?? 0;
   const statusLine =
-    financial.paymentStatusMessage ||
-    financial.paymentStatus ||
-    financial.status ||
-    '';
+    financial.paymentStatusMessage || financial.paymentStatus || financial.status || '';
+
+  const fmt = (n: number) =>
+    n.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' });
 
   return (
-    <View
-      style={{
-        backgroundColor: colors.background,
-        borderRadius: theme.borderRadius.md,
-        padding: theme.spacing.md,
-        borderWidth: 0.5,
-        borderColor: colors.border,
-      }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-        <Euro size={18} color={colors.text.primary} strokeWidth={1} />
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: '300',
-            color: colors.text.primary,
-            marginLeft: theme.spacing.xs,
-            letterSpacing: 0.3,
-          }}
-        >
-          {t('producer.missions.financialStatus')}
-        </Text>
-      </View>
-      {financial.totalAmount != null && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: theme.spacing.xs,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.secondary,
-            }}
-          >
-            {t('producer.missions.total')}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.primary,
-            }}
-          >
-            {financial.totalAmount.toLocaleString(priceLocale, {
-              style: 'currency',
-              currency: 'EUR',
-            })}
-          </Text>
-        </View>
-      )}
-      {released != null && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: theme.spacing.xs,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.secondary,
-            }}
-          >
-            {t('producer.missions.financialReleased')}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.primary,
-            }}
-          >
-            {released.toLocaleString(priceLocale, {
-              style: 'currency',
-              currency: 'EUR',
-            })}
-          </Text>
-        </View>
-      )}
-      {inEscrow > 0 && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: theme.spacing.xs,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.secondary,
-            }}
-          >
-            {t('producer.missions.financialInEscrow')}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.primary,
-            }}
-          >
-            {inEscrow.toLocaleString(priceLocale, {
-              style: 'currency',
-              currency: 'EUR',
-            })}
-          </Text>
-        </View>
-      )}
-      {statusLine !== '' && (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: theme.spacing.xs,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: '300',
-              color: colors.text.secondary,
-            }}
-          >
-            {statusLine}
-          </Text>
-        </View>
-      )}
-    </View>
+    <MissionDetailSection title={t('producer.missions.financialStatus')} icon={Euro}>
+      {financial.totalAmount != null ? (
+        <MoneyRow label={t('producer.missions.total')} value={fmt(financial.totalAmount)} />
+      ) : null}
+      {released != null ? (
+        <MoneyRow label={t('producer.missions.financialReleased')} value={fmt(released)} accent />
+      ) : null}
+      {inEscrow > 0 ? (
+        <MoneyRow label={t('producer.missions.financialInEscrow')} value={fmt(inEscrow)} />
+      ) : null}
+      {statusLine !== '' ? (
+        <Text style={[enterpriseUi.navRowSubtitle, styles.statusLine]}>{statusLine}</Text>
+      ) : null}
+    </MissionDetailSection>
   );
 }
+
+const styles = StyleSheet.create({
+  moneyRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+  },
+  statusLine: {
+    marginTop: 4,
+  },
+});

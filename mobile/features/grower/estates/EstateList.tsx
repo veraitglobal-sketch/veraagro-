@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, Edit, Trash2, Package } from 'lucide-react-native';
 import type { Estate } from '../../../lib/api';
@@ -7,7 +7,8 @@ import { growerUi, growerStyles } from '../../../lib/grower-ui';
 
 export interface EstateListProps {
   estates: Estate[];
-  loading: boolean;
+  /** False until dashboard/cache has been checked — avoids empty-state flash. */
+  ready: boolean;
   getStatusColor: (status: string) => string;
   getStatusLabel: (status: string) => string;
   onPressEstate: (estate: Estate) => void;
@@ -18,7 +19,7 @@ export interface EstateListProps {
 
 export function EstateList({
   estates,
-  loading,
+  ready,
   getStatusColor,
   getStatusLabel,
   onPressEstate,
@@ -28,13 +29,8 @@ export function EstateList({
 }: EstateListProps) {
   const { t } = useTranslation();
 
-  if (loading && estates.length === 0) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="small" color={enterpriseColors.primary} />
-        <Text style={styles.loadingText}>{t('producer.estates.loading')}</Text>
-      </View>
-    );
+  if (!ready) {
+    return null;
   }
 
   if (estates.length === 0) {
@@ -84,7 +80,7 @@ export function EstateList({
                   <Edit size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={(e) => onDelete(estate, e)} hitSlop={8} accessibilityRole="button">
-                  <Trash2 size={20} color="#B91C1C" strokeWidth={1.75} />
+                  <Trash2 size={20} color={enterpriseColors.destructive} strokeWidth={1.75} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -127,15 +123,6 @@ export function EstateList({
 }
 
 const styles = StyleSheet.create({
-  loading: {
-    paddingVertical: 48,
-    alignItems: 'center',
-    gap: 12,
-  },
-  loadingText: {
-    fontSize: 14,
-    color: enterpriseColors.gray600,
-  },
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',

@@ -1,13 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { ShieldAlert } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
-import { materialsAPI } from '../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { materialsAPI } from '../../../lib/api';
 
 const BANNED_CACHE_KEY = 'banned_substances_cache';
-const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
 
 const DEFAULT_BANNED_KEYS: { title: string; desc: string }[] = [
   { title: 'producer.bannedSubstances.defSyntheticTitle', desc: 'producer.bannedSubstances.defSyntheticDesc' },
@@ -18,7 +22,9 @@ const DEFAULT_BANNED_KEYS: { title: string; desc: string }[] = [
 
 export default function BannedSubstancesScreen() {
   const { t } = useTranslation();
-  const [allowedList, setAllowedList] = useState<{ barcode?: string; name?: string }[]>([]);
+  const router = useRouter();
+  const p = useBioVeraScreenPadding();
+  const [allowedList, setAllowedList] = useState<{ barcode?: string; name?: string; productName?: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -28,15 +34,17 @@ export default function BannedSubstancesScreen() {
       setAllowedList(list || []);
       await AsyncStorage.setItem(
         BANNED_CACHE_KEY,
-        JSON.stringify({ data: list || [], at: Date.now() })
+        JSON.stringify({ data: list || [], at: Date.now() }),
       );
-    } catch (_) {
+    } catch {
       const cached = await AsyncStorage.getItem(BANNED_CACHE_KEY);
       if (cached) {
         try {
           const { data } = JSON.parse(cached);
           setAllowedList(Array.isArray(data) ? data : []);
-        } catch (_2) {}
+        } catch {
+          /* ignore */
+        }
       }
     } finally {
       setLoading(false);
@@ -45,78 +53,127 @@ export default function BannedSubstancesScreen() {
   }, []);
 
   React.useEffect(() => {
-    load();
+    void load();
   }, [load]);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    load();
+    await load();
+  }, [load]);
+
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/field');
+    }
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    >
-      <View style={styles.header}>
-        <ShieldAlert size={28} color={theme.colors.warning} strokeWidth={1.5} />
-        <Text style={styles.title}>{t('producer.bannedSubstances.title')}</Text>
-        <Text style={styles.subtitle}>{t('producer.bannedSubstances.subtitle')}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('producer.bannedSubstances.whatIsBanned')}</Text>
-        {DEFAULT_BANNED_KEYS.map((row) => (
-          <View key={row.title} style={styles.card}>
-            <Text style={styles.cardTitle}>{t(row.title)}</Text>
-            <Text style={styles.cardDesc}>{t(row.desc)}</Text>
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader
+        title={t('producer.bannedSubstances.title')}
+        subtitle={t('producer.bannedSubstances.subtitle')}
+        onBack={goBack}
+      />
+      <EnterpriseScreen
+        refreshing={refreshing}
+        onRefresh={() => void onRefresh()}
+        contentPaddingBottom={Math.max(p.bottomInset, 20) + 12}
+      >
+        <View style={growerUi.scrollContent}>
+          <View style={[enterpriseUi.inAppPanel, styles.intro]}>
+            <ShieldAlert size={24} color={enterpriseColors.primary} strokeWidth={1.5} />
+            <Text style={styles.introText}>{t('producer.bannedSubstances.subtitle')}</Text>
           </View>
-        ))}
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('producer.bannedSubstances.allowedSubstances')}</Text>
-        {loading && allowedList.length === 0 ? (
-          <Text style={styles.hint}>{t('producer.bannedSubstances.loading')}</Text>
-        ) : allowedList.length === 0 ? (
-          <Text style={styles.hint}>{t('producer.bannedSubstances.noCache')}</Text>
-        ) : (
-          allowedList.slice(0, 30).map((a, i) => (
-            <View key={i} style={styles.allowedRow}>
-              <Text style={styles.allowedBarcode}>{a.barcode || '—'}</Text>
-              <Text style={styles.allowedName} numberOfLines={1}>{(a as any).name ?? (a as any).productName ?? '—'}</Text>
+          <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.bannedSubstances.whatIsBanned')}</Text>
+          {DEFAULT_BANNED_KEYS.map((row) => (
+            <View key={row.title} style={[enterpriseUi.inAppPanel, styles.card]}>
+              <Text style={enterpriseUi.navRowTitle}>{t(row.title)}</Text>
+              <Text style={enterpriseUi.navRowSubtitle}>{t(row.desc)}</Text>
             </View>
-          ))
-        )}
-        {allowedList.length > 30 && (
-          <Text style={styles.hint}>{t('producer.bannedSubstances.moreItems', { count: allowedList.length - 30 })}</Text>
-        )}
-      </View>
-    </ScrollView>
+          ))}
+
+          <Text style={[enterpriseUi.inAppSectionLabel, styles.sectionGap]}>
+            {t('producer.bannedSubstances.allowedSubstances')}
+          </Text>
+          {loading && allowedList.length === 0 ? (
+            <Text style={enterpriseUi.navRowSubtitle}>{t('producer.bannedSubstances.loading')}</Text>
+          ) : allowedList.length === 0 ? (
+            <View style={growerUi.emptyCard}>
+              <Text style={enterpriseUi.navRowSubtitle}>{t('producer.bannedSubstances.noCache')}</Text>
+            </View>
+          ) : (
+            <View style={[enterpriseUi.inAppPanel, styles.listPanel]}>
+              {allowedList.slice(0, 30).map((a, i) => (
+                <View
+                  key={`${a.barcode ?? i}-${i}`}
+                  style={[styles.allowedRow, i > 0 && styles.allowedRowBorder]}
+                >
+                  <Text style={styles.allowedBarcode}>{a.barcode || '—'}</Text>
+                  <Text style={enterpriseUi.navRowTitle} numberOfLines={1}>
+                    {a.name ?? a.productName ?? '—'}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+          {allowedList.length > 30 ? (
+            <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>
+              {t('producer.bannedSubstances.moreItems', { count: allowedList.length - 30 })}
+            </Text>
+          ) : null}
+        </View>
+      </EnterpriseScreen>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  content: { padding: theme.spacing.md, paddingBottom: theme.spacing['2xl'] },
-  header: { marginBottom: theme.spacing.lg },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary, marginTop: 8 },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: 4 },
-  section: { marginBottom: theme.spacing.xl },
-  sectionTitle: { ...theme.typography.body, fontWeight: '600', color: theme.colors.text.primary, marginBottom: theme.spacing.sm },
-  card: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.warning,
+  intro: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    padding: 16,
+    marginBottom: 20,
   },
-  cardTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text.primary },
-  cardDesc: { fontSize: 14, color: theme.colors.text.secondary, marginTop: 4 },
-  allowedRow: { flexDirection: 'row', paddingVertical: 8, borderBottomWidth: 0.5, borderBottomColor: theme.colors.border },
-  allowedBarcode: { width: 100, fontSize: 13, color: theme.colors.text.tertiary },
-  allowedName: { flex: 1, fontSize: 14, color: theme.colors.text.primary },
-  hint: { fontSize: 13, color: theme.colors.text.tertiary, marginTop: 8 },
+  introText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '400',
+    color: enterpriseColors.gray700,
+    lineHeight: 22,
+  },
+  card: {
+    padding: 16,
+    marginBottom: 10,
+  },
+  sectionGap: {
+    marginTop: 8,
+    marginBottom: 10,
+  },
+  listPanel: {
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+  },
+  allowedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    gap: 12,
+  },
+  allowedRowBorder: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+  },
+  allowedBarcode: {
+    width: 96,
+    fontSize: 13,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+  },
+  hint: {
+    marginTop: 10,
+  },
 });

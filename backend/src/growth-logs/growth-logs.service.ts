@@ -6,12 +6,23 @@ import { CryptoUtil } from '../common/utils/crypto.util';
 import {
   getPlantingProgressNotesMinLength,
 } from '../harvest-announcements/planting-progress.util';
+import {
+  MaterialBarcodeValidationService,
+  type GrowerMaterialKind,
+} from '../compliance/material-barcode-validation.service';
+import { GrowthLogTreatmentSyncService } from '../treatment-logs/growth-log-treatment-sync.service';
+import { SmartLockService } from '../smart-lock/smart-lock.service';
+
+const MATERIAL_KINDS = new Set<GrowerMaterialKind>(['SEED', 'FERTILIZER', 'PESTICIDE']);
 
 @Injectable()
 export class GrowthLogsService {
   constructor(
     private prisma: PrismaService,
     private antiFraudService: AntiFraudService,
+    private materialBarcodeValidation: MaterialBarcodeValidationService,
+    private growthLogTreatmentSync: GrowthLogTreatmentSyncService,
+    private smartLockService: SmartLockService,
   ) {}
 
   async create(userId: string, data: {
@@ -26,6 +37,10 @@ export class GrowthLogsService {
     deviceTimestamp: Date | string;
     notes?: string;
     growthStage?: string;
+    materialBarcode?: string;
+    materialKind?: string;
+    /** When true, materialBarcode + materialKind are required (setva / đubrivo / prskanje). */
+    requiresMaterialBarcode?: boolean;
   }) {
     const deviceTimestamp =
       data.deviceTimestamp instanceof Date
@@ -93,6 +108,40 @@ export class GrowthLogsService {
       }
     }
 
+    const requiresMaterial =
+      data.requiresMaterialBarcode === true ||
+      (typeof data.materialKind === 'string' && MATERIAL_KINDS.has(data.materialKind as GrowerMaterialKind));
+
+    const materialBarcode = data.materialBarcode?.trim().replace(/\s+/g, '') ?? '';
+    const materialKindRaw = data.materialKind?.trim().toUpperCase() ?? '';
+
+    if (requiresMaterial) {
+      if (!materialBarcode) {
+        throw new BadRequestException(
+          'Material barcode is required for planting, fertilizing, and spraying entries.',
+        );
+      }
+      if (!MATERIAL_KINDS.has(materialKindRaw as GrowerMaterialKind)) {
+        throw new BadRequestException('Material kind must be SEED, FERTILIZER, or PESTICIDE.');
+      }
+      await this.materialBarcodeValidation.assertValidForGrower(
+        userId,
+        materialBarcode,
+        materialKindRaw as GrowerMaterialKind,
+        { farmId: data.estateId, entryType: 'GROWTH_LOG' },
+      );
+    } else if (materialBarcode) {
+      if (!MATERIAL_KINDS.has(materialKindRaw as GrowerMaterialKind)) {
+        throw new BadRequestException('Material kind must be SEED, FERTILIZER, or PESTICIDE when barcode is sent.');
+      }
+      await this.materialBarcodeValidation.assertValidForGrower(
+        userId,
+        materialBarcode,
+        materialKindRaw as GrowerMaterialKind,
+        { farmId: data.estateId, entryType: 'GROWTH_LOG' },
+      );
+    }
+
     // Anti-fraud validation
     const fraudValidation = await this.antiFraudService.validateGrowthLogSubmission({
       gpsLatitude: data.gpsLatitude,
@@ -145,6 +194,22 @@ export class GrowthLogsService {
       throw new BadRequestException('Duplicate log detected. This entry already exists.');
     }
 
+    if (
+      materialKindRaw === 'SEED' &&
+      materialBarcode &&
+      data.parcelId?.trim() &&
+      plan.announcementType === 'PLANTING'
+    ) {
+      await this.smartLockService.ensureSeedLinkedToParcel({
+        inputSerialNumber: materialBarcode,
+        userId,
+        parcelId: data.parcelId.trim(),
+        gpsLatitude: data.gpsLatitude,
+        gpsLongitude: data.gpsLongitude,
+        deviceId: data.deviceId,
+      });
+    }
+
     // Create immutable log
     const growthLog = await this.prisma.growth_logs.create({
       data: {
@@ -163,10 +228,29 @@ export class GrowthLogsService {
         timeOffset: timestampValidation.timeOffset,
         notes: data.notes,
         growthStage: data.growthStage,
+        materialBarcode: materialBarcode || null,
+        materialKind: materialKindRaw || null,
         dataHash,
         previousLogHash: previousLog?.dataHash || null,
       },
     });
+
+    if (
+      materialKindRaw === 'PESTICIDE' &&
+      materialBarcode &&
+      data.parcelId?.trim()
+    ) {
+      await this.growthLogTreatmentSync.recordPesticideApplication({
+        userId,
+        parcelId: data.parcelId.trim(),
+        materialBarcode,
+        deviceTimestamp,
+        gpsLatitude: data.gpsLatitude,
+        gpsLongitude: data.gpsLongitude,
+        deviceId: data.deviceId,
+        notes: data.notes,
+      });
+    }
 
     return growthLog;
   }

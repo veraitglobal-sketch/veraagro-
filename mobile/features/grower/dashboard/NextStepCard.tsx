@@ -2,8 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react-native';
 import { computeNextStep, type NextStep } from './computeNextStep';
-import { homeUi } from '../../../lib/home-ui';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 
 export interface NextStepCardProps {
   estateCount: number;
@@ -12,14 +11,20 @@ export interface NextStepCardProps {
   approved: number;
   activeMissions: number;
   offlinePending: number;
+  legacyFieldLogPending?: number;
+  unreadNotifications?: number;
   batchesReadyForTransport: number;
   ready: boolean;
+  syncError?: string | null;
+  syncing?: boolean;
   onAddField: () => void;
   onAddParcel: () => void;
   onMissions: () => void;
   onRequestTransport: () => void;
   onSteps: () => void;
   onFieldLog: () => void;
+  onSyncNow?: () => void;
+  onNotifications?: () => void;
 }
 
 function labelAndCta(
@@ -42,6 +47,13 @@ function labelAndCta(
         cta: t('producer.dashboard.nextStep.addParcelCta'),
         onPress: props.onAddParcel,
       };
+    case 'sync_queue':
+      return {
+        title: t('producer.dashboard.nextStep.syncTitle', { count: step.pendingCount ?? 1 }),
+        body: t('producer.dashboard.nextStep.syncBody'),
+        cta: t('producer.dashboard.syncStrip.syncNow'),
+        onPress: props.onSyncNow ?? props.onFieldLog,
+      };
     case 'missions':
       return {
         title: t('producer.dashboard.nextStep.missionsTitle'),
@@ -63,6 +75,13 @@ function labelAndCta(
         cta: t('producer.dashboard.nextStep.pendingCta'),
         onPress: props.onSteps,
       };
+    case 'notifications':
+      return {
+        title: t('producer.dashboard.nextStep.notificationsTitle', { count: step.pendingCount ?? 1 }),
+        body: t('producer.dashboard.nextStep.notificationsBody'),
+        cta: t('producer.dashboard.nextStep.notificationsCta'),
+        onPress: props.onNotifications ?? props.onMissions,
+      };
     case 'log_work':
       return {
         title: t('producer.dashboard.nextStep.logWorkTitle'),
@@ -73,29 +92,25 @@ function labelAndCta(
     case 'default_steps':
     default:
       return {
-        title: t('producer.dashboard.nextStep.defaultTitle'),
-        body: t('producer.dashboard.nextStep.defaultBody'),
-        cta: t('producer.dashboard.nextStep.defaultCta'),
-        onPress: props.onSteps,
+        title: t('producer.dashboard.nextStep.allGoodTitle'),
+        body: t('producer.dashboard.nextStep.allGoodBody'),
+        cta: t('producer.dashboard.nextStep.allGoodCta'),
+        onPress: props.onFieldLog,
       };
   }
 }
 
 function NextStepSkeleton() {
-  const { t } = useTranslation();
   return (
-    <View style={[homeUi.card, styles.skeletonCard]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <View style={homeUi.cardAccent} />
-      <View style={styles.body}>
-        <Text style={styles.eyebrow}>{t('producer.dashboard.nextStep.eyebrow')}</Text>
-        <View style={styles.skelLineWide} />
-        <View style={styles.skelLine} />
-        <View style={styles.skelCta} />
-      </View>
+    <View style={[enterpriseUi.authPanel, styles.skeletonPanel]} accessibilityElementsHidden>
+      <View style={styles.skelLineWide} />
+      <View style={styles.skelLine} />
+      <View style={styles.skelCta} />
     </View>
   );
 }
 
+/** Hero action card — white panel + primary CTA (different from provenance ribbon). */
 export default function NextStepCard(props: NextStepCardProps) {
   const { t } = useTranslation();
   if (!props.ready) {
@@ -109,97 +124,127 @@ export default function NextStepCard(props: NextStepCardProps) {
     approved: props.approved,
     activeMissions: props.activeMissions,
     offlinePending: props.offlinePending,
+    legacyFieldLogPending: props.legacyFieldLogPending,
+    unreadNotifications: props.unreadNotifications,
     batchesReadyForTransport: props.batchesReadyForTransport,
   });
   if (!step) return <NextStepSkeleton />;
 
   const { title, body, cta, onPress } = labelAndCta(t, step, props);
+  const showSyncError = step.kind === 'sync_queue' && props.syncError;
 
   return (
-    <View style={homeUi.card}>
-      <View style={homeUi.cardAccent} />
-      <View style={styles.body}>
-        <Text style={styles.eyebrow}>{t('producer.dashboard.nextStep.eyebrow')}</Text>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.desc} numberOfLines={2}>
-          {body}
+    <View style={[enterpriseUi.authPanel, styles.panel, styles.panelHero, styles.panelElevated]}>
+      <View style={styles.heroAccent} accessibilityElementsHidden />
+      <View style={styles.panelInner}>
+      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.dashboard.nextStep.eyebrow')}</Text>
+      <Text style={styles.headline}>{title}</Text>
+      <Text style={enterpriseUi.inAppLead} numberOfLines={3}>
+        {body}
+      </Text>
+      {showSyncError ? (
+        <Text style={styles.syncError} numberOfLines={2}>
+          {props.syncError}
         </Text>
-        <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={styles.cta} accessibilityRole="button">
-          <Text style={styles.ctaText}>{cta}</Text>
-          <ChevronRight size={18} color={enterpriseColors.white} strokeWidth={2} />
-        </TouchableOpacity>
+      ) : null}
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={props.syncing && step.kind === 'sync_queue'}
+        activeOpacity={0.88}
+        style={[
+          enterpriseUi.authSubmit,
+          styles.cta,
+          props.syncing && step.kind === 'sync_queue' ? styles.ctaDisabled : null,
+        ]}
+        accessibilityRole="button"
+      >
+        <View style={styles.ctaInner}>
+          <Text style={enterpriseUi.authSubmitText}>{cta}</Text>
+          <ChevronRight size={20} color={enterpriseColors.white} strokeWidth={2} />
+        </View>
+      </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  skeletonCard: {
-    marginBottom: 4,
+  panel: {
+    marginBottom: 12,
+    overflow: 'hidden',
   },
-  body: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
+  panelHero: {
+    position: 'relative',
   },
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: enterpriseColors.gray600,
-    letterSpacing: 0.45,
-    textTransform: 'uppercase',
+  panelElevated: {
+    shadowColor: '#111827',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
+    elevation: 3,
+  },
+  heroAccent: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
+    backgroundColor: enterpriseColors.primary,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+  },
+  panelInner: {
+    paddingLeft: 4,
+  },
+  headline: {
+    fontSize: 20,
+    fontWeight: '300',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.45,
+    lineHeight: 26,
+    marginTop: 4,
     marginBottom: 6,
   },
-  title: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.3,
-    lineHeight: 22,
-  },
-  desc: {
+  syncError: {
     fontSize: 14,
-    fontWeight: '400',
-    color: enterpriseColors.gray600,
-    lineHeight: 20,
-    marginTop: 4,
-    marginBottom: 12,
+    fontWeight: '500',
+    color: enterpriseColors.destructive,
+    marginTop: 10,
+    lineHeight: 19,
   },
   cta: {
+    marginTop: 20,
+  },
+  ctaInner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 12,
-    minHeight: 48,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    width: '100%',
+    gap: 8,
   },
-  ctaText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: enterpriseColors.white,
-    letterSpacing: -0.2,
-    flex: 1,
+  ctaDisabled: {
+    opacity: 0.65,
+  },
+  skeletonPanel: {
+    gap: 10,
+    marginBottom: 12,
   },
   skelLineWide: {
     height: 18,
     borderRadius: 6,
     backgroundColor: enterpriseColors.gray100,
-    marginBottom: 8,
-    width: '78%',
+    width: '72%',
   },
   skelLine: {
     height: 14,
     borderRadius: 6,
     backgroundColor: enterpriseColors.gray100,
-    marginBottom: 14,
-    width: '92%',
+    width: '90%',
   },
   skelCta: {
-    height: 48,
+    height: 52,
     borderRadius: 12,
     backgroundColor: enterpriseColors.gray100,
+    marginTop: 6,
   },
 });

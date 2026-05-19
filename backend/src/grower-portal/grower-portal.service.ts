@@ -194,7 +194,7 @@ export class GrowerPortalService {
           photoUrl: true,
         },
       },
-      vehicles: { select: { vehicleNumber: true } },
+      vehicles: { select: { vehicleNumber: true, licensePlate: true, make: true, model: true, type: true } },
       orders: {
         select: {
           id: true,
@@ -250,7 +250,7 @@ export class GrowerPortalService {
                 photoUrl: true,
               },
             },
-            vehicles: { select: { vehicleNumber: true } },
+            vehicles: { select: { vehicleNumber: true, licensePlate: true, make: true, model: true, type: true } },
             orders: {
               select: {
                 id: true,
@@ -365,7 +365,8 @@ export class GrowerPortalService {
       driver,
       pickupDriverPerson,
       pickupAtFarm,
-      vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
+      vehicle: GrowerPortalService.formatMissionVehicleLabel(mission.vehicles),
+      vehicleInfo: GrowerPortalService.missionVehicleInfo(mission.vehicles),
       requestedAt: mission.requestedAt,
       pickedUpAt: mission.pickedUpAt,
       completedAt: mission.completedAt,
@@ -753,11 +754,41 @@ export class GrowerPortalService {
         : 'Not assigned',
       pickupDriverPerson,
       pickupAtFarm,
-      vehicle: mission.vehicles?.vehicleNumber || 'Not assigned',
+      vehicle: GrowerPortalService.formatMissionVehicleLabel(mission.vehicles),
+      vehicleInfo: GrowerPortalService.missionVehicleInfo(mission.vehicles),
       requestedAt: mission.requestedAt,
       pickedUpAt: mission.pickedUpAt,
       completedAt: mission.completedAt,
     };
+  }
+
+  private static missionVehicleInfo(vehicle: unknown): {
+    vehicleNumber: string | null;
+    licensePlate: string | null;
+    make: string | null;
+    model: string | null;
+    type: string | null;
+  } | null {
+    if (!vehicle || typeof vehicle !== 'object') return null;
+    const v = vehicle as Record<string, unknown>;
+    return {
+      vehicleNumber: v.vehicleNumber != null ? String(v.vehicleNumber) : null,
+      licensePlate: v.licensePlate != null ? String(v.licensePlate) : null,
+      make: v.make != null ? String(v.make) : null,
+      model: v.model != null ? String(v.model) : null,
+      type: v.type != null ? String(v.type) : null,
+    };
+  }
+
+  private static formatMissionVehicleLabel(vehicle: unknown): string {
+    const info = GrowerPortalService.missionVehicleInfo(vehicle);
+    if (!info) return 'Not assigned';
+    const parts = [
+      info.licensePlate,
+      info.vehicleNumber,
+      [info.make, info.model].filter(Boolean).join(' ').trim() || null,
+    ].filter((p) => p && String(p).trim());
+    return parts.length ? parts.join(' · ') : 'Not assigned';
   }
 
   /**

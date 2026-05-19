@@ -43,7 +43,7 @@ export type HarvestPickRow = {
 };
 
 const STEPS = 3;
-const STEP_ACCENTS = ['#64748B', '#2D5A27', '#1D4ED8'] as const;
+const STEP_ACCENTS = ['#4B5563', '#2D5A27', '#374151'] as const;
 const UNITS = ['kg', 'l', 'pcs', 'pack'];
 
 async function fetchHarvestPlanRows(): Promise<HarvestPickRow[]> {

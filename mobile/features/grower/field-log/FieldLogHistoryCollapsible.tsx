@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerStyles } from '../../../lib/grower-ui';
 import type { FieldLogHistoryItem } from '../../../lib/offline-storage';
 
 type Props = {
@@ -12,13 +13,17 @@ type Props = {
   onDiscard: (id: string) => void;
 };
 
-function statusStyle(status: FieldLogHistoryItem['status']): { bg: string; color: string } {
-  if (status === 'synced') return { bg: `${enterpriseColors.primary}18`, color: enterpriseColors.primary };
-  if (status === 'unrecoverable' || status === 'error') {
-    return { bg: '#FEE2E2', color: '#B91C1C' };
+function statusColors(status: FieldLogHistoryItem['status']): { bg: string; fg: string } {
+  if (status === 'synced') {
+    return { bg: enterpriseColors.primaryTint, fg: enterpriseColors.primary };
   }
-  if (status === 'syncing') return { bg: `${enterpriseColors.primary}14`, color: enterpriseColors.primary };
-  return { bg: '#FEF3C7', color: '#B45309' };
+  if (status === 'unrecoverable' || status === 'error') {
+    return { bg: enterpriseColors.destructiveTint, fg: enterpriseColors.destructive };
+  }
+  if (status === 'syncing') {
+    return { bg: enterpriseColors.gray100, fg: enterpriseColors.gray900 };
+  }
+  return { bg: enterpriseColors.gray100, fg: enterpriseColors.gray700 };
 }
 
 export function FieldLogHistoryCollapsible({ items, formatWhen, activityLabel, onDiscard }: Props) {
@@ -26,14 +31,14 @@ export function FieldLogHistoryCollapsible({ items, formatWhen, activityLabel, o
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={styles.wrap}>
+    <View style={[enterpriseUi.inAppPanel, styles.wrap]}>
       <TouchableOpacity
         onPress={() => setOpen((v) => !v)}
         activeOpacity={0.75}
         style={styles.toggle}
         accessibilityRole="button"
       >
-        <Text style={styles.toggleLabel}>
+        <Text style={enterpriseUi.navRowTitle}>
           {t('producer.fieldLogForm.historyToggleShort', { count: items.length })}
         </Text>
         {open ? (
@@ -48,21 +53,27 @@ export function FieldLogHistoryCollapsible({ items, formatWhen, activityLabel, o
           {items.length === 0 ? (
             <Text style={styles.empty}>{t('producer.fieldLogForm.historyEmpty')}</Text>
           ) : (
-            items.slice(0, 8).map((h) => {
-              const ss = statusStyle(h.status);
+            items.slice(0, 8).map((h, index) => {
+              const ss = statusColors(h.status);
               return (
-                <View key={h.id} style={styles.row}>
+                <View
+                  key={h.id}
+                  style={[styles.row, index < Math.min(items.length, 8) - 1 && styles.rowBorder]}
+                >
                   <View style={styles.rowTop}>
                     <Text style={styles.when}>{formatWhen(h.timestamp)}</Text>
-                    <View style={[styles.badge, { backgroundColor: ss.bg }]}>
-                      <Text style={[styles.badgeText, { color: ss.color }]}>
+                    <View style={[growerStyles.statusPill, { backgroundColor: ss.bg }]}>
+                      <Text style={[growerStyles.statusPillText, { color: ss.fg }]}>
                         {t(`producer.fieldLogForm.histStatus_${h.status}`, { defaultValue: h.status })}
                       </Text>
                     </View>
                   </View>
                   <Text style={styles.activity}>{activityLabel(String(h.activityType))}</Text>
-                  {(h.status === 'pending' || h.status === 'error' || h.status === 'unrecoverable') ? (
-                    <TouchableOpacity onPress={() => onDiscard(h.id)} hitSlop={{ top: 8, bottom: 8, left: 4, right: 8 }}>
+                  {h.status === 'pending' || h.status === 'error' || h.status === 'unrecoverable' ? (
+                    <TouchableOpacity
+                      onPress={() => onDiscard(h.id)}
+                      hitSlop={{ top: 8, bottom: 8, left: 4, right: 8 }}
+                    >
                       <Text style={styles.discard}>{t('producer.fieldLogForm.discardQueueConfirm')}</Text>
                     </TouchableOpacity>
                   ) : null}
@@ -78,40 +89,33 @@ export function FieldLogHistoryCollapsible({ items, formatWhen, activityLabel, o
 
 const styles = StyleSheet.create({
   wrap: {
-    marginTop: 8,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-    overflow: 'hidden',
+    marginTop: 16,
+    marginBottom: 8,
   },
   toggle: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    minHeight: 52,
+    paddingHorizontal: 18,
+    minHeight: 56,
     paddingVertical: 12,
-  },
-  toggleLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
   },
   body: {
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
-    paddingHorizontal: 14,
-    paddingBottom: 12,
+    paddingHorizontal: 18,
+    paddingBottom: 14,
   },
   empty: {
-    fontSize: 14,
+    fontSize: 15,
     color: enterpriseColors.gray600,
-    fontStyle: 'italic',
-    paddingVertical: 10,
+    paddingVertical: 12,
+    lineHeight: 21,
   },
   row: {
-    paddingVertical: 10,
+    paddingVertical: 12,
+  },
+  rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: enterpriseColors.gray200,
   },
@@ -122,30 +126,23 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   when: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
     color: enterpriseColors.gray900,
     flex: 1,
-  },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '600',
+    letterSpacing: -0.1,
   },
   activity: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: enterpriseColors.primary,
     marginTop: 4,
+    letterSpacing: -0.15,
   },
   discard: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#B91C1C',
-    marginTop: 6,
+    color: enterpriseColors.destructive,
+    marginTop: 8,
   },
 });

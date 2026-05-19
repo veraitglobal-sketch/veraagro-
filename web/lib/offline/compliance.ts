@@ -20,6 +20,40 @@ export interface PartnerDiscountResult {
   finalPrice: number;
 }
 
+export type GrowerMaterialKind = 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+
+export function materialKindForFieldEntry(
+  entryType: 'PRSKANJE' | 'SETVA' | 'BERBA',
+  field: 'seed' | 'fertilizer',
+): GrowerMaterialKind {
+  if (field === 'seed') return 'SEED';
+  return entryType === 'PRSKANJE' ? 'PESTICIDE' : 'FERTILIZER';
+}
+
+/**
+ * Unified material validation (whitelist + seeds + supplier units).
+ */
+export async function validateMaterial(
+  code: string,
+  kind: GrowerMaterialKind,
+  farmId?: string,
+): Promise<{ valid: boolean; message?: string }> {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+  const params = new URLSearchParams({ code: code.trim(), kind });
+  if (farmId) params.set('farmId', farmId);
+  const response = await fetch(`${API_URL}/compliance/validate-material?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || 'Material validation failed');
+  }
+  return response.json();
+}
+
 /**
  * Check compliance for scanned fertilizer barcode
  */

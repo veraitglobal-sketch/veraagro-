@@ -14,7 +14,7 @@ import { Camera, Check } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { complianceUi, complianceStyles } from '../../../lib/compliance-ui';
 import {
@@ -54,7 +54,7 @@ export function MaterialComplianceForm() {
       }
     >
       <View style={growerUi.scrollContent}>
-        <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.checklistHeading')}</Text>
+        <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.compliance.batchForm.checklistHeading')}</Text>
         <Text style={complianceUi.body}>
           {t('producer.compliance.batchForm.intro')}{' '}
           <Text onPress={() => router.push('/(producer)/materials')} style={complianceUi.link}>
@@ -107,7 +107,7 @@ export function MaterialComplianceForm() {
               <Text style={[complianceUi.panelTitle, { color: enterpriseColors.primary }]}>
                 {t('producer.compliance.batchForm.resolvedBadge')}
               </Text>
-              <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.complianceCompleteTitle')}</Text>
+              <Text style={enterpriseUi.navRowTitle}>{t('producer.compliance.batchForm.complianceCompleteTitle')}</Text>
               <Text style={complianceUi.body}>
                 {t('producer.compliance.batchForm.resolvedBody', { batchId: c.complianceStatus.publicBatchId })}
               </Text>
@@ -137,7 +137,7 @@ export function MaterialComplianceForm() {
 
         {c.showForm ? (
           <View>
-            <Text style={growerUi.formLabel}>{t('producer.compliance.batchForm.stickerRollLabel')}</Text>
+            <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.compliance.batchForm.stickerRollLabel')}</Text>
             <Text style={[complianceUi.body, { marginBottom: 12 }]}>
               {t('producer.compliance.batchForm.labelRollLogicHint')}
             </Text>
@@ -184,9 +184,9 @@ export function MaterialComplianceForm() {
                       key={r.serialNumber}
                       onPress={() => c.setStickerRollId(r.serialNumber)}
                       activeOpacity={0.88}
-                      style={[complianceUi.chip, sel && complianceUi.chipOn]}
+                      style={[growerUi.filterChip, sel && growerUi.filterChipOn]}
                     >
-                      <Text style={[complianceUi.chipText, sel && complianceUi.chipTextOn]}>
+                      <Text style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}>
                         {r.serialNumber}
                       </Text>
                     </TouchableOpacity>
@@ -223,7 +223,9 @@ export function MaterialComplianceForm() {
               {t('producer.compliance.batchForm.stickerHelp')}
             </Text>
 
-            <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.requiredPhotosHeading')}</Text>
+            <Text style={[enterpriseUi.inAppSectionLabel, { marginTop: 8, marginBottom: 12 }]}>
+              {t('producer.compliance.batchForm.requiredPhotosHeading')}
+            </Text>
             {COMPLIANCE_PHOTO_TYPES.map((type) => (
               <PhotoRow
                 key={type}
@@ -286,17 +288,17 @@ function PhotoRow({
   const { t } = useTranslation();
   return (
     <View style={{ marginBottom: 20 }}>
-      <Text style={growerUi.settingsRowTitle}>
+      <Text style={enterpriseUi.navRowTitle}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.label`)} *
       </Text>
-      <Text style={[growerUi.settingsRowDesc, { marginBottom: 10 }]}>
+      <Text style={[enterpriseUi.navRowSubtitle, { marginBottom: 10 }]}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.hint`)}
       </Text>
       <TouchableOpacity
         onPress={onTake}
         disabled={busy}
         activeOpacity={0.88}
-        style={complianceUi.photoBox}
+        style={[enterpriseUi.inAppPanel, complianceUi.photoBox, { borderWidth: 1, borderStyle: 'dashed' }]}
         accessibilityRole="button"
       >
         {uri ? (

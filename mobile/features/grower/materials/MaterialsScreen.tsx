@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Plus, ChevronRight } from 'lucide-react-native';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { Plus } from 'lucide-react-native';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
@@ -20,6 +20,14 @@ export function MaterialsScreen() {
   const p = useBioVeraScreenPadding();
   const [addOpen, setAddOpen] = useState(false);
 
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/supplies');
+    }
+  };
+
   return (
     <View style={growerUi.canvas}>
       <EnterpriseScreen
@@ -31,6 +39,7 @@ export function MaterialsScreen() {
             <GrowerStackHeader
               title={t('producer.materials.screenTitle')}
               subtitle={t('producer.materials.screenLeadShort')}
+              onBack={goBack}
             />
             <WhitelistSearch
               searchQuery={data.searchQuery}
@@ -54,14 +63,11 @@ export function MaterialsScreen() {
         <TouchableOpacity
           onPress={() => router.push('/map')}
           activeOpacity={0.72}
-          style={styles.mapLink}
+          style={[enterpriseUi.inAppPanel, styles.mapLink]}
           accessibilityRole="button"
         >
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text style={styles.mapLinkTitle}>{t('producer.materials.mapBannerTitle')}</Text>
-            <Text style={styles.mapLinkCta}>{t('producer.materials.mapBannerCta')}</Text>
-          </View>
-          <ChevronRight size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+          <Text style={enterpriseUi.navRowTitle}>{t('producer.materials.mapBannerTitle')}</Text>
+          <Text style={styles.mapLinkCta}>{t('producer.materials.mapBannerCta')}</Text>
         </TouchableOpacity>
 
         <MaterialList
@@ -87,29 +93,14 @@ export function MaterialsScreen() {
 
 const styles = StyleSheet.create({
   mapLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginTop: 12,
     marginBottom: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: enterpriseColors.gray200,
-    gap: 8,
-  },
-  mapLinkTitle: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.15,
-    lineHeight: 20,
+    padding: 16,
   },
   mapLinkCta: {
     fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.primary,
-    marginTop: 4,
+    marginTop: 6,
   },
 });

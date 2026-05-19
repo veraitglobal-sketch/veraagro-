@@ -14,7 +14,10 @@ import {
   ScannedCode,
 } from '@/lib/offline/indexeddb';
 import { syncAllEntries, setupAutoSync, setupPeriodicSync, isOnline, onOnlineStatusChange } from '@/lib/offline/sync';
-import { checkCompliance } from '@/lib/offline/compliance';
+import {
+  validateMaterial,
+  materialKindForFieldEntry,
+} from '@/lib/offline/compliance';
 import i18n from '@/i18n/config';
 
 export type EntryType = 'PRSKANJE' | 'SETVA' | 'BERBA';
@@ -178,29 +181,45 @@ export function useOfflineEntry(options: UseOfflineEntryOptions = {}): UseOfflin
           };
         }
 
-        // COMPLIANCE CHECK: If fertilizer barcode is provided, check against Bio-White-List
-        if (options?.fertilizerBarcode && online) {
+        const validateBarcodeOnline = async (
+          barcode: string,
+          field: 'seed' | 'fertilizer',
+        ): Promise<{ ok: true } | { ok: false; error: string }> => {
+          if (!online) {
+            return { ok: true };
+          }
           try {
-            const complianceResult = await checkCompliance(options.fertilizerBarcode, farmId, type);
-            if (!complianceResult.compliant || complianceResult.blocked) {
+            const kind = materialKindForFieldEntry(type, field);
+            const result = await validateMaterial(barcode, kind, farmId);
+            if (!result.valid) {
               return {
-                success: false,
-                error: complianceResult.reason || i18n.t('growerPages.fieldEntryOfflineComplianceDefault'),
+                ok: false,
+                error: result.message || i18n.t('growerPages.fieldEntryOfflineComplianceDefault'),
               };
             }
+            return { ok: true };
           } catch (complianceError: unknown) {
-            // If offline, allow entry but mark for compliance check on sync
-            if (!online) {
-              console.warn('Offline - compliance check will be performed on sync');
-            } else {
-              return {
-                success: false,
-                error:
-                  complianceError instanceof Error && complianceError.message
-                    ? complianceError.message
-                    : i18n.t('growerPages.fieldEntryOfflineComplianceFailed'),
-              };
-            }
+            return {
+              ok: false,
+              error:
+                complianceError instanceof Error && complianceError.message
+                  ? complianceError.message
+                  : i18n.t('growerPages.fieldEntryOfflineComplianceFailed'),
+            };
+          }
+        };
+
+        if (seedSerialNumber) {
+          const seedCheck = await validateBarcodeOnline(seedSerialNumber, 'seed');
+          if (!seedCheck.ok) {
+            return { success: false, error: seedCheck.error };
+          }
+        }
+
+        if (options?.fertilizerBarcode?.trim()) {
+          const fertCheck = await validateBarcodeOnline(options.fertilizerBarcode, 'fertilizer');
+          if (!fertCheck.ok) {
+            return { success: false, error: fertCheck.error };
           }
         }
 

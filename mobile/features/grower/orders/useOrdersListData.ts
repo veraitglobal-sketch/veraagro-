@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
+import { enterpriseOrderStatusColor } from '../../../lib/enterprise-ui';
 import { getOrderStatusLabel } from './useOrderDetailData';
 
 export type OrderFilterStatus = 'all' | 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
@@ -13,15 +14,16 @@ export function useOrdersListData() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<OrderFilterStatus>('all');
 
-  const loadOrders = useCallback(async () => {
+  const loadOrders = useCallback(async (opts?: { background?: boolean }) => {
+    const background = opts?.background === true;
+    if (!background) setLoading(true);
     try {
-      setLoading(true);
       const data = await ordersAPI.getAll();
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading orders:', error);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   }, []);
 
@@ -31,7 +33,7 @@ export function useOrdersListData() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadOrders();
+    await loadOrders({ background: true });
     setRefreshing(false);
   }, [loadOrders]);
 
@@ -40,17 +42,7 @@ export function useOrdersListData() {
     [orders, filter]
   );
 
-  const getStatusColor = useCallback((status: string) => {
-    switch (status) {
-      case 'PENDING': return theme.colors.warning;
-      case 'CONFIRMED': return theme.colors.accent;
-      case 'PREPARING': return theme.colors.primary;
-      case 'IN_TRANSIT': return theme.colors.primary;
-      case 'DELIVERED': return theme.colors.success || theme.colors.primary;
-      case 'CANCELLED': return theme.colors.error;
-      default: return theme.colors.text.secondary;
-    }
-  }, []);
+  const getStatusColor = useCallback((status: string) => enterpriseOrderStatusColor(status), []);
 
   const getStatusLabel = useCallback((status: string) => getOrderStatusLabel(status, t), [t]);
 

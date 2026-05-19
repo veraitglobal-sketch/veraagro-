@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../../lib/api-url';
@@ -26,10 +26,12 @@ export function useWalletData() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [ordersFinancial, setOrdersFinancial] = useState<OrdersFinancialSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
 
-  const loadWalletData = useCallback(async () => {
+  const loadWalletData = useCallback(async (opts?: { background?: boolean }) => {
+    const background = opts?.background === true || hasLoadedRef.current;
+    if (!background) setLoading(true);
     try {
-      setLoading(true);
       const token = await AsyncStorage.getItem('auth_token');
 
       const [walletResponse, transactionsResponse, ordersFin] = await Promise.all([
@@ -47,16 +49,23 @@ export function useWalletData() {
         Array.isArray(transactionsResponse.data) ? transactionsResponse.data : [],
       );
       setOrdersFinancial(ordersFin);
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error loading wallet:', error);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadWalletData();
+    void loadWalletData();
   }, [loadWalletData]);
 
-  return { wallet, transactions, ordersFinancial, loading, reload: loadWalletData };
+  return {
+    wallet,
+    transactions,
+    ordersFinancial,
+    loading,
+    reload: () => loadWalletData({ background: true }),
+  };
 }

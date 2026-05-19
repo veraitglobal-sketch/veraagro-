@@ -439,6 +439,66 @@ export const b2bSuppliersAPI = {
     const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
     return response.data;
   },
+  getMyCatalog: async () => {
+    const response = await api.get('/b2b-suppliers/my/catalog');
+    return (response.data || []) as Array<{
+      id: string;
+      name: string;
+      description: string | null;
+      unit: string;
+      listPrice: number | null;
+      sku: string | null;
+      imageUrl: string | null;
+      isActive?: boolean;
+    }>;
+  },
+  createCatalogItem: async (data: {
+    name: string;
+    description?: string;
+    unit?: string;
+    listPrice?: number;
+    sku?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/my/catalog', data);
+    return response.data as { id: string };
+  },
+  updateCatalogItem: async (
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      unit?: string;
+      listPrice?: number | null;
+      sku?: string;
+    },
+  ) => {
+    const response = await api.patch(`/b2b-suppliers/my/catalog/${encodeURIComponent(id)}`, data);
+    return response.data;
+  },
+  deleteCatalogItem: async (id: string) => {
+    const response = await api.delete(`/b2b-suppliers/my/catalog/${encodeURIComponent(id)}`);
+    return response.data;
+  },
+  uploadCatalogItemImage: async (itemId: string, photoUri: string) => {
+    const formData = new FormData();
+    formData.append('image', {
+      uri: photoUri,
+      type: 'image/jpeg',
+      name: 'product.jpg',
+    } as unknown as Blob);
+    const response = await api.post(
+      `/b2b-suppliers/my/catalog/${encodeURIComponent(itemId)}/image`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+    return response.data;
+  },
+  deleteCatalogItemImage: async (itemId: string) => {
+    const response = await api.delete(
+      `/b2b-suppliers/my/catalog/${encodeURIComponent(itemId)}/image`,
+    );
+    return response.data;
+  },
 };
 
 // Field Entries API
@@ -569,6 +629,9 @@ export const growthLogsAPI = {
     deviceTimestamp: string;
     notes?: string;
     growthStage?: string;
+    materialBarcode?: string;
+    materialKind?: 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+    requiresMaterialBarcode?: boolean;
   }): Promise<GrowthLog> => {
     const response = await api.post('/growth-logs', data);
     return response.data;
@@ -937,6 +1000,24 @@ export const packageBadgesAPI = {
 
 // Missions API
 /** Align with Prisma `MissionStatus` (backend). Not `DELIVERED` — use `COMPLETED`. */
+export type MissionAssignedDriver = {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string | null;
+  email?: string | null;
+  photoUrl?: string | null;
+};
+
+export type MissionVehicleInfo = {
+  id?: string;
+  vehicleNumber?: string;
+  licensePlate?: string;
+  make?: string | null;
+  model?: string | null;
+  type?: string;
+};
+
 export interface Mission {
   id: string;
   /** Human-readable, e.g. MISSION-2026-0001-AB12 */
@@ -944,12 +1025,20 @@ export interface Mission {
   batchId?: string | null;
   status: string;
   fromHubId?: string;
-  toHubId: string;
+  toHubId?: string;
   driverId?: string;
+  assignedLogisticsDriverId?: string | null;
+  vehicleId?: string | null;
   createdAt: string;
   updatedAt: string;
-  batch?: any;
-  driver?: any;
+  batch?: unknown;
+  /** Mapped for grower API responses */
+  assignedDriver?: MissionAssignedDriver | null;
+  vehicleInfo?: MissionVehicleInfo | null;
+  logisticsCompanyContact?: { firstName?: string; lastName?: string; phone?: string | null } | null;
+  assigned_logistics_driver?: MissionAssignedDriver | null;
+  vehicles?: MissionVehicleInfo | null;
+  driver?: MissionAssignedDriver | null;
 }
 
 export const missionsAPI = {
@@ -1276,6 +1365,28 @@ export const materialsAPI = {
     description?: string;
   }) => {
     const response = await api.post('/compliance/white-list/grower', body);
+    return response.data;
+  },
+};
+
+/** Link platform seed batch to parcel (area + GPS smart-lock). */
+export const smartLockAPI = {
+  linkSeedToParcel: async (data: {
+    inputSerialNumber: string;
+    parcelId: string;
+    gpsLatitude: number;
+    gpsLongitude: number;
+    deviceId?: string;
+  }) => {
+    const response = await api.post('/smart-lock/scan', data);
+    return response.data as {
+      alreadyLinked?: boolean;
+      message?: string;
+      seed?: { serialNumber: string; name?: string; batchNumber?: string };
+    };
+  },
+  getParcelStatus: async (parcelId: string) => {
+    const response = await api.get(`/smart-lock/parcel/${encodeURIComponent(parcelId)}/status`);
     return response.data;
   },
 };

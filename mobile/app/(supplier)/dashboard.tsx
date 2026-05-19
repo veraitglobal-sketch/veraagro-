@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'rea
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Bell } from 'lucide-react-native';
+import { Bell, ShoppingBag } from 'lucide-react-native';
+import { enterpriseColors } from '../../lib/enterprise-ui';
 import { useAuth } from '../../hooks/useAuth';
 import { b2bSuppliersAPI, notificationsAPI } from '../../lib/api';
 import { theme } from '../../lib/theme';
@@ -17,6 +18,7 @@ export default function SupplierDashboardScreen() {
   const p = useBioVeraScreenPadding();
   const [orders, setOrders] = useState(0);
   const [threads, setThreads] = useState(0);
+  const [catalogCount, setCatalogCount] = useState(0);
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -42,13 +44,15 @@ export default function SupplierDashboardScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [o, t, p] = await Promise.all([
+        const [o, th, p, catalog] = await Promise.all([
           b2bSuppliersAPI.getIncomingOrders(),
           b2bSuppliersAPI.getMyThreads(),
           b2bSuppliersAPI.getMyProfile().catch(() => null),
+          b2bSuppliersAPI.getMyCatalog().catch(() => []),
         ]);
         setOrders(Array.isArray(o) ? o.length : 0);
-        setThreads(Array.isArray(t) ? t.length : 0);
+        setThreads(Array.isArray(th) ? th.length : 0);
+        setCatalogCount(Array.isArray(catalog) ? catalog.length : 0);
         if (p && typeof p === 'object' && p !== null && 'businessName' in p) {
           setName(String((p as { businessName?: string }).businessName || ''));
         }
@@ -116,6 +120,29 @@ export default function SupplierDashboardScreen() {
       <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 20 }}>
         {user.firstName} · {user.partnerCode}
       </Text>
+
+      <TouchableOpacity
+        onPress={() => router.push('/(supplier)/catalog' as any)}
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.borderRadius.lg,
+          padding: 18,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: enterpriseColors.gray200,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+          <ShoppingBag size={18} color={enterpriseColors.primary} strokeWidth={1.5} />
+          <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>
+            {t('supplier.screenCatalog')}
+          </Text>
+        </View>
+        <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 6 }}>
+          {t('supplier.store.dashboardHint')}
+        </Text>
+        <Text style={{ fontSize: 28, fontWeight: '300', color: enterpriseColors.primary }}>{catalogCount}</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => router.push('/(supplier)/orders' as any)}

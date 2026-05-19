@@ -390,12 +390,14 @@ export function useFieldLogData() {
       return;
     }
     try {
-      const result = await materialValidator(materialID, materialKind);
+      const result = await materialValidator(materialID, materialKind, {
+        farmId: currentEstate?.id,
+      });
       setMaterialValid(result.valid);
     } catch {
       setMaterialValid(false);
     }
-  }, [materialID, activityType, materialKind]);
+  }, [materialID, activityType, materialKind, currentEstate?.id]);
 
   useEffect(() => {
     if (!materialID || materialID.trim().length < 3) {
@@ -719,12 +721,12 @@ export function useFieldLogData() {
       missing.push(t('producer.fieldLogForm.submitMissingGps'));
     }
     const materialBarcodeActivities: ActivityType[] = ['PLANTING', 'FERTILIZING', 'SPRAYING'];
-    if (
-      materialBarcodeActivities.includes(activityType as ActivityType) &&
-      materialID.trim() &&
-      materialValid === false
-    ) {
-      missing.push(t('producer.fieldLogForm.submitMissingMaterial'));
+    if (materialBarcodeActivities.includes(activityType as ActivityType)) {
+      if (!materialID.trim()) {
+        missing.push(t('producer.fieldLogForm.submitMissingMaterialRequired'));
+      } else if (materialValid !== true) {
+        missing.push(t('producer.fieldLogForm.submitMissingMaterial'));
+      }
     }
     if (missing.length > 0) {
       Alert.alert(

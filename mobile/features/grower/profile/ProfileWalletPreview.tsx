@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react-native';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import type { WalletData, Transaction } from '../wallet/useWalletData';
 
@@ -34,10 +33,7 @@ export function ProfileWalletPreview({ wallet, loading, lastTransaction, onPress
     >
       <View style={styles.header}>
         <Text style={styles.title}>{t('producer.financial.title')}</Text>
-        <View style={styles.detailLink}>
-          <Text style={styles.detailText}>{t('producer.profileScreen.viewDetails')}</Text>
-          <ChevronRight size={16} color={enterpriseColors.primary} strokeWidth={1.75} />
-        </View>
+        <Text style={styles.detailText}>{t('producer.profileScreen.viewDetails')}</Text>
       </View>
 
       {loading ? (
@@ -79,10 +75,7 @@ export function ProfileWalletPreview({ wallet, loading, lastTransaction, onPress
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: enterpriseColors.gray200,
+    ...enterpriseUi.inAppPanel,
     paddingHorizontal: 18,
     paddingTop: 16,
     paddingBottom: 18,
@@ -95,15 +88,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '500',
     color: enterpriseColors.gray600,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-  },
-  detailLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
+    letterSpacing: -0.1,
+    marginBottom: 0,
+    marginLeft: 0,
   },
   detailText: {
     fontSize: 13,
@@ -119,7 +108,7 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 34,
     fontWeight: '300',
-    color: enterpriseColors.gray900,
+    color: enterpriseColors.primary,
     letterSpacing: -0.9,
     lineHeight: 40,
   },
@@ -128,12 +117,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: enterpriseColors.gray600,
     marginTop: 4,
-    letterSpacing: -0.15,
   },
   meta: {
     flexDirection: 'row',
-    marginTop: 18,
-    paddingTop: 16,
+    marginTop: 16,
+    paddingTop: 14,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
   },
@@ -151,16 +139,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: enterpriseColors.gray600,
     marginBottom: 4,
-    letterSpacing: -0.1,
   },
   metaValue: {
     fontSize: 16,
     fontWeight: '500',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.25,
   },
   lastTx: {
-    marginTop: 14,
+    marginTop: 12,
     paddingTop: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
@@ -169,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     color: enterpriseColors.gray600,
-    letterSpacing: 0.4,
+    letterSpacing: 0.35,
     textTransform: 'uppercase',
     marginBottom: 4,
   },
@@ -177,6 +163,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: enterpriseColors.gray700,
-    letterSpacing: -0.15,
   },
 });

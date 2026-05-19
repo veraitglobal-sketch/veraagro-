@@ -212,81 +212,79 @@ export function verifyGPSAgainstEstateOrParcels(
   return false;
 }
 
+async function validateMaterialOnServer(
+  barcode: string,
+  kind: 'SEED' | 'FERTILIZER' | 'PESTICIDE',
+  farmId?: string,
+): Promise<{ valid: boolean; message?: string } | null> {
+  try {
+    const apiModule = await import('./api');
+    const client = apiModule.default;
+    const params = new URLSearchParams({
+      code: barcode.trim(),
+      kind,
+    });
+    if (farmId) params.set('farmId', farmId);
+    const response = await client.get(`/compliance/validate-material?${params.toString()}`);
+    const data = response.data as { valid?: boolean; message?: string };
+    if (data.valid) {
+      return { valid: true };
+    }
+    return {
+      valid: false,
+      message: data.message ?? i18n.t('integrity.notWhitelisted'),
+    };
+  } catch (error: unknown) {
+    if (isLikelyNetworkError(error)) {
+      return null;
+    }
+    return {
+      valid: false,
+      message: apiErrorMessage(error, i18n.t('integrity.notWhitelisted')),
+    };
+  }
+}
+
 /**
- * Validate material barcode against whitelist
- * For seeds, validates against database
+ * Validate material barcode — prefers server rules; offline falls back to cached whitelist.
  */
 export async function materialValidator(
   barcode: string,
-  type?: 'SEED' | 'FERTILIZER' | 'PESTICIDE'
+  type?: 'SEED' | 'FERTILIZER' | 'PESTICIDE',
+  options?: { farmId?: string },
 ): Promise<{ valid: boolean; message?: string }> {
   if (!barcode || barcode.trim().length === 0) {
     return { valid: false, message: i18n.t('integrity.barcodeRequired') };
   }
 
   const trimmedBarcode = barcode.trim();
+  const kind: 'SEED' | 'FERTILIZER' | 'PESTICIDE' =
+    type === 'SEED' || type === 'FERTILIZER' || type === 'PESTICIDE'
+      ? type
+      : trimmedBarcode.toUpperCase().startsWith('SEED')
+        ? 'SEED'
+        : 'PESTICIDE';
 
-  // If it's a seed (starts with SEED- or looks like seed code), validate against database
-  if (type === 'SEED' || trimmedBarcode.toUpperCase().startsWith('SEED')) {
-    try {
-      const { seedsAPI } = await import('./api');
-      const result = await seedsAPI.validate(trimmedBarcode);
-      return { 
-        valid: true, 
-        message: `Seed validated: ${result.seed?.name || trimmedBarcode}` 
-      };
-    } catch (error: unknown) {
-      // Handle network errors gracefully
-      if (isLikelyNetworkError(error)) {
-        return {
-          valid: false,
-          message: 'Cannot connect to server. Please check your internet connection.',
-        };
-      }
-      return {
-        valid: false,
-        message: apiErrorMessage(error, 'Seed not found or invalid'),
-      };
-    }
+  const server = await validateMaterialOnServer(trimmedBarcode, kind, options?.farmId);
+  if (server) {
+    return server;
   }
 
-  // For fertilizers/pesticides, check local whitelist first
+  // Offline: seeds cannot be validated without network
+  if (kind === 'SEED' || trimmedBarcode.toUpperCase().startsWith('SEED')) {
+    return {
+      valid: false,
+      message: i18n.t('integrity.offlineSeedValidation'),
+    };
+  }
+
   const whitelist = await offlineStorage.getWhitelist();
   if (whitelist.includes(trimmedBarcode)) {
     return { valid: true };
   }
 
-  // Then check supplier-registered material units (goods-in) on the server
-  try {
-    const { API_URL } = await import('./api-url');
-    const res = await fetch(
-      `${API_URL}/b2b-suppliers/public/material-barcodes/lookup?code=${encodeURIComponent(trimmedBarcode)}`,
-      { method: 'GET' },
-    );
-    if (res.ok) {
-      const data = (await res.json()) as {
-        registered?: boolean;
-        status?: string;
-        businessName?: string | null;
-        productName?: string | null;
-        message?: string;
-      };
-      if (data.registered) {
-        if (data.status === 'VOID') {
-          return { valid: false, message: i18n.t('integrity.voidBarcode') };
-        }
-        const label =
-          [data.businessName, data.productName].filter(Boolean).join(' · ') ||
-          i18n.t('integrity.supplierRegisteredDefault');
-        return { valid: true, message: `${label} (${data.status})` };
-      }
-    }
-  } catch {
-    // offline / server down — fall through
-  }
-
   return {
     valid: false,
-    message: i18n.t('integrity.notWhitelisted'),
+    message: i18n.t('integrity.notWhitelistedOffline'),
   };
 }

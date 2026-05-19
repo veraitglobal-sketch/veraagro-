@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
@@ -11,30 +11,22 @@ import { batchesAPI } from '../../lib/api';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 import { BioVeraSubpageHeader } from '../../components/BioVeraSubpageHeader';
-import { enterpriseColors } from '../../lib/enterprise-ui';
+import {
+  enterpriseColors,
+  enterpriseLotBucketStyle,
+  type EnterpriseLotBucket,
+} from '../../lib/enterprise-ui';
 import { growerUi, growerStyles } from '../../lib/grower-ui';
 import { HubSectionTitle } from '../../features/grower/hubs/HubNavTile';
 
 type LotFilter = 'all' | 'here' | 'moving' | 'done';
 
-function statusBucket(status: string): LotFilter {
+function statusBucket(status: string): EnterpriseLotBucket {
   const s = String(status ?? '').toUpperCase();
   if (s === 'DELIVERED') return 'done';
   if (s === 'IN_HUB' || s === 'IN_TRANSIT') return 'moving';
   if (s === 'PACKED' || s === 'QUALITY_VERIFIED' || s === 'HARVESTED') return 'here';
   return 'here';
-}
-
-function bucketAccent(bucket: LotFilter): string {
-  if (bucket === 'done') return enterpriseColors.gray600;
-  if (bucket === 'moving') return '#1D4ED8';
-  return enterpriseColors.primary;
-}
-
-function bucketTint(bucket: LotFilter): string {
-  if (bucket === 'done') return `${enterpriseColors.gray600}18`;
-  if (bucket === 'moving') return '#1D4ED818';
-  return `${enterpriseColors.primary}12`;
 }
 
 export default function BatchesScreen() {
@@ -45,23 +37,26 @@ export default function BatchesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<LotFilter>('all');
+  const hasCacheRef = useRef(false);
 
-  const loadBatches = useCallback(async () => {
+  const loadBatches = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent === true || hasCacheRef.current;
+    if (!silent) setLoading(true);
     try {
-      setLoading(true);
       const data = await batchesAPI.getAll();
       setBatches(Array.isArray(data) ? data : []);
+      hasCacheRef.current = true;
     } catch (error) {
       console.error('Error loading batches:', error);
-      setBatches([]);
+      if (!hasCacheRef.current) setBatches([]);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      void loadBatches();
+      void loadBatches({ silent: hasCacheRef.current });
     }, [loadBatches]),
   );
 
@@ -75,7 +70,7 @@ export default function BatchesScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadBatches();
+    await loadBatches({ silent: true });
     setRefreshing(false);
   };
 
@@ -88,7 +83,7 @@ export default function BatchesScreen() {
     const c = { all: batches.length, here: 0, moving: 0, done: 0 };
     for (const b of batches) {
       const bucket = statusBucket(b.status);
-      if (bucket !== 'all') c[bucket] += 1;
+      c[bucket] += 1;
     }
     return c;
   }, [batches]);
@@ -176,7 +171,7 @@ export default function BatchesScreen() {
               const detailRef = batch.id ?? batch.batchId;
               const product = batch.productName || t('producer.batches.product');
               const bucket = statusBucket(batch.status);
-              const accent = bucketAccent(bucket);
+              const { accent, tint } = enterpriseLotBucketStyle(bucket);
               const metaParts = [
                 batch.quantity ? `${batch.quantity} ${batch.unit || 'kg'}` : null,
                 displayId || null,
@@ -204,7 +199,7 @@ export default function BatchesScreen() {
                     },
                   ]}
                 >
-                  <View style={[growerUi.tileIcon, { backgroundColor: bucketTint(bucket) }]}>
+                  <View style={[growerUi.tileIcon, { backgroundColor: tint }]}>
                     <Package size={22} color={accent} strokeWidth={1.75} />
                   </View>
                   <View style={{ flex: 1, minWidth: 0 }}>
@@ -212,7 +207,7 @@ export default function BatchesScreen() {
                       <Text style={growerUi.tileTitle} numberOfLines={1}>
                         {product}
                       </Text>
-                      <View style={[growerStyles.statusPill, { backgroundColor: bucketTint(bucket) }]}>
+                      <View style={[growerStyles.statusPill, { backgroundColor: tint }]}>
                         <Text style={[growerStyles.statusPillText, { color: accent }]}>
                           {getBatchStatusLabel(t, batch.status)}
                         </Text>

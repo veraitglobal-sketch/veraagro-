@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { theme } from '../../../lib/theme';
 import { PendingCost } from '../../../lib/offline-storage';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 
 interface CostEntryFormProps {
   onSubmit: (entry: Omit<PendingCost, 'id' | 'timestamp' | 'status'>) => Promise<void>;
@@ -31,34 +32,38 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
   };
 
   return (
-    <View style={styles.container}>
+    <View>
+      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.costCalculator.costNameLabel')}</Text>
       <TextInput
-        style={styles.input}
+        style={growerUi.formInput}
         placeholder={t('producer.costCalculator.costNamePlaceholder')}
-        placeholderTextColor={theme.colors.text.tertiary}
+        placeholderTextColor={enterpriseColors.gray600}
         value={label}
         onChangeText={setLabel}
       />
+      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.costCalculator.amountLabel')}</Text>
       <TextInput
-        style={styles.input}
+        style={growerUi.formInput}
         placeholder={t('producer.costCalculator.amountPlaceholder')}
-        placeholderTextColor={theme.colors.text.tertiary}
+        placeholderTextColor={enterpriseColors.gray600}
         value={amount}
         onChangeText={setAmount}
         keyboardType="decimal-pad"
       />
       <View style={styles.actions}>
-        {onCancel && (
-          <TouchableOpacity style={styles.cancelBtn} onPress={onCancel} disabled={saving}>
-            <Text style={styles.cancelBtnText}>{t('producer.costCalculator.cancel')}</Text>
+        {onCancel ? (
+          <TouchableOpacity onPress={onCancel} disabled={saving} style={styles.cancelBtn}>
+            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
           </TouchableOpacity>
-        )}
+        ) : null}
         <TouchableOpacity
-          style={[styles.submitBtn, (!label.trim() || saving) && styles.submitBtnDisabled]}
-          onPress={handleSubmit}
+          style={[enterpriseUi.authBtnPrimary, styles.submitBtn, (!label.trim() || saving) && styles.disabled]}
+          onPress={() => void handleSubmit()}
           disabled={!label.trim() || saving}
         >
-          <Text style={styles.submitBtnText}>{saving ? t('producer.costCalculator.saving') : t('producer.costCalculator.addCost')}</Text>
+          <Text style={enterpriseUi.authBtnPrimaryText}>
+            {saving ? t('producer.costCalculator.saving') : t('producer.costCalculator.addCost')}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -66,26 +71,28 @@ export default function CostEntryForm({ onSubmit, onCancel }: CostEntryFormProps
 }
 
 const styles = StyleSheet.create({
-  container: { padding: theme.spacing.md },
-  input: {
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 12,
+    marginTop: 16,
+  },
+  cancelBtn: {
     minHeight: 48,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: 16,
-    marginBottom: theme.spacing.sm,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  cancelText: {
     fontSize: 16,
-    color: theme.colors.text.primary,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
   },
-  actions: { flexDirection: 'row', gap: 12, marginTop: theme.spacing.sm, justifyContent: 'flex-end' },
-  cancelBtn: { paddingVertical: 12, paddingHorizontal: 20 },
-  cancelBtnText: { fontSize: 16, color: theme.colors.text.secondary },
   submitBtn: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: theme.borderRadius.md,
+    minHeight: 48,
+    paddingHorizontal: 20,
   },
-  submitBtnDisabled: { opacity: 0.5 },
-  submitBtnText: { fontSize: 16, color: theme.colors.text.inverse, fontWeight: '600' },
+  disabled: {
+    opacity: 0.5,
+  },
 });

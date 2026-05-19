@@ -11,12 +11,13 @@ import {
   StyleSheet,
   RefreshControl,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, QrCode } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
+import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
+import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
+import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
+import { growerUi } from '../../lib/grower-ui';
+import { complianceStyles } from '../../lib/compliance-ui';
 import { batchesAPI, packageBadgesAPI, type PackageBadgeType } from '../../lib/api';
 import { API_URL } from '../../lib/api-url';
 
@@ -38,10 +39,32 @@ function publicBadgeUrl(serial: string): string {
   return `${base}/public/badges/${encodeURIComponent(serial)}`;
 }
 
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return <Text style={enterpriseUi.inAppSectionLabel}>{children}</Text>;
+}
+
+function FieldHint({ children }: { children: React.ReactNode }) {
+  return <Text style={[enterpriseUi.inAppLead, styles.hint]}>{children}</Text>;
+}
+
+function PickerPanel({
+  children,
+  maxHeight = 200,
+}: {
+  children: React.ReactNode;
+  maxHeight?: number;
+}) {
+  return (
+    <View style={[complianceStyles.pickerPanel, { maxHeight }]}>
+      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+        {children}
+      </ScrollView>
+    </View>
+  );
+}
+
 export default function PackageBadgesScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
 
   const [batches, setBatches] = useState<{ id: string; batchId: string; productName?: string }[]>([]);
@@ -162,141 +185,87 @@ export default function PackageBadgesScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: insets.top + 8,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}
-          hitSlop={12}
-        >
-          <ChevronLeft size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>{t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 10, lineHeight: 18 }}>
+    <EnterpriseScreen
+      refreshing={listRefreshing}
+      onRefresh={onListRefresh}
+      contentPaddingBottom={Math.max(p.bottomInset, 24) + 16}
+      header={
+        <GrowerStackHeader
+          title={t('producer.packageBadges.title')}
+          subtitle={t('producer.packageBadges.subtitle')}
+        />
+      }
+    >
+      <View style={growerUi.scrollContent}>
+        <Text style={[enterpriseUi.inAppLead, styles.footerNote]}>
           {t('producer.packageBadges.printOrderFooterNote')}
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <QrCode size={22} color={theme.colors.primary} strokeWidth={1.75} />
-          <Text
-            style={{ fontSize: 20, fontWeight: '600', color: theme.colors.text.primary, flex: 1 }}
-            numberOfLines={2}
-          >
-            {t('producer.packageBadges.title')}
-          </Text>
-        </View>
-        <Text
-          style={{
-            fontSize: 13,
-            color: theme.colors.text.secondary,
-            marginTop: 6,
-            lineHeight: 20,
-          }}
-        >
-          {t('producer.packageBadges.subtitle')}
-        </Text>
-      </View>
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: p.screenPaddingLeft,
-          paddingTop: theme.spacing.md,
-          paddingBottom: Math.max(insets.bottom, 24),
-        }}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={listRefreshing}
-            onRefresh={onListRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
+        <View style={enterpriseUi.authPanel}>
+          <FieldLabel>{t('producer.packageBadges.parentLabel')}</FieldLabel>
+          <FieldHint>{t('producer.packageBadges.parentHint')}</FieldHint>
+          <TextInput
+            value={parentSerial}
+            onChangeText={setParentSerial}
+            placeholder={t('producer.packageBadges.parentPh')}
+            placeholderTextColor={enterpriseColors.gray600}
+            autoCapitalize="characters"
+            style={growerUi.formInput}
           />
-        }
-      >
-        <Text style={labelStyle}>{t('producer.packageBadges.parentLabel')}</Text>
-        <Text style={hintStyle}>{t('producer.packageBadges.parentHint')}</Text>
-        <TextInput
-          value={parentSerial}
-          onChangeText={setParentSerial}
-          placeholder={t('producer.packageBadges.parentPh')}
-          placeholderTextColor={theme.colors.text.tertiary}
-          autoCapitalize="characters"
-          style={inputStyle}
-        />
 
-        <Text style={[labelStyle, { marginTop: 16 }]}>{t('producer.packageBadges.typeLabel')}</Text>
-        <View style={{ flexDirection: 'row', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-          {(
-            [
-              ['PALLET_MASTER' as const, 'producer.packageBadges.typePallet'],
-              ['ROLL_LINE' as const, 'producer.packageBadges.typeRoll'],
-            ] as const
-          ).map(([v, key]) => {
-            const on = badgeType === v;
-            return (
-              <TouchableOpacity
-                key={v}
-                onPress={() => setBadgeType(v)}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 14,
-                  borderRadius: theme.borderRadius.md,
-                  borderWidth: 1,
-                  borderColor: on ? theme.colors.primary : theme.colors.border,
-                  backgroundColor: on ? `${theme.colors.primary}12` : theme.colors.surface,
-                }}
-              >
-                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
-                  {t(key)}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+          <FieldLabel>{t('producer.packageBadges.typeLabel')}</FieldLabel>
+          <View style={styles.typeRow}>
+            {(
+              [
+                ['PALLET_MASTER' as const, 'producer.packageBadges.typePallet'],
+                ['ROLL_LINE' as const, 'producer.packageBadges.typeRoll'],
+              ] as const
+            ).map(([v, key]) => {
+              const on = badgeType === v;
+              return (
+                <TouchableOpacity
+                  key={v}
+                  onPress={() => setBadgeType(v)}
+                  style={[growerUi.filterChip, styles.typeChip, on && growerUi.filterChipOn]}
+                >
+                  <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]}>{t(key)}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <Text style={[labelStyle, { marginTop: 16 }]}>{t('producer.packageBadges.linkPrintOrder')}</Text>
-        <Text style={hintStyle}>{t('producer.packageBadges.linkPrintHint')}</Text>
-        <TouchableOpacity
-          onPress={() => setOpenPrintPicker((o) => !o)}
-          style={[inputStyle, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
-        >
-          <Text
-            style={{
-              fontSize: 15,
-              color: selectedPrintOrderId
-                ? theme.colors.text.primary
-                : theme.colors.text.tertiary,
-              flex: 1,
+          <FieldLabel>{t('producer.packageBadges.linkPrintOrder')}</FieldLabel>
+          <FieldHint>{t('producer.packageBadges.linkPrintHint')}</FieldHint>
+          <TouchableOpacity
+            onPress={() => {
+              setOpenPrintPicker((o) => !o);
+              setOpenBatchPicker(false);
             }}
-            numberOfLines={1}
+            style={[enterpriseUi.inAppPanel, styles.pickerTrigger]}
           >
-            {printOrdersLoading
-              ? t('producer.packageBadges.linkPrintOrderLoading')
-              : selectedPrintOrderId
-                ? `${printOrders.find((x) => x.id === selectedPrintOrderId)?.status ?? ''} · ${selectedPrintOrderId.slice(0, 8)}`
-                : '—'}
-          </Text>
-        </TouchableOpacity>
-        {openPrintPicker && !printOrdersLoading && (
-          <View style={{ maxHeight: 160, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.borderRadius.md, marginBottom: 12 }}>
-            <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+            <Text
+              style={
+                selectedPrintOrderId ? enterpriseUi.navRowTitle : enterpriseUi.navRowSubtitle
+              }
+              numberOfLines={1}
+            >
+              {printOrdersLoading
+                ? t('producer.packageBadges.linkPrintOrderLoading')
+                : selectedPrintOrderId
+                  ? `${printOrders.find((x) => x.id === selectedPrintOrderId)?.status ?? ''} · ${selectedPrintOrderId.slice(0, 8)}`
+                  : '—'}
+            </Text>
+          </TouchableOpacity>
+          {openPrintPicker && !printOrdersLoading ? (
+            <PickerPanel maxHeight={160}>
               <TouchableOpacity
                 onPress={() => {
                   setSelectedPrintOrderId(null);
                   setOpenPrintPicker(false);
                 }}
-                style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+                style={complianceStyles.pickerRow}
               >
-                <Text style={{ color: theme.colors.text.secondary }}>—</Text>
+                <Text style={enterpriseUi.navRowSubtitle}>—</Text>
               </TouchableOpacity>
               {printOrders.map((o) => (
                 <TouchableOpacity
@@ -305,65 +274,54 @@ export default function PackageBadgesScreen() {
                     setSelectedPrintOrderId(o.id);
                     setOpenPrintPicker(false);
                   }}
-                  style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+                  style={complianceStyles.pickerRow}
                 >
-                  <Text style={{ color: theme.colors.text.primary, fontSize: 13 }}>
+                  <Text style={enterpriseUi.navRowTitle}>
                     {o.status} · {o.id.slice(0, 8)}…
                   </Text>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
-          </View>
-        )}
+            </PickerPanel>
+          ) : null}
 
-        <Text style={[labelStyle, { marginTop: 20 }]}>{t('producer.packageBadges.childrenLabel')}</Text>
-        <Text style={hintStyle}>{t('producer.packageBadges.childrenHint')}</Text>
-        <TextInput
-          value={childrenRaw}
-          onChangeText={setChildrenRaw}
-          placeholder={t('producer.packageBadges.childrenPh')}
-          placeholderTextColor={theme.colors.text.tertiary}
-          multiline
-          style={[inputStyle, { minHeight: 100, textAlignVertical: 'top' }]}
-        />
+          <FieldLabel>{t('producer.packageBadges.childrenLabel')}</FieldLabel>
+          <FieldHint>{t('producer.packageBadges.childrenHint')}</FieldHint>
+          <TextInput
+            value={childrenRaw}
+            onChangeText={setChildrenRaw}
+            placeholder={t('producer.packageBadges.childrenPh')}
+            placeholderTextColor={enterpriseColors.gray600}
+            multiline
+            style={[growerUi.formInput, styles.multiline]}
+          />
 
-        <Text style={[labelStyle, { marginTop: 8 }]}>{t('producer.packageBadges.batchLabel')}</Text>
-        <TouchableOpacity
-          onPress={() => setOpenBatchPicker((o) => !o)}
-          style={[inputStyle, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
-        >
-          <Text
-            style={{
-              fontSize: 15,
-              color: selectedBatchLabel ? theme.colors.text.primary : theme.colors.text.tertiary,
-              flex: 1,
+          <FieldLabel>{t('producer.packageBadges.batchLabel')}</FieldLabel>
+          <TouchableOpacity
+            onPress={() => {
+              setOpenBatchPicker((o) => !o);
+              setOpenPrintPicker(false);
             }}
-            numberOfLines={1}
+            style={[enterpriseUi.inAppPanel, styles.pickerTrigger]}
           >
-            {batchesLoading
-              ? t('producer.packageBadges.loadingBatches')
-              : selectedBatchLabel || t('producer.packageBadges.batchNone')}
-          </Text>
-        </TouchableOpacity>
-        {openBatchPicker && !batchesLoading && (
-          <View
-            style={{
-              maxHeight: 200,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              borderRadius: theme.borderRadius.md,
-              marginTop: 8,
-            }}
-          >
-            <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+            <Text
+              style={selectedBatchLabel ? enterpriseUi.navRowTitle : enterpriseUi.navRowSubtitle}
+              numberOfLines={1}
+            >
+              {batchesLoading
+                ? t('producer.packageBadges.loadingBatches')
+                : selectedBatchLabel || t('producer.packageBadges.batchNone')}
+            </Text>
+          </TouchableOpacity>
+          {openBatchPicker && !batchesLoading ? (
+            <PickerPanel>
               <TouchableOpacity
                 onPress={() => {
                   setBatchInternalId(null);
                   setOpenBatchPicker(false);
                 }}
-                style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+                style={complianceStyles.pickerRow}
               >
-                <Text style={{ color: theme.colors.text.secondary }}>{t('producer.packageBadges.batchNone')}</Text>
+                <Text style={enterpriseUi.navRowSubtitle}>{t('producer.packageBadges.batchNone')}</Text>
               </TouchableOpacity>
               {batches.map((b) => (
                 <TouchableOpacity
@@ -372,61 +330,74 @@ export default function PackageBadgesScreen() {
                     setBatchInternalId(b.id);
                     setOpenBatchPicker(false);
                   }}
-                  style={{ padding: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }}
+                  style={complianceStyles.pickerRow}
                 >
-                  <Text style={{ color: theme.colors.text.primary, fontWeight: '500' }}>{b.batchId}</Text>
+                  <Text style={enterpriseUi.navRowTitle}>{b.batchId}</Text>
                   {b.productName ? (
-                    <Text style={{ color: theme.colors.text.secondary, fontSize: 12, marginTop: 2 }}>{b.productName}</Text>
+                    <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 2 }]}>{b.productName}</Text>
                   ) : null}
                 </TouchableOpacity>
               ))}
-            </ScrollView>
-          </View>
-        )}
+            </PickerPanel>
+          ) : null}
+        </View>
 
         <TouchableOpacity
           onPress={onSubmit}
           disabled={submitting}
-          style={{
-            marginTop: 24,
-            backgroundColor: theme.colors.primary,
-            borderRadius: theme.borderRadius.md,
-            paddingVertical: 14,
-            alignItems: 'center',
-            opacity: submitting ? 0.6 : 1,
-          }}
+          activeOpacity={0.88}
+          style={[enterpriseUi.authBtnPrimary, submitting && styles.btnDisabled]}
         >
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={enterpriseColors.white} />
           ) : (
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{t('producer.packageBadges.submit')}</Text>
+            <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.packageBadges.submit')}</Text>
           )}
         </TouchableOpacity>
 
-        <Text
-          style={{
-            marginTop: 16,
-            fontSize: 12,
-            color: theme.colors.text.tertiary,
-            lineHeight: 18,
-          }}
-        >
-          {t('producer.packageBadges.qrHint')}
-        </Text>
-      </ScrollView>
-    </View>
+        <Text style={[enterpriseUi.navRowSubtitle, styles.qrHint]}>{t('producer.packageBadges.qrHint')}</Text>
+      </View>
+    </EnterpriseScreen>
   );
 }
 
-const labelStyle = { fontSize: 13, fontWeight: '600' as const, color: theme.colors.text.primary, marginBottom: 4 };
-const hintStyle = { fontSize: 12, color: theme.colors.text.secondary, marginBottom: 8, lineHeight: 18 };
-const inputStyle = {
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  borderRadius: theme.borderRadius.md,
-  paddingHorizontal: 12,
-  paddingVertical: 10,
-  fontSize: 15,
-  color: theme.colors.text.primary,
-  backgroundColor: theme.colors.surface,
-};
+const styles = StyleSheet.create({
+  footerNote: {
+    marginBottom: 12,
+    fontSize: 14,
+  },
+  hint: {
+    marginTop: 4,
+    marginBottom: 10,
+    fontSize: 15,
+  },
+  typeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  typeChip: {
+    paddingHorizontal: 16,
+  },
+  pickerTrigger: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 52,
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  multiline: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  btnDisabled: {
+    opacity: 0.55,
+  },
+  qrHint: {
+    marginTop: 16,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+});

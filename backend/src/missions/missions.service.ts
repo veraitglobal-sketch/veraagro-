@@ -55,6 +55,58 @@ export class MissionsService {
     return out;
   }
 
+  /** Grower-facing mission JSON with driver + vehicle blocks (Prisma relations stay for compatibility). */
+  private static mapMissionForGrowerApi(mission: Record<string, unknown>): Record<string, unknown> {
+    const out = MissionsService.scrubMissionForGrowerView(mission);
+    const assigned = out.assigned_logistics_driver as Record<string, unknown> | null | undefined;
+    const vehicle = out.vehicles as Record<string, unknown> | null | undefined;
+    const lp = out.users_missions_logisticsPartnerIdTousers as Record<string, unknown> | null | undefined;
+
+    const assignedDriver = assigned
+      ? {
+          id: assigned.id,
+          firstName: assigned.firstName,
+          lastName: assigned.lastName,
+          phone: assigned.phone ?? null,
+          email: assigned.email ?? null,
+          photoUrl: assigned.photoUrl ?? null,
+        }
+      : null;
+
+    const vehicleInfo = vehicle
+      ? {
+          id: vehicle.id,
+          vehicleNumber: vehicle.vehicleNumber,
+          licensePlate: vehicle.licensePlate,
+          make: vehicle.make ?? null,
+          model: vehicle.model ?? null,
+          type: vehicle.type,
+        }
+      : null;
+
+    const logisticsCompanyContact = lp
+      ? {
+          firstName: lp.firstName,
+          lastName: lp.lastName,
+          phone: lp.phone ?? null,
+        }
+      : null;
+
+    out.assignedDriver = assignedDriver;
+    out.vehicleInfo = vehicleInfo;
+    out.logisticsCompanyContact = logisticsCompanyContact;
+    // Legacy mobile field (TimelineBlock)
+    out.driver = assignedDriver
+      ? {
+          firstName: assignedDriver.firstName,
+          lastName: assignedDriver.lastName,
+          phone: assignedDriver.phone,
+        }
+      : null;
+
+    return out;
+  }
+
   /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
   private shouldAutoAssignLogistics(): boolean {
     return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
@@ -1457,7 +1509,7 @@ export class MissionsService {
           include: growerInclude,
           orderBy: { createdAt: 'desc' },
         });
-        return rows.map((m) => MissionsService.scrubMissionForGrowerView(m as Record<string, unknown>));
+        return rows.map((m) => MissionsService.mapMissionForGrowerApi(m as Record<string, unknown>));
       }
       if (isGrower) {
         const rows = await this.prisma.missions.findMany({
@@ -1465,7 +1517,7 @@ export class MissionsService {
           include: growerInclude,
           orderBy: { createdAt: 'desc' },
         });
-        return rows.map((m) => MissionsService.scrubMissionForGrowerView(m as Record<string, unknown>));
+        return rows.map((m) => MissionsService.mapMissionForGrowerApi(m as Record<string, unknown>));
       }
       if (isLogisticsPartner) {
         return this.prisma.missions.findMany({
@@ -1526,7 +1578,7 @@ export class MissionsService {
     }
     if (roles.includes('GROWER') || roles.includes('FARMER')) {
       if (mission.growerId === requestUserId) {
-        return MissionsService.scrubMissionForGrowerView(mission as Record<string, unknown>);
+        return MissionsService.mapMissionForGrowerApi(mission as Record<string, unknown>);
       }
     }
     if (roles.includes('LOGISTICS_PARTNER')) {

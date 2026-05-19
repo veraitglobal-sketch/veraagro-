@@ -18,7 +18,7 @@ export default function ScannerScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
-  const params = useLocalSearchParams<{ returnTo?: string }>();
+  const params = useLocalSearchParams<{ returnTo?: string; materialKind?: string }>();
   const isForProducts = params.returnTo === 'products' || params.returnTo === 'seed-registration';
   const isMaterialAdd = params.returnTo === 'material-add';
   const [permission, requestPermission] = useCameraPermissions();
@@ -49,6 +49,25 @@ export default function ScannerScreen() {
         return;
       }
       if (isMaterialAdd) {
+        const kindParam = params.materialKind;
+        const kind =
+          kindParam === 'SEED' || kindParam === 'FERTILIZER' || kindParam === 'PESTICIDE'
+            ? kindParam
+            : 'FERTILIZER';
+        const result = await materialValidator(data, kind);
+        if (!result.valid) {
+          Alert.alert(t('alerts.warning'), result.message || t('producer.scanner.barcodeNotOnWhitelist'), [
+            {
+              text: t('alerts.tryAgain'),
+              onPress: () => {
+                setScanned(false);
+                setBarcode(null);
+              },
+            },
+          ]);
+          setValidating(false);
+          return;
+        }
         await AsyncStorage.setItem('last_material_barcode', data);
         setValidating(false);
         router.back();

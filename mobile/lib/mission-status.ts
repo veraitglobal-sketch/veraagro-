@@ -1,5 +1,5 @@
 import type { TFunction } from 'i18next';
-import { colors } from './colors';
+import { enterpriseColors } from './enterprise-ui';
 
 /**
  * Mission status strings from Prisma `MissionStatus` (backend). Mobile UI must not assume legacy `DELIVERED`.
@@ -48,24 +48,25 @@ export function getMissionStatusLabelLocalized(status: string, t: TFunction): st
   return translated;
 }
 
+/** Enterprise grower palette only — no amber/blue status rainbows. */
 export function getMissionStatusColor(status: string): string {
   switch (status) {
-    case 'PENDING':
-      return colors.warning;
-    case 'ASSIGNED':
-    case 'ACCEPTED':
-    case 'IN_PROGRESS':
-    case 'READY_FOR_LOADING':
-      return colors.accent;
     case 'PICKED_UP':
     case 'IN_TRANSIT':
-      return colors.primary;
     case 'COMPLETED':
     case 'DELIVERED':
-      return colors.success || colors.primary;
+      return enterpriseColors.primary;
     case 'CANCELLED':
-      return colors.text.secondary;
+      return enterpriseColors.gray600;
     default:
-      return colors.text.secondary;
+      return enterpriseColors.gray900;
   }
+}
+
+export function missionStatusEnterpriseTone(status: string): { bg: string; text: string } {
+  const text = getMissionStatusColor(status);
+  if (text === enterpriseColors.primary) {
+    return { bg: enterpriseColors.primaryTint, text };
+  }
+  return { bg: enterpriseColors.gray100, text };
 }

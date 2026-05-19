@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } fr
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { missionsAPI, Mission } from '../../../lib/api';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 
 type Step = 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY';
 
@@ -21,7 +21,6 @@ export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Pro
   const [busy, setBusy] = useState<string | null>(null);
 
   const status = mission.status ?? '';
-
   const loadingHandoverRequired = BEFORE_LOADING_DONE.includes(String(status));
 
   const run = async (step: Step) => {
@@ -47,13 +46,12 @@ export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Pro
 
   if (loadingHandoverRequired) {
     return (
-      <View style={[styles.wrap, styles.wrapNotice]}>
-        <Text style={styles.title}>{t('logistics.loadingHandover.needTitle')}</Text>
-        <Text style={styles.hint}>{t('logistics.loadingHandover.needBody')}</Text>
-        <TouchableOpacity style={[styles.btn, styles.btnFull]} onPress={openLoadingHandover}>
-          <Text style={styles.btnText}>{t('logistics.loadingHandover.needCta')}</Text>
-        </TouchableOpacity>
-      </View>
+      <EnterpriseNotice
+        title={t('logistics.loadingHandover.needTitle')}
+        body={t('logistics.loadingHandover.needBody')}
+        onPress={openLoadingHandover}
+        actionLabel={t('logistics.loadingHandover.needCta')}
+      />
     );
   }
 
@@ -62,46 +60,46 @@ export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Pro
   }
 
   return (
-    <View style={styles.wrap}>
-      <Text style={styles.title}>{t('logistics.lifecycleTitle')}</Text>
-      <Text style={styles.hint}>{t('logistics.lifecycleHint')}</Text>
+    <View style={[enterpriseUi.inAppPanel, styles.wrap]}>
+      <Text style={enterpriseUi.navRowTitle}>{t('logistics.lifecycleTitle')}</Text>
+      <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>{t('logistics.lifecycleHint')}</Text>
       <View style={styles.row}>
         {status === 'READY_FOR_LOADING' && (
           <TouchableOpacity
-            style={styles.btn}
+            style={enterpriseUi.authBtnPrimary}
             onPress={() => void run('DEPART_FARM')}
             disabled={busy !== null}
           >
             {busy === `${mission.id}:DEPART_FARM` ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={enterpriseColors.white} />
             ) : (
-              <Text style={styles.btnText}>{t('logistics.lifecycleDepart')}</Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('logistics.lifecycleDepart')}</Text>
             )}
           </TouchableOpacity>
         )}
         {status === 'PICKED_UP' && (
           <TouchableOpacity
-            style={styles.btn}
+            style={enterpriseUi.authBtnPrimary}
             onPress={() => void run('START_TRANSIT')}
             disabled={busy !== null}
           >
             {busy === `${mission.id}:START_TRANSIT` ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={enterpriseColors.white} />
             ) : (
-              <Text style={styles.btnText}>{t('logistics.lifecycleTransit')}</Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('logistics.lifecycleTransit')}</Text>
             )}
           </TouchableOpacity>
         )}
         {status === 'IN_TRANSIT' && (
           <TouchableOpacity
-            style={styles.btn}
+            style={enterpriseUi.authBtnPrimary}
             onPress={() => void run('COMPLETE_DELIVERY')}
             disabled={busy !== null}
           >
             {busy === `${mission.id}:COMPLETE_DELIVERY` ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={enterpriseColors.white} />
             ) : (
-              <Text style={styles.btnText}>{t('logistics.lifecycleDelivered')}</Text>
+              <Text style={enterpriseUi.authBtnPrimaryText}>{t('logistics.lifecycleDelivered')}</Text>
             )}
           </TouchableOpacity>
         )}
@@ -112,50 +110,14 @@ export default function LogisticsMissionLifecycleBar({ mission, onUpdated }: Pro
 
 const styles = StyleSheet.create({
   wrap: {
-    marginTop: theme.spacing.md,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(45, 90, 39, 0.25)',
-    backgroundColor: 'rgba(247, 250, 246, 0.9)',
-  },
-  wrapNotice: {
-    backgroundColor: 'rgba(251, 191, 36, 0.12)',
-    borderColor: 'rgba(245, 158, 11, 0.45)',
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.primary,
+    marginBottom: 12,
+    padding: 16,
   },
   hint: {
-    fontSize: 12,
-    color: colors.text.secondary,
     marginTop: 6,
-    lineHeight: 18,
+    marginBottom: 12,
   },
   row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: theme.spacing.sm,
-    gap: 8,
-  },
-  btn: {
-    backgroundColor: colors.primary,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    minWidth: 140,
-    alignItems: 'center',
-  },
-  btnFull: {
-    minWidth: undefined,
-    width: '100%',
-    marginTop: theme.spacing.sm,
-  },
-  btnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 13,
+    gap: 10,
   },
 });

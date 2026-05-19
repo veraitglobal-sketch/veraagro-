@@ -59,6 +59,10 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSyncTriggerRef = useRef(0);
   const cacheHydratedRef = useRef(false);
+  const initialLoadDoneRef = useRef(false);
+  const refreshInFlightRef = useRef(false);
+  const loadDataRef = useRef<() => Promise<void>>(async () => {});
+  const loadLiveDataRef = useRef<() => Promise<void>>(async () => {});
 
   /** Hydrate from disk before first paint when possible — avoids home layout pop-in. */
   useLayoutEffect(() => {
@@ -313,15 +317,34 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       loadLiveData(),
     ]);
     if (user?.trustScore) setTrustScore(user.trustScore);
+    initialLoadDoneRef.current = true;
   }, [user?.trustScore, loadEstates, loadParcelSteps, loadOfflinePending, loadRecentEntries, loadLiveData]);
 
+  loadDataRef.current = loadData;
+  loadLiveDataRef.current = loadLiveData;
+
+  const userId = user?.id;
+
+  /** Initial load once per user — not on every socket reconnect. */
   useEffect(() => {
-    loadData();
+    if (!userId) return;
+    initialLoadDoneRef.current = false;
+    void loadDataRef.current();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
     const interval = setInterval(() => {
-      if (!connected) loadLiveData();
+      if (!connected) void loadLiveDataRef.current();
     }, 30000);
     return () => clearInterval(interval);
-  }, [user, connected, loadData, loadLiveData]);
+  }, [userId, connected]);
+
+  /** When back online, refresh live slices only (missions, batches, wallet) — keep cached estates. */
+  useEffect(() => {
+    if (!userId || !connected || !initialLoadDoneRef.current) return;
+    void loadLiveDataRef.current();
+  }, [userId, connected]);
 
   // After transport reconnects (Socket.io), run the same auto-sync as settings allow
   useEffect(() => {
@@ -354,13 +377,23 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   }, [socketNotifications, loadLiveData]);
 
   const onRefresh = useCallback(async () => {
+    if (refreshInFlightRef.current) return;
+    refreshInFlightRef.current = true;
     setRefreshing(true);
     setOfflineSyncing(true);
+    const clearStuckRefresh = setTimeout(() => {
+      setRefreshing(false);
+      setOfflineSyncing(false);
+      refreshInFlightRef.current = false;
+    }, 45_000);
     try {
       await syncService.syncAll();
       await loadData();
     } finally {
+      clearTimeout(clearStuckRefresh);
       setRefreshing(false);
+      setOfflineSyncing(false);
+      refreshInFlightRef.current = false;
       await loadOfflinePending();
     }
   }, [loadData, loadOfflinePending]);

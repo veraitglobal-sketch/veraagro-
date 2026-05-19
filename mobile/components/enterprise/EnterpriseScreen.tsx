@@ -12,20 +12,16 @@ import { growerUi } from '../../lib/grower-ui';
 
 type Props = {
   children: ReactNode;
-  /** Fixed header above scroll body (e.g. GrowerTabHeader). */
   header?: ReactNode;
   refreshing?: boolean;
   onRefresh?: () => void;
   contentPaddingBottom?: number;
-  /** Subtle green wash like welcome — use on Home tab only. */
   withTopWash?: boolean;
   contentContainerStyle?: StyleProp<ViewStyle>;
+  /** Tab roots: stretch canvas when content is short; always allow scroll when tall. */
+  fillViewport?: boolean;
 };
 
-/**
- * Grower in-app canvas — same gray-50 + white surfaces as welcome/login.
- * Farmer-friendly: vertical scroll, pull-to-refresh, no nested gestures.
- */
 export function EnterpriseScreen({
   children,
   header,
@@ -34,12 +30,13 @@ export function EnterpriseScreen({
   contentPaddingBottom = 16,
   withTopWash = false,
   contentContainerStyle,
+  fillViewport = false,
 }: Props) {
   return (
     <View style={growerUi.canvas}>
       {withTopWash ? (
         <LinearGradient
-          colors={['rgba(45, 90, 39, 0.07)', 'rgba(249, 250, 251, 0)']}
+          colors={['rgba(45, 90, 39, 0.055)', 'rgba(249, 250, 251, 0)']}
           style={enterpriseUi.screenTopWash}
           pointerEvents="none"
         />
@@ -47,12 +44,13 @@ export function EnterpriseScreen({
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={[
-          { paddingBottom: contentPaddingBottom, flexGrow: 0 },
+          { paddingBottom: contentPaddingBottom, flexGrow: fillViewport ? 1 : 0 },
           contentContainerStyle,
         ]}
         contentInsetAdjustmentBehavior="never"
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           onRefresh ? (
             <RefreshControl

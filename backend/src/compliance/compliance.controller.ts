@@ -1,5 +1,17 @@
-import { Controller, Post, Get, Body, UseGuards, Request, Query, Put, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  UseGuards,
+  Request,
+  Query,
+  Put,
+  Param,
+  BadRequestException,
+} from '@nestjs/common';
 import { ComplianceService } from './compliance.service';
+import { MaterialBarcodeValidationService, type GrowerMaterialKind } from './material-barcode-validation.service';
 import { GrowerWhiteListDto } from './dto/grower-white-list.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -8,12 +20,45 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @Controller('compliance')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ComplianceController {
-  constructor(private readonly complianceService: ComplianceService) {}
+  constructor(
+    private readonly complianceService: ComplianceService,
+    private readonly materialBarcodeValidation: MaterialBarcodeValidationService,
+  ) {}
 
   /**
    * Check compliance for scanned fertilizer barcode
    * Used as middleware in field entry flow
    */
+  /**
+   * Grower: validate material barcode (same rules as growth-log create).
+   */
+  @Get('validate-material')
+  @Roles('FARMER', 'GROWER')
+  async validateMaterial(
+    @Request() req: { user: { id: string } },
+    @Query('code') code: string,
+    @Query('kind') kind: string,
+    @Query('farmId') farmId?: string,
+  ) {
+    const k = (kind ?? '').trim().toUpperCase();
+    if (!['SEED', 'FERTILIZER', 'PESTICIDE'].includes(k)) {
+      throw new BadRequestException('kind must be SEED, FERTILIZER, or PESTICIDE');
+    }
+    try {
+      await this.materialBarcodeValidation.assertValidForGrower(
+        req.user.id,
+        code ?? '',
+        k as GrowerMaterialKind,
+        { farmId, entryType: 'GROWTH_LOG' },
+      );
+      return { valid: true as const };
+    } catch (e: unknown) {
+      const message =
+        e instanceof Error ? e.message : 'Material barcode is not authorized for your account.';
+      return { valid: false as const, message };
+    }
+  }
+
   @Post('check')
   @Roles('FARMER', 'GROWER')
   async checkCompliance(@Request() req, @Body() body: { barcode: string; farmId?: string; entryType?: string }) {

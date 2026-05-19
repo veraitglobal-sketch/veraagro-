@@ -50,6 +50,13 @@ interface MissionTracker {
   }>;
   driver: string;
   vehicle: string;
+  vehicleInfo?: {
+    vehicleNumber: string | null;
+    licensePlate: string | null;
+    make: string | null;
+    model: string | null;
+    type: string | null;
+  } | null;
   requestedAt: string;
   pickedUpAt: string | null;
   completedAt: string | null;
@@ -577,6 +584,26 @@ export default function GrowerPortalPage() {
                     )}
                   </div>
                 </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-5 rounded-lg border border-gray-100 bg-gray-50/80 px-4 py-3"
+                >
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    {t('growerPages.portalPickupVehicleHeading')}
+                  </p>
+                  {sm.vehicle && sm.vehicle !== 'Not assigned' ? (
+                    <p className="mt-1 text-base font-semibold text-gray-900">{sm.vehicle}</p>
+                  ) : (
+                    <p className="mt-1 text-sm text-amber-900">{t('growerPages.portalPickupNoVehicle')}</p>
+                  )}
+                  {sm.vehicleInfo?.licensePlate ? (
+                    <p className="mt-1 text-sm text-gray-700">
+                      {t('growerPages.portalPickupLicensePlate')}: {sm.vehicleInfo.licensePlate}
+                    </p>
+                  ) : null}
+                </motion.div>
 
                 <div className="mt-6 border-t border-gray-100 pt-5">
                   <p className="text-sm font-semibold text-gray-900">{t('growerPages.portalPickupProofTitle')}</p>

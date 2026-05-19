@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, type ListRenderItem } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { PendingProduct } from '../../../lib/offline-storage';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerStyles, growerUi } from '../../../lib/grower-ui';
 
 interface ProductListProps {
   products: PendingProduct[];
   loading: boolean;
   listRefreshing: boolean;
   onRefresh: () => Promise<void>;
+  ListHeaderComponent?: React.ReactElement;
+  contentPaddingBottom?: number;
 }
 
 function ProductItem({ item }: { item: PendingProduct }) {
@@ -19,42 +22,56 @@ function ProductItem({ item }: { item: PendingProduct }) {
       : item.status === 'syncing'
         ? t('producer.products.syncing')
         : item.status;
+
+  const statusTone =
+    item.status === 'synced'
+      ? { bg: enterpriseColors.primaryTint, text: enterpriseColors.primary }
+      : { bg: enterpriseColors.gray100, text: enterpriseColors.gray700 };
+
   return (
-    <View style={styles.item}>
-      <Text style={styles.name} numberOfLines={1}>
+    <View style={[enterpriseUi.inAppPanel, styles.item]}>
+      <Text style={enterpriseUi.navRowTitle} numberOfLines={1}>
         {item.name}
       </Text>
       {item.contents ? (
-        <Text style={styles.contents} numberOfLines={2}>
+        <Text style={enterpriseUi.navRowSubtitle} numberOfLines={2}>
           {item.contents}
         </Text>
       ) : null}
       <View style={styles.meta}>
-        <Text style={styles.metaText}>
+        <Text style={enterpriseUi.navRowSubtitle}>
           {item.quantity} {item.unit}
         </Text>
-        {item.parcelOrEstate ? <Text style={styles.metaText}> • {item.parcelOrEstate}</Text> : null}
+        {item.parcelOrEstate ? (
+          <Text style={enterpriseUi.navRowSubtitle}> · {item.parcelOrEstate}</Text>
+        ) : null}
       </View>
-      <Text style={styles.status}>{statusLabel}</Text>
+      <View style={[growerStyles.statusPill, { backgroundColor: statusTone.bg, marginTop: 8 }]}>
+        <Text style={[growerStyles.statusPillText, { color: statusTone.text }]}>{statusLabel}</Text>
+      </View>
     </View>
   );
 }
 
-export default function ProductList({ products, loading, listRefreshing, onRefresh }: ProductListProps) {
+export default function ProductList({
+  products,
+  loading,
+  listRefreshing,
+  onRefresh,
+  ListHeaderComponent,
+  contentPaddingBottom = 24,
+}: ProductListProps) {
   const { t } = useTranslation();
+
+  const renderItem: ListRenderItem<PendingProduct> = ({ item }) => <ProductItem item={item} />;
 
   if (loading && products.length === 0) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.secondary}>{t('producer.products.loading')}</Text>
-      </View>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.secondary}>{t('producer.products.noProducts')}</Text>
+      <View style={styles.flex}>
+        {ListHeaderComponent}
+        <View style={styles.centered}>
+          <Text style={enterpriseUi.navRowSubtitle}>{t('producer.products.loading')}</Text>
+        </View>
       </View>
     );
   }
@@ -63,31 +80,42 @@ export default function ProductList({ products, loading, listRefreshing, onRefre
     <FlatList
       data={products}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <ProductItem item={item} />}
-      onRefresh={onRefresh}
+      renderItem={renderItem}
+      onRefresh={() => void onRefresh()}
       refreshing={listRefreshing}
-      contentContainerStyle={styles.list}
-      style={styles.flatList}
+      ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={
+        <View style={growerUi.emptyCard}>
+          <Text style={enterpriseUi.navRowSubtitle}>{t('producer.products.noProducts')}</Text>
+        </View>
+      }
+      contentContainerStyle={[styles.list, { paddingBottom: contentPaddingBottom }]}
+      style={styles.flex}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
     />
   );
 }
 
 const styles = StyleSheet.create({
-  list: { padding: theme.spacing.md, paddingBottom: theme.spacing['2xl'] },
-  flatList: { flex: 1 },
-  item: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-    borderWidth: 0.5,
-    borderColor: theme.colors.border,
+  flex: { flex: 1 },
+  list: {
+    paddingHorizontal: 20,
+    flexGrow: 1,
   },
-  name: { fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 4 },
-  contents: { fontSize: 14, color: theme.colors.text.secondary, marginBottom: 4 },
-  meta: { flexDirection: 'row', flexWrap: 'wrap' },
-  metaText: { fontSize: 13, color: theme.colors.text.tertiary },
-  status: { fontSize: 12, color: theme.colors.primary, marginTop: 6 },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.xl },
-  secondary: { fontSize: 16, color: theme.colors.text.secondary, textAlign: 'center' },
+  item: {
+    padding: 16,
+    marginBottom: 10,
+  },
+  meta: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 4,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
 });

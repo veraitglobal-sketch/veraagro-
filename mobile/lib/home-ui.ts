@@ -267,10 +267,10 @@ export const homeUi = {
 
 export const homeStyles = StyleSheet.create({
   linkIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: enterpriseColors.primaryTint,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: enterpriseColors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,

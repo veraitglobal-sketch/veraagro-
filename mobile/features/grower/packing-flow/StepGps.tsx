@@ -1,13 +1,13 @@
 /**
- * Step 3: GPS/Timestamp – Automatic log (capture location + time)
+ * Step 3: GPS/Timestamp – Automatic log
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Check } from 'lucide-react-native';
 import * as Location from 'expo-location';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 
 export type GpsCapturePayload = { lat: number; lng: number; timestamp: string };
 
@@ -49,38 +49,39 @@ export default function StepGps({ onCaptured }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
-        <MapPin size={40} color={theme.colors.primary} style={styles.icon} />
-        <Text style={styles.title}>{t('packingFlow.step3.title')}</Text>
-        <Text style={styles.subtitle}>{t('packingFlow.step3.subtitle')}</Text>
+      <View style={[enterpriseUi.inAppPanel, styles.card]}>
+        <View style={styles.iconWell}>
+          <MapPin size={32} color={enterpriseColors.primary} strokeWidth={1.5} />
+        </View>
+        <Text style={enterpriseUi.navRowTitle}>{t('packingFlow.step3.title')}</Text>
+        <Text style={[enterpriseUi.navRowSubtitle, styles.subtitle]}>{t('packingFlow.step3.subtitle')}</Text>
 
         {captured ? (
           <View style={styles.capturedWrap}>
             <View style={styles.successRow}>
-              <Check size={24} color={theme.colors.success} />
+              <Check size={22} color={enterpriseColors.primary} strokeWidth={2} />
               <Text style={styles.successText}>{t('packingFlow.step3.captured')}</Text>
             </View>
-            {location && (
+            {location ? (
               <Text style={styles.coords}>
                 {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
               </Text>
-            )}
-            {timestamp && (
-              <Text style={styles.time}>{new Date(timestamp).toLocaleString()}</Text>
-            )}
+            ) : null}
+            {timestamp ? <Text style={styles.time}>{new Date(timestamp).toLocaleString()}</Text> : null}
           </View>
         ) : (
           <TouchableOpacity
-            style={[styles.captureBtn, loading && styles.captureBtnDisabled]}
-            onPress={capture}
+            style={[enterpriseUi.authBtnPrimary, styles.captureBtn, loading && styles.captureBtnDisabled]}
+            onPress={() => void capture()}
             disabled={loading}
+            activeOpacity={0.88}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator color={enterpriseColors.white} size="small" />
             ) : (
               <>
-                <MapPin size={24} color="#fff" />
-                <Text style={styles.captureBtnText}>{t('packingFlow.step3.capture')}</Text>
+                <MapPin size={22} color={enterpriseColors.white} strokeWidth={1.5} />
+                <Text style={enterpriseUi.authBtnPrimaryText}>{t('packingFlow.step3.capture')}</Text>
               </>
             )}
           </TouchableOpacity>
@@ -93,36 +94,57 @@ export default function StepGps({ onCaptured }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   card: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    padding: 20,
   },
-  icon: { marginBottom: theme.spacing.md },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary, marginBottom: theme.spacing.xs },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginBottom: theme.spacing.lg },
+  iconWell: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  subtitle: {
+    marginTop: 6,
+    marginBottom: 18,
+  },
   capturedWrap: {
-    backgroundColor: theme.colors.successLight,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.success,
+    backgroundColor: enterpriseColors.primaryTint,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: enterpriseColors.gray200,
   },
-  successRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: theme.spacing.sm },
-  successText: { fontSize: 16, fontWeight: '600', color: theme.colors.success },
-  coords: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, fontFamily: 'monospace' },
-  time: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: theme.spacing.xs },
+  successRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  successText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+  },
+  coords: {
+    fontSize: 14,
+    color: enterpriseColors.gray700,
+    fontFamily: 'monospace',
+  },
+  time: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    marginTop: 6,
+  },
   captureBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 16,
-    borderRadius: theme.borderRadius.md,
-    minHeight: 56,
+    minHeight: 52,
   },
-  captureBtnDisabled: { opacity: 0.6 },
-  captureBtnText: { fontSize: 16, fontWeight: '600', color: '#fff' },
+  captureBtnDisabled: {
+    opacity: 0.6,
+  },
 });

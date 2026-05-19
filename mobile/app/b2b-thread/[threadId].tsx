@@ -48,7 +48,7 @@ export default function B2bThreadDeepLinkScreen() {
           return;
         }
         const next =
-          `/b2b-supplier/${encodeURIComponent(row.supplierUserId)}?threadId=${encodeURIComponent(threadId)}`;
+          `/b2b-supplier/${encodeURIComponent(row.supplierUserId)}?panel=messages&threadId=${encodeURIComponent(threadId)}`;
         router.replace(next as Href);
       } catch {
         if (!cancelled) {

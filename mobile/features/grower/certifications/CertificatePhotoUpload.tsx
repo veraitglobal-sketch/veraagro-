@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Camera, X } from 'lucide-react-native';
+import { Camera } from 'lucide-react-native';
 import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import { RequiredCert } from './useCertificationsData';
 import { PendingCertificatePhoto } from '../../../lib/offline-storage';
 
@@ -43,77 +44,115 @@ export default function CertificatePhotoUpload({ cert, onSave, onCancel }: Certi
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{cert.title}</Text>
-      {cert.description ? <Text style={styles.desc}>{cert.description}</Text> : null}
+    <View style={[growerUi.scrollContent, styles.container]}>
+      <View style={enterpriseUi.authPanel}>
+        {cert.description ? (
+          <Text style={[enterpriseUi.navRowSubtitle, styles.desc]}>{cert.description}</Text>
+        ) : null}
 
-      {!photoUri ? (
-        <View style={styles.buttons}>
-          <TouchableOpacity style={styles.btn} onPress={takePhoto}>
-            <Camera size={24} color={theme.colors.primary} strokeWidth={1} />
-            <Text style={styles.btnText}>{t('producer.certifications.takePhoto')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.btn} onPress={pickImage}>
-            <Text style={styles.btnText}>{t('producer.certifications.chooseFromGallery')}</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <>
-          <Image source={{ uri: photoUri }} style={styles.preview} resizeMode="cover" />
-          <View style={styles.actions}>
-            <TouchableOpacity onPress={() => setPhotoUri(null)} style={styles.cancelBtn}>
-              <Text style={styles.cancelBtnText}>{t('producer.certifications.removePhoto')}</Text>
+        {!photoUri ? (
+          <View style={styles.buttons}>
+            <TouchableOpacity style={styles.outlineBtn} onPress={takePhoto} activeOpacity={0.88}>
+              <Camera size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
+              <Text style={styles.outlineBtnText}>{t('producer.certifications.takePhoto')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.saveBtn, saving && styles.saveBtnDisabled]}
-              onPress={handleSave}
-              disabled={saving}
-            >
-              <Text style={styles.saveBtnText}>{saving ? t('producer.products.saving') : t('producer.products.saveToDevice')}</Text>
+            <TouchableOpacity style={styles.outlineBtn} onPress={pickImage} activeOpacity={0.88}>
+              <Text style={styles.outlineBtnText}>{t('producer.certifications.chooseFromGallery')}</Text>
             </TouchableOpacity>
           </View>
-        </>
-      )}
+        ) : (
+          <>
+            <Image source={{ uri: photoUri }} style={styles.preview} resizeMode="cover" />
+            <View style={styles.actions}>
+              <TouchableOpacity onPress={() => setPhotoUri(null)} style={styles.cancelBtn}>
+                <Text style={styles.cancelText}>{t('producer.certifications.removePhoto')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[enterpriseUi.authBtnPrimary, styles.saveBtn, saving && styles.disabled]}
+                onPress={() => void handleSave()}
+                disabled={saving}
+                activeOpacity={0.88}
+              >
+                <Text style={enterpriseUi.authBtnPrimaryText}>
+                  {saving ? t('producer.products.saving') : t('producer.products.saveToDevice')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+      </View>
 
-      <TouchableOpacity onPress={onCancel} style={styles.backBtn}>
-        <X size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.backBtnText}>{t('common.close')}</Text>
+      <TouchableOpacity onPress={onCancel} style={styles.closeBtn} activeOpacity={0.72}>
+        <Text style={styles.closeText}>{t('common.close')}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: theme.spacing.md },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary, marginBottom: 4 },
-  desc: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginBottom: theme.spacing.md },
-  buttons: { flexDirection: 'row', gap: 12, marginBottom: theme.spacing.md },
-  btn: {
-    flex: 1,
+  container: {
+    paddingTop: 8,
+  },
+  desc: {
+    marginBottom: 16,
+  },
+  buttons: {
+    gap: 10,
+  },
+  outlineBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
+    minHeight: 52,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
   },
-  btnText: { fontSize: 16, color: theme.colors.primary, fontWeight: '500' },
-  preview: { width: '100%', height: 200, borderRadius: theme.borderRadius.md, marginBottom: theme.spacing.md },
-  actions: { flexDirection: 'row', gap: 12, marginBottom: theme.spacing.md },
-  cancelBtn: { paddingVertical: 12, paddingHorizontal: 20 },
-  cancelBtnText: { fontSize: 16, color: theme.colors.text.secondary },
+  outlineBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+  },
+  preview: {
+    width: '100%',
+    height: 220,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cancelBtn: {
+    minHeight: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  cancelText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+  },
   saveBtn: {
     flex: 1,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
+    minHeight: 48,
+    justifyContent: 'center',
   },
-  saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { fontSize: 16, color: theme.colors.text.inverse, fontWeight: '600' },
-  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  backBtnText: { fontSize: 14, color: theme.colors.text.secondary },
+  disabled: {
+    opacity: 0.5,
+  },
+  closeBtn: {
+    marginTop: 20,
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+  },
 });

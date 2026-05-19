@@ -37,7 +37,7 @@ export function HubSummaryMetrics({ title, rows }: { title: string; rows: HubMet
   if (rows.length === 0) return null;
 
   return (
-    <View style={growerUi.metricsCard}>
+    <View style={growerUi.formPanel}>
       <Text style={growerStyles.metricsTitle}>{title}</Text>
       {rows.map((r) => (
         <View key={r.key} style={growerStyles.metricRow}>

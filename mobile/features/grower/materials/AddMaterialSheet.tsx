@@ -185,7 +185,10 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
             <TouchableOpacity
               style={styles.scanBtn}
               onPress={() =>
-                router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'material-add' } } as any)
+                router.push({
+                  pathname: '/(producer)/scanner',
+                  params: { returnTo: 'material-add', materialKind: type },
+                } as any)
               }
             >
               <ScanLine size={22} color={theme.colors.primary} />

@@ -1,50 +1,25 @@
 /**
- * Compliance photos screen — enterprise tokens (farmer-readable sizes).
+ * Compliance photos — enterprise tokens (aligned with grower UI).
  */
 import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
 import { enterpriseColors, enterpriseUi } from './enterprise-ui';
 import { growerUi } from './grower-ui';
 
 export const complianceUi = {
-  canvas: {
-    flex: 1,
-    backgroundColor: enterpriseColors.canvas,
-  } as ViewStyle,
-
-  scrollPad: {
-    paddingTop: 12,
-    paddingBottom: 32,
-  } as ViewStyle,
-
-  heading: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.3,
-    marginBottom: 10,
-  } as TextStyle,
-
-  body: {
-    fontSize: 16,
-    color: enterpriseColors.gray600,
-    lineHeight: 23,
-    marginBottom: 16,
-  } as TextStyle,
-
+  heading: enterpriseUi.inAppSectionLabel,
+  body: enterpriseUi.inAppLead,
   link: {
     color: enterpriseColors.primary,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   } as TextStyle,
 
   panel: {
     ...enterpriseUi.authPanel,
-    marginBottom: 20,
+    marginBottom: 16,
   } as ViewStyle,
 
   panelTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
+    ...enterpriseUi.navRowTitle,
     marginBottom: 8,
   } as TextStyle,
 
@@ -56,86 +31,44 @@ export const complianceUi = {
   } as TextStyle,
 
   successPanel: {
-    backgroundColor: enterpriseColors.primaryTint,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(45, 90, 39, 0.25)',
+    ...enterpriseUi.inAppPanel,
+    borderColor: enterpriseColors.premiumTintBorder,
+    backgroundColor: enterpriseColors.premiumTintBg,
     padding: 18,
-    marginBottom: 20,
+    marginBottom: 16,
   } as ViewStyle,
 
   warnText: {
     fontSize: 15,
-    color: '#92400E',
+    color: enterpriseColors.gray700,
     lineHeight: 22,
   } as TextStyle,
 
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    minHeight: 44,
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  } as ViewStyle,
-
-  chipOn: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
-  } as ViewStyle,
-
-  chipText: {
-    fontSize: 15,
-    color: enterpriseColors.gray600,
-  } as TextStyle,
-
-  chipTextOn: {
-    color: enterpriseColors.primary,
-    fontWeight: '600',
-  } as TextStyle,
-
-  input: {
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 16,
-    color: enterpriseColors.gray900,
-    backgroundColor: enterpriseColors.white,
-  } as TextStyle,
+  input: growerUi.formInput,
 
   verifyBtn: {
+    ...enterpriseUi.authBtnPrimary,
     minHeight: 52,
     paddingHorizontal: 18,
-    justifyContent: 'center',
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 12,
   } as ViewStyle,
 
-  verifyBtnText: {
-    color: enterpriseColors.white,
-    fontWeight: '600',
-    fontSize: 16,
-  } as TextStyle,
+  verifyBtnText: enterpriseUi.authBtnPrimaryText,
 
   photoBox: {
     minHeight: 180,
-    borderWidth: 2,
-    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderStyle: 'dashed' as const,
     borderColor: enterpriseColors.gray200,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
     backgroundColor: enterpriseColors.white,
-    overflow: 'hidden',
-    marginBottom: 20,
+    overflow: 'hidden' as const,
+    marginBottom: 16,
   } as ViewStyle,
 
-  saveBtn: growerUi.btnPrimary,
-  saveBtnText: growerUi.btnPrimaryText,
+  saveBtn: enterpriseUi.authBtnPrimary,
+  saveBtnText: enterpriseUi.authBtnPrimaryText,
 };
 
 export const complianceStyles = StyleSheet.create({
@@ -143,10 +76,25 @@ export const complianceStyles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 8,
+    alignItems: 'stretch',
   },
   chipWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+  },
+  pickerPanel: {
+    ...enterpriseUi.inAppPanel,
+    maxHeight: 200,
+    marginTop: 8,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  pickerRow: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 52,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
   },
 });

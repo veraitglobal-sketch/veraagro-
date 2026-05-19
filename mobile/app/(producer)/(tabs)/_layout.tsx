@@ -2,8 +2,8 @@ import { Tabs } from 'expo-router';
 import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { GrowerDashboardProvider } from '../../../contexts/GrowerDashboardContext';
 import { growerTabScreenOptions } from '../../../lib/enterprise-ui';
+import { GrowerTabBar } from '../../../components/enterprise/GrowerTabBar';
 
 /**
  * Grower tabs: Home → Field (parcels & diary) → Chain (lots & transport) → Supplies → Profile.
@@ -14,8 +14,7 @@ export default function ProducerTabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <GrowerDashboardProvider>
-    <Tabs screenOptions={growerTabScreenOptions(insets)}>
+    <Tabs screenOptions={growerTabScreenOptions(insets)} tabBar={(props) => <GrowerTabBar {...props} />}>
       <Tabs.Screen
         name="index"
         options={{
@@ -72,6 +71,5 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen name="wallet" options={{ title: t('producer.tabs.wallet'), href: null }} />
       <Tabs.Screen name="settings" options={{ title: t('producer.tabs.settings'), href: null }} />
     </Tabs>
-    </GrowerDashboardProvider>
   );
 }

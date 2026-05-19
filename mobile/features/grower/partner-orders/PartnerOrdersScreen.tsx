@@ -65,7 +65,7 @@ export default function PartnerOrdersScreen() {
 
   const openThread = (supplierUserId: string, threadId: string) => {
     router.push(
-      `/b2b-supplier/${encodeURIComponent(supplierUserId)}?threadId=${encodeURIComponent(threadId)}` as Href,
+      `/b2b-supplier/${encodeURIComponent(supplierUserId)}?panel=messages&threadId=${encodeURIComponent(threadId)}` as Href,
     );
   };
 

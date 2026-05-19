@@ -1,10 +1,12 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Truck } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
 import type { Mission } from '../../../lib/api';
-import { getStatusColor, getStatusLabel } from './useMissionDetailData';
+import { missionStatusEnterpriseTone } from '../../../lib/mission-status';
+import { growerStyles } from '../../../lib/grower-ui';
+import { enterpriseUi } from '../../../lib/enterprise-ui';
+import { getStatusLabel } from './useMissionDetailData';
+import { MissionDetailSection } from './MissionDetailSection';
 
 interface MissionInfoBlockProps {
   mission: Mission;
@@ -12,61 +14,30 @@ interface MissionInfoBlockProps {
 
 export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
   const { t } = useTranslation();
+  const tone = missionStatusEnterpriseTone(mission.status);
+
   return (
-    <View
-      style={{
-        backgroundColor: colors.background,
-        borderRadius: theme.borderRadius.md,
-        padding: theme.spacing.md,
-        marginBottom: theme.spacing.md,
-        borderWidth: 0.5,
-        borderColor: colors.border,
-      }}
+    <MissionDetailSection
+      title={t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
+      icon={Truck}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-        <Truck size={18} color={colors.text.primary} strokeWidth={1} />
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: '300',
-            color: colors.text.primary,
-            marginLeft: theme.spacing.xs,
-            letterSpacing: 0.3,
-          }}
-        >
-          {t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
-        </Text>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: '300',
-            color: colors.text.secondary,
-          }}
-        >
-          {t('producer.missions.statusFieldLabel')}
-        </Text>
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.sm,
-            paddingVertical: 4,
-            borderRadius: theme.borderRadius.sm,
-            backgroundColor: `${getStatusColor(mission.status)}15`,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: '300',
-              color: getStatusColor(mission.status),
-              letterSpacing: 0.3,
-            }}
-          >
+      <View style={styles.row}>
+        <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missions.statusFieldLabel')}</Text>
+        <View style={[growerStyles.statusPill, { backgroundColor: tone.bg }]}>
+          <Text style={[growerStyles.statusPillText, { color: tone.text }]}>
             {getStatusLabel(mission.status, t)}
           </Text>
         </View>
       </View>
-    </View>
+    </MissionDetailSection>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+});

@@ -1,84 +1,95 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Wallet } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface WalletBalanceCardProps {
   availableBalance: number;
   pendingBalance: number;
+  totalEarned?: number;
+}
+
+function formatEur(amount: number, locale: string) {
+  return amount.toLocaleString(locale, { style: 'currency', currency: 'EUR' });
 }
 
 export function WalletBalanceCard({
   availableBalance,
   pendingBalance,
+  totalEarned,
 }: WalletBalanceCardProps) {
   const { t } = useTranslation();
-  const dateLocale = useAppLocaleTag();
+  const locale = useAppLocaleTag();
+
   return (
-    <View
-      style={{
-        backgroundColor: theme.colors.primary,
-        borderRadius: theme.borderRadius.lg,
-        padding: theme.spacing.xl,
-        marginBottom: theme.spacing.lg,
-        borderWidth: 0.5,
-        borderColor: 'rgba(0, 0, 0, 0.05)',
-        ...(theme.shadows?.md || {}),
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: theme.spacing.md,
-        }}
-      >
-        <Wallet size={24} color={theme.colors.text.inverse} strokeWidth={1.5} />
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: '300',
-            color: 'rgba(255, 255, 255, 0.9)',
-            marginLeft: theme.spacing.sm,
-            letterSpacing: 0.5,
-          }}
-        >
-          {t('producer.wallet.available')}
-        </Text>
+    <View style={styles.card}>
+      <Text style={styles.amount}>{formatEur(availableBalance ?? 0, locale)}</Text>
+      <Text style={styles.amountLabel}>{t('producer.wallet.available')}</Text>
+
+      <View style={styles.meta}>
+        {pendingBalance > 0 ? (
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>{t('producer.wallet.pending')}</Text>
+            <Text style={styles.metaValue}>{formatEur(pendingBalance, locale)}</Text>
+          </View>
+        ) : null}
+        {totalEarned != null ? (
+          <View style={[styles.metaItem, pendingBalance > 0 && styles.metaItemBorder]}>
+            <Text style={styles.metaLabel}>{t('producer.wallet.totalEarned')}</Text>
+            <Text style={styles.metaValue}>{formatEur(totalEarned, locale)}</Text>
+          </View>
+        ) : null}
       </View>
-      <Text
-        style={{
-          fontSize: 36,
-          fontWeight: '300',
-          color: theme.colors.text.inverse,
-          letterSpacing: 1,
-          marginBottom: theme.spacing.xs,
-        }}
-      >
-        {availableBalance != null
-          ? availableBalance.toLocaleString(dateLocale, {
-              style: 'currency',
-              currency: 'EUR',
-            })
-          : (0).toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
-      </Text>
-      {pendingBalance > 0 && (
-        <Text
-          style={{
-            fontSize: 11,
-            fontWeight: '300',
-            color: 'rgba(255, 255, 255, 0.8)',
-            letterSpacing: 0.3,
-          }}
-        >
-          {t('producer.wallet.pending')}:{' '}
-          {pendingBalance.toLocaleString(dateLocale, {
-            style: 'currency',
-            currency: 'EUR',
-          })}
-        </Text>
-      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    ...enterpriseUi.inAppPanel,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 18,
+    marginBottom: 16,
+  },
+  amount: {
+    fontSize: 34,
+    fontWeight: '300',
+    color: enterpriseColors.primary,
+    letterSpacing: -0.9,
+    lineHeight: 40,
+  },
+  amountLabel: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    marginTop: 4,
+  },
+  meta: {
+    flexDirection: 'row',
+    marginTop: 16,
+    paddingTop: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+  },
+  metaItem: {
+    flex: 1,
+    minWidth: 0,
+  },
+  metaItemBorder: {
+    paddingLeft: 16,
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderLeftColor: enterpriseColors.gray200,
+  },
+  metaLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    marginBottom: 4,
+  },
+  metaValue: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: enterpriseColors.gray900,
+  },
+});

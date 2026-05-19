@@ -2,17 +2,21 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Package, QrCode, Plus } from 'lucide-react-native';
+import { QrCode, Plus } from 'lucide-react-native';
 import { useProductsData } from './useProductsData';
 import ProductEntryForm from './ProductEntryForm';
 import ProductList from './ProductList';
-import { theme } from '../../../lib/theme';
-import { HubSummaryMetrics } from '../hubs/HubSummaryMetrics';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { HubMetricsStrip } from '../hubs/HubMetricsStrip';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 
 export default function ProductsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { products, loading, listRefreshing, load, addProduct } = useProductsData();
   const [showForm, setShowForm] = useState(false);
   const [scannedQr, setScannedQr] = useState<string | null>(null);
@@ -27,10 +31,12 @@ export default function ProductsScreen() {
             setShowForm(true);
             await AsyncStorage.removeItem('last_scanned_qr');
           }
-        } catch (_) {}
+        } catch {
+          /* ignore */
+        }
       };
-      readScanned();
-    }, [])
+      void readScanned();
+    }, []),
   );
 
   const handleAdd = useCallback(
@@ -39,7 +45,7 @@ export default function ProductsScreen() {
       setShowForm(false);
       setScannedQr(null);
     },
-    [addProduct]
+    [addProduct],
   );
 
   const productMetricRows = useMemo(
@@ -60,81 +66,112 @@ export default function ProductsScreen() {
 
   const openScanner = () => {
     setScannedQr(null);
-    router.push({ pathname: '../scanner', params: { returnTo: 'products' } });
+    router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } });
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('producer.dashboard.myProducts')}</Text>
-        <Text style={styles.subtitle}>{t('producer.dashboard.myProductsDesc')}</Text>
-      </View>
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/supplies');
+    }
+  };
 
-      <View style={styles.metricsWrap}>
-        <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={productMetricRows} />
-      </View>
+  const listBottomPad = Math.max(insets.bottom, 12) + 58 + 16;
 
+  const listHeader = (
+    <View style={styles.headerBlock}>
+      <HubMetricsStrip rows={productMetricRows} />
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.bigButton} onPress={openScanner}>
-          <QrCode size={28} color={theme.colors.text.inverse} strokeWidth={1.5} />
-          <Text style={styles.bigButtonText}>{t('producer.dashboard.scanQr')}</Text>
+        <TouchableOpacity onPress={openScanner} activeOpacity={0.88} style={[enterpriseUi.authBtnPrimary, styles.actionBtn]}>
+          <QrCode size={22} color={enterpriseColors.white} strokeWidth={1.5} />
+          <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.dashboard.scanQr')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.bigButton, styles.bigButtonSecondary]}
-          onPress={() => { setScannedQr(null); setShowForm(true); }}
+          onPress={() => {
+            setScannedQr(null);
+            setShowForm(true);
+          }}
+          activeOpacity={0.88}
+          style={[styles.actionBtn, styles.actionBtnOutline]}
         >
-          <Plus size={28} color={theme.colors.primary} strokeWidth={1.5} />
-          <Text style={styles.bigButtonTextSecondary}>{t('producer.dashboard.manualEntry')}</Text>
+          <Plus size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
+          <Text style={styles.actionBtnOutlineText}>{t('producer.dashboard.manualEntry')}</Text>
         </TouchableOpacity>
       </View>
-
-      {showForm && (
-        <View style={styles.formCard}>
+      {showForm ? (
+        <View style={[enterpriseUi.authPanel, styles.formCard]}>
           <ProductEntryForm
             onSubmit={handleAdd}
-            onCancel={() => { setShowForm(false); setScannedQr(null); }}
+            onCancel={() => {
+              setShowForm(false);
+              setScannedQr(null);
+            }}
             initialQrCode={scannedQr || ''}
             initialSource={scannedQr ? 'qr' : 'manual'}
           />
         </View>
-      )}
+      ) : null}
+      <Text style={[enterpriseUi.inAppSectionLabel, styles.listTitle]}>
+        {t('producer.products.enteredListTitle')}
+      </Text>
+    </View>
+  );
 
-      <View style={styles.listHeader}>
-        <Package size={20} color={theme.colors.text.secondary} strokeWidth={1} />
-        <Text style={styles.listTitle}>{t('producer.products.enteredListTitle')}</Text>
-      </View>
+  return (
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader
+        title={t('producer.dashboard.myProducts')}
+        subtitle={t('producer.products.screenLeadShort')}
+        onBack={goBack}
+      />
       <ProductList
         products={products}
         loading={loading}
         listRefreshing={listRefreshing}
         onRefresh={refreshList}
+        ListHeaderComponent={listHeader}
+        contentPaddingBottom={listBottomPad}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm, paddingBottom: theme.spacing.md },
-  metricsWrap: { paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.sm },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginTop: 4 },
-  actions: { flexDirection: 'row', gap: 12, paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.md },
-  bigButton: {
+  headerBlock: {
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 14,
+  },
+  actionBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 16,
-    borderRadius: theme.borderRadius.md,
-    minHeight: 56,
+    gap: 8,
+    minHeight: 52,
   },
-  bigButtonSecondary: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.primary },
-  bigButtonText: { fontSize: 18, fontWeight: '600', color: theme.colors.text.inverse },
-  bigButtonTextSecondary: { fontSize: 18, fontWeight: '600', color: theme.colors.primary },
-  formCard: { marginHorizontal: theme.spacing.md, marginBottom: theme.spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, borderWidth: 0.5, borderColor: theme.colors.border },
-  listHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: theme.spacing.md, marginBottom: 8 },
-  listTitle: { ...theme.typography.body, fontWeight: '600', color: theme.colors.text.primary },
+  actionBtnOutline: {
+    backgroundColor: enterpriseColors.white,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    borderRadius: 12,
+  },
+  actionBtnOutlineText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+    letterSpacing: -0.2,
+  },
+  formCard: {
+    marginBottom: 14,
+  },
+  listTitle: {
+    marginTop: 4,
+    marginBottom: 10,
+  },
 });

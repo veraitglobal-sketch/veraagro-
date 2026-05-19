@@ -16,6 +16,13 @@ export const growerUi = {
     flexGrow: 0,
   } as ViewStyle,
 
+  /** Tab roots: stretch content to bottom safe area (no half-empty canvas). */
+  tabRootBody: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
+  } as ViewStyle,
+
   pageTitle: {
     fontSize: 26,
     fontWeight: '300',
@@ -34,29 +41,18 @@ export const growerUi = {
   } as TextStyle,
 
   sectionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: enterpriseColors.gray600,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginTop: 22,
-    marginBottom: 12,
+    ...enterpriseUi.inAppSectionLabel,
+    marginTop: 4,
+    marginBottom: 10,
   } as TextStyle,
 
   card: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    overflow: 'hidden',
+    ...enterpriseUi.inAppPanel,
     marginBottom: 10,
   } as ViewStyle,
 
   metricsCard: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    ...enterpriseUi.inAppPanel,
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 16,
@@ -87,10 +83,7 @@ export const growerUi = {
   } as ViewStyle,
 
   estateCard: {
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    ...enterpriseUi.inAppPanel,
     padding: 16,
     marginBottom: 10,
   } as ViewStyle,
@@ -180,6 +173,14 @@ export const growerStyles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     backgroundColor: enterpriseColors.canvas,
+  },
+  headerAccent: {
+    width: 32,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: enterpriseColors.primary,
+    marginBottom: 14,
+    opacity: 0.85,
   },
   headerRow: {
     flexDirection: 'row',

@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import type { BatchItem, ParcelFilterOption } from './useQualityEntryData';
 
 export interface BatchSelectorProps {
@@ -36,43 +36,20 @@ export function BatchSelector({
   const { t } = useTranslation();
 
   return (
-    <View style={{ marginBottom: theme.spacing.md }}>
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '300',
-          color: colors.text.secondary,
-          marginBottom: theme.spacing.xs,
-          letterSpacing: 0.3,
-        }}
-      >
-        {t('producer.qualityEntry.parcelHeading')}
-      </Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: theme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
+    <View style={styles.wrap}>
+      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.qualityEntry.parcelHeading')}</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
+        <View style={styles.chipRow}>
           {parcelFilterOptions.map((opt) => {
             const sel = parcelFilterId === opt.id;
             return (
               <TouchableOpacity
                 key={String(opt.id)}
                 onPress={() => setParcelFilterId(String(opt.id))}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: sel ? colors.primary : colors.border,
-                  backgroundColor: sel ? `${colors.primary}10` : colors.background,
-                }}
+                style={[growerUi.filterChip, sel && growerUi.filterChipOn]}
               >
                 <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '600',
-                    color: sel ? colors.primary : colors.text.secondary,
-                    letterSpacing: 0.2,
-                    maxWidth: 260,
-                  }}
+                  style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}
                   numberOfLines={2}
                 >
                   {opt.label}
@@ -83,82 +60,72 @@ export function BatchSelector({
         </View>
       </ScrollView>
 
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '300',
-          color: colors.text.secondary,
-          marginBottom: theme.spacing.xs,
-          letterSpacing: 0.3,
-        }}
-      >
+      <Text style={[enterpriseUi.inAppSectionLabel, styles.batchHeading]}>
         {t('producer.qualityEntry.batchHeading')}
       </Text>
       {loading ? (
-        <View style={{ padding: theme.spacing.md, alignItems: 'center' }}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
+        <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 16 }} />
       ) : filteredBatches.length === 0 ? (
-        <View
-          style={{
-            backgroundColor: colors.background,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: colors.border,
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.secondary }}>
-            {t('producer.qualityEntry.noBatches')}
-          </Text>
+        <View style={[enterpriseUi.inAppPanel, styles.empty]}>
+          <Text style={enterpriseUi.navRowSubtitle}>{t('producer.qualityEntry.noBatches')}</Text>
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {filteredBatches.map((batch) => (
-              <TouchableOpacity
-                key={batch.id}
-                onPress={() => setSelectedBatchId(batch.id)}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: selectedBatchId === batch.id ? colors.primary : colors.border,
-                  backgroundColor: selectedBatchId === batch.id ? `${colors.primary}10` : colors.background,
-                  maxWidth: 200,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: '600',
-                    color: selectedBatchId === batch.id ? colors.primary : colors.text.secondary,
-                    letterSpacing: 0.3,
-                  }}
-                  numberOfLines={2}
+          <View style={styles.chipRow}>
+            {filteredBatches.map((batch) => {
+              const sel = selectedBatchId === batch.id;
+              return (
+                <TouchableOpacity
+                  key={batch.id}
+                  onPress={() => setSelectedBatchId(batch.id)}
+                  style={[styles.batchChip, growerUi.filterChip, sel && growerUi.filterChipOn]}
                 >
-                  {batch.batchId || (batch.id ? batch.id.slice(0, 8) : '')}
-                </Text>
-                {parcelSummaryLine(batch).length > 0 ? (
                   <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '300',
-                      color: colors.text.tertiary,
-                      marginTop: 4,
-                      letterSpacing: 0.2,
-                    }}
+                    style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}
                     numberOfLines={2}
                   >
-                    {parcelSummaryLine(batch)}
+                    {batch.batchId || (batch.id ? batch.id.slice(0, 8) : '')}
                   </Text>
-                ) : null}
-              </TouchableOpacity>
-            ))}
+                  {parcelSummaryLine(batch).length > 0 ? (
+                    <Text style={[enterpriseUi.navRowSubtitle, styles.batchSub]} numberOfLines={2}>
+                      {parcelSummaryLine(batch)}
+                    </Text>
+                  ) : null}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </ScrollView>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: {
+    marginBottom: 16,
+  },
+  chipScroll: {
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingRight: 4,
+  },
+  batchHeading: {
+    marginTop: 4,
+  },
+  batchChip: {
+    maxWidth: 200,
+    alignItems: 'flex-start',
+  },
+  batchSub: {
+    marginTop: 4,
+    fontSize: 13,
+  },
+  empty: {
+    padding: 16,
+  },
+});

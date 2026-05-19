@@ -6,7 +6,8 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { FileText, Check } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 
 interface Props {
   onViewed: () => void;
@@ -16,11 +17,13 @@ export default function StepInstructions({ onViewed }: Props) {
   const { t } = useTranslation();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
-      <View style={styles.card}>
-        <FileText size={32} color={theme.colors.primary} style={styles.icon} />
-        <Text style={styles.title}>{t('packingFlow.step1.title')}</Text>
-        <Text style={styles.subtitle}>{t('packingFlow.step1.subtitle')}</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.inner} showsVerticalScrollIndicator={false}>
+      <View style={[enterpriseUi.inAppPanel, styles.card]}>
+        <View style={styles.iconWell}>
+          <FileText size={28} color={enterpriseColors.primary} strokeWidth={1.5} />
+        </View>
+        <Text style={enterpriseUi.navRowTitle}>{t('packingFlow.step1.title')}</Text>
+        <Text style={[enterpriseUi.navRowSubtitle, styles.subtitle]}>{t('packingFlow.step1.subtitle')}</Text>
 
         <View style={styles.list}>
           <Bullet text={t('packingFlow.step1.item1')} />
@@ -29,9 +32,13 @@ export default function StepInstructions({ onViewed }: Props) {
           <Bullet text={t('packingFlow.step1.item4')} />
         </View>
 
-        <TouchableOpacity style={styles.confirmBtn} onPress={onViewed}>
-          <Check size={20} color="#fff" />
-          <Text style={styles.confirmBtnText}>{t('packingFlow.step1.confirm')}</Text>
+        <TouchableOpacity
+          style={[enterpriseUi.authBtnPrimary, styles.confirmBtn]}
+          onPress={onViewed}
+          activeOpacity={0.88}
+        >
+          <Check size={20} color={enterpriseColors.white} strokeWidth={2} />
+          <Text style={enterpriseUi.authBtnPrimaryText}>{t('packingFlow.step1.confirm')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -49,35 +56,51 @@ function Bullet({ text }: { text: string }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  inner: { paddingBottom: theme.spacing.xl },
+  inner: { paddingBottom: 24 },
   card: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    padding: 20,
   },
-  icon: { marginBottom: theme.spacing.md },
-  title: { ...theme.typography.h3, color: theme.colors.text.primary, marginBottom: theme.spacing.xs },
-  subtitle: { ...theme.typography.bodySmall, color: theme.colors.text.secondary, marginBottom: theme.spacing.lg },
-  list: { marginBottom: theme.spacing.lg, gap: theme.spacing.sm },
-  bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.sm },
+  iconWell: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  subtitle: {
+    marginTop: 6,
+    marginBottom: 16,
+  },
+  list: {
+    marginBottom: 20,
+    gap: 10,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
   bullet: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: enterpriseColors.primary,
     marginTop: 8,
   },
-  bulletText: { ...theme.typography.body, color: theme.colors.text.primary, flex: 1 },
+  bulletText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '400',
+    color: enterpriseColors.gray900,
+    lineHeight: 23,
+  },
   confirmBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.md,
+    minHeight: 52,
   },
-  confirmBtnText: { fontSize: 16, fontWeight: '600', color: '#fff' },
 });

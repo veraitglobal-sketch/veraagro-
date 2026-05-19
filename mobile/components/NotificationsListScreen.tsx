@@ -1,10 +1,12 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCallback, useState, useEffect } from 'react';
-import { ArrowLeft, Bell, AlertCircle, Info, Calendar } from 'lucide-react-native';
+import { Bell, AlertCircle, Info, Calendar } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { theme } from '../lib/theme';
-import { useBioVeraScreenPadding } from '../lib/screen-insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GrowerStackHeader } from './grower/GrowerStackHeader';
+import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
+import { growerUi } from '../lib/grower-ui';
 import { notificationsAPI, Notification } from '../lib/api';
 import { normalizeUserRoles } from '../lib/post-login-redirect';
 import { resolveNotificationActionHref } from '../lib/resolve-notification-action';
@@ -13,12 +15,44 @@ import { useAppLocaleTag } from '../lib/date-locale';
 
 type Filter = 'all' | 'unread' | 'ACTION_REQUIRED' | 'REMINDER' | 'ALERT';
 
+function notificationIconColor(type: string): string {
+  switch (type) {
+    case 'ACTION_REQUIRED':
+    case 'ALERT':
+      return enterpriseColors.destructive;
+    case 'REMINDER':
+      return enterpriseColors.gray700;
+    default:
+      return enterpriseColors.primary;
+  }
+}
+
+function getNotificationIcon(type: string) {
+  switch (type) {
+    case 'ACTION_REQUIRED':
+    case 'ALERT':
+      return AlertCircle;
+    case 'REMINDER':
+      return Bell;
+    default:
+      return Info;
+  }
+}
+
+const FILTERS: { id: Filter; labelKey: string }[] = [
+  { id: 'all', labelKey: 'notificationsCenter.filterAll' },
+  { id: 'unread', labelKey: 'notificationsCenter.filterUnread' },
+  { id: 'ACTION_REQUIRED', labelKey: 'notificationsCenter.filterActionRequired' },
+  { id: 'REMINDER', labelKey: 'notificationsCenter.filterReminders' },
+  { id: 'ALERT', labelKey: 'notificationsCenter.filterAlerts' },
+];
+
 /**
  * Shared notifications list (grower + buyer). Same API and actionUrl resolution as web NotificationCenter.
  */
 export function NotificationsListScreen() {
   const { t } = useTranslation();
-  const p = useBioVeraScreenPadding();
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAuth();
   const notifyRoles = normalizeUserRoles(user);
@@ -66,294 +100,196 @@ export function NotificationsListScreen() {
     return n.type === filter;
   });
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'ACTION_REQUIRED':
-        return AlertCircle;
-      case 'REMINDER':
-        return Bell;
-      case 'ALERT':
-        return AlertCircle;
-      default:
-        return Info;
-    }
-  };
-
-  const getNotificationColor = (type: string) => {
-    switch (type) {
-      case 'ACTION_REQUIRED':
-        return theme.colors.error;
-      case 'REMINDER':
-        return theme.colors.warning;
-      case 'ALERT':
-        return theme.colors.error;
-      default:
-        return theme.colors.primary;
-    }
-  };
-
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: p.headerTop,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-          style={{ marginRight: theme.spacing.md }}
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-        >
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: '300',
-            color: theme.colors.text.primary,
-            letterSpacing: 0.5,
-            flex: 1,
-          }}
-        >
-          {t('notificationsCenter.title')}
-        </Text>
-        {unreadCount > 0 ? (
-          <View
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 10,
-              backgroundColor: theme.colors.error,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.background }}>{unreadCount}</Text>
-          </View>
-        ) : null}
-      </View>
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(producer)/(tabs)/profile');
+    }
+  };
 
-      <View
-        style={{
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingVertical: theme.spacing.sm,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {(
-              [
-                { id: 'all' as const, labelKey: 'notificationsCenter.filterAll' },
-                { id: 'unread' as const, labelKey: 'notificationsCenter.filterUnread' },
-                { id: 'ACTION_REQUIRED' as const, labelKey: 'notificationsCenter.filterActionRequired' },
-                { id: 'REMINDER' as const, labelKey: 'notificationsCenter.filterReminders' },
-                { id: 'ALERT' as const, labelKey: 'notificationsCenter.filterAlerts' },
-              ] as const
-            ).map((f) => (
+  const subtitle =
+    unreadCount > 0
+      ? t('notificationsCenter.unreadCount', { count: unreadCount })
+      : t('notificationsCenter.subtitle');
+
+  const listBottomPad = Math.max(insets.bottom, 16) + 12;
+
+  return (
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader title={t('notificationsCenter.title')} subtitle={subtitle} onBack={goBack} />
+
+      <View style={styles.filterBar}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+          {FILTERS.map((f) => {
+            const active = filter === f.id;
+            return (
               <TouchableOpacity
                 key={f.id}
                 onPress={() => setFilter(f.id)}
-                activeOpacity={0.7}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
-                  backgroundColor: filter === f.id ? `${theme.colors.primary}10` : 'transparent',
-                }}
+                activeOpacity={0.72}
+                style={[growerUi.filterChip, active && growerUi.filterChipOn]}
               >
-                <Text
-                  style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                    letterSpacing: 0.3,
-                  }}
-                >
-                  {t(f.labelKey)}
-                </Text>
+                <Text style={[growerUi.filterChipText, active && growerUi.filterChipTextOn]}>{t(f.labelKey)}</Text>
               </TouchableOpacity>
-            ))}
-          </View>
+            );
+          })}
         </ScrollView>
       </View>
 
       <ScrollView
-        style={{ flex: 1 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+        style={styles.flex}
+        contentContainerStyle={[growerUi.scrollContent, { paddingBottom: listBottomPad }]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={enterpriseColors.primary} />
+        }
+        showsVerticalScrollIndicator={false}
       >
-        <View
-          style={{
-            paddingTop: theme.spacing.md,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-          }}
-        >
-          {loading ? (
-            <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-              <Text
-                style={{
-                  color: theme.colors.text.secondary,
-                  fontSize: 11,
-                  fontWeight: '300',
-                  letterSpacing: 0.3,
-                }}
-              >
-                {t('notificationsCenter.loading')}
-              </Text>
-            </View>
-          ) : filteredNotifications.length === 0 ? (
-            <View
-              style={{
-                backgroundColor: theme.colors.surface,
-                borderRadius: theme.borderRadius.md,
-                padding: theme.spacing.xl,
-                borderWidth: 0.5,
-                borderColor: 'rgba(0, 0, 0, 0.05)',
-                alignItems: 'center',
-              }}
-            >
-              <Bell size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
-              <Text
-                style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: theme.colors.text.secondary,
-                  marginTop: theme.spacing.sm,
-                  letterSpacing: 0.3,
-                  textAlign: 'center',
-                }}
-              >
-                {t('notificationsCenter.empty')}
-              </Text>
-            </View>
-          ) : (
-            <View style={{ gap: theme.spacing.sm }}>
-              {filteredNotifications.map((notification) => {
-                const Icon = getNotificationIcon(notification.type);
-                const iconColor = getNotificationColor(notification.type);
+        {loading ? (
+          <View style={styles.centered}>
+            <ActivityIndicator color={enterpriseColors.primary} />
+            <Text style={[enterpriseUi.navRowSubtitle, styles.loadingText]}>{t('notificationsCenter.loading')}</Text>
+          </View>
+        ) : filteredNotifications.length === 0 ? (
+          <View style={growerUi.emptyCard}>
+            <Bell size={32} color={enterpriseColors.gray600} strokeWidth={1.5} />
+            <Text style={[enterpriseUi.navRowSubtitle, styles.emptyText]}>{t('notificationsCenter.empty')}</Text>
+          </View>
+        ) : (
+          filteredNotifications.map((notification) => {
+            const Icon = getNotificationIcon(notification.type);
+            const iconColor = notificationIconColor(notification.type);
 
-                return (
-                  <TouchableOpacity
-                    key={notification.id}
-                    onPress={() => {
-                      if (!notification.read) {
-                        void markAsRead(notification.id);
-                      }
-                      const href = resolveNotificationActionHref(notification.actionUrl, {
-                        roles: notifyRoles,
-                      });
-                      if (href) {
-                        router.push(href);
-                      }
-                    }}
-                    activeOpacity={0.7}
-                    style={{
-                      backgroundColor: notification.read ? theme.colors.surface : `${iconColor}05`,
-                      borderRadius: theme.borderRadius.md,
-                      padding: theme.spacing.md,
-                      borderWidth: 0.5,
-                      borderColor: notification.read ? 'rgba(0, 0, 0, 0.05)' : iconColor,
-                      borderLeftWidth: notification.read ? 0.5 : 3,
-                    }}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                      <View
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: theme.borderRadius.sm,
-                          backgroundColor: `${iconColor}15`,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: theme.spacing.sm,
-                        }}
-                      >
-                        <Icon size={20} color={iconColor} strokeWidth={1} />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              fontWeight: notification.read ? '300' : '400',
-                              color: theme.colors.text.primary,
-                              letterSpacing: 0.3,
-                              flex: 1,
-                            }}
-                          >
-                            {notification.title}
-                          </Text>
-                          {!notification.read ? (
-                            <View
-                              style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: 4,
-                                backgroundColor: iconColor,
-                                marginLeft: theme.spacing.sm,
-                              }}
-                            />
-                          ) : null}
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 11,
-                            fontWeight: '300',
-                            color: theme.colors.text.secondary,
-                            marginBottom: theme.spacing.xs,
-                            letterSpacing: 0.2,
-                          }}
-                        >
-                          {notification.message}
-                        </Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                          <Text
-                            style={{
-                              fontSize: 9,
-                              fontWeight: '300',
-                              color: theme.colors.text.secondary,
-                              marginLeft: 4,
-                              letterSpacing: 0.2,
-                            }}
-                          >
-                            {new Date(notification.createdAt).toLocaleDateString(localeTag, {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </Text>
-                        </View>
-                      </View>
+            return (
+              <TouchableOpacity
+                key={notification.id}
+                onPress={() => {
+                  if (!notification.read) {
+                    void markAsRead(notification.id);
+                  }
+                  const href = resolveNotificationActionHref(notification.actionUrl, {
+                    roles: notifyRoles,
+                  });
+                  if (href) {
+                    router.push(href);
+                  }
+                }}
+                activeOpacity={0.72}
+                style={[
+                  enterpriseUi.inAppPanel,
+                  styles.item,
+                  !notification.read && styles.itemUnread,
+                ]}
+              >
+                <View style={styles.itemRow}>
+                  <View style={styles.iconWell}>
+                    <Icon size={20} color={iconColor} strokeWidth={1.5} />
+                  </View>
+                  <View style={styles.itemBody}>
+                    <View style={styles.titleRow}>
+                      <Text style={enterpriseUi.navRowTitle} numberOfLines={2}>
+                        {notification.title}
+                      </Text>
+                      {!notification.read ? <View style={styles.unreadDot} /> : null}
                     </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          )}
-        </View>
+                    <Text style={enterpriseUi.navRowSubtitle} numberOfLines={3}>
+                      {notification.message}
+                    </Text>
+                    <View style={styles.dateRow}>
+                      <Calendar size={12} color={enterpriseColors.gray600} strokeWidth={1} />
+                      <Text style={enterpriseUi.navRowSubtitle}>
+                        {new Date(notification.createdAt).toLocaleDateString(localeTag, {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  filterBar: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingVertical: 4,
+  },
+  centered: {
+    paddingVertical: 48,
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    marginTop: 4,
+  },
+  emptyText: {
+    marginTop: 12,
+    textAlign: 'center',
+  },
+  item: {
+    padding: 16,
+    marginBottom: 10,
+  },
+  itemUnread: {
+    borderLeftWidth: 3,
+    borderLeftColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  iconWell: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  itemBody: {
+    flex: 1,
+    minWidth: 0,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginBottom: 4,
+  },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: enterpriseColors.primary,
+    marginTop: 6,
+    flexShrink: 0,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+  },
+});

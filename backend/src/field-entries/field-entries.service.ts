@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ComplianceService } from '../compliance/compliance.service';
+import {
+  MaterialBarcodeValidationService,
+  materialKindForFieldEntry,
+  type LegacyFieldEntryType,
+} from '../compliance/material-barcode-validation.service';
+import { SmartLockService } from '../smart-lock/smart-lock.service';
 import { ImageResizeService } from '../common/image/image-resize.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
 
-export type EntryType = 'PRSKANJE' | 'SETVA' | 'BERBA';
+export type EntryType = LegacyFieldEntryType;
 
 interface CreateFieldEntryDto {
   type: EntryType;
@@ -25,7 +30,8 @@ interface CreateFieldEntryDto {
 export class FieldEntriesService {
   constructor(
     private prisma: PrismaService,
-    private complianceService: ComplianceService,
+    private materialBarcodeValidation: MaterialBarcodeValidationService,
+    private smartLockService: SmartLockService,
   ) {}
 
   /**
@@ -183,34 +189,45 @@ export class FieldEntriesService {
       }
     }
 
-    // COMPLIANCE CHECK: If fertilizer barcode is provided, check against Bio-White-List
-    if (dto.fertilizerBarcode) {
-      const complianceResult = await this.complianceService.checkCompliance({
-        barcode: dto.fertilizerBarcode,
+    if (dto.seedSerialNumber?.trim()) {
+      await this.materialBarcodeValidation.assertValidForGrower(
         userId,
-        farmId: dto.farmId,
-        entryType: dto.type,
-      });
-
-      if (!complianceResult.compliant || complianceResult.blocked) {
-        throw new ForbiddenException(complianceResult.reason || 'Compliance check failed');
-      }
+        dto.seedSerialNumber,
+        materialKindForFieldEntry(dto.type, 'seed'),
+        { farmId: dto.farmId, entryType: dto.type },
+      );
     }
 
-    // Validate seed batch if provided
-    if (dto.seedSerialNumber) {
-      const seedBatch = await (this.prisma as any).seedBatch.findUnique({
-        where: { serialNumber: dto.seedSerialNumber },
+    if (dto.fertilizerBarcode?.trim()) {
+      await this.materialBarcodeValidation.assertValidForGrower(
+        userId,
+        dto.fertilizerBarcode,
+        materialKindForFieldEntry(dto.type, 'fertilizer'),
+        { farmId: dto.farmId, entryType: dto.type },
+      );
+    }
+
+    const dataExtra = dto.data as { parcelId?: string; parcel_id?: string };
+    const parcelId =
+      typeof dataExtra.parcelId === 'string'
+        ? dataExtra.parcelId.trim()
+        : typeof dataExtra.parcel_id === 'string'
+          ? dataExtra.parcel_id.trim()
+          : '';
+    if (
+      dto.type === 'SETVA' &&
+      dto.seedSerialNumber?.trim() &&
+      parcelId &&
+      dto.data.location?.lat != null &&
+      dto.data.location?.lng != null
+    ) {
+      await this.smartLockService.ensureSeedLinkedToParcel({
+        inputSerialNumber: dto.seedSerialNumber,
+        userId,
+        parcelId,
+        gpsLatitude: dto.data.location.lat,
+        gpsLongitude: dto.data.location.lng,
       });
-
-      if (!seedBatch) {
-        throw new NotFoundException('Seed batch not found');
-      }
-
-      // Optional: Check if seed batch is purchased by this user
-      if (seedBatch.purchasedBy && seedBatch.purchasedBy !== userId) {
-        throw new BadRequestException('Seed batch is not purchased by you');
-      }
     }
 
     // Create entry (you might want to create a FieldEntry model in Prisma)

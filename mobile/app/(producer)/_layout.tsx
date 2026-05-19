@@ -5,6 +5,7 @@ import { AuthGuard } from '../../components/AuthGuard';
 import { NetworkProvider } from '../../contexts/NetworkContext';
 import { ProducerOfflineStrip } from '../../components/ProducerOfflineStrip';
 import { GrowerReconnectAutoSync } from '../../components/GrowerReconnectAutoSync';
+import { GrowerDashboardProvider } from '../../contexts/GrowerDashboardContext';
 
 /**
  * Producer Layout
@@ -14,9 +15,11 @@ export default function ProducerLayout() {
   return (
     <AuthGuard requiredRole={['ADMIN', 'FARMER', 'PARTNER', 'GROWER']}>
       <NetworkProvider>
+      <GrowerDashboardProvider>
       <View style={{ flex: 1 }}>
         <GrowerReconnectAutoSync />
         <ProducerOfflineStrip />
+      <View style={{ flex: 1 }}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -77,6 +80,8 @@ export default function ProducerLayout() {
         />
       </Stack>
       </View>
+      </View>
+      </GrowerDashboardProvider>
       </NetworkProvider>
     </AuthGuard>
   );

@@ -144,9 +144,32 @@ export class TreatmentLogsService {
       throw e;
     }
 
-    if (logs.length === 0) return { date: null };
+    const growthSprays: Array<{ materialBarcode: string; deviceTimestamp: Date }> = [];
+    try {
+      const rows = await this.prisma.growth_logs.findMany({
+        where: {
+          parcelId,
+          materialKind: 'PESTICIDE',
+          materialBarcode: { not: null },
+        },
+        select: { materialBarcode: true, deviceTimestamp: true },
+        orderBy: { deviceTimestamp: 'desc' },
+        take: 200,
+      });
+      for (const row of rows) {
+        const bar = row.materialBarcode?.trim();
+        if (bar) {
+          growthSprays.push({ materialBarcode: bar, deviceTimestamp: row.deviceTimestamp });
+        }
+      }
+    } catch (e) {
+      this.logger.warn(`growth_logs PHI supplement failed parcelId=${parcelId}`, e);
+    }
+
+    if (logs.length === 0 && growthSprays.length === 0) return { date: null };
 
     const productIds = [...new Set(logs.map((l) => l.productId).filter(Boolean))];
+    const sprayBarcodes = [...new Set(growthSprays.map((g) => g.materialBarcode))];
     const uuidIds = productIds.filter((id) => UUID_RE.test(id));
     const otherIds = productIds.filter((id) => !UUID_RE.test(id));
 
@@ -172,6 +195,19 @@ export class TreatmentLogsService {
           if (p.id) phiByKey.set(p.id, p.phiDays ?? 0);
         }
       }
+      if (sprayBarcodes.length > 0) {
+        const missing = sprayBarcodes.filter((b) => !phiByKey.has(b));
+        if (missing.length > 0) {
+          const extra = await this.prisma.bio_white_list.findMany({
+            where: { barcode: { in: missing }, isActive: true },
+            select: { id: true, barcode: true, phiDays: true },
+          });
+          for (const p of extra) {
+            phiByKey.set(p.barcode, p.phiDays ?? 0);
+            if (p.id) phiByKey.set(p.id, p.phiDays ?? 0);
+          }
+        }
+      }
     } catch (e) {
       this.logger.error(`bio_white_list PHI lookup failed parcelId=${parcelId}`, e);
       throw e;
@@ -182,6 +218,16 @@ export class TreatmentLogsService {
       const phi = phiByKey.get(log.productId) ?? 0;
       if (phi <= 0) continue;
       const applied = new Date(log.appliedAt);
+      if (Number.isNaN(applied.getTime())) continue;
+      const harvestOk = new Date(applied);
+      harvestOk.setDate(harvestOk.getDate() + phi);
+      if (harvestOk > latestBlocking) latestBlocking = harvestOk;
+    }
+
+    for (const spray of growthSprays) {
+      const phi = phiByKey.get(spray.materialBarcode) ?? 0;
+      if (phi <= 0) continue;
+      const applied = new Date(spray.deviceTimestamp);
       if (Number.isNaN(applied.getTime())) continue;
       const harvestOk = new Date(applied);
       harvestOk.setDate(harvestOk.getDate() + phi);
