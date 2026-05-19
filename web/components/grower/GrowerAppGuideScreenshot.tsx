@@ -59,7 +59,7 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
       alt={alt}
       width={SCREENSHOT_WIDTH}
       height={SCREENSHOT_HEIGHT}
-      className="grower-app-guide-screenshot w-full h-auto block"
+      className="grower-app-guide-screenshot w-full max-w-full h-auto block align-top"
       loading={eager ? 'eager' : 'lazy'}
       fetchPriority={eager ? 'high' : undefined}
       decoding={eager ? 'sync' : 'async'}
@@ -76,7 +76,7 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
       <button
         type="button"
         onClick={() => setLightboxOpen(true)}
-        className="group relative block w-full cursor-zoom-in border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+        className="group relative block w-full max-w-full overflow-hidden cursor-zoom-in border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
         aria-label={t('grower.appGuide.enlargeScreenshot')}
       >
         {imgEl}

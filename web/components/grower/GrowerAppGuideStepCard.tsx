@@ -55,13 +55,13 @@ export function GrowerAppGuideStepCard({ step, index, pdfExport = false }: Props
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] print:grid-cols-1 lg:gap-0">
-        {/* Left: phone screenshot */}
+        {/* Left: phone screenshot (PNG is already a full screen capture — no extra bezel) */}
         <div className="border-b lg:border-b-0 lg:border-r border-gray-100 bg-gray-50/80 p-5 sm:p-6 lg:sticky lg:top-24 lg:self-start print:static print:border-b print:border-r-0">
-          <div className="mx-auto w-full max-w-[420px]">
+          <div className="mx-auto w-full max-w-[300px]">
             <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 lg:text-left print:hidden">
               {t('grower.appGuide.screenColumnLabel')}
             </p>
-            <div className="rounded-[1.75rem] border-[6px] border-gray-900 bg-gray-900 overflow-hidden shadow-lg">
+            <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10 bg-white">
               <GrowerAppGuideScreenshot
                 src={src}
                 alt={t(step.titleKey)}

@@ -3555,8 +3555,8 @@
         "id": "mobileApp",
         "title": "Mobile app guide",
         "description": "Step-by-step with phone screenshots — sign-in, field tab, lots, suppliers, wallet.",
-        "type": "Web",
-        "size": "9 steps"
+        "type": "PDF",
+        "size": "2.4 MB"
       },
       {
         "id": "payment",

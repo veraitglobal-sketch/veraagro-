@@ -25,9 +25,6 @@ const DOWNLOAD_BY_ID: Record<string, () => Promise<void>> = {
   quality: growersAPI.downloadQualityStandards,
 };
 
-/** Screenshot guide — PDF download + optional online view. */
-const ONLINE_GUIDE_IDS = new Set(['mobileApp']);
-
 const RESOURCE_ICONS: React.ReactNode[] = [
   <svg key="i0" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -409,31 +406,7 @@ export default function GrowersPage() {
                         <span className="px-2 py-1 bg-gray-100 rounded">{resource.type}</span>
                         <span>{resource.size}</span>
                       </div>
-                      {ONLINE_GUIDE_IDS.has(resource.id) ? (
-                        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-4">
-                          <button
-                            type="button"
-                            className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={() => handleDownload(resource.id)}
-                            disabled={downloadingId === resource.id}
-                          >
-                            {downloadingId === resource.id ? (
-                              t('growersPage.downloading')
-                            ) : (
-                              <>
-                                {t('grower.appGuide.downloadPdf')}
-                                <Download className="w-4 h-4" aria-hidden />
-                              </>
-                            )}
-                          </button>
-                          <Link
-                            href={loc('/grower/mobile-app-guide')}
-                            className="text-sm text-gray-600 hover:text-[#2D5A27] font-medium transition-colors flex items-center gap-1"
-                          >
-                            {t('grower.appGuide.viewOnline')}
-                          </Link>
-                        </div>
-                      ) : DOWNLOAD_BY_ID[resource.id] ? (
+                      {DOWNLOAD_BY_ID[resource.id] ? (
                         <button
                           type="button"
                           className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"

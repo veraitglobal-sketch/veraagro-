@@ -3556,8 +3556,8 @@
         "id": "mobileApp",
         "title": "Uputstvo za mobilnu aplikaciju",
         "description": "Korak po korak sa snimcima ekrana — prijava, polje, lotovi, snabdevači, novčanik.",
-        "type": "Web",
-        "size": "9 koraka"
+        "type": "PDF",
+        "size": "2,4 MB"
       },
       {
         "id": "payment",
