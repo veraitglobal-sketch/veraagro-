@@ -284,16 +284,7 @@ export default function PlantingsScreen() {
     return undefined;
   };
 
-  const inputStyle = {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    paddingVertical: 12,
-    paddingHorizontal: theme.spacing.md,
-    fontSize: 16,
-    color: theme.colors.text.primary,
-    backgroundColor: theme.colors.surface,
-  } as const;
+  const inputStyle = growerUi.formInput;
 
   const allCropVarieties = useMemo(
     () => CROP_CATALOG.flatMap((c) => c.items),
@@ -842,7 +833,7 @@ const styles = StyleSheet.create({
     borderColor: `${enterpriseColors.primary}25`,
     marginBottom: 16,
   },
-  leadTitle: { fontSize: 18, fontWeight: '800', color: enterpriseColors.gray900, marginBottom: 6 },
+  leadTitle: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900, marginBottom: 6 },
   leadText: { fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22 },
   leadHint: { fontSize: 14, color: enterpriseColors.gray600, lineHeight: 20, marginTop: 8 },
   errBanner: {
@@ -891,12 +882,12 @@ const styles = StyleSheet.create({
     minHeight: 52,
     justifyContent: 'center',
   },
-  emptyCtaText: { fontSize: 18, fontWeight: '800', color: '#fff' },
+  emptyCtaText: { fontSize: 17, fontWeight: '600', color: '#fff' },
   plantingCard: {
     backgroundColor: enterpriseColors.white,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: enterpriseColors.primary,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
     padding: 16,
     marginBottom: 12,
   },

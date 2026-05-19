@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { View, ScrollView, RefreshControl } from 'react-native';
+import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import {
   MapPin,
   ListOrdered,
@@ -12,7 +13,6 @@ import {
   Sprout,
   Scan,
 } from 'lucide-react-native';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
@@ -63,27 +63,18 @@ export default function FieldHubScreen() {
   ]);
 
   return (
-    <ScrollView
-      style={growerUi.canvas}
-      contentContainerStyle={{ paddingBottom: Math.max(p.bottomInset, 16) + 12, flexGrow: 0 }}
-      contentInsetAdjustmentBehavior="never"
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={data.refreshing}
-          onRefresh={() => void data.onRefresh()}
-          tintColor={enterpriseColors.primary}
-          colors={[enterpriseColors.primary]}
+    <EnterpriseScreen
+      refreshing={data.refreshing}
+      onRefresh={() => void data.onRefresh()}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={
+        <GrowerTabHeader
+          title={t('producer.hubs.field.title')}
+          subtitle={t('producer.hubs.field.leadShort')}
+          style={{ paddingTop: insets.top + 6 }}
         />
       }
     >
-      <GrowerTabHeader
-        title={t('producer.hubs.field.title')}
-        subtitle={t('producer.hubs.field.leadShort')}
-        style={{ paddingTop: insets.top + 6 }}
-      />
-
       <View style={growerUi.scrollContent}>
         <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={metricRows} />
 
@@ -137,6 +128,6 @@ export default function FieldHubScreen() {
         onPress={() => router.push('/(producer)/(tabs)/steps')}
       />
       </View>
-    </ScrollView>
+    </EnterpriseScreen>
   );
 }

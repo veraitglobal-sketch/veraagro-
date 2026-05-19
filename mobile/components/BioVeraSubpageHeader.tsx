@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 import { router, useSegments } from 'expo-router';
 import { replaceToRoleHome } from '../lib/app-navigation';
 import { ArrowLeft } from 'lucide-react-native';
-import { theme } from '../lib/theme';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
+import { enterpriseColors } from '../lib/enterprise-ui';
+import { growerUi } from '../lib/grower-ui';
 
 type LeftMode = 'back' | 'none';
 
@@ -36,10 +37,10 @@ export function BioVeraSubpageHeader({
           paddingTop: p.headerTop,
           paddingLeft: p.screenPaddingLeft,
           paddingRight: p.screenPaddingRight,
-          paddingBottom: theme.spacing.md,
-          backgroundColor: theme.colors.background,
+          paddingBottom: 14,
+          backgroundColor: enterpriseColors.canvas,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: theme.colors.border,
+          borderBottomColor: enterpriseColors.gray200,
           flexDirection: 'row',
           alignItems: 'center',
         },
@@ -59,27 +60,15 @@ export function BioVeraSubpageHeader({
             })
           }
           hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
-          style={{ marginRight: theme.spacing.md }}
+          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', marginRight: 4 }}
         >
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
+          <ArrowLeft size={22} color={enterpriseColors.gray900} strokeWidth={1.5} />
         </TouchableOpacity>
       ) : null}
-      <Text
-        numberOfLines={2}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          fontSize: 20,
-          fontWeight: '300',
-          letterSpacing: 0.2,
-          color: theme.colors.text.primary,
-        }}
-      >
+      <Text numberOfLines={2} style={[growerUi.pageTitle, { flex: 1, minWidth: 0, fontSize: 22 }]}>
         {title}
       </Text>
-      {right != null ? (
-        <View style={{ marginLeft: theme.spacing.sm, justifyContent: 'center' }}>{right}</View>
-      ) : null}
+      {right != null ? <View style={{ marginLeft: 8, justifyContent: 'center' }}>{right}</View> : null}
     </View>
   );
 }

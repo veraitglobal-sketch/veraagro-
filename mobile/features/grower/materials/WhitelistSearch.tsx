@@ -2,6 +2,7 @@ import { View, TextInput, TouchableOpacity, Text, ScrollView, StyleSheet } from 
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react-native';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import type { MaterialFilterType } from './useMaterialsData';
 
@@ -70,9 +71,9 @@ export function WhitelistSearch({
               key={f.id}
               onPress={() => setFilterType(f.id)}
               activeOpacity={0.7}
-              style={[styles.filterChip, active && styles.filterChipActive]}
+              style={[growerUi.filterChip, active && growerUi.filterChipOn]}
             >
-              <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>{f.label}</Text>
+              <Text style={[growerUi.filterChipText, active && growerUi.filterChipTextOn]}>{f.label}</Text>
             </TouchableOpacity>
           );
         })}
@@ -109,29 +110,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     paddingBottom: 12,
-  },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    minHeight: 40,
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  filterChipActive: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
-  },
-  filterChipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-    letterSpacing: -0.1,
-  },
-  filterChipTextActive: {
-    color: enterpriseColors.primary,
-    fontWeight: '600',
   },
 });

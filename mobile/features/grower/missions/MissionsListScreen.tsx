@@ -1,13 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react-native';
@@ -78,50 +71,45 @@ export default function MissionsListScreen() {
     { id: 'COMPLETED', label: t('logistics.filterCompleted') },
   ];
 
+  const filterBar = (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.filterScroll}
+      contentContainerStyle={styles.filterRow}
+    >
+      {filters.map((f) => {
+        const active = filter === f.id;
+        return (
+          <TouchableOpacity
+            key={f.id}
+            onPress={() => setFilter(f.id)}
+            activeOpacity={0.88}
+            style={[growerUi.filterChip, active && growerUi.filterChipOn]}
+          >
+            <Text style={[growerUi.filterChipText, active && growerUi.filterChipTextOn]}>{f.label}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </ScrollView>
+  );
+
   return (
-    <View style={growerUi.canvas}>
-      <GrowerStackHeader
-        title={t('producer.tabs.missions')}
-        subtitle={t('producer.hubs.chain.missionsDesc')}
-      />
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScroll}
-        contentContainerStyle={styles.filterRow}
-      >
-        {filters.map((f) => {
-          const active = filter === f.id;
-          return (
-            <TouchableOpacity
-              key={f.id}
-              onPress={() => setFilter(f.id)}
-              activeOpacity={0.7}
-              style={[styles.filterChip, active && styles.filterChipActive]}
-            >
-              <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>{f.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          ...growerUi.scrollContent,
-          paddingTop: 12,
-          paddingBottom: Math.max(p.bottomInset, 20) + 12,
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh()}
-            tintColor={enterpriseColors.primary}
-            colors={[enterpriseColors.primary]}
+    <EnterpriseScreen
+      refreshing={refreshing}
+      onRefresh={() => void onRefresh()}
+      contentPaddingBottom={Math.max(p.bottomInset, 20) + 12}
+      header={
+        <>
+          <GrowerStackHeader
+            title={t('producer.tabs.missions')}
+            subtitle={t('producer.hubs.chain.missionsDesc')}
           />
-        }
-      >
+          {filterBar}
+        </>
+      }
+    >
+      <View style={[growerUi.scrollContent, { paddingTop: 12 }]}>
         <TouchableOpacity
           onPress={() => router.push('/(producer)/missions-create')}
           activeOpacity={0.88}
@@ -183,8 +171,8 @@ export default function MissionsListScreen() {
             })}
           </View>
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }
 
@@ -196,34 +184,10 @@ const styles = StyleSheet.create({
     borderBottomColor: enterpriseColors.gray200,
   },
   filterRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     gap: 8,
     flexDirection: 'row',
-  },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    minHeight: 40,
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  filterChipActive: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
-  },
-  filterChipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-    letterSpacing: -0.1,
-  },
-  filterChipTextActive: {
-    color: enterpriseColors.primary,
-    fontWeight: '600',
   },
   centered: {
     paddingVertical: 48,
@@ -260,7 +224,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   rowTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     letterSpacing: -0.25,

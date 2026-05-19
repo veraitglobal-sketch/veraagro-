@@ -1,9 +1,13 @@
-import React, { useMemo } from 'react';
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { useMemo } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Package, Box, ShoppingBag, Bell } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
+import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { HubNavTile, HubSectionTitle } from './HubNavTile';
@@ -15,6 +19,7 @@ import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
 export default function SuppliesHubScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const p = useBioVeraScreenPadding();
   const data = useGrowerDashboard();
 
@@ -39,66 +44,53 @@ export default function SuppliesHubScreen() {
   }, [t, data.estates.length, data.unreadCount]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingTop: theme.spacing.md,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing.xl),
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={data.refreshing}
-            onRefresh={() => void data.onRefresh()}
-            tintColor={theme.colors.text.secondary}
-            colors={[theme.colors.primary]}
-          />
-        }
-      >
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: '700',
-            color: theme.colors.text.primary,
-            marginBottom: 6,
-          }}
-        >
-          {t('producer.hubs.supplies.title')}
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: theme.colors.text.secondary,
-            lineHeight: 20,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('producer.hubs.supplies.lead')}
-        </Text>
-
+    <EnterpriseScreen
+      refreshing={data.refreshing}
+      onRefresh={() => void data.onRefresh()}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={
+        <GrowerTabHeader
+          title={t('producer.hubs.supplies.title')}
+          subtitle={t('producer.hubs.supplies.lead')}
+          style={{ paddingTop: insets.top + 6 }}
+        />
+      }
+    >
+      <View style={growerUi.scrollContent}>
         <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={metricRows} />
 
         {data.unreadCount > 0 ? (
           <TouchableOpacity
             onPress={() => router.push('/(producer)/notifications')}
-            activeOpacity={0.75}
+            activeOpacity={0.88}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: theme.colors.primaryLight,
-              borderRadius: theme.borderRadius.md,
-              paddingVertical: 12,
-              paddingHorizontal: theme.spacing.md,
-              marginBottom: theme.spacing.md,
+              backgroundColor: enterpriseColors.primaryTint,
+              borderRadius: 16,
+              paddingVertical: 16,
+              paddingHorizontal: 16,
+              marginBottom: 12,
               borderWidth: 1,
-              borderColor: theme.colors.border,
-              gap: 10,
+              borderColor: 'rgba(45, 90, 39, 0.18)',
+              gap: 12,
+              minHeight: 56,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={t('producer.hubs.supplies.openNotifications', {
+              count: data.unreadCount,
+            })}
           >
-            <Bell size={22} color={theme.colors.primary} strokeWidth={1.75} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color: theme.colors.primary }}>
+            <Bell size={24} color={enterpriseColors.primary} strokeWidth={1.75} />
+            <Text
+              style={{
+                flex: 1,
+                fontSize: 17,
+                fontWeight: '600',
+                color: enterpriseColors.primary,
+                letterSpacing: -0.25,
+              }}
+            >
               {t('producer.hubs.supplies.openNotifications', { count: data.unreadCount })}
             </Text>
           </TouchableOpacity>
@@ -127,7 +119,7 @@ export default function SuppliesHubScreen() {
           icon={ShoppingBag}
           onPress={() => router.push('/(producer)/partner-orders')}
         />
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }

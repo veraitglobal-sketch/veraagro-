@@ -290,7 +290,88 @@ export const enterpriseUi = {
     borderRadius: 2,
     backgroundColor: enterpriseColors.primary,
   } as ViewStyle,
+
+  /** Bottom tabs — white bar, readable labels (farmers 60+). */
+  tabBar: {
+    backgroundColor: enterpriseColors.white,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+    paddingTop: 6,
+    elevation: 0,
+    shadowOpacity: 0,
+  } as ViewStyle,
+
+  tabBarLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: -0.15,
+    marginTop: 2,
+  } as TextStyle,
+
+  /** Hub / settings row — large tap target, one-line helper max. */
+  listRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: enterpriseColors.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    minHeight: 72,
+    marginBottom: 10,
+  } as ViewStyle,
+
+  listRowIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.primaryTint,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  } as ViewStyle,
+
+  listRowTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.3,
+    lineHeight: 22,
+  } as TextStyle,
+
+  listRowDesc: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    marginTop: 4,
+    lineHeight: 20,
+  } as TextStyle,
+
+  screenTopWash: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  } as ViewStyle,
 };
+
+/** Shared Expo Router tab options for grower (and similar) apps. */
+export function growerTabScreenOptions(insets: { bottom: number }) {
+  return {
+    tabBarActiveTintColor: enterpriseColors.primary,
+    tabBarInactiveTintColor: enterpriseColors.gray600,
+    tabBarStyle: {
+      ...enterpriseUi.tabBar,
+      height: 58 + Math.max(insets.bottom, 6),
+      paddingBottom: Math.max(insets.bottom, 6),
+    },
+    tabBarLabelStyle: enterpriseUi.tabBarLabel,
+    tabBarIconStyle: { marginTop: 0 },
+    headerShown: false,
+  } as const;
+}
 
 export const enterpriseStyles = StyleSheet.create({
   logo: {

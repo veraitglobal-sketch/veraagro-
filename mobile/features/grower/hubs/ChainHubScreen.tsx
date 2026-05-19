@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { View } from 'react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,7 +16,6 @@ import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 import { EnterpriseListPanel } from '../../../components/grower/EnterpriseListPanel';
 import { growerUi } from '../../../lib/grower-ui';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { HubNavTile, HubSectionTitle } from './HubNavTile';
 import { HubSummaryMetrics, type HubMetricRow } from './HubSummaryMetrics';
 
@@ -66,27 +66,18 @@ export default function ChainHubScreen() {
   }, [t, data.batchTotalCount, data.batchesReadyForTransport, data.activeMissions.length]);
 
   return (
-    <ScrollView
-      style={growerUi.canvas}
-      contentContainerStyle={{ paddingBottom: Math.max(p.bottomInset, 16) + 12, flexGrow: 0 }}
-      contentInsetAdjustmentBehavior="never"
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={data.refreshing}
-          onRefresh={() => void data.onRefresh()}
-          tintColor={enterpriseColors.primary}
-          colors={[enterpriseColors.primary]}
+    <EnterpriseScreen
+      refreshing={data.refreshing}
+      onRefresh={() => void data.onRefresh()}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={
+        <GrowerTabHeader
+          title={t('producer.hubs.chain.title')}
+          subtitle={t('producer.hubs.chain.leadShort')}
+          style={{ paddingTop: insets.top + 6 }}
         />
       }
     >
-      <GrowerTabHeader
-        title={t('producer.hubs.chain.title')}
-        subtitle={t('producer.hubs.chain.leadShort')}
-        style={{ paddingTop: insets.top + 6 }}
-      />
-
       <View style={growerUi.scrollContent}>
         <HubSummaryMetrics title={t('producer.hubs.metrics.summaryTitle')} rows={metricRows} />
 
@@ -135,6 +126,6 @@ export default function ChainHubScreen() {
           onPress={() => router.push({ pathname: '/(producer)/scanner', params: { returnTo: 'products' } })}
         />
       </View>
-    </ScrollView>
+    </EnterpriseScreen>
   );
 }

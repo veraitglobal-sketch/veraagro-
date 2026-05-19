@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Plus, ChevronRight } from 'lucide-react-native';
@@ -21,35 +22,26 @@ export function MaterialsScreen() {
 
   return (
     <View style={growerUi.canvas}>
-      <GrowerStackHeader
-        title={t('producer.materials.screenTitle')}
-        subtitle={t('producer.materials.screenLeadShort')}
-      />
-
-      <WhitelistSearch
-        searchQuery={data.searchQuery}
-        setSearchQuery={data.setSearchQuery}
-        filterType={data.filterType}
-        setFilterType={data.setFilterType}
-      />
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          ...growerUi.scrollContent,
-          paddingTop: 16,
-          paddingBottom: Math.max(p.bottomInset, 20) + 12,
-        }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={data.refreshing}
-            onRefresh={data.onRefresh}
-            tintColor={enterpriseColors.primary}
-            colors={[enterpriseColors.primary]}
-          />
+      <EnterpriseScreen
+        refreshing={data.refreshing}
+        onRefresh={data.onRefresh}
+        contentPaddingBottom={Math.max(p.bottomInset, 20) + 12}
+        header={
+          <>
+            <GrowerStackHeader
+              title={t('producer.materials.screenTitle')}
+              subtitle={t('producer.materials.screenLeadShort')}
+            />
+            <WhitelistSearch
+              searchQuery={data.searchQuery}
+              setSearchQuery={data.setSearchQuery}
+              filterType={data.filterType}
+              setFilterType={data.setFilterType}
+            />
+          </>
         }
       >
+        <View style={[growerUi.scrollContent, { paddingTop: 16 }]}>
         <TouchableOpacity
           onPress={() => setAddOpen(true)}
           activeOpacity={0.88}
@@ -81,7 +73,8 @@ export function MaterialsScreen() {
           getTypeColor={data.getTypeColor}
           getTypeLabel={data.getTypeLabel}
         />
-      </ScrollView>
+        </View>
+      </EnterpriseScreen>
 
       <AddMaterialSheet
         visible={addOpen}

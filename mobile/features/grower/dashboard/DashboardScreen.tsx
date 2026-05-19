@@ -1,4 +1,5 @@
-import { View, ScrollView, RefreshControl, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -77,33 +78,22 @@ export default function DashboardScreen() {
         : null;
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[
-        styles.content,
-        { paddingBottom: Math.max(p.bottomInset, 16) + 16 },
-      ]}
-      contentInsetAdjustmentBehavior="never"
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
+    <EnterpriseScreen
+      withTopWash
+      refreshing={data.refreshing}
+      onRefresh={() => void data.onRefresh()}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 16}
+      header={
+        <DashboardHeader
+          farmName={farmName}
+          partnerCode={user?.partnerCode}
+          statusLine={statusLine}
+          reserveStatusLine={!ps.loaded}
           refreshing={data.refreshing}
-          onRefresh={() => void data.onRefresh()}
-          tintColor={enterpriseColors.primary}
-          colors={[enterpriseColors.primary]}
+          style={{ paddingTop: insets.top + 6 }}
         />
       }
     >
-      <DashboardHeader
-        farmName={farmName}
-        partnerCode={user?.partnerCode}
-        statusLine={statusLine}
-        reserveStatusLine={!ps.loaded}
-        refreshing={data.refreshing}
-        style={{ paddingTop: insets.top + 6 }}
-      />
-
       <View style={styles.body}>
         <SyncQueueStrip
           pendingCount={data.offlinePending}
@@ -156,18 +146,11 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         ) : null}
       </View>
-    </ScrollView>
+    </EnterpriseScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: enterpriseColors.canvas,
-  },
-  content: {
-    flexGrow: 0,
-  },
   body: {
     paddingHorizontal: 20,
     paddingTop: 8,

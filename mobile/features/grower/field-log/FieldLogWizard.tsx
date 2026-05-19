@@ -38,7 +38,7 @@ const activityLabelKey: Record<ActivityType, string> = {
 
 const MATERIAL_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'SPRAYING']);
 
-const STEP_ACCENTS = ['#64748B', '#2D5A27', '#1D4ED8'] as const;
+const STEP_ACCENTS = [enterpriseColors.gray600, enterpriseColors.primary, enterpriseColors.primary] as const;
 
 function StepChrome({
   step,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   },
   parcelCardOn: { backgroundColor: '#475569', borderColor: '#475569' },
   parcelCardInner: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  parcelCardTitle: { fontSize: 20, fontWeight: '700', color: enterpriseColors.gray900 },
+  parcelCardTitle: { fontSize: 20, fontWeight: '600', color: enterpriseColors.gray900 },
   parcelCardTitleOn: { color: '#fff' },
   parcelCardSub: { fontSize: 15, color: enterpriseColors.gray600, marginTop: 4 },
   parcelCardSubOn: { color: 'rgba(255,255,255,0.85)' },
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cropCardOn: { backgroundColor: enterpriseColors.primary },
-  cropName: { fontSize: 24, fontWeight: '800', color: enterpriseColors.primary },
+  cropName: { fontSize: 22, fontWeight: '600', color: enterpriseColors.primary },
   cropNameOn: { color: '#fff' },
   cropMeta: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray600, marginTop: 6 },
   cropMetaOn: { color: 'rgba(255,255,255,0.9)' },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     minHeight: 60,
     justifyContent: 'center',
   },
-  addCropBtnText: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  addCropBtnText: { fontSize: 18, fontWeight: '600', color: '#fff' },
   linkAddCrop: { paddingVertical: 12, alignItems: 'center' },
   linkAddCropText: { fontSize: 17, fontWeight: '600', color: enterpriseColors.primary },
   workBtn: {
@@ -522,8 +522,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
-  workBtnOn: { backgroundColor: STEP_ACCENTS[2], borderColor: STEP_ACCENTS[2] },
-  workBtnText: { fontSize: 18, fontWeight: '700', color: enterpriseColors.gray900, textAlign: 'center' },
+  workBtnOn: { backgroundColor: enterpriseColors.primary, borderColor: enterpriseColors.primary },
+  workBtnText: { fontSize: 17, fontWeight: '600', color: enterpriseColors.gray900, textAlign: 'center' },
   workBtnTextOn: { color: '#fff' },
   gpsWarn: { fontSize: 15, fontWeight: '600', color: '#B45309', marginBottom: 12 },
   heroBtn: {
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 16,
   },
-  heroBtnText: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  heroBtnText: { fontSize: 18, fontWeight: '600', color: '#fff' },
   gpsBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  footerPrimaryText: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  footerPrimaryText: { fontSize: 18, fontWeight: '600', color: '#fff' },
   footerSecondary: {
     minHeight: 56,
     paddingHorizontal: 16,

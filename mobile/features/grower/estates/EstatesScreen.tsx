@@ -1,8 +1,9 @@
-import { View, ScrollView, TouchableOpacity, RefreshControl, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Plus } from 'lucide-react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -19,48 +20,34 @@ export function EstatesScreen() {
   const data = useEstatesData();
 
   return (
-    <View style={growerUi.canvas}>
-      <GrowerTabHeader
-        title={t('producer.estates.myFields')}
-        subtitle={
-          data.estates.length === 0 && !data.loading
-            ? t('producer.estates.listEmptySubtitle')
-            : undefined
-        }
-        style={{ paddingTop: insets.top + 6 }}
-        right={
-          <TouchableOpacity
-            onPress={() => router.push('/(producer)/estates/new')}
-            activeOpacity={0.9}
-            style={growerUi.btnIcon}
-            accessibilityRole="button"
-            accessibilityLabel={t('producer.estates.newEstate')}
-          >
-            <Plus size={22} color={enterpriseColors.white} strokeWidth={2} />
-          </TouchableOpacity>
-        }
-      />
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          ...growerUi.scrollContent,
-          paddingTop: 8,
-          paddingBottom: Math.max(p.bottomInset, 16) + 12,
-          flexGrow: 0,
-        }}
-        contentInsetAdjustmentBehavior="never"
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={data.refreshing}
-            onRefresh={data.onRefresh}
-            tintColor={enterpriseColors.primary}
-            colors={[enterpriseColors.primary]}
-          />
-        }
-      >
+    <EnterpriseScreen
+      refreshing={data.refreshing}
+      onRefresh={data.onRefresh}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={
+        <GrowerTabHeader
+          title={t('producer.estates.myFields')}
+          subtitle={
+            data.estates.length === 0 && !data.loading
+              ? t('producer.estates.listEmptySubtitle')
+              : undefined
+          }
+          style={{ paddingTop: insets.top + 6 }}
+          right={
+            <TouchableOpacity
+              onPress={() => router.push('/(producer)/estates/new')}
+              activeOpacity={0.9}
+              style={growerUi.btnIcon}
+              accessibilityRole="button"
+              accessibilityLabel={t('producer.estates.newEstate')}
+            >
+              <Plus size={22} color={enterpriseColors.white} strokeWidth={2} />
+            </TouchableOpacity>
+          }
+        />
+      }
+    >
+      <View style={[growerUi.scrollContent, { paddingTop: 8 }]}>
         <EstateList
           estates={data.estates}
           loading={data.loading}
@@ -77,7 +64,7 @@ export function EstatesScreen() {
             data.handleDelete(estate);
           }}
         />
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }

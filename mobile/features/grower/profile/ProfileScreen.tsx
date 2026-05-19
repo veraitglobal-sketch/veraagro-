@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
+import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../../hooks/useAuth';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -17,7 +18,6 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const pad = useBioVeraScreenPadding();
   const [pendingCount, setPendingCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -62,42 +62,30 @@ export default function ProfileScreen() {
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || '—';
 
   return (
-    <View style={styles.root}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={{
-          paddingTop: insets.top + 20,
-          paddingBottom: Math.max(insets.bottom, pad.bottomInset, 20) + 12,
-          paddingHorizontal: pad.screenPaddingLeft,
-        }}
-        contentInsetAdjustmentBehavior="never"
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh()}
-            tintColor={enterpriseColors.primary}
-            colors={[enterpriseColors.primary]}
-          />
-        }
-      >
+    <EnterpriseScreen
+      withTopWash
+      refreshing={refreshing}
+      onRefresh={() => void onRefresh()}
+      contentPaddingBottom={Math.max(pad.bottomInset, 20) + 12}
+      header={
+        <GrowerTabHeader
+          title={t('producer.tabs.profile')}
+          subtitle={user?.email ?? undefined}
+          style={{ paddingTop: 12 }}
+        />
+      }
+    >
+      <View style={styles.body}>
         <Text style={styles.name} accessibilityRole="header">
           {displayName}
         </Text>
         {user?.partnerCode ? (
           <Text style={styles.code}>{user.partnerCode}</Text>
         ) : null}
-        {user?.email ? (
-          <Text style={styles.email} numberOfLines={1}>
-            {user.email}
-          </Text>
-        ) : null}
-
         {pendingCount > 0 ? (
           <TouchableOpacity
             onPress={() => router.push('/(producer)/(tabs)/field-log')}
-            activeOpacity={0.7}
+            activeOpacity={0.88}
             style={styles.pending}
             accessibilityRole="button"
           >
@@ -132,18 +120,15 @@ export default function ProfileScreen() {
         >
           <Text style={styles.logoutText}>{t('supplier.logOut')}</Text>
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: enterpriseColors.canvas,
-  },
-  scroll: {
-    flex: 1,
+  body: {
+    paddingHorizontal: 20,
+    paddingTop: 4,
   },
   name: {
     fontSize: 32,
@@ -170,9 +155,15 @@ const styles = StyleSheet.create({
   pending: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 22,
-    paddingVertical: 4,
+    gap: 12,
+    marginTop: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    minHeight: 56,
+    backgroundColor: 'rgba(254, 243, 199, 0.5)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   pendingDot: {
     width: 6,
@@ -182,10 +173,11 @@ const styles = StyleSheet.create({
   },
   pendingText: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#92400E',
-    letterSpacing: -0.1,
+    letterSpacing: -0.15,
+    lineHeight: 22,
   },
   walletWrap: {
     marginTop: 24,

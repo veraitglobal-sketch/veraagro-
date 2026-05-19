@@ -1,13 +1,20 @@
-import { View, Text, ScrollView, TouchableOpacity, Switch, Alert, RefreshControl } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
-import { ArrowLeft, Bell, RefreshCw, Shield, Info, Wifi } from 'lucide-react-native';
+import { Bell, RefreshCw, Shield, Info, Wifi } from 'lucide-react-native';
 import Constants from 'expo-constants';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
+import {
+  EnterpriseSettingsButton,
+  EnterpriseSettingsGroup,
+  EnterpriseSettingsLinkRow,
+  EnterpriseSettingsToggleRow,
+} from '../../../components/enterprise/EnterpriseSettingsGroup';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../../lib/api-url';
 import { syncService } from '../../../lib/sync-service';
@@ -25,7 +32,6 @@ const SETTINGS_KEYS = {
  */
 export default function SettingsScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const p = useBioVeraScreenPadding();
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
@@ -177,318 +183,85 @@ export default function SettingsScreen() {
   }, [t]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Header */}
-      <View style={{
-        paddingTop: p.headerTop,
-        paddingBottom: theme.spacing.md,
-        paddingLeft: p.screenPaddingLeft,
-        paddingRight: p.screenPaddingRight,
-        backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-      }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={{ marginRight: theme.spacing.md }}
-          >
-            <ArrowLeft size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
-          </TouchableOpacity>
-          <Text style={{
-            fontSize: 18,
-            fontWeight: '300',
-            color: theme.colors.text.primary,
-            letterSpacing: 1,
-          }}>
-            {t('producer.tabs.settings')}
-          </Text>
-        </View>
-      </View>
+    <EnterpriseScreen
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={<GrowerStackHeader title={t('producer.tabs.settings')} />}
+    >
+      <View style={[growerUi.scrollContent, { paddingTop: 12 }]}>
+        <LanguageSettingsBlock />
 
-      <ScrollView
-        style={{ flex: 1 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
-          />
-        }
-      >
-        <View
-          style={{
-            paddingTop: theme.spacing.lg,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-          }}
+        <EnterpriseSettingsGroup
+          title={t('producer.settings.connectionTitle')}
+          icon={<Wifi size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
         >
-          <LanguageSettingsBlock />
+          <Text style={growerUi.formLabel}>{t('producer.settings.apiUrlLabel')}</Text>
+          <Text selectable style={growerUi.settingsRowDesc}>
+            {API_URL}
+          </Text>
+          <EnterpriseSettingsButton
+            label={t('producer.settings.testConnection')}
+            onPress={() => void testApiConnection()}
+            disabled={connectionChecking}
+          />
+          <EnterpriseSettingsButton
+            label={t('producer.settings.retrySyncNow')}
+            variant="outline"
+            onPress={() => void retryOfflineSync()}
+            disabled={syncRetryBusy}
+          />
+          <EnterpriseSettingsButton
+            label={t('producer.sync.clearLocalQueue')}
+            variant="danger"
+            onPress={clearLocalUploadQueue}
+          />
+        </EnterpriseSettingsGroup>
 
-          <View
-            style={{
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.md,
-              marginBottom: theme.spacing.md,
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-              <Wifi size={20} color={theme.colors.text.primary} strokeWidth={1} />
-              <Text
-                style={{
-                  marginLeft: theme.spacing.md,
-                  fontSize: 14,
-                  fontWeight: '600',
-                  color: theme.colors.text.primary,
-                }}
-              >
-                {t('producer.settings.connectionTitle')}
-              </Text>
-            </View>
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '300',
-                color: theme.colors.text.secondary,
-                marginBottom: 4,
-              }}
-            >
-              {t('producer.settings.apiUrlLabel')}
-            </Text>
-            <Text
-              selectable
-              style={{
-                fontSize: 12,
-                fontWeight: '400',
-                color: theme.colors.text.primary,
-                marginBottom: theme.spacing.md,
-              }}
-            >
-              {API_URL}
-            </Text>
-            <TouchableOpacity
-              onPress={() => void testApiConnection()}
-              disabled={connectionChecking}
-              activeOpacity={0.7}
-              style={{
-                paddingVertical: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.md,
-                borderRadius: theme.borderRadius.md,
-                backgroundColor: theme.colors.primary,
-                marginBottom: theme.spacing.sm,
-                opacity: connectionChecking ? 0.6 : 1,
-              }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.background, textAlign: 'center' }}>
-                {t('producer.settings.testConnection')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => void retryOfflineSync()}
-              disabled={syncRetryBusy}
-              activeOpacity={0.7}
-              style={{
-                paddingVertical: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.md,
-                borderRadius: theme.borderRadius.md,
-                borderWidth: 0.5,
-                borderColor: theme.colors.primary,
-                marginBottom: theme.spacing.sm,
-                opacity: syncRetryBusy ? 0.6 : 1,
-              }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary, textAlign: 'center' }}>
-                {t('producer.settings.retrySyncNow')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={clearLocalUploadQueue}
-              activeOpacity={0.7}
-              style={{
-                paddingVertical: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.md,
-                borderRadius: theme.borderRadius.md,
-                borderWidth: 0.5,
-                borderColor: theme.colors.error,
-              }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.error, textAlign: 'center' }}>
-                {t('producer.sync.clearLocalQueue')}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        <EnterpriseSettingsGroup>
+          <EnterpriseSettingsToggleRow
+            title={t('producer.settings.notifications', 'Notifications')}
+            description={t('producer.settings.orderNotifications')}
+            icon={<Bell size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            value={notifications}
+            onValueChange={handleNotificationsToggle}
+          />
+        </EnterpriseSettingsGroup>
 
-          {/* Notifications */}
-          <View style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                <Bell size={20} color={theme.colors.text.primary} strokeWidth={1} />
-                <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
-                  <Text style={{
-                    fontSize: 14,
-                    fontWeight: '300',
-                    color: theme.colors.text.primary,
-                    letterSpacing: 0.3,
-                  }}>
-                    {t('producer.settings.notifications', 'Notifications')}
-                  </Text>
-                  <Text style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    marginTop: 2,
-                    letterSpacing: 0.2,
-                  }}>
-                    {t('producer.settings.orderNotifications')}
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={notifications}
-                onValueChange={handleNotificationsToggle}
-                trackColor={{ false: colors.border, true: colors.accent }}
-                thumbColor={theme.colors.background}
-              />
-            </View>
-          </View>
+        <EnterpriseSettingsGroup>
+          <EnterpriseSettingsToggleRow
+            title={t('producer.settings.autoSync', 'Auto sync')}
+            description={t('producer.settings.autoSyncRecords')}
+            icon={<RefreshCw size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            value={autoSync}
+            onValueChange={handleAutoSyncToggle}
+          />
+        </EnterpriseSettingsGroup>
 
-          {/* Auto Sync */}
-          <View style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                <RefreshCw size={20} color={theme.colors.text.primary} strokeWidth={1} />
-                <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
-                  <Text style={{
-                    fontSize: 14,
-                    fontWeight: '300',
-                    color: theme.colors.text.primary,
-                    letterSpacing: 0.3,
-                  }}>
-                    {t('producer.settings.autoSync', 'Auto sync')}
-                  </Text>
-                  <Text style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    marginTop: 2,
-                    letterSpacing: 0.2,
-                  }}>
-                    {t('producer.settings.autoSyncRecords')}
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={autoSync}
-                onValueChange={handleAutoSyncToggle}
-                trackColor={{ false: colors.border, true: colors.accent }}
-                thumbColor={theme.colors.background}
-              />
-            </View>
-          </View>
+        <EnterpriseSettingsGroup>
+          <EnterpriseSettingsToggleRow
+            title={t('producer.settings.gpsAlwaysTitle')}
+            description={t('producer.settings.gpsAlwaysSubtitle')}
+            icon={<Shield size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            value={gpsAlways}
+            onValueChange={handleGpsToggle}
+          />
+        </EnterpriseSettingsGroup>
 
-          {/* GPS Always */}
-          <View style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.1)',
-          }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                <Shield size={20} color={theme.colors.text.primary} strokeWidth={1} />
-                <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
-                  <Text style={{
-                    fontSize: 14,
-                    fontWeight: '300',
-                    color: theme.colors.text.primary,
-                    letterSpacing: 0.3,
-                  }}>
-                    {t('producer.settings.gpsAlwaysTitle')}
-                  </Text>
-                  <Text style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: theme.colors.text.secondary,
-                    marginTop: 2,
-                    letterSpacing: 0.2,
-                  }}>
-                    {t('producer.settings.gpsAlwaysSubtitle')}
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={gpsAlways}
-                onValueChange={handleGpsToggle}
-                trackColor={{ false: colors.border, true: colors.accent }}
-                thumbColor={theme.colors.background}
-              />
-            </View>
-          </View>
-
-          {/* About */}
-          <TouchableOpacity
-            activeOpacity={0.7}
+        <EnterpriseSettingsGroup>
+          <EnterpriseSettingsLinkRow
+            title={t('producer.settings.aboutTitle')}
+            description={t('producer.settings.aboutSubtitle', { version: appVersion })}
+            icon={<Info size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
             onPress={() =>
               Alert.alert(
                 t('producer.settings.aboutAlertTitle'),
                 t('producer.settings.aboutAlertBody', { version: appVersion }),
               )
             }
-            style={{
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-            borderWidth: 0.5,
-            borderColor: 'rgba(0, 0, 0, 0.1)',
-          }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Info size={20} color={theme.colors.text.primary} strokeWidth={1} />
-              <View style={{ marginLeft: theme.spacing.md, flex: 1 }}>
-                <Text style={{
-                  fontSize: 14,
-                  fontWeight: '300',
-                  color: theme.colors.text.primary,
-                  letterSpacing: 0.3,
-                }}>
-                  {t('producer.settings.aboutTitle')}
-                </Text>
-                <Text style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: theme.colors.text.secondary,
-                  marginTop: 2,
-                  letterSpacing: 0.2,
-                }}>
-                  {t('producer.settings.aboutSubtitle', { version: appVersion })}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+          />
+        </EnterpriseSettingsGroup>
+      </View>
+    </EnterpriseScreen>
   );
 }

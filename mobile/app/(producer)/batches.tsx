@@ -1,11 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
 import { useRouter } from 'expo-router';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
 import { Package, Plus, ChevronRight } from 'lucide-react-native';
-import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
 import { useAppLocaleTag } from '../../lib/date-locale';
@@ -101,32 +101,28 @@ export default function BatchesScreen() {
   ];
 
   return (
-    <View style={growerUi.canvas}>
-      <BioVeraSubpageHeader
-        title={t('producer.batches.listScreenTitle')}
-        left="back"
-        right={
-          <TouchableOpacity
-            onPress={() => router.push('/(producer)/batch-new')}
-            accessibilityLabel={t('producer.batches.createFabA11y')}
-            hitSlop={12}
-            style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <Plus size={26} color={enterpriseColors.primary} strokeWidth={2} />
-          </TouchableOpacity>
-        }
-      />
-
-      <ScrollView
-        style={{ flex: 1 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={enterpriseColors.primary} />
-        }
-        contentContainerStyle={[
-          growerUi.scrollContent,
-          { paddingBottom: Math.max(p.bottomInset, theme.spacing.lg) },
-        ]}
-      >
+    <EnterpriseScreen
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
+      header={
+        <BioVeraSubpageHeader
+          title={t('producer.batches.listScreenTitle')}
+          left="back"
+          right={
+            <TouchableOpacity
+              onPress={() => router.push('/(producer)/batch-new')}
+              accessibilityLabel={t('producer.batches.createFabA11y')}
+              hitSlop={12}
+              style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+            >
+              <Plus size={26} color={enterpriseColors.primary} strokeWidth={2} />
+            </TouchableOpacity>
+          }
+        />
+      }
+    >
+      <View style={growerUi.scrollContent}>
         <Text style={[growerUi.pageLead, { marginTop: 0, marginBottom: 14 }]}>
           {t('producer.batches.listLeadOneLine')}
         </Text>
@@ -139,9 +135,9 @@ export default function BatchesScreen() {
                 key={f.id}
                 onPress={() => setFilter(f.id)}
                 activeOpacity={0.85}
-                style={[styles.filterChip, sel && styles.filterChipOn]}
+                style={[growerUi.filterChip, sel && growerUi.filterChipOn]}
               >
-                <Text style={[styles.filterChipText, sel && styles.filterChipTextOn]}>
+                <Text style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}>
                   {f.label}
                   {f.count != null && f.count > 0 ? ` (${f.count})` : ''}
                 </Text>
@@ -166,10 +162,10 @@ export default function BatchesScreen() {
             </Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batch-new')}
-              style={styles.emptyCta}
+              style={growerUi.btnPrimary}
               activeOpacity={0.85}
             >
-              <Text style={styles.emptyCtaText}>{t('producer.batches.createFabA11y')}</Text>
+              <Text style={growerUi.btnPrimaryText}>{t('producer.batches.createFabA11y')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -234,8 +230,8 @@ export default function BatchesScreen() {
             })}
           </View>
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }
 
@@ -246,24 +242,11 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 4,
   },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    minHeight: 44,
-    justifyContent: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  filterChipOn: { borderColor: enterpriseColors.primary, backgroundColor: `${enterpriseColors.primary}10` },
-  filterChipText: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray600 },
-  filterChipTextOn: { color: enterpriseColors.primary },
   mutedCenter: {
     padding: 32,
     textAlign: 'center',
     fontSize: 16,
-    color: theme.colors.text.secondary,
+    color: enterpriseColors.gray600,
   },
   emptyText: {
     fontSize: 16,
@@ -272,15 +255,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginTop: 12,
   },
-  emptyCta: {
-    marginTop: 16,
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 12,
-    paddingHorizontal: 24,
-    minHeight: 48,
-    justifyContent: 'center',
-  },
-  emptyCtaText: { fontSize: 16, fontWeight: '700', color: '#fff' },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',

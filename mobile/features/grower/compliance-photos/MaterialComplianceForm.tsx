@@ -6,16 +6,17 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
-  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Camera, Check } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
+import { complianceUi, complianceStyles } from '../../../lib/compliance-ui';
 import {
   COMPLIANCE_PHOTO_TYPES,
   type CompliancePhotoType,
@@ -34,86 +35,46 @@ export function MaterialComplianceForm() {
   const [pullRefreshing, setPullRefreshing] = useState(false);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      <BioVeraSubpageHeader left="back" title={t('producer.compliance.title')} />
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingTop: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingBottom: Math.max(p.bottomInset, theme.spacing['2xl']),
-        }}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={pullRefreshing}
-            onRefresh={async () => {
-              setPullRefreshing(true);
-              try {
-                await c.refreshAll();
-              } finally {
-                setPullRefreshing(false);
-              }
-            }}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-          />
+    <EnterpriseScreen
+      refreshing={pullRefreshing}
+      onRefresh={async () => {
+        setPullRefreshing(true);
+        try {
+          await c.refreshAll();
+        } finally {
+          setPullRefreshing(false);
         }
-      >
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: '600',
-            color: colors.text.primary,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('producer.compliance.batchForm.checklistHeading')}
-        </Text>
-        <Text style={{ fontSize: 16, color: colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
+      }}
+      contentPaddingBottom={Math.max(p.bottomInset, 24) + 12}
+      header={
+        <GrowerStackHeader
+          title={t('producer.compliance.title')}
+          subtitle={t('producer.compliance.batchForm.intro')}
+        />
+      }
+    >
+      <View style={growerUi.scrollContent}>
+        <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.checklistHeading')}</Text>
+        <Text style={complianceUi.body}>
           {t('producer.compliance.batchForm.intro')}{' '}
-          <Text
-            onPress={() => router.push('/(producer)/materials')}
-            style={{ color: colors.primary, fontWeight: '600' }}
-          >
+          <Text onPress={() => router.push('/(producer)/materials')} style={complianceUi.link}>
             {t('producer.compliance.batchForm.materialsLink')}
           </Text>
         </Text>
 
-        <View
-          style={{
-            backgroundColor: colors.background,
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 0.5,
-            borderColor: colors.border,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.primary, marginBottom: 6 }}>
-            {t('producer.compliance.batchForm.explainerTitle')}
-          </Text>
-          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
-            • {t('producer.compliance.batchForm.explainerBullet0')}
-          </Text>
-          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
-            • {t('producer.compliance.batchForm.explainerBullet1')}
-          </Text>
-          <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 4 }}>
-            • {t('producer.compliance.batchForm.explainerBullet2')}
-          </Text>
+        <View style={complianceUi.panel}>
+          <Text style={complianceUi.panelTitle}>{t('producer.compliance.batchForm.explainerTitle')}</Text>
+          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet0')}</Text>
+          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet1')}</Text>
+          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet2')}</Text>
         </View>
 
         {c.batchesLoading ? (
-          <ActivityIndicator color={colors.primary} style={{ marginVertical: 24 }} />
+          <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
         ) : c.totalBatchCount === 0 ? (
-          <Text style={{ fontSize: 14, color: colors.text.secondary, lineHeight: 20 }}>
+          <Text style={complianceUi.body}>
             {t('producer.compliance.batchForm.noBatches')}{' '}
-            <Text
-              onPress={() => router.push('/(producer)/batch-new')}
-              style={{ color: colors.primary, fontWeight: '600' }}
-            >
+            <Text onPress={() => router.push('/(producer)/batch-new')} style={complianceUi.link}>
               {t('producer.compliance.batchForm.createBatch')}
             </Text>
             {t('producer.compliance.batchForm.noBatchesSuffix')}
@@ -131,46 +92,33 @@ export function MaterialComplianceForm() {
         )}
 
         {c.selectedBatchId && c.statusLoading ? (
-          <Text style={{ fontSize: 14, color: colors.text.secondary }}>{t('producer.compliance.batchForm.loadingStatus')}</Text>
+          <Text style={complianceUi.body}>{t('producer.compliance.batchForm.loadingStatus')}</Text>
         ) : null}
 
         {c.selectedBatchId && c.statusError && !c.statusLoading ? (
-          <Text style={{ fontSize: 14, color: theme.colors.warning, marginBottom: 12 }}>
-            {t('producer.compliance.batchForm.statusLoadError')}
-          </Text>
+          <Text style={complianceUi.warnText}>{t('producer.compliance.batchForm.statusLoadError')}</Text>
         ) : null}
 
         {c.selectedBatchId &&
           !c.statusLoading &&
           c.complianceStatus?.complete &&
           !c.showReplaceForm && (
-            <View
-              style={{
-                backgroundColor: `${colors.primary}10`,
-                borderRadius: theme.borderRadius.md,
-                borderWidth: 1,
-                borderColor: `${colors.primary}40`,
-                padding: theme.spacing.md,
-                marginBottom: theme.spacing.lg,
-              }}
-            >
-              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.primary, marginBottom: 4 }}>
+            <View style={complianceUi.successPanel}>
+              <Text style={[complianceUi.panelTitle, { color: enterpriseColors.primary }]}>
                 {t('producer.compliance.batchForm.resolvedBadge')}
               </Text>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 4 }}>
-                {t('producer.compliance.batchForm.complianceCompleteTitle')}
-              </Text>
-              <Text style={{ fontSize: 16, color: colors.text.secondary, lineHeight: 20, marginBottom: 8 }}>
+              <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.complianceCompleteTitle')}</Text>
+              <Text style={complianceUi.body}>
                 {t('producer.compliance.batchForm.resolvedBody', { batchId: c.complianceStatus.publicBatchId })}
               </Text>
               {c.complianceStatus.uploadedPhotoTypes?.length > 0 ? (
-                <Text style={{ fontSize: 15, color: colors.text.tertiary, marginBottom: 12 }}>
+                <Text style={[complianceUi.body, { marginBottom: 12 }]}>
                   {t('producer.compliance.batchForm.photoTypesOnFile')}:{' '}
                   {c.complianceStatus.uploadedPhotoTypes.join(', ')}
                 </Text>
               ) : null}
               {c.complianceStatus.stickerRollId ? (
-                <Text style={{ fontSize: 15, color: colors.text.secondary, marginBottom: 12 }}>
+                <Text style={[complianceUi.body, { marginBottom: 12 }]}>
                   {t('producer.compliance.batchForm.stickerOnFile')}: {c.complianceStatus.stickerRollId}
                 </Text>
               ) : null}
@@ -179,26 +127,18 @@ export function MaterialComplianceForm() {
                   c.setShowReplaceForm(true);
                   c.setStickerRollId(c.complianceStatus?.stickerRollId || '');
                 }}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 14,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  alignSelf: 'flex-start',
-                }}
+                activeOpacity={0.88}
+                style={[growerUi.filterChip, { alignSelf: 'flex-start' }]}
               >
-                <Text style={{ fontSize: 14, color: colors.text.primary }}>{t('producer.compliance.batchForm.updatePhotosCta')}</Text>
+                <Text style={growerUi.filterChipText}>{t('producer.compliance.batchForm.updatePhotosCta')}</Text>
               </TouchableOpacity>
             </View>
           )}
 
         {c.showForm ? (
           <View>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text.primary, marginBottom: 8 }}>
-              {t('producer.compliance.batchForm.stickerRollLabel')}
-            </Text>
-            <Text style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 18, marginBottom: 8 }}>
+            <Text style={growerUi.formLabel}>{t('producer.compliance.batchForm.stickerRollLabel')}</Text>
+            <Text style={[complianceUi.body, { marginBottom: 12 }]}>
               {t('producer.compliance.batchForm.labelRollLogicHint')}
             </Text>
             {c.pickableRolls.length > 12 ? (
@@ -207,21 +147,13 @@ export function MaterialComplianceForm() {
                   value={c.labelRollFilter}
                   onChangeText={c.setLabelRollFilter}
                   placeholder={t('producer.compliance.batchForm.labelRollSearchPlaceholder')}
-                  placeholderTextColor={colors.text.tertiary}
+                  placeholderTextColor={enterpriseColors.gray600}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  style={{
-                    borderWidth: 0.5,
-                    borderColor: colors.border,
-                    borderRadius: 8,
-                    padding: 12,
-                    fontSize: 14,
-                    color: colors.text.primary,
-                    marginBottom: 8,
-                  }}
+                  style={[complianceUi.input, { marginBottom: 8, flex: undefined }]}
                 />
                 {c.stickerRollListMeta.mode === 'search' ? (
-                  <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: 8 }}>
+                  <Text style={[complianceUi.body, { fontSize: 14, marginBottom: 8 }]}>
                     {t('producer.compliance.batchForm.labelRollMatchCount', {
                       shown: c.stickerRollListForUi.length,
                       total: c.stickerRollListMeta.matchCount,
@@ -231,7 +163,7 @@ export function MaterialComplianceForm() {
                       : ''}
                   </Text>
                 ) : c.stickerRollListMeta.mode === 'recent' ? (
-                  <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: 8 }}>
+                  <Text style={[complianceUi.body, { fontSize: 14, marginBottom: 8 }]}>
                     {t('producer.compliance.batchForm.labelRollShowingRecent', {
                       total: c.stickerRollListMeta.matchCount,
                     })}
@@ -240,27 +172,21 @@ export function MaterialComplianceForm() {
               </>
             ) : null}
             <ScrollView
-              style={{ maxHeight: 220, marginBottom: 8 }}
+              style={{ maxHeight: 220, marginBottom: 12 }}
               nestedScrollEnabled
               keyboardShouldPersistTaps="handled"
             >
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+              <View style={complianceStyles.chipWrap}>
                 {c.stickerRollListForUi.map((r) => {
                   const sel = c.stickerRollId === r.serialNumber;
                   return (
                     <TouchableOpacity
                       key={r.serialNumber}
                       onPress={() => c.setStickerRollId(r.serialNumber)}
-                      style={{
-                        paddingHorizontal: 10,
-                        paddingVertical: 6,
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        borderColor: sel ? colors.primary : colors.border,
-                        backgroundColor: sel ? `${colors.primary}10` : colors.background,
-                      }}
+                      activeOpacity={0.88}
+                      style={[complianceUi.chip, sel && complianceUi.chipOn]}
                     >
-                      <Text style={{ fontSize: 14, color: sel ? colors.primary : colors.text.secondary }}>
+                      <Text style={[complianceUi.chipText, sel && complianceUi.chipTextOn]}>
                         {r.serialNumber}
                       </Text>
                     </TouchableOpacity>
@@ -269,52 +195,35 @@ export function MaterialComplianceForm() {
               </View>
             </ScrollView>
             {c.pickableRolls.length === 0 ? (
-              <Text style={{ fontSize: 15, color: theme.colors.warning, marginBottom: 8 }}>
-                {t('producer.compliance.batchForm.labelRollNoneAvailable')}
-              </Text>
+              <Text style={complianceUi.warnText}>{t('producer.compliance.batchForm.labelRollNoneAvailable')}</Text>
             ) : null}
-            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 4 }}>
+            <View style={complianceStyles.inputRow}>
               <TextInput
                 value={c.stickerRollId}
                 onChangeText={c.setStickerRollId}
                 placeholder={t('producer.compliance.batchForm.stickerInputPlaceholder')}
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={enterpriseColors.gray600}
                 autoCapitalize="characters"
-                style={{
-                  flex: 1,
-                  borderWidth: 0.5,
-                  borderColor: colors.border,
-                  borderRadius: 8,
-                  padding: 12,
-                  fontSize: 14,
-                  color: colors.text.primary,
-                }}
+                style={[complianceUi.input, { flex: 1 }]}
               />
               <TouchableOpacity
                 onPress={c.onVerifySticker}
                 disabled={c.verifying}
-                style={{
-                  paddingHorizontal: 16,
-                  justifyContent: 'center',
-                  backgroundColor: colors.primary,
-                  borderRadius: 8,
-                  opacity: c.verifying ? 0.6 : 1,
-                }}
+                activeOpacity={0.88}
+                style={[complianceUi.verifyBtn, c.verifying && { opacity: 0.6 }]}
               >
                 {c.verifying ? (
-                  <ActivityIndicator size="small" color={colors.background} />
+                  <ActivityIndicator size="small" color={enterpriseColors.white} />
                 ) : (
-                  <Text style={{ color: colors.background, fontWeight: '600' }}>{t('producer.compliance.batchForm.verify')}</Text>
+                  <Text style={complianceUi.verifyBtnText}>{t('producer.compliance.batchForm.verify')}</Text>
                 )}
               </TouchableOpacity>
             </View>
-            <Text style={{ fontSize: 14, color: colors.text.tertiary, marginBottom: theme.spacing.lg }}>
+            <Text style={[complianceUi.body, { fontSize: 14, marginBottom: 20 }]}>
               {t('producer.compliance.batchForm.stickerHelp')}
             </Text>
 
-            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: 12 }}>
-              {t('producer.compliance.batchForm.requiredPhotosHeading')}
-            </Text>
+            <Text style={complianceUi.heading}>{t('producer.compliance.batchForm.requiredPhotosHeading')}</Text>
             {COMPLIANCE_PHOTO_TYPES.map((type) => (
               <PhotoRow
                 key={type}
@@ -325,49 +234,41 @@ export function MaterialComplianceForm() {
               />
             ))}
 
-            {c.showReplaceForm && (
+            {c.showReplaceForm ? (
               <TouchableOpacity
                 onPress={() => {
                   c.setShowReplaceForm(false);
                   c.setPhotos({});
                 }}
-                style={{ marginBottom: 12 }}
+                style={{ marginBottom: 12, minHeight: 44, justifyContent: 'center' }}
               >
-                <Text style={{ fontSize: 16, color: colors.text.tertiary, textDecorationLine: 'underline' }}>
+                <Text style={[complianceUi.link, { textDecorationLine: 'underline' }]}>
                   {t('producer.compliance.batchForm.cancelKeep')}
                 </Text>
               </TouchableOpacity>
-            )}
+            ) : null}
 
             <TouchableOpacity
               onPress={c.onSave}
               disabled={c.saving}
-              style={{
-                backgroundColor: colors.primary,
-                paddingVertical: 14,
-                borderRadius: theme.borderRadius.md,
-                alignItems: 'center',
-                opacity: c.saving ? 0.5 : 1,
-                marginTop: 8,
-              }}
+              activeOpacity={0.88}
+              style={[complianceUi.saveBtn, c.saving && { opacity: 0.5 }, { marginTop: 8 }]}
             >
               {c.saving ? (
-                <ActivityIndicator color={colors.background} />
+                <ActivityIndicator color={enterpriseColors.white} />
               ) : (
-                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.background }}>
-                  {t('producer.compliance.batchForm.saveSubmit')}
-                </Text>
+                <Text style={complianceUi.saveBtnText}>{t('producer.compliance.batchForm.saveSubmit')}</Text>
               )}
             </TouchableOpacity>
             {c.showReplaceForm && c.selectedBatch ? (
-              <Text style={{ fontSize: 14, color: theme.colors.warning, marginTop: 8 }}>
+              <Text style={[complianceUi.warnText, { marginTop: 12 }]}>
                 {t('producer.compliance.batchForm.replaceWarning', { batchId: c.selectedBatch.batchId })}
               </Text>
             ) : null}
           </View>
         ) : null}
-      </ScrollView>
-    </View>
+      </View>
+    </EnterpriseScreen>
   );
 }
 
@@ -384,27 +285,19 @@ function PhotoRow({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={{ marginBottom: theme.spacing.lg }}>
-      <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text.primary, marginBottom: 2 }}>
+    <View style={{ marginBottom: 20 }}>
+      <Text style={growerUi.settingsRowTitle}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.label`)} *
       </Text>
-      <Text style={{ fontSize: 15, color: colors.text.tertiary, marginBottom: 8, lineHeight: 18 }}>
+      <Text style={[growerUi.settingsRowDesc, { marginBottom: 10 }]}>
         {t(`producer.compliance.batchForm.photoTypes.${type}.hint`)}
       </Text>
       <TouchableOpacity
         onPress={onTake}
         disabled={busy}
-        style={{
-          minHeight: 180,
-          borderWidth: 2,
-          borderStyle: 'dashed',
-          borderColor: colors.border,
-          borderRadius: theme.borderRadius.md,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: colors.background,
-          overflow: 'hidden',
-        }}
+        activeOpacity={0.88}
+        style={complianceUi.photoBox}
+        accessibilityRole="button"
       >
         {uri ? (
           <View style={{ width: '100%' }}>
@@ -414,19 +307,25 @@ function PhotoRow({
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: 8,
-                gap: 6,
-                backgroundColor: `${colors.primary}10`,
+                padding: 10,
+                gap: 8,
+                backgroundColor: enterpriseColors.primaryTint,
               }}
             >
-              <Check size={16} color={colors.primary} />
-              <Text style={{ fontSize: 15, color: colors.primary }}>{t('producer.compliance.batchForm.photoAdded')}</Text>
+              <Check size={18} color={enterpriseColors.primary} />
+              <Text style={{ fontSize: 16, color: enterpriseColors.primary, fontWeight: '600' }}>
+                {t('producer.compliance.batchForm.photoAdded')}
+              </Text>
             </View>
           </View>
         ) : (
-          <View style={{ padding: 24, alignItems: 'center' }}>
-            {busy ? <ActivityIndicator color={colors.primary} /> : <Camera size={40} color={colors.text.tertiary} strokeWidth={1.2} />}
-            <Text style={{ marginTop: 10, fontSize: 14, color: colors.text.secondary }}>
+          <View style={{ padding: 28, alignItems: 'center' }}>
+            {busy ? (
+              <ActivityIndicator color={enterpriseColors.primary} />
+            ) : (
+              <Camera size={44} color={enterpriseColors.gray600} strokeWidth={1.5} />
+            )}
+            <Text style={{ marginTop: 12, fontSize: 16, color: enterpriseColors.gray600 }}>
               {t('producer.compliance.batchForm.clickToTakePhoto')}
             </Text>
           </View>

@@ -2,6 +2,7 @@ import { View, Text, ActivityIndicator, type StyleProp, type ViewStyle } from 'r
 import { useTranslation } from 'react-i18next';
 import SyncStatus from '../../../components/SyncStatus';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { homeUi } from '../../../lib/home-ui';
 
 interface DashboardHeaderProps {
   farmName: string;
@@ -72,22 +73,17 @@ const styles = {
     minWidth: 0,
   },
   farmName: {
-    fontSize: 22,
-    fontWeight: '600' as const,
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.4,
+    ...homeUi.heroFarmName,
   },
   meta: {
-    fontSize: 13,
-    fontWeight: '400' as const,
-    color: enterpriseColors.gray600,
-    marginTop: 4,
+    ...homeUi.heroMeta,
   },
   status: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '500' as const,
     color: enterpriseColors.primary,
-    marginTop: 6,
+    marginTop: 8,
+    lineHeight: 20,
   },
   statusPlaceholder: {
     height: 19,

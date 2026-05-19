@@ -1,10 +1,9 @@
-import { StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { theme } from '../../../lib/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GrowerDashboardProvider } from '../../../contexts/GrowerDashboardContext';
+import { growerTabScreenOptions } from '../../../lib/enterprise-ui';
 
 /**
  * Grower tabs: Home → Field (parcels & diary) → Chain (lots & transport) → Supplies → Profile.
@@ -16,38 +15,7 @@ export default function ProducerTabsLayout() {
 
   return (
     <GrowerDashboardProvider>
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.text.tertiary,
-        tabBarStyle: {
-          backgroundColor: '#F9FAFB',
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: theme.colors.border,
-          height: 56 + insets.bottom,
-          paddingBottom: Math.max(insets.bottom, 6),
-          paddingTop: 6,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
-          letterSpacing: -0.2,
-          marginTop: 2,
-        },
-        tabBarIconStyle: { marginTop: 0 },
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border,
-        },
-        headerTintColor: theme.colors.text.primary,
-        headerTitleStyle: {
-          fontSize: 18,
-          fontWeight: '600',
-          letterSpacing: -0.2,
-        },
-      }}
-    >
+    <Tabs screenOptions={growerTabScreenOptions(insets)}>
       <Tabs.Screen
         name="index"
         options={{
@@ -69,6 +37,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen
         name="chain"
         options={{
+          headerShown: false,
           title: t('producer.tabs.chainHub'),
           tabBarLabel: t('producer.tabs.chain'),
           tabBarIcon: ({ color, size }) => <Package size={size || 22} color={color} strokeWidth={1.5} />,
@@ -77,6 +46,7 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen
         name="supplies"
         options={{
+          headerShown: false,
           title: t('producer.tabs.suppliesHub'),
           tabBarLabel: t('producer.tabs.supplies'),
           tabBarIcon: ({ color, size }) => <ShoppingBag size={size || 22} color={color} strokeWidth={1.5} />,

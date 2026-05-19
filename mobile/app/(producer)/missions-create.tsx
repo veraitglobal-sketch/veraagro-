@@ -18,7 +18,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { MapPin } from 'lucide-react-native';
-import { theme } from '../../lib/theme';
 import { enterpriseColors } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
@@ -329,7 +328,7 @@ export default function MissionsCreateScreen() {
           contentContainerStyle={{
             ...growerUi.scrollContent,
             paddingTop: 12,
-            paddingBottom: theme.spacing.lg + keyboardPad,
+            paddingBottom: 24 + keyboardPad,
           }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
@@ -337,8 +336,8 @@ export default function MissionsCreateScreen() {
             <RefreshControl
               refreshing={listRefreshing}
               onRefresh={() => void loadBatches('refresh')}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
+              tintColor={enterpriseColors.primary}
+              colors={[enterpriseColors.primary]}
             />
           }
         >
@@ -356,21 +355,22 @@ export default function MissionsCreateScreen() {
         </View>
 
         {batches.length === 0 ? (
-          <View style={{ marginBottom: theme.spacing.lg }}>
-            <Text style={{ fontSize: 16, color: theme.colors.text.secondary, lineHeight: 24 }}>
+          <View style={{ marginBottom: 24 }}>
+            <Text style={{ fontSize: 16, color: enterpriseColors.gray600, lineHeight: 24 }}>
               {t('producer.missionsCreate.noBatchesBody')}
             </Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batch-new')}
-              style={{ marginTop: theme.spacing.md, minHeight: 48, justifyContent: 'center' }}
+              style={[growerUi.btnPrimary, { marginTop: 16 }]}
+              activeOpacity={0.88}
             >
-              <Text style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '600' }}>
+              <Text style={growerUi.btnPrimaryText}>
                 {t('producer.missionsCreate.openBatchesCta')}
               </Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{ marginBottom: theme.spacing.lg, gap: theme.spacing.xs }}>
+          <View style={{ marginBottom: 24, gap: 4 }}>
             <Text style={growerUi.formLabel}>{t('producer.missionsCreate.batchLabel')}</Text>
             {batches.map((b) => {
               const selected = batchId === b.id;
@@ -380,17 +380,19 @@ export default function MissionsCreateScreen() {
                   onPress={() => setBatchId(b.id)}
                   activeOpacity={0.7}
                   style={{
-                    padding: theme.spacing.md,
+                    padding: 16,
+                    minHeight: 64,
                     borderRadius: 12,
                     borderWidth: 1,
                     borderColor: selected ? enterpriseColors.primary : enterpriseColors.gray200,
                     backgroundColor: selected ? enterpriseColors.primaryTint : enterpriseColors.white,
+                    justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 17, color: theme.colors.text.primary, fontWeight: '600' }}>
+                  <Text style={{ fontSize: 17, color: enterpriseColors.gray900, fontWeight: '600' }}>
                     {b.productName || t('producer.missionsCreate.productFallback')} — {b.batchId || b.id.slice(0, 8)}…
                   </Text>
-                  <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 6 }}>
+                  <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 6 }}>
                     {b.quantity} {b.unit} · {getBatchStatusLabel(t, b.status)}
                   </Text>
                 </TouchableOpacity>
@@ -400,72 +402,72 @@ export default function MissionsCreateScreen() {
         )}
 
         {batches.length > 0 && batchId ? (
-          <View style={{ marginBottom: theme.spacing.md }}>
+          <View style={{ marginBottom: 16 }}>
             {packagingComplianceLoading ? (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                <ActivityIndicator size="small" color={theme.colors.primary} />
-                <Text style={{ fontSize: 15, color: theme.colors.text.secondary }}>
+                <ActivityIndicator size="small" color={enterpriseColors.primary} />
+                <Text style={{ fontSize: 15, color: enterpriseColors.gray600 }}>
                   {t('producer.missionsCreate.packagingComplianceChecking')}
                 </Text>
               </View>
             ) : packagingCompliance && !packagingCompliance.complete ? (
               <View
                 style={{
-                  padding: theme.spacing.md,
-                  borderRadius: theme.borderRadius.md,
+                  padding: 16,
+                  borderRadius: 12,
                   borderWidth: 1,
                   borderColor: 'rgba(245, 158, 11, 0.5)',
                   backgroundColor: 'rgba(251, 191, 36, 0.12)',
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: enterpriseColors.gray900, marginBottom: 8 }}>
                   {t('producer.missionsCreate.packagingComplianceTitle')}
                 </Text>
-                <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22, marginBottom: theme.spacing.sm }}>
+                <Text style={{ fontSize: 15, color: enterpriseColors.gray600, lineHeight: 22, marginBottom: 8 }}>
                   {t('producer.missionsCreate.packagingComplianceWhy')}
                 </Text>
                 {packagingCompliance.missingPhotoTypes.length > 0 ? (
-                  <Text style={{ fontSize: 14, color: theme.colors.text.primary, marginBottom: 6, lineHeight: 20 }}>
+                  <Text style={{ fontSize: 14, color: enterpriseColors.gray900, marginBottom: 6, lineHeight: 20 }}>
                     <Text style={{ fontWeight: '600' }}>{t('producer.missionsCreate.packagingComplianceMissingPhotos')} </Text>
                     {packagingCompliance.missingPhotoTypes.map((c) => photoTypeLabel(c)).join(' · ')}
                   </Text>
                 ) : null}
                 {!packagingCompliance.stickerRollId ? (
-                  <Text style={{ fontSize: 14, color: theme.colors.text.primary, marginBottom: theme.spacing.sm, lineHeight: 20 }}>
+                  <Text style={{ fontSize: 14, color: enterpriseColors.gray900, marginBottom: 8, lineHeight: 20 }}>
                     {t('producer.missionsCreate.packagingComplianceMissingSticker')}
                   </Text>
                 ) : null}
                 <TouchableOpacity
                   onPress={() => router.push('/(producer)/compliance-photos')}
                   style={{
-                    marginTop: theme.spacing.sm,
+                    marginTop: 8,
                     alignSelf: 'flex-start',
                     paddingVertical: 12,
-                    paddingHorizontal: theme.spacing.md,
-                    borderRadius: theme.borderRadius.md,
-                    backgroundColor: theme.colors.primary,
+                    paddingHorizontal: 16,
+                    borderRadius: 12,
+                    backgroundColor: enterpriseColors.primary,
                     minHeight: 48,
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.inverse }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: enterpriseColors.white }}>
                     {t('producer.missionsCreate.openPackagingCompliance')}
                   </Text>
                 </TouchableOpacity>
               </View>
             ) : packagingCompliance?.complete ? (
-              <Text style={{ fontSize: 15, color: theme.colors.success, fontWeight: '500' }}>
+              <Text style={{ fontSize: 15, color: '#059669', fontWeight: '500' }}>
                 {t('producer.missionsCreate.packagingComplianceOk')}
               </Text>
             ) : (
-              <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, lineHeight: 18 }}>
+              <Text style={{ fontSize: 13, color: enterpriseColors.gray600, lineHeight: 18 }}>
                 {t('producer.missionsCreate.packagingComplianceUnchecked')}
               </Text>
             )}
           </View>
         ) : null}
 
-        <View style={{ marginBottom: theme.spacing.md }}>
+        <View style={{ marginBottom: 16 }}>
           <TouchableOpacity
             onPress={getCurrentLocation}
             disabled={locLoading}
@@ -493,13 +495,13 @@ export default function MissionsCreateScreen() {
             </Text>
           </TouchableOpacity>
           {locationHint ? (
-            <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: theme.spacing.sm, lineHeight: 22 }}>{locationHint}</Text>
+            <Text style={{ fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 }}>{locationHint}</Text>
           ) : null}
           <Text
             style={{
               fontSize: 14,
-              color: theme.colors.text.secondary,
-              marginTop: theme.spacing.sm,
+              color: enterpriseColors.gray600,
+              marginTop: 8,
               lineHeight: 20,
               opacity: 0.95,
             }}
@@ -549,8 +551,8 @@ export default function MissionsCreateScreen() {
         </ScrollView>
         <View
           style={{
-            paddingTop: theme.spacing.md,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.md),
+            paddingTop: 16,
+            paddingBottom: Math.max(p.bottomInset, 16),
             paddingLeft: p.screenPaddingLeft,
             paddingRight: p.screenPaddingRight,
             borderTopWidth: 0.5,

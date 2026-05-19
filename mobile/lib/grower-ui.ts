@@ -17,30 +17,30 @@ export const growerUi = {
   } as ViewStyle,
 
   pageTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '300',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.5,
-    lineHeight: 30,
+    letterSpacing: -0.55,
+    lineHeight: 32,
   } as TextStyle,
 
   pageLead: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    lineHeight: 22,
-    marginTop: 6,
+    lineHeight: 23,
+    marginTop: 8,
     letterSpacing: -0.15,
   } as TextStyle,
 
   sectionLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '600',
     color: enterpriseColors.gray600,
-    letterSpacing: 0.55,
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 22,
+    marginBottom: 12,
   } as TextStyle,
 
   card: {
@@ -62,43 +62,10 @@ export const growerUi = {
     marginBottom: 16,
   } as ViewStyle,
 
-  tile: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    minHeight: 64,
-    marginBottom: 10,
-  } as ViewStyle,
-
-  tileIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: enterpriseColors.primaryTint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  } as ViewStyle,
-
-  tileTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.25,
-  } as TextStyle,
-
-  tileDesc: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: enterpriseColors.gray600,
-    marginTop: 3,
-    lineHeight: 19,
-  } as TextStyle,
+  tile: enterpriseUi.listRow,
+  tileIcon: enterpriseUi.listRowIcon,
+  tileTitle: enterpriseUi.listRowTitle,
+  tileDesc: enterpriseUi.listRowDesc,
 
   btnPrimary: enterpriseUi.authBtnPrimary,
   btnPrimaryText: enterpriseUi.authBtnPrimaryText,
@@ -151,21 +118,68 @@ export const growerUi = {
 
   formPanel: {
     backgroundColor: enterpriseColors.white,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: enterpriseColors.gray200,
-    padding: 16,
+    padding: 18,
     marginBottom: 12,
   } as ViewStyle,
+
+  settingsGroupTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  } as TextStyle,
+
+  settingsRowTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    letterSpacing: -0.25,
+  } as TextStyle,
+
+  settingsRowDesc: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    marginTop: 4,
+    lineHeight: 21,
+  } as TextStyle,
+
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    minHeight: 48,
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
+  } as ViewStyle,
+
+  filterChipOn: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  } as ViewStyle,
+
+  filterChipText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+  } as TextStyle,
+
+  filterChipTextOn: {
+    color: enterpriseColors.primary,
+  } as TextStyle,
 };
 
 export const growerStyles = StyleSheet.create({
   headerBar: {
     paddingHorizontal: 20,
-    paddingBottom: 14,
-    backgroundColor: enterpriseColors.white,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: enterpriseColors.gray200,
+    paddingBottom: 16,
+    backgroundColor: enterpriseColors.canvas,
   },
   headerRow: {
     flexDirection: 'row',
