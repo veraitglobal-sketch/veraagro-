@@ -3601,34 +3601,34 @@
     "metaDescription": "Prijavite se za Bio Vera program: fiksne sezonske cene, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, organizovano preuzimanje hladnjacama. Otvoren za imanja iz 30+ zemalja."
   },
   "logisticsPartnerPage": {
-    "title": "Za logističke partnere",
-    "heroLead": "Postanite ugovoreni Bio Vera prevoznik u našem hladnom lancu — redovne misije, Vera pravila flote i ista sledljivost serija koju prezentujemo kupcima.",
+    "title": "Hladnjača transport — redovne ture od njive do EU maloprodaje",
+    "heroLead": "Postanite ugovoreni Bio Vera prevoznik u našem hladnom lancu. Redovne misije, optimizovane rute, brza isplata. Isti standardi sledljivosti koje prezentujemo našim kupcima važe i za logistiku.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "prospectNote": "",
     "whoCanApplyTitle": "Ko može da se prijavi",
-    "whoCanApplyLead": "Logistički partneri mogu se prijaviti iz istih 30+ zemalja gde imamo proizvođače. Male kompanije, veliki transportni operateri i nezavisni vozači kvalifikuju se pod uslovom da ispunjavaju naše standarde hladnog lanca i praćenja.",
+    "whoCanApplyLead": "Prevoznici iz svih zemalja gde imamo proizvođače — Srbija, BiH, Crna Gora, Hrvatska, Bugarska i još 25+ zemalja. Primamo male firme, velike transportne kompanije i nezavisne vozače. Jedini uslov: ispunjavate naše standarde hladnog lanca i GPS praćenja.",
     "countriesLine": "",
     "whoCanApplyLine2": "",
     "fleetPolicyTitle": "Standardi flote",
-    "fleetPolicyP1": "Vozila koja voze Vera tovare moraju ispunjavati propisane zahteve za eksterijer i brendiranje.",
-    "fleetPolicyP2": "Registracija dodatnih vozila podleže potpunoj usklađenosti sa Bio Vera specifikacijama flote.",
+    "fleetPolicyP1": "Vozila koja voze Bio Vera tovare moraju ispunjavati propisani eksterijer i brendiranje.",
+    "fleetPolicyP2": "Registracija dodatnih vozila podleže punoj usklađenosti sa specifikacijama.",
     "fleetStandardsBullets": [],
-    "conditionsTitle": "Uslovi",
+    "conditionsTitle": "Šta morate imati",
     "conditionsLead": "",
     "needLine": "",
     "requirementItems": [
       {
-        "title": "Hladni lanac",
-        "body": "Obavezna rashladna jedinica koja održava 0°C do +12°C za transport organskih proizvoda. Obavezno za sve partnere bez obzira na veličinu flote."
+        "title": "Hladnjača",
+        "body": "Rashladna jedinica koja održava 0°C do +12°C. Obavezno za sve partnere — kombi, kamion ili tegljač."
       },
       {
-        "title": "Digitalno praćenje",
-        "body": "Obavezni Bio Vera senzori za monitoring temperature u realnom vremenu i GPS praćenje. Isti zahtev za svaki nivo partnera."
+        "title": "GPS i senzori",
+        "body": "Bio Vera senzori za monitoring temperature u realnom vremenu i GPS praćenje. Ugradnja obavezna za sve nivoe partnera."
       },
       {
         "title": "Pouzdanost",
-        "body": "Visok skor poverenja i striktno poštovanje rokova isporuke. Konstantne performanse su ključne za dugoročne ugovore."
+        "body": "Striktno poštovanje rokova isporuke. Konstantne performanse su uslov za dugoročne ugovore."
       }
     ],
     "whatYouGetTitle": "Šta dobijate",
@@ -3636,15 +3636,15 @@
     "benefitItems": [
       {
         "title": "Optimizacija ruta",
-        "body": "Naš softver smanjuje prazne kilometre kroz inteligentno planiranje ruta, maksimizujući efikasnost flote."
+        "body": "Naš softver minimizuje prazne kilometre. Povratne ture nose seme i đubriva za dobavljače — nema praznog povratka."
       },
       {
-        "title": "Brza isplata",
-        "body": "Isplata po završenoj isporuci. Bez perioda čekanja ili odloženih obračuna."
+        "title": "Isplata odmah po isporuci",
+        "body": "Nema čekanja. Isplata po potvrđenoj isporuci."
       },
       {
         "title": "Dugoročni ugovori",
-        "body": "Stabilne obaveze obima sa predvidivim tokovima prihoda."
+        "body": "Stabilan obim, predvidiv prihod. Redovne ture umesto jednokratnih poslova."
       }
     ],
     "fuelTitle": "",
@@ -3709,8 +3709,8 @@
     "downloading": "Preuzimanje…",
     "downloadFailed": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "comingSoon": "Uskoro",
-    "applicationTitle": "Prijava partnera",
-    "applicationLead": "Navedite broj kombija i kamiona. Učitajte dokumentaciju flote. Saglasnost za ugradnju Bio Vera senzora na sva vozila koja se koriste za naše isporuke.",
+    "applicationTitle": "Prijavite se",
+    "applicationLead": "Navedite broj i tip vozila. Učitajte dokumentaciju. Potvrdite saglasnost za ugradnju Bio Vera senzora.",
     "successTitle": "Prijava poslata!",
     "successBody": "Hvala na interesovanju. Pregledaćemo prijavu i javićemo vam u roku 3–5 radnih dana.",
     "companyNameLabel": "Naziv kompanije *",
@@ -3729,8 +3729,8 @@
     "submitApplication": "Pošalji prijavu",
     "submitting": "Slanje…",
     "submitError": "Slanje nije uspelo. Pokušajte ponovo ili pišite na info@biovera.app",
-    "metaTitle": "Logistički Partner | Bio Vera — Mreža Hlađenog Transporta",
-    "metaDescription": "Pridružite se Bio Vera ugovornoj hladnoj mreži. Redovne misije, optimizacija ruta, brza isplata po isporuci. Dobrodošli mali vozni parkovi, velike kompanije i nezavisni vozači."
+    "metaTitle": "Hladnjača Transport Srbija EU | Bio Vera — Logistički Partneri",
+    "metaDescription": "Postanite Bio Vera prevoznik: redovne ture hladnjacama, optimizovane rute, isplata odmah po isporuci. Mali vozni parkovi, velike kompanije i nezavisni vozači."
   },
   "productsPage": {
     "redirecting": "Preusmeravanje…"
@@ -3911,56 +3911,56 @@
     "errorFallback": "Slanje nije uspelo. Pokušajte kasnije ili pišite na info@biovera.app."
   },
   "aboutPage": {
-    "metaTitle": "O Bio Veri | Integrisani Agrifood Operater, Hamburg",
-    "metaDescription": "Bio Vera transformiše poljoprivredu kroz vertikalnu integraciju. Programi za proizvođače, terenska kontrola kvaliteta, pakovanje i hladna logistika do EU maloprodaje sa kompletnom sledljivošću serija.",
+    "metaTitle": "O Bio Veri | Organizovani Otkup Voća i Povrća — Hamburg",
+    "metaDescription": "Bio Vera organizuje proizvodnju, kontrolu kvaliteta, pakovanje i hladjeni transport svežeg voća i povrća od njive do EU maloprodaje. Sedište u Hamburgu, program otvoren za proizvođače širom sveta.",
     "heroTitle": "O Bio Veri",
-    "heroSubtitle": "Bio Vera organizuje poljoprivrednu proizvodnju kroz ugovorne proizvođače koji prate naše standarde i inpute, sprovodi terensku kontrolu kvaliteta, pakovanje i logistiku, i prodaje brendiranu hranu krajnjim kupcima — sve na jednom dosijeu serije po tovaru.",
+    "heroSubtitle": "Bio Vera organizuje poljoprivrednu proizvodnju kroz ugovorne proizvođače, sprovodi terensku kontrolu kvaliteta, pakuje i isporučuje brendiranu hranu direktno EU maloprodajnim lancima. Jedan dosije serije prati svaki tovar od njive do police.",
     "missionTitle": "Naša misija",
-    "missionP1": "Koristimo tehnologiju tako da isti zapisi služe operacijama i prodaji: proizvođači ostaju producenti u našem sistemu, kupci ugovaraju sa Bio Verom, a krajnji potrošači vide proverljivo poreklo i kvalitet.",
+    "missionP1": "Koristimo tehnologiju da isti zapisi služe operacijama i prodaji. Proizvođači proizvode unutar našeg sistema, kupci ugovaraju sa Bio Verom, potrošači vide proverljivo poreklo i kvalitet.",
     "missionP2": "",
     "visionTitle": "Naša vizija",
-    "visionP1": "Voditi evropske vertikalno integrisane koridore svežih proizvoda sa sledljivom kontrolom kvaliteta koju kupci prepoznaju na polici. Svaki proizvod sa kompletnim digitalnim pasošom, svaki proizvođač pravično kompenzovan, svaki potrošač u mogućnosti da veruje poreklu.",
+    "visionP1": "Voditi evropske koridore svežih proizvoda sa kontrolom kvaliteta koju kupci prepoznaju na polici. Svaki proizvod sa kompletnim digitalnim pasošom, svaki proizvođač pravično kompenzovan.",
     "visionP2": "",
     "valuesTitle": "Naše vrednosti",
     "valueCards": [
       {
         "title": "Transparentnost",
-        "description": "Kompletna vidljivost svakog koraka lanca snabdevanja, od njive do police. Bez skrivenih procesa, bez zamućenog porekla."
+        "description": "Kompletna vidljivost svakog koraka od njive do police. Bez skrivenih procesa."
       },
       {
-        "title": "Kvalitet na prvom mestu",
-        "description": "Rigorozni standardi koji prevazilaze očekivanja industrije. Svaki proizvod verifikovan kroz naš Protocol 360 sistem."
+        "title": "Kvalitet",
+        "description": "Standardi koji prevazilaze industrijsko proseče. Svaki proizvod prolazi Protocol 360 verifikaciju."
       },
       {
-        "title": "Pravična kompenzacija",
-        "description": "Proizvođači dobijaju poštene cene za svoje proizvode uz održavanje konkurentnih tržišnih stopa."
+        "title": "Pravične cene",
+        "description": "Proizvođači dobijaju stabilne sezonske cene dogovorene unapred. Bez posrednika koji uzimaju maržu."
       },
       {
         "title": "Održivost",
-        "description": "Održive poljoprivredne prakse i smanjenje otpada kroz efikasno upravljanje lancem snabdevanja."
+        "description": "Održive prakse i smanjen otpad kroz efikasan lanac snabdevanja."
       }
     ],
     "whatWeDoTitle": "Šta radimo",
     "whatWeDoItems": [
       {
-        "title": "Kompletna sledljivost",
-        "body": "Svaki proizvod dobija digitalni pasoš sa dokazom porekla, puta i kvaliteta. QR na gajbi pokazuje koje imanje u našem programu je proizvelo seriju."
+        "title": "Sledljivost",
+        "body": "Svaki proizvod dobija digitalni pasoš: poreklo, put, kvalitet. QR na gajbi pokazuje tačno imanje koje je proizvelo seriju."
       },
       {
-        "title": "Osiguranje kvaliteta",
-        "body": "Protocol 360: analiza zemljišta na terenu, biometrijsko skeniranje na pakovanju, monitoring hladnog lanca tokom transporta."
+        "title": "Kontrola kvaliteta",
+        "body": "Protocol 360: analiza zemljišta na terenu, skeniranje na pakovanju, monitoring temperature tokom transporta."
       },
       {
-        "title": "Prodaja i nabavka",
-        "body": "Prodajemo kupcima niže u lancu dok proizvođači ispunjavaju ugovorenu proizvodnju. Kraći odgovorni lanac, pravični podsticaji za proizvođače, svežina i jasnoća u maloprodaji."
+        "title": "Prodaja",
+        "body": "Mi prodajemo kupcima, proizvođači ispunjavaju ugovorenu proizvodnju. Kraći lanac, pravični podsticaji, svežina na polici."
       },
       {
         "title": "EU usklađenost",
-        "body": "Automatsko upravljanje sertifikatima, podrška grupnoj GlobalG.A.P. IFA v6 sertifikaciji i kompletno praćenje usklađenosti za pristup EU tržištu."
+        "body": "GlobalG.A.P. IFA v6 grupna sertifikacija, automatski EU sertifikati, kompletno praćenje usklađenosti za pristup evropskom tržištu."
       }
     ],
-    "ctaTitle": "Postanite deo Vera koridora",
-    "ctaBody": "Bilo da proizvodite u našem programu, isporučujete inpute, prevozite za nas ili kupujete od Bio Vere — pravila od parcele do isplate su ista.",
+    "ctaTitle": "Postanite deo Bio Vera koridora",
+    "ctaBody": "Bilo da proizvodite, isporučujete inpute, prevozite ili kupujete — pravila od parcele do isplate su ista.",
     "ctaProducer": "Postanite Vera proizvođač",
     "ctaContact": "Kontaktirajte nas"
   },
@@ -4524,44 +4524,44 @@
     "toolbarCopied": "Kopirano",
     "toolbarPrintPdf": "",
     "toolbarPrintAria": "Otvori dijalog za štampu ili čuvanje kao PDF",
-    "introNote": "Savremen koncept za prodaju svežih proizvoda. Direktne veze sa proizvođačima, kontrolisan kvalitet i maksimalna iskorišćenost — izgrađeno za organizovanu, transparentnu i efikasnu maloprodaju.",
+    "introNote": "Savremen maloprodajni koncept za sveže voće i povrće. Direktne veze sa proizvođačima, kontrolisan kvalitet, maksimalna iskorišćenost svakog kilograma. Organizovana prodaja umesto haosa u lancu.",
     "pdfHint": "",
     "contentsTitle": "",
     "contentsNav": "Skok na odeljak",
     "skipToContent": "Preskoči na dokument",
     "coverEyebrow": "Direktno. Sveže. Kontrolisano.",
-    "coverTitle": "BioVera Fresh",
+    "coverTitle": "BioVera Fresh — prodavnica svežeg voća i povrća",
     "coverSubtitle": "",
     "heroImageAlt": "BioVera Fresh koncept prodaje — prikaz svežih proizvoda",
     "pdfDocumentTitle": "Kompletan dokument — BioVera Fresh",
     "pdfDocumentSubtitle": "Ceo tekst za deljenje sa partnerima, pilote ili arhivu.",
     "ctaTitle": "Postanite BioVera Fresh partner",
-    "ctaBody": "Kontaktirajte Bio Vera tim. Kompletan programski PDF pokriva svih 14 poglavlja: uvod, tržišni kontekst, koncept prodavnice, operacije, model zarade, investicija, uslovi i mapa rasta.",
+    "ctaBody": "Kontaktirajte Bio Vera tim. Programski PDF pokriva svih 14 poglavlja: uvod, tržište, koncept, operacije, zarada, investicija, uslovi, rast.",
     "ctaButton": "Kontaktirajte Bio Vera",
     "webSections": [
       {
-        "title": "Tržišni jaz",
-        "body": "Tradicionalna distribucija svežih proizvoda je fragmentirana: visok kalo, nejasno poreklo, nestabilne cene, slaba kontrola kvaliteta. To stvara neizvesnost za trgovce, otpad za proizvođače i nisko poverenje za potrošače."
+        "title": "Problem na tržištu",
+        "body": "Tradicionalna distribucija svežih proizvoda je fragmentirana: visok kalo i bacanje, nejasno poreklo, nestabilne cene, slaba kontrola kvaliteta. Trgovci gube na otpadu, proizvođači na ceni, potrošači na poverenju."
       },
       {
-        "title": "BioVera odgovor",
-        "body": "Direktna veza između proizvođača i maloprodaje. Standardizovani kvalitet proizvoda. Organizovana distribucija. Kontrolisani formati prodavnica. Maksimalna iskorišćenost svakog proizvedenog kilograma."
+        "title": "BioVera rešenje",
+        "body": "Direktna veza proizvođač–maloprodaja. Standardizovani kvalitet. Organizovana distribucija. Kontrolisani formati prodavnica. Svaki kilogram maksimalno iskorišćen."
       },
       {
-        "title": "Raspored prodavnice",
-        "body": "Dve zone rade kao jedna celina:\n\nMaloprodajna zona — sveže voće i povrće, jasno izlaganje, prodaja na merenje, BioVera pakovanja.\n\nFresh zona — sokovi, voćne salate i vidljiva priprema. Brza usluga, visoka poseta."
+        "title": "Kako izgleda prodavnica",
+        "body": "Dve zone u jednom prostoru:\n\nMaloprodajna zona — sveže voće i povrće, jasno izlaganje, prodaja na merenje, BioVera pakovanja.\n\nFresh zona — sveži sokovi, voćne salate, vidljiva priprema. Brza usluga, visoka poseta kupaca."
       },
       {
-        "title": "Operacije i zarada",
-        "body": "Planirani asortiman i redovna rotacija smanjuju otpad. Tokovi prihoda: prodaja proizvoda, sveži sokovi, voćne salate, sezonski događaji. Vitka posada, jasne rutine, niska operativna složenost."
+        "title": "Zarada i operacije",
+        "body": "Planiran asortiman i redovna rotacija smanjuju otpad. Prihod dolazi iz: prodaje proizvoda, svežih sokova, voćnih salata i sezonskih događaja. Mala ekipa, jasne rutine, niska složenost."
       },
       {
-        "title": "Standardi prodavnice",
-        "body": "Odobrena signalizacija, vidljiv hladni lanac, čiste operacije. Ispravni rashladni uređaji sa pravilima temperature. QR ili verifikacija pasoša na polici ili kasi. Čišćenje po ček-listama."
+        "title": "Standardi",
+        "body": "Brendirana signalizacija, vidljiv hladni lanac, ispravni rashladni uređaji. QR verifikacija na polici ili kasi. Čišćenje po ček-listi."
       },
       {
         "title": "Ko može biti partner",
-        "body": "Preduzetnici, investitori, vlasnici lokacija, operateri koji traže otporan koncept maloprodaje hrane."
+        "body": "Preduzetnici, investitori, vlasnici lokacija, operateri koji traže stabilan koncept u prehrambenoj maloprodaji."
       }
     ],
     "pdfSections": [
@@ -4649,8 +4649,8 @@
     ],
     "resourceDownload": "Preuzmi",
     "resourceDownloading": "Preuzimanje…",
-    "metaTitle": "BioVera Fresh | Koncept Maloprodaje od Njive do Police",
-    "metaDescription": "Kontrolisani maloprodajni model za sveže proizvode: direktne veze sa proizvođačima, standardizovani kvalitet, organizovana distribucija. Partnerstvo sa Bio Verom za otvaranje BioVera Fresh prodavnice."
+    "metaTitle": "BioVera Fresh | Prodavnica Svežeg Voća i Povrća — Franšiza",
+    "metaDescription": "Savremen koncept maloprodaje svežeg voća i povrća. Direktno od proizvođača, kontrolisan kvalitet, organizovana distribucija. Postanite BioVera Fresh partner."
   },
   "projectOverview": {
     "toolbarCopyLink": "Kopiraj link",

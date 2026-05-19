@@ -144,6 +144,12 @@ const nextConfig: NextConfig = {
         destination: "/logistics-partner",
         permanent: true,
       },
+      /** SR-friendly marketing slug → canonical logistics partner page */
+      {
+        source: "/sr/logistika",
+        destination: "/logistics-partner",
+        permanent: true,
+      },
       /** SR-friendly marketing slug → canonical growers page */
       {
         source: "/sr/proizvodjaci",
@@ -154,6 +160,30 @@ const nextConfig: NextConfig = {
       {
         source: "/sr/za-kupce",
         destination: "/sr/for-buyers",
+        permanent: true,
+      },
+      /** SR-friendly marketing slug → canonical suppliers page */
+      {
+        source: "/sr/dobavljaci",
+        destination: "/sr/suppliers",
+        permanent: true,
+      },
+      /** SR-friendly marketing slug → canonical about page */
+      {
+        source: "/sr/o-nama",
+        destination: "/sr/about",
+        permanent: true,
+      },
+      /** DE-friendly marketing slug → canonical for-buyers page */
+      {
+        source: "/de/fuer-einkaeufer",
+        destination: "/de/for-buyers",
+        permanent: true,
+      },
+      /** DE-friendly marketing slug → canonical growers page */
+      {
+        source: "/de/erzeuger",
+        destination: "/de/growers",
         permanent: true,
       },
     ];

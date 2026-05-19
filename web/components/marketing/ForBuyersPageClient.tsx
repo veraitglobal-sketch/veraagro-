@@ -211,16 +211,22 @@ export default function ForBuyersPageClient() {
                 );
               })}
             </div>
-            <p className="mt-4 text-sm text-gray-500">{t('forBuyersPage.productsNote')}</p>
+            {t('forBuyersPage.productsNote') ? (
+              <p className="mt-4 text-sm text-gray-500">{t('forBuyersPage.productsNote')}</p>
+            ) : null}
 
             <div className="mt-10 pt-10 border-t border-gray-200">
               <h3 className="text-xl font-light text-gray-900 mb-1">{t('forBuyersPage.harvestCalendarTitle')}</h3>
+              {harvestCalendarLead && harvestCalendarLead !== 'forBuyersPage.harvestCalendarLead' ? (
+                <p className="text-gray-600 mb-6 max-w-2xl">{harvestCalendarLead}</p>
+              ) : null}
               <HarvestCalendar />
             </div>
           </section>
 
+          {packagingTitle ? (
           <section className="py-12 border-t border-gray-200">
-            <h2 className="text-2xl font-light text-gray-900 mb-2">{t('forBuyersPage.packagingTitle')}</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-2">{packagingTitle}</h2>
             <p className="text-gray-600 max-w-2xl">{t('forBuyersPage.packagingLead')}</p>
             {packagingList.length > 0 ? (
               <ul className="mt-6 space-y-2 text-gray-600">
@@ -233,6 +239,7 @@ export default function ForBuyersPageClient() {
               </ul>
             ) : null}
           </section>
+          ) : null}
 
           {operateList.length > 0 ? (
             <section id="how-we-operate" className="py-12 border-t border-gray-200 scroll-mt-20">

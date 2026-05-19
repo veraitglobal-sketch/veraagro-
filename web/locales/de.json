@@ -95,7 +95,7 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Ein vertikal integriertes landwirtschaftliches Netzwerk. Vom Feld bis zum Käufer: rückverfolgbare Chargen, Bio-Ready-Zertifizierung und digitaler Nachweis bei jedem Schritt. Offen für Produzenten weltweit.",
+    "siteDescription": "Bio Vera liefert frisches Obst und Gemüse mit lückenloser Chargenrückverfolgung. GlobalG.A.P. IFA v6 zertifiziert, Kühlkette überwacht, digitaler Produktpass. Sitz in Hamburg.",
     "ldJsonDescription": "Ein vertikal integriertes landwirtschaftliches Netzwerk. Vom Feld bis zum Käufer mit rückverfolgbaren Chargen, Bio-Ready-Zertifizierung und digitalem Nachweis. Offen für Produzenten weltweit.",
     "keywords": [
       "Bio Vera",
@@ -111,7 +111,8 @@
       "Nachhaltige Landwirtschaft",
       "Lebensmitteltransparenz"
     ],
-    "ldJsonContactType": "Kundendienst"
+    "ldJsonContactType": "Kundendienst",
+    "homeTitle": "Bio Vera | Lieferant Frisches Obst & Gemüse — Rückverfolgbarkeit vom Erzeuger bis Regal"
   },
   "chat": {
     "needHelp": "Brauchen Sie Hilfe?",
@@ -1831,11 +1832,11 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertikal integriert",
-      "title2": "Landwirtschaftliches Netzwerk",
-      "subtitle": "Vom Feld bis zum Käufer in einem System: rückverfolgbare Chargen, Bio-Ready-Zertifizierung und digitaler Nachweis bei jedem Schritt. Offen für Produzenten weltweit.",
+      "title1": "Frisches Obst und Gemüse",
+      "title2": "mit lückenloser Rückverfolgbarkeit",
+      "subtitle": "Bio Vera ist ein vertikal integrierter Agrifood-Anbieter mit Sitz in Hamburg. Wir betreiben die gesamte Lieferkette — von der Vertragsanbauer-Steuerung über Qualitätssicherung und Verpackung bis zur gekühlten Auslieferung an den Einzelhandel. Jede Charge trägt eine Batch_ID mit vollständiger Rückverfolgbarkeit vom Feld bis zum Regal.",
       "browseProducts": "Produkte durchsuchen",
-      "becomeProducer": "Werden Sie Produzent",
+      "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
       "preOrderAria": "Informationen zur Vorbestellung",
       "preOrderTip1": "Vera-Produkte werden frisch zur Lieferung verschickt. Neben der Qualitätskontrolle sind wir bestrebt, die Erwartungen unserer Kunden in jedem Schritt zu erfüllen.",
@@ -1846,81 +1847,69 @@
       "Zertifiziert",
       "Überwachung",
       "Betrugsfälle",
-      "Öffentliche Blockchain-Spur auf Polygon wenn aktiviert"
+      "Optionale Verankerung"
     ],
     "partnersLine": "Führende Agrarorganisationen vertrauen uns tagtäglich",
     "vision": {
       "title": "Unsere Vision",
-      "intro": "Wir bauen einen vertrauenswürdigen Weg vom Feld zum Käufer auf: klare Regeln, ehrliche Aufzeichnungen und fairer Marktzugang für Erzeuger, die unsere Standards erfüllen.",
+      "intro": "Ein transparenter Versorgungskanal, in dem Erzeuger den Preis vor der Ernte kennen, Einkäufer die Herkunft vor der Bestellung prüfen und Verbraucher jedes Produkt im Regal verifizieren können.",
       "cards": [
         {
           "title": "Transparenz",
-          "description": "Vollständige Transparenz des gesamten Prozesses vom Feld bis zum Kunden. Jeder Schritt ist dokumentiert und unveränderlich."
+          "description": "Jeder Schritt vom Feld bis zum Regal in einem Dossier. Vertrieb, Qualitätssicherung und Auditoren arbeiten mit demselben Datensatz."
         },
         {
           "title": "Sicherheit",
-          "description": "Kryptografisch geschützte Daten, Betrugsschutz und unveränderliche digitale Beweise."
+          "description": "Zugriffskontrollen und Betrugsschutz sichern die Integrität jeder Lieferung, die wir verkaufen."
         },
         {
-          "title": "EU-Zugang",
-          "description": "Automatisierte Generierung von EU-Zertifikaten und digitalen Reisepässen für den direkten Marktzugang."
+          "title": "EU-Dokumentation",
+          "description": "Automatisierte EU-Zertifikate und digitale Produktpässe — Compliance, die den Anforderungen der Verordnung (EG) Nr. 178/2002 und dem kommenden DPP-Mandat entspricht."
         }
       ]
     },
     "features": {
       "title": "Kernfunktionen",
-      "intro": "Wie das Netzwerk tagtäglich funktioniert – Produktion, Logistik, Lieferung und Abwicklung in einem Betriebsmodell verbunden.",
+      "intro": "",
       "list": [
         {
           "title": "Smart-Lock-System",
-          "description": "Das Scannen des QR-Codes ist der Primärschlüssel. Unveränderlicher Produktionsnachweis mit GPS-Validierung."
+          "description": "Anbau, Protokoll, Verpackung, Logistik, Lieferung und Abrechnung in einer koordinierten Kette."
         },
         {
-          "title": "Chargenverfolgung",
-          "description": "Jede Kiste wird mit Batch_ID verfolgt. Rückverfolgbarkeit mit einem Klick vom Feld bis zum Kunden."
+          "title": "Chargenrückverfolgung",
+          "description": "Jede Kiste trägt eine Batch_ID. Dieselbe Rückverfolgbarkeit läuft vom Feld bis zur Auslieferung."
         },
         {
-          "title": "Treuhandzahlung",
-          "description": "Die Gelder des Käufers bleiben bis zur Bestätigung der Lieferung auf dem Treuhandkonto und werden dann zu vereinbarten Bedingungen an den Erzeuger und die Logistikpartner freigegeben. Bio Vera leitet die Kette als Marken- und Lieferbetreiber – starke, faire Geschäftsbedingungen, keine öffentliche Prozenttabelle."
+          "title": "Gesicherte Zahlung",
+          "description": "Käufergelder verbleiben bei Bio Vera bis Lieferung und Konformitätsprüfung abgeschlossen sind."
         },
         {
-          "title": "Digitaler Handschlag",
-          "description": "Der Kunde scannt den QR-Code, um die Lieferung zu bestätigen. Automatische Zahlungsfreigabe."
+          "title": "Betrugsschutz",
+          "description": "GPS-Zeitstempel, Geräte-ID-Verfolgung, kamerabasierte Erfassung. Nachträgliche Änderungen ausgeschlossen."
         },
         {
-          "title": "Schutz vor Betrug",
-          "description": "GPS-Zeitstempel, Geräte-ID-Verfolgung, Nur-Kamera-Erfassung. Unmöglich zu fälschen."
-        },
-        {
-          "title": "Digitaler EU-Pass",
-          "description": "Automatisierte Generierung von EU-Zertifikaten. Direkter Marktzugang ohne Zwischenhändler."
-        },
-        {
-          "title": "Blockchain-Verifizierung (Polygon)",
-          "description": "Unveränderlicher Herkunftsnachweis in der Kette. Produktpässe zeigen einen verifizierten Ausweis und eine vollständige Reise. Vollständig."
+          "title": "Digitaler Produktpass",
+          "description": "Automatisierte Zertifikate und Pässe — vorbereitet auf die EU-DPP-Pflicht ab 2027."
         }
       ]
     },
     "blockchain": {
-      "title": "Warum wir Blockchain verwenden",
-      "body": "Wir verwenden ein Blockchain-System, damit unsere Produkte Ihnen – dem Kunden – treu bleiben. Jeder Schritt der Reise, von der Ernte bis zur Auslieferung, wird auf eine Weise aufgezeichnet, die nicht geändert werden kann. Nicht von uns, nicht von irgendjemandem in unserem Unternehmen. Niemand kann den Weg verändern. Was Sie sehen, wenn Sie ein Produkt scannen, ist derselbe Beweis, den wir sehen: transparent, überprüfbar und unveränderlich.",
-      "bullets": [
-        "Unveränderlicher Datensatz",
-        "Niemand kann den Trail bearbeiten",
-        "Sie verifizieren die gleichen Daten wie wir"
-      ]
+      "title": "Warum Herkunftsdaten belastbar bleiben",
+      "body": "Wir verkaufen die Ware und tragen die Verantwortung gegenüber Käufern. Operative Teams erfassen jeden Übergang, damit nachträglich niemand den bereits veröffentlichten Nachweis ändern kann.",
+      "bullets": []
     },
     "roadmap": {
       "title": "Roadmap",
-      "subtitle": "Wo wir jetzt sind und wohin wir gehen",
-      "statusCompleted": "Vollendet",
-      "statusInProgress": "Im Gange",
+      "subtitle": "Wo wir stehen und wohin wir gehen.",
+      "statusCompleted": "Abgeschlossen",
+      "statusInProgress": "In Arbeit",
       "statusPlanned": "Geplant",
       "phases": [
         {
-          "phase": "1. Quartal 2026",
-          "title": "Netzwerk-Go-Live",
-          "status": "vollendet",
+          "phase": "Q1 2026",
+          "title": "Betriebsstart",
+          "status": "completed",
           "items": [
             "Backend-API",
             "Mobile App",
@@ -1931,150 +1920,122 @@
         {
           "phase": "Q2 2026",
           "title": "Funktionserweiterung",
-          "status": "vollendet",
+          "status": "completed",
           "items": [
-            "KI-Analyse – abgeschlossen",
-            "Blockchain-Verifizierung (Polygon) – abgeschlossen",
+            "KI-Analyse — abgeschlossen",
+            "Ledger-Anker (Polygon) — abgeschlossen",
             "Erweitertes Dashboard",
             "Integrationen",
             "EU-Zertifikate"
           ]
         },
         {
-          "phase": "Q3-Q4 2026",
+          "phase": "Q3–Q4 2026",
           "title": "Skalierung",
           "status": "in-progress",
           "items": [
-            "Unterstützung für mehrere Regionen",
-            "API-Marktplatz",
+            "Multi-Region-Unterstützung",
+            "Partner-API-Zugang",
             "Partnerintegrationen",
-            "Unternehmensfunktionen"
+            "Enterprise-Funktionen"
           ]
         },
         {
           "phase": "2027",
           "title": "Globale Expansion",
-          "status": "geplant",
+          "status": "planned",
           "items": [
             "Globale Märkte",
             "IoT-Sensoren",
-            "KI-Vorhersagen"
+            "KI-Prognosen"
           ]
         }
       ]
     },
     "products": {
-      "title": "Produkte durchsuchen",
-      "subtitle": "Bio-Produkte mit vollständiger Rückverfolgbarkeit",
-      "fruits": "Früchte",
+      "title": "Sortiment",
+      "subtitle": "13 Obstsorten, 18 Gemüsesorten und 3 Getreidesorten mit vollständigem Chargendossier hinter jeder Position.",
+      "fruits": "Obst",
       "vegetables": "Gemüse",
-      "grains": "Körner"
+      "grains": "Getreide"
     },
     "cta": {
-      "title": "Werden Sie Partner des Netzwerks",
-      "body": "Arbeiten Sie mit Erzeugern, Logistikpartnern und Käufern nach einheitlichen Standards zusammen – klare Übergaben, rückverfolgbare Chargen und vorhersehbare Geschäftsbedingungen.",
-      "becomeProducer": "Werden Sie Produzent",
-      "startShopping": "Beginnen Sie mit dem Einkaufen"
+      "title": "Werden Sie Teil des Vera-Korridors",
+      "body": "Ob Sie anbauen, Inputs liefern, Transport übernehmen oder bei Bio Vera einkaufen — dieselben Regeln vom Feld bis zur Auszahlung.",
+      "becomeProducer": "Werden Sie Vera-Erzeuger",
+      "startShopping": "Jetzt einkaufen"
     },
-    "help": "Fragen? Wir sind hier, um zu helfen."
+    "help": "Fragen? Wir sind für Sie da."
   },
   "forBuyersPage": {
-    "title": "Für Käufer",
-    "heroLead": "Beziehen Sie frische Produkte aus dem Bio Vera-Netzwerk: zertifizierte Herkunft und nachvollziehbare Chargenhistorie, nicht nur eine Auflistung. Der vollständige Katalog und die Bestellmöglichkeit finden Sie nach der Registrierung in Ihrem Dashboard.",
-    "notShopBody": "Wir sind kein Standard-Onlineshop. Wir arbeiten mit einem klaren, transparenten Prozess: Sie sehen, was wir bieten, Sie geben Ihre Firmen- und Kontaktdaten an und geben Ihr Einverständnis, und wir nehmen jede Anfrage ernst. Lesen Sie unten, wie wir arbeiten. Wenn Sie bereit sind, bekunden Sie unten auf der Seite Ihr Interesse, damit wir mit Ihnen in Kontakt treten können.",
+    "metaTitle": "Obst & Gemüse Großhandel | Bio Vera — Rückverfolgbar & GlobalG.A.P. Zertifiziert",
+    "metaDescription": "Beschaffen Sie frisches Obst und Gemüse für Einzelhandel und Gastronomie. Chargenrückverfolgung per Batch_ID, Kühlkettenüberwachung, digitaler Produktpass. Jetzt registrieren.",
+    "title": "Obst und Gemüse für Einzelhandel und Gastronomie — Rückverfolgbar bis zum Feld",
+    "heroLead": "Beschaffen Sie bei Bio Vera: zertifizierte Herkunft, lückenlose Chargenrückverfolgung und ein digitaler Produktpass pro Lieferung. Sortiment, Preise und Bestellung über Ihr Einkaufs-Dashboard nach Registrierung.",
+    "notShopBody": "Wir sind kein klassischer Online-Großhandel. Sie hinterlegen Ihre Unternehmensdaten, wir prüfen jede Anfrage sorgfältig. Registrierte Einkäufer erhalten Zugang zum Dashboard mit Echtzeit-Beständen, Erntekalendern und Chargendossiers.",
     "linkHowWeOperate": "Wie wir arbeiten",
-    "linkExpressInterest": "Bekunden Sie Ihr Interesse",
+    "linkExpressInterest": "Anfrage stellen",
     "placeOrder": "Bestellung aufgeben",
     "preOrder2026": "Vorbestellung 2026",
-    "purchasesTitle": "So funktionieren Einkäufe",
-    "purchasesLead": "Von der Anmeldung bis zur Lieferung: ein einfacher, transparenter Prozess.",
+    "purchasesTitle": "Beschaffungsprozess",
+    "purchasesLead": "",
     "purchasesSteps": [
       {
-        "title": "Registrieren oder anmelden",
-        "body": "Erstellen Sie ein Käuferkonto oder melden Sie sich an. Über Ihr Dashboard haben Sie Zugriff auf den vollständigen Produktkatalog und die Bestelltools."
+        "title": "Registrierung",
+        "body": "Einkäuferkonto anlegen. Ihr Dashboard gibt Zugang zum vollständigen Sortiment und den Bestelltools."
       },
       {
-        "title": "Stöbern und bestellen",
-        "body": "Im Dashboard können Sie nach Kategorien (Obst, Gemüse, Getreide usw.) suchen und Herkunft, Ernteinformationen und Preise anzeigen. Geben Sie Direktbestellungen auf oder nutzen Sie Vorbestellung 2026 für die Saisonplanung."
+        "title": "Sortiment und Bestellung",
+        "body": "Filtern nach Kategorie — Obst, Gemüse, Getreide. Herkunft, Erntefenster und Preise einsehen. Direktbestellung oder Vorbestellung für die nächste Saison."
       },
       {
-        "title": "bestätigen und bezahlen",
-        "body": "Bestellungen werden in Bio Vera bestätigt. Zahlungs- und Lieferbedingungen sind klar; Wir arbeiten mit sicheren, nachvollziehbaren Abläufen vom Bauernhof bis zu Ihnen."
+        "title": "Bestätigung und Zahlung",
+        "body": "Zahlungs- und Lieferbedingungen werden im System bestätigt. Gelder sind bis zur Lieferung und Konformitätsprüfung gesichert."
       },
       {
         "title": "Lieferung und Rückverfolgbarkeit",
-        "body": "Verfolgen Sie Ihre Charge über den digitalen Pass. Sie sehen, wo und wann geerntet wurde (Erntezeitraum) und wie bis zur Lieferung damit umgegangen wurde."
+        "body": "Verfolgen Sie Ihre Charge über den digitalen Produktpass: wo geerntet, wann, wie behandelt bis zur Auslieferung."
       }
     ],
-    "productsTitle": "Produkte, die wir anbieten",
-    "productsLead": "Wir liefern eine große Auswahl an frischem Obst und Gemüse (und Getreide) an europäische Märkte. Die vollständige, aktuelle Liste mit Sorten, Verfügbarkeit und Preisen finden Sie nach der Registrierung in Ihrem Dashboard.",
+    "productsTitle": "Sortiment",
+    "productsLead": "13 Obstsorten, 18 Gemüsesorten und 3 Getreidesorten. Vertragsanbau nach Bio Vera Standards. Aktuelle Verfügbarkeit im Einkaufs-Dashboard.",
     "productCategoryLabels": [
-      "Früchte",
+      "Obst",
       "Gemüse",
-      "Getreide",
-      "Andere"
+      "Getreide"
     ],
-    "productsNote": "Melden Sie sich bei Ihrem Käufer-Dashboard an, um den vollständigen Katalog anzuzeigen, Bestellungen aufzugeben oder eine Vorbestellung für 2026 aufzugeben.",
+    "productsNote": "",
     "harvestCalendarTitle": "Erntekalender",
-    "packagingTitle": "Verpackung",
-    "packagingLead": "Wir verwenden standardisierte, rückverfolgbare Verpackungen, die den Anforderungen an Lebensmittelsicherheit und Qualität entsprechen.",
-    "packagingList": [
-      "Bio-Vera-Mehrwegkisten mit ggf. integrierten QR-Codes.",
-      "Verpackungsarten und -optionen sind pro Produkt in Ihrem Dashboard sichtbar.",
-      "Die Einhaltung unserer Verpackungsstandards wird überprüft; Bei ordnungsgemäßer Nutzung gilt eine Arbeitsprämie."
-    ],
-    "operateTitle": "Wie wir arbeiten",
-    "operateInformator": "Käuferinformationen (Informator)",
-    "operateLead": "Wir betreiben eine vertikal integrierte Kette: vom Saatgut und Anbau über die Verpackung, Logistik und Lieferung bis zum Einzelhandel.",
-    "operateList": [
-      "Direkte Verbindung zwischen zertifizierten Produzenten und Käufern; keine unnötigen Vermittler.",
-      "Jede Charge wird dokumentiert: Erntedatum, Herkunft und Handhabung sind dokumentiert und sichtbar.",
-      "Kühlkette und Logistik sorgen dafür, dass die Produkte vom Feld bis zum Bestimmungsort frisch bleiben.",
-      "Wir arbeiten mit klaren Preisen und Abrechnungen: Treuhandkonto, bis die Freigabebedingungen erfüllt sind, dann Auszahlung an Partner zu vereinbarten Bedingungen."
-    ],
-    "securityTitle": "Sicherheit und Schutzmaßnahmen",
-    "securityLead": "Wir schützen Qualität, Zahlungen und Daten, damit Sie vertrauensvoll bestellen können.",
+    "harvestCalendarLead": "Saisonale Verfügbarkeit nach Produkt. Unsere Ware reist frisch, ohne Tiefkühlung — Geschmack und Textur wie vom Feld.",
+    "packagingTitle": "",
+    "packagingLead": "",
+    "packagingList": [],
+    "operateTitle": "",
+    "operateInformator": "",
+    "operateLead": "",
+    "operateList": [],
+    "securityTitle": "Qualitätssicherung und Compliance",
+    "securityLead": "",
     "securityCards": [
       {
-        "title": "Zahlungen",
-        "desc": "Strukturierter Ablauf: Die Zahlung des Käufers wird bei Bio Vera treuhänderisch verwahrt, bis die Lieferung bestätigt ist, und geht dann an den vertraglich vereinbarten Züchter und Logistikpartner. Wir agieren als Marken- und Anbieterseite – keine versteckten Gebühren; Die Bedingungen werden direkt mit Bio Vera vereinbart, nicht mit einer abstrakten Marktplatzebene."
-      },
-      {
-        "title": "Verträge & Compliance",
-        "desc": "Bestellungen und Vorbestellungen werden dokumentiert. Wir setzen Qualitäts- und Verpackungsstandards durch und überprüfen die Einhaltung vor der Veröffentlichung."
+        "title": "Zahlungssicherheit",
+        "desc": "Einkäufergelder bleiben bei Bio Vera gesichert bis zur bestätigten Übergabe und Konformitätsprüfung."
       },
       {
         "title": "Qualitätskontrolle",
-        "desc": "Feld- und Qualitätsprüfungen, Barcode- und GPS-Validierung und nur genehmigte Eingaben. Nicht autorisierte oder nicht konforme Chargen werden blockiert."
+        "desc": "Feld- und Laborprüfungen, Barcode- und GPS-Validierung. Nicht konforme Chargen werden vor dem Versand gesperrt. Konform mit Verordnung (EG) Nr. 178/2002."
       },
       {
         "title": "Rückverfolgbarkeit",
-        "desc": "Jede Charge verfügt über einen eindeutigen Ausweis und einen digitalen Reisepass. Herkunft, Erntedatum und Transport können Sie jederzeit überprüfen."
+        "desc": "Jede Charge hat eine eindeutige Batch_ID und einen digitalen Produktpass. Herkunft und Weg jederzeit prüfbar — Lieferkettengesetz-konform."
       }
     ],
-    "valueTitle": "Was Sie mit Bio Vera bekommen",
-    "valueLead": "Unser Obst und Gemüse ist frisch geerntet, rückverfolgbar und mit einem vollständigen digitalen Pass versehen.",
-    "valueBlocks": [
-      {
-        "title": "Unser Obst und Gemüse",
-        "body": "Von Bio Vera-zertifizierten Produzenten bezogen. Wir konzentrieren uns auf Qualität, nachhaltige Anbaumethoden und die Einhaltung unseres Protokolls."
-      },
-      {
-        "title": "Frisch geerntet",
-        "body": "Ernten werden geplant und gemeldet; Unser Ziel ist es, die Produkte ohne unnötige Verzögerung vom Feld auf den Markt zu bringen, damit Sie frische Produkte erhalten."
-      },
-      {
-        "title": "Produktpass",
-        "body": "Jede Charge verfügt über einen digitalen Pass mit vollständigen Informationen: wo sie geerntet wurde (Region, Bauernhof), wann (Erntedatum und -zeitraum), Kühlkette, Einhaltung der Vorschriften und der gesamte Weg vom Feld bis zur Lieferung."
-      },
-      {
-        "title": "Herkunft und Produzent",
-        "body": "Sie sehen den Bauernhof, die Region und den Produzenten hinter jedem Produkt. Zertifizierungen und Qualitätseinträge sind bei der Bestellung im Dashboard verfügbar."
-      }
-    ],
+    "valueTitle": "",
+    "valueLead": "",
+    "valueBlocks": [],
     "ctaRepeat": "Bereit zur Bestellung oder Planung für 2026?",
-    "interestTitle": "Bekunden Sie Ihr Interesse",
-    "interestLead": "Damit wir Ihre Anfrage ernst nehmen können, hinterlassen Sie bitte Ihre Firmen- und Kontaktdaten und bestätigen Sie, dass Sie unsere Arbeitsweise gelesen haben und mit der Kontaktaufnahme einverstanden sind.",
+    "interestTitle": "Anfrage stellen",
+    "interestLead": "Hinterlegen Sie Ihre Unternehmensdaten. Rückmeldung innerhalb von zwei Werktagen.",
     "interestThanks": "Danke schön.",
     "interestThanksBody": "Wir haben Ihre Daten erhalten und werden uns mit Ihnen in Verbindung setzen. Wenn Sie noch nicht registriert sind, können Sie dies tun, um auf den vollständigen Katalog zuzugreifen und Bestellungen aufzugeben, sobald Ihr Profil vollständig ist.",
     "interestRegisterLink": "Als Käufer registrieren",
@@ -2094,182 +2055,177 @@
     "required": "*"
   },
   "growersPage": {
-    "title": "Für Züchter",
-    "heroLead": "Treten Sie einem Erzeugernetzwerk mit vereinbarter Abnahme und organisierter Logistik bei – wachsen Sie nach dem Bio Vera-Protokoll und wir stimmen Abholung, Dokumente und Zahlung aufeinander ab. Offen für Produzenten weltweit.",
+    "metaTitle": "Erzeuger-Programm | Bio Vera — Vertragsanbau mit Abnahmegarantie",
+    "metaDescription": "Werden Sie Bio Vera Vertragserzeuger: feste Saisonpreise, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung innerhalb 48h, organisierte Kühltransporte. 30+ Länder.",
+    "title": "Vertragsanbau für den deutschen Einzelhandel — Feste Preise, Organisierte Abnahme",
+    "heroLead": "Produzieren Sie nach Bio Vera Protokoll — wir organisieren Abholung, Dokumentation und Absatz an europäische Einzelhandelsketten. Feste Saisonpreise vor der Ernte vereinbart. Ohne Zwischenhändler, ohne Preisrisiko.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
-    "whoCanApplyTitle": "Wer kann sich bewerben?",
-    "whoCanApplyLead": "Produzenten aus diesen Ländern können beitreten. Gleiches Protokoll, gleiche Zertifizierung.",
-    "countriesLine": "Österreich, Belgien, Bosnien und Herzegowina, Bulgarien, Kroatien, Zypern, Tschechische Republik, Dänemark, Estland, Finnland, Frankreich, Deutschland, Griechenland, Ungarn, Irland, Italien, Lettland, Litauen, Luxemburg, Malta, Montenegro, Niederlande, Nordmazedonien, Polen, Portugal, Rumänien, Serbien, Slowakei, Slowenien, Spanien, Schweden",
-    "valuePropositionTitle": "Das Wertversprechen",
-    "valuePropositionLead": "Was wir bieten",
+    "whoCanApplyTitle": "Wer kann sich bewerben",
+    "whoCanApplyLead": "Das Programm steht Betrieben in 30+ Ländern offen. Gleiche Standards, gleicher Zertifizierungsrahmen. Aktueller Zertifizierungsstatus ist keine Voraussetzung — Bereitschaft, Bio Vera Standards zu befolgen, genügt.",
+    "countriesLine": "",
+    "valuePropositionTitle": "Ihre Vorteile",
+    "valuePropositionLead": "",
     "valueItems": [
       {
-        "title": "Festpreise",
-        "body": "Saisonale Preisstabilität. Kein Zwischenhändler, keine täglichen Preisschwankungen. Sichern Sie Ihren Umsatz mit vorhersehbaren Preisen während der gesamten Saison."
+        "title": "Feste Saisonpreise",
+        "body": "Preise vor der Ernte vereinbart. Keine Tagesschwankungen, kein Preisrisiko nach der Ernte. Kalkulierbare Erlöse."
       },
       {
-        "title": "Logistikpriorität",
-        "body": "Unsere Kühlflotte holt Ihre Ware pünktlich zur vereinbarten Minute ab. Keine Wartezeit. Ihre Ernte wird vom Feld bis zum Markt vorrangig behandelt."
+        "title": "Kostenlose GlobalG.A.P. Zertifizierung",
+        "body": "Vera Agrar hält die GlobalG.A.P. IFA v6 Gruppenzertifizierung. Bio Vera trägt sämtliche Dokumentations- und Auditkosten — Sie sparen 950–2.000 EUR jährlich."
       },
       {
-        "title": "Automatisierte Zahlungen",
-        "body": "Die Gelder werden nach Überprüfung vor Ort reserviert und innerhalb von 48 Stunden nach Ankunft am Hub freigegeben. Keine Zahlungsverzögerungen, keine Cashflow-Sorgen."
+        "title": "Auszahlung in 48 Stunden",
+        "body": "Mittel werden bei Feldverifizierung reserviert. Auszahlung innerhalb von 48 Stunden nach Ankunft im Hub."
+      },
+      {
+        "title": "Organisierte Logistik",
+        "body": "Unsere Kühlflotte holt nach Zeitplan ab. Kein Warten, kein eigener Transport nötig."
       }
     ],
-    "protocolTitle": "Das Bio-Vera-Protokoll",
-    "protocolLead": "Strenge Voraussetzungen für die Netzwerkteilnahme",
+    "protocolTitle": "Das Bio Vera Protokoll",
+    "protocolLead": "",
     "protocolItems": [
       {
-        "title": "Digitale Terminplanung",
-        "body": "Alle Ernten müssen 24 Stunden im Voraus über die App angemeldet werden. Eine Echtzeit-Ernte-Start-/Stopp-Berichterstattung ist obligatorisch."
+        "title": "Digitale Planung",
+        "body": "Alle Ernten 24h im Voraus über die App angemeldet. Echtzeit-Start- und Stopp-Meldung ist Pflicht."
       },
       {
-        "title": "Qualitätsüberprüfung",
-        "body": "Unsere Feldkoordinatoren haben die endgültige Befugnis, Chargen vor Ort auf der Grundlage der visuellen und chemischen Standards von Bio Vera zu genehmigen oder abzulehnen."
+        "title": "Qualitätsprüfung vor Ort",
+        "body": "Unsere Feldkoordinatoren genehmigen oder lehnen Chargen vor Ort ab — nach visuellen und chemischen Standards."
       },
       {
-        "title": "Intelligente Verpackung",
-        "body": "Verwenden Sie ausschließlich Bio Vera Mehrwegkisten mit integrierten QR-Codes. Kein manuelles Umpacken erlaubt."
+        "title": "Verpackung",
+        "body": "Ausschließlich Bio Vera Mehrwegkisten mit integrierten QR-Codes. Kein manuelles Umpacken."
       },
       {
-        "title": "Volle Transparenz",
-        "body": "Boden- und Spritzprotokolle müssen vor Saisonbeginn digital hochgeladen werden."
+        "title": "Digitale Dokumentation",
+        "body": "Boden- und Pflanzenschutzprotokolle digital vor Saisonbeginn hochgeladen. Keine Papiere."
       }
     ],
     "groupCertTitle": "Gruppenzertifizierung",
-    "groupCertSubtitle": "Gruppenzertifizierungsoption 2",
-    "groupCertBody": "Vera Agrar hält die Zertifizierung für alle unsere Partner. Wir übernehmen die Kosten und den Zertifizierungsprozess, während Sie direkten Zugang zum deutschen Markt erhalten.",
+    "groupCertSubtitle": "",
+    "groupCertBody": "Sie zahlen keine Zertifizierung selbst. Vera Agrar ist Träger des GlobalG.A.P. Gruppenzertifikats. Sie treten als Mitglied bei — Bio Vera übernimmt Dokumentation, Audit und Zertifikatspflege.",
     "technicalStandardsTitle": "Technische Standards",
     "tableColCategory": "Kategorie",
     "tableColStandard": "Standard",
-    "certTableRows": [
-      {
-        "category": "Zertifizierung",
-        "standard": "GlobalG.A.P. IFA v6 (Gruppe)"
-      },
-      {
-        "category": "Analyse",
-        "standard": "Der MRL-Grenzwert liegt bei 70 % der in der EU zulässigen Werte"
-      },
-      {
-        "category": "Logistik",
-        "standard": "Direktverpackung auf dem Bauernhof in Vera-Verpackung"
-      }
-    ],
-    "paymentGuaranteedBold": "Garantierte Zahlung:",
-    "paymentGuaranteedRest": "Die Zahlung ist durch Verträge mit deutschen Handelsketten gesichert (60-90 Tage).",
-    "applyCertCta": "Beantragen Sie die Vera Group-Zertifizierung 2026",
+    "certTableRows": [],
+    "paymentGuaranteedBold": "",
+    "paymentGuaranteedRest": "",
+    "applyCertCta": "Jetzt bewerben",
     "resourcesTitle": "Ressourcen und Downloads",
-    "resourcesLead": "Wichtige Dokumente und Leitfäden für Züchter",
+    "resourcesLead": "Wichtige Dokumente und Leitfäden für Erzeuger",
     "resourceItems": [
       {
-        "id": "Aussicht",
-        "title": "Aussicht auf einen Züchter",
-        "description": "Vollständige Informationen darüber, wie Sie Bio Vera-Anbauer werden, einschließlich der Vorteile, Anforderungen und des Bewerbungsprozesses.",
+        "id": "prospect",
+        "title": "Erzeuger-Prospekt",
+        "description": "Alles über die Zusammenarbeit als Vera-Erzeuger: Vorteile, Anforderungen und Bewerbung.",
         "type": "PDF",
         "size": "~2 MB"
       },
       {
-        "id": "Verpackung",
+        "id": "packaging",
         "title": "Verpackungsrichtlinien",
-        "description": "Vollständige Verpackungsstandards und Anweisungen für Bio Vera-Produkte. Enthält Spezifikationen für Kartons, Produktanordnung (5 Reihen × 3 Produkte für runde Artikel), QR-Codes und Branding-Anforderungen.",
+        "description": "Verpackungsstandards für Bio Vera-Produkte inkl. QR-Codes und Branding.",
         "type": "PDF",
         "size": "~1,5 MB"
       },
       {
-        "id": "Feldmanagement",
-        "title": "Leitfaden zur Feldbewirtschaftung für Landwirte",
-        "description": "Vollständiger Leitfaden zur Verwaltung von Grundstücken, Parzellen und Feldeinträgen mit dem Bio Vera-System.",
+        "id": "fieldManagement",
+        "title": "Leitfaden Feldbewirtschaftung",
+        "description": "Betriebe, Parzellen und Feldeinträge im Bio Vera-System.",
         "type": "PDF",
         "size": "2,4 MB"
       },
       {
-        "id": "Protokoll",
-        "title": "Bio Vera-Protokoll",
-        "description": "Detaillierte Anforderungen und Standards für die Netzwerkteilnahme und Zertifizierung.",
+        "id": "protocol",
+        "title": "Bio Vera Protokoll",
+        "description": "Anforderungen für Programmteilnahme und Zertifizierung.",
         "type": "PDF",
         "size": "1,8 MB"
       },
       {
-        "id": "Zertifizierung",
+        "id": "certification",
         "title": "Zertifizierungsanforderungen",
-        "description": "GlobalG.A.P. IFA v6-Gruppenzertifizierungsanforderungen und Compliance-Checkliste.",
+        "description": "GlobalG.A.P. IFA v6 Gruppenzertifizierung und Compliance-Checkliste.",
         "type": "PDF",
         "size": "1,2 MB"
       },
       {
         "id": "mobileApp",
-        "title": "Leitfaden für mobile Apps",
-        "description": "Schritt-für-Schritt-Anleitung zur Verwendung der mobilen Bio Vera-Anwendung für die Feldverwaltung.",
+        "title": "Leitfaden Mobile App",
+        "description": "Schritt-für-Schritt: Bio Vera App für die Feldarbeit.",
         "type": "PDF",
         "size": "3,1 MB"
       },
       {
-        "id": "Zahlung",
-        "title": "Leitfaden zum Zahlungsvorgang",
-        "description": "Wie Treuhandkonto, Freigabe nach Lieferung und Partnerauszahlungen im Rahmen Ihrer Vereinbarungen mit Bio Vera funktionieren.",
+        "id": "payment",
+        "title": "Leitfaden Zahlungsprozess",
+        "description": "Treuhand, Freigabe nach Lieferung und Auszahlungen gemäß Vereinbarung.",
         "type": "PDF",
         "size": "1,5 MB"
       },
       {
-        "id": "Qualität",
+        "id": "quality",
         "title": "Qualitätsstandards",
-        "description": "Visuelle und chemische Qualitätsstandards für Bio Vera-zertifizierte Produkte.",
+        "description": "Visuelle und chemische Standards für Bio Vera-Produkte.",
         "type": "PDF",
         "size": "2,7 MB"
       }
     ],
     "download": "Herunterladen",
     "downloading": "Herunterladen…",
-    "downloadFailed": "Das Herunterladen der Ressource ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "comingSoon": "Kommt bald",
-    "applicationTitle": "Herstelleranwendung",
-    "applicationLead": "Bewerben Sie sich für den Beitritt zum Bio Vera-Netzwerk",
+    "downloadFailed": "Download fehlgeschlagen. Bitte erneut versuchen.",
+    "viewGuideOnline": "Leitfaden online öffnen",
+    "backToGrowers": "Zurück zu Erzeugern",
+    "comingSoon": "Demnächst",
+    "applicationTitle": "Jetzt bewerben",
+    "applicationLead": "Bewerbung einreichen, Unterlagen hochladen. Prüfung innerhalb von fünf Werktagen.",
     "successTitle": "Bewerbung eingereicht!",
-    "successBody": "Vielen Dank für Ihr Interesse. Wir prüfen Ihre Bewerbung und kontaktieren Sie innerhalb von 3-5 Werktagen.",
-    "farmNameLabel": "Hofname *",
-    "farmNamePlaceholder": "Geben Sie Ihren Farmnamen ein",
+    "successBody": "Vielen Dank für Ihr Interesse. Wir prüfen Ihre Bewerbung und melden uns innerhalb von fünf Werktagen.",
+    "farmNameLabel": "Betriebsname *",
+    "farmNamePlaceholder": "Betriebsname eingeben",
     "contactPersonLabel": "Ansprechpartner *",
     "contactPersonPlaceholder": "Vollständiger Name",
-    "phoneLabel": "Telefon (WhatsApp aktiviert) *",
-    "phonePlaceholder": "+1234567890",
+    "phoneLabel": "Telefon (WhatsApp) *",
+    "phonePlaceholder": "+49 …",
     "gpsLabel": "Genauer GPS-Standort *",
-    "gpsPlaceholder": "Breitengrad, Längengrad (z. B. 44.7866, 20.4489)",
-    "cropTypesLabel": "Kulturarten *",
-    "totalHectaresLabel": "Gesamthektar *",
-    "totalHectaresPlaceholder": "z.B. 5.5",
-    "certificationsSection": "Zertifizierungen und Anforderungen",
-    "certGlobalGap": "Globaler G.A.P. zertifiziert",
-    "certIrrigation": "Bewässerungssystem installiert",
-    "certDigital": "Bereit für die digitale Integration",
+    "gpsPlaceholder": "Breitengrad, Längengrad (z. B. 48,1351, 11,5820)",
+    "cropTypesLabel": "Kulturen *",
+    "totalHectaresLabel": "Gesamtfläche (Hektar) *",
+    "totalHectaresPlaceholder": "z. B. 5,5",
+    "certificationsSection": "Zertifizierungen & Ausstattung",
+    "certGlobalGap": "GlobalG.A.P. zertifiziert",
+    "certIrrigation": "Bewässerungssystem vorhanden",
+    "certDigital": "Bereit für digitale Integration",
     "fieldPhotosLabel": "Aktuelle Feldfotos",
     "uploadPhotos": "Fotos hochladen",
     "uploadOrDrop": "oder per Drag & Drop",
-    "fileTypesHint": "PNG, JPG jeweils bis zu 10 MB",
+    "fileTypesHint": "PNG, JPG, max. 10 MB pro Datei",
     "submitApplication": "Bewerbung einreichen",
-    "submitting": "Einreichen…",
-    "submitError": "Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie info@biovera.app",
+    "submitting": "Wird gesendet…",
+    "submitError": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren.",
     "crops": [
       {
-        "id": "Himbeere",
+        "id": "Raspberry",
         "label": "Himbeere"
       },
       {
-        "id": "Brombeere",
+        "id": "Blackberry",
         "label": "Brombeere"
       },
       {
-        "id": "Apfel",
+        "id": "Apple",
         "label": "Apfel"
       },
       {
-        "id": "Pfeffer",
-        "label": "Pfeffer"
+        "id": "Pepper",
+        "label": "Paprika"
       },
       {
-        "id": "Blaubeere",
-        "label": "Blaubeere"
+        "id": "Blueberry",
+        "label": "Heidelbeere"
       }
     ]
   },

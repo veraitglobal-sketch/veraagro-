@@ -1,20 +1,20 @@
 {
-  "metaTitle": "Partnerstvo za Dobavljače | Bio Vera — Poljoprivredni Inputi",
-  "metaDescription": "Distribuirajte Bio Vera proizvode i pakovanje našoj mreži proizvođača. Garantovan otkup, stabilne cene, integrisana povratna logistika. Prijavite se za nacionalnu pokrivenost.",
+  "metaTitle": "Distributer Semena i Đubriva | Bio Vera — Partnerstvo za Dobavljače",
+  "metaDescription": "Postanite Bio Vera dobavljač: distribuirajte seme, đubriva i pakovanje našoj mreži proizvođača. Garantovan otkup, stabilne cene, povratna logistika. Prijavite se za nacionalnu pokrivenost.",
   "hero": {
-    "title": "Za naše dobavljače",
-    "subtitle": "Postanite Bio Vera dobavljač: prodajte naše proizvode i pakovanje proizvođačima u vašoj zemlji. Dobijate garantovan otkup od naše mreže proizvođača i podržavate ih obukom i savetima na terenu.",
+    "title": "Postanite Bio Vera dobavljač u vašoj zemlji",
+    "subtitle": "Prodajte Bio Vera proizvode — seme, đubriva i pakovanje — proizvođačima u vašoj zemlji. Garantovan otkup od naše mreže, stabilna potražnja, predvidiv prihod.",
     "downloadPdf": "Preuzmite PDF prospekt",
     "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo."
   },
   "whoApply": {
-    "title": "Ko treba da se prijavi",
-    "intro": "Preferiramo partnere koji već rade u poljoprivredi sa jakom nacionalnom prisutnošću. Prodajete Bio Vera proizvode i Bio Vera pakovanje u vašoj zemlji.",
+    "title": "Koga tražimo",
+    "intro": "Partnere koji već rade u poljoprivredi sa jakom prisutnošću u svojoj zemlji. Idealno distributer ili veleprodaja koja poznaje lokalne proizvođače i može da pokrije teritoriju.",
     "bullets": []
   },
   "yourRole": {
     "title": "Vaša uloga",
-    "intro": "Kao naš dobavljač savetujete i obučavate proizvođače na terenu. Vi ste lokalna kontakt tačka, nabavljate pakovanje za naše korisnike i održavate zalihe praćene kroz Vera Admin Panel.",
+    "intro": "Vi ste lokalna kontakt tačka za Bio Vera proizvođače. Savetujete i obučavate ih na terenu, nabavljate pakovanje, održavate zalihe. Svaka transakcija praćena kroz Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
@@ -22,30 +22,26 @@
     "subtitle": "",
     "cards": [
       {
-        "title": "Garantovan otkup",
-        "description": "Naši proizvođači nabavljaju od odobrenih dobavljača. Stabilna potražnja i predvidiv prihod."
+        "title": "Garantovana potražnja",
+        "description": "Naši proizvođači nabavljaju isključivo od odobrenih dobavljača. Stabilan obim tokom cele sezone."
       },
       {
-        "title": "Stabilnost cena",
-        "description": "Unapred dogovorena struktura cena. Bez oscilacija ili pregovora po transakciji."
+        "title": "Fiksne cene",
+        "description": "Unapred dogovorena struktura cena. Nema pregovora po svakoj transakciji, nema iznenađenja."
       },
       {
-        "title": "Integrisana logistika",
-        "description": "Seme i đubriva se dostavljaju na povratnim turama naše logističke mreže. Manje praznih kilometara, niži troškovi."
+        "title": "Besplatna dostava inputa",
+        "description": "Seme i đubriva se dostavljaju na povratnim turama naše logističke mreže. Vi ne plaćate transport."
       },
       {
-        "title": "Nacionalna pokrivenost",
-        "description": "Proširite doseg i predstavljajte Bio Veru širom vaše zemlje."
-      },
-      {
-        "title": "Ekskluzivan pristup tržištu",
-        "description": "Direktan pristup našoj mreži proizvođača i evropskoj maloprodaji kroz naš vertikalno integrisani lanac."
+        "title": "Pristup EU tržištu",
+        "description": "Direktan pristup našoj mreži proizvođača i evropskoj maloprodaji kroz vertikalno integrisani lanac."
       }
     ]
   },
   "howItWorks": {
-    "title": "Kako funkcioniše",
-    "subtitle": "Dobavljači nabavljaju od naših odobrenih partnera, distribuiraju sertifikovanim proizvođačima po unapred dogovorenim cenama. Svaka transakcija praćena kroz QR kodove. Kretanje zaliha beleži se u realnom vremenu sa automatskim upozorenjima na pragu od 20%.",
+    "title": "Kako funkcioniše lanac",
+    "subtitle": "Nabavljate od naših odobrenih partnera, distribuirate sertifikovanim proizvođačima po dogovorenim cenama. QR skeniranje obavezno za svaku otpremu. Sistem automatski upozorava centralu kada zalihe padnu ispod 20%.",
     "supplyChainTitle": "",
     "steps": [],
     "forSuppliersPanelTitle": "",
@@ -53,8 +49,8 @@
     "forSuppliersPanelBullets": []
   },
   "requirements": {
-    "title": "Zahtevi programa",
-    "subtitle": "Suv, bezbedan skladišni prostor za Vera seme, đubriva i pakovanje. QR skeniranje obavezno za svaku otpremu. Fizička verifikacija primljene robe. Isključivo digitalna evidencija kroz Vera Admin Panel.",
+    "title": "Uslovi",
+    "subtitle": "Suv i bezbedan skladišni prostor. Digitalna evidencija kroz Vera Admin Panel — bez papirne dokumentacije. Fizička verifikacija robe pri prijemu.",
     "supplierHeading": "",
     "cards": [],
     "commonLabel": "",
@@ -73,8 +69,8 @@
     "systemColumnBullets": []
   },
   "application": {
-    "title": "Prijava dobavljača",
-    "intro": "Prijavite se online. Dobijate referentni kod za praćenje prijave. Naš tim vas kontaktira za zakazivanje sastanka; po odobrenju kreiramo vaš partnerski nalog.",
+    "title": "Prijavite se",
+    "intro": "Online prijava. Dobijate referentni kod za praćenje. Naš tim zakazuje sastanak; po odobrenju kreiramo vaš partnerski nalog.",
     "linkCheckStatus": "Proverite status uz referencu",
     "linkPartnerLogin": "Prijava partner prodavnice",
     "receivedTitle": "Prijava primljena",
