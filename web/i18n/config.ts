@@ -111,6 +111,7 @@ const frWithJourney = {
 };
 const esWithJourney = {
   ...es,
+  bioVeraFresh: bioVeraFreshPageEs,
   suppliersPage: suppliersPageEs,
   buyerRetail: buyerRetailEs,
   passportPublic: passportPublicEs,
