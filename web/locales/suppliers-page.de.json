@@ -1,190 +1,113 @@
 {
+  "metaTitle": "Lieferanten-Partnerschaft | Bio Vera — Saatgut, Düngemittel & Verpackung",
+  "metaDescription": "Werden Sie Bio Vera Lieferant: vertreiben Sie Saatgut, Düngemittel und Verpackung an unser Erzeugernetzwerk. Garantierte Abnahme, stabile Preise, Rücktransport-Logistik.",
   "hero": {
-    "title": "Für unsere Lieferanten",
-    "subtitle": "Werden Sie Bio Vera-Lieferant: Verkaufen Sie unsere Produkte und unsere Verpackungen an Erzeuger in Ihrem Land. Sie erhalten eine garantierte Abnahme bei unseren Produzenten und unterstützen diese mit Beratung und Schulung vor Ort.",
+    "title": "Bio Vera Lieferant werden — Inputs für unser Erzeugernetzwerk",
+    "subtitle": "Vertreiben Sie Bio Vera Produkte — Saatgut, Düngemittel und Verpackung — an Erzeuger in Ihrem Land. Garantierte Abnahme, stabile Nachfrage, planbare Erlöse.",
     "downloadPdf": "Prospekt-PDF herunterladen",
     "downloadFail": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
   },
   "whoApply": {
-    "title": "Wer sollte sich bewerben?",
-    "intro": "Unsere Lieferanten verkaufen Bio Vera-Produkte und Bio Vera-Verpackungen in ihrem Land. Wir bevorzugen Partner, die bereits in der Landwirtschaft tätig sind und im ganzen Land stark vertreten sind.",
-    "bullets": [
-      "Sie verkaufen unsere Produkte (Saatgut, Betriebsmittel) an Landwirte",
-      "Sie verkaufen unsere Verpackungen an Produzenten",
-      "Idealerweise arbeiten Sie bereits in der Landwirtschaft",
-      "Eine breite Präsenz in Ihrem Land ist von Vorteil"
-    ]
+    "title": "Wen wir suchen",
+    "intro": "Partner mit Erfahrung im Agrarbereich und starker nationaler Präsenz. Idealerweise Distributoren oder Großhändler mit direktem Zugang zu lokalen Erzeugern.",
+    "bullets": []
   },
   "yourRole": {
-    "title": "Deine Rolle",
-    "intro": "Als unser Lieferant beraten und schulen Sie Anwender vor Ort. Sie sind lokaler Ansprechpartner für Produzenten und unterstützen diese mit der Beratung vor Ort. Sie beschaffen auch Verpackungen für unsere Nutzer – darunter Kartons zum Verpacken von Produkten – damit diese vor Ort alles haben, was sie brauchen.",
-    "bullets": [
-      "Beratung und Schulung der Anwender vor Ort",
-      "Beschaffung von Verpackungen für unsere Nutzer (z. B. Kartons zum Verpacken)",
-      "Erster Ansprechpartner für Landwirte in Ihrer Region",
-      "Physische Überprüfung der erhaltenen Waren"
-    ]
+    "title": "Ihre Rolle",
+    "intro": "Sie sind der lokale Ansprechpartner für Bio Vera Erzeuger. Beratung und Schulung vor Ort, Verpackungsbeschaffung, Bestandsführung über das Vera Admin Dashboard.",
+    "bullets": []
   },
   "benefits": {
-    "title": "Was Sie bekommen",
-    "subtitle": "Vorteile, wenn Sie Bio Vera-Lieferant werden",
+    "title": "Ihre Vorteile",
+    "subtitle": "",
     "cards": [
       {
-        "title": "Garantierte Abnahme",
-        "description": "Garantierte Abnahme bei unseren Produzenten in Ihrem Land. Unsere Erzeuger beziehen ihre Produkte von zugelassenen Lieferanten – Sie erhalten eine stabile Nachfrage und vorhersehbare Einnahmen."
+        "title": "Garantierte Nachfrage",
+        "description": "Unsere Erzeuger beziehen ausschließlich von zugelassenen Lieferanten. Stabiles Volumen über die gesamte Saison."
       },
       {
-        "title": "Unsere Produkte & Verpackungen",
-        "description": "Sie verkaufen Bio Vera-Produkte und Bio Vera-Verpackungen. Eine Marke, ein Standard, vollständige Rückverfolgbarkeit über QR und das Vera-System."
+        "title": "Feste Preise",
+        "description": "Vorab vereinbarte Preisstruktur. Keine Verhandlungen pro Transaktion."
       },
       {
-        "title": "Preisstabilität",
-        "description": "Vorab vereinbarte Preisstruktur. Keine Preisschwankungen oder Verhandlungen pro Transaktion. Vorhersehbare Margen."
+        "title": "Kostenlose Zustellung",
+        "description": "Saatgut und Düngemittel werden auf Rücktransporten unseres Logistiknetzwerks geliefert. Keine Transportkosten für Sie."
       },
       {
-        "title": "Integrierte Logistik",
-        "description": "Erhalten Sie bei Rückfahrten Saatgut und Düngemittel aus unserem Logistiknetzwerk. Weniger Leerkilometer, geringere Kosten."
-      },
-      {
-        "title": "Landesweite Abdeckung bevorzugt",
-        "description": "Wir bevorzugen Lieferanten mit starker nationaler Präsenz. Erweitern Sie Ihre Reichweite und vertreten Sie Bio Vera in Ihrem ganzen Land."
-      },
-      {
-        "title": "Exklusiver Marktzugang",
-        "description": "Direkter Zugang zu unserem Produzentennetzwerk und zum deutschen Markt durch unsere vertikal integrierte Kette."
+        "title": "EU-Marktzugang",
+        "description": "Direkter Zugang zu unserem Erzeugernetzwerk und zum europäischen Einzelhandel über unsere vertikal integrierte Kette."
       }
     ]
   },
   "howItWorks": {
-    "title": "Wie es funktioniert",
-    "subtitle": "Verständnis der Bio Vera-Lieferkette",
-    "supplyChainTitle": "Lieferkettenprozess",
-    "steps": [
-      {
-        "title": "Beschaffung von zugelassenen Partnern",
-        "body": "Lieferanten beziehen Waren von unseren zugelassenen Partnern im Land. Sie beschaffen auch Verpackungen (z. B. Kartons zum Verpacken) für unsere Benutzer. Saatgut, Düngemittel und Verpackung entsprechen den Bio Vera-Spezifikationen."
-      },
-      {
-        "title": "Vereinbarte Preisstruktur",
-        "body": "Alle Produkte werden zu vorab vereinbarten Preisen verkauft. Dies gewährleistet Preisstabilität für die Erzeuger und vorhersehbare Einnahmen für die Lieferanten. Keine Preisschwankungen oder Verhandlungen pro Transaktion."
-      },
-      {
-        "title": "Verteilung an Erzeuger",
-        "body": "Lieferanten vertreiben Produkte an Bio Vera-zertifizierte Erzeuger in ihrer Region. Jede Transaktion wird über QR-Codes verfolgt und gewährleistet so eine vollständige Rückverfolgbarkeit vom Lieferanten bis zum Feld."
-      },
-      {
-        "title": "Digitales Tracking und Compliance",
-        "body": "Alle Lagerbewegungen werden im Vera Admin Dashboard erfasst. Lieferanten behalten die Lagerbestände in Echtzeit im Blick und das System warnt automatisch, wenn der Lagerbestand unter den Schwellenwert von 20 % fällt."
-      }
-    ],
-    "forSuppliersPanelTitle": "Für Lieferanten",
-    "forSuppliersPanelIntro": "Als Lieferant kaufen Sie bei unseren anerkannten Partnern ein und verkaufen sie zum vereinbarten Preis an die Erzeuger. Du pflegst lokale Lagerbestände, besorgst Verpackungen (z. B. Kartons) für unsere Nutzer und betreust die Landwirte regional.",
-    "forSuppliersPanelBullets": [
-      "Kauf bei zugelassenen Partnern",
-      "Sorgen Sie für sichere Lagermöglichkeiten",
-      "Beschaffung von Verpackungen (z. B. Kartons zum Verpacken) für unsere Nutzer",
-      "Zu Festpreisen an die Erzeuger verteilen",
-      "Verfolgen Sie alle Transaktionen über QR-Codes"
-    ]
+    "title": "",
+    "subtitle": "",
+    "supplyChainTitle": "",
+    "steps": [],
+    "forSuppliersPanelTitle": "",
+    "forSuppliersPanelIntro": "",
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
-    "title": "Programmanforderungen",
-    "subtitle": "Was wir von unseren Lieferanten erwarten",
-    "supplierHeading": "Für Lieferanten",
-    "cards": [
-      {
-        "title": "Vera-Ressourcenspeicher",
-        "description": "Verpflichtung zur Bereitstellung eines trockenen und sicheren Lagerraums für Vera-Saatgut, Düngemittel und Verpackungsmaterialien."
-      },
-      {
-        "title": "Ausgabe von QR-Codes",
-        "description": "Der Lieferant kann keine Waren herausgeben, ohne den QR-Code aus der App des Landwirts zu scannen. Nur so kann der Verbrauch pro Hektar erfasst werden."
-      },
-      {
-        "title": "Lokaler Support",
-        "description": "Der Lieferant ist der erste Ansprechpartner für Landwirte in ihrer Region. Sie führen eine physische Überprüfung der erhaltenen Waren durch und beraten und schulen vor Ort."
-      },
-      {
-        "title": "Bestandsberichte",
-        "description": "Das System muss die Zentrale in Hamburg automatisch benachrichtigen, wenn der Lagerbestand unter 20 % fällt."
-      }
-    ],
-    "commonLabel": "Gemeinsame Verpflichtung:",
-    "commonBody": "Alle Partner müssen das Vera Admin Dashboard nutzen, um jeden Ein- und Ausgang von Waren zu erfassen. Kein „Papierkram“ – alles muss im digitalen System sein."
+    "title": "Anforderungen",
+    "subtitle": "Trockener, sicherer Lagerraum. QR-Scanning bei jeder Ausgabe. Digitale Dokumentation über Vera Admin Dashboard. Physische Wareneingangskontrolle.",
+    "supplierHeading": "",
+    "cards": [],
+    "commonLabel": "",
+    "commonBody": ""
   },
   "logistics": {
-    "title": "Vera Logistics-Vorteil",
-    "subtitle": "Intelligentes Retourenlogistiksystem",
-    "noEmptyTitle": "Keine leeren Rückfahrten",
-    "steps": [
-      {
-        "title": "Abholung und Lieferung",
-        "body": "Der Fahrer holt Produkte von den Erzeugern ab und liefert sie an die Adresse des Käufers."
-      },
-      {
-        "title": "Abholung bei Rücksendung",
-        "body": "Auf der Rückfahrt holt der Fahrer unsere Vera-Samen und Düngemittel bei unseren Partnern ab."
-      },
-      {
-        "title": "Verteilung an Lieferanten",
-        "body": "Auf dem Rückweg liefert der Fahrer Vera-Saatgut und Düngemittel direkt an unsere Lieferanten, wodurch Leerkilometer vermieden werden."
-      }
-    ],
-    "supplierColumnTitle": "Für Lieferanten",
-    "supplierColumnIntro": "Erhalten Sie regelmäßig Lieferungen von Vera-Saatgut und Düngemitteln direkt von unseren Partnern, die von unserem Logistiknetzwerk auf Rückfahrten geliefert werden.",
-    "supplierColumnBullets": [
-      "Für eingehende Waren ist kein separater Transport erforderlich",
-      "Reduzierte Logistikkosten durch integriertes System",
-      "Regelmäßiger, vorhersehbarer Lieferplan"
-    ],
-    "systemColumnTitle": "Systemvorteile",
-    "systemColumnIntro": "Unser intelligentes Logistiksystem sorgt für maximale Effizienz, indem es Leerfahrten eliminiert und jeden Transportkilometer optimiert.",
-    "systemColumnBullets": [
-      "Null Leerkilometer bei Rückfahrten",
-      "Reduzierte Kraftstoffkosten und Umweltbelastung",
-      "Schnellere Lieferzeiten durch optimierte Routen"
-    ]
+    "title": "",
+    "subtitle": "",
+    "noEmptyTitle": "",
+    "steps": [],
+    "supplierColumnTitle": "",
+    "supplierColumnIntro": "",
+    "supplierColumnBullets": [],
+    "systemColumnTitle": "",
+    "systemColumnIntro": "",
+    "systemColumnBullets": []
   },
   "application": {
-    "title": "Lieferantenantrag",
-    "intro": "Bewerben Sie sich online (kein SB-Login). Sie erhalten einen Referenzcode zur Nachverfolgung Ihrer Bewerbung. Unser Team wird sich mit Ihnen in Verbindung setzen, um einen Termin zu vereinbaren. Sobald Sie genehmigt wurden, erstellen wir Ihr Partnershop-Konto.",
-    "linkCheckStatus": "Überprüfen Sie den Status anhand Ihrer Referenz",
-    "linkPartnerLogin": "Login für den Partnershop",
+    "title": "Jetzt bewerben",
+    "intro": "Online-Bewerbung. Referenzcode zur Nachverfolgung. Unser Team vereinbart einen Termin; nach Freigabe erstellen wir Ihr Partnerkonto.",
+    "linkCheckStatus": "Status mit Referenzcode prüfen",
+    "linkPartnerLogin": "Partner-Login",
     "receivedTitle": "Bewerbung eingegangen",
     "referencePrefix": "Ihre Referenz:",
-    "receivedBody": "Wir werden uns mit Ihnen in Verbindung setzen, um ein Gespräch zu vereinbaren. Speichern Sie Ihre Referenznummer – damit können Sie jederzeit den Status Ihrer Bewerbung überprüfen.",
-    "ctaCheckStatus": "Überprüfen Sie den Bewerbungsstatus",
-    "ctaAnother": "Reichen Sie einen anderen ein"
+    "receivedBody": "Wir melden uns zur Terminvereinbarung. Referenznummer speichern — damit prüfen Sie den Bewerbungsstatus jederzeit.",
+    "ctaCheckStatus": "Bewerbungsstatus prüfen",
+    "ctaAnother": "Weitere Bewerbung senden"
   },
   "form": {
-    "companyNameLabel": "Name der Firma *",
-    "companyNamePlaceholder": "Geben Sie den Firmennamen ein",
-    "vatLabel": "Umsatzsteuer-Identifikationsnummer / Steueridentifikationsnummer *",
-    "vatPlaceholder": "Geben Sie die Umsatzsteuer-ID ein",
+    "companyNameLabel": "Firmenname *",
+    "companyNamePlaceholder": "Firmenname eingeben",
+    "vatLabel": "USt-IdNr. / Steuernummer *",
+    "vatPlaceholder": "USt-IdNr. eingeben",
     "contactPersonLabel": "Ansprechpartner *",
     "contactPlaceholder": "Vollständiger Name",
     "emailLabel": "E-Mail *",
-    "emailPlaceholder": "email@example.com",
+    "emailPlaceholder": "email@beispiel.de",
     "phoneLabel": "Telefon *",
-    "phonePlaceholder": "+1234567890",
+    "phonePlaceholder": "+49 …",
     "productTypeLabel": "Produkttyp *",
-    "productTypePlaceholder": "Produkttyp auswählen",
+    "productTypePlaceholder": "Produkttyp wählen",
     "certificationsLabel": "Zertifizierungen *",
-    "certificationsHint": "Wählen Sie mindestens eine Zertifizierung aus",
+    "certificationsHint": "Mindestens eine Zertifizierung wählen",
     "websiteLabel": "Website (optional)",
-    "websitePlaceholder": "https://www.example.com",
-    "descriptionLabel": "Geschäftsbeschreibung (optional)",
-    "descriptionPlaceholder": "Kurze Beschreibung Ihres Unternehmens und Ihrer Produkte...",
-    "submitting": "Einreichen...",
+    "websitePlaceholder": "https://www.beispiel.de",
+    "descriptionLabel": "Unternehmensbeschreibung (optional)",
+    "descriptionPlaceholder": "Kurze Beschreibung von Unternehmen und Produkten …",
+    "submitting": "Wird gesendet …",
     "submit": "Bewerbung einreichen",
-    "submitErrorFallback": "Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie info@biovera.app",
+    "submitErrorFallback": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren.",
     "productTypes": {
-      "seeds": "Samen",
+      "seeds": "Saatgut",
       "fertilizers": "Düngemittel",
-      "packaging": "Verpackungsmaterialien",
-      "equipment": "Ausrüstung",
-      "other": "Andere"
+      "packaging": "Verpackungsmaterial",
+      "equipment": "Technik & Geräte",
+      "other": "Sonstiges"
     }
   },
-  "formspeeNote": "Wird auch im Bio Vera-System gespeichert – verwenden Sie diese Referenz in Admin-Partneranwendungen."
+  "formspeeNote": "Wird auch im Bio Vera-System gespeichert — Referenz in Admin Partner-Bewerbungen verwenden."
 }

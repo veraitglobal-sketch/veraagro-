@@ -60,12 +60,15 @@ export default function SuppliersPageClient() {
     [t],
   );
   const benefitsSubtitle = t('suppliersPage.benefits.subtitle');
+  const howItWorksTitle = t('suppliersPage.howItWorks.title');
   const howItWorksSubtitle = t('suppliersPage.howItWorks.subtitle');
   const requirementsSubtitle = t('suppliersPage.requirements.subtitle');
   const requirementsCommonLabel = t('suppliersPage.requirements.commonLabel');
   const requirementsCommonBody = t('suppliersPage.requirements.commonBody');
   const logisticsTitle = t('suppliersPage.logistics.title');
   const forSuppliersPanelTitle = t('suppliersPage.howItWorks.forSuppliersPanelTitle');
+  const showHowItWorks =
+    Boolean(howItWorksTitle || howItWorksSubtitle || howSteps.length > 0 || forSuppliersPanelTitle);
   const forSuppliersPanelBullets = useMemo(
     () => t('suppliersPage.howItWorks.forSuppliersPanelBullets', { returnObjects: true }) as string[],
     [t],
@@ -239,9 +242,12 @@ export default function SuppliersPageClient() {
         </div>
       </section>
 
+      {showHowItWorks ? (
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">{t('suppliersPage.howItWorks.title')}</h2>
+          {howItWorksTitle ? (
+            <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">{howItWorksTitle}</h2>
+          ) : null}
           {howItWorksSubtitle ? (
             <p className="text-base text-gray-600 font-light leading-relaxed text-center max-w-3xl mx-auto">
               {howItWorksSubtitle}
@@ -294,6 +300,7 @@ export default function SuppliersPageClient() {
           ) : null}
         </div>
       </section>
+      ) : null}
 
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">

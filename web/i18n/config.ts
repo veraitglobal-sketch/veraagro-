@@ -35,9 +35,17 @@ import passportPublicRo from "../locales/passport-public.ro.json";
 import passportPublicBg from "../locales/passport-public.bg.json";
 import passportPublicFr from "../locales/passport-public.fr.json";
 import passportPublicEs from "../locales/passport-public.es.json";
+import bioVeraFreshPageEn from "../locales/biovera-fresh-page.en.json";
+import bioVeraFreshPageSr from "../locales/biovera-fresh-page.sr.json";
+import bioVeraFreshPageDe from "../locales/biovera-fresh-page.de.json";
+import bioVeraFreshPageRo from "../locales/biovera-fresh-page.ro.json";
+import bioVeraFreshPageBg from "../locales/biovera-fresh-page.bg.json";
+import bioVeraFreshPageFr from "../locales/biovera-fresh-page.fr.json";
+import bioVeraFreshPageEs from "../locales/biovera-fresh-page.es.json";
 
 const enWithJourney = {
   ...en,
+  bioVeraFresh: bioVeraFreshPageEn,
   suppliersPage: suppliersPageEn,
   buyerRetail: buyerRetailEn,
   passportPublic: passportPublicEn,
@@ -48,6 +56,7 @@ const enWithJourney = {
 };
 const srWithJourney = {
   ...sr,
+  bioVeraFresh: bioVeraFreshPageSr,
   suppliersPage: suppliersPageSr,
   buyerRetail: buyerRetailSr,
   passportPublic: passportPublicSr,
@@ -58,6 +67,7 @@ const srWithJourney = {
 };
 const deWithJourney = {
   ...de,
+  bioVeraFresh: bioVeraFreshPageDe,
   suppliersPage: suppliersPageDe,
   buyerRetail: buyerRetailDe,
   passportPublic: passportPublicDe,
@@ -68,6 +78,7 @@ const deWithJourney = {
 };
 const roWithJourney = {
   ...ro,
+  bioVeraFresh: bioVeraFreshPageRo,
   suppliersPage: suppliersPageRo,
   buyerRetail: buyerRetailRo,
   passportPublic: passportPublicRo,
@@ -78,6 +89,7 @@ const roWithJourney = {
 };
 const bgWithJourney = {
   ...bg,
+  bioVeraFresh: bioVeraFreshPageBg,
   suppliersPage: suppliersPageBg,
   buyerRetail: buyerRetailBg,
   passportPublic: passportPublicBg,
@@ -88,6 +100,7 @@ const bgWithJourney = {
 };
 const frWithJourney = {
   ...fr,
+  bioVeraFresh: bioVeraFreshPageFr,
   suppliersPage: suppliersPageFr,
   buyerRetail: buyerRetailFr,
   passportPublic: passportPublicFr,

@@ -77,6 +77,7 @@ export default function LogisticsPartnerPageClient() {
   const numLocale = numberIntlLocaleFromLanguageTag(i18n.language);
 
   const prospectNote = t('logisticsPartnerPage.prospectNote');
+  const whoCanApplyTitle = t('logisticsPartnerPage.whoCanApplyTitle');
   const countriesLine = t('logisticsPartnerPage.countriesLine');
   const whoCanApplyLine2 = t('logisticsPartnerPage.whoCanApplyLine2');
   const conditionsLead = t('logisticsPartnerPage.conditionsLead');
@@ -84,6 +85,7 @@ export default function LogisticsPartnerPageClient() {
   const whatYouGetLead = t('logisticsPartnerPage.whatYouGetLead');
   const fuelTitle = t('logisticsPartnerPage.fuelTitle');
   const resourcesTitle = t('logisticsPartnerPage.resourcesTitle');
+  const fleetPolicyTitle = t('logisticsPartnerPage.fleetPolicyTitle');
 
   const requirementItems = useMemo(() => {
     const raw = t('logisticsPartnerPage.requirementItems', { returnObjects: true });
@@ -227,7 +229,7 @@ export default function LogisticsPartnerPageClient() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">{t('logisticsPartnerPage.title')}</h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">{t('logisticsPartnerPage.heroLead')}</p>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light whitespace-pre-line">{t('logisticsPartnerPage.heroLead')}</p>
             <button
               type="button"
               onClick={async () => {
@@ -250,9 +252,10 @@ export default function LogisticsPartnerPageClient() {
         </div>
       </section>
 
+      {whoCanApplyTitle ? (
       <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-xl font-light text-gray-900 mb-4">{t('logisticsPartnerPage.whoCanApplyTitle')}</h2>
+          <h2 className="text-xl font-light text-gray-900 mb-4">{whoCanApplyTitle}</h2>
           <p className="text-sm text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">{t('logisticsPartnerPage.whoCanApplyLead')}</p>
           {countriesLine ? (
             <p className="text-sm text-gray-600 font-light leading-relaxed mt-6">{countriesLine}</p>
@@ -271,11 +274,13 @@ export default function LogisticsPartnerPageClient() {
           ) : null}
         </div>
       </section>
+      ) : null}
 
+      {fleetPolicyTitle ? (
       <section className="py-14 px-6 lg:px-8 border-t border-gray-200 bg-[#f9fbf9]">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-light text-[#23471f] mb-5 text-center">
-            {t('logisticsPartnerPage.fleetPolicyTitle')}
+            {fleetPolicyTitle}
           </h2>
           <p className="text-sm text-gray-700 font-light leading-relaxed mb-4">{t('logisticsPartnerPage.fleetPolicyP1')}</p>
           <p className="text-sm text-gray-700 font-light leading-relaxed">{t('logisticsPartnerPage.fleetPolicyP2')}</p>
@@ -291,6 +296,7 @@ export default function LogisticsPartnerPageClient() {
           ) : null}
         </div>
       </section>
+      ) : null}
 
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">

@@ -55,11 +55,11 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
     <img
       src={src}
       srcSet={pdfExport ? undefined : `${src} ${SCREENSHOT_WIDTH}w`}
-      sizes={pdfExport ? undefined : '(max-width: 640px) min(92vw, 420px), 420px'}
+      sizes={pdfExport ? undefined : '(max-width: 1024px) min(92vw, 390px), 390px'}
       alt={alt}
       width={SCREENSHOT_WIDTH}
       height={SCREENSHOT_HEIGHT}
-      className="grower-app-guide-screenshot w-full max-w-full h-auto block align-top"
+      className="grower-app-guide-screenshot w-full max-w-full h-auto block align-top rounded-none border-0 shadow-none sm:rounded-xl sm:border sm:border-gray-200/70 sm:bg-white sm:shadow-[0_8px_32px_rgba(15,23,42,0.08)]"
       loading={eager ? 'eager' : 'lazy'}
       fetchPriority={eager ? 'high' : undefined}
       decoding={eager ? 'sync' : 'async'}
@@ -76,7 +76,7 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
       <button
         type="button"
         onClick={() => setLightboxOpen(true)}
-        className="group relative block w-full max-w-full overflow-hidden cursor-zoom-in border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+        className="group relative block w-full max-w-full cursor-zoom-in rounded-none sm:rounded-xl border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
         aria-label={t('grower.appGuide.enlargeScreenshot')}
       >
         {imgEl}

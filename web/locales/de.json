@@ -1832,9 +1832,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Frisches Obst und Gemüse",
-      "title2": "mit lückenloser Rückverfolgbarkeit",
-      "subtitle": "Bio Vera ist ein vertikal integrierter Agrifood-Anbieter mit Sitz in Hamburg. Wir betreiben die gesamte Lieferkette — von der Vertragsanbauer-Steuerung über Qualitätssicherung und Verpackung bis zur gekühlten Auslieferung an den Einzelhandel. Jede Charge trägt eine Batch_ID mit vollständiger Rückverfolgbarkeit vom Feld bis zum Regal.",
+      "title1": "Vertikal Integriertes Agrifood-Unternehmen",
+      "title2": "Vom Feld bis ins Regal — Ohne Zwischenhändler",
+      "subtitle": "Ein Versorgungskanal. Eine Batch_ID. Lückenlose Rückverfolgbarkeit von der Ernte bis zur Auslieferung an den deutschen Einzelhandel.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
@@ -2230,63 +2230,55 @@
     ]
   },
   "logisticsPartnerPage": {
-    "title": "Für die Logistik",
-    "heroLead": "Treten Sie dem vertrauenswürdigen Netzwerk von Transportpartnern von Bio Vera bei. Offen für unabhängige Fahrer, kleine Transporter, mittlere LKWs und große Transportunternehmen. Liefern Sie Bio-Produkte mit vollständiger Rückverfolgbarkeit und sichern Sie sich stabile, langfristige Verträge.",
+    "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Obst & Gemüse",
+    "metaDescription": "Werden Sie Bio Vera Transportpartner: regelmäßige Kühltransporte, Routenoptimierung, sofortige Auszahlung. Kleine Flotten, große Speditionen und Einzelfahrer.",
+    "title": "Frischelogistik — Kühltransporte vom Erzeuger bis zum Einzelhandel",
+    "heroLead": "Werden Sie vertraglich gebundener Bio Vera Transportpartner in unserer Kühlkette. Regelmäßige Einsätze, optimierte Routen, sofortige Auszahlung nach Lieferung.\n\nKühleinheit 0°C bis +12°C. Bio Vera Sensoren für Echtzeit-Temperatur und GPS. Kleine Flotten, Großspeditionen und Einzelfahrer willkommen.\n\nRoutenoptimierung minimiert Leerkilometer. Rücktransporte liefern Saatgut und Düngemittel an Lieferanten. Langfristige Verträge mit stabilem Volumen.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
-    "prospectNote": "Das Prospekt-PDF enthält unser Marken-Lkw-Design und vollständige Programmdetails",
-    "whoCanApplyTitle": "Wer kann sich bewerben?",
-    "whoCanApplyLead": "Logistikpartner können sich aus denselben Ländern bewerben, in denen wir Erzeuger haben. Jeder, der die folgenden Bedingungen erfüllt, kann Vera-Logistikpartner werden.",
-    "countriesLine": "Österreich, Belgien, Bosnien und Herzegowina, Bulgarien, Kroatien, Zypern, Tschechische Republik, Dänemark, Estland, Finnland, Frankreich, Deutschland, Griechenland, Ungarn, Irland, Italien, Lettland, Litauen, Luxemburg, Malta, Montenegro, Niederlande, Nordmazedonien, Polen, Portugal, Rumänien, Serbien, Slowakei, Slowenien, Spanien, Schweden",
-    "whoCanApplyLine2": "Wir arbeiten mit <s1>kleinen Unternehmen</s1>, <s2>großen Transportunternehmen</s2> und <s3>unabhängigen Fahrern</s3> zusammen. Die einzige Voraussetzung ist, dass Sie unsere unten aufgeführten Kühlketten- und Nachverfolgungsstandards einhalten können.",
-    "fleetPolicyTitle": "Bio Vera-Flottenstandards und Registrierung von Fahrzeugen",
-    "fleetPolicyP1": "Im Rahmen einer neuen Bio-Vera-Logistikregelung entwickeln und betreiben wir gemeinsam mit Vertragspartnern eine eigene Fahrzeugflotte. Fahrzeuge, die Vera-Ladungen befördern, müssen diesem Programm optisch und technisch entsprechen – einheitliche Identität auf der Straße, einheitliche Kühlkette, überprüfbare Telemetrie.",
-    "fleetPolicyP2": "Die Beantragung der Registrierung zusätzlicher Fahrzeuge bei Bio Vera Logistics ist nur möglich, wenn die Anforderungen der Bio Vera-Flotte vollständig eingehalten werden: vorgeschriebene Außen- und Lackierungen des LKWs, Sauberkeit und Abdichtung des Laderaums, Kühlung und von Bio Vera zugelassene Sensoren, GPS und Übergabewerkzeuge sowie alle anderen verbindlichen Standards, die in Prospekten und Partnerhandbüchern kommuniziert werden. Fahrzeuge, die diese Anforderungen nicht erfüllen, werden nicht zugelassen.",
-    "fleetStandardsBullets": [
-      "Äußeres und Grafiken: Von Vera genehmigte Lackierung, Beschilderung und Markierungen (siehe Prospekt-PDF)",
-      "Temperaturregelung: gekühlter Körper innerhalb des vorgeschriebenen Bereichs; vor der Routenzuweisung überprüft werden",
-      "Telematik: Bio-Vera-Sensor-Kit/GPS-Workflow wie dokumentiert; keine unautorisierten Ersatzspieler",
-      "Hygiene und Siegel im Frachtbereich entsprechen den veröffentlichten Bio-Kühlkettenregeln für Vera-Partner",
-      "Alle weiteren für das Vera-Flottenprogramm veröffentlichten technischen Prüfungen bleiben verbindlich"
-    ],
-    "conditionsTitle": "Voraussetzungen, um Vera-Logistikpartner zu werden",
-    "conditionsLead": "Sie müssen Folgendes erfüllen. Wir akzeptieren kleine Flotten, große Unternehmen und unabhängige Fahrer.",
-    "needLine": "Sie benötigen <s1>Kühl-/Kühlsysteme</s1> (Kühlkette), digitale Nachverfolgung und zuverlässige Lieferung. Wir akzeptieren <s2>kleine Unternehmen</s2>, <s3>große Unternehmen</s3> und <s4>unabhängige Fahrer</s4>.",
+    "prospectNote": "",
+    "whoCanApplyTitle": "",
+    "whoCanApplyLead": "",
+    "countriesLine": "",
+    "whoCanApplyLine2": "",
+    "fleetPolicyTitle": "",
+    "fleetPolicyP1": "",
+    "fleetPolicyP2": "",
+    "fleetStandardsBullets": [],
+    "conditionsTitle": "Voraussetzungen",
+    "conditionsLead": "",
+    "needLine": "",
     "requirementItems": [
       {
-        "title": "Bio Vera: vom Obstgarten bis ins Regal",
-        "body": "Vollständige End-to-End-Verantwortung von der Abholung vom Bauernhof bis zur Lieferung ins Einzelhandelsregal. Sie garantieren in jeder Phase die vollständige Integrität der Kühlkette, GPS-Tracking und digitale Übergabe. Keine Teillieferungen – Sie sind für die gesamte Reise vom Feld bis zum endgültigen Bestimmungsort verantwortlich."
+        "title": "Kühleinheit",
+        "body": "Kühleinheit 0°C bis +12°C für den Transport von Frischware. Pflicht für alle Partner — Transporter, LKW oder Sattelzug."
       },
       {
-        "title": "Kühlsysteme (Kühlkette)",
-        "body": "Obligatorische Kühleinheit, die Temperaturen zwischen 0 °C und +12 °C für den Transport von Bio-Produkten aufrechterhalten kann. Für alle Partner erforderlich. Wir akzeptieren kleine Transporter, mittelgroße LKWs und große Transportfahrzeuge – die Unternehmensgröße spielt keine Rolle."
-      },
-      {
-        "title": "Digitales Tracking",
-        "body": "Obligatorische Installation von Bio-Vera-Sensoren für Echtzeit-Temperaturüberwachung und GPS-Tracking. Gleiche Anforderung für unabhängige Fahrer, kleine Unternehmen und große Logistikpartner."
+        "title": "GPS und Sensoren",
+        "body": "Bio Vera Sensoren für Echtzeit-Temperaturüberwachung und GPS-Tracking. Pflicht für alle Partnerstufen."
       },
       {
         "title": "Zuverlässigkeit",
-        "body": "Hoher Vertrauenswert und strikte Einhaltung pünktlicher Lieferfristen. Kontinuierliche Leistung ist für langfristige Partnerschaften unerlässlich."
+        "body": "Strikte Einhaltung der Liefertermine. Konstante Leistung ist Voraussetzung für langfristige Verträge."
       }
     ],
-    "whatYouGetTitle": "Was Sie bekommen",
-    "whatYouGetLead": "Vorteile einer Mitgliedschaft im Bio Vera-Netzwerk",
+    "whatYouGetTitle": "Ihre Vorteile",
+    "whatYouGetLead": "",
     "benefitItems": [
       {
         "title": "Routenoptimierung",
-        "body": "Unsere Software reduziert Leerkilometer durch intelligente Routenplanung und maximiert so die Effizienz und Rentabilität Ihrer Flotte."
+        "body": "Unsere Software minimiert Leerkilometer. Rücktransporte liefern Saatgut und Düngemittel an Lieferanten — kein Leerfahrt-Rückweg."
       },
       {
-        "title": "Schnelle Zahlung",
-        "body": "Sofortige Zahlung nach abgeschlossener Lieferung. Keine Wartezeiten oder verspätete Abrechnungen. Ihr Cashflow bleibt gesund."
+        "title": "Sofortige Auszahlung",
+        "body": "Auszahlung unmittelbar nach bestätigter Lieferung. Keine Wartezeiten."
       },
       {
         "title": "Langfristige Verträge",
-        "body": "Stabile Volumenzusagen mit vorhersehbaren Einnahmequellen. Bauen Sie nachhaltiges Wachstum mit zuverlässigen Partnerschaften auf."
+        "body": "Stabiles Volumen, planbare Erlöse. Regelmäßige Einsätze statt Einzelaufträge."
       }
     ],
-    "fuelTitle": "Beispiel zur Kraftstoffeinsparung",
+    "fuelTitle": "",
     "fuelLead": "Stellen Sie den Regler auf eine angenommene Kraftstoffeinsparung. Grau zeigt das Baseliniveau vor der Optimierung (100 %); grün entspricht dem verbleibenden Kraftstoffanteil (100 % − Ersparnis). Die EUR-Beträge unten nutzen aktuell 10.000 € Kraftstoffkosten pro Monat.",
     "fuelSavingsLabel": "Angenommene Kraftstoffeinsparung",
     "fuelDisclaimer": "Nur zur Veranschaulichung—keine individuelle Offerte oder Garantie. Ergebnisse hängen von Strecken, Ladung, Standzeiten und Preisen ab.",
@@ -2298,76 +2290,76 @@
     "yearlySavings": "Hochrechnung pro Jahr",
     "before": "Baseline (vorher)",
     "after": "Nach Optimierung",
-    "resourcesTitle": "Ressourcen und Downloads",
-    "resourcesLead": "Wichtige Dokumente und Leitfäden für Logistikpartner",
+    "resourcesTitle": "",
+    "resourcesLead": "",
     "resourceItems": [
       {
-        "id": "Aussicht",
-        "title": "Logistikpartner-Interessent",
-        "description": "Vollständige Informationen darüber, wie Sie Bio Vera-Logistikpartner werden, einschließlich der Vorteile, Anforderungen und des Bewerbungsprozesses.",
+        "id": "prospect",
+        "title": "Logistikpartner-Prospekt",
+        "description": "Vollständige Informationen zur Partnerschaft als Bio Vera Transportpartner: Vorteile, Anforderungen und Bewerbungsprozess.",
         "type": "PDF",
         "size": "~2 MB"
       },
       {
         "id": "transportOps",
-        "title": "Leitfaden für den Transportbetrieb",
-        "description": "Vollständiger Leitfaden zur Verwaltung von Lieferungen, digitalen Übergaben und Routenoptimierung mit dem Bio Vera-System.",
+        "title": "Leitfaden Transportbetrieb",
+        "description": "Leitfaden für Lieferungen, digitale Übergaben und Routenoptimierung im Bio Vera System.",
         "type": "PDF",
         "size": "2,4 MB"
       },
       {
         "id": "coldChain",
         "title": "Kühlkettenprotokoll",
-        "description": "Detaillierte Anforderungen und Standards für temperaturgeführten Transport und Compliance.",
+        "description": "Anforderungen und Standards für temperaturgeführten Transport und Compliance.",
         "type": "PDF",
         "size": "1,8 MB"
       },
       {
         "id": "mobileApp",
-        "title": "Leitfaden für mobile Apps",
-        "description": "Schritt-für-Schritt-Anleitung zur Nutzung der mobilen Anwendung Bio Vera für Logistikabläufe.",
+        "title": "Leitfaden Mobile App",
+        "description": "Schritt-für-Schritt: Bio Vera Mobile App für Logistik.",
         "type": "PDF",
         "size": "3,1 MB"
       },
       {
-        "id": "Zahlung",
-        "title": "Leitfaden zum Zahlungsvorgang",
-        "description": "Automatisierte Zahlungen nach Lieferbestätigung, Terminierung und Abrechnung an Transportpartner zu vereinbarten Bedingungen.",
+        "id": "payment",
+        "title": "Leitfaden Zahlung und Auszahlung",
+        "description": "Automatische Auszahlung nach Lieferbestätigung, Zeitplan und Abrechnung gemäß Vereinbarung.",
         "type": "PDF",
         "size": "1,5 MB"
       },
       {
-        "id": "GPS",
+        "id": "gps",
         "title": "GPS-Tracking-Standards",
-        "description": "Anforderungen an GPS-Tracking-Geräte, Datenprotokollierung und Echtzeitüberwachung.",
+        "description": "Anforderungen an GPS-Geräte, Datenprotokollierung und Echtzeitüberwachung.",
         "type": "PDF",
         "size": "2,7 MB"
       }
     ],
     "download": "Herunterladen",
     "downloading": "Herunterladen…",
-    "downloadFailed": "Das Herunterladen der Ressource ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "comingSoon": "Kommt bald",
-    "applicationTitle": "Partnerbewerbung",
-    "applicationLead": "Bewerben Sie sich als Logistikpartner von Bio Vera",
+    "downloadFailed": "Download fehlgeschlagen. Bitte erneut versuchen.",
+    "comingSoon": "Demnächst",
+    "applicationTitle": "Jetzt bewerben",
+    "applicationLead": "Anzahl und Typ der Fahrzeuge angeben. Flottendokumentation hochladen. Zustimmung zur Installation von Bio Vera Sensoren auf allen für uns genutzten Fahrzeugen.",
     "successTitle": "Bewerbung eingereicht!",
-    "successBody": "Vielen Dank für Ihr Interesse. Wir prüfen Ihre Bewerbung und kontaktieren Sie innerhalb von 3-5 Werktagen.",
-    "companyNameLabel": "Name der Firma *",
-    "companyNamePlaceholder": "Geben Sie Ihren Firmennamen ein",
+    "successBody": "Vielen Dank für Ihr Interesse. Wir prüfen Ihre Bewerbung und melden uns innerhalb von 3–5 Werktagen.",
+    "companyNameLabel": "Firmenname *",
+    "companyNamePlaceholder": "Firmenname eingeben",
     "vehicleCountLabel": "Anzahl Kühlfahrzeuge *",
-    "vehicleCountPlaceholder": "z.B. 5 Transporter, 2 LKW",
-    "vehicleCountHint": "Geben Sie die Anzahl der Transporter und LKWs separat an",
+    "vehicleCountPlaceholder": "z. B. 5 Transporter, 2 LKW",
+    "vehicleCountHint": "Transporter und LKW getrennt angeben",
     "regionsLabel": "Abgedeckte Regionen *",
-    "regionsPlaceholder": "Listen Sie die Regionen, Städte oder Routen auf, die Sie abdecken (z. B. Belgrad, Novi Sad, Niš).",
+    "regionsPlaceholder": "Regionen, Städte oder Routen (z. B. Hamburg, Berlin, München)",
     "licenseLabel": "Transportlizenz (PDF) *",
-    "uploadFile": "Laden Sie eine Datei hoch",
+    "uploadFile": "Datei hochladen",
     "orDrag": "oder per Drag & Drop",
     "pdfLimit": "PDF bis 10 MB",
     "acceptTrackingLabel": "Ich akzeptiere digitale Temperaturkontrolle und GPS-Tracking *",
-    "acceptTrackingDesc": "Durch Aktivieren dieses Kästchens erklären Sie sich damit einverstanden, Bio Vera-Sensoren zur Temperaturüberwachung und GPS-Verfolgung in allen für Bio Vera-Lieferungen verwendeten Fahrzeugen zu installieren und zu warten.",
+    "acceptTrackingDesc": "Mit dem Häkchen bestätigen Sie die Installation und Wartung von Bio Vera Sensoren für Temperatur und GPS auf allen Fahrzeugen für Bio Vera-Lieferungen.",
     "submitApplication": "Bewerbung einreichen",
-    "submitting": "Einreichen…",
-    "submitError": "Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie info@biovera.app"
+    "submitting": "Wird gesendet …",
+    "submitError": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren."
   },
   "productsPage": {
     "redirecting": "Weiterleitung…"
@@ -2505,56 +2497,143 @@
     }
   },
   "aboutPage": {
+    "metaTitle": "Über Bio Vera | Vertikal Integrierter Agrifood-Anbieter — Hamburg",
+    "metaDescription": "Bio Vera betreibt die gesamte Lieferkette: Vertragsanbau, Qualitätssicherung, Verpackung und Kühllogistik bis zum deutschen Einzelhandel. Lückenlose Chargenrückverfolgung.",
     "heroTitle": "Über Bio Vera",
-    "heroSubtitle": "Die Landwirtschaft durch Technologie, Transparenz und Vertrauen verändern",
-    "missionTitle": "Unsere Mission",
-    "missionP1": "Bio Vera setzt sich für die Stärkung landwirtschaftlicher Lieferketten ein, indem es Produzenten weltweit direkt mit Märkten verbindet und bei jedem Schritt klare Standards, Qualitätssicherung und eine faire Vergütung gewährleistet.",
-    "missionP2": "Wir glauben, dass Technologie die Lücke zwischen traditioneller Landwirtschaft und modernen Marktanforderungen schließen und ein nachhaltiges Ökosystem schaffen kann, in dem Landwirte gedeihen, Käufer vertrauen und Verbraucher von wirklich rückverfolgbaren, qualitativ hochwertigen Produkten profitieren.",
-    "visionTitle": "Unsere Vision",
-    "visionP1": "Wir wollen ein führendes vertikal integriertes Agrarnetzwerk werden und neue Maßstäbe für Rückverfolgbarkeit, Qualitätssicherung und nachhaltige Landwirtschaft setzen.",
-    "visionP2": "Wir stellen uns eine Zukunft vor, in der jedes Produkt im Regal über einen vollständigen digitalen Pass verfügt, in der Landwirte eine faire Vergütung für ihre Arbeit erhalten und in der Verbraucher auf die Herkunft und Qualität ihrer Einkäufe vertrauen können.",
-    "valuesTitle": "Unsere Werte",
-    "valueCards": [
+    "heroSubtitle": "Bio Vera organisiert landwirtschaftliche Produktion über Vertragserzeuger, führt Qualitätsprüfungen im Feld durch, verpackt und liefert Markenware direkt an den Einzelhandel — mit einem Chargendossier pro Lieferung.",
+    "missionTitle": "Mission",
+    "missionP1": "Dieselben Daten für Betrieb und Vertrieb. Erzeuger produzieren in unserem System, Einkäufer handeln mit Bio Vera, Verbraucher sehen prüfbare Herkunft.",
+    "missionP2": "",
+    "visionTitle": "Vision",
+    "visionP1": "Europas führende vertikal integrierte Frischekorridore mit Rückverfolgbarkeit, die Einkäufer am Regal erkennen.",
+    "visionP2": "",
+    "protocol360Title": "Protocol 360",
+    "protocol360Body": "Bodenanalyse im Feld, Scanning bei Verpackung, Kühlkettenüberwachung. GlobalG.A.P. IFA v6 Gruppenzertifizierung. Konform mit Verordnung (EG) 178/2002 und Lieferkettengesetz (LkSG).",
+    "valuesTitle": "",
+    "valueCards": [],
+    "whatWeDoTitle": "",
+    "whatWeDoItems": [],
+    "ctaTitle": "Teil des Bio Vera Korridors werden",
+    "ctaBody": "Ob Erzeuger, Lieferant, Transportpartner oder Einkäufer — dieselben Regeln von der Parzelle bis zur Abrechnung.",
+    "ctaProducer": "Bio Vera Erzeuger werden",
+    "ctaContact": "Kontakt"
+  },
+  "bioVeraFresh": {
+    "toolbarCopyLink": "",
+    "toolbarCopied": "Kopiert",
+    "toolbarPrintPdf": "",
+    "toolbarPrintAria": "Druckdialog öffnen oder als PDF speichern",
+    "introNote": "Ein modernes Einzelhandelskonzept für frisches Obst und Gemüse. Direkte Erzeugeranbindung, standardisierte Qualität, maximale Verwertung jedes Kilogramms.",
+    "pdfHint": "",
+    "contentsTitle": "",
+    "contentsNav": "Zum Abschnitt springen",
+    "skipToContent": "Zum Dokument springen",
+    "coverEyebrow": "Direkt. Frisch. Kontrolliert.",
+    "coverTitle": "BioVera Fresh — Fachgeschäft für Frisches Obst und Gemüse",
+    "coverSubtitle": "",
+    "heroImageAlt": "BioVera Fresh Einzelhandelskonzept — frische Produkte",
+    "pdfDocumentTitle": "Vollständiges Dokument — BioVera Fresh",
+    "pdfDocumentSubtitle": "Gesamter Programmtext für Partner, Piloten oder Archiv.",
+    "ctaTitle": "BioVera Fresh Partner werden",
+    "ctaBody": "Kontaktieren Sie das Bio Vera Team. Das Programm-PDF umfasst alle 14 Kapitel: Einführung, Markt, Konzept, Betrieb, Ertragsmodell, Investition, Voraussetzungen und Wachstum.",
+    "ctaButton": "Bio Vera kontaktieren",
+    "webSections": [
       {
-        "title": "Transparenz",
-        "description": "Vollständige Transparenz über jeden Schritt der Lieferkette, vom Feld bis zum Regal. Keine versteckten Prozesse, keine unklaren Ursprünge."
+        "title": "Zwei Zonen",
+        "body": "Frischetheke — Obst, Gemüse, Abwiegen, BioVera-Packungen.\n\nFresh-Counter — Säfte, Obstsalate, sichtbare Zubereitung. Schlankes Team, klare Abläufe, niedrige Komplexität."
       },
       {
-        "title": "Qualität zuerst",
-        "description": "Strenge Qualitätsstandards, die die Erwartungen der Branche übertreffen. Jedes Produkt wird durch unser Protocol 360-System verifiziert."
-      },
-      {
-        "title": "Gerechte Vergütung",
-        "description": "Sicherstellen, dass Landwirte faire Preise für ihre Produkte erhalten und gleichzeitig wettbewerbsfähige Marktpreise aufrechterhalten."
-      },
-      {
-        "title": "Nachhaltigkeit",
-        "description": "Förderung nachhaltiger landwirtschaftlicher Praktiken und Reduzierung von Abfall durch effizientes Lieferkettenmanagement."
+        "title": "Für wen",
+        "body": "Für Unternehmer, Investoren und Standortbetreiber, die ein stabiles Lebensmittel-Einzelhandelskonzept suchen."
       }
     ],
-    "whatWeDoTitle": "Was wir tun",
-    "whatWeDoItems": [
+    "pdfSections": [
       {
-        "title": "Vollständige Rückverfolgbarkeit",
-        "body": "Jedes Produkt erhält einen digitalen Pass mit unveränderlichem Herkunfts-, Reise- und Qualitätsnachweis. QR-Codes auf jeder Box verbinden Verbraucher direkt mit dem Landwirt, der ihre Lebensmittel angebaut hat."
+        "title": "BioVera Fresh",
+        "body": "Modernes Konzept für den Verkauf frischer Produkte.\n\nDirekt. Frisch. Kontrolliert.\n\nBioVera Fresh ist ein zeitgemäßes Obst- und Gemüse-Einzelhandelsmodell mit direkter Erzeugeranbindung, kontrollierter Qualität und maximaler Produktverwertung."
       },
       {
-        "title": "Qualitätssicherung",
-        "body": "Unser Protocol 360-System gewährleistet eine dreistufige Qualitätskontrolle: Bodenanalyse auf Feldebene, biometrisches Scannen bei der Verpackung und Kühlkettenüberwachung während des Transports."
+        "title": "1. Einführung",
+        "body": "BioVera Fresh entstand als Antwort auf den wachsenden Bedarf an organisiertem, transparentem und effizientem Verkauf frischer Produkte.\n\nIn traditionellen Systemen geht viel Wert durch schwache Organisation, unvorhersehbare Nachfrage und fehlende Kontrolle verloren.\n\nBioVera Fresh setzt einen neuen Standard — Produktion und Markt werden über eine kontrollierte Kette mit stabiler Qualität und minimalen Verlusten verbunden."
       },
       {
-        "title": "Direkter Marktzugang",
-        "body": "Wir eliminieren Zwischenhändler und verbinden Produzenten direkt mit Käufern. Das bedeutet bessere Preise für die Landwirte und garantierte Frische für die Verbraucher."
+        "title": "2. Marktproblem",
+        "body": "Der Obst- und Gemüsemarkt steht vor strukturellen Herausforderungen:\n\n• fragmentierte Distribution\n• hohe Schwundquoten\n• unklare Herkunft\n• volatile Preise\n• schwache Qualitätskontrolle\n\nDas erzeugt Unsicherheit für Erzeuger, Partner und Konsumenten."
       },
       {
-        "title": "EU-Konformität",
-        "body": "Automatisiertes Zertifizierungsmanagement, GlobalG.A.P. Erleichterung der IFA v6-Gruppenzertifizierung und vollständige Compliance-Nachverfolgung für nahtlosen Zugang zu Märkten auf der ganzen Welt."
+        "title": "3. Die BioVera Antwort",
+        "body": "BioVera Fresh führt ein klares, kontrolliertes Modell ein:\n\n• direkte Verbindung zwischen Erzeuger und Handel\n• standardisierte Produktqualität\n• organisierte Distribution\n• kontrollierte Filialformate\n• maximale Verwertung jeder Lieferung\n\nVerluste sinken, der Gesamtwert der Ware steigt."
+      },
+      {
+        "title": "4. Filialkonzept",
+        "body": "Eine BioVera Fresh Filiale ist modern, funktional und einfach — mit zwei Kernzonen:\n\nFrischetheke\n• frisches Obst und Gemüse\n• klare Präsentation\n• Verkauf nach Gewicht\n• BioVera Verpackungen\n\nFresh-Counter\n• frisch gepresste Säfte\n• Obstsalate\n• Zubereitung vor dem Kunden\n\nZusätzlich\n• kleiner Verzehrraum\n• schneller, unkomplizierter Service"
+      },
+      {
+        "title": "5. Systemablauf",
+        "body": "BioVera Fresh folgt einem einfachen, effizienten Ablauf:\n\n• Produktion im Erzeugernetzwerk\n• Qualitätskontrolle nach BioVera Standard\n• Distribution über organisiertes System\n• Verkauf in BioVera Fresh Filialen\n\nDas Modell liefert Stabilität, Kontrolle und Transparenz in jedem Schritt."
+      },
+      {
+        "title": "6. Warenführung",
+        "body": "Kernvorteil ist disziplinierte Sortimentsführung:\n\n• frischeste Ware hat Priorität in der Theke\n• der Fresh-Counter steigert Wert durch Säfte und Salate nach definiertem Qualitätsstandard\n• Ware unter BioVera Standard erreicht den Kunden nicht\n\nErgebnis:\n\n• minimaler Schwund\n• hohe Verwertung\n• Mehrwert über das Sortiment"
+      },
+      {
+        "title": "7. Ertragsmodell",
+        "body": "Partner erzielen Erlöse aus mehreren Quellen:\n\n1. Obst- und Gemüseverkauf\n• stabiler Umsatz\n• kontinuierliche Nachfrage\n• Basisertrag\n\n2. Frisch gepresste Säfte\n• hohe Marge\n• schnelle Rotation\n• Zusatzertrag\n\n3. Obstsalate\n• Premium-Produkt\n• höherer Warenkorb\n• zusätzliche Profitabilität\n\nGemeinsam entsteht ein stabiles, skalierbares Ertragsmodell."
+      },
+      {
+        "title": "8. Betriebsmodell",
+        "body": "BioVera Fresh ist leicht zu betreiben:\n\n• schlankes Team (z. B. zwei Mitarbeitende)\n• klare Schichten und Routinen\n• schnelle Tagesorganisation\n• geringe betriebliche Komplexität\n\nDas ermöglicht einen schnellen Start und effizienten Tagesbetrieb."
+      },
+      {
+        "title": "9. Vorteile für Partner",
+        "body": "Als BioVera Fresh Partner erhalten Sie:\n\n• Zugang zu BioVera Lieferungen\n• fertiges Betriebsmodell\n• Qualitäts- und Servicestandards\n• Unterstützung bei Start und Wachstum\n• verlässliche Belieferung\n• wiedererkennbare Marke"
+      },
+      {
+        "title": "10. Investition",
+        "body": "Die Investition hängt ab von:\n\n• Filialgröße\n• Standort\n• Ausstattung\n\nDas Modell ist auf vergleichsweise schnelle Amortisation bei stabilem Betrieb ausgelegt."
+      },
+      {
+        "title": "11. Verhältnis zum Markt",
+        "body": "BioVera Fresh konkurriert nicht mit bestehenden Partnern.\n\nRetail-Ketten und Distributoren bleiben Kernpartner; BioVera Fresh ist ein Zusatzkanal, der:\n\n• den Markt stabilisiert\n• Überschussmengen aufnimmt\n• Produktionskontinuität unterstützt"
+      },
+      {
+        "title": "12. Wachstum",
+        "body": "BioVera Fresh ist Teil einer breiteren europäischen Expansion.\n\nGeplant sind:\n\n• neue Standorte\n• Ausbau des Partnernetzwerks\n• höhere Erzeugerleistung\n• stärkere Distribution"
+      },
+      {
+        "title": "13. Wer kann Partner werden",
+        "body": "Partner können sein:\n\n• Unternehmer\n• Investoren\n• Standortbetreiber\n• Operatoren mit Interesse an stabilem Lebensmittel-Einzelhandel"
+      },
+      {
+        "title": "14. BioVera Fresh Partner werden",
+        "body": "Wenn Sie Teil eines modernen Frische-Einzelhandelssystems werden und Ihr Geschäft mit BioVera-Unterstützung aufbauen möchten, kontaktieren Sie uns."
+      },
+      {
+        "title": "Kontakt",
+        "body": "Für weitere Informationen wenden Sie sich an das Bio Vera Team.\n\nE-Mail: contact@biovera.app\nTelefon: +49 155 63740470\nWeb: https://biovera.app"
       }
     ],
-    "ctaTitle": "Begleiten Sie uns auf dieser Reise",
-    "ctaBody": "Egal, ob Sie Züchter, Lieferant, Logistikpartner oder Käufer sind, Bio Vera bietet einen Platz in einem landwirtschaftlichen Netzwerk – mit klaren Prozessen vom Feld bis zur Siedlung.",
-    "ctaProducer": "Werden Sie Produzent",
-    "ctaContact": "Kontaktieren Sie uns"
+    "downloadProspectCta": "Prospekt-PDF herunterladen",
+    "downloadProspectError": "Download fehlgeschlagen. Bitte erneut versuchen.",
+    "prospectNote": "",
+    "franchiseBlueprintTitle": "",
+    "franchiseBlueprintLead": "",
+    "franchiseBlueprintItems": [],
+    "resourcesTitle": "",
+    "resourcesLead": "",
+    "resourceItems": [
+      {
+        "id": "freshProspect",
+        "title": "BioVera Fresh Prospekt",
+        "description": "Vollständiger Text: Einführung, Markt, Lösung, Filialkonzept, Ablauf, Warenführung, Ertrag, Betrieb, Vorteile, Investition, Marktbezug, Wachstum, Partnerprofil und Kontakt.",
+        "type": "PDF",
+        "size": "~180 KB"
+      }
+    ],
+    "resourceDownload": "Herunterladen",
+    "resourceDownloading": "Wird heruntergeladen…",
+    "metaTitle": "BioVera Fresh | Fachgeschäft für Frisches Obst & Gemüse — Franchise",
+    "metaDescription": "Modernes Fachgeschäft für frisches Obst und Gemüse. Direkte Erzeugeranbindung, kontrollierte Qualität, organisierter Vertrieb. Werden Sie BioVera Fresh Partner."
   },
   "helpCenterPage": {
     "title": "Hilfecenter",

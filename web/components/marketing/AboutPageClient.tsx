@@ -51,6 +51,10 @@ export default function AboutPageClient() {
 
   const missionP2 = t('aboutPage.missionP2');
   const visionP2 = t('aboutPage.visionP2');
+  const valuesTitle = t('aboutPage.valuesTitle');
+  const whatWeDoTitle = t('aboutPage.whatWeDoTitle');
+  const protocol360Title = t('aboutPage.protocol360Title');
+  const protocol360Body = t('aboutPage.protocol360Body');
 
   return (
     <div className="min-h-screen bg-white">
@@ -111,8 +115,25 @@ export default function AboutPageClient() {
             </div>
           </section>
 
+          {protocol360Body ? (
           <section className="mb-14">
-            <h2 className="text-2xl font-light text-gray-900 mb-8">{t('aboutPage.valuesTitle')}</h2>
+            <div className="flex items-start gap-4">
+              <Award className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
+              <div>
+                {protocol360Title ? (
+                  <h2 className="text-2xl font-light text-gray-900 mb-4">{protocol360Title}</h2>
+                ) : null}
+                <p className="text-gray-600 font-light leading-relaxed">{protocol360Body}</p>
+              </div>
+            </div>
+          </section>
+          ) : null}
+
+          {valueCards.length > 0 ? (
+          <section className="mb-14">
+            {valuesTitle ? (
+              <h2 className="text-2xl font-light text-gray-900 mb-8">{valuesTitle}</h2>
+            ) : null}
             <div className="grid md:grid-cols-2 gap-6">
               {valueCards.map((value, index) => {
                 const IconComponent = VALUE_ICONS[index] ?? Shield;
@@ -129,9 +150,13 @@ export default function AboutPageClient() {
               })}
             </div>
           </section>
+          ) : null}
 
+          {whatWeDoItems.length > 0 ? (
           <section className="mb-14">
-            <h2 className="text-2xl font-light text-gray-900 mb-6">{t('aboutPage.whatWeDoTitle')}</h2>
+            {whatWeDoTitle ? (
+              <h2 className="text-2xl font-light text-gray-900 mb-6">{whatWeDoTitle}</h2>
+            ) : null}
             <div className="space-y-6">
               {whatWeDoItems.map((item) => (
                 <div key={item.title} className="border-l-2 border-[#2D5A27] pl-6">
@@ -141,6 +166,7 @@ export default function AboutPageClient() {
               ))}
             </div>
           </section>
+          ) : null}
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 sm:p-8 text-center shadow-sm">
             <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.ctaTitle')}</h2>

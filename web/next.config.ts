@@ -186,6 +186,24 @@ const nextConfig: NextConfig = {
         destination: "/de/growers",
         permanent: true,
       },
+      /** DE-friendly marketing slug → canonical suppliers page */
+      {
+        source: "/de/lieferanten",
+        destination: "/de/suppliers",
+        permanent: true,
+      },
+      /** DE-friendly marketing slug → canonical logistics partner page */
+      {
+        source: "/de/logistik",
+        destination: "/logistics-partner",
+        permanent: true,
+      },
+      /** DE-friendly marketing slug → canonical about page */
+      {
+        source: "/de/ueber-uns",
+        destination: "/de/about",
+        permanent: true,
+      },
     ];
   },
   async headers() {
