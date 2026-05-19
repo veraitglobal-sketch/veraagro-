@@ -2,20 +2,24 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Printer } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 import { GrowerAppGuideContent } from '@/components/grower/GrowerAppGuideContent';
+import { GrowerAppGuidePdfToolbar } from '@/components/grower/GrowerAppGuidePdfToolbar';
+import { isGrowerAppGuidePdfExport } from '@/lib/grower-app-guide';
 
 /** Public mobile app guide (screenshots) — no login required. */
 export default function GrowerAppGuidePublicPage() {
   const { t } = useTranslation();
   const loc = useLocalizedHref();
+  const searchParams = useSearchParams();
+  const pdfExport = isGrowerAppGuidePdfExport(searchParams);
 
   return (
     <div className="min-h-screen bg-[#f3f6f3] text-gray-900">
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-gray-200 bg-white print:hidden">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-8">
           <Link href={loc('/')} className="flex items-center gap-2">
             <Image src="/logo1.png" alt={t('footer.logoAlt')} width={72} height={26} className="h-5 w-auto" priority />
@@ -37,23 +41,14 @@ export default function GrowerAppGuidePublicPage() {
         </div>
 
         <GrowerAppGuideContent
-          toolbar={
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="inline-flex min-h-[48px] items-center gap-2 rounded-lg bg-[#2D5A27] px-5 text-sm font-medium text-white hover:bg-[#23471f]"
-              >
-                <Printer className="h-4 w-4" aria-hidden />
-                {t('grower.appGuide.printPdf')}
-              </button>
-              <p className="self-center text-sm text-gray-600">{t('grower.appGuide.pdfHowTo')}</p>
-            </div>
-          }
+          pdfExport={pdfExport}
+          toolbar={pdfExport ? undefined : <GrowerAppGuidePdfToolbar />}
         />
       </main>
 
-      <Footer />
+      <div className="print:hidden">
+        <Footer />
+      </div>
     </div>
   );
 }

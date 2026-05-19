@@ -1,7 +1,38 @@
 /** Public URL prefix — files live in `web/public/docs/grower-app-guide/`. */
 export const GROWER_APP_GUIDE_SCREEN_BASE = '/docs/grower-app-guide';
 
-export const GROWER_APP_GUIDE_PDF_PATH = '/docs/grower-app-guide/biovera-grower-app-uputstvo.pdf';
+/** Static PDFs — generate once via `npm run generate:app-guide-pdf`, commit, deploy. */
+export const GROWER_APP_GUIDE_PDF_FILES = {
+  sr: 'biovera-grower-app-guide.sr.pdf',
+  en: 'biovera-grower-app-guide.en.pdf',
+} as const;
+
+/** @deprecated Use {@link growerAppGuidePdfPath} */
+export const GROWER_APP_GUIDE_PDF_PATH = `${GROWER_APP_GUIDE_SCREEN_BASE}/${GROWER_APP_GUIDE_PDF_FILES.sr}`;
+
+export function growerAppGuidePdfPath(locale?: string): string {
+  const lang = (locale ?? 'sr').split('-')[0]?.toLowerCase();
+  const file =
+    lang === 'en' ? GROWER_APP_GUIDE_PDF_FILES.en : GROWER_APP_GUIDE_PDF_FILES.sr;
+  return `${GROWER_APP_GUIDE_SCREEN_BASE}/${file}`;
+}
+
+export function growerAppGuidePdfFilename(locale?: string): string {
+  const lang = (locale ?? 'sr').split('-')[0]?.toLowerCase();
+  return lang === 'en' ? GROWER_APP_GUIDE_PDF_FILES.en : GROWER_APP_GUIDE_PDF_FILES.sr;
+}
+
+/** Append to guide URL so all screenshots load eagerly (PDF export / Playwright). */
+export const GROWER_APP_GUIDE_PDF_EXPORT_PARAM = 'pdf';
+export const GROWER_APP_GUIDE_PDF_EXPORT_VALUE = '1';
+
+export function growerAppGuidePdfExportSearch(): string {
+  return `${GROWER_APP_GUIDE_PDF_EXPORT_PARAM}=${GROWER_APP_GUIDE_PDF_EXPORT_VALUE}`;
+}
+
+export function isGrowerAppGuidePdfExport(searchParams: URLSearchParams | { get: (k: string) => string | null }): boolean {
+  return searchParams.get(GROWER_APP_GUIDE_PDF_EXPORT_PARAM) === GROWER_APP_GUIDE_PDF_EXPORT_VALUE;
+}
 
 export type GrowerAppGuideDetailBlock = {
   heading: string;
@@ -24,6 +55,8 @@ export type GrowerAppGuideStep = {
  * Order matches the farmer journey for the mobile app guide.
  * Add PNGs to `public/docs/grower-app-guide/screens/` with these exact names.
  */
+export const GROWER_APP_GUIDE_STEP_COUNT = 9;
+
 export const GROWER_APP_GUIDE_STEPS: GrowerAppGuideStep[] = [
   {
     id: 'welcome',

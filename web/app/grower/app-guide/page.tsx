@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Printer } from 'lucide-react';
 import AuthGuard from '@/components/AuthGuard';
 import SidebarLayout from '@/components/SidebarLayout';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { GrowerAppGuideContent } from '@/components/grower/GrowerAppGuideContent';
+import { GrowerAppGuidePdfToolbar } from '@/components/grower/GrowerAppGuidePdfToolbar';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 export default function GrowerAppGuidePage() {
@@ -23,15 +23,8 @@ export default function GrowerAppGuidePage() {
             title={t('grower.appGuide.pageTitle')}
             description={t('grower.appGuide.pageDescription')}
             right={
-              <div className="flex flex-wrap gap-2 print:hidden">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-800 hover:bg-gray-50"
-                >
-                  <Printer className="h-4 w-4" aria-hidden />
-                  {t('grower.appGuide.printPdf')}
-                </button>
+              <div className="flex flex-wrap items-center gap-2 print:hidden">
+                <GrowerAppGuidePdfToolbar showPrint={false} className="!flex-row !gap-2" />
                 <Link
                   href={loc('/grower/mobile-app-guide')}
                   target="_blank"

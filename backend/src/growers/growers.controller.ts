@@ -72,16 +72,11 @@ export class GrowersController {
   }
 
   @Get('mobile-app-guide/download')
-  async downloadMobileAppGuide(@Res() res: Response) {
-    try {
-      const pdfBuffer = await this.growersService.generateMobileAppGuidePDF();
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename="bio-vera-mobile-app-guide.pdf"');
-      res.send(pdfBuffer);
-    } catch (error) {
-      console.error('Error generating mobile app guide PDF:', error);
-      throw new HttpException('Failed to generate mobile app guide PDF', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  downloadMobileAppGuide(@Res() res: Response) {
+    res.redirect(
+      302,
+      'https://www.biovera.app/docs/grower-app-guide/biovera-grower-app-guide.sr.pdf',
+    );
   }
 
   @Get('payment-process-guide/download')

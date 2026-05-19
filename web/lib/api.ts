@@ -1683,29 +1683,21 @@ export const growersAPI = {
     }
   },
   downloadMobileAppGuide: async () => {
-    try {
-      const response = await api.get('/growers/mobile-app-guide/download', {
-        responseType: 'blob',
-      });
-      
-      if (!(response.data instanceof Blob)) {
-        throw new Error('Invalid response format');
-      }
-      
-      const url = window.URL.createObjectURL(response.data);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'bio-vera-mobile-app-guide.pdf');
-      document.body.appendChild(link);
-      link.click();
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      }, 100);
-    } catch (error: unknown) {
-      console.error('Error downloading mobile app guide:', error);
-      throw error;
-    }
+    const { growerAppGuidePdfPath, growerAppGuidePdfFilename } = await import('@/lib/grower-app-guide');
+    const locale =
+      typeof document !== 'undefined'
+        ? document.documentElement.lang || 'sr'
+        : 'sr';
+    const pdfPath = growerAppGuidePdfPath(locale);
+    const filename = growerAppGuidePdfFilename(locale);
+    const link = document.createElement('a');
+    link.href = pdfPath;
+    link.setAttribute('download', filename);
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   },
   downloadPaymentProcessGuide: async () => {
     try {

@@ -760,7 +760,7 @@
       "pageTitle": "How to use the app",
       "pageDescription": "Step-by-step through the Bio Vera grower mobile app — with phone screenshots.",
       "hint": "Screenshots are added to the project folder; until a file is present you will see the expected filename.",
-      "hintLive": "Below are phone screenshots and short explanations for each step. For a PDF: use Print → Save as PDF.",
+      "hintLive": "Download the ready-made PDF (button above) or browse each step with screenshots below. Click a screen to enlarge.",
       "pdfHowTo": "PDF: print this page and choose Save as PDF in your browser.",
       "openPublicLink": "Open public link",
       "enlargeScreenshot": "Open screenshot at full size",
@@ -774,6 +774,8 @@
       "imagePending": "Add this screenshot to the folder (see README).",
       "printPdf": "Print / save as PDF",
       "downloadPdf": "Download PDF",
+      "pdfDownloadHint": "Download the ready-made PDF — one file with all steps and screenshots. You do not need to load the full page.",
+      "viewOnline": "View online",
       "footer": "For legal and contract matters use formal Bio Vera documents. This guide is a practical walkthrough of the app.",
       "openFromEducation": "Mobile app guide (screenshots)",
       "steps": {

@@ -760,7 +760,7 @@
       "pageTitle": "Kako koristiti aplikaciju",
       "pageDescription": "Korak po korak kroz mobilnu Bio Vera aplikaciju za proizvođače — sa snimcima ekrana telefona.",
       "hint": "Snimci ekrana se dodaju u folder projekta; dok slika nije tu, videćete naziv fajla koji treba uploadovati.",
-      "hintLive": "Snimci su u punoj rezoluciji telefona. Kliknite na ekran za uvećanje ako vam treba veći prikaz. PDF: Štampaj → Sačuvaj kao PDF.",
+      "hintLive": "Možete preuzeti gotov PDF (dugme iznad) ili pogledati korake ovde sa snimcima ekrana. Klik na sliku = uvećanje.",
       "pdfHowTo": "PDF: štampaj stranicu i izaberi „Sačuvaj kao PDF” u pregledaču.",
       "openPublicLink": "Otvori javni link",
       "enlargeScreenshot": "Otvori snimak u punoj veličini",
@@ -774,6 +774,8 @@
       "imagePending": "Dodajte snimak u folder (vidi README).",
       "printPdf": "Štampaj / sačuvaj PDF",
       "downloadPdf": "Preuzmi PDF",
+      "pdfDownloadHint": "Preuzmite gotov PDF — jedan fajl sa svim koracima i slikama. Ne morate učitavati celu stranicu.",
+      "viewOnline": "Pogledaj online",
       "footer": "Za pravna pitanja i ugovor koristite pisana dokumenta Bio Vere. Ovo uputstvo je praktični vodič kroz aplikaciju.",
       "openFromEducation": "Vodič za mobilnu aplikaciju (snimci ekrana)",
       "steps": {

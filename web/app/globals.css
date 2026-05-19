@@ -143,7 +143,11 @@ img.grower-app-guide-screenshot {
 
 @media print {
   img.grower-app-guide-screenshot {
-    max-width: 320px !important;
+    max-width: 280px !important;
+  }
+
+  .grower-app-guide-pdf-export img.grower-app-guide-screenshot {
+    max-width: 300px !important;
   }
 }
 

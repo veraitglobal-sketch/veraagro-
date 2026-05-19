@@ -15,7 +15,8 @@
     "translate:ro": "TRANSLATE_TO=ro node scripts/translate-en-locale.mjs",
     "translate:bg": "TRANSLATE_TO=bg node scripts/translate-en-locale.mjs",
     "translate:fr": "TRANSLATE_TO=fr node scripts/translate-en-locale.mjs",
-    "translate:es": "TRANSLATE_TO=es node scripts/translate-en-locale.mjs"
+    "translate:es": "TRANSLATE_TO=es node scripts/translate-en-locale.mjs",
+    "generate:app-guide-pdf": "node scripts/generate-grower-app-guide-pdf.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",

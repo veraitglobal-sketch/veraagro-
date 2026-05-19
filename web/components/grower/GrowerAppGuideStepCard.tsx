@@ -9,6 +9,7 @@ import { GrowerAppGuideScreenshot } from '@/components/grower/GrowerAppGuideScre
 type Props = {
   step: GrowerAppGuideStep;
   index: number;
+  pdfExport?: boolean;
 };
 
 function parseDetailBlocks(raw: unknown): GrowerAppGuideDetailBlock[] {
@@ -24,7 +25,7 @@ function parseDetailBlocks(raw: unknown): GrowerAppGuideDetailBlock[] {
   );
 }
 
-export function GrowerAppGuideStepCard({ step, index }: Props) {
+export function GrowerAppGuideStepCard({ step, index, pdfExport = false }: Props) {
   const { t } = useTranslation();
   const src = growerAppGuideImageSrc(step.imageFile);
 
@@ -53,9 +54,9 @@ export function GrowerAppGuideStepCard({ step, index }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:gap-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] print:grid-cols-1 lg:gap-0">
         {/* Left: phone screenshot */}
-        <div className="border-b lg:border-b-0 lg:border-r border-gray-100 bg-gray-50/80 p-5 sm:p-6 lg:sticky lg:top-24 lg:self-start">
+        <div className="border-b lg:border-b-0 lg:border-r border-gray-100 bg-gray-50/80 p-5 sm:p-6 lg:sticky lg:top-24 lg:self-start print:static print:border-b print:border-r-0">
           <div className="mx-auto w-full max-w-[420px]">
             <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 lg:text-left print:hidden">
               {t('grower.appGuide.screenColumnLabel')}
@@ -66,6 +67,7 @@ export function GrowerAppGuideStepCard({ step, index }: Props) {
                 alt={t(step.titleKey)}
                 imageFile={step.imageFile}
                 priority={index === 0}
+                pdfExport={pdfExport}
               />
             </div>
             <p className="mt-2 text-center text-xs text-gray-500 lg:text-left print:hidden">

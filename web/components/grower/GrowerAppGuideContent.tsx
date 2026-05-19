@@ -8,10 +8,11 @@ import { GROWER_APP_GUIDE_STEPS } from '@/lib/grower-app-guide';
 type Props = {
   toolbar?: React.ReactNode;
   footerExtra?: React.ReactNode;
+  pdfExport?: boolean;
 };
 
 /** Shared step-by-step guide body (screenshots + bullets). */
-export function GrowerAppGuideContent({ toolbar, footerExtra }: Props) {
+export function GrowerAppGuideContent({ toolbar, footerExtra, pdfExport = false }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -41,9 +42,9 @@ export function GrowerAppGuideContent({ toolbar, footerExtra }: Props) {
         </ol>
       </nav>
 
-      <div className="space-y-8 max-w-7xl">
+      <div className={`space-y-8 max-w-7xl ${pdfExport ? 'grower-app-guide-pdf-export' : ''}`}>
         {GROWER_APP_GUIDE_STEPS.map((step, index) => (
-          <GrowerAppGuideStepCard key={step.id} step={step} index={index} />
+          <GrowerAppGuideStepCard key={step.id} step={step} index={index} pdfExport={pdfExport} />
         ))}
       </div>
 
