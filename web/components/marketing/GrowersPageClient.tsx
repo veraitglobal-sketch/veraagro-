@@ -343,6 +343,7 @@ export default function GrowersPageClient() {
             <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">{t('growersPage.groupCertBody')}</p>
           </div>
 
+          {certTableRows.length > 0 ? (
           <div className="mb-12">
             <h3 className="text-xl font-light text-gray-900 mb-6 text-center">{t('growersPage.technicalStandardsTitle')}</h3>
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -368,7 +369,9 @@ export default function GrowersPageClient() {
               </table>
             </div>
           </div>
+          ) : null}
 
+          {paymentGuaranteedBold || paymentGuaranteedRest ? (
           <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-6 mb-8">
             <div className="flex items-start">
               <div className="flex-shrink-0">
@@ -388,6 +391,7 @@ export default function GrowersPageClient() {
               </div>
             </div>
           </div>
+          ) : null}
 
           <div className="text-center">
             <Link

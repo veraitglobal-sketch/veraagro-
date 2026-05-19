@@ -90,6 +90,8 @@ export default function ForBuyersPageClient() {
   const securityLead = t('forBuyersPage.securityLead');
   const operateLead = t('forBuyersPage.operateLead');
   const valueLead = t('forBuyersPage.valueLead');
+  const packagingTitle = t('forBuyersPage.packagingTitle');
+  const harvestCalendarLead = t('forBuyersPage.harvestCalendarLead');
 
   const productCategoryIcons = [Apple, Carrot, Wheat, Package];
 

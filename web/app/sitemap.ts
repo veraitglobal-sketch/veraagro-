@@ -3,57 +3,72 @@ import type { MetadataRoute } from 'next';
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.biovera.app').replace(/\/$/, '');
 
 type ChangeFreq = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
+type SitemapLocale = 'en' | 'sr';
 
-type SitemapSpec = {
-  path: string;
+type MarketingPage = {
+  /** Path segment after locale; empty string = homepage. */
+  segment: string;
   changeFrequency: ChangeFreq;
   priority: number;
-  /** Homepage hreflang cluster (en + sr + x-default). */
-  homeAlternates?: boolean;
 };
 
-/** Public marketing URLs — EN-first index; home also in SR with hreflang. */
-const SITEMAP_SPECS: SitemapSpec[] = [
-  { path: '/en', changeFrequency: 'weekly', priority: 1.0, homeAlternates: true },
-  { path: '/sr', changeFrequency: 'weekly', priority: 0.9, homeAlternates: true },
-  { path: '/en/for-buyers', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/en/growers', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/en/suppliers', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/en/logistics', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/en/biovera-fresh', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/en/about', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/en/contact', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/en/faq', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/en/press', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/en/security', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/en/careers', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/en/help-center', changeFrequency: 'monthly', priority: 0.4 },
-  { path: '/en/investors', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/en/investor-deck', changeFrequency: 'monthly', priority: 0.4 },
-  { path: '/en/legal', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/en/terms', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/en/privacy', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/en/cookies', changeFrequency: 'yearly', priority: 0.3 },
+/** Public marketing URLs indexed per locale (EN + SR sitemaps). */
+const MARKETING_PAGES: MarketingPage[] = [
+  { segment: '', changeFrequency: 'weekly', priority: 1.0 },
+  { segment: 'for-buyers', changeFrequency: 'weekly', priority: 0.9 },
+  { segment: 'growers', changeFrequency: 'weekly', priority: 0.9 },
+  { segment: 'suppliers', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'logistics', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'biovera-fresh', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'about', changeFrequency: 'monthly', priority: 0.7 },
+  { segment: 'contact', changeFrequency: 'monthly', priority: 0.7 },
+  { segment: 'faq', changeFrequency: 'monthly', priority: 0.7 },
+  { segment: 'press', changeFrequency: 'monthly', priority: 0.6 },
+  { segment: 'security', changeFrequency: 'monthly', priority: 0.5 },
+  { segment: 'careers', changeFrequency: 'monthly', priority: 0.5 },
+  { segment: 'help-center', changeFrequency: 'monthly', priority: 0.4 },
+  { segment: 'investors', changeFrequency: 'monthly', priority: 0.5 },
+  { segment: 'investor-deck', changeFrequency: 'monthly', priority: 0.4 },
+  { segment: 'legal', changeFrequency: 'yearly', priority: 0.3 },
+  { segment: 'terms', changeFrequency: 'yearly', priority: 0.3 },
+  { segment: 'privacy', changeFrequency: 'yearly', priority: 0.3 },
+  { segment: 'cookies', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
-function homeHreflangAlternates() {
+function resolvePath(locale: SitemapLocale, segment: string): string {
+  if (segment === 'logistics') {
+    return locale === 'en' ? '/en/logistics' : '/logistics-partner';
+  }
+  return segment ? `/${locale}/${segment}` : `/${locale}`;
+}
+
+function hreflangAlternates(segment: string): MetadataRoute.Sitemap[number]['alternates'] {
   return {
     languages: {
-      en: `${siteUrl}/en`,
-      sr: `${siteUrl}/sr`,
-      'x-default': `${siteUrl}/en`,
+      en: `${siteUrl}${resolvePath('en', segment)}`,
+      sr: `${siteUrl}${resolvePath('sr', segment)}`,
+      'x-default': `${siteUrl}${resolvePath('en', segment)}`,
     },
   };
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export async function generateSitemaps() {
+  return [{ id: 'en' }, { id: 'sr' }];
+}
+
+export default async function sitemap({
+  id,
+}: {
+  id: Promise<string>;
+}): Promise<MetadataRoute.Sitemap> {
+  const locale = (await id) as SitemapLocale;
   const lastModified = new Date();
 
-  return SITEMAP_SPECS.map(({ path, changeFrequency, priority, homeAlternates }) => ({
-    url: `${siteUrl}${path}`,
+  return MARKETING_PAGES.map(({ segment, changeFrequency, priority }) => ({
+    url: `${siteUrl}${resolvePath(locale, segment)}`,
     lastModified,
     changeFrequency,
     priority,
-    ...(homeAlternates ? { alternates: homeHreflangAlternates() } : {}),
+    alternates: hreflangAlternates(segment),
   }));
 }

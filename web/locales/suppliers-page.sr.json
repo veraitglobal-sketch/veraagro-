@@ -1,153 +1,80 @@
 {
+  "metaTitle": "Partnerstvo za Dobavljače | Bio Vera — Poljoprivredni Inputi",
+  "metaDescription": "Distribuirajte Bio Vera proizvode i pakovanje našoj mreži proizvođača. Garantovan otkup, stabilne cene, integrisana povratna logistika. Prijavite se za nacionalnu pokrivenost.",
   "hero": {
     "title": "Za naše dobavljače",
-    "subtitle": "Postanite Bio Vera dobavljač: prodajte naše proizvode i ambalažu uzgajivačima u svojoj zemlji. Imate zajemčenu prodaju kod naših proizvođača i podržavate ih savetima i obukama na licu mesta.",
+    "subtitle": "Postanite Bio Vera dobavljač: prodajte naše proizvode i pakovanje proizvođačima u vašoj zemlji. Dobijate garantovan otkup od naše mreže proizvođača i podržavate ih obukom i savetima na terenu.",
     "downloadPdf": "Preuzmite PDF prospekt",
     "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo."
   },
   "whoApply": {
     "title": "Ko treba da se prijavi",
-    "intro": "Naši dobavljači prodaju Bio Vera proizvode i Bio Vera ambalažu u svojoj zemlji. Preporučujemo partnere koji već rade u poljoprivredi i imaju jaku nacionalnu pokrivenost.",
-    "bullets": [
-      "Prodajete naše proizvode (semena, inpute) uzgajivačima",
-      "Prodajete našu ambalažu proizvođačima",
-      "Idealno je da već radite u poljoprivredi",
-      "Šira nacionalna prisutnost je prednost"
-    ]
+    "intro": "Preferiramo partnere koji već rade u poljoprivredi sa jakom nacionalnom prisutnošću. Prodajete Bio Vera proizvode i Bio Vera pakovanje u vašoj zemlji.",
+    "bullets": []
   },
   "yourRole": {
     "title": "Vaša uloga",
-    "intro": "Kao naš dobavljač savetujete i obučavate korisnike na terenu. Jeste lokalna kontakt tačka za proizvođače i podržavate ih vođstvom na licu mesta. Nabavljate i ambalažu za naše korisnike — uključujući kutije za pakovanje voća i povrća — da sve što treba budu dostupno lokalno.",
-    "bullets": [
-      "Saveti i obuka korisnika na licu mesta",
-      "Nabavka ambalaže za naše korisnike (npr. kutije za pakovanje)",
-      "Prva kontakt tačka za poljoprivrednike u vašoj regiji",
-      "Fizička provera primljene robe"
-    ]
+    "intro": "Kao naš dobavljač savetujete i obučavate proizvođače na terenu. Vi ste lokalna kontakt tačka, nabavljate pakovanje za naše korisnike i održavate zalihe praćene kroz Vera Admin Panel.",
+    "bullets": []
   },
   "benefits": {
     "title": "Šta dobijate",
-    "subtitle": "Prednosti programa Bio Vera dobavljača",
+    "subtitle": "",
     "cards": [
       {
-        "title": "Zajemčena prodaja",
-        "description": "Zajemčena prodaja kod naših proizvođača u vašoj zemlji. Naši uzgajivači nabavljaju kod odobrenih dobavljača — stabilna tražnja i predvidiv prihod."
-      },
-      {
-        "title": "Naši proizvodi i ambalaža",
-        "description": "Prodajete Bio Vera proizvode i Bio Vera ambalažu. Jedan brend, jedan standard, potpuna sledljivost preko QR kodova i Vera sistema."
+        "title": "Garantovan otkup",
+        "description": "Naši proizvođači nabavljaju od odobrenih dobavljača. Stabilna potražnja i predvidiv prihod."
       },
       {
         "title": "Stabilnost cena",
-        "description": "Unapred dogovorena cenovna struktura. Bez kolebanja cena ili pojedinačnih pregovora po transakciji. Predvidive marže."
+        "description": "Unapred dogovorena struktura cena. Bez oscilacija ili pregovora po transakciji."
       },
       {
         "title": "Integrisana logistika",
-        "description": "Primajte semena i đubriva na povratnim vožnjama iz naše logističke mreže. Manje praznih kilometara, niži troškovi."
+        "description": "Seme i đubriva se dostavljaju na povratnim turama naše logističke mreže. Manje praznih kilometara, niži troškovi."
       },
       {
-        "title": "Preferira se nacionalna pokrivenost",
-        "description": "Prednost imaju dobavljači sa jakom nacionalnom prisutnošću. Širite doseg i predstavljajte Bio Vera širom zemlje."
+        "title": "Nacionalna pokrivenost",
+        "description": "Proširite doseg i predstavljajte Bio Veru širom vaše zemlje."
       },
       {
-        "title": "Ekskluzivan pristup tržištima",
-        "description": "Direktan pristup našoj mreži proizvođača i nemačkom tržištu kroz vertikalno integrisan lanac."
+        "title": "Ekskluzivan pristup tržištu",
+        "description": "Direktan pristup našoj mreži proizvođača i evropskoj maloprodaji kroz naš vertikalno integrisani lanac."
       }
     ]
   },
   "howItWorks": {
     "title": "Kako funkcioniše",
-    "subtitle": "Razumevanje Bio Vera lanca snabdevanja",
-    "supplyChainTitle": "Proces lanca snabdevanja",
-    "steps": [
-      {
-        "title": "Nabavka kod odobrenih partnera",
-        "body": "Dobavljači nabavljaju robu kod naših odobrenih partnera u zemlji. Nabavljaju i ambalažu (npr. kutije za pakovanje) za naše korisnike. Semena, đubriva i ambalaža ispunjavaju Bio Vera specifikacije."
-      },
-      {
-        "title": "Dogovorena cenovna struktura",
-        "body": "Svi proizvodi se prodaju po unapred dogovorenim cenama. To obezbeđuje stabilnost cena uzgajivačima i predvidiv prihod dobavljačima. Bez kolebanja ili pojedinačnih pregovora po transakciji."
-      },
-      {
-        "title": "Distribucija uzgajivačima",
-        "body": "Dobavljači distribuiraju proizvode Bio Vera sertifikovanim uzgajivačima u svojoj regiji. Svaka transakcija prati se QR kodovima — potpuna sledljivost od dobavljača do njive."
-      },
-      {
-        "title": "Digitalno praćenje i usklađenost",
-        "body": "Sva kretanja zaliha beleže se u Vera Admin kontrolnoj tabli. Dobavljači imaju uvid u stanje zaliha u realnom vremenu, a sistem automatski upozorava kad zališe padnu ispod praga od 20%."
-      }
-    ],
-    "forSuppliersPanelTitle": "Za dobavljače",
-    "forSuppliersPanelIntro": "Kao dobavljač kupujete kod naših odobrenih partnera i prodajete uzgajivačima po dogovorenoj ceni. Držite lokalne zalihe, nabavljate ambalažu (npr. kutije) za naše korisnike i pružate regionalnu podršku proizvođačima.",
-    "forSuppliersPanelBullets": [
-      "Kupovina kod odobrenih partnera",
-      "Održavanje bezbednog skladišnog prostora",
-      "Nabavka ambalaže (npr. kutija za pakovanje) za naše korisnike",
-      "Distribucija uzgajivačima po fiksnim cenama",
-      "Praćenje svih transakcija preko QR kodova"
-    ]
+    "subtitle": "Dobavljači nabavljaju od naših odobrenih partnera, distribuiraju sertifikovanim proizvođačima po unapred dogovorenim cenama. Svaka transakcija praćena kroz QR kodove. Kretanje zaliha beleži se u realnom vremenu sa automatskim upozorenjima na pragu od 20%.",
+    "supplyChainTitle": "",
+    "steps": [],
+    "forSuppliersPanelTitle": "",
+    "forSuppliersPanelIntro": "",
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
     "title": "Zahtevi programa",
-    "subtitle": "Šta očekujemo od dobavljača",
-    "supplierHeading": "Za dobavljače",
-    "cards": [
-      {
-        "title": "Skladištenje Vera resursa",
-        "description": "Obaveza da obezbedite suv i bezbedan prostor za Vera semena, đubriva i ambalažni materijal."
-      },
-      {
-        "title": "Izdavanje preko QR koda",
-        "description": "Dobavljač ne sme izdavati robu bez skeniranja QR koda iz aplikacije proizvođača. Jedini je način praćenja potrošnje po hektaru."
-      },
-      {
-        "title": "Lokalna podrška",
-        "description": "Dobavljač je prva kontakt tačka za proizvođača u svojoj regiji. Obavlja fizičku proveru primljene robe i pruža savete i obuku na licu mesta."
-      },
-      {
-        "title": "Izveštavanje o zalihama",
-        "description": "Sistem mora automatski obavestiti sedište u Hamburgu kad zališe padnu ispod 20%."
-      }
-    ],
-    "commonLabel": "Zajednička obaveza:",
-    "commonBody": "Svi partneri moraju koristiti Vera Admin kontrolnu tablu za evidenciju svakog ulaza i izlaza robe. Bez „papira“ — sve mora biti u digitalnom sistemu."
+    "subtitle": "Suv, bezbedan skladišni prostor za Vera seme, đubriva i pakovanje. QR skeniranje obavezno za svaku otpremu. Fizička verifikacija primljene robe. Isključivo digitalna evidencija kroz Vera Admin Panel.",
+    "supplierHeading": "",
+    "cards": [],
+    "commonLabel": "",
+    "commonBody": ""
   },
   "logistics": {
-    "title": "Prednost Vera logistike",
-    "subtitle": "Pametan sistem povratnih vožnji",
-    "noEmptyTitle": "Bez praznih povratnih vožnji",
-    "steps": [
-      {
-        "title": "Preuzimanje i isporuka",
-        "body": "Vozač preuzima robu kod uzgajivača i isporučuje je na adresu kupca."
-      },
-      {
-        "title": "Povratno preuzimanje",
-        "body": "Na povratnoj vožnji vozač preuzima Vera semena i đubriva kod naših partnera."
-      },
-      {
-        "title": "Distribucija dobavljačima",
-        "body": "Vozač direktno dostavlja Vera semena i đubriva našim dobavljačima na povratnoj ruti — bez praznih kilometara."
-      }
-    ],
-    "supplierColumnTitle": "Za dobavljače",
-    "supplierColumnIntro": "Redovne isporuke Vera semena i đubriva direktno od naših partnera, putem naše logističke mreže na povratnim rutama.",
-    "supplierColumnBullets": [
-      "Nije potrebno posebno organizovati transport dolazne robe",
-      "Niži logistički troškovi kroz integrisan sistem",
-      "Redovan, predvidiv raspored isporuka"
-    ],
-    "systemColumnTitle": "Prednosti sistema",
-    "systemColumnIntro": "Pametan logistički sistem maksimalno efikasno koristi svaki kilometar transporta, eliminišući prazne povratne vožnje.",
-    "systemColumnBullets": [
-      "Nula praznih kilometara na povratnim rutama",
-      "Niži troškovi goriva i manji uticaj na životnu sredinu",
-      "Brže isporuke zahvaljujući optimizovanim rutama"
-    ]
+    "title": "",
+    "subtitle": "",
+    "noEmptyTitle": "",
+    "steps": [],
+    "supplierColumnTitle": "",
+    "supplierColumnIntro": "",
+    "supplierColumnBullets": [],
+    "systemColumnTitle": "",
+    "systemColumnIntro": "",
+    "systemColumnBullets": []
   },
   "application": {
     "title": "Prijava dobavljača",
-    "intro": "Prijavite se online (bez samouslužnog naloga prodavnice). Dobijate referentni kod za praćenje prijave. Naš tim vas kontaktira radi zakazivanja razgovora; po odobrenju kreiramo partner nalog prodavnice.",
+    "intro": "Prijavite se online. Dobijate referentni kod za praćenje prijave. Naš tim vas kontaktira za zakazivanje sastanka; po odobrenju kreiramo vaš partnerski nalog.",
     "linkCheckStatus": "Proverite status uz referencu",
     "linkPartnerLogin": "Prijava partner prodavnice",
     "receivedTitle": "Prijava primljena",

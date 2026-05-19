@@ -95,7 +95,7 @@ export default function HomePageClient() {
                 titleFallback
               )}
             </h1>
-            <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed whitespace-pre-line">
               {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

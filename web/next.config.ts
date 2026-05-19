@@ -144,6 +144,18 @@ const nextConfig: NextConfig = {
         destination: "/logistics-partner",
         permanent: true,
       },
+      /** SR-friendly marketing slug → canonical growers page */
+      {
+        source: "/sr/proizvodjaci",
+        destination: "/sr/growers",
+        permanent: true,
+      },
+      /** SR-friendly marketing slug → canonical for-buyers page */
+      {
+        source: "/sr/za-kupce",
+        destination: "/sr/for-buyers",
+        permanent: true,
+      },
     ];
   },
   async headers() {
