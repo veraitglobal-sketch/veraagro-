@@ -9,7 +9,13 @@ import { growerUi, growerStyles } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { missionsAPI, type Mission } from '../../../lib/api';
-import { formatDriverName, formatVehicleLine, missionAssignedDriverFromApi, missionVehicleFromApi } from '../../../lib/mission-logistics';
+import {
+  formatDriverName,
+  formatVehicleLine,
+  missionAssignedDriverFromApi,
+  missionLogisticsPartnerLabel,
+  missionVehicleFromApi,
+} from '../../../lib/mission-logistics';
 import { getMissionStatusLabelLocalized } from '../../../lib/mission-status';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
@@ -125,9 +131,17 @@ export default function MissionsListScreen() {
                 ? `${t('producer.missionsCreate.batchLabel')}: ${batch?.batchId || mission.batchId}`
                 : null;
               const dateLine = new Date(mission.createdAt).toLocaleDateString(dateLocale);
-              const driverLine = formatDriverName(missionAssignedDriverFromApi(mission as unknown as Record<string, unknown>));
-              const vehicleLine = formatVehicleLine(missionVehicleFromApi(mission as unknown as Record<string, unknown>));
-              const logisticsLine = [driverLine, vehicleLine].filter(Boolean).join(' · ');
+              const raw = mission as unknown as Record<string, unknown>;
+              const driverLine = formatDriverName(missionAssignedDriverFromApi(raw));
+              const partnerLine = missionLogisticsPartnerLabel(raw);
+              const vehicleLine = formatVehicleLine(missionVehicleFromApi(raw));
+              const logisticsLine = driverLine
+                ? [driverLine, vehicleLine].filter(Boolean).join(' · ')
+                : partnerLine
+                  ? [t('producer.missions.assignmentLineCarrier', { name: partnerLine }), vehicleLine]
+                      .filter(Boolean)
+                      .join(' · ')
+                  : '';
 
               return (
                 <TouchableOpacity

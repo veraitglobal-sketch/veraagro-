@@ -2,11 +2,11 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, Modal, TextInput } fro
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LogOut, MapPin, Package, Building2, Truck, Users, Plus, X, Bell } from 'lucide-react-native';
-import { theme } from '../../lib/theme';
-import { LanguageSettingsBlock } from '../../components/LanguageSettingsBlock';
+import { theme } from '../../../lib/theme';
+import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 
 interface DeliveryLocation {
   id: string;

@@ -5,14 +5,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { QrCode, Package, X, Truck, Bell } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { inventoryAPI, Product, batchesAPI, BatchAvailability, notificationsAPI } from '../../lib/api';
-import { theme } from '../../lib/theme';
-import { useBioVeraScreenPadding } from '../../lib/screen-insets';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import ErrorMessage from '../../components/ErrorMessage';
-import ProductPassport from '../../components/ProductPassport';
-import ReservationModal from '../../components/ReservationModal';
-import { useAppLocaleTag } from '../../lib/date-locale';
+import { inventoryAPI, Product, batchesAPI, BatchAvailability, notificationsAPI } from '../../../lib/api';
+import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import ErrorMessage from '../../../components/ErrorMessage';
+import ProductPassport from '../../../components/ProductPassport';
+import ReservationModal from '../../../components/ReservationModal';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 type FilterStatus = 'all' | 'available_now' | 'incoming' | 'reservations';
 

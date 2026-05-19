@@ -59,3 +59,44 @@ export function missionShowsDriverBlock(status: string): boolean {
   const s = (status || '').toUpperCase();
   return s !== 'PENDING' && s !== 'CANCELLED';
 }
+
+export function missionLogisticsPartnerId(mission: Record<string, unknown>): string | null {
+  const id = mission.logisticsPartnerId;
+  return id != null && String(id).trim() ? String(id).trim() : null;
+}
+
+export function missionLogisticsPartnerLabel(mission: Record<string, unknown>): string {
+  const direct = mission.logisticsPartnerLabel;
+  if (typeof direct === 'string' && direct.trim()) return direct.trim();
+  const lp = mission.logisticsCompanyContact as
+    | { firstName?: string; lastName?: string; partnerCode?: string | null; email?: string | null }
+    | null
+    | undefined;
+  if (lp) {
+    const name = [lp.firstName, lp.lastName].filter(Boolean).join(' ').trim();
+    if (name) return name;
+    if (lp.partnerCode?.trim()) return lp.partnerCode.trim();
+    if (lp.email?.trim()) return lp.email.trim();
+  }
+  const partner = mission.users_missions_logisticsPartnerIdTousers as
+    | { firstName?: string; lastName?: string; partnerCode?: string; email?: string }
+    | null
+    | undefined;
+  if (partner) {
+    const name = [partner.firstName, partner.lastName].filter(Boolean).join(' ').trim();
+    if (name) return name;
+    if (partner.partnerCode?.trim()) return partner.partnerCode.trim();
+    if (partner.email?.trim()) return partner.email.trim();
+  }
+  return '';
+}
+
+/** Show logistics card when carrier and/or driver/vehicle is relevant (not bare PENDING). */
+export function missionShouldShowLogisticsBlock(mission: Record<string, unknown>): boolean {
+  const status = String(mission.status ?? '').toUpperCase();
+  if (status === 'CANCELLED') return false;
+  if (missionLogisticsPartnerId(mission)) return true;
+  if (missionHasAssignedDriver(mission)) return true;
+  if (missionVehicleFromApi(mission)) return true;
+  return missionShowsDriverBlock(status);
+}

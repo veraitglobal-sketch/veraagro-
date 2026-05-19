@@ -2,10 +2,10 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { ordersAPI, Order } from '../../lib/api';
-import { theme } from '../../lib/theme';
-import { useAppLocaleTag } from '../../lib/date-locale';
-import { tBuyerOrderStatus } from '../../lib/buyer-order-status';
+import { ordersAPI, Order } from '../../../lib/api';
+import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
+import { tBuyerOrderStatus } from '../../../lib/buyer-order-status';
 import { ArrowRight, Package } from 'lucide-react-native';
 
 /**

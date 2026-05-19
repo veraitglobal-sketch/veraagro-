@@ -55,9 +55,9 @@ export class MissionsService {
     return out;
   }
 
-  /** Grower-facing mission JSON with driver + vehicle blocks (Prisma relations stay for compatibility). */
-  private static mapMissionForGrowerApi(mission: Record<string, unknown>): Record<string, unknown> {
-    const out = MissionsService.scrubMissionForGrowerView(mission);
+  /** Driver, vehicle, and carrier labels for mobile/web (keeps Prisma relation keys). */
+  private static enrichMissionLogisticsFields(mission: Record<string, unknown>): Record<string, unknown> {
+    const out = { ...mission };
     const assigned = out.assigned_logistics_driver as Record<string, unknown> | null | undefined;
     const vehicle = out.vehicles as Record<string, unknown> | null | undefined;
     const lp = out.users_missions_logisticsPartnerIdTousers as Record<string, unknown> | null | undefined;
@@ -89,13 +89,26 @@ export class MissionsService {
           firstName: lp.firstName,
           lastName: lp.lastName,
           phone: lp.phone ?? null,
+          email: lp.email ?? null,
+          partnerCode: lp.partnerCode ?? null,
         }
+      : null;
+
+    const logisticsPartnerLabel = lp
+      ? [lp.firstName, lp.lastName]
+          .filter((v) => v != null && String(v).trim() !== '')
+          .join(' ')
+          .trim() ||
+        (lp.partnerCode != null ? String(lp.partnerCode) : '') ||
+        (lp.email != null ? String(lp.email) : '') ||
+        null
       : null;
 
     out.assignedDriver = assignedDriver;
     out.vehicleInfo = vehicleInfo;
     out.logisticsCompanyContact = logisticsCompanyContact;
-    // Legacy mobile field (TimelineBlock)
+    out.logisticsPartnerLabel = logisticsPartnerLabel;
+    out.hasAssignedPickupDriver = Boolean(assignedDriver?.firstName || assignedDriver?.lastName);
     out.driver = assignedDriver
       ? {
           firstName: assignedDriver.firstName,
@@ -105,6 +118,11 @@ export class MissionsService {
       : null;
 
     return out;
+  }
+
+  /** Grower-facing mission JSON with driver + vehicle blocks (Prisma relations stay for compatibility). */
+  private static mapMissionForGrowerApi(mission: Record<string, unknown>): Record<string, unknown> {
+    return MissionsService.enrichMissionLogisticsFields(MissionsService.scrubMissionForGrowerView(mission));
   }
 
   /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
@@ -1583,10 +1601,10 @@ export class MissionsService {
     }
     if (roles.includes('LOGISTICS_PARTNER')) {
       if (mission.logisticsPartnerId === requestUserId) {
-        return mission;
+        return MissionsService.enrichMissionLogisticsFields(mission as Record<string, unknown>);
       }
       if (mission.status === 'PENDING' && mission.logisticsPartnerId == null) {
-        return mission;
+        return MissionsService.enrichMissionLogisticsFields(mission as Record<string, unknown>);
       }
     }
 
@@ -1766,8 +1784,11 @@ export class MissionsService {
         users_missions_logisticsPartnerIdTousers: true,
         vehicles: true,
         batches: true,
+        assigned_logistics_driver: true,
       },
     });
+
+    const growerPayload = MissionsService.mapMissionForGrowerApi(updated as Record<string, unknown>);
 
     try {
       await this.notificationsService.create({
@@ -1782,7 +1803,7 @@ export class MissionsService {
     }
 
     try {
-      await this.notificationsGateway.notifyMissionUpdate(mission.growerId, updated);
+      await this.notificationsGateway.notifyMissionUpdate(mission.growerId, growerPayload);
     } catch (e) {
       this.logger.warn(`admin assign: notify grower failed: ${e instanceof Error ? e.message : String(e)}`);
     }

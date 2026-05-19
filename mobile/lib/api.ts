@@ -934,10 +934,51 @@ export type LogisticsDriverRow = {
   isActive: boolean;
 };
 
+export type LogisticsVehicleRow = {
+  id: string;
+  vehicleNumber: string;
+  type: string;
+  make?: string | null;
+  model?: string | null;
+  licensePlate: string;
+  hasFrigo: boolean;
+  tempRangeMin?: number;
+  tempRangeMax?: number;
+  status: string;
+};
+
+export const logisticsVehiclesAPI = {
+  list: async (): Promise<LogisticsVehicleRow[]> => {
+    const response = await api.get('/logistics-partner/vehicles');
+    return Array.isArray(response.data) ? response.data : [];
+  },
+  create: async (body: {
+    licensePlate: string;
+    type: string;
+    make?: string;
+    model?: string;
+    hasFrigo?: boolean;
+    tempRangeMin?: number;
+    tempRangeMax?: number;
+  }): Promise<LogisticsVehicleRow> => {
+    const response = await api.post('/logistics-partner/vehicles', body);
+    return response.data;
+  },
+};
+
 export const logisticsDriversAPI = {
   list: async (): Promise<LogisticsDriverRow[]> => {
     const response = await api.get('/logistics-partner/drivers');
     return Array.isArray(response.data) ? response.data : [];
+  },
+  create: async (body: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  }): Promise<LogisticsDriverRow> => {
+    const response = await api.post('/logistics-partner/drivers', body);
+    return response.data;
   },
 };
 
@@ -1027,8 +1068,11 @@ export interface Mission {
   fromHubId?: string;
   toHubId?: string;
   driverId?: string;
+  logisticsPartnerId?: string | null;
   assignedLogisticsDriverId?: string | null;
   vehicleId?: string | null;
+  logisticsPartnerLabel?: string | null;
+  hasAssignedPickupDriver?: boolean;
   createdAt: string;
   updatedAt: string;
   batch?: unknown;
@@ -1091,6 +1135,14 @@ export const missionsAPI = {
     step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
   ): Promise<Mission> => {
     const response = await api.patch(`/missions/${encodeURIComponent(missionId)}/lifecycle`, { step });
+    return response.data;
+  },
+  /** PENDING pool only — assigns partner + frigo vehicle, status → ASSIGNED */
+  claimMission: async (
+    missionId: string,
+    body?: { vehicleId?: string; logisticsDriverId?: string },
+  ): Promise<Mission> => {
+    const response = await api.post(`/missions/${encodeURIComponent(missionId)}/claim`, body ?? {});
     return response.data;
   },
 };

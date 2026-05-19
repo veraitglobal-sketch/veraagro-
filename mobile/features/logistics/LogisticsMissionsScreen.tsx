@@ -1,30 +1,36 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCallback, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Truck, Calendar, Clock, FileSignature, Bell, Camera } from 'lucide-react-native';
+import { Truck, Calendar, Clock, Bell } from 'lucide-react-native';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission, notificationsAPI } from '../../lib/api';
+import { canClaimLogisticsMission } from '../../lib/logistics-mission-helpers';
 import { getMissionStatusColor, getMissionStatusLabelLocalized } from '../../lib/mission-status';
-import { useAuth } from '../../hooks/useAuth';
-import { partnerSignInHref } from '../../lib/post-login-redirect';
 import { useAppLocaleTag } from '../../lib/date-locale';
+import { GrowerTabHeader } from '../../components/grower/GrowerTabHeader';
 
-/**
- * Default screen for (logistics): pool (PENDING) + assigned runs.
- */
-export default function LogisticsHomeScreen() {
+/** Pool (PENDING) + assigned runs — claim, filters, mission detail. */
+export default function LogisticsMissionsScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
-  const { logout } = useAuth();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<'all' | 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'COMPLETED'>('all');
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -80,110 +86,62 @@ export default function LogisticsHomeScreen() {
   const filteredMissions =
     filter === 'all' ? missions : missions.filter((m) => m.status === filter);
 
+  const claimMission = async (missionId: string) => {
+    setClaimingId(missionId);
+    try {
+      await missionsAPI.claimMission(missionId);
+      await loadMissions();
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { message?: string | string[] } } })?.response?.data
+        ?.message;
+      const text =
+        typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(' ') : t('logistics.claim.errFallback');
+      Alert.alert(t('logistics.claim.errTitle'), text);
+    } finally {
+      setClaimingId(null);
+    }
+  };
+
+  const notifButton = (
+    <TouchableOpacity
+      onPress={() => router.push('/(logistics)/notifications')}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel={t('notificationsCenter.title')}
+    >
+      <View style={{ position: 'relative' }}>
+        <Bell size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
+        {unreadNotifications > 0 ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: -5,
+              right: -8,
+              minWidth: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: theme.colors.error,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 3,
+            }}
+          >
+            <Text style={{ fontSize: 8, fontWeight: '700', color: theme.colors.background }}>
+              {unreadNotifications > 9 ? '9+' : unreadNotifications}
+            </Text>
+          </View>
+        ) : null}
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: p.headerTop,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <View
-          style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '300',
-                color: theme.colors.text.primary,
-                letterSpacing: 0.5,
-              }}
-            >
-              {t('logistics.missionsTitle')}
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: theme.colors.text.secondary,
-                marginTop: 4,
-                lineHeight: 18,
-              }}
-            >
-              {t('logistics.missionsSubtitle')}
-            </Text>
-          </View>
-          <View style={{ alignItems: 'flex-end', gap: 8 }}>
-            <TouchableOpacity
-              onPress={() => router.push('/(logistics)/notifications')}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel={t('notificationsCenter.title')}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
-            >
-              <View style={{ position: 'relative' }}>
-                <Bell size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
-                {unreadNotifications > 0 ? (
-                  <View
-                    style={{
-                      position: 'absolute',
-                      top: -5,
-                      right: -8,
-                      minWidth: 15,
-                      height: 15,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.error,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      paddingHorizontal: 3,
-                    }}
-                  >
-                    <Text style={{ fontSize: 8, fontWeight: '700', color: theme.colors.background }}>
-                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push('/(logistics)/handover-loading')}
-              hitSlop={8}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
-            >
-              <Camera size={14} color={theme.colors.primary} strokeWidth={1.5} />
-              <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '500' }}>
-                {t('logistics.loadingHandover.link')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push('/(logistics)/handover-receiver')}
-              hitSlop={8}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
-            >
-              <FileSignature size={14} color={theme.colors.primary} strokeWidth={1.5} />
-              <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '500' }}>
-                {t('logistics.receiverProof.link')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={async () => {
-                await logout();
-                router.replace(partnerSignInHref() as any);
-              }}
-              hitSlop={12}
-            >
-              <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, fontWeight: '500' }}>
-                {t('logistics.signOut')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <GrowerTabHeader
+        title={t('logistics.missionsTitle')}
+        subtitle={t('logistics.missionsSubtitle')}
+        right={notifButton}
+      />
 
       <View
         style={{
@@ -296,10 +254,8 @@ export default function LogisticsHomeScreen() {
               {filteredMissions.map((mission) => {
                 const c = getMissionStatusColor(mission.status);
                 return (
-                  <TouchableOpacity
+                  <View
                     key={mission.id}
-                    onPress={() => router.push(`/(logistics)/mission/${mission.id}`)}
-                    activeOpacity={0.7}
                     style={{
                       backgroundColor: theme.colors.surface,
                       borderRadius: theme.borderRadius.md,
@@ -308,6 +264,10 @@ export default function LogisticsHomeScreen() {
                       borderColor: 'rgba(0, 0, 0, 0.05)',
                     }}
                   >
+                    <TouchableOpacity
+                      onPress={() => router.push(`/(logistics)/mission/${mission.id}`)}
+                      activeOpacity={0.7}
+                    >
                     <View
                       style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}
                     >
@@ -410,7 +370,39 @@ export default function LogisticsHomeScreen() {
                         </View>
                       ) : null}
                     </View>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                    {canClaimLogisticsMission(mission) ? (
+                      <TouchableOpacity
+                        onPress={() => void claimMission(mission.id)}
+                        disabled={claimingId === mission.id}
+                        activeOpacity={0.8}
+                        style={{
+                          marginTop: theme.spacing.sm,
+                          minHeight: 44,
+                          borderRadius: theme.borderRadius.sm,
+                          backgroundColor: theme.colors.primary,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingHorizontal: theme.spacing.md,
+                        }}
+                      >
+                        {claimingId === mission.id ? (
+                          <ActivityIndicator color="#fff" />
+                        ) : (
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              fontWeight: '500',
+                              color: '#fff',
+                              letterSpacing: 0.3,
+                            }}
+                          >
+                            {t('logistics.claim.cta')}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
                 );
               })}
             </View>

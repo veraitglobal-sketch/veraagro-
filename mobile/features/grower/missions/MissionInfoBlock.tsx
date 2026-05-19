@@ -4,9 +4,14 @@ import { Truck } from 'lucide-react-native';
 import type { Mission } from '../../../lib/api';
 import { missionStatusEnterpriseTone } from '../../../lib/mission-status';
 import { growerStyles } from '../../../lib/grower-ui';
-import { enterpriseUi } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { getStatusLabel } from './useMissionDetailData';
 import { MissionDetailSection } from './MissionDetailSection';
+import {
+  formatDriverName,
+  missionAssignedDriverFromApi,
+  missionLogisticsPartnerLabel,
+} from '../../../lib/mission-logistics';
 
 interface MissionInfoBlockProps {
   mission: Mission;
@@ -15,6 +20,19 @@ interface MissionInfoBlockProps {
 export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
   const { t } = useTranslation();
   const tone = missionStatusEnterpriseTone(mission.status);
+  const raw = mission as unknown as Record<string, unknown>;
+  const driverName = formatDriverName(missionAssignedDriverFromApi(raw));
+  const partnerLabel = missionLogisticsPartnerLabel(raw);
+  const status = String(mission.status ?? '').toUpperCase();
+
+  let assignmentLine: string | null = null;
+  if (driverName) {
+    assignmentLine = t('producer.missions.assignmentLineDriver', { name: driverName });
+  } else if (partnerLabel && status !== 'PENDING') {
+    assignmentLine = t('producer.missions.assignmentLineCarrier', { name: partnerLabel });
+  } else if (status === 'PENDING') {
+    assignmentLine = t('producer.missions.assignmentLinePending');
+  }
 
   return (
     <MissionDetailSection
@@ -29,6 +47,9 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
           </Text>
         </View>
       </View>
+      {assignmentLine ? (
+        <Text style={styles.assignmentLine}>{assignmentLine}</Text>
+      ) : null}
     </MissionDetailSection>
   );
 }
@@ -39,5 +60,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+    marginBottom: 10,
+  },
+  assignmentLine: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+    lineHeight: 22,
+    letterSpacing: -0.15,
   },
 });

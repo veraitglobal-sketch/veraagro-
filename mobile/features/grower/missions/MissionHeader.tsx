@@ -16,7 +16,7 @@ export default function MissionHeader() {
         if (router.canGoBack()) {
           router.back();
         } else if (isLogistics) {
-          router.replace('/(logistics)');
+          router.replace('/(logistics)/(tabs)/missions');
         } else {
           replaceToRoleHome(segments);
         }

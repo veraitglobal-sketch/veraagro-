@@ -37,7 +37,7 @@ export function GrowerAppGuideStepCard({ step, index, pdfExport = false }: Props
   return (
     <section
       id={`guide-${step.id}`}
-      className="scroll-mt-24 rounded-xl border border-gray-200 bg-white shadow-sm print:break-inside-avoid overflow-hidden"
+      className="scroll-mt-24 rounded-xl border border-gray-200 bg-white shadow-sm print:break-inside-avoid"
     >
       <div className="border-b border-gray-100 bg-[#fafbf9] px-5 py-4 sm:px-6">
         <div className="flex items-center gap-3">
@@ -54,11 +54,11 @@ export function GrowerAppGuideStepCard({ step, index, pdfExport = false }: Props
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,390px)_minmax(0,1fr)] print:grid-cols-1 lg:gap-0">
-        {/* Left: native screenshot — PNG is already a full screen capture; no faux phone bezel */}
-        <div className="border-b lg:border-b-0 lg:border-r border-gray-100 bg-[#f3f6f3] px-4 py-6 sm:px-6 lg:px-8 lg:sticky lg:top-24 lg:self-start print:static print:border-b print:border-r-0 print:bg-white">
-          <div className="mx-auto w-[calc(100%+2rem)] max-w-none -mx-4 sm:w-full sm:max-w-[390px] sm:mx-auto lg:max-w-none">
-            <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 lg:text-left print:hidden">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(280px,380px)_minmax(0,1fr)] print:grid-cols-1">
+        {/* Left: native screenshot inside shared device frame */}
+        <div className="border-b xl:border-b-0 xl:border-r border-gray-100 bg-[#f3f6f3] px-4 py-8 sm:px-6 lg:px-8 xl:sticky xl:top-24 xl:self-start print:static print:border-b print:border-r-0 print:bg-white">
+          <div className="mx-auto w-full max-w-[380px]">
+            <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 xl:text-left print:hidden">
               {t('grower.appGuide.screenColumnLabel')}
             </p>
             <GrowerAppGuideScreenshot
@@ -68,7 +68,7 @@ export function GrowerAppGuideStepCard({ step, index, pdfExport = false }: Props
               priority={index === 0}
               pdfExport={pdfExport}
             />
-            <p className="mt-3 text-center text-xs text-gray-500 lg:text-left print:hidden">
+            <p className="mt-4 text-center text-xs text-gray-500 xl:text-left print:hidden">
               {t('grower.appGuide.tapToEnlarge')}
             </p>
           </div>

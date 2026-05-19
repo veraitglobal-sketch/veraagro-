@@ -4,14 +4,14 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { ShoppingCart, Sprout, Package, Apple, Carrot, Wheat, ChevronRight, Bell } from 'lucide-react-native';
-import { inventoryAPI, Product, notificationsAPI } from '../../lib/api';
-import ProductCard from '../../components/ProductCard';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import ErrorMessage from '../../components/ErrorMessage';
-import Card from '../../components/ui/Card';
-import { useCart } from '../../hooks/useCart';
-import { theme } from '../../lib/theme';
-import { useBioVeraScreenPadding } from '../../lib/screen-insets';
+import { inventoryAPI, Product, notificationsAPI } from '../../../lib/api';
+import ProductCard from '../../../components/ProductCard';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import ErrorMessage from '../../../components/ErrorMessage';
+import Card from '../../../components/ui/Card';
+import { useCart } from '../../../hooks/useCart';
+import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 
 /**
  * Buyer Shop Screen

@@ -28,7 +28,8 @@ Ovaj fajl je **trajni sidro** kad otvaraš novi chat: jedna linija „nastavi iz
 
 ## Poznati ograničenja (ne gubiti vreme u novom četu)
 
-- **Buyer `(buyer)`:** trenutno je uglavnom **Tabs** bez unutrašnjeg Stack-a — ivični iOS swipe „kao sistemski stek“ nije jednak svuda kao na **`(producer)`** Stack-u. Ako prioritet zahteva paritet navigation-a, radi se refaktor (Stack iznad tabs grupe).
+- **Buyer `(buyer)`:** **Stack iznad `(tabs)`** — `cart`, `checkout`, `order/[id]`, `notifications` imaju edge-swipe nazad; tabovi ostaju u donjoj traci.
+- **Logistika `(logistics)`:** **3 taba** (Početna / Misije / Profil) + hub sa stavkama kao na webu (vozila, vozači, predaje, obaveštenja). Stack ekrani: `vehicles`, `drivers`, `mission/[id]`, handover.
 - **Proizvođač `(producer)`:** glavni stek ima `BioVeraSubpageHeader` ili custom `ArrowLeft` na pojedinim formama — kada se doda novi fullscreen ekran, obavezno back ili eksplicitni `left="none"` sa razlogom.
 - **Korenski `app/_layout.tsx`:** za autentifikovane **grupe** `(producer)`, `(buyer)`, `(supplier)`, `(logistics)` **ne vraćati** `gestureEnabled: false` na ceo ekran grupe — to gasi povlačenje nazad na unutrašnjim Stack-ovima. Na login rutama ostaviti ono što je namerno bez edge-swipe.
 

@@ -24,7 +24,7 @@ export function replaceToRoleHome(segments: readonly string[]): void {
     return;
   }
   if (root === '(logistics)') {
-    router.replace('/(logistics)' as Href);
+    router.replace('/(logistics)/(tabs)' as Href);
     return;
   }
   if (root === '(supplier)') {

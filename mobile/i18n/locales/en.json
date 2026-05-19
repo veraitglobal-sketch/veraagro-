@@ -132,7 +132,15 @@
   },
   "logistics": {
     "missionsTitle": "Transport",
-    "missionsSubtitle": "Unclaimed pool and your assigned runs (full admin tools stay on the web).",
+    "missionsSubtitle": "Claim open jobs or continue assigned runs. Add a refrigerated vehicle if claim fails.",
+    "claim": {
+      "title": "Open transport job",
+      "body": "This pickup is still in the pool. Claim it to assign your company and an available refrigerated truck.",
+      "cta": "Claim mission",
+      "vehicleHint": "You need at least one AVAILABLE vehicle with refrigeration (hasFrigo).",
+      "errTitle": "Could not claim",
+      "errFallback": "Could not claim this mission. Refresh the list and try again."
+    },
     "signOut": "Sign out",
     "emptyMissions": "No missions in this list yet.",
     "filterAll": "All",
@@ -140,6 +148,58 @@
     "filterAssigned": "Assigned",
     "filterInTransit": "In transit",
     "filterCompleted": "Done",
+    "tabs": {
+      "home": "Home",
+      "missions": "Missions",
+      "profile": "Profile"
+    },
+    "hub": {
+      "title": "Transport hub",
+      "subtitle": "Missions, fleet, handover — same flow as the web partner portal.",
+      "metricPending": "Open pool",
+      "metricActive": "Active runs",
+      "metricFrigoFree": "Frigo free",
+      "sectionRuns": "Runs",
+      "missions": "Missions",
+      "missionsDesc": "{{pending}} open · {{active}} active",
+      "notificationsUnread": "{{count}} unread",
+      "notificationsOk": "All read",
+      "sectionFleet": "Fleet",
+      "vehicles": "Vehicles",
+      "vehiclesDesc": "{{count}} registered · {{free}} frigo available",
+      "drivers": "Drivers",
+      "driversDesc": "Assign drivers to missions on web or view list here",
+      "sectionHandover": "Handover",
+      "loadingDesc": "Temperature, photos, signature at farm loading",
+      "receiverDesc": "Who received the lot at destination",
+      "sectionMore": "Account",
+      "profile": "Profile & settings",
+      "profileDesc": "Language, notifications, sign out"
+    },
+    "vehicles": {
+      "lead": "Refrigerated vehicles are required to claim missions.",
+      "addCta": "Add vehicle",
+      "formTitle": "New vehicle",
+      "platePh": "License plate",
+      "save": "Save",
+      "empty": "No vehicles yet. Add at least one with refrigeration.",
+      "frigoYes": "Refrigerated",
+      "frigoNo": "No frigo",
+      "errTitle": "Vehicle",
+      "errPlate": "Enter license plate"
+    },
+    "drivers": {
+      "lead": "People who can be assigned to pickup runs.",
+      "webHint": "To add or edit drivers with photos, use the web portal (Drivers).",
+      "empty": "No drivers registered yet.",
+      "inactive": "inactive"
+    },
+    "loadingHandover": {
+      "link": "Loading handover",
+      "needTitle": "Loading handover required",
+      "needBody": "Complete temperature check and photos before the truck departs.",
+      "needCta": "Open handover"
+    },
     "receiverProof": {
       "link": "Receiver proof",
       "back": "Back",
@@ -1239,7 +1299,15 @@
       "listEmpty": "No missions in this list yet.",
       "notFound": "Mission not found",
       "yourPayout": "Your payout",
-      "assignedToDriver": "Assigned to driver",
+      "assignedToDriver": "Pickup driver",
+      "assignedToCarrier": "Assigned to carrier",
+      "assignedToCarrierHint": "“Assigned” means the carrier took the job. They must pick a pickup driver before loading — the name will appear here.",
+      "assignmentLineDriver": "Driver: {{name}}",
+      "assignmentLineCarrier": "Carrier: {{name}} (driver not named yet)",
+      "assignmentLinePending": "Waiting for carrier assignment",
+      "carrierNotAssigned": "No carrier assigned yet.",
+      "driverPendingTitle": "Pickup driver",
+      "driverPendingDetail": "Carrier has not named a driver yet.",
       "logisticsTitle": "Carrier & vehicle",
       "logisticsCompanyLabel": "Carrier contact",
       "driverLabel": "Pickup driver",
@@ -1939,6 +2007,16 @@
       "invalidPrice": "Price must be a number.",
       "imageFailed": "Could not save photo.",
       "dashboardHint": "Products with photos for growers"
+    },
+    "shop": {
+      "validation": {
+        "nameRequired": "Enter a product name.",
+        "nameTooLong": "Name can be at most 200 characters.",
+        "descriptionTooLong": "Description can be at most 2000 characters.",
+        "unitTooLong": "Unit can be at most 32 characters.",
+        "priceInvalid": "Price must be a non-negative number.",
+        "skuTooLong": "SKU can be at most 64 characters."
+      }
     }
   },
   "error": "Error",

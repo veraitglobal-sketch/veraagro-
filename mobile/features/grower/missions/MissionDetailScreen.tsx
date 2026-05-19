@@ -14,6 +14,7 @@ import TimelineBlock from './TimelineBlock';
 import ConsumerFeedbackBlock from './ConsumerFeedbackBlock';
 import FinancialStatusBlock from './FinancialStatusBlock';
 import LogisticsMissionLifecycleBar from './LogisticsMissionLifecycleBar';
+import LogisticsClaimMissionBlock from './LogisticsClaimMissionBlock';
 
 interface MissionDetailScreenProps {
   missionId: string | undefined;
@@ -65,7 +66,10 @@ export default function MissionDetailScreen({ missionId, variant = 'grower' }: M
         <MissionLogisticsBlock mission={mission} />
         <BatchInfoBlock mission={mission} />
         {variant === 'logistics' && (
-          <LogisticsMissionLifecycleBar mission={mission} onUpdated={onRefresh} />
+          <>
+            <LogisticsClaimMissionBlock mission={mission} onClaimed={onRefresh} />
+            <LogisticsMissionLifecycleBar mission={mission} onUpdated={onRefresh} />
+          </>
         )}
         <JourneyMapBlock journeyMap={journeyMap} />
         <TimelineBlock mission={mission} />

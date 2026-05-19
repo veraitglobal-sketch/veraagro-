@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImageOff, X, ZoomIn } from 'lucide-react';
+import { GrowerAppGuideDeviceFrame } from '@/components/grower/GrowerAppGuideDeviceFrame';
 
 /** Native iPhone screenshot dimensions in repo (1170×2532 @3×). */
 const SCREENSHOT_WIDTH = 1170;
@@ -59,7 +60,7 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
       alt={alt}
       width={SCREENSHOT_WIDTH}
       height={SCREENSHOT_HEIGHT}
-      className="grower-app-guide-screenshot w-full max-w-full h-auto block align-top rounded-none border-0 shadow-none sm:rounded-xl sm:border sm:border-gray-200/70 sm:bg-white sm:shadow-[0_8px_32px_rgba(15,23,42,0.08)]"
+      className="grower-app-guide-screenshot w-full max-w-full h-auto block align-top border-0 shadow-none"
       loading={eager ? 'eager' : 'lazy'}
       fetchPriority={eager ? 'high' : undefined}
       decoding={eager ? 'sync' : 'async'}
@@ -67,8 +68,10 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
     />
   );
 
+  const framed = <GrowerAppGuideDeviceFrame pdfExport={pdfExport}>{imgEl}</GrowerAppGuideDeviceFrame>;
+
   if (pdfExport) {
-    return imgEl;
+    return framed;
   }
 
   return (
@@ -76,10 +79,10 @@ export function GrowerAppGuideScreenshot({ src, alt, imageFile, priority = false
       <button
         type="button"
         onClick={() => setLightboxOpen(true)}
-        className="group relative block w-full max-w-full cursor-zoom-in rounded-none sm:rounded-xl border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+        className="group relative block w-full cursor-zoom-in border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
         aria-label={t('grower.appGuide.enlargeScreenshot')}
       >
-        {imgEl}
+        {framed}
         <span className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 print:hidden">
           <ZoomIn className="h-3.5 w-3.5" aria-hidden />
           {t('grower.appGuide.zoomLabel')}

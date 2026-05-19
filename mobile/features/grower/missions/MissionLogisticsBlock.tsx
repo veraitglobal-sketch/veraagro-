@@ -1,13 +1,14 @@
 import { View, Text, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Truck, User } from 'lucide-react-native';
+import { Truck, User, Building2 } from 'lucide-react-native';
 import type { Mission } from '../../../lib/api';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import {
   formatDriverName,
   formatVehicleLine,
   missionAssignedDriverFromApi,
-  missionShowsDriverBlock,
+  missionLogisticsPartnerLabel,
+  missionShouldShowLogisticsBlock,
   missionVehicleFromApi,
 } from '../../../lib/mission-logistics';
 import { MissionDetailSection } from './MissionDetailSection';
@@ -29,26 +30,34 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlockProps) {
   const { t } = useTranslation();
   const raw = mission as unknown as Record<string, unknown>;
-  if (!missionShowsDriverBlock(mission.status)) return null;
+  if (!missionShouldShowLogisticsBlock(raw)) return null;
 
   const driver = missionAssignedDriverFromApi(raw);
   const vehicle = missionVehicleFromApi(raw);
   const driverName = formatDriverName(driver);
   const vehicleLine = formatVehicleLine(vehicle);
-  const lp = raw.logisticsCompanyContact as { firstName?: string; lastName?: string; phone?: string | null } | null;
-  const companyName = lp ? [lp.firstName, lp.lastName].filter(Boolean).join(' ').trim() : '';
-
-  if (!driverName && !vehicleLine && !companyName) {
-    return (
-      <MissionDetailSection title={t('producer.missions.logisticsTitle')} icon={Truck}>
-        <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missions.driverNotAssigned')}</Text>
-      </MissionDetailSection>
-    );
-  }
+  const partnerLabel = missionLogisticsPartnerLabel(raw);
+  const hasPartner = Boolean(partnerLabel);
+  const status = String(mission.status ?? '').toUpperCase();
 
   return (
     <MissionDetailSection title={t('producer.missions.logisticsTitle')} icon={Truck}>
-      {companyName ? <InfoRow label={t('producer.missions.logisticsCompanyLabel')} value={companyName} /> : null}
+      {status === 'ASSIGNED' && !driverName ? (
+        <Text style={styles.hintBanner}>{t('producer.missions.assignedToCarrierHint')}</Text>
+      ) : null}
+
+      {hasPartner ? (
+        <View style={styles.row}>
+          <View style={styles.labelRow}>
+            <Building2 size={16} color={enterpriseColors.gray600} strokeWidth={1.5} />
+            <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missions.logisticsCompanyLabel')}</Text>
+          </View>
+          <Text style={styles.value}>{partnerLabel}</Text>
+        </View>
+      ) : (
+        <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missions.carrierNotAssigned')}</Text>
+      )}
+
       {driverName ? (
         <View style={styles.row}>
           <View style={styles.labelRow}>
@@ -62,14 +71,15 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
             </TouchableOpacity>
           ) : null}
         </View>
-      ) : (
-        <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missions.driverNotAssigned')}</Text>
-      )}
+      ) : hasPartner ? (
+        <Text style={[styles.pendingDriver, { marginTop: 4 }]}>{t('producer.missions.driverNotAssigned')}</Text>
+      ) : null}
+
       {vehicleLine ? (
         <InfoRow label={t('producer.missions.vehicleLabel')} value={vehicleLine} />
-      ) : (
+      ) : hasPartner || driverName ? (
         <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 8 }]}>{t('producer.missions.vehicleNotAssigned')}</Text>
-      )}
+      ) : null}
       {vehicle?.licensePlate ? (
         <InfoRow label={t('producer.missions.licensePlateLabel')} value={String(vehicle.licensePlate)} />
       ) : null}
@@ -78,6 +88,21 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
 }
 
 const styles = StyleSheet.create({
+  hintBanner: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: enterpriseColors.gray700,
+    backgroundColor: enterpriseColors.primaryTint,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 14,
+  },
+  pendingDriver: {
+    fontSize: 15,
+    lineHeight: 21,
+    color: enterpriseColors.gray600,
+    marginBottom: 8,
+  },
   row: {
     marginBottom: 12,
   },

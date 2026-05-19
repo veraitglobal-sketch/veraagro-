@@ -1,6 +1,7 @@
 import { LogBox } from 'react-native';
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
+import { authScreenNoSwipeBack, bioVeraStackScreenOptions } from '../lib/stack-navigation-options';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../contexts/AuthContext';
 import { CartProvider } from '../hooks/useCart';
@@ -39,11 +40,11 @@ export default function RootLayout() {
     <AuthProvider>
     <CartProvider>
       <Stack
-        screenOptions={{
+        screenOptions={bioVeraStackScreenOptions({
           headerStyle: stackHeaderStyle as object,
           headerTintColor: theme.colors.text.primary,
           headerTitleStyle: stackHeaderTitleStyle as object,
-        }}
+        })}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ headerShown: false }} />
@@ -57,16 +58,16 @@ export default function RootLayout() {
         {/* Auth screens: no edge-swipe "back" — sign out only via Logout. */}
         <Stack.Screen
           name="login"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false, ...authScreenNoSwipeBack }}
         />
         <Stack.Screen
           name="partner-login"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false, ...authScreenNoSwipeBack }}
         />
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen
           name="buyer-login"
-          options={{ headerShown: false, gestureEnabled: false, fullScreenGestureEnabled: false }}
+          options={{ headerShown: false, ...authScreenNoSwipeBack }}
         />
         <Stack.Screen name="buyer-register" options={{ headerShown: false }} />
         {/* Authenticated hubs: allow native edge-swipe and stack gestures (inner navigators handle pop). */}

@@ -40,7 +40,7 @@ function missionsListHref(path: string, context?: NotificationActionContext): Hr
   const webLogisticsFleet =
     path.includes('logistics-partner') || path.includes('fleet-partner');
   if (webLogisticsFleet || isLogisticsStack(R)) {
-    return '/(logistics)/' as Href;
+    return '/(logistics)/(tabs)' as Href;
   }
   return '/(producer)/missions' as Href;
 }
@@ -147,7 +147,7 @@ export function resolveNotificationActionHref(
     if (lm?.[1]) {
       return `/(logistics)/mission/${encodeURIComponent(lm[1])}` as Href;
     }
-    return '/(logistics)/' as Href;
+    return '/(logistics)/(tabs)' as Href;
   }
 
   const batchMatch = path.match(/^\/batches\/([^/]+)\/?$/);
@@ -185,7 +185,7 @@ export function resolveNotificationActionHref(
   if (deliveryDetail) {
     const R = rolesUpperSet(context?.roles);
     if (isLogisticsStack(R)) {
-      return '/(logistics)/' as Href;
+      return '/(logistics)/(tabs)' as Href;
     }
     if (R.has('BUYER') || R.has('CUSTOMER')) {
       return '/(buyer)/orders' as Href;
@@ -196,7 +196,7 @@ export function resolveNotificationActionHref(
   if (path === '/orders') {
     const R = rolesUpperSet(context?.roles);
     if (isLogisticsStack(R) && !isProducerStack(R) && !(R.has('BUYER') || R.has('CUSTOMER'))) {
-      return '/(logistics)/' as Href;
+      return '/(logistics)/(tabs)' as Href;
     }
     if (isProducerStack(R) || !context?.roles?.length) {
       return '/(producer)/orders' as Href;
@@ -210,7 +210,7 @@ export function resolveNotificationActionHref(
   if (/^\/deliveries\//.test(path)) {
     const R = rolesUpperSet(context?.roles);
     if (isLogisticsStack(R)) {
-      return '/(logistics)/' as Href;
+      return '/(logistics)/(tabs)' as Href;
     }
     if (R.has('BUYER') || R.has('CUSTOMER')) {
       return '/(buyer)/orders' as Href;

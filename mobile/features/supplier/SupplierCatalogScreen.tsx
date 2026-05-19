@@ -22,6 +22,10 @@ import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
 import { pickFromGallery } from '../../lib/camera-picker';
 import { SupplierStorefrontHeader } from './SupplierStorefrontHeader';
+import {
+  validateSupplierCatalogForm,
+  type SupplierCatalogFormErrors,
+} from '../../lib/supplier-shop-validation';
 
 export type CatalogItem = {
   id: string;
@@ -57,6 +61,7 @@ export default function SupplierCatalogScreen() {
     listPrice: '',
     sku: '',
   });
+  const [fieldErrors, setFieldErrors] = useState<SupplierCatalogFormErrors>({});
 
   const load = useCallback(async () => {
     try {
@@ -96,6 +101,7 @@ export default function SupplierCatalogScreen() {
 
   const resetForm = () => {
     setForm({ name: '', description: '', unit: 'bag', listPrice: '', sku: '' });
+    setFieldErrors({});
     setEditingId(null);
     setPendingImageUri(null);
   };
@@ -108,6 +114,7 @@ export default function SupplierCatalogScreen() {
   const openEdit = (it: CatalogItem) => {
     setEditingId(it.id);
     setPendingImageUri(null);
+    setFieldErrors({});
     setForm({
       name: it.name,
       description: it.description || '',
@@ -137,12 +144,9 @@ export default function SupplierCatalogScreen() {
   };
 
   const saveItem = async () => {
-    if (!form.name.trim()) return;
-    const listPrice = form.listPrice.trim() ? parseFloat(form.listPrice.replace(',', '.')) : undefined;
-    if (form.listPrice.trim() && (listPrice === undefined || Number.isNaN(listPrice))) {
-      Alert.alert(t('error'), t('supplier.store.invalidPrice'));
-      return;
-    }
+    const { valid, errors, listPrice } = validateSupplierCatalogForm(form, t);
+    setFieldErrors(errors);
+    if (!valid) return;
     setSaving(true);
     try {
       if (editingId) {
@@ -317,12 +321,16 @@ export default function SupplierCatalogScreen() {
 
             <Text style={growerUi.formLabel}>{t('supplier.store.nameLabel')}</Text>
             <TextInput
-              style={growerUi.formInput}
+              style={[growerUi.formInput, fieldErrors.name && styles.inputError]}
               value={form.name}
-              onChangeText={(v) => setForm((f) => ({ ...f, name: v }))}
+              onChangeText={(v) => {
+                setForm((f) => ({ ...f, name: v }));
+                if (fieldErrors.name) setFieldErrors((e) => ({ ...e, name: undefined }));
+              }}
               placeholder={t('supplier.store.namePlaceholder')}
               placeholderTextColor={enterpriseColors.gray600}
             />
+            {fieldErrors.name ? <Text style={styles.fieldError}>{fieldErrors.name}</Text> : null}
 
             <Text style={growerUi.formLabel}>{t('supplier.store.descLabel')}</Text>
             <TextInput
@@ -352,13 +360,17 @@ export default function SupplierCatalogScreen() {
 
             <Text style={growerUi.formLabel}>{t('supplier.store.priceLabel')}</Text>
             <TextInput
-              style={growerUi.formInput}
+              style={[growerUi.formInput, fieldErrors.listPrice && styles.inputError]}
               value={form.listPrice}
-              onChangeText={(v) => setForm((f) => ({ ...f, listPrice: v }))}
+              onChangeText={(v) => {
+                setForm((f) => ({ ...f, listPrice: v }));
+                if (fieldErrors.listPrice) setFieldErrors((e) => ({ ...e, listPrice: undefined }));
+              }}
               keyboardType="decimal-pad"
               placeholder="0.00"
               placeholderTextColor={enterpriseColors.gray600}
             />
+            {fieldErrors.listPrice ? <Text style={styles.fieldError}>{fieldErrors.listPrice}</Text> : null}
 
             <Text style={growerUi.formLabel}>{t('supplier.store.skuLabel')}</Text>
             <TextInput
@@ -381,7 +393,7 @@ export default function SupplierCatalogScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => void saveItem()}
-                disabled={saving || !form.name.trim()}
+                disabled={saving}
                 style={[enterpriseUi.authBtnPrimary, styles.saveBtn, saving && styles.saveDisabled]}
               >
                 {saving ? (
@@ -571,5 +583,14 @@ const styles = StyleSheet.create({
   },
   saveDisabled: {
     opacity: 0.5,
+  },
+  inputError: {
+    borderColor: enterpriseColors.destructive,
+  },
+  fieldError: {
+    fontSize: 13,
+    color: enterpriseColors.destructive,
+    marginTop: 4,
+    marginBottom: 8,
   },
 });

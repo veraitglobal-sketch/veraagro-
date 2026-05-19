@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Calendar, User, Clock } from 'lucide-react-native';
+import { Calendar, User, Clock, Building2 } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import type { Mission } from '../../../lib/api';
 import { isMissionCompletedSuccess } from '../../../lib/mission-status';
 import {
   formatDriverName,
   missionAssignedDriverFromApi,
+  missionLogisticsPartnerLabel,
   missionShowsDriverBlock,
 } from '../../../lib/mission-logistics';
 import { useAppLocaleTag } from '../../../lib/date-locale';
@@ -58,8 +59,10 @@ function TimelineRow({
 
 export default function TimelineBlock({ mission }: TimelineBlockProps) {
   const { t } = useTranslation();
-  const driverName = formatDriverName(missionAssignedDriverFromApi(mission as unknown as Record<string, unknown>));
-  const showDriver = missionShowsDriverBlock(mission.status) && Boolean(driverName);
+  const raw = mission as unknown as Record<string, unknown>;
+  const driverName = formatDriverName(missionAssignedDriverFromApi(raw));
+  const partnerLabel = missionLogisticsPartnerLabel(raw);
+  const showLogistics = missionShowsDriverBlock(mission.status);
   const dateLocale = useAppLocaleTag();
 
   return (
@@ -70,12 +73,27 @@ export default function TimelineBlock({ mission }: TimelineBlockProps) {
         icon={Calendar}
         detail={new Date(mission.createdAt).toLocaleDateString(dateLocale, dateFormat)}
       />
-      {showDriver ? (
+      {showLogistics && partnerLabel ? (
+        <TimelineRow
+          title={t('producer.missions.assignedToCarrier')}
+          lineColor={enterpriseColors.gray900}
+          icon={Building2}
+          detail={partnerLabel}
+        />
+      ) : null}
+      {showLogistics && driverName ? (
         <TimelineRow
           title={t('producer.missions.assignedToDriver')}
-          lineColor={enterpriseColors.gray900}
+          lineColor={enterpriseColors.primary}
           icon={User}
           detail={driverName}
+        />
+      ) : showLogistics && partnerLabel ? (
+        <TimelineRow
+          title={t('producer.missions.driverPendingTitle')}
+          lineColor={enterpriseColors.gray600}
+          icon={User}
+          detail={t('producer.missions.driverPendingDetail')}
         />
       ) : null}
       {mission.status === 'IN_TRANSIT' ? (

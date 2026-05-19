@@ -133,7 +133,15 @@
   },
   "logistics": {
     "missionsTitle": "Zadaci transporta",
-    "missionsSubtitle": "Nedodeljeni zadaci i tvoje dodele (puni admin alati su na vebu).",
+    "missionsSubtitle": "Preuzmi slobodne zadatke ili nastavi dodeljene. Za preuzimanje treba hladnjačko vozilo (slobodno).",
+    "claim": {
+      "title": "Slobodan transport",
+      "body": "Ovaj utovar još nije dodeljen. Preuzmi ga da se dodeli tvoja firma i slobodno hladnjačko vozilo.",
+      "cta": "Preuzmi misiju",
+      "vehicleHint": "Potrebno je bar jedno vozilo sa statusom Slobodno i uključenim hladnjakom (hasFrigo).",
+      "errTitle": "Nije moguće preuzeti",
+      "errFallback": "Misija nije preuzeta. Osveži listu i pokušaj ponovo."
+    },
     "signOut": "Odjavi se",
     "emptyMissions": "Još nema zadataka na ovoj listi.",
     "filterAll": "Sve",
@@ -141,6 +149,58 @@
     "filterAssigned": "Dodeljeno",
     "filterInTransit": "U transportu",
     "filterCompleted": "Završeno",
+    "tabs": {
+      "home": "Početna",
+      "missions": "Misije",
+      "profile": "Profil"
+    },
+    "hub": {
+      "title": "Transport",
+      "subtitle": "Misije, vozila, predaja — isti tok kao na web portalu za partnere.",
+      "metricPending": "Slobodne",
+      "metricActive": "Aktivne",
+      "metricFrigoFree": "Hladnjak slobodno",
+      "sectionRuns": "Vožnje",
+      "missions": "Misije",
+      "missionsDesc": "{{pending}} na čekanju · {{active}} aktivnih",
+      "notificationsUnread": "{{count}} nepročitanih",
+      "notificationsOk": "Sve pročitano",
+      "sectionFleet": "Flota",
+      "vehicles": "Vozila",
+      "vehiclesDesc": "{{count}} registrovanih · {{free}} hladnjača slobodno",
+      "drivers": "Vozači",
+      "driversDesc": "Dodela vozača na vebu; ovde lista",
+      "sectionHandover": "Predaja",
+      "loadingDesc": "Temperatura, fotografije, potpis pri utovaru",
+      "receiverDesc": "Ko je primio robu na destinaciji",
+      "sectionMore": "Nalog",
+      "profile": "Profil i podešavanja",
+      "profileDesc": "Jezik, obaveštenja, odjava"
+    },
+    "vehicles": {
+      "lead": "Za preuzimanje misije potrebno je hladnjačko vozilo.",
+      "addCta": "Dodaj vozilo",
+      "formTitle": "Novo vozilo",
+      "platePh": "Registarska oznaka",
+      "save": "Sačuvaj",
+      "empty": "Još nema vozila. Dodaj bar jedno sa hladnjakom.",
+      "frigoYes": "Hladnjača",
+      "frigoNo": "Bez hladnjaka",
+      "errTitle": "Vozilo",
+      "errPlate": "Unesi tablicu"
+    },
+    "drivers": {
+      "lead": "Osobe koje mogu biti dodeljene utovaru.",
+      "webHint": "Za dodavanje ili izmenu vozača (foto) koristi web portal (Vozači).",
+      "empty": "Još nema registrovanih vozača.",
+      "inactive": "neaktivan"
+    },
+    "loadingHandover": {
+      "link": "Predaja utovara",
+      "needTitle": "Potrebna predaja utovara",
+      "needBody": "Završi temperaturu i fotografije pre odlaska kamiona.",
+      "needCta": "Otvori predaju"
+    },
     "receiverProof": {
       "link": "Dokaz primaoca",
       "back": "Nazad",
@@ -1241,7 +1301,15 @@
       "listEmpty": "Još nema zadataka na ovoj listi.",
       "notFound": "Zadatak nije pronađen",
       "yourPayout": "Tvoja isplata",
-      "assignedToDriver": "Dodeljeno vozaču",
+      "assignedToDriver": "Vozač za preuzimanje",
+      "assignedToCarrier": "Dodeljeno prevozniku",
+      "assignedToCarrierHint": "Status „Dodeljeno” znači da je prevoznik preuzeo vožnju. Vozač za utovar bira prevoznik — čim ga imenuje, ime će se pojaviti ovde.",
+      "assignmentLineDriver": "Vozač: {{name}}",
+      "assignmentLineCarrier": "Prevoznik: {{name}} (vozač još nije imenovan)",
+      "assignmentLinePending": "Čeka dodelu prevoznika",
+      "carrierNotAssigned": "Prevoznik još nije dodeljen.",
+      "driverPendingTitle": "Vozač za utovar",
+      "driverPendingDetail": "Prevoznik još nije imenovao vozača — obavestiće te kad bude spremno.",
       "logisticsTitle": "Prevoznik i vozilo",
       "logisticsCompanyLabel": "Kontakt prevoznika",
       "driverLabel": "Vozač (preuzimanje)",
@@ -1947,6 +2015,16 @@
       "invalidPrice": "Cena mora biti broj.",
       "imageFailed": "Fotografija nije sačuvana.",
       "dashboardHint": "Proizvodi sa slikama za proizvođače"
+    },
+    "shop": {
+      "validation": {
+        "nameRequired": "Unesite naziv proizvoda.",
+        "nameTooLong": "Naziv može imati najviše 200 karaktera.",
+        "descriptionTooLong": "Opis može imati najviše 2000 karaktera.",
+        "unitTooLong": "Jedinica može imati najviše 32 karaktera.",
+        "priceInvalid": "Cena mora biti pozitivan broj.",
+        "skuTooLong": "SKU može imati najviše 64 karaktera."
+      }
     }
   },
   "error": "Greška",

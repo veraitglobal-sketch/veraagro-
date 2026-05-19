@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, MapPin, Camera, FlaskConical, Clock } from 'lucide-react-native';
-import { theme } from '../../lib/theme';
+import { theme } from '../../../lib/theme';
 
 /**
  * Bio Vera Standard Screen

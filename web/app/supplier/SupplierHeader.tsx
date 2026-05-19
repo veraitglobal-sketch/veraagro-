@@ -13,7 +13,7 @@ export default function SupplierHeader() {
     () =>
       [
         { href: '/supplier/dashboard', label: t('supplier.nav.home') },
-        { href: '/supplier/catalog', label: t('supplier.nav.catalog') },
+        { href: '/supplier/catalog', label: t('supplier.nav.shop', { defaultValue: t('supplier.nav.catalog') }) },
         { href: '/supplier/orders', label: t('supplier.nav.orders') },
         { href: '/supplier/messages', label: t('supplier.nav.messages') },
         { href: '/supplier/package-badges', label: t('supplier.nav.badges') },

@@ -45,7 +45,7 @@ export function getPostLoginPath(roles: string[], options?: { partnerEntry?: Par
     return '/(buyer)/shop';
   }
   if (roles.includes('LOGISTICS_PARTNER')) {
-    return '/(logistics)';
+    return '/(logistics)/(tabs)';
   }
   return null;
 }

@@ -1,6 +1,7 @@
-import { View, Platform } from 'react-native';
+import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import i18n from '../../i18n/config';
+import { bioVeraStackScreenOptions } from '../../lib/stack-navigation-options';
 import { AuthGuard } from '../../components/AuthGuard';
 import { NetworkProvider } from '../../contexts/NetworkContext';
 import { ProducerOfflineStrip } from '../../components/ProducerOfflineStrip';
@@ -20,13 +21,7 @@ export default function ProducerLayout() {
         <GrowerReconnectAutoSync />
         <ProducerOfflineStrip />
       <View style={{ flex: 1 }}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          gestureEnabled: true,
-          ...(Platform.OS === 'ios' ? { fullScreenGestureEnabled: true } : {}),
-        }}
-      >
+      <Stack screenOptions={bioVeraStackScreenOptions({ headerShown: false })}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="scanner"

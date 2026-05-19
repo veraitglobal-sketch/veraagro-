@@ -4,6 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { b2bSupplierPortalAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
+import {
+  validateSupplierBarcodeForm,
+  validateSupplierCatalogForm,
+  type SupplierBarcodeFormErrors,
+  type SupplierCatalogFormErrors,
+} from '@/lib/supplier-shop-validation';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { ImageUp, Plus, Pencil, Trash2, X, Barcode, Package } from 'lucide-react';
@@ -30,6 +36,9 @@ export default function SupplierCatalogPage() {
     listPrice: '',
     sku: '',
   });
+  const [catalogErrors, setCatalogErrors] = useState<SupplierCatalogFormErrors>({});
+  const [barcodeErrors, setBarcodeErrors] = useState<SupplierBarcodeFormErrors>({});
+  const [tab, setTab] = useState<'products' | 'barcodes'>('products');
 
   const load = useCallback(async () => {
     setErr(null);
@@ -72,22 +81,19 @@ export default function SupplierCatalogPage() {
 
   const resetForm = () => {
     setForm({ name: '', description: '', unit: 'bag', listPrice: '', sku: '' });
+    setCatalogErrors({});
     setEditingId(null);
     setImageFile(null);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
+    const { valid, errors, listPrice } = validateSupplierCatalogForm(form, t);
+    setCatalogErrors(errors);
+    if (!valid) return;
     setSaving(true);
     setErr(null);
     try {
-      const listPrice = form.listPrice.trim() ? parseFloat(form.listPrice) : undefined;
-      if (form.listPrice.trim() && Number.isNaN(listPrice!)) {
-        setErr('List price must be a number');
-        setSaving(false);
-        return;
-      }
       if (editingId) {
         await b2bSupplierPortalAPI.updateCatalogItem(editingId, {
           name: form.name.trim(),
@@ -120,6 +126,8 @@ export default function SupplierCatalogPage() {
   const startEdit = (it: Item) => {
     setEditingId(it.id);
     setImageFile(null);
+    setCatalogErrors({});
+    setTab('products');
     setForm({
       name: it.name,
       description: it.description || '',
@@ -167,7 +175,7 @@ export default function SupplierCatalogPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm('Remove this line from your catalog?')) return;
+    if (!confirm(t('supplier.shop.confirmDeleteProduct'))) return;
     setErr(null);
     try {
       await b2bSupplierPortalAPI.deleteCatalogItem(id);
@@ -180,7 +188,9 @@ export default function SupplierCatalogPage() {
 
   const onRegisterBarcode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!barForm.barcode.trim()) return;
+    const { valid, errors } = validateSupplierBarcodeForm(barForm, t);
+    setBarcodeErrors(errors);
+    if (!valid) return;
     setBarSaving(true);
     setErr(null);
     try {
@@ -191,6 +201,7 @@ export default function SupplierCatalogPage() {
         note: barForm.note.trim() || undefined,
       });
       setBarForm({ barcode: '', catalogItemId: '', lotNumber: '', note: '' });
+      setBarcodeErrors({});
       await load();
     } catch (e: unknown) {
       setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
@@ -200,7 +211,7 @@ export default function SupplierCatalogPage() {
   };
 
   const markBarcodeSold = async (id: string) => {
-    if (!confirm('Mark this unit as SOLD? Growers can still verify the barcode in the system.')) return;
+    if (!confirm(t('supplier.shop.confirmMarkSold'))) return;
     setBarSaving(true);
     setErr(null);
     try {
@@ -214,7 +225,7 @@ export default function SupplierCatalogPage() {
   };
 
   const voidBarcode = async (id: string) => {
-    if (!confirm('Void this barcode? It will no longer be accepted in field apps.')) return;
+    if (!confirm(t('supplier.shop.confirmVoidBarcode'))) return;
     setBarSaving(true);
     setErr(null);
     try {
@@ -233,34 +244,58 @@ export default function SupplierCatalogPage() {
       redirectTo="/login?returnTo=%2Fsupplier%2Fcatalog"
     >
       <div className="max-w-3xl">
-        <h1 className="text-2xl font-light text-gray-900">Store catalog</h1>
-        <p className="text-sm text-gray-600 font-light mt-1 mb-6">
-          Reference products and prices for growers (shown on your public store profile). Grower orders can still
-          use free text — this list helps everyone align on names and units.
-        </p>
+        <h1 className="text-2xl font-light text-gray-900">{t('supplier.shop.pageTitle')}</h1>
+        <p className="text-sm text-gray-600 font-light mt-1 mb-4">{t('supplier.shop.pageIntro')}</p>
 
-        <div className="rounded-lg border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-4 sm:p-5 mb-8">
+        <div
+          role="tablist"
+          className="flex flex-wrap gap-1 mb-6 p-1 rounded-xl border border-gray-200 bg-gray-50"
+          aria-label={t('supplier.shop.tabsLabel')}
+        >
+          {(['products', 'barcodes'] as const).map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={tab === key}
+              onClick={() => setTab(key)}
+              className={`min-h-[48px] flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-colors ${
+                tab === key
+                  ? 'bg-white text-[#2D5A27] font-medium shadow-sm border border-gray-200'
+                  : 'text-gray-600 hover:text-[#2D5A27]'
+              }`}
+            >
+              {key === 'products' ? t('supplier.shop.tabProducts') : t('supplier.shop.tabBarcodes')}
+            </button>
+          ))}
+        </div>
+
+        {tab === 'barcodes' ? (
+        <div className="rounded-xl border border-[#2D5A27]/20 bg-[#2D5A27]/5 p-5 sm:p-6 mb-8">
           <h2 className="text-sm font-medium text-gray-900 mb-1 flex items-center gap-2">
             <Barcode className="h-4 w-4 text-[#2D5A27]" />
-            Physical unit barcodes
+            {t('supplier.shop.barcodesTitle')}
           </h2>
-          <p className="text-xs text-gray-600 font-light mb-4">
-            When you <strong>receive</strong> stock, register each scannable code (EAN, Code 128, etc.) — it becomes
-            unique in Bio Vera. When you <strong>sell</strong>, mark the row as SOLD (optional: link a grower or order
-            later from the API). Grower scanners can then resolve your codes even if the product is not on the global
-            whitelist.
-          </p>
+          <p className="text-xs text-gray-600 font-light mb-4">{t('supplier.shop.barcodesIntro')}</p>
           <form onSubmit={onRegisterBarcode} className="space-y-3 mb-4">
             <div className="grid sm:grid-cols-2 gap-3">
               <label className="block sm:col-span-2 text-xs text-gray-600">
-                Barcode (from label) *
+                {t('supplier.shop.barcodeLabel')} *
                 <input
-                  className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+                  className={`mt-0.5 w-full rounded-lg border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 ${
+                    barcodeErrors.barcode ? 'border-red-400' : 'border-gray-300 focus:border-[#2D5A27]'
+                  }`}
                   value={barForm.barcode}
-                  onChange={(e) => setBarForm((f) => ({ ...f, barcode: e.target.value }))}
-                  placeholder="Scan or type — must be unique"
-                  required
+                  onChange={(e) => {
+                    setBarForm((f) => ({ ...f, barcode: e.target.value }));
+                    if (barcodeErrors.barcode) setBarcodeErrors((er) => ({ ...er, barcode: undefined }));
+                  }}
+                  placeholder={t('supplier.shop.barcodePlaceholder')}
+                  aria-invalid={Boolean(barcodeErrors.barcode)}
                 />
+                {barcodeErrors.barcode ? (
+                  <p className="mt-1 text-xs text-red-600">{barcodeErrors.barcode}</p>
+                ) : null}
               </label>
               <label className="block text-xs text-gray-600 sm:col-span-2">
                 <span className="inline-flex items-center gap-1">
@@ -306,7 +341,7 @@ export default function SupplierCatalogPage() {
           </form>
           {barcodes.length > 0 && (
             <div className="border-t border-[#2D5A27]/20 pt-3">
-              <p className="text-xs font-medium text-gray-700 mb-2">Recent units</p>
+              <p className="text-xs font-medium text-gray-700 mb-2">{t('supplier.shop.recentUnits')}</p>
               <ul className="space-y-2 max-h-60 overflow-y-auto text-xs">
                 {barcodes.map((b) => (
                   <li
@@ -348,9 +383,13 @@ export default function SupplierCatalogPage() {
           )}
         </div>
 
-        {err && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
-        )}
+        ) : null}
+
+        {tab === 'products' ? (
+        <>
+        {err ? (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{err}</div>
+        ) : null}
 
         <form
           id="supplier-catalog-line-form"
@@ -359,18 +398,24 @@ export default function SupplierCatalogPage() {
         >
           <h2 className="text-sm font-medium text-gray-800 mb-3 flex items-center gap-2">
             <Plus className="h-4 w-4 text-[#2D5A27]" />
-            {editingId ? 'Edit line' : 'Add product line'}
+            {editingId ? t('supplier.shop.editProduct') : t('supplier.shop.addProduct')}
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <label className="block sm:col-span-2 text-xs text-gray-600">
-              Name *
+              {t('supplier.shop.nameLabel')} *
               <input
-                className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className={`mt-0.5 w-full rounded-lg border px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 ${
+                  catalogErrors.name ? 'border-red-400' : 'border-gray-300 focus:border-[#2D5A27]'
+                }`}
                 value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                required
-                placeholder="e.g. Organic tomato seed – variety X"
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, name: e.target.value }));
+                  if (catalogErrors.name) setCatalogErrors((er) => ({ ...er, name: undefined }));
+                }}
+                placeholder={t('supplier.shop.namePlaceholder')}
+                aria-invalid={Boolean(catalogErrors.name)}
               />
+              {catalogErrors.name ? <p className="mt-1 text-xs text-red-600">{catalogErrors.name}</p> : null}
             </label>
             <label className="block sm:col-span-2 text-xs text-gray-600">
               Description
@@ -544,6 +589,8 @@ export default function SupplierCatalogPage() {
             ))}
           </ul>
         )}
+        </>
+        ) : null}
       </div>
     </AuthGuard>
   );

@@ -14,6 +14,9 @@ Stranica: **`/sr/grower/mobile-app-guide`** (javno) · **`/grower/app-guide`** (
 
 ## Snimci ekrana
 
+**Format:** pun ekran sa telefona (PNG/JPEG), **bez** ugrađenog mockup okvira — sajt dodaje ujednačen okvir u `GrowerAppGuideDeviceFrame`.  
+Rezolucija: **1170×2532** (@3× iPhone). Na Vercel-u koristite mala slova u imenu fajla (`1.png`, ne `1.PNG`).
+
 | Fajl | Ekran |
 |------|--------|
 | `1.png` | Welcome |
