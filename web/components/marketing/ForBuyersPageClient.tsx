@@ -24,6 +24,7 @@ import {
 import HarvestCalendar from '@/components/HarvestCalendar';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import { marketingHeroLead, marketingHeroTitle } from '@/lib/marketing-classes';
 
 type Step = { title: string; body: string };
 type Card = { title: string; desc: string };
@@ -125,10 +126,10 @@ export default function ForBuyersPageClient() {
       <div className="pt-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <section className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4 leading-tight">
+            <h1 className={marketingHeroTitle}>
               {t('forBuyersPage.title')}
             </h1>
-            <p className="text-lg text-gray-600 mb-6 max-w-2xl leading-relaxed">
+            <p className={`${marketingHeroLead} mb-6 max-w-2xl`}>
               {t('forBuyersPage.heroLead')}
             </p>
 

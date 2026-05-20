@@ -7,6 +7,8 @@ import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import MarketingHero from '@/components/marketing/MarketingHero';
+import { marketingSectionTitle, marketingSectionTitleMb4 } from '@/lib/marketing-classes';
 import { growersAPI, submitApplicationForm } from '@/lib/api';
 
 type ValueOrProtocolItem = { title: string; body: string };
@@ -263,10 +265,12 @@ export default function GrowersPageClient() {
         </div>
       </header>
 
-      <section className="pt-24 pb-24 px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">{t('growersPage.title')}</h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">{t('growersPage.heroLead')}</p>
+      <MarketingHero
+        eyebrow={t('growersPage.heroEyebrow', { defaultValue: '' }) || undefined}
+        title={t('growersPage.title')}
+        lead={t('growersPage.heroLead')}
+        sectionClassName="pb-20"
+      >
           <button
             type="button"
             onClick={async () => {
@@ -282,12 +286,11 @@ export default function GrowersPageClient() {
             <Download className="w-4 h-4" />
             {t('growersPage.downloadProspectCta')}
           </button>
-        </div>
-      </section>
+      </MarketingHero>
 
       <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-xl font-light text-gray-900 mb-4">{t('growersPage.whoCanApplyTitle')}</h2>
+          <h2 className={marketingSectionTitleMb4}>{t('growersPage.whoCanApplyTitle')}</h2>
           <p className="text-sm text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">{t('growersPage.whoCanApplyLead')}</p>
           {countriesLine ? (
             <p className="text-sm text-gray-600 font-light leading-relaxed mt-6">{countriesLine}</p>
@@ -298,7 +301,7 @@ export default function GrowersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('growersPage.valuePropositionTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('growersPage.valuePropositionTitle')}</h2>
             {valuePropositionLead ? (
               <p className="text-base text-gray-600 font-light">{valuePropositionLead}</p>
             ) : null}
@@ -318,7 +321,7 @@ export default function GrowersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('growersPage.protocolTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('growersPage.protocolTitle')}</h2>
             {protocolLead ? <p className="text-base text-gray-600 font-light">{protocolLead}</p> : null}
           </div>
 
@@ -336,7 +339,7 @@ export default function GrowersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('growersPage.groupCertTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('growersPage.groupCertTitle')}</h2>
             {groupCertSubtitle ? (
               <p className="text-base text-gray-600 font-light mb-6">{groupCertSubtitle}</p>
             ) : null}
@@ -407,7 +410,7 @@ export default function GrowersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('growersPage.resourcesTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('growersPage.resourcesTitle')}</h2>
             <p className="text-base text-gray-600 font-light">{t('growersPage.resourcesLead')}</p>
           </div>
 
@@ -470,7 +473,7 @@ export default function GrowersPageClient() {
       <section id="application" className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('growersPage.applicationTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('growersPage.applicationTitle')}</h2>
             <p className="text-base text-gray-600 font-light">{t('growersPage.applicationLead')}</p>
           </div>
 

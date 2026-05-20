@@ -18,6 +18,8 @@ import type { SiteLocale } from "@/i18n/config";
 import { useLocalizedHref, useLocaleFromPath } from "@/hooks/useLocalizedHref";
 import { bioVeraFreshAPI } from "@/lib/api";
 import Footer from "@/components/Footer";
+import MarketingHero from "@/components/marketing/MarketingHero";
+import { marketingSectionTitle } from "@/lib/marketing-classes";
 
 function isFranchiseBlueprintList(x: unknown): x is { title: string; body: string }[] {
   return (
@@ -171,8 +173,15 @@ export default function BioVeraFreshPageClient({
         .biovera-fresh-root header.bf-cover {
           display: none;
         }
+        /* Full programme (14 chapters): PDF / print only — not shown on screen */
+        .biovera-fresh-root .bf-pdf-block {
+          display: none;
+        }
         @media print {
           .biovera-fresh-root header.bf-cover {
+            display: block !important;
+          }
+          .biovera-fresh-root .bf-pdf-block {
             display: block !important;
           }
         }
@@ -239,11 +248,12 @@ export default function BioVeraFreshPageClient({
       </a>
 
       {/* Hero — same rhythm as growers (`growers/page.tsx`) */}
-      <section className="bf-no-print pt-24 pb-20 px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-4 leading-tight">{t("bioVeraFresh.coverTitle")}</h1>
-          <p className="text-lg text-[#2D5A27] mb-6 max-w-2xl mx-auto leading-relaxed font-light">{t("bioVeraFresh.coverEyebrow")}</p>
-          <p className="text-base text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">{t("bioVeraFresh.introNote")}</p>
+      <MarketingHero
+        eyebrow={t("bioVeraFresh.coverEyebrow")}
+        title={t("bioVeraFresh.coverTitle")}
+        lead={t("bioVeraFresh.introNote")}
+        sectionClassName="bf-no-print pb-16"
+      >
           <button
             type="button"
             disabled={pdfDownloading}
@@ -257,7 +267,7 @@ export default function BioVeraFreshPageClient({
             )}
             {t("bioVeraFresh.downloadProspectCta")}
           </button>
-          {showToolbar ? (
+        {showToolbar ? (
           <div
             className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium"
             role="region"
@@ -286,15 +296,14 @@ export default function BioVeraFreshPageClient({
             </button>
             ) : null}
           </div>
-          ) : null}
-          {pdfHint ? (
-            <p className="mt-6 text-xs text-gray-500 font-light max-w-xl mx-auto leading-snug">{pdfHint}</p>
-          ) : null}
-          {prospectNote ? (
-            <p className="mt-3 text-xs text-gray-500 font-light max-w-xl mx-auto leading-relaxed">{prospectNote}</p>
-          ) : null}
-        </div>
-      </section>
+        ) : null}
+        {pdfHint ? (
+          <p className="mt-6 text-xs text-gray-500 font-light max-w-xl mx-auto leading-snug">{pdfHint}</p>
+        ) : null}
+        {prospectNote ? (
+          <p className="mt-3 text-xs text-gray-500 font-light max-w-xl mx-auto leading-relaxed">{prospectNote}</p>
+        ) : null}
+      </MarketingHero>
 
       <main
         id="biovera-fresh-document"
@@ -318,12 +327,12 @@ export default function BioVeraFreshPageClient({
           </p>
         </header>
 
-        {/* Programme overview — same grid + dividers as growers “protocol” block */}
-        <section className="py-16 px-6 lg:px-8 border-t border-gray-200 print:py-6 print:border-gray-300">
+        {/* Short overview for the web — not included in print/PDF brochure */}
+        <section className="bf-no-print py-16 px-6 lg:px-8 border-t border-gray-200">
           <div className="max-w-6xl mx-auto print:max-w-none">
             {contentsTitle ? (
             <div className="text-center mb-12 bf-no-print">
-              <h2 className="text-2xl font-light text-gray-900 mb-3">{contentsTitle}</h2>
+              <h2 className={marketingSectionTitle}>{contentsTitle}</h2>
             </div>
             ) : null}
             <div className="grid md:grid-cols-2 gap-8 print:grid-cols-1 print:gap-6">
@@ -343,7 +352,7 @@ export default function BioVeraFreshPageClient({
         {/* Partner CTA — growers-style centered block */}
         <section className="bf-no-print py-16 px-6 lg:px-8 border-t border-gray-200">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.ctaTitle")}</h2>
+            <h2 className={marketingSectionTitle}>{t("bioVeraFresh.ctaTitle")}</h2>
             <p className="text-base text-gray-600 font-light mb-8">{t("bioVeraFresh.ctaBody")}</p>
             <Link
               href={loc("/contact")}
@@ -354,21 +363,19 @@ export default function BioVeraFreshPageClient({
           </div>
         </section>
 
-        {/* Full programme (14 chapters) — on screen and in print */}
-        <section className="bf-pdf-block border-t border-gray-200 py-16 px-6 lg:px-8 print:py-8 print:px-10">
-          <div className="max-w-6xl mx-auto print:max-w-none">
+        {/* Full brochure — print / Save as PDF / server PDF only (hidden on screen) */}
+        <div className="bf-pdf-block border-t border-gray-200 px-6 py-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
           <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
           <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
-          <div className="mt-8 space-y-10 print:space-y-6">
+          <div className="mt-8 space-y-8 print:space-y-6">
             {pdfSections.map((s) => (
-              <section key={s.title} className="bf-body border-b border-gray-100 pb-10 last:border-0 print:border-0 print:pb-6">
-                <h3 className="bf-heading text-lg font-light text-gray-900 print:text-[11pt] print:font-semibold">{s.title}</h3>
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-gray-600 font-light print:text-[10.5pt] print:text-gray-700 print:font-normal">{s.body}</p>
+              <section key={s.title} className="bf-body">
+                <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
+                <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">{s.body}</p>
               </section>
             ))}
           </div>
-          </div>
-        </section>
+        </div>
       </main>
 
       <div className="bf-no-print bg-white">
@@ -376,7 +383,7 @@ export default function BioVeraFreshPageClient({
         <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
+              <h2 className={marketingSectionTitle}>{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
               <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
                 {t("bioVeraFresh.franchiseBlueprintLead")}
               </p>
@@ -410,7 +417,7 @@ export default function BioVeraFreshPageClient({
         <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-3">{t("bioVeraFresh.resourcesTitle")}</h2>
+              <h2 className={marketingSectionTitle}>{t("bioVeraFresh.resourcesTitle")}</h2>
               <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
                 {t("bioVeraFresh.resourcesLead")}
               </p>

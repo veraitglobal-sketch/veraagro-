@@ -118,7 +118,7 @@ export default function HomePageClient({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl !font-light text-gray-900 mb-4 md:mb-6 leading-tight tracking-tight">
+            <h1 className="text-2xl sm:text-[1.75rem] md:text-3xl lg:text-4xl !font-light text-gray-900 mb-4 md:mb-6 leading-snug tracking-tight">
               {heroUsesSplitTitle ? (
                 <>
                   {heroTitle1}

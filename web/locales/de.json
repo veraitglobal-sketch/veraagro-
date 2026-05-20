@@ -2061,7 +2061,7 @@
   "growersPage": {
     "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, EU-Marktzugang",
     "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in der EU und dem Westlichen Balkan.",
-    "title": "Programm für Erzeuger — Garantierte Konditionen, Zugang zum EU-Markt",
+    "title": "Programm für Erzeuger",
     "heroLead": "Werden Sie Teil eines Netzwerks zertifizierter Erzeuger. Bio Vera sichert Qualitätsstandards, Gruppenzertifizierung GlobalG.A.P., Logistikkoordination und Zugang zu europäischen Abnehmern — ohne Zertifizierungskosten für den Erzeuger.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
@@ -2231,12 +2231,13 @@
         "id": "Blueberry",
         "label": "Heidelbeere"
       }
-    ]
+    ],
+    "heroEyebrow": "Bio Vera · Erzeuger"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Obst & Gemüse",
     "metaDescription": "Werden Sie Bio Vera Transportpartner: regelmäßige Kühltransporte, Routenoptimierung, sofortige Auszahlung. Kleine Flotten, große Speditionen und Einzelfahrer.",
-    "title": "Frischelogistik — Kühltransporte vom Erzeuger bis zum Einzelhandel",
+    "title": "Logistik-Partnerprogramm",
     "heroLead": "Werden Sie vertraglich gebundener Bio Vera Transportpartner in unserer Kühlkette. Regelmäßige Einsätze, optimierte Routen, sofortige Auszahlung nach Lieferung.\n\nKühleinheit 0°C bis +12°C. Bio Vera Sensoren für Echtzeit-Temperatur und GPS. Kleine Flotten, Großspeditionen und Einzelfahrer willkommen.\n\nRoutenoptimierung minimiert Leerkilometer. Rücktransporte liefern Saatgut und Düngemittel an Lieferanten. Langfristige Verträge mit stabilem Volumen.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
@@ -2363,7 +2364,8 @@
     "acceptTrackingDesc": "Mit dem Häkchen bestätigen Sie die Installation und Wartung von Bio Vera Sensoren für Temperatur und GPS auf allen Fahrzeugen für Bio Vera-Lieferungen.",
     "submitApplication": "Bewerbung einreichen",
     "submitting": "Wird gesendet …",
-    "submitError": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren."
+    "submitError": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren.",
+    "heroEyebrow": "Bio Vera · Logistik"
   },
   "productsPage": {
     "redirecting": "Weiterleitung…"

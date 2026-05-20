@@ -1,9 +1,10 @@
 {
   "hero": {
-    "title": "Programa de socios proveedores — Cadena de suministro integrada, demanda garantizada",
+    "title": "Programa para proveedores",
     "subtitle": "Distribuya insumos certificados — semillas, fertilizantes y envases — a través de la red de productores Bio Vera en su región. Demanda garantizada, estructura de precios fija y logística integrada.",
     "downloadPdf": "Descargar prospecto PDF",
-    "downloadFail": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo."
+    "downloadFail": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
+    "eyebrow": "Bio Vera · Proveedores"
   },
   "whoApply": {
     "title": "¿Quién debería aplicar?",

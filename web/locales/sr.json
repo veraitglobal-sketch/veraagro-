@@ -3495,7 +3495,7 @@
     "required": "*"
   },
   "growersPage": {
-    "title": "Program za Proizvođače — Garantovani Uslovi, Pristup EU Tržištu",
+    "title": "Program za proizvođače",
     "heroLead": "Pridružite se mreži sertifikovanih proizvođača. Bio Vera osigurava standarde kvaliteta, GlobalG.A.P. grupnu sertifikaciju, logističku koordinaciju i pristup evropskim kupcima — bez troškova sertifikacije za proizvođača.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
@@ -3667,10 +3667,11 @@
       }
     ],
     "metaTitle": "Program za Proizvođače | Bio Vera — Sertifikacija, Garantovani Uslovi, EU Tržišni Pristup",
-    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za uzgajivače u EU i na Zapadnom Balkanu."
+    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za uzgajivače u EU i na Zapadnom Balkanu.",
+    "heroEyebrow": "Bio Vera · Proizvođači"
   },
   "logisticsPartnerPage": {
-    "title": "Hladnjača transport — redovne ture od njive do EU maloprodaje",
+    "title": "Partner za hladni lanac",
     "heroLead": "Postanite ugovoreni Bio Vera prevoznik u našem hladnom lancu. Redovne misije, optimizovane rute, brza isplata. Isti standardi sledljivosti koje prezentujemo našim kupcima važe i za logistiku.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
@@ -3799,7 +3800,8 @@
     "submitting": "Slanje…",
     "submitError": "Slanje nije uspelo. Pokušajte ponovo ili pišite na info@biovera.app",
     "metaTitle": "Hladnjača Transport Srbija EU | Bio Vera — Logistički Partneri",
-    "metaDescription": "Postanite Bio Vera prevoznik: redovne ture hladnjacama, optimizovane rute, isplata odmah po isporuci. Mali vozni parkovi, velike kompanije i nezavisni vozači."
+    "metaDescription": "Postanite Bio Vera prevoznik: redovne ture hladnjacama, optimizovane rute, isplata odmah po isporuci. Mali vozni parkovi, velike kompanije i nezavisni vozači.",
+    "heroEyebrow": "Bio Vera · Logistika"
   },
   "productsPage": {
     "redirecting": "Preusmeravanje…"

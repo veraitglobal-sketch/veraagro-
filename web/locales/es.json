@@ -2096,7 +2096,7 @@
   "growersPage": {
     "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, acceso al mercado UE",
     "metaDescription": "Programa para productores: condiciones garantizadas, certificación grupal GlobalG.A.P. IFA v6 gratuita, pago en 48 h, logística coordinada y acceso al mercado UE. Abierto a productores de la UE y los Balcanes Occidentales.",
-    "title": "Programa para productores — Condiciones garantizadas, acceso al mercado UE",
+    "title": "Programa para productores",
     "heroLead": "Únase a una red de productores certificados. Bio Vera garantiza estándares de calidad, certificación grupal GlobalG.A.P., coordinación logística y acceso a compradores europeos — sin coste de certificación para el productor.",
     "downloadProspectCta": "Descargar prospecto PDF",
     "downloadProspectError": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
@@ -2277,10 +2277,11 @@
         "id": "Arándano",
         "label": "Arándano"
       }
-    ]
+    ],
+    "heroEyebrow": "Bio Vera · Productores"
   },
   "logisticsPartnerPage": {
-    "title": "Para logística",
+    "title": "Programa de logística",
     "heroLead": "Únase a la red confiable de socios de transporte de Bio Vera. Abierto a conductores independientes, furgonetas pequeñas, camiones medianos y grandes empresas de transporte. Entregue productos orgánicos con trazabilidad completa y obtenga contratos estables y a largo plazo.",
     "downloadProspectCta": "Descargar prospecto PDF",
     "downloadProspectError": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
@@ -2417,7 +2418,8 @@
     "acceptTrackingDesc": "Al marcar esta casilla, acepta instalar y mantener sensores Bio Vera para monitoreo de temperatura y seguimiento GPS en todos los vehículos utilizados para las entregas de Bio Vera.",
     "submitApplication": "Enviar solicitud",
     "submitting": "Sumisión…",
-    "submitError": "No se pudo enviar. Por favor inténtalo de nuevo o contacta con info@biovera.app"
+    "submitError": "No se pudo enviar. Por favor inténtalo de nuevo o contacta con info@biovera.app",
+    "heroEyebrow": "Bio Vera · Logística"
   },
   "productsPage": {
     "redirecting": "Redirigiendo…"

@@ -2,10 +2,11 @@
   "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
   "metaDescription": "Supplier partnership programme: distribute certified inputs through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure, integrated logistics.",
   "hero": {
-    "title": "Supplier Partnership Programme — Integrated Supply Chain, Guaranteed Demand",
+    "title": "Supplier partnership programme",
     "subtitle": "Distribute certified inputs — seeds, fertilizers and packaging — through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure and integrated logistics.",
     "downloadPdf": "Download Prospect PDF",
-    "downloadFail": "Failed to download prospect. Please try again."
+    "downloadFail": "Failed to download prospect. Please try again.",
+    "eyebrow": "Bio Vera · Suppliers"
   },
   "whoApply": {
     "title": "Who Should Apply",

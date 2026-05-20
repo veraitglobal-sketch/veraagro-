@@ -2096,7 +2096,7 @@
   "growersPage": {
     "metaTitle": "Programme producteurs | Bio Vera — Certification, conditions garanties, accès au marché UE",
     "metaDescription": "Programme producteurs : conditions garanties, certification de groupe GlobalG.A.P. IFA v6 gratuite, paiement sous 48 h, logistique coordonnée et accès au marché UE. Ouvert aux producteurs de l'UE et des Balkans occidentaux.",
-    "title": "Programme pour les producteurs — Conditions garanties, accès au marché UE",
+    "title": "Programme producteurs",
     "heroLead": "Rejoignez un réseau de producteurs certifiés. Bio Vera assure les standards qualité, la certification de groupe GlobalG.A.P., la coordination logistique et l'accès aux acheteurs européens — sans frais de certification pour le producteur.",
     "downloadProspectCta": "Télécharger le PDF des prospects",
     "downloadProspectError": "Échec du téléchargement du prospect. Veuillez réessayer.",
@@ -2277,10 +2277,11 @@
         "id": "Myrtille",
         "label": "Myrtille"
       }
-    ]
+    ],
+    "heroEyebrow": "Bio Vera · Producteurs"
   },
   "logisticsPartnerPage": {
-    "title": "Pour la logistique",
+    "title": "Programme logistique",
     "heroLead": "Rejoignez le réseau de confiance de partenaires de transport de Bio Vera. Ouvert aux chauffeurs indépendants, aux petites camionnettes, aux camions moyens et aux grandes entreprises de transport. Livrez des produits biologiques avec une traçabilité complète et obtenez des contrats stables et à long terme.",
     "downloadProspectCta": "Télécharger le PDF des prospects",
     "downloadProspectError": "Échec du téléchargement du prospect. Veuillez réessayer.",
@@ -2417,7 +2418,8 @@
     "acceptTrackingDesc": "En cochant cette case, vous acceptez d'installer et d'entretenir les capteurs Bio Vera pour la surveillance de la température et le suivi GPS sur tous les véhicules utilisés pour les livraisons Bio Vera.",
     "submitApplication": "Soumettre la candidature",
     "submitting": "Soumission…",
-    "submitError": "Échec de la soumission. Veuillez réessayer ou contacter info@biovera.app"
+    "submitError": "Échec de la soumission. Veuillez réessayer ou contacter info@biovera.app",
+    "heroEyebrow": "Bio Vera · Logistique"
   },
   "productsPage": {
     "redirecting": "Redirection…"

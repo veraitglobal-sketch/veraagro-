@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { suppliersAPI, partnerApplicationsAPI, submitApplicationForm, getFormspreeEndpoint } from '@/lib/api';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import MarketingHero from '@/components/marketing/MarketingHero';
+import { marketingSectionTitle, marketingSectionTitleMb4 } from '@/lib/marketing-classes';
 
 const CERTIFICATION_CODES = ['GlobalG.A.P.', 'IFS', 'BRC', 'ISO 22000', 'HACCP', 'Organic EU', 'Fair Trade'] as const;
 
@@ -165,10 +167,12 @@ export default function SuppliersPageClient() {
         </div>
       </header>
 
-      <section className="pt-24 pb-24 px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">{t('suppliersPage.hero.title')}</h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light">{t('suppliersPage.hero.subtitle')}</p>
+      <MarketingHero
+        eyebrow={t('suppliersPage.hero.eyebrow', { defaultValue: '' }) || undefined}
+        title={t('suppliersPage.hero.title')}
+        lead={t('suppliersPage.hero.subtitle')}
+        sectionClassName="pb-20"
+      >
           <button
             type="button"
             onClick={async () => {
@@ -184,14 +188,13 @@ export default function SuppliersPageClient() {
             <Download className="w-4 h-4" />
             {t('suppliersPage.hero.downloadPdf')}
           </button>
-        </div>
-      </section>
+      </MarketingHero>
 
       <section className="py-16 px-6 lg:px-8 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-10">
             <div>
-              <h2 className="text-2xl font-light text-gray-900 mb-4">{t('suppliersPage.whoApply.title')}</h2>
+              <h2 className={marketingSectionTitleMb4}>{t('suppliersPage.whoApply.title')}</h2>
               <p className="text-base text-gray-600 font-light leading-relaxed mb-4">{t('suppliersPage.whoApply.intro')}</p>
               {whoApplyBullets.length > 0 ? (
               <ul className="space-y-2 text-sm text-gray-600 font-light">
@@ -205,7 +208,7 @@ export default function SuppliersPageClient() {
               ) : null}
             </div>
             <div>
-              <h2 className="text-2xl font-light text-gray-900 mb-4">{t('suppliersPage.yourRole.title')}</h2>
+              <h2 className={marketingSectionTitleMb4}>{t('suppliersPage.yourRole.title')}</h2>
               <p className="text-base text-gray-600 font-light leading-relaxed mb-4">{t('suppliersPage.yourRole.intro')}</p>
               {yourRoleBullets.length > 0 ? (
               <ul className="space-y-2 text-sm text-gray-600 font-light">
@@ -225,7 +228,7 @@ export default function SuppliersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('suppliersPage.benefits.title')}</h2>
+            <h2 className={marketingSectionTitle}>{t('suppliersPage.benefits.title')}</h2>
             {benefitsSubtitle ? (
               <p className="text-base text-gray-600 font-light">{benefitsSubtitle}</p>
             ) : null}
@@ -246,7 +249,7 @@ export default function SuppliersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-4xl mx-auto">
           {howItWorksTitle ? (
-            <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">{howItWorksTitle}</h2>
+            <h2 className={`${marketingSectionTitleMb4} text-center`}>{howItWorksTitle}</h2>
           ) : null}
           {howItWorksSubtitle ? (
             <p className="text-base text-gray-600 font-light leading-relaxed text-center max-w-3xl mx-auto">
@@ -304,7 +307,7 @@ export default function SuppliersPageClient() {
 
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">{t('suppliersPage.requirements.title')}</h2>
+          <h2 className={`${marketingSectionTitleMb4} text-center`}>{t('suppliersPage.requirements.title')}</h2>
           {requirementsSubtitle ? (
             <p className="text-base text-gray-600 font-light leading-relaxed text-center max-w-3xl mx-auto">
               {requirementsSubtitle}
@@ -363,7 +366,7 @@ export default function SuppliersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('suppliersPage.logistics.title')}</h2>
+            <h2 className={marketingSectionTitle}>{t('suppliersPage.logistics.title')}</h2>
             <p className="text-base text-gray-600 font-light">{t('suppliersPage.logistics.subtitle')}</p>
           </div>
 
@@ -397,7 +400,7 @@ export default function SuppliersPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('suppliersPage.application.title')}</h2>
+            <h2 className={marketingSectionTitle}>{t('suppliersPage.application.title')}</h2>
             <p className="text-base text-gray-600 font-light max-w-xl mx-auto">{t('suppliersPage.application.intro')}</p>
             <p className="text-sm text-gray-500 mt-2 space-x-3">
               <Link href={loc('/suppliers/status')} className="text-[#2D5A27] underline">

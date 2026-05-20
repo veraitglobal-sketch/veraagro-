@@ -7,6 +7,8 @@ import { Target, Users, Award, Globe, Shield, Leaf } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import MarketingHero from '@/components/marketing/MarketingHero';
+import { marketingSectionTitle } from '@/lib/marketing-classes';
 
 type Card = { title: string; description: string };
 type Block = { title: string; body: string };
@@ -82,17 +84,18 @@ export default function AboutPageClient() {
 
       <main className="pt-24 pb-20 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 leading-tight">{t('aboutPage.heroTitle')}</h1>
-            <p className="text-lg text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">{t('aboutPage.heroSubtitle')}</p>
-          </div>
+          <MarketingHero
+            title={t('aboutPage.heroTitle')}
+            lead={t('aboutPage.heroSubtitle')}
+            sectionClassName="!pt-0 pb-14 !px-0"
+          />
 
           <section className="mb-14">
             <div className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-xl p-6 sm:p-8">
               <div className="flex items-start gap-4">
                 <Target className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.missionTitle')}</h2>
+                  <h2 className={`${marketingSectionTitle} mb-4`}>{t('aboutPage.missionTitle')}</h2>
                   <p className="text-gray-600 font-light leading-relaxed">{t('aboutPage.missionP1')}</p>
                   {missionP2 ? (
                     <p className="text-gray-600 font-light leading-relaxed mt-4">{missionP2}</p>
@@ -106,7 +109,7 @@ export default function AboutPageClient() {
             <div className="flex items-start gap-4">
               <Globe className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
               <div>
-                <h2 className="text-2xl font-light text-gray-900 mb-4">{t('aboutPage.visionTitle')}</h2>
+                <h2 className={`${marketingSectionTitle} mb-4`}>{t('aboutPage.visionTitle')}</h2>
                 <p className="text-gray-600 font-light leading-relaxed">{t('aboutPage.visionP1')}</p>
                 {visionP2 ? (
                   <p className="text-gray-600 font-light leading-relaxed mt-4">{visionP2}</p>
@@ -121,7 +124,7 @@ export default function AboutPageClient() {
               <Award className="w-8 h-8 text-[#2D5A27] flex-shrink-0 mt-1" />
               <div>
                 {protocol360Title ? (
-                  <h2 className="text-2xl font-light text-gray-900 mb-4">{protocol360Title}</h2>
+                  <h2 className={`${marketingSectionTitle} mb-4`}>{protocol360Title}</h2>
                 ) : null}
                 <p className="text-gray-600 font-light leading-relaxed">{protocol360Body}</p>
               </div>
@@ -132,7 +135,7 @@ export default function AboutPageClient() {
           {valueCards.length > 0 ? (
           <section className="mb-14">
             {valuesTitle ? (
-              <h2 className="text-2xl font-light text-gray-900 mb-8">{valuesTitle}</h2>
+              <h2 className={`${marketingSectionTitle} mb-8`}>{valuesTitle}</h2>
             ) : null}
             <div className="grid md:grid-cols-2 gap-6">
               {valueCards.map((value, index) => {
@@ -155,7 +158,7 @@ export default function AboutPageClient() {
           {whatWeDoItems.length > 0 ? (
           <section className="mb-14">
             {whatWeDoTitle ? (
-              <h2 className="text-2xl font-light text-gray-900 mb-6">{whatWeDoTitle}</h2>
+              <h2 className={`${marketingSectionTitle} mb-6`}>{whatWeDoTitle}</h2>
             ) : null}
             <div className="space-y-6">
               {whatWeDoItems.map((item) => (

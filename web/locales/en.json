@@ -3500,7 +3500,7 @@
   "growersPage": {
     "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, EU Market Access",
     "metaDescription": "Grower programme: guaranteed terms, free GlobalG.A.P. IFA v6 group certification, 48-hour payout, coordinated logistics and EU market access. Open to growers in the EU and Western Balkans.",
-    "title": "Grower Programme — Guaranteed Terms, EU Market Access",
+    "title": "Grower programme",
     "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
@@ -3683,12 +3683,13 @@
         "id": "Blueberry",
         "label": "Blueberry"
       }
-    ]
+    ],
+    "heroEyebrow": "Bio Vera · Growers"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
     "metaDescription": "Join Bio Vera's contracted cold chain network. Regular missions, route optimisation, fast payment on delivery. Small fleets, large companies and independent drivers welcome.",
-    "title": "For Logistics Partners",
+    "title": "Logistics partner programme",
     "heroLead": "Become a contracted Bio Vera carrier in our cold chain — regular missions, Vera fleet rules and the same batch traceability we present to paying customers.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
@@ -3815,7 +3816,8 @@
     "acceptTrackingDesc": "By checking this box, you agree to install and maintain Bio Vera sensors for temperature monitoring and GPS tracking on all vehicles used for Bio Vera deliveries.",
     "submitApplication": "Submit application",
     "submitting": "Submitting…",
-    "submitError": "Failed to submit. Please try again or contact info@biovera.app"
+    "submitError": "Failed to submit. Please try again or contact info@biovera.app",
+    "heroEyebrow": "Bio Vera · Logistics"
   },
   "productsPage": {
     "redirecting": "Redirecting…"

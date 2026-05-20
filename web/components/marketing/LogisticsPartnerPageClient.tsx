@@ -7,6 +7,8 @@ import { Download } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import MarketingHero from '@/components/marketing/MarketingHero';
+import { marketingSectionTitle, marketingSectionTitleMb4 } from '@/lib/marketing-classes';
 import { logisticsPartnerAPI, submitApplicationForm } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { numberIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
@@ -225,37 +227,37 @@ export default function LogisticsPartnerPageClient() {
         </div>
       </header>
 
-      <section className="pt-24 pb-24 px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight">{t('logisticsPartnerPage.title')}</h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-light whitespace-pre-line">{t('logisticsPartnerPage.heroLead')}</p>
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await logisticsPartnerAPI.downloadProspect();
-                } catch (error: unknown) {
-                  console.error('Error downloading prospect:', error);
-                  alert(apiErrorOrT(error, t, 'logisticsPartnerPage.downloadProspectError'));
-                }
-              }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              {t('logisticsPartnerPage.downloadProspectCta')}
-            </button>
-            {prospectNote ? (
-              <p className="text-xs text-gray-500 mt-4 font-light">{prospectNote}</p>
-            ) : null}
-          </div>
-        </div>
-      </section>
+      <MarketingHero
+        eyebrow={t('logisticsPartnerPage.heroEyebrow', { defaultValue: '' }) || undefined}
+        title={t('logisticsPartnerPage.title')}
+        lead={t('logisticsPartnerPage.heroLead')}
+        leadClassName="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto mb-8 whitespace-pre-line"
+        sectionClassName="pb-20"
+      >
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              await logisticsPartnerAPI.downloadProspect();
+            } catch (error: unknown) {
+              console.error('Error downloading prospect:', error);
+              alert(apiErrorOrT(error, t, 'logisticsPartnerPage.downloadProspectError'));
+            }
+          }}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium rounded-lg hover:bg-[#23471f] transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          {t('logisticsPartnerPage.downloadProspectCta')}
+        </button>
+        {prospectNote ? (
+          <p className="text-xs text-gray-500 mt-4 font-light">{prospectNote}</p>
+        ) : null}
+      </MarketingHero>
 
       {whoCanApplyTitle ? (
       <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-xl font-light text-gray-900 mb-4">{whoCanApplyTitle}</h2>
+          <h2 className={marketingSectionTitleMb4}>{whoCanApplyTitle}</h2>
           <p className="text-sm text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">{t('logisticsPartnerPage.whoCanApplyLead')}</p>
           {countriesLine ? (
             <p className="text-sm text-gray-600 font-light leading-relaxed mt-6">{countriesLine}</p>
@@ -301,7 +303,7 @@ export default function LogisticsPartnerPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.conditionsTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('logisticsPartnerPage.conditionsTitle')}</h2>
             {conditionsLead ? (
               <p className="text-base text-gray-600 font-light">{conditionsLead}</p>
             ) : null}
@@ -334,7 +336,7 @@ export default function LogisticsPartnerPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.whatYouGetTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('logisticsPartnerPage.whatYouGetTitle')}</h2>
             {whatYouGetLead ? (
               <p className="text-base text-gray-600 font-light">{whatYouGetLead}</p>
             ) : null}
@@ -355,7 +357,7 @@ export default function LogisticsPartnerPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{fuelTitle}</h2>
+            <h2 className={marketingSectionTitle}>{fuelTitle}</h2>
             <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.fuelLead')}</p>
             <p className="text-sm text-gray-500 font-light mt-3">{t('logisticsPartnerPage.fuelDisclaimer')}</p>
           </div>
@@ -430,7 +432,7 @@ export default function LogisticsPartnerPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{resourcesTitle}</h2>
+            <h2 className={marketingSectionTitle}>{resourcesTitle}</h2>
             {t('logisticsPartnerPage.resourcesLead') ? (
               <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.resourcesLead')}</p>
             ) : null}
@@ -496,7 +498,7 @@ export default function LogisticsPartnerPageClient() {
       <section className="py-20 px-6 lg:px-8 border-t border-gray-200">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-light text-gray-900 mb-3">{t('logisticsPartnerPage.applicationTitle')}</h2>
+            <h2 className={marketingSectionTitle}>{t('logisticsPartnerPage.applicationTitle')}</h2>
             <p className="text-base text-gray-600 font-light">{t('logisticsPartnerPage.applicationLead')}</p>
           </div>
 

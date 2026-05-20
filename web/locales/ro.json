@@ -2096,7 +2096,7 @@
   "growersPage": {
     "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
     "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Balcanii de Vest.",
-    "title": "Program pentru producători — Condiții garantate, acces la piața UE",
+    "title": "Program pentru producători",
     "heroLead": "Alăturați-vă unei rețele de producători certificați. Bio Vera asigură standarde de calitate, certificare de grup GlobalG.A.P., coordonare logistică și acces la cumpărători europeni — fără costuri de certificare pentru producător.",
     "downloadProspectCta": "Descărcați PDF prospect",
     "downloadProspectError": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou.",
@@ -2277,10 +2277,11 @@
         "id": "Coacăze",
         "label": "Coacăze"
       }
-    ]
+    ],
+    "heroEyebrow": "Bio Vera · Producători"
   },
   "logisticsPartnerPage": {
-    "title": "Pentru logistica",
+    "title": "Program pentru logistică",
     "heroLead": "Alăturați-vă rețelei de încredere de parteneri de transport Bio Vera. Deschis șoferilor independenți, camionete mici, camioane medii și companii mari de transport. Livrați produse organice cu trasabilitate completă și obțineți contracte stabile, pe termen lung.",
     "downloadProspectCta": "Descărcați PDF prospect",
     "downloadProspectError": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou.",
@@ -2417,7 +2418,8 @@
     "acceptTrackingDesc": "Bifând această casetă, sunteți de acord să instalați și să întrețineți senzori Bio Vera pentru monitorizarea temperaturii și urmărirea GPS pe toate vehiculele utilizate pentru livrările Bio Vera.",
     "submitApplication": "Trimiteți cererea",
     "submitting": "Se trimite…",
-    "submitError": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app"
+    "submitError": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app",
+    "heroEyebrow": "Bio Vera · Logistică"
   },
   "productsPage": {
     "redirecting": "Se redirecționează…"

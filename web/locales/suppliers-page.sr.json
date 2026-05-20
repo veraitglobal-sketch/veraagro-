@@ -2,10 +2,11 @@
   "metaTitle": "Distributer Semena i Đubriva | Bio Vera — Partnerstvo za Dobavljače",
   "metaDescription": "Partnerski program za dobavljače: distribuirajte sertifikovane inpute kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura, integrisana logistika.",
   "hero": {
-    "title": "Partnerski Program za Dobavljače — Integrisani Supply Chain, Garantovana Potražnja",
+    "title": "Partnerski program za dobavljače",
     "subtitle": "Distribuirajte sertifikovane inpute — semena, đubriva i ambalažu — kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura i integrisana logistika.",
     "downloadPdf": "Preuzmite PDF prospekt",
-    "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo."
+    "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo.",
+    "eyebrow": "Bio Vera · Dobavljači"
   },
   "whoApply": {
     "title": "Koga tražimo",
