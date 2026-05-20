@@ -171,14 +171,8 @@ export default function BioVeraFreshPageClient({
         .biovera-fresh-root header.bf-cover {
           display: none;
         }
-        .biovera-fresh-root .bf-pdf-block {
-          display: none;
-        }
         @media print {
           .biovera-fresh-root header.bf-cover {
-            display: block !important;
-          }
-          .biovera-fresh-root .bf-pdf-block {
             display: block !important;
           }
         }
@@ -360,19 +354,21 @@ export default function BioVeraFreshPageClient({
           </div>
         </section>
 
-        {/* Full brochure — print / Save as PDF only */}
-        <div className="bf-pdf-block border-t border-gray-200 px-6 py-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
+        {/* Full programme (14 chapters) — on screen and in print */}
+        <section className="bf-pdf-block border-t border-gray-200 py-16 px-6 lg:px-8 print:py-8 print:px-10">
+          <div className="max-w-6xl mx-auto print:max-w-none">
           <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
           <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
-          <div className="mt-8 space-y-8 print:space-y-6">
+          <div className="mt-8 space-y-10 print:space-y-6">
             {pdfSections.map((s) => (
-              <section key={s.title} className="bf-body">
-                <h3 className="bf-heading text-base font-semibold text-gray-900 print:text-[11pt]">{s.title}</h3>
-                <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-gray-700 print:text-[10.5pt]">{s.body}</p>
+              <section key={s.title} className="bf-body border-b border-gray-100 pb-10 last:border-0 print:border-0 print:pb-6">
+                <h3 className="bf-heading text-lg font-light text-gray-900 print:text-[11pt] print:font-semibold">{s.title}</h3>
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-gray-600 font-light print:text-[10.5pt] print:text-gray-700 print:font-normal">{s.body}</p>
               </section>
             ))}
           </div>
-        </div>
+          </div>
+        </section>
       </main>
 
       <div className="bf-no-print bg-white">

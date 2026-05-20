@@ -19,12 +19,28 @@
   "ctaButton": "Contact Bio Vera",
   "webSections": [
     {
-      "title": "Two zones",
-      "body": "Fresh counter — fruit, vegetables, sold by weight, BioVera packs.\n\nFresh counter service — juices, fruit salads, visible preparation. Lean team, clear routines, low complexity."
+      "title": "Market Gap",
+      "body": "Traditional fresh produce distribution is fragmented: high shrink, unclear origin, volatile pricing, weak quality control. This creates uncertainty for retailers, waste for producers and low trust for consumers."
     },
     {
-      "title": "Who it's for",
-      "body": "Entrepreneurs, investors, site operators and partners seeking a stable food-retail concept."
+      "title": "The BioVera Answer",
+      "body": "Direct link between growers and retail. Standardised product quality. Organised distribution. Controlled store formats. Maximum utilisation of every kilogram produced."
+    },
+    {
+      "title": "Store Layout",
+      "body": "Two zones work as one unit:\n\nRetail zone — fresh fruit and vegetables, clear merchandising, sold-by-weight service, BioVera packs.\n\nFresh zone — juices, fruit salads and visible preparation. Quick service, high footfall."
+    },
+    {
+      "title": "Operations and Earnings",
+      "body": "Planned assortment and steady rotation cut waste. Revenue streams: produce sales, fresh juices, fruit salads, seasonal events. Lean crew, clear routines, low operational complexity."
+    },
+    {
+      "title": "Store Standards",
+      "body": "Approved signage, visible cold chain, clean operations. Working chillers with temperature rules. QR or passport verification at shelf or till. Checklist-led cleaning."
+    },
+    {
+      "title": "Who Can Partner",
+      "body": "Entrepreneurs, investors, site owners, operators seeking a resilient food-retail concept."
     }
   ],
   "pdfSections": [

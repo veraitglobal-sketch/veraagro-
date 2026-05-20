@@ -19,12 +19,28 @@
   "ctaButton": "Bio Vera kontaktieren",
   "webSections": [
     {
-      "title": "Zwei Zonen",
-      "body": "Frischetheke — Obst, Gemüse, Abwiegen, BioVera-Packungen.\n\nFresh-Counter — Säfte, Obstsalate, sichtbare Zubereitung. Schlankes Team, klare Abläufe, niedrige Komplexität."
+      "title": "Marktproblem",
+      "body": "Die klassische Distribution frischer Ware ist fragmentiert: hoher Schwund, unklare Herkunft, volatile Preise, schwache Qualitätskontrolle. Das erzeugt Unsicherheit für Handel, Erzeuger und Konsumenten."
     },
     {
-      "title": "Für wen",
-      "body": "Für Unternehmer, Investoren und Standortbetreiber, die ein stabiles Lebensmittel-Einzelhandelskonzept suchen."
+      "title": "Die BioVera Antwort",
+      "body": "Direkte Verbindung Erzeuger–Handel. Standardisierte Qualität. Organisierte Distribution. Kontrollierte Filialformate. Jedes Kilogramm maximal verwertet."
+    },
+    {
+      "title": "So sieht die Filiale aus",
+      "body": "Zwei Zonen in einem Raum:\n\nFrischetheke — frisches Obst und Gemüse, klare Präsentation, Verkauf nach Gewicht, BioVera-Verpackungen.\n\nFresh-Counter — frisch gepresste Säfte, Obstsalate, Zubereitung vor dem Kunden. Schneller Service, hohe Frequenz."
+    },
+    {
+      "title": "Ertrag und Betrieb",
+      "body": "Geplantes Sortiment und gleichmäßige Rotation senken Schwund. Umsatz aus: Warenverkauf, frischen Säften, Obstsalaten und saisonalen Aktionen. Schlankes Team, klare Abläufe, niedrige Komplexität."
+    },
+    {
+      "title": "Filialstandards",
+      "body": "Genehmigte Beschilderung, sichtbare Kühlkette, saubere Abläufe. Funktionierende Kühlgeräte mit Temperaturvorgaben. QR- oder Pass-Verifikation am Regal oder an der Kasse. Reinigung nach Checkliste."
+    },
+    {
+      "title": "Wer Partner werden kann",
+      "body": "Unternehmer, Investoren, Standortbetreiber und Operatoren, die ein stabiles Lebensmittel-Einzelhandelskonzept suchen."
     }
   ],
   "pdfSections": [

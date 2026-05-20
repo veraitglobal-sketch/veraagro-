@@ -19,12 +19,28 @@
   "ctaButton": "Kontaktirajte Bio Vera",
   "webSections": [
     {
-      "title": "Dve zone",
-      "body": "Maloprodajna zona — sveže voće i povrće, prodaja na merenje, BioVera pakovanja.\n\nFresh zona — sveži sokovi, voćne salate, vidljiva priprema. Mala ekipa, jasne rutine, niska složenost."
+      "title": "Problem na tržištu",
+      "body": "Tradicionalna distribucija svežih proizvoda je fragmentirana: visok kalo i bacanje, nejasno poreklo, nestabilne cene, slaba kontrola kvaliteta. Trgovci gube na otpadu, proizvođači na ceni, potrošači na poverenju."
     },
     {
-      "title": "Za koga",
-      "body": "Preduzetnici, investitori, vlasnici lokacija i operateri koji traže stabilan koncept u prehrambenoj maloprodaji."
+      "title": "BioVera rešenje",
+      "body": "Direktna veza proizvođač–maloprodaja. Standardizovani kvalitet. Organizovana distribucija. Kontrolisani formati prodavnica. Svaki kilogram maksimalno iskorišćen."
+    },
+    {
+      "title": "Kako izgleda prodavnica",
+      "body": "Dve zone u jednom prostoru:\n\nMaloprodajna zona — sveže voće i povrće, jasno izlaganje, prodaja na merenje, BioVera pakovanja.\n\nFresh zona — sveži sokovi, voćne salate, vidljiva priprema. Brza usluga, visoka poseta kupaca."
+    },
+    {
+      "title": "Zarada i operacije",
+      "body": "Planiran asortiman i redovna rotacija smanjuju otpad. Prihod dolazi iz: prodaje proizvoda, svežih sokova, voćnih salata i sezonskih događaja. Mala ekipa, jasne rutine, niska složenost."
+    },
+    {
+      "title": "Standardi",
+      "body": "Brendirana signalizacija, vidljiv hladni lanac, ispravni rashladni uređaji. QR verifikacija na polici ili kasi. Čišćenje po ček-listi."
+    },
+    {
+      "title": "Ko može biti partner",
+      "body": "Preduzetnici, investitori, vlasnici lokacija, operateri koji traže stabilan koncept u prehrambenoj maloprodaji."
     }
   ],
   "pdfSections": [

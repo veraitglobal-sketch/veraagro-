@@ -19,12 +19,28 @@
   "ctaButton": "Contactați Bio Vera",
   "webSections": [
     {
-      "title": "Două zone",
-      "body": "Raion proaspăt — fructe, legume, vânzare la cântar, ambalaje BioVera.\n\nFresh counter — sucuri proaspete, salate de fructe, preparare vizibilă. Echipă mică, rutine clare, complexitate redusă."
+      "title": "Problema pieței",
+      "body": "Distribuția tradițională a produselor proaspete este fragmentată: pierderi mari, origine neclară, prețuri volatile, control slab al calității."
     },
     {
-      "title": "Pentru cine",
-      "body": "Antreprenori, investitori, operatori de locații și parteneri care caută un concept stabil de retail alimentar."
+      "title": "Răspunsul BioVera",
+      "body": "Legătură directă producător–retail. Calitate standardizată. Distribuție organizată. Formate de magazin controlate. Valorificare maximă a fiecărui kilogram."
+    },
+    {
+      "title": "Cum arată magazinul",
+      "body": "Două zone într-un singur spațiu:\n\nZona retail — fructe și legume proaspete, expunere clară, vânzare la cântar, ambalaje BioVera.\n\nZona Fresh — sucuri proaspete, salate de fructe, preparare vizibilă. Serviciu rapid, trafic ridicat."
+    },
+    {
+      "title": "Operațiuni și venituri",
+      "body": "Sortiment planificat și rotație constantă reduc pierderile. Venituri din: vânzări de produse, sucuri proaspete, salate de fructe și evenimente sezoniere. Echipă mică, rutine clare, complexitate redusă."
+    },
+    {
+      "title": "Standarde",
+      "body": "Semnalistică aprobată, lanț frigorific vizibil, echipamente funcționale. Verificare QR la raft sau casă. Curățenie conform checklist."
+    },
+    {
+      "title": "Cine poate fi partener",
+      "body": "Antreprenori, investitori, proprietari de locații, operatori care caută un concept stabil în retail alimentar."
     }
   ],
   "pdfSections": [
