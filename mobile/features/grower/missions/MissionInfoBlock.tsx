@@ -47,6 +47,9 @@ export default function MissionInfoBlock({ mission }: MissionInfoBlockProps) {
           </Text>
         </View>
       </View>
+      {status === 'AWAITING_APPROVAL' ? (
+        <Text style={styles.awaitingBanner}>{t('producer.missions.awaitingAdminApproval')}</Text>
+      ) : null}
       {assignmentLine ? (
         <Text style={styles.assignmentLine}>{assignmentLine}</Text>
       ) : null}
@@ -68,5 +71,16 @@ const styles = StyleSheet.create({
     color: enterpriseColors.primary,
     lineHeight: 22,
     letterSpacing: -0.15,
+  },
+  awaitingBanner: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: enterpriseColors.gray600,
+    lineHeight: 21,
+    marginBottom: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: enterpriseColors.gray100,
+    borderRadius: 10,
   },
 });

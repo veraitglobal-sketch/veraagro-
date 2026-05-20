@@ -6,17 +6,21 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  RefreshControl,
   type NativeSyntheticEvent,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, Save, ChevronRight } from 'lucide-react-native';
-import * as Location from 'expo-location';
-import MapView, { Polygon, Polyline, Marker } from 'react-native-maps';
+import { useState, useCallback, useRef } from 'react';
+import { ArrowLeft, Save, ChevronRight, MapPin } from 'lucide-react-native';
+import MapView from 'react-native-maps';
+import { getCurrentGrowerPosition } from '../../../lib/grower-permissions';
+import {
+  EstateBoundaryMap,
+  animateEstateMapTo,
+  DEFAULT_ESTATE_MAP_REGION,
+} from '../../../components/grower/EstateBoundaryMap';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { estatesAPI, parcelsAPI, harvestAnnouncementsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
@@ -45,12 +49,7 @@ export default function NewEstateScreen() {
   const [location, setLocation] = useState('');
   const [polygonCoordinates, setPolygonCoordinates] = useState<Array<{ lat: number; lng: number }>>([]);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [region, setRegion] = useState({
-    latitude: 44.0165,
-    longitude: 21.0059,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
+  const mapRef = useRef<MapView>(null);
   const [loading, setLoading] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [drawStyle, setDrawStyle] = useState<'tap' | 'finger'>('tap');
@@ -61,42 +60,19 @@ export default function NewEstateScreen() {
   const [cropId, setCropId] = useState<string | null>(null);
   const [varietyId, setVarietyId] = useState<string | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
-      try {
-        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-        const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
-        setCurrentLocation(userLocation);
-        setRegion({ latitude: userLocation.lat, longitude: userLocation.lng, latitudeDelta: 0.01, longitudeDelta: 0.01 });
-      } catch {
-        // ignore
-      }
-    })();
-  }, []);
-
   const refreshDeviceLocation = useCallback(async () => {
     if (step !== 1) return;
     setLocationRefreshing(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      const pos = await getCurrentGrowerPosition(t);
+      if (!pos) return;
+      const userLocation = { lat: pos.lat, lng: pos.lng };
       setCurrentLocation(userLocation);
-      setRegion({
-        latitude: userLocation.lat,
-        longitude: userLocation.lng,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-    } catch {
-      // ignore
+      animateEstateMapTo(mapRef, userLocation.lat, userLocation.lng);
     } finally {
       setLocationRefreshing(false);
     }
-  }, [step]);
+  }, [step, t]);
 
   const handleMapPress = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
     if (!drawing || drawStyle !== 'tap') return;
@@ -231,19 +207,7 @@ export default function NewEstateScreen() {
         )}
       </View>
 
-      <ScrollView
-        style={{ flex: 1 }}
-        refreshControl={
-          step === 1 ? (
-            <RefreshControl
-              refreshing={locationRefreshing}
-              onRefresh={refreshDeviceLocation}
-              tintColor={colors.primary}
-              colors={[colors.primary]}
-            />
-          ) : undefined
-        }
-      >
+      <ScrollView style={{ flex: 1 }} scrollEnabled={step !== 1 || !drawing} keyboardShouldPersistTaps="handled">
         <View style={{ padding: theme.spacing.md }}>
           {/* Step 1: Name, location, map */}
           {step === 1 && (
@@ -330,64 +294,33 @@ export default function NewEstateScreen() {
                     <Text style={[buttonTextStyle, { color: colors.error }]}>{t('producer.estates.delete')}</Text>
                   </TouchableOpacity>
                 )}
-              </View>
-              <View style={{ height: 360, borderRadius: theme.borderRadius.md, overflow: 'hidden', borderWidth: 0.5, borderColor: colors.border, marginBottom: theme.spacing.md }}>
-                <MapView
-                  style={{ flex: 1 }}
-                  region={region}
-                  onRegionChangeComplete={(r) =>
-                    setRegion({
-                      latitude: r.latitude,
-                      longitude: r.longitude,
-                      latitudeDelta: r.latitudeDelta,
-                      longitudeDelta: r.longitudeDelta,
-                    })
-                  }
-                  scrollEnabled={!fingerDrawingLocked}
-                  zoomEnabled={!fingerDrawingLocked}
-                  rotateEnabled={!fingerDrawingLocked}
-                  onPress={handleMapPress}
-                  onPanDrag={handlePanDrag}
-                  showsUserLocation
-                  showsMyLocationButton
+                <TouchableOpacity
+                  onPress={() => void refreshDeviceLocation()}
+                  disabled={locationRefreshing}
+                  style={[buttonStyle, { flex: 0, minWidth: 52 }]}
+                  accessibilityLabel={t('producer.estates.yourLocation')}
                 >
-                  {currentLocation && (
-                    <Marker coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }} title={t('producer.estates.yourLocation')} />
+                  {locationRefreshing ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <MapPin size={20} color={colors.primary} strokeWidth={1.5} />
                   )}
-                  {polygonCoordinates.length > 0 && !(fingerDrawingLocked && fingerStroke.length >= 2) ? (
-                    <Polygon
-                      coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-                      fillColor={`${colors.primary}30`}
-                      strokeColor={colors.primary}
-                      strokeWidth={2}
-                    />
-                  ) : null}
-                  {polygonCoordinates.length > 0 && fingerDrawingLocked && fingerStroke.length >= 2 ? (
-                    <Polygon
-                      coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-                      fillColor={`${colors.primary}14`}
-                      strokeColor={colors.primary}
-                      strokeWidth={1}
-                    />
-                  ) : null}
-                  {fingerDrawingLocked && fingerStroke.length >= 2 ? (
-                    <Polyline
-                      coordinates={fingerStroke.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-                      strokeColor={colors.primary}
-                      strokeWidth={3}
-                    />
-                  ) : null}
-                  {drawStyle === 'tap'
-                    ? polygonCoordinates.map((coord, index) => (
-                        <Marker
-                          key={`v-${coord.lat}-${coord.lng}-${index}`}
-                          coordinate={{ latitude: coord.lat, longitude: coord.lng }}
-                          title={t('producer.estates.pointN', { n: index + 1 })}
-                        />
-                      ))
-                    : null}
-                </MapView>
+                </TouchableOpacity>
               </View>
+              <EstateBoundaryMap
+                ref={mapRef}
+                initialRegion={DEFAULT_ESTATE_MAP_REGION}
+                polygonCoordinates={polygonCoordinates}
+                fingerStroke={fingerStroke}
+                drawing={drawing}
+                drawStyle={drawStyle}
+                fingerDrawingLocked={fingerDrawingLocked}
+                currentLocation={currentLocation}
+                onMapPress={handleMapPress}
+                onPanDrag={handlePanDrag}
+                pointLabel={(index) => t('producer.estates.pointN', { n: index + 1 })}
+                yourLocationTitle={t('producer.estates.yourLocation')}
+              />
               {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
                 <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: theme.spacing.md }}>
                   {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}

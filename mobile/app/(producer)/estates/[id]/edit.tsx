@@ -11,9 +11,14 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Save } from 'lucide-react-native';
-import MapView, { Polygon, Polyline, Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
+import {
+  EstateBoundaryMap,
+  animateEstateMapTo,
+  DEFAULT_ESTATE_MAP_REGION,
+} from '../../../../components/grower/EstateBoundaryMap';
 import { colors } from '../../../../lib/colors';
 import { theme } from '../../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../../lib/screen-insets';
@@ -39,12 +44,7 @@ export default function EditEstateScreen() {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [polygonCoordinates, setPolygonCoordinates] = useState<Array<{ lat: number; lng: number }>>([]);
-  const [region, setRegion] = useState({
-    latitude: 44.0165,
-    longitude: 21.0059,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
+  const mapRef = useRef<MapView>(null);
   const [initialLoad, setInitialLoad] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -68,12 +68,7 @@ export default function EditEstateScreen() {
           if (coords.length > 0) {
             const centerLat = coords.reduce((sum, p) => sum + p.lat, 0) / coords.length;
             const centerLng = coords.reduce((sum, p) => sum + p.lng, 0) / coords.length;
-            setRegion({
-              latitude: centerLat,
-              longitude: centerLng,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            });
+            requestAnimationFrame(() => animateEstateMapTo(mapRef, centerLat, centerLng));
           }
         } else {
           setPolygonCoordinates([]);
@@ -182,6 +177,8 @@ export default function EditEstateScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
+        scrollEnabled={!drawing}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -385,78 +382,21 @@ export default function EditEstateScreen() {
             )}
           </View>
 
-          {/* Map */}
-          <View style={{
-            height: 400,
-            borderRadius: theme.borderRadius.md,
-            overflow: 'hidden',
-            borderWidth: 0.5,
-            borderColor: colors.border,
-            marginBottom: theme.spacing.md,
-          }}>
-            <MapView
-              style={{ flex: 1 }}
-              region={region}
-              onRegionChangeComplete={(r) =>
-                setRegion({
-                  latitude: r.latitude,
-                  longitude: r.longitude,
-                  latitudeDelta: r.latitudeDelta,
-                  longitudeDelta: r.longitudeDelta,
-                })
-              }
-              scrollEnabled={!fingerDrawingLocked}
-              zoomEnabled={!fingerDrawingLocked}
-              rotateEnabled={!fingerDrawingLocked}
-              onPress={handleMapPress}
-              onPanDrag={handlePanDrag}
-              showsUserLocation={true}
-            >
-              {polygonCoordinates.length > 0 && !(fingerDrawingLocked && fingerStroke.length >= 2) ? (
-                <Polygon
-                  coordinates={polygonCoordinates.map((coord) => ({
-                    latitude: coord.lat,
-                    longitude: coord.lng,
-                  }))}
-                  fillColor={`${colors.primary}30`}
-                  strokeColor={colors.primary}
-                  strokeWidth={2}
-                />
-              ) : null}
-              {polygonCoordinates.length > 0 &&
-              fingerDrawingLocked &&
-              fingerStroke.length >= 2 ? (
-                <Polygon
-                  coordinates={polygonCoordinates.map((coord) => ({
-                    latitude: coord.lat,
-                    longitude: coord.lng,
-                  }))}
-                  fillColor={`${colors.primary}14`}
-                  strokeColor={colors.primary}
-                  strokeWidth={1}
-                />
-              ) : null}
-              {fingerDrawingLocked && fingerStroke.length >= 2 ? (
-                <Polyline
-                  coordinates={fingerStroke.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-                  strokeColor={colors.primary}
-                  strokeWidth={3}
-                />
-              ) : null}
-              {drawStyle === 'tap'
-                ? polygonCoordinates.map((coord, index) => (
-                    <Marker
-                      key={`v-${coord.lat}-${coord.lng}-${index}`}
-                      coordinate={{
-                        latitude: coord.lat,
-                        longitude: coord.lng,
-                      }}
-                      title={t('producer.estates.pointN', { n: index + 1 })}
-                    />
-                  ))
-                : null}
-            </MapView>
-          </View>
+          <EstateBoundaryMap
+            ref={mapRef}
+            height={400}
+            initialRegion={DEFAULT_ESTATE_MAP_REGION}
+            polygonCoordinates={polygonCoordinates}
+            fingerStroke={fingerStroke}
+            drawing={drawing}
+            drawStyle={drawStyle}
+            fingerDrawingLocked={fingerDrawingLocked}
+            currentLocation={null}
+            onMapPress={handleMapPress}
+            onPanDrag={handlePanDrag}
+            pointLabel={(index) => t('producer.estates.pointN', { n: index + 1 })}
+            yourLocationTitle={t('producer.estates.yourLocation')}
+          />
 
           {/* Polygon Info */}
           {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (

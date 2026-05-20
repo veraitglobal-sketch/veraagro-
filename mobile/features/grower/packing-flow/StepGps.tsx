@@ -7,6 +7,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } fr
 import { useTranslation } from 'react-i18next';
 import { MapPin, Check } from 'lucide-react-native';
 import * as Location from 'expo-location';
+import { ensureForegroundLocationPermission } from '../../../lib/grower-permissions';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 
 export type GpsCapturePayload = { lat: number; lng: number; timestamp: string };
@@ -25,11 +26,8 @@ export default function StepGps({ onCaptured }: Props) {
   const capture = async () => {
     setLoading(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(t('alerts.warning'), t('estates.locationPermissionRequired'));
-        return;
-      }
+      const granted = await ensureForegroundLocationPermission(t, { rationale: true });
+      if (!granted) return;
       const loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });

@@ -63,6 +63,30 @@ export class IngestMobileCostDto {
   @IsString()
   currency?: string;
 
+  @IsOptional()
+  @IsString()
+  note?: string;
+
+  @IsOptional()
+  @IsString()
+  estateId?: string;
+
+  @IsOptional()
+  @IsString()
+  parcelId?: string;
+
+  @IsOptional()
+  @IsString()
+  harvestAnnouncementId?: string;
+
+  @IsOptional()
+  @IsString()
+  parcelLabel?: string;
+
+  @IsOptional()
+  @IsString()
+  plantingLabel?: string;
+
   @IsString()
   timestamp: string;
 }

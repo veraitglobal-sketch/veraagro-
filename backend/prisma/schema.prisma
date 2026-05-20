@@ -447,6 +447,11 @@ model growth_logs {
   materialKind              String?
   dataHash                  String                 @unique
   previousLogHash           String?
+  /// APPROVED (visible) | REJECTED (hidden from grower passport views)
+  moderationStatus          String                 @default("APPROVED")
+  rejectionReason           String?
+  moderatedAt               DateTime?
+  moderatedByUserId         String?
   labResultUrl              String?
   labResultHash             String?
   labTestDate               DateTime?
@@ -776,6 +781,23 @@ model notifications {
 
   @@index([status])
   @@index([userId])
+}
+
+/// FCM/APNs device tokens for mobile push (one row per token; upsert on register).
+model user_push_devices {
+  id         String       @id
+  userId     String
+  token      String       @unique
+  platform   PushPlatform
+  deviceId   String?
+  appSurface String?
+  locale     String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime
+  users      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, deviceId])
 }
 
 model order_items {
@@ -1179,6 +1201,7 @@ model users {
   missions_missions_growerIdTousers            missions[]                   @relation("missions_growerIdTousers")
   missions_missions_logisticsPartnerIdTousers  missions[]                   @relation("missions_logisticsPartnerIdTousers")
   notifications                                notifications[]
+  user_push_devices                            user_push_devices[]
   orders                                       orders[]
   ratings_ratings_ratedUserIdTousers           ratings[]                    @relation("ratings_ratedUserIdTousers")
   ratings_ratings_raterIdTousers               ratings[]                    @relation("ratings_raterIdTousers")
@@ -1686,6 +1709,7 @@ enum MaterialTypeEnum {
 }
 
 enum MissionStatus {
+  AWAITING_APPROVAL
   PENDING
   ASSIGNED
   ACCEPTED
@@ -1718,6 +1742,11 @@ enum NotificationType {
   REMINDER
   ALERT
   SYSTEM
+}
+
+enum PushPlatform {
+  IOS
+  ANDROID
 }
 
 enum OrderStatus {

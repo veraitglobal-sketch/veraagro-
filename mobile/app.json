@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Bio Vera",
-    "slug": "bio-vera",
+    "slug": "biovera",
     "version": "1.0.0",
     "sdkVersion": "54.0.0",
     "orientation": "portrait",
@@ -20,6 +20,7 @@
         "NSCameraUsageDescription": "Bio Vera needs camera access to capture growth evidence with GPS metadata.",
         "NSLocationWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
+        "NSUserNotificationsUsageDescription": "Obaveštenja o žetvi, transportu, sinhronizaciji terenskih unosa i porukama Bio Vera tima.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -35,7 +36,8 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {},
@@ -60,11 +62,12 @@
         }
       ],
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      "expo-notifications"
     ],
     "extra": {
       "eas": {
-        "projectId": "373e53b3-f456-4d0e-9cbb-033346876475"
+        "projectId": "dd053e4b-3d6e-4238-a8fd-fc09c90572a8"
       }
     }
   }

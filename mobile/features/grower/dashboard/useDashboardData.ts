@@ -20,6 +20,10 @@ import { useSocket } from '../../../hooks/useSocket';
 import { API_URL } from '../../../lib/api-url';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { fetchGrowerOrdersFinancial, type OrdersFinancialSnapshot } from './fetchGrowerOrdersFinancial';
+import {
+  fetchSuppliesSnapshot,
+  type SuppliesSnapshot,
+} from '../hubs/fetchSuppliesSnapshot';
 
 export interface FinancialData {
   totalEarned: number;
@@ -55,6 +59,8 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [batchTotalCount, setBatchTotalCount] = useState(0);
   const [harvestPlanCount, setHarvestPlanCount] = useState(0);
   const [hasTransportRecord, setHasTransportRecord] = useState(false);
+  const [suppliesSnapshot, setSuppliesSnapshot] = useState<SuppliesSnapshot | null>(null);
+  const [suppliesSnapshotLoaded, setSuppliesSnapshotLoaded] = useState(false);
   const appStateRef = useRef(AppState.currentState);
   const syncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSyncTriggerRef = useRef(0);
@@ -293,6 +299,25 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }
   }, []);
 
+  const loadSuppliesSnapshot = useCallback(async () => {
+    try {
+      const snap = await fetchSuppliesSnapshot();
+      setSuppliesSnapshot(snap);
+    } catch {
+      setSuppliesSnapshot({
+        materialsCount: 0,
+        productsCount: 0,
+        partnerOrdersOpen: 0,
+        partnerOrdersAwaitingReceive: 0,
+        partnerOrdersPending: 0,
+        partnerOrdersTotal: 0,
+        recentOrders: [],
+      });
+    } finally {
+      setSuppliesSnapshotLoaded(true);
+    }
+  }, []);
+
   const loadLiveData = useCallback(async () => {
     try {
       await Promise.all([
@@ -302,11 +327,20 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         loadFinancialData(),
         loadOrdersFinancial(),
         loadHarvestPlans(),
+        loadSuppliesSnapshot(),
       ]);
     } catch (e) {
       console.error('Error loading live data:', e);
     }
-  }, [loadMissions, loadBatches, loadNotifications, loadFinancialData, loadOrdersFinancial, loadHarvestPlans]);
+  }, [
+    loadMissions,
+    loadBatches,
+    loadNotifications,
+    loadFinancialData,
+    loadOrdersFinancial,
+    loadHarvestPlans,
+    loadSuppliesSnapshot,
+  ]);
 
   const loadData = useCallback(async () => {
     const estateList = await loadEstates();
@@ -477,5 +511,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     batchTotalCount,
     harvestPlanCount,
     hasTransportRecord,
+    suppliesSnapshot,
+    suppliesSnapshotLoaded,
   };
 }

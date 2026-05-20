@@ -8,9 +8,11 @@ import { tString } from '../lib/i18n-strings';
 
 interface SyncStatusProps {
   className?: string;
+  /** Kad nema čekanja — ne prikazuj „sve poslato“ (samo Početna, po potrebi). */
+  hideWhenClear?: boolean;
 }
 
-export default function SyncStatus({ className = '' }: SyncStatusProps) {
+export default function SyncStatus({ className = '', hideWhenClear = false }: SyncStatusProps) {
   const { t } = useTranslation();
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>({
     lastSyncTime: null,
@@ -54,6 +56,10 @@ export default function SyncStatus({ className = '' }: SyncStatusProps) {
       console.error('Error loading sync status:', error);
     }
   };
+
+  if (hideWhenClear && !syncStatus.syncing && syncStatus.pendingCount === 0) {
+    return null;
+  }
 
   const handleSync = async () => {
     try {

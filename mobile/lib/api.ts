@@ -633,8 +633,17 @@ export const growthLogsAPI = {
     materialKind?: 'SEED' | 'FERTILIZER' | 'PESTICIDE';
     requiresMaterialBarcode?: boolean;
   }): Promise<GrowthLog> => {
-    const response = await api.post('/growth-logs', data);
-    return response.data;
+    try {
+      const response = await api.post('/growth-logs', data);
+      return response.data;
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
+        throw new Error(
+          'API ruta /growth-logs nije na serveru. Pokreni deploy najnovijeg backend-a na Railway.',
+        );
+      }
+      throw error;
+    }
   },
 };
 
@@ -1211,6 +1220,10 @@ export const notificationsAPI = {
   },
   markAsRead: async (id: string): Promise<void> => {
     await api.patch(`/notifications/${id}/read`);
+  },
+  sendTestPush: async (): Promise<{ ok: boolean; pushEnabled: boolean; devices: number }> => {
+    const response = await api.post('/notifications/push/test', {});
+    return response.data;
   },
 };
 

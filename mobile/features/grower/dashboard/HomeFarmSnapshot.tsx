@@ -149,6 +149,6 @@ export function HomeFarmSnapshot({
   if (items.length === 0) return null;
 
   return (
-    <EnterpriseNavSection title={t('producer.dashboard.homeSnapshot.title')} items={items} />
+    <EnterpriseNavSection title={t('producer.dashboard.homeSnapshot.navTitle')} items={items} />
   );
 }

@@ -8,8 +8,9 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Video, Scale, HeartHandshake, BookMarked, X } from 'lucide-react-native';
+import { Video, Scale, HeartHandshake, BookMarked, BookOpen, X } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -27,6 +28,7 @@ type EducationTopic = {
 
 export default function GrowerEducationScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const p = useBioVeraScreenPadding();
   const [detail, setDetail] = useState<EducationTopic | null>(null);
 
@@ -85,6 +87,13 @@ export default function GrowerEducationScreen() {
       >
         <Text style={[growerUi.pageLead, { marginTop: 0 }]}>{t('producer.education.pageLeadOneLine')}</Text>
         <Text style={styles.comingSoon}>{t('producer.education.comingSoonShort')}</Text>
+
+        <HubNavTile
+          title={t('producer.appGuide.cardTitle')}
+          description={t('producer.appGuide.cardBody')}
+          icon={BookOpen}
+          onPress={() => router.push('/(producer)/app-guide')}
+        />
 
         <HubSectionTitle>{t('producer.education.topicsTitle')}</HubSectionTitle>
         {topics.map((topic) => (

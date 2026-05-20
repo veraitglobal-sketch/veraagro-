@@ -132,6 +132,14 @@ export interface PendingCost {
   label: string;
   amount: number;
   currency?: string;
+  /** Free-text detail (fuel vendor, invoice no., etc.). */
+  note?: string;
+  estateId?: string;
+  parcelId?: string;
+  harvestAnnouncementId?: string;
+  /** Snapshot labels for list UI when offline. */
+  parcelLabel?: string;
+  plantingLabel?: string;
   timestamp: string;
   status: 'pending' | 'syncing' | 'synced' | 'error' | 'skipped';
   error?: string;

@@ -9,12 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
-import { theme } from '../../../lib/theme';
+import { X, Camera } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerUi } from '../../../lib/grower-ui';
 
 export const GROWTH_STAGE_PRESETS = [
   'Vegetative',
@@ -29,22 +30,16 @@ type Props = {
   onClose: () => void;
   onSubmit: (payload: { notes: string; growthStage: string | undefined }) => Promise<void>;
   busy: boolean;
-  estateName?: string;
   parcelLabel?: string;
   planLabel?: string;
-  /** Zasad plans require stage + longer notes (server-enforced). */
   strictPlantingProgress?: boolean;
 };
 
-/**
- * Web-aligned flow: optional growth stage + notes, then one GPS photo (handled by parent).
- */
 export function AddGrowthLogModal({
   visible,
   onClose,
   onSubmit,
   busy,
-  estateName,
   parcelLabel,
   planLabel,
   strictPlantingProgress = false,
@@ -74,65 +69,41 @@ export function AddGrowthLogModal({
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.45)' }}
+        style={styles.overlay}
       >
-        <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
         <View
-          style={{
-            backgroundColor: colors.background,
-            borderTopLeftRadius: theme.borderRadius.lg,
-            borderTopRightRadius: theme.borderRadius.lg,
-            paddingTop: theme.spacing.md,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-            maxHeight: '88%',
-          }}
+          style={[
+            styles.sheet,
+            { paddingBottom: Math.max(p.bottomInset, 16) },
+          ]}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingHorizontal: p.screenPaddingLeft,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.text.primary }}>
-              {t('producer.growthJournal.addLogTitle')}
-            </Text>
+          <View style={[styles.sheetHeader, { paddingHorizontal: p.screenPaddingLeft }]}>
+            <Text style={styles.sheetTitle}>{t('producer.growthJournal.addLogTitle')}</Text>
             <TouchableOpacity onPress={onClose} hitSlop={12} accessibilityRole="button">
-              <X size={22} color={colors.text.secondary} />
+              <X size={22} color={enterpriseColors.gray600} strokeWidth={1.5} />
             </TouchableOpacity>
           </View>
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: theme.spacing.lg }}
+            contentContainerStyle={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: 20 }}
           >
-            <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginBottom: theme.spacing.sm }}>
+            <Text style={enterpriseUi.navRowSubtitle}>
               {t('producer.growthJournal.addLogContext', {
-                estate: estateName || '—',
-                parcel: parcelLabel || t('producer.growthJournal.allParcelsContext'),
-                plan: planLabel || '—',
+                parcel: parcelLabel || '—',
+                planting: planLabel || '—',
               })}
             </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colors.primary,
-                lineHeight: 18,
-                marginBottom: theme.spacing.md,
-                fontWeight: '500',
-              }}
-            >
-              {t('producer.growthJournal.passportLinkedLine')}
-            </Text>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
+            <Text style={styles.passportLine}>{t('producer.growthJournal.passportLinkedLine')}</Text>
+
+            <Text style={enterpriseUi.inAppSectionLabel}>
               {t(
                 strictPlantingProgress
                   ? 'producer.growthJournal.growthStageLabelPlanting'
                   : 'producer.growthJournal.growthStageLabel',
               )}
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+            <View style={styles.chipRow}>
               {GROWTH_STAGE_PRESETS.map((s) => {
                 const sel = growthStage === s;
                 return (
@@ -142,32 +113,18 @@ export function AddGrowthLogModal({
                       setGrowthStage(sel ? '' : s);
                       setCustomStage('');
                     }}
-                    style={{
-                      paddingHorizontal: 10,
-                      paddingVertical: 6,
-                      borderRadius: 8,
-                      borderWidth: 1,
-                      borderColor: sel ? colors.primary : colors.border,
-                      backgroundColor: sel ? `${colors.primary}12` : 'transparent',
-                    }}
+                    style={[styles.chip, sel && styles.chipSelected]}
                   >
-                    <Text style={{ fontSize: 12, color: sel ? colors.primary : colors.text.secondary }}>{s}</Text>
+                    <Text style={[styles.chipText, sel && styles.chipTextSelected]}>{s}</Text>
                   </TouchableOpacity>
                 );
               })}
               <TouchableOpacity
                 onPress={() => setGrowthStage((prev) => (prev === '__custom__' ? '' : '__custom__'))}
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: growthStage === '__custom__' ? colors.primary : colors.border,
-                  backgroundColor: growthStage === '__custom__' ? `${colors.primary}12` : 'transparent',
-                }}
+                style={[styles.chip, growthStage === '__custom__' && styles.chipSelected]}
               >
                 <Text
-                  style={{ fontSize: 12, color: growthStage === '__custom__' ? colors.primary : colors.text.secondary }}
+                  style={[styles.chipText, growthStage === '__custom__' && styles.chipTextSelected]}
                 >
                   {t('producer.growthJournal.customStage')}
                 </Text>
@@ -178,84 +135,152 @@ export function AddGrowthLogModal({
                 value={customStage}
                 onChangeText={setCustomStage}
                 placeholder={t('producer.growthJournal.customStagePlaceholder')}
-                placeholderTextColor={colors.text.tertiary}
-                style={{
-                  borderWidth: 0.5,
-                  borderColor: colors.border,
-                  borderRadius: 8,
-                  padding: 12,
-                  fontSize: 14,
-                  color: colors.text.primary,
-                  marginBottom: theme.spacing.md,
-                }}
+                placeholderTextColor={enterpriseColors.gray600}
+                style={[growerUi.formInput, styles.fieldGap]}
               />
             ) : null}
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.tertiary, marginBottom: 6 }}>
+
+            <Text style={enterpriseUi.inAppSectionLabel}>
               {t(
-                strictPlantingProgress ? 'producer.growthJournal.notesLabelPlanting' : 'producer.growthJournal.notesLabel',
+                strictPlantingProgress
+                  ? 'producer.growthJournal.notesLabelPlanting'
+                  : 'producer.growthJournal.notesLabel',
               )}
             </Text>
             <TextInput
               value={notes}
               onChangeText={setNotes}
               placeholder={t('producer.growthJournal.notesPlaceholder')}
-              placeholderTextColor={colors.text.tertiary}
+              placeholderTextColor={enterpriseColors.gray600}
               multiline
               numberOfLines={3}
-              style={{
-                borderWidth: 0.5,
-                borderColor: colors.border,
-                borderRadius: 8,
-                padding: 12,
-                fontSize: 14,
-                color: colors.text.primary,
-                minHeight: 88,
-                textAlignVertical: 'top',
-                marginBottom: theme.spacing.lg,
-              }}
+              style={[growerUi.formInput, styles.notesInput]}
             />
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: `${colors.primary}55`,
-                backgroundColor: `${colors.primary}0c`,
-                borderRadius: theme.borderRadius.md,
-                padding: 12,
-                marginBottom: theme.spacing.md,
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+
+            <View style={styles.photoHint}>
+              <Text style={enterpriseUi.navRowTitle}>
                 {t('producer.growthJournal.photoRequiredLineTitle')}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.text.secondary, lineHeight: 18, marginTop: 6 }}>
+              <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 6 }]}>
                 {t('producer.growthJournal.photoRequiredLineBody')}
               </Text>
             </View>
+
             <TouchableOpacity
-              onPress={submit}
+              onPress={() => void submit()}
               disabled={busy}
-              style={{
-                backgroundColor: colors.primary,
-                paddingVertical: 14,
-                borderRadius: theme.borderRadius.md,
-                alignItems: 'center',
-                opacity: busy ? 0.6 : 1,
-              }}
+              activeOpacity={0.88}
+              style={[enterpriseUi.authBtnPrimary, styles.submitBtn, busy && styles.submitBusy]}
             >
               {busy ? (
-                <ActivityIndicator color={colors.background} />
+                <ActivityIndicator color={enterpriseColors.white} />
               ) : (
-                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.background }}>
-                  {t('producer.growthJournal.takePhotoAndSave')}
-                </Text>
+                <>
+                  <Camera size={20} color={enterpriseColors.white} strokeWidth={1.5} />
+                  <Text style={enterpriseUi.authBtnPrimaryText}>
+                    {t('producer.growthJournal.continueCta')}
+                  </Text>
+                </>
               )}
             </TouchableOpacity>
-            <Text style={{ fontSize: 11, color: colors.text.tertiary, marginTop: 10, lineHeight: 16 }}>
-              {t('producer.growthJournal.addLogFooter')}
-            </Text>
+            <Text style={styles.footerNote}>{t('producer.growthJournal.addLogFooter')}</Text>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  sheet: {
+    backgroundColor: enterpriseColors.white,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    maxHeight: '88%',
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingBottom: 10,
+  },
+  sheetTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+  },
+  passportLine: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: enterpriseColors.primary,
+    fontWeight: '500',
+    marginTop: 8,
+    marginBottom: 14,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+  },
+  chipSelected: {
+    borderColor: enterpriseColors.primary,
+    backgroundColor: enterpriseColors.primaryTint,
+  },
+  chipText: {
+    fontSize: 13,
+    color: enterpriseColors.gray700,
+  },
+  chipTextSelected: {
+    color: enterpriseColors.primary,
+    fontWeight: '600',
+  },
+  fieldGap: {
+    marginBottom: 12,
+  },
+  notesInput: {
+    minHeight: 88,
+    textAlignVertical: 'top',
+    marginBottom: 14,
+  },
+  photoHint: {
+    borderWidth: 1,
+    borderColor: enterpriseColors.primaryTintStrong,
+    backgroundColor: enterpriseColors.primaryTint,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 14,
+  },
+  submitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    minHeight: 52,
+  },
+  submitBusy: {
+    opacity: 0.6,
+  },
+  footerNote: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: enterpriseColors.gray600,
+    marginTop: 10,
+  },
+});

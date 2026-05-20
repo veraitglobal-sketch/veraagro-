@@ -6,9 +6,17 @@ import { AntiFraudModule } from '../anti-fraud/anti-fraud.module';
 import { ComplianceModule } from '../compliance/compliance.module';
 import { TreatmentLogsModule } from '../treatment-logs/treatment-logs.module';
 import { SmartLockModule } from '../smart-lock/smart-lock.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [PrismaModule, AntiFraudModule, ComplianceModule, TreatmentLogsModule, SmartLockModule],
+  imports: [
+    PrismaModule,
+    AntiFraudModule,
+    ComplianceModule,
+    TreatmentLogsModule,
+    SmartLockModule,
+    NotificationsModule,
+  ],
   providers: [GrowthLogsService],
   controllers: [GrowthLogsController],
   exports: [GrowthLogsService],

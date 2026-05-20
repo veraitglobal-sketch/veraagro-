@@ -1,0 +1,16 @@
+# EAS upload ignore (monorepo: keep ../shared, skip heavy siblings)
+node_modules/
+.expo/
+dist/
+ios/
+android/
+.DS_Store
+*.log
+.env
+.env.*
+
+../backend/
+../web/
+../blockchain/
+../filedump/
+../node_modules/

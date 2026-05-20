@@ -5,6 +5,7 @@ import { API_URL } from '../lib/api-url';
 import { axiosLikeMessage } from '../lib/api-error';
 import { setAuthUnauthorizedHandler } from '../lib/auth-events';
 import { replaceToSignIn } from '../lib/app-navigation';
+import { refreshPushRegistrationIfAuthed, unregisterPushTokenFromBackend } from '../lib/push-service';
 
 interface User {
   id: string;
@@ -59,6 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    await unregisterPushTokenFromBackend();
     await AsyncStorage.removeItem('auth_token');
     await AsyncStorage.removeItem('auth_user');
     delete axios.defaults.headers.common['Authorization'];
@@ -105,6 +107,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
           setUser(u);
           setToken(access_token);
+          void refreshPushRegistrationIfAuthed(
+            Array.isArray(u.roles) ? u.roles : u.role ? [u.role] : undefined,
+          ).catch((e) => {
+            console.warn('[Auth] push registration skipped:', e instanceof Error ? e.message : e);
+          });
           return { user: u as User, token: access_token };
         } catch (err: unknown) {
           lastError = err;

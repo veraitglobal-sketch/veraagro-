@@ -96,7 +96,7 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
     if (socketId) {
       this.server.to(`user:${userId}`).emit('notification', notification);
     } else if (shouldLogThrottled(`ws:not-connected:${userId}`, 120_000)) {
-      this.logger.debug(`User ${userId} not connected; notification queued for next session`);
+      this.logger.debug(`User ${userId} not connected; use in-app/push via NotificationsService.create`);
     }
   }
 

@@ -1,25 +1,11 @@
-# Expo
-.expo/
-.expo-shared/
-dist/
-web-build/
+# Firebase client config (download from Firebase Console — never commit secrets)
+google-services.json
+GoogleService-Info.plist
 
-# Node
+# Native folders from prebuild (optional local)
+android/
+ios/
+
 node_modules/
-npm-debug.log
-yarn-error.log
-
-# macOS
-.DS_Store
-
-# Environment
-.env
-.env.local
-
-# TypeScript
-*.tsbuildinfo
-
-# IDE
-.vscode/
-.idea/
 .expo/
+dist/

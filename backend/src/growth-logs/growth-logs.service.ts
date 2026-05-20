@@ -1,5 +1,12 @@
 import * as crypto from 'crypto';
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AntiFraudService } from '../anti-fraud/anti-fraud.service';
 import { CryptoUtil } from '../common/utils/crypto.util';
@@ -17,12 +24,15 @@ const MATERIAL_KINDS = new Set<GrowerMaterialKind>(['SEED', 'FERTILIZER', 'PESTI
 
 @Injectable()
 export class GrowthLogsService {
+  private readonly logger = new Logger(GrowthLogsService.name);
+
   constructor(
     private prisma: PrismaService,
     private antiFraudService: AntiFraudService,
     private materialBarcodeValidation: MaterialBarcodeValidationService,
     private growthLogTreatmentSync: GrowthLogTreatmentSyncService,
     private smartLockService: SmartLockService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(userId: string, data: {
@@ -252,6 +262,24 @@ export class GrowthLogsService {
       });
     }
 
+    try {
+      const grower = await this.prisma.users.findUnique({
+        where: { id: userId },
+        select: { firstName: true, lastName: true },
+      });
+      const growerLabel = grower
+        ? `${grower.firstName || ''} ${grower.lastName || ''}`.trim() || 'Proizvođač'
+        : 'Proizvođač';
+      const parcelLabel = parcel.cropType || data.parcelId.slice(0, 8);
+      await this.notificationsService.notifyAdminsNewGrowthPhoto({
+        growerLabel,
+        parcelLabel,
+        logId: growthLog.id,
+      });
+    } catch (e) {
+      this.logger.warn(`notifyAdminsNewGrowthPhoto: ${e instanceof Error ? e.message : e}`);
+    }
+
     return growthLog;
   }
 
@@ -269,7 +297,7 @@ export class GrowthLogsService {
     }
 
     return this.prisma.growth_logs.findMany({
-      where: { estateId },
+      where: { estateId, moderationStatus: { not: 'REJECTED' } },
       orderBy: { createdAt: 'desc' },
       include: {
         parcels: {
@@ -306,7 +334,7 @@ export class GrowthLogsService {
     }
 
     return this.prisma.growth_logs.findMany({
-      where: { parcelId },
+      where: { parcelId, moderationStatus: { not: 'REJECTED' } },
       orderBy: { createdAt: 'desc' },
       include: {
         parcels: {
@@ -326,5 +354,81 @@ export class GrowthLogsService {
         },
       },
     });
+  }
+
+  async listForAdmin(opts?: { moderationStatus?: string; limit?: number }) {
+    const limit = Math.min(Math.max(opts?.limit ?? 80, 1), 200);
+    const where =
+      opts?.moderationStatus?.trim()
+        ? { moderationStatus: opts.moderationStatus.trim() }
+        : { moderationStatus: { not: 'REJECTED' } };
+
+    return this.prisma.growth_logs.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        users: { select: { id: true, firstName: true, lastName: true, partnerCode: true } },
+        parcels: {
+          select: {
+            id: true,
+            cropType: true,
+            estates: { select: { id: true, name: true } },
+          },
+        },
+        harvest_announcements: {
+          select: {
+            id: true,
+            cropType: true,
+            announcementType: true,
+            estimatedDate: true,
+            status: true,
+          },
+        },
+      },
+    });
+  }
+
+  async adminRejectLog(adminId: string, logId: string, reason?: string) {
+    const log = await this.prisma.growth_logs.findUnique({
+      where: { id: logId },
+      include: {
+        users: { select: { id: true, firstName: true, lastName: true } },
+        parcels: { select: { cropType: true } },
+      },
+    });
+    if (!log) throw new NotFoundException('Growth log not found');
+    if (log.moderationStatus === 'REJECTED') {
+      return log;
+    }
+
+    const updated = await this.prisma.growth_logs.update({
+      where: { id: logId },
+      data: {
+        moderationStatus: 'REJECTED',
+        rejectionReason: reason?.trim() || null,
+        moderatedAt: new Date(),
+        moderatedByUserId: adminId,
+      },
+    });
+
+    try {
+      await this.notificationsService.notifyGrowerGrowthPhotoRejected({
+        growerId: log.userId,
+        reason,
+        parcelLabel: log.parcels?.cropType ?? undefined,
+      });
+    } catch (e) {
+      this.logger.warn(`notifyGrowerGrowthPhotoRejected: ${e instanceof Error ? e.message : e}`);
+    }
+
+    return updated;
+  }
+
+  async adminDeleteLog(adminId: string, logId: string) {
+    const log = await this.prisma.growth_logs.findUnique({ where: { id: logId } });
+    if (!log) throw new NotFoundException('Growth log not found');
+    await this.prisma.growth_logs.delete({ where: { id: logId } });
+    return { ok: true, id: logId, deletedBy: adminId };
   }
 }

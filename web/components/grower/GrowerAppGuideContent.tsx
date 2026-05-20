@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { Smartphone } from 'lucide-react';
 import { GrowerAppGuideStepCard } from '@/components/grower/GrowerAppGuideStepCard';
+import { GrowerAppGuideFaqSection } from '@/components/grower/GrowerAppGuideFaqSection';
 import { GROWER_APP_GUIDE_STEPS } from '@/lib/grower-app-guide';
 
 type Props = {
@@ -47,6 +48,8 @@ export function GrowerAppGuideContent({ toolbar, footerExtra, pdfExport = false 
           <GrowerAppGuideStepCard key={step.id} step={step} index={index} pdfExport={pdfExport} />
         ))}
       </div>
+
+      <GrowerAppGuideFaqSection pdfExport={pdfExport} />
 
       <p className="mt-8 text-xs text-gray-500 print:mt-4">{t('grower.appGuide.footer')}</p>
       {footerExtra}

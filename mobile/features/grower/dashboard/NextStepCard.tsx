@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react-native';
 import { computeNextStep, type NextStep } from './computeNextStep';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 
@@ -158,10 +157,7 @@ export default function NextStepCard(props: NextStepCardProps) {
         ]}
         accessibilityRole="button"
       >
-        <View style={styles.ctaInner}>
-          <Text style={enterpriseUi.authSubmitText}>{cta}</Text>
-          <ChevronRight size={20} color={enterpriseColors.white} strokeWidth={2} />
-        </View>
+        <Text style={[enterpriseUi.authSubmitText, styles.ctaText]}>{cta}</Text>
       </TouchableOpacity>
       </View>
     </View>
@@ -170,7 +166,7 @@ export default function NextStepCard(props: NextStepCardProps) {
 
 const styles = StyleSheet.create({
   panel: {
-    marginBottom: 12,
+    marginBottom: 16,
     overflow: 'hidden',
   },
   panelHero: {
@@ -197,13 +193,13 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   headline: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '300',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.45,
-    lineHeight: 26,
+    letterSpacing: -0.5,
+    lineHeight: 28,
     marginTop: 4,
-    marginBottom: 6,
+    marginBottom: 8,
   },
   syncError: {
     fontSize: 14,
@@ -213,14 +209,13 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   cta: {
-    marginTop: 20,
+    marginTop: 22,
+    minHeight: 52,
+    justifyContent: 'center',
   },
-  ctaInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  ctaText: {
+    textAlign: 'center',
     width: '100%',
-    gap: 8,
   },
   ctaDisabled: {
     opacity: 0.65,

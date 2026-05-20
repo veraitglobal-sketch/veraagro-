@@ -24,6 +24,9 @@ export class AdminService {
       totalParcels,
       pendingParcelsCount,
       pendingEstatesCount,
+      transportAwaitingApproval,
+      recentGrowthPhotos,
+      activePlantings,
     ] = await Promise.all([
       this.prisma.users.count(),
       this.prisma.users.count({
@@ -79,6 +82,11 @@ export class AdminService {
       this.prisma.parcels.count(),
       this.prisma.parcels.count({ where: { approvedAt: null } }),
       this.prisma.estates.count({ where: { status: 'PENDING_SETUP' } }),
+      this.prisma.missions.count({ where: { status: 'AWAITING_APPROVAL' } }),
+      this.prisma.growth_logs.count({ where: { moderationStatus: 'APPROVED' } }),
+      this.prisma.harvest_announcements.count({
+        where: { announcementType: 'PLANTING', status: { notIn: ['CANCELLED', 'REJECTED'] } },
+      }),
     ]);
 
     return {
@@ -110,6 +118,11 @@ export class AdminService {
       parcels: {
         total: totalParcels,
         pendingApproval: pendingParcelsCount,
+      },
+      growerModeration: {
+        transportAwaitingApproval,
+        recentGrowthPhotos,
+        activePlantings,
       },
     };
   }

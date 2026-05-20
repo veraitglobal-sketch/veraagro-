@@ -380,6 +380,8 @@ export class BatchesService {
       throw new NotFoundException('Batch not found');
     }
 
+    const displayStatus = await this.syncBatchStatusIfMissionCompleted(batch);
+
     const formatUserDisplay = (u: { id: string; firstName?: string | null; lastName?: string | null } | null | undefined) => {
       if (!u) return null;
       const name = [u.firstName, u.lastName].filter(Boolean).join(' ').trim();
@@ -400,7 +402,7 @@ export class BatchesService {
         quantity: batch.quantity,
         unit: batch.unit,
         harvestDate: batch.harvestDate,
-        status: batch.status,
+        status: displayStatus,
       },
       traceability: {
         origin: {
@@ -506,11 +508,51 @@ export class BatchesService {
     };
   }
 
+  /** Align batch.status with a COMPLETED transport mission (grower „Stiglo“ filter). */
+  private async syncBatchStatusIfMissionCompleted(batch: {
+    id: string;
+    batchId: string;
+    status: string;
+  }): Promise<string> {
+    const terminal = new Set(['DELIVERED', 'RETURNED', 'EXPIRED']);
+    if (terminal.has(batch.status)) return batch.status;
+    const mission = await this.prisma.missions.findFirst({
+      where: { batchId: batch.id, status: 'COMPLETED' },
+      select: { id: true },
+    });
+    if (!mission) return batch.status;
+    try {
+      await this.markDelivered(batch.batchId);
+      return 'DELIVERED';
+    } catch (e) {
+      this.logger.warn(
+        `syncBatchStatusIfMissionCompleted failed for ${batch.batchId}: ${e instanceof Error ? e.message : e}`,
+      );
+      return 'DELIVERED';
+    }
+  }
+
+  /**
+   * Grower list filter „Stiglo“ uses batch.status === DELIVERED. Logistics marks the mission
+   * COMPLETED first; keep batch row aligned (and heal legacy rows on list).
+   */
+  private async resolveGrowerListStatuses<
+    T extends { id: string; batchId: string; status: string },
+  >(rows: T[]): Promise<T[]> {
+    if (rows.length === 0) return rows;
+    const out: T[] = [];
+    for (const row of rows) {
+      const status = await this.syncBatchStatusIfMissionCompleted(row);
+      out.push(status === row.status ? row : { ...row, status });
+    }
+    return out;
+  }
+
   /**
    * Get all batches for a user (grower)
    */
   async getAllBatchesForUser(userId: string) {
-    return this.prisma.batches.findMany({
+    const rows = await this.prisma.batches.findMany({
       where: {
         OR: [{ harvestedByUserId: userId }, { estates: { ownerId: userId } }],
       },
@@ -523,6 +565,7 @@ export class BatchesService {
         createdAt: 'desc',
       },
     });
+    return this.resolveGrowerListStatuses(rows);
   }
 
   /**

@@ -125,6 +125,24 @@ export class MissionsController {
     return this.missionsService.listLogisticsPartnersForAdmin();
   }
 
+  @Patch('admin/:id/approve-transport')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminApproveTransport(@Request() req, @Param('id') id: string) {
+    return this.missionsService.adminApproveTransport(req.user.id, id);
+  }
+
+  @Patch('admin/:id/reject-transport')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminRejectTransport(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() body: { reason?: string },
+  ) {
+    return this.missionsService.adminRejectTransport(req.user.id, id, body?.reason);
+  }
+
   @Patch('admin/:id/assign')
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')

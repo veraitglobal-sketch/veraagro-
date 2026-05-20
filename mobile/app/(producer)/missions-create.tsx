@@ -17,6 +17,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
+import { getCurrentGrowerPosition } from '../../lib/grower-permissions';
 import { MapPin } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
@@ -186,17 +187,16 @@ export default function MissionsCreateScreen() {
     setLocationHint(null);
     setLocLoading(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      const growerPos = await getCurrentGrowerPosition(t, {
+        accuracy: Location.Accuracy.Balanced,
+      });
+      if (!growerPos) {
         setLocationHint(t('producer.missionsCreate.locationHintDenied'));
         setShowManualGps(true);
         return;
       }
-      const pos = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
+      const lat = growerPos.lat;
+      const lng = growerPos.lng;
       setPickupLat(String(lat));
       setPickupLng(String(lng));
       try {

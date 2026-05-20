@@ -5,8 +5,8 @@
       "text": "odobrene parcele → setva / beleške u sezoni (uglavnom mobilno) → plan berbe pred berbu."
     },
     {
-      "kicker": "Partija",
-      "text": "partija → pakovanje do PACKED / QUALITY_VERIFIED → kvalitet → tri fotografije + rolna nalepnica."
+      "kicker": "Lot",
+      "text": "lot → pakovanje do PACKED / QUALITY_VERIFIED → kvalitet → tri fotografije + rolna nalepnica."
     },
     {
       "kicker": "Sa farme",
@@ -31,7 +31,7 @@
     {
       "title": "Kontrolna tabla",
       "paragraphs": [
-        "Obaveštenja, aktivne partije, poruke, šta sledi — bacite pogled povremeno."
+        "Obaveštenja, aktivni lotovi, poruke, šta sledi — bacite pogled povremeno."
       ],
       "links": [{ "label": "Kontrolna tabla", "href": "/grower" }]
     },
@@ -45,7 +45,7 @@
     {
       "title": "Moja polja (parcele)",
       "paragraphs": [
-        "Gazdinstvo + parcele, m², usev · partije/tretmani/dnevnik na bloku aktivni tek kad admin odobri parcelu."
+        "Gazdinstvo + parcele, m², usev · lotovi/tretmani/dnevnik na bloku aktivni tek kad admin odobri parcelu."
       ],
       "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
     },
@@ -74,9 +74,9 @@
       "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
     },
     {
-      "title": "Berba → partija",
+      "title": "Berba → lot",
       "paragraphs": [
-        "Kada zrije: berba · partija vezana za parcelu · mobilni tok za kg i prozor."
+        "Kada zrije: berba · lot vezan za parcelu · mobilni tok za kg i prozor."
       ],
       "links": [
         { "label": "Moja polja", "href": "/grower/fields" },

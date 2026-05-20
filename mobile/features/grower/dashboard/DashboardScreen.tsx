@@ -1,19 +1,17 @@
-import { View, ActivityIndicator } from 'react-native';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { TabRootBody } from '../../../components/enterprise/TabRootBody';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { useAuth } from '../../../hooks/useAuth';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
-import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 import { BioVeraProvenanceRibbon } from '../../../components/enterprise/BioVeraProvenanceRibbon';
-import SyncStatus from '../../../components/SyncStatus';
 import NextStepCard from './NextStepCard';
 import { HomeFarmSnapshot } from './HomeFarmSnapshot';
+import { HomeDashboardHeader } from './HomeDashboardHeader';
+import { HomeKpiStrip } from './HomeKpiStrip';
 import { tString } from '../../../lib/i18n-strings';
 
 function humanizeSyncError(lastError: string | null, pendingCount: number, t: TFunction): string | null {
@@ -45,10 +43,6 @@ export default function DashboardScreen() {
     ? t('producer.dashboard.greetingName', { name: user.firstName })
     : t('producer.dashboard.greeting');
 
-  const headerSubtitle = user?.partnerCode
-    ? `${greeting} · ${t('producer.dashboard.partner')} ${user.partnerCode}`
-    : greeting;
-
   const syncError = humanizeSyncError(data.offlineSyncLastError, data.offlinePending, t);
 
   return (
@@ -59,27 +53,18 @@ export default function DashboardScreen() {
       onRefresh={() => void tabRefresh.onRefresh()}
       contentPaddingBottom={Math.max(p.bottomInset, 16) + 16}
       header={
-        <GrowerTabHeader
-          title={farmName}
-          subtitle={headerSubtitle}
-          right={
-            <View style={{ alignItems: 'flex-end', minWidth: 72 }}>
-              {tabRefresh.showHeaderSpinner ? (
-                <ActivityIndicator
-                  size="small"
-                  color={enterpriseColors.primary}
-                  style={{ marginBottom: 4 }}
-                />
-              ) : null}
-              <SyncStatus />
-            </View>
-          }
+        <HomeDashboardHeader
+          farmName={farmName}
+          greetingLine={greeting}
+          partnerCode={user?.partnerCode}
+          parcelSteps={ps}
+          estateCount={estateCount}
         />
       }
     >
-      <BioVeraProvenanceRibbon />
-      <TabRootBody>
-        <HomeFarmSnapshot
+      <TabRootBody style={{ paddingTop: 0 }}>
+        <HomeKpiStrip
+          loaded={ps.loaded}
           estateCount={estateCount}
           parcelSteps={ps}
           activeMissions={data.activeMissions.length}
@@ -110,6 +95,18 @@ export default function DashboardScreen() {
           onFieldLog={() => router.push('/(producer)/(tabs)/field-log')}
           onSyncNow={() => void data.onRefresh()}
           onNotifications={() => router.push('/(producer)/notifications')}
+        />
+
+        <BioVeraProvenanceRibbon compact />
+
+        <HomeFarmSnapshot
+          estateCount={estateCount}
+          parcelSteps={ps}
+          activeMissions={data.activeMissions.length}
+          batchesReadyForTransport={data.batchesReadyForTransport}
+          activeBatches={data.activeBatches.length}
+          offlinePending={data.offlinePending}
+          ordersFinancial={data.ordersFinancial}
         />
       </TabRootBody>
     </EnterpriseScreen>

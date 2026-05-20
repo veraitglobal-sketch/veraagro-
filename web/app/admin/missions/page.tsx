@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
 const MISSION_FILTER_STATUSES = [
+  'AWAITING_APPROVAL',
   'PENDING',
   'ASSIGNED',
   'ACCEPTED',

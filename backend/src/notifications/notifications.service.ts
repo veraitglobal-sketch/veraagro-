@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationTrigger, UserRole } from '@prisma/client';
+import { PushNotificationService } from './push-notification.service';
 
 /**
  * Enhanced Notifications Service
@@ -11,7 +12,10 @@ import { NotificationTrigger, UserRole } from '@prisma/client';
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private pushNotificationService: PushNotificationService,
+  ) {}
 
   /**
    * Create notification (basic)
@@ -23,7 +27,7 @@ export class NotificationsService {
     message: string;
     actionUrl?: string;
   }) {
-    return this.prisma.notifications.create({
+    const row = await this.prisma.notifications.create({
       data: {
         id: crypto.randomUUID(),
         userId: data.userId,
@@ -34,6 +38,20 @@ export class NotificationsService {
         status: 'UNREAD',
       },
     });
+
+    void this.pushNotificationService
+      .sendToUser(data.userId, {
+        title: data.title,
+        body: data.message,
+        actionUrl: data.actionUrl,
+        notificationId: row.id,
+        type: data.type,
+      })
+      .catch((e) => {
+        this.logger.warn(`push after create failed user=${data.userId}: ${e instanceof Error ? e.message : e}`);
+      });
+
+    return row;
   }
 
   /**
@@ -88,9 +106,16 @@ export class NotificationsService {
     growerLabel: string;
     destinationCity: string | null;
     missionId: string;
+    awaitingApproval?: boolean;
   }): Promise<void> {
     const city = data.destinationCity?.trim() || '—';
     const message = `${data.missionNumber} — ${data.growerLabel} → ${city}`;
+    const title = data.awaitingApproval
+      ? 'Transport — čeka odobrenje'
+      : 'New transport request';
+    const actionUrl = data.awaitingApproval
+      ? `/admin/grower-control?tab=transport&missionId=${encodeURIComponent(data.missionId)}`
+      : '/admin/missions';
 
     const admins = await this.prisma.users.findMany({
       where: {
@@ -107,15 +132,87 @@ export class NotificationsService {
         await this.create({
           userId: a.id,
           type: 'ACTION_REQUIRED',
-          title: 'New transport request',
+          title,
           message,
-          actionUrl: '/admin/missions',
+          actionUrl,
         });
       } catch (e) {
         this.logger.warn(
           `notifyAdminsForNewTransportRequest: failed for user ${a.id}`,
           e,
         );
+      }
+    }
+  }
+
+  async notifyGrowerTransportDecision(data: {
+    growerId: string;
+    missionNumber: string;
+    approved: boolean;
+    reason?: string;
+    missionId: string;
+  }): Promise<void> {
+    const title = data.approved ? 'Transport odobren' : 'Transport odbijen';
+    const message = data.approved
+      ? `${data.missionNumber}: operativa je odobrila zahtev. Prevoznik može biti dodeljen.`
+      : `${data.missionNumber}: zahtev nije odobren.${data.reason?.trim() ? ` Razlog: ${data.reason.trim()}` : ''}`;
+    await this.create({
+      userId: data.growerId,
+      type: data.approved ? 'SYSTEM' : 'ALERT',
+      title,
+      message,
+      actionUrl: `/(producer)/mission/${encodeURIComponent(data.missionId)}`,
+    });
+  }
+
+  async notifyGrowerGrowthPhotoRejected(data: {
+    growerId: string;
+    reason?: string;
+    parcelLabel?: string;
+  }): Promise<void> {
+    await this.create({
+      userId: data.growerId,
+      type: 'ALERT',
+      title: 'Fotografija rasta odbijena',
+      message: `${data.parcelLabel ? `${data.parcelLabel}: ` : ''}Operativa nije prihvatila fotografiju.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''} Pošaljite novu sa parcele.`,
+      actionUrl: '/(producer)/growth-journal',
+    });
+  }
+
+  async notifyGrowerPlantingRemoved(data: {
+    growerId: string;
+    cropType: string;
+    reason?: string;
+  }): Promise<void> {
+    await this.create({
+      userId: data.growerId,
+      type: 'ALERT',
+      title: 'Zasad uklonjen',
+      message: `Plan zasada „${data.cropType}” je uklonjen iz sistema.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''}`,
+      actionUrl: '/(producer)/plantings',
+    });
+  }
+
+  async notifyAdminsNewGrowthPhoto(data: {
+    growerLabel: string;
+    parcelLabel: string;
+    logId: string;
+  }): Promise<void> {
+    const admins = await this.prisma.users.findMany({
+      where: { OR: [{ roles: { has: 'SUPER_ADMIN' } }, { roles: { has: 'ADMIN' } }] },
+      select: { id: true },
+    });
+    for (const a of admins) {
+      try {
+        await this.create({
+          userId: a.id,
+          type: 'ACTION_REQUIRED',
+          title: 'Nova fotografija rasta',
+          message: `${data.growerLabel} — ${data.parcelLabel}`,
+          actionUrl: `/admin/grower-control?tab=growth&logId=${encodeURIComponent(data.logId)}`,
+        });
+      } catch (e) {
+        this.logger.warn(`notifyAdminsNewGrowthPhoto: ${a.id}`, e);
       }
     }
   }
@@ -161,16 +258,12 @@ export class NotificationsService {
       title = title.replace(regex, context[key]);
     });
 
-    return this.prisma.notifications.create({
-      data: {
-        id: crypto.randomUUID(),
-        userId,
-        type: this.mapTriggerToType(trigger),
-        title,
-        message,
-        actionUrl: template.actionUrl,
-        status: 'UNREAD',
-      },
+    return this.create({
+      userId,
+      type: this.mapTriggerToType(trigger),
+      title,
+      message,
+      actionUrl: template.actionUrl ?? undefined,
     });
   }
 
@@ -293,15 +386,11 @@ export class NotificationsService {
 
     const notification = messages[trigger] || messages.CUSTOM;
 
-    return this.prisma.notifications.create({
-      data: {
-        id: crypto.randomUUID(),
-        userId,
-        type: 'SYSTEM',
-        title: notification.title,
-        message: notification.message,
-        status: 'UNREAD',
-      },
+    return this.create({
+      userId,
+      type: 'SYSTEM',
+      title: notification.title,
+      message: notification.message,
     });
   }
 

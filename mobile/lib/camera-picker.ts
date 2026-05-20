@@ -1,4 +1,6 @@
 import { Alert, InteractionManager, Linking, Platform } from 'react-native';
+import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import type { TFunction } from 'i18next';
 
@@ -11,13 +13,66 @@ export type PickImageOptions = {
   allowsEditing?: boolean;
   /** Wait for RN modals / transitions to finish (iOS camera after Modal). */
   defer?: boolean;
+  /** Bio Vera Serbian explanation before the OS / Expo dialog (default true). */
+  rationale?: boolean;
+  rationaleTitleKey?: string;
+  rationaleBodyKey?: string;
 };
 
-async function ensureCameraPermission(t: TFunction): Promise<boolean> {
-  let status = (await ImagePicker.getCameraPermissionsAsync()).status;
-  if (status !== 'granted') {
-    ({ status } = await ImagePicker.requestCameraPermissionsAsync());
+const EXPO_GO_CAMERA_HINT_KEY = 'biovera_expo_go_camera_hint_v1';
+
+function showCameraRationale(
+  t: TFunction,
+  titleKey: string,
+  bodyKey: string,
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    Alert.alert(t(titleKey), t(bodyKey), [
+      { text: t('common.cancel'), style: 'cancel', onPress: () => resolve(false) },
+      { text: t('producer.permissions.cameraAllow'), onPress: () => resolve(true) },
+    ]);
+  });
+}
+
+/** One-time note when running inside Expo Go (not the production Bio Vera app). */
+async function maybeExplainExpoGoCameraDialog(t: TFunction): Promise<void> {
+  if (Constants.appOwnership !== 'expo') return;
+  if (await AsyncStorage.getItem(EXPO_GO_CAMERA_HINT_KEY)) return;
+  await AsyncStorage.setItem(EXPO_GO_CAMERA_HINT_KEY, '1');
+  await new Promise<void>((resolve) => {
+    Alert.alert(
+      t('producer.permissions.expoGoCameraTitle'),
+      t('producer.permissions.expoGoCameraBody'),
+      [{ text: t('common.ok'), onPress: () => resolve() }],
+    );
+  });
+}
+
+async function ensureCameraPermission(
+  t: TFunction,
+  options: Pick<PickImageOptions, 'rationale' | 'rationaleTitleKey' | 'rationaleBodyKey'> = {},
+): Promise<boolean> {
+  const {
+    rationale = true,
+    rationaleTitleKey = 'producer.permissions.cameraRationaleTitle',
+    rationaleBodyKey = 'producer.permissions.cameraRationaleBody',
+  } = options;
+
+  const current = await ImagePicker.getCameraPermissionsAsync();
+  if (current.status === 'granted') return true;
+
+  if (current.status === 'denied' && current.canAskAgain === false) {
+    permissionAlert(t, 'producer.fieldLogAlerts.camPermTitle', 'producer.fieldLogAlerts.camPermBody');
+    return false;
   }
+
+  if (rationale && current.status === 'undetermined') {
+    const proceed = await showCameraRationale(t, rationaleTitleKey, rationaleBodyKey);
+    if (!proceed) return false;
+    await maybeExplainExpoGoCameraDialog(t);
+  }
+
+  const { status } = await ImagePicker.requestCameraPermissionsAsync();
   return status === 'granted';
 }
 
@@ -60,7 +115,7 @@ async function runPick<T>(fn: () => Promise<T>, defer?: boolean): Promise<T> {
 /** Launch device camera; returns asset or null when cancelled. */
 export async function pickFromCamera(opts: PickImageOptions): Promise<ImagePicker.ImagePickerAsset | null> {
   return runPick(async () => {
-    const granted = await ensureCameraPermission(opts.t);
+    const granted = await ensureCameraPermission(opts.t, opts);
     if (!granted) {
       permissionAlert(opts.t, 'producer.fieldLogAlerts.camPermTitle', 'producer.fieldLogAlerts.camPermBody');
       return null;

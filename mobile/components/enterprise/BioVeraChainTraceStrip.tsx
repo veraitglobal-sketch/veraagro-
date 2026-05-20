@@ -57,7 +57,10 @@ function labelStyle(state: StepState) {
 /**
  * Chain tab — typographic enterprise cue (no cards, dots, or step widgets).
  */
-export function BioVeraChainTraceStrip(props: Props) {
+export function BioVeraChainTraceStrip({
+  compact = false,
+  ...props
+}: Props & { compact?: boolean }) {
   const { t } = useTranslation();
   const states = resolveStates(props);
   const progress = railProgress(states);
@@ -70,9 +73,13 @@ export function BioVeraChainTraceStrip(props: Props) {
   };
 
   return (
-    <View style={styles.wrap} accessibilityRole="summary">
-      <Text style={styles.title}>{t('producer.brand.chainTrace.title')}</Text>
-      <Text style={styles.lead}>{t('producer.brand.chainTrace.lead')}</Text>
+    <View style={[styles.wrap, compact && styles.wrapCompact]} accessibilityRole="summary">
+      {compact ? null : (
+        <>
+          <Text style={styles.title}>{t('producer.brand.chainTrace.title')}</Text>
+          <Text style={styles.lead}>{t('producer.brand.chainTrace.lead')}</Text>
+        </>
+      )}
 
       <View style={styles.chainRow}>
         {STEP_KEYS.map((key, index) => {
@@ -101,6 +108,15 @@ const styles = StyleSheet.create({
   wrap: {
     width: '100%',
     marginBottom: 22,
+  },
+  wrapCompact: {
+    marginBottom: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.white,
   },
   title: {
     ...enterpriseUi.inAppTitle,

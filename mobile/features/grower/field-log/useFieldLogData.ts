@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { Alert, Linking } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from 'expo-location';
 import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
+import { getCurrentGrowerPosition, isForegroundLocationGranted } from '../../../lib/grower-permissions';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
 import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI } from '../../../lib/api';
@@ -282,20 +281,9 @@ export function useFieldLogData() {
     activityType,
   ]);
 
-  const requestPermissions = useCallback(async () => {
-    const [cameraStatus, locationStatus] = await Promise.all([
-      ImagePicker.requestCameraPermissionsAsync(),
-      Location.requestForegroundPermissionsAsync(),
-    ]);
-    if (cameraStatus.status !== 'granted' || locationStatus.status !== 'granted') {
-      Alert.alert(t('producer.fieldLogAlerts.permTitle'), t('producer.fieldLogAlerts.permBody'));
-    }
-  }, [t]);
-
   useEffect(() => {
-    loadEstates();
-    requestPermissions();
-  }, [loadEstates, requestPermissions]);
+    void loadEstates();
+  }, [loadEstates]);
 
   const refreshReferenceData = useCallback(async () => {
     setReferenceRefreshing(true);
@@ -409,27 +397,10 @@ export function useFieldLogData() {
   }, [materialID, activityType, validateMaterial]);
 
   const getCurrentLocation = useCallback(async () => {
+    setGpsLoading(true);
     try {
-      setGpsLoading(true);
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(t('producer.fieldLogAlerts.locSettingsTitle'), t('producer.fieldLogAlerts.locSettingsBody'), [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('producer.fieldLogAlerts.openSettings'), onPress: () => Linking.openSettings() },
-        ]);
-        setGpsLoading(false);
-        return;
-      }
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const acc =
-        loc.coords.accuracy != null && Number.isFinite(loc.coords.accuracy) ? loc.coords.accuracy : undefined;
-      const userLocation = { lat: loc.coords.latitude, lng: loc.coords.longitude, accuracy: acc };
-      setLocation(userLocation);
-    } catch (error: unknown) {
-      Alert.alert(
-        t('producer.fieldLogAlerts.locationError'),
-        apiErrorMessage(error, t('producer.fieldLogAlerts.locationErrorFallback')),
-      );
+      const pos = await getCurrentGrowerPosition(t);
+      if (pos) setLocation(pos);
     } finally {
       setGpsLoading(false);
     }
@@ -475,8 +446,7 @@ export function useFieldLogData() {
           }
         } catch {}
         try {
-          const { status } = await Location.getForegroundPermissionsAsync();
-          if (status !== 'granted') return;
+          if (!(await isForegroundLocationGranted())) return;
           const gpsAlways = await AsyncStorage.getItem('settings_gps_always');
           if (gpsAlways === 'true' && !locationRef.current) {
             await getCurrentLocation();

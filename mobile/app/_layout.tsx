@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { authScreenNoSwipeBack, bioVeraStackScreenOptions } from '../lib/stack-navigation-options';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../contexts/AuthContext';
+import { PushNotificationHandler } from '../components/PushNotificationHandler';
 import { CartProvider } from '../hooks/useCart';
 import '../i18n/config';
 import { applySavedLanguagePreference } from '../lib/i18n-language';
@@ -43,6 +44,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
     <AuthProvider>
+    <PushNotificationHandler />
     <CartProvider>
       <Stack
         screenOptions={bioVeraStackScreenOptions({

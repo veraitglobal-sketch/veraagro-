@@ -5,6 +5,7 @@ import { enterpriseColors } from './enterprise-ui';
  * Mission status strings from Prisma `MissionStatus` (backend). Mobile UI must not assume legacy `DELIVERED`.
  */
 export type MissionStatusCode =
+  | 'AWAITING_APPROVAL'
   | 'PENDING'
   | 'ASSIGNED'
   | 'ACCEPTED'
@@ -17,6 +18,7 @@ export type MissionStatusCode =
   | 'DELIVERED';
 
 const EN_LABELS: Record<string, string> = {
+  AWAITING_APPROVAL: 'Awaiting admin approval',
   PENDING: 'Pending',
   ASSIGNED: 'Assigned',
   ACCEPTED: 'Accepted',

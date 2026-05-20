@@ -17,6 +17,8 @@ import {
   lotStatusPillClass,
   type LotFilter,
 } from '@/lib/batch-status-i18n';
+import { groupLotsByEstate } from '@/lib/lot-display';
+import { LotIdsBlock } from '@/components/grower/LotIdsBlock';
 import {
   Package,
   Plus,
@@ -124,11 +126,14 @@ export default function GrowerBatchesPage() {
       if (lotFilter !== 'all' && lotStatusBucket(batch.status) !== lotFilter) return false;
       if (!q) return true;
       const bid = String(batch.batchId ?? '').toLowerCase();
+      const sid = String(batch.id ?? '').toLowerCase();
       const pname = String(batch.productName ?? '').toLowerCase();
       const ename = String(batch.estates?.name ?? '').toLowerCase();
-      return bid.includes(q) || pname.includes(q) || ename.includes(q);
+      return bid.includes(q) || sid.includes(q) || pname.includes(q) || ename.includes(q);
     });
   }, [batches, searchTerm, lotFilter]);
+
+  const groupedLots = useMemo(() => groupLotsByEstate(filteredBatches), [filteredBatches]);
 
   const lotFilterChips: { id: LotFilter; label: string; count: number }[] = [
     { id: 'all', label: t('growerPages.allStatuses'), count: lotCounts.all },
@@ -320,47 +325,61 @@ export default function GrowerBatchesPage() {
             </p>
           ) : null}
 
-          <div className="max-w-3xl space-y-2">
+          <div className="max-w-3xl space-y-6">
             {filteredBatches.length > 0 ? (
-              filteredBatches.map((batch) => {
-                const bucket = lotStatusBucket(batch.status);
-                const accent =
-                  bucket === 'done' ? 'border-gray-300' : bucket === 'moving' ? 'border-blue-500' : 'border-[#2D5A27]';
-                const metaParts = [
-                  `${batch.quantity} ${batch.unit}`,
-                  batch.batchId,
-                  batch.harvestDate
-                    ? new Date(batch.harvestDate).toLocaleDateString(undefined, {
-                        day: 'numeric',
-                        month: 'short',
-                      })
-                    : null,
-                  batch.estates?.name || null,
-                ].filter(Boolean);
+              groupedLots.map((section) => (
+                <section key={section.title}>
+                  <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    {t('growerPages.lotsGroupedByEstate', { estate: section.title })}
+                  </h2>
+                  <ul className="space-y-2">
+                    {section.items.map((batch) => {
+                      const bucket = lotStatusBucket(batch.status);
+                      const accent =
+                        bucket === 'done'
+                          ? 'border-gray-300'
+                          : bucket === 'moving'
+                            ? 'border-blue-500'
+                            : 'border-[#2D5A27]';
+                      const metaParts = [
+                        batch.productName,
+                        batch.quantity != null ? `${batch.quantity} ${batch.unit}` : null,
+                        batch.harvestDate
+                          ? new Date(batch.harvestDate).toLocaleDateString(undefined, {
+                              day: 'numeric',
+                              month: 'short',
+                            })
+                          : null,
+                        batch.parcels?.cropType || batch.parcels?.name || null,
+                      ].filter(Boolean);
 
-                return (
-                  <button
-                    key={batch.id}
-                    type="button"
-                    onClick={() => handleViewDetails(batch)}
-                    className={`flex w-full min-h-[64px] items-center gap-3 rounded-xl border border-gray-200 border-l-4 bg-white p-4 text-left shadow-sm transition-colors hover:border-[#2D5A27]/30 ${accent}`}
-                  >
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/10">
-                      <Package className="h-5 w-5 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-base font-semibold text-gray-900">{batch.productName}</span>
-                        <span className={getStatusColor(batch.status)}>
-                          {getBatchStatusLabel(t, batch.status)}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 truncate text-sm text-gray-600">{metaParts.join(' · ')}</p>
-                    </div>
-                    <ChevronRight className="h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden />
-                  </button>
-                );
-              })
+                      return (
+                        <li key={batch.id}>
+                          <button
+                            type="button"
+                            onClick={() => handleViewDetails(batch)}
+                            className={`flex w-full min-h-[72px] items-start gap-3 rounded-xl border border-gray-200 border-l-4 bg-white p-4 text-left shadow-sm transition-colors hover:border-[#2D5A27]/30 ${accent}`}
+                          >
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#2D5A27]/10">
+                              <Package className="h-5 w-5 text-[#2D5A27]" strokeWidth={1.75} aria-hidden />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-start justify-between gap-2">
+                                <LotIdsBlock lot={batch} compact />
+                                <span className={getStatusColor(batch.status)}>
+                                  {getBatchStatusLabel(t, batch.status)}
+                                </span>
+                              </div>
+                              <p className="mt-2 text-sm text-gray-600">{metaParts.join(' · ')}</p>
+                            </div>
+                            <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ))
             ) : (
               <div className="rounded-xl border border-gray-200 bg-white py-12 text-center shadow-sm">
                 <Package className="mx-auto mb-4 h-12 w-12 text-gray-400" strokeWidth={1.25} aria-hidden />
@@ -378,10 +397,8 @@ export default function GrowerBatchesPage() {
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-2xl font-semibold text-gray-900">
-                        {t('growerPages.batchDetailsHeading', { batchId: selectedBatch.batchId })}
-                      </h2>
-                      <p className="text-base text-gray-600 mt-1">{selectedBatch.productName}</p>
+                      <LotIdsBlock lot={selectedBatch} />
+                      <p className="text-base text-gray-600 mt-2">{selectedBatch.productName}</p>
                     </div>
                     <button
                       type="button"

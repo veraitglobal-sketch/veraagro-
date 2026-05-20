@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import { ChevronRight } from 'lucide-react-native';
+import { BookOpen, ChevronRight } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { estatesAPI, parcelsAPI } from '../../../lib/api';
 import { webGrowerHrefToMobilePath } from '../../../lib/grower-web-href-to-mobile';
@@ -151,6 +151,23 @@ export default function GrowerJourneyScreen({ showStatusBanner = true }: Props) 
           </View>
         ) : null}
 
+        <View style={styles.guideCard}>
+          <View style={styles.guideHeader}>
+            <BookOpen size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
+            <Text style={styles.guideTitle}>{t('producer.appGuide.cardTitle')}</Text>
+          </View>
+          <Text style={styles.guideBody}>{t('producer.appGuide.cardBody')}</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/(producer)/app-guide')}
+            activeOpacity={0.7}
+            style={styles.glanceLink}
+            accessibilityRole="button"
+          >
+            <Text style={styles.linkText}>{t('producer.appGuide.cardCta')}</Text>
+            <ChevronRight size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
+          </TouchableOpacity>
+        </View>
+
         <Text style={growerUi.sectionLabel}>{journey.fullChainTitle}</Text>
         <View style={growerUi.card}>
           {journey.chainShort.map((row, idx) => (
@@ -231,6 +248,28 @@ const styles = StyleSheet.create({
     ...growerUi.card,
     padding: 16,
     marginBottom: 4,
+  },
+  guideCard: {
+    ...growerUi.card,
+    padding: 16,
+    marginBottom: 4,
+  },
+  guideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  guideTitle: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+  },
+  guideBody: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    lineHeight: 20,
+    marginTop: 8,
   },
   glanceTitle: {
     fontSize: 12,

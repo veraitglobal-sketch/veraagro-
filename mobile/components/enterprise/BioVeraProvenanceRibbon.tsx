@@ -4,11 +4,11 @@ import { ShieldCheck } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 
 /** Home trust strip — defines premium surface language for the grower app. */
-export function BioVeraProvenanceRibbon() {
+export function BioVeraProvenanceRibbon({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.wrap} accessibilityRole="text">
+    <View style={[styles.wrap, compact && styles.wrapCompact]} accessibilityRole="text">
       <View style={enterpriseUi.premiumIconCircle}>
         <ShieldCheck size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
       </View>
@@ -35,6 +35,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 2,
+  },
+  wrapCompact: {
+    marginHorizontal: 0,
+    marginBottom: 20,
+    paddingVertical: 12,
   },
   copy: {
     flex: 1,

@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -82,6 +83,17 @@ export class HarvestAnnouncementsController {
   /**
    * Update announcement status (Admin)
    */
+  @Delete('admin/:id/planting')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  adminDeletePlanting(
+    @Request() req: { user: { id: string } },
+    @Param('id') id: string,
+    @Body() body: { reason?: string },
+  ) {
+    return this.announcementsService.adminDeletePlanting(req.user.id, id, body?.reason);
+  }
+
   @Put(':id/status')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')

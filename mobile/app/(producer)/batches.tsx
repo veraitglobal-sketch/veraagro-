@@ -11,6 +11,8 @@ import { batchesAPI } from '../../lib/api';
 import { isLikelyNetworkError } from '../../lib/api-error';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
+import { groupLotsByEstate } from '../../lib/lot-display';
+import LotIdsBlock from '../../features/grower/batches/LotIdsBlock';
 import { BioVeraSubpageHeader } from '../../components/BioVeraSubpageHeader';
 import {
   enterpriseColors,
@@ -24,9 +26,10 @@ type LotFilter = 'all' | 'here' | 'moving' | 'done';
 
 function statusBucket(status: string): EnterpriseLotBucket {
   const s = String(status ?? '').toUpperCase();
-  if (s === 'DELIVERED') return 'done';
+  if (s === 'DELIVERED' || s === 'SOLD') return 'done';
   if (s === 'IN_HUB' || s === 'IN_TRANSIT') return 'moving';
   if (s === 'PACKED' || s === 'QUALITY_VERIFIED' || s === 'HARVESTED') return 'here';
+  if (s === 'RETURNED' || s === 'EXPIRED') return 'done';
   return 'here';
 }
 
@@ -83,6 +86,8 @@ export default function BatchesScreen() {
     if (filter === 'all') return batches;
     return batches.filter((b) => statusBucket(b.status) === filter);
   }, [batches, filter]);
+
+  const groupedLots = useMemo(() => groupLotsByEstate(filteredBatches), [filteredBatches]);
 
   const counts = useMemo(() => {
     const c = { all: batches.length, here: 0, moving: 0, done: 0 };
@@ -169,65 +174,73 @@ export default function BatchesScreen() {
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{ gap: 0 }}>
-            {filteredBatches.map((batch, index) => {
-              const rowKey = String(batch.id ?? batch.batchId ?? '');
-              const displayId = batch.batchId || (batch.id ? String(batch.id).slice(0, 8) : '');
-              const detailRef = batch.id ?? batch.batchId;
-              const product = batch.productName || t('producer.batches.product');
-              const bucket = statusBucket(batch.status);
-              const { accent, tint } = enterpriseLotBucketStyle(bucket);
-              const metaParts = [
-                batch.quantity ? `${batch.quantity} ${batch.unit || 'kg'}` : null,
-                displayId || null,
-                batch.harvestDate
-                  ? new Date(batch.harvestDate).toLocaleDateString(dateLocale, {
-                      day: 'numeric',
-                      month: 'short',
-                    })
-                  : null,
-              ].filter(Boolean);
+          <View style={{ gap: 16 }}>
+            {groupedLots.map((section) => (
+              <View key={section.title}>
+                <HubSectionTitle>
+                  {t('producer.batches.lotsGroupedByEstate', { estate: section.title })}
+                </HubSectionTitle>
+                <View style={{ gap: 0 }}>
+                  {section.items.map((batch, index) => {
+                    const rowKey = String(batch.id ?? batch.batchId ?? '');
+                    const detailRef = batch.id ?? batch.batchId;
+                    const product = batch.productName || t('producer.batches.product');
+                    const bucket = statusBucket(batch.status);
+                    const { accent, tint } = enterpriseLotBucketStyle(bucket);
+                    const metaParts = [
+                      product,
+                      batch.quantity ? `${batch.quantity} ${batch.unit || 'kg'}` : null,
+                      batch.harvestDate
+                        ? new Date(batch.harvestDate).toLocaleDateString(dateLocale, {
+                            day: 'numeric',
+                            month: 'short',
+                          })
+                        : null,
+                      batch.parcels?.cropType || null,
+                    ].filter(Boolean);
 
-              return (
-                <TouchableOpacity
-                  key={rowKey || displayId || `batch-row-${index}`}
-                  onPress={() => {
-                    if (detailRef) router.push(`/(producer)/batch/${detailRef}`);
-                  }}
-                  activeOpacity={0.88}
-                  style={[
-                    growerUi.tile,
-                    {
-                      borderLeftWidth: 4,
-                      borderLeftColor: accent,
-                      marginBottom: 10,
-                    },
-                  ]}
-                >
-                  <View style={[growerUi.tileIcon, { backgroundColor: tint }]}>
-                    <Package size={22} color={accent} strokeWidth={1.75} />
-                  </View>
-                  <View style={{ flex: 1, minWidth: 0 }}>
-                    <View style={styles.titleRow}>
-                      <Text style={growerUi.tileTitle} numberOfLines={1}>
-                        {product}
-                      </Text>
-                      <View style={[growerStyles.statusPill, { backgroundColor: tint }]}>
-                        <Text style={[growerStyles.statusPillText, { color: accent }]}>
-                          {getBatchStatusLabel(t, batch.status)}
-                        </Text>
-                      </View>
-                    </View>
-                    {metaParts.length > 0 ? (
-                      <Text style={growerUi.tileDesc} numberOfLines={1}>
-                        {metaParts.join(' · ')}
-                      </Text>
-                    ) : null}
-                  </View>
-                  <ChevronRight size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
-                </TouchableOpacity>
-              );
-            })}
+                    return (
+                      <TouchableOpacity
+                        key={rowKey || `batch-row-${index}`}
+                        onPress={() => {
+                          if (detailRef) router.push(`/(producer)/batch/${detailRef}`);
+                        }}
+                        activeOpacity={0.88}
+                        style={[
+                          growerUi.tile,
+                          {
+                            borderLeftWidth: 4,
+                            borderLeftColor: accent,
+                            marginBottom: 10,
+                            alignItems: 'flex-start',
+                          },
+                        ]}
+                      >
+                        <View style={[growerUi.tileIcon, { backgroundColor: tint }]}>
+                          <Package size={22} color={accent} strokeWidth={1.75} />
+                        </View>
+                        <View style={{ flex: 1, minWidth: 0 }}>
+                          <View style={styles.titleRow}>
+                            <LotIdsBlock lot={batch} compact />
+                            <View style={[growerStyles.statusPill, { backgroundColor: tint }]}>
+                              <Text style={[growerStyles.statusPillText, { color: accent }]}>
+                                {getBatchStatusLabel(t, batch.status)}
+                              </Text>
+                            </View>
+                          </View>
+                          {metaParts.length > 0 ? (
+                            <Text style={[growerUi.tileDesc, { marginTop: 6 }]} numberOfLines={2}>
+                              {metaParts.join(' · ')}
+                            </Text>
+                          ) : null}
+                        </View>
+                        <ChevronRight size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            ))}
           </View>
         )}
       </View>

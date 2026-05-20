@@ -779,6 +779,30 @@
       "viewOnline": "Pogledaj online",
       "footer": "Za pravna pitanja i ugovor koristite pisana dokumenta Bio Vere. Ovo uputstvo je praktični vodič kroz aplikaciju.",
       "openFromEducation": "Vodič za mobilnu aplikaciju (snimci ekrana)",
+      "faqTitle": "Česta pitanja",
+      "faqLead": "Kratki odgovori za dozvole, mapu parcele, dnevnik rasta i testiranje aplikacije.",
+      "faqItems": [
+        {
+          "title": "„Experience needs permissions” — šta je to?",
+          "body": "Ako aplikaciju pokrećete u Expo Go (razvojni klijent), iOS/Android prikazuju engleski dijalog Expo-a, ne Bio Vere. Za rad na njivi koristite instaliranu Bio Vera aplikaciju (APK/IPA sa EAS build-a). U njoj ćete prvo videti kratko objašnjenje na srpskom, pa normalan sistemski dijalog za kameru ili lokaciju."
+        },
+        {
+          "title": "Kamera, lokacija i obaveštenja",
+          "body": "Kamera i GPS traže se samo kad pritisnete dugme za fotografiju ili GPS akciju (dnevnik rasta, terenski unos, centriranje mape). Obaveštenja se nude jednom posle prijave — možete ih kasnije isključiti u Podešavanjima telefona. Ako ste odbili dozvolu, u aplikaciji izaberite „Otvori podešavanja”."
+        },
+        {
+          "title": "Nova parcela — mapa se pomera sama",
+          "body": "U koraku „Dodaj njivu” uključite crtanje, izaberite Tačke ili Prstom, pa dodajte ivicu parcele. Dok crtate, ne povlačite listu nadole. Za GPS centar koristite dugme sa ikonom lokacije pored kontrola, ne pull-to-refresh."
+        },
+        {
+          "title": "Dnevnik rasta — fotografija",
+          "body": "Svaki unos mora imati sliku snimljenu na parceli. Posle „Na dalje” u formi aplikacija otvara kameru i beleži GPS za pasoš. Ako kamera ne radi, dozvolite pristup u podešavanjima ili izaberite postojeću sliku iz galerije kad aplikacija ponudi."
+        },
+        {
+          "title": "Crvena greška 404 posle prijave",
+          "body": "Ako server još nema modul push obaveštenja, registracija tokena može vratiti 404 — to ne blokira dnevnik ni parcele. Operativni tim treba da deploy-uje najnoviji API na Railway. U Podešavanjima aplikacije možete proveriti API URL i vezu sa serverom."
+        }
+      ],
       "steps": {
         "welcome": {
           "title": "Dobrodošli",
@@ -891,7 +915,7 @@
             },
             {
               "heading": "Parcele i zone",
-              "body": "Na mapi crtate ili potvrđujete granice parcele (poligon). Sistem proverava da li ste fizički na parceli pri unosu. Status „čeka odobrenje” znači da tim još nije potvrdio granice."
+              "body": "Na mapi crtate ili potvrđujete granice parcele (poligon). Uključite „Uključi crtanje”, izaberite Tačke (dodir) ili Prstom (povlačenje po ivici), minimum tri tačke. Dok crtate, mapa ne treba da skače — koristite dugme lokacije za centar, ne povlačenje cele stranice. Sistem proverava da li ste fizički na parceli pri unosu. Status „čeka odobrenje” znači da tim još nije potvrdio granice."
             },
             {
               "heading": "Moji zasadi",
@@ -911,11 +935,11 @@
         },
         "lots": {
           "title": "Lotovi (tab)",
-          "lead": "Posle berbe — partije, kvalitet, pakovanje i transport.",
+          "lead": "Posle berbe — lotovi, kvalitet, pakovanje i transport.",
           "detailBlocks": [
             {
               "heading": "Šta je tab „Lotovi”",
-              "body": "Posle berbe prelazite sa „polja” na „robu”: svaka partija (lot) dobija identitet u sistemu — status, kvalitet, ambalaža i veza sa transportom."
+              "body": "Posle berbe prelazite sa „polja” na „robu”: svaki lot dobija identitet u sistemu — javni BATCH-ID, status, kvalitet, ambalaža i veza sa transportom."
             },
             {
               "heading": "Lista lotova i statusi",
@@ -1386,8 +1410,8 @@
         "bannedDesc": "Pročitaj korake i standarde pre kupovine inputa.",
         "certsTitle": "Sertifikati i dokazi",
         "certsDesc": "Profil, fotografije i dokumenta za organsko i druga pravila.",
-        "logisticsBlockTitle": "Partije i transport",
-        "logisticsBlockHint": "Partije (lotovi), zahtev za prevoz, praćenje misija, sken paleta — isti tok kao u aplikaciji.",
+        "logisticsBlockTitle": "Lotovi i transport",
+        "logisticsBlockHint": "Lotovi, zahtev za prevoz, praćenje misija, sken paleta — isti tok kao u aplikaciji.",
         "logisticsBatches": "Moji lotovi",
         "logisticsQuality": "Kvalitet (kontrolna lista za seriju)",
         "logisticsCompliance": "Fotografije usklađenosti",
@@ -1579,6 +1603,7 @@
     "parcelsPending": "Parcele na čekanju",
     "harvestPlans": "Planovi berbe",
     "growerOps": "Operativni zadaci (proizvođač)",
+    "goGrowerControl": "Kontrola proizvođača",
     "goParcelsPending": "Parcele na čekanju",
     "goEstates": "Gazdinstva i podešavanje",
     "goHarvestPlans": "Planovi berbe",
@@ -1609,7 +1634,45 @@
       "estates": "Odobrenje gazdinstava",
       "products": "Katalog proizvoda",
       "harvestPlans": "Planovi berbe",
+      "growerControl": "Kontrola proizvođača",
       "haccp": "HACCP monitoring"
+    },
+    "growerControl": {
+      "title": "Kontrola proizvođača",
+      "intro": "Odobravanje transporta (usklađenost pre logistike), odbijanje fotografija napretka i brisanje zasada. Obaveštenja vode ovde.",
+      "tabTransport": "Transport (čeka)",
+      "tabGrowth": "Fotografije napretka",
+      "tabPlantings": "Zasadi",
+      "tabPlans": "Planovi berbe",
+      "loading": "Učitavanje…",
+      "emptyTransport": "Nema transporta koji čeka odobrenje.",
+      "emptyGrowth": "Nema novih fotografija za pregled.",
+      "emptyPlantings": "Nema aktivnih zasada.",
+      "emptyPlans": "Nema planova na čekanju.",
+      "approveTransport": "Odobri transport",
+      "rejectTransport": "Odbij transport",
+      "rejectPhoto": "Odbij fotografiju",
+      "deletePhoto": "Obriši",
+      "deletePlanting": "Obriši zasad",
+      "confirmPlan": "Potvrdi plan",
+      "rejectPlan": "Odbij plan",
+      "reasonOptional": "Razlog (opciono)",
+      "reasonRequired": "Razlog (obavezno za odbijanje)",
+      "openMissions": "Misije i dodela vozača",
+      "openHarvestPlans": "Svi planovi berbe",
+      "grower": "Proizvođač",
+      "estate": "Gazdinstvo",
+      "crop": "Kultura",
+      "gps": "GPS",
+      "notes": "Napomena",
+      "mission": "Misija",
+      "destination": "Odredište",
+      "created": "Kreirano",
+      "confirmDeletePlanting": "Obrisati ovaj zasad? Proizvođač dobija obaveštenje.",
+      "confirmDeletePhoto": "Trajno obrisati ovu fotografiju?",
+      "confirmRejectTransport": "Odbiti zahtev za transport?",
+      "transportApprovedHint": "Posle odobrenja misija prelazi u PENDING — dodelite vozača u Misijama ili logistika preuzima vožnju.",
+      "planPendingHint": "Potvrda plana žetve pre transporta (ako je uključeno na API-ju)."
     },
     "financeOverview": {
       "heading": "Pregled finansija platforme",
@@ -1630,7 +1693,7 @@
       "platformFeeBookedHint": "Zbir polja platformFee gde ostaje osiguran, neotpust dok traje obračun; jednom po povezanoj porudžbini.",
       "periodMonth": "Isporučeni lotovi — ovaj mesec",
       "periodYear": "Isporučeni lotovi — ova godina",
-      "batchesCount": "{{count}} partija",
+      "batchesCount": "{{count}} lotova",
       "quantityTotal": "{{qty}} kg (ukupna količina)"
     },
     "dashboard": {
@@ -1656,6 +1719,8 @@
       "approveParcels": "Odobri parcele",
       "estatesFields": "Gazdinstva / polja",
       "harvestPlans": "Planovi berbe",
+      "growerControl": "Kontrola proizvođača",
+      "growerControlBadge": "{{count}} na čekanju",
       "setupBadge": "{{count}} podešavanje",
       "live": "Uživo",
       "liveSubtitle": "Parcele na čekanju i poslednji lotovi",
@@ -1863,6 +1928,7 @@
       "errLoadPartners": "Učitavanje logističkih partnera nije uspelo",
       "errAssign": "Dodela nije uspela",
       "statuses": {
+        "AWAITING_APPROVAL": "Čeka odobrenje (admin)",
         "PENDING": "Na čekanju",
         "ASSIGNED": "Dodeljeno",
         "ACCEPTED": "Prihvaćeno",
@@ -2653,7 +2719,10 @@
     "labelUnit": "Jedinica *",
     "labelHarvestDate": "Datum berbe *",
     "creating": "Kreira se…",
-    "batchesDescription": "Lotovi (u sistemu još „partije”) su upakovani seriji za trag i pasoš. Dodaju se samo iz Moja polja na odobrenoj parceli (Kreiraj lot), ne sa ove liste — ovde pregled.",
+    "batchesDescription": "Lotovi su upakovani seriji za trag i pasoš (javni BATCH-ID i sistemski ID). Dodaju se samo iz Moja polja na odobrenoj parceli (Kreiraj lot), ne sa ove liste — ovde pregled.",
+    "lotLabel": "Lot",
+    "lotSystemBatchId": "Batch ID (sistem)",
+    "lotsGroupedByEstate": "{{estate}}",
     "batchesLeadOneLine": "Spakovana roba = lot sa QR kodom; zatim slike pakovanja i zahtev za prevoz.",
     "filterHere": "Kod mene",
     "filterMoving": "Na putu",
@@ -2874,8 +2943,8 @@
     "sf2": "Na toj porudžbini dodirnite <0>Primljeno na farmi</0> kada fizički stigne isporuka. To beleži prijem za B2B liniju (koordinacija/revizija) — <1>ne</1> dodaje automatski gajbe niti serijske brojeve rolova u salda ispod.",
     "sf3t": "3. Zvanično stanje i barkodovi u aplikaciji",
     "sf3": "U <0>Materijalima</0> koristite <1>Kupovinu</1> da sistem ažurira <2>Gajbe</2>, <3>Rolo etikete</3> i <4>Foliju</4>, a (za svaki rolo) čuva <5>serijski broj</5> koji ćete navesti na <6>Fotografije usklađenosti</6>. Ako nabavljate van aplikacije, uskladite salda sa partnerom ili podrškom. Velike porudžbine: ponavljajte ili podelite (npr. max 200 kom po porudžbini u aplikaciji).",
-    "sf4t": "4. Berba, partija i pakovanje",
-    "sf4": "Prijavite rad i formirajte partije u <0>Moje partije</0> i alatima na polju; pratite pakovanje i sledljivost u aplikaciji.",
+    "sf4t": "4. Berba, lot i pakovanje",
+    "sf4": "Prijavite rad i formirajte lotove u <0>Moji lotovi</0> i alatima na polju; pratite pakovanje i sledljivost u aplikaciji.",
     "sf5t": "5. Pre transporta",
     "sf5": "Potreban je dovoljan zvaničan materijal za isporuku, fotografije usklađenosti i unos kvaliteta. Zatim <0>Zahtev za transport</0> — aplikacija proverava pakovanje i materijal za partiju.",
     "sfCompactOpen": "pokaži 5 koraka",
@@ -3288,7 +3357,7 @@
     "partnersLine": "Poverenje vodećih poljoprivrednih organizacija svakodnevno",
     "vision": {
       "title": "Naša vizija",
-      "intro": "Gradimo poverenje od parcele do police: jasna pravila za proizvođače u našem programu, kontrolisani kvalitativni pregledi na svakom koraku i kupci koji nabavljaju direktno od Bio Vere.",
+      "intro": "Gradimo poverenje od njive do police: jasna pravila za proizvođače u našem programu, kontrolisani kvalitativni pregledi na svakom koraku i kupci koji nabavljaju direktno od Bio Vere.",
       "cards": [
         {
           "title": "Transparentnost",

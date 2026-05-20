@@ -3,8 +3,8 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-// Include repo root so `shared/` (imported from `lib/grower-journey-data`, etc.) is watched and resolvable
-config.watchFolders = [__dirname, path.resolve(__dirname, '..')];
+// Only `shared/` from monorepo — not entire repo root (`..`), which breaks EAS tarball upload.
+config.watchFolders = [__dirname, path.resolve(__dirname, '../shared')];
 config.resolver.blockList = [
   /node_modules\/.*\/node_modules\/react-native\/.*/,
 ];

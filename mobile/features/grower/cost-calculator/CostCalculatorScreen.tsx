@@ -16,12 +16,24 @@ export default function CostCalculatorScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { costs, products, loading, listRefreshing, load, addCost } = useCostCalculatorData();
+  const {
+    costs,
+    products,
+    parcels,
+    allocationLoading,
+    plantingsForParcel,
+    resolveAllocationLabels,
+    loading,
+    listRefreshing,
+    refreshAll,
+    addCost,
+    removeCost,
+  } = useCostCalculatorData();
   const [showForm, setShowForm] = useState(false);
 
   const refreshList = useCallback(async () => {
-    await load({ silent: true });
-  }, [load]);
+    await refreshAll();
+  }, [refreshAll]);
 
   const handleAddCost = useCallback(
     async (entry: Parameters<typeof addCost>[0]) => {
@@ -71,7 +83,14 @@ export default function CostCalculatorScreen() {
       ) : null}
       {showForm ? (
         <View style={[enterpriseUi.authPanel, styles.formCard]}>
-          <CostEntryForm onSubmit={handleAddCost} onCancel={() => setShowForm(false)} />
+          <CostEntryForm
+            parcels={parcels}
+            allocationLoading={allocationLoading}
+            plantingsForParcel={plantingsForParcel}
+            resolveAllocationLabels={resolveAllocationLabels}
+            onSubmit={handleAddCost}
+            onCancel={() => setShowForm(false)}
+          />
         </View>
       ) : null}
       <Text style={[enterpriseUi.inAppSectionLabel, styles.listTitle]}>
@@ -92,6 +111,7 @@ export default function CostCalculatorScreen() {
         loading={loading}
         listRefreshing={listRefreshing}
         onRefresh={refreshList}
+        onDelete={removeCost}
         ListHeaderComponent={listHeader}
         contentPaddingBottom={listBottomPad}
       />

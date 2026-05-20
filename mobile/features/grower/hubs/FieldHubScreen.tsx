@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { TabRootBody } from '../../../components/enterprise/TabRootBody';
 import { EnterpriseNavSection } from '../../../components/enterprise/EnterpriseNavSection';
-import { MapPin, ListOrdered, Leaf, ClipboardList, Wheat, Scan, Sprout } from 'lucide-react-native';
+import { GrowerTabShellHeader } from '../../../components/enterprise/GrowerTabShellHeader';
+import { MapPin, ListOrdered, BookOpen, Leaf, ClipboardList, Wheat, Scan, Sprout } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
 import { HubMetricsStrip } from './HubMetricsStrip';
 import type { HubMetricRow } from './HubSummaryMetrics';
+import { parcelStatusLine } from '../dashboard/parcelStatusLine';
 
 export default function FieldHubScreen() {
   const { t } = useTranslation();
@@ -19,6 +19,8 @@ export default function FieldHubScreen() {
   const p = useBioVeraScreenPadding();
   const data = useGrowerDashboard();
   const tabRefresh = useGrowerTabRefresh();
+  const ps = data.parcelSteps;
+  const estateCount = data.estates.length;
 
   const metricRows = useMemo((): HubMetricRow[] => {
     const rows: HubMetricRow[] = [
@@ -26,15 +28,14 @@ export default function FieldHubScreen() {
         key: 'estates',
         type: 'count',
         label: t('producer.hubs.metrics.estates'),
-        count: data.estates.length,
+        count: estateCount,
       },
       {
         key: 'parcels',
         type: 'ratio',
         label: t('producer.hubs.metrics.parcelsApproved'),
-        approved: data.parcelSteps.loaded ? data.parcelSteps.approved : 0,
-        total: data.parcelSteps.loaded ? data.parcelSteps.total : 0,
-        animate: data.parcelSteps.loaded,
+        approved: ps.loaded ? ps.approved : 0,
+        total: ps.loaded ? ps.total : 0,
       },
     ];
     if (data.offlinePending > 0) {
@@ -46,14 +47,9 @@ export default function FieldHubScreen() {
       });
     }
     return rows.slice(0, 3);
-  }, [
-    t,
-    data.estates.length,
-    data.parcelSteps.loaded,
-    data.parcelSteps.approved,
-    data.parcelSteps.total,
-    data.offlinePending,
-  ]);
+  }, [t, estateCount, ps.loaded, ps.approved, ps.total, data.offlinePending]);
+
+  const statusLine = parcelStatusLine(t, estateCount, ps, 'producer.hubs.field.leadShort');
 
   return (
     <EnterpriseScreen
@@ -63,67 +59,94 @@ export default function FieldHubScreen() {
       onRefresh={() => void tabRefresh.onRefresh()}
       contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
       header={
-        <GrowerTabHeader
+        <GrowerTabShellHeader
+          eyebrow={t('producer.tabs.field')}
           title={t('producer.hubs.field.title')}
-          subtitle={t('producer.hubs.field.leadShort')}
+          statusLine={statusLine}
         />
       }
     >
-      <TabRootBody>
+      <TabRootBody style={{ paddingTop: 0 }}>
         <HubMetricsStrip rows={metricRows} />
+
+        <EnterpriseNavSection
+          title={t('producer.hubs.field.sectionRecords')}
+          items={[
+            {
+              key: 'field-log',
+              title: t('producer.tabs.fieldLog'),
+              subtitle: t('producer.hubs.field.fieldLogDesc'),
+              icon: ClipboardList,
+              onPress: () => router.push('/(producer)/(tabs)/field-log'),
+            },
+          ]}
+        />
+
         <EnterpriseNavSection
           title={t('producer.hubs.field.sectionFarm')}
           items={[
-              {
-                key: 'field-log',
-                title: t('producer.tabs.fieldLog'),
-                subtitle: t('producer.hubs.field.fieldLogDesc'),
-                icon: ClipboardList,
-                onPress: () => router.push('/(producer)/(tabs)/field-log'),
-              },
-              {
-                key: 'estates',
-                title: t('producer.hubs.field.estatesTitle'),
-                subtitle: t('producer.hubs.field.estatesDesc'),
-                icon: MapPin,
-                onPress: () => router.push('/(producer)/estates'),
-              },
-              {
-                key: 'plot',
-                title: t('producer.hubs.field.plotMapperTitle'),
-                subtitle: t('producer.hubs.field.plotMapperDesc'),
-                icon: Scan,
-                onPress: () => router.push('/(producer)/plot-mapper'),
-              },
-              {
-                key: 'plantings',
-                title: t('producer.hubs.field.plantingsTitle'),
-                subtitle: t('producer.hubs.field.plantingsDesc'),
-                icon: Leaf,
-                onPress: () => router.push('/(producer)/plantings'),
-              },
-              {
-                key: 'harvest',
-                title: t('producer.tabs.harvest'),
-                subtitle: t('producer.hubs.field.harvestDesc'),
-                icon: Wheat,
-                onPress: () => router.push('/(producer)/(tabs)/harvest'),
-              },
-              {
-                key: 'journal',
-                title: t('producer.hubs.field.growthJournalTitle'),
-                subtitle: t('producer.hubs.field.growthJournalDesc'),
-                icon: Sprout,
-                onPress: () => router.push('/(producer)/growth-journal'),
-              },
-              {
-                key: 'steps',
-                title: t('producer.tabs.steps'),
-                subtitle: t('producer.hubs.field.stepsDesc'),
-                icon: ListOrdered,
-                onPress: () => router.push('/(producer)/(tabs)/steps'),
-              },
-            ]}
+            {
+              key: 'estates',
+              title: t('producer.hubs.field.estatesTitle'),
+              subtitle: t('producer.hubs.field.estatesDesc'),
+              icon: MapPin,
+              onPress: () => router.push('/(producer)/estates'),
+            },
+            {
+              key: 'plot',
+              title: t('producer.hubs.field.plotMapperTitle'),
+              subtitle: t('producer.hubs.field.plotMapperDesc'),
+              icon: Scan,
+              onPress: () => router.push('/(producer)/plot-mapper'),
+            },
+          ]}
+        />
+
+        <EnterpriseNavSection
+          title={t('producer.hubs.field.sectionSeason')}
+          items={[
+            {
+              key: 'plantings',
+              title: t('producer.hubs.field.plantingsTitle'),
+              subtitle: t('producer.hubs.field.plantingsDesc'),
+              icon: Leaf,
+              onPress: () => router.push('/(producer)/plantings'),
+            },
+            {
+              key: 'harvest',
+              title: t('producer.tabs.harvest'),
+              subtitle: t('producer.hubs.field.harvestDesc'),
+              icon: Wheat,
+              onPress: () => router.push('/(producer)/(tabs)/harvest'),
+            },
+            {
+              key: 'journal',
+              title: t('producer.hubs.field.growthJournalTitle'),
+              subtitle: t('producer.hubs.field.growthJournalDesc'),
+              icon: Sprout,
+              onPress: () => router.push('/(producer)/growth-journal'),
+            },
+          ]}
+        />
+
+        <EnterpriseNavSection
+          title={t('producer.hubs.field.sectionGuide')}
+          items={[
+            {
+              key: 'steps',
+              title: t('producer.tabs.steps'),
+              subtitle: t('producer.hubs.field.stepsDesc'),
+              icon: ListOrdered,
+              onPress: () => router.push('/(producer)/(tabs)/steps'),
+            },
+            {
+              key: 'app-guide',
+              title: t('producer.appGuide.cardTitle'),
+              subtitle: t('producer.appGuide.cardBody'),
+              icon: BookOpen,
+              onPress: () => router.push('/(producer)/app-guide'),
+            },
+          ]}
         />
       </TabRootBody>
     </EnterpriseScreen>

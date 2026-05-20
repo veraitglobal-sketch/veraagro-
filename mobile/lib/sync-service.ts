@@ -443,6 +443,12 @@ export const syncService = {
             label: cost.label,
             amount: cost.amount,
             currency: cost.currency || 'EUR',
+            note: cost.note?.trim() || undefined,
+            estateId: cost.estateId,
+            parcelId: cost.parcelId,
+            harvestAnnouncementId: cost.harvestAnnouncementId,
+            parcelLabel: cost.parcelLabel,
+            plantingLabel: cost.plantingLabel,
             timestamp: cost.timestamp,
           },
           { headers: { Authorization: token ? `Bearer ${token}` : '' } }

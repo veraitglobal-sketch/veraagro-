@@ -779,6 +779,30 @@
       "viewOnline": "View online",
       "footer": "For legal and contract matters use formal Bio Vera documents. This guide is a practical walkthrough of the app.",
       "openFromEducation": "Mobile app guide (screenshots)",
+      "faqTitle": "Common questions",
+      "faqLead": "Quick answers on permissions, parcel map drawing, growth journal photos, and testing the app.",
+      "faqItems": [
+        {
+          "title": "What is “Experience needs permissions”?",
+          "body": "If you run the app inside Expo Go (developer client), iOS/Android show Expo’s English dialog, not Bio Vera’s. For real field work use the installed Bio Vera app (EAS APK/IPA). There you first see a short explanation in your language, then the normal system permission dialog."
+        },
+        {
+          "title": "Camera, location, and notifications",
+          "body": "Camera and GPS are requested only when you tap a photo or GPS action (growth journal, field log, map center). Notifications are offered once after login — you can turn them off later in phone settings. If you denied access, use “Open settings” in the app."
+        },
+        {
+          "title": "New parcel — map keeps moving",
+          "body": "On “Add estate”, enable drawing, choose Tap points or Finger, then mark the boundary. While drawing, do not pull the page down. Use the location pin button next to the controls to center the map, not pull-to-refresh."
+        },
+        {
+          "title": "Growth journal — photo required",
+          "body": "Every entry needs a photo taken on the parcel. After Continue in the form the app opens the camera and records GPS for the passport. If the camera fails, allow access in settings or pick an existing photo from the gallery when offered."
+        },
+        {
+          "title": "Red 404 error after login",
+          "body": "If the server does not have the push module yet, token registration may return 404 — that does not block parcels or the diary. Operations should deploy the latest API to Railway. In app Settings you can check the API URL and connection."
+        }
+      ],
       "steps": {
         "welcome": {
           "title": "Welcome",
@@ -896,8 +920,8 @@
               "body": "Registrujete farmu kao celinu i vidite listu imanja povezanih sa vašim nalogom. Bez registrovanog imanja i parcele kasniji GPS unosi mogu biti odbijeni."
             },
             {
-              "heading": "Parcele i zone",
-              "body": "Na mapi crtate ili potvrđujete granice parcele (poligon). Sistem proverava da li ste fizički na parceli pri unosu. Status „čeka odobrenje” znači da tim još nije potvrdio granice."
+              "heading": "Parcels and zones",
+              "body": "Draw or confirm parcel boundaries on the map (polygon). Enable drawing, choose Tap points or Finger, at least three points. While drawing the map should stay still — use the location button to center, not pull-to-refresh on the page. GPS checks apply on field entries. “Pending approval” means operations have not confirmed the boundary yet."
             },
             {
               "heading": "Moji zasadi",
@@ -1578,6 +1602,7 @@
     "parcelsPending": "Parcels pending",
     "harvestPlans": "Harvest plans",
     "growerOps": "Grower operations",
+    "goGrowerControl": "Grower control",
     "goParcelsPending": "Parcels pending",
     "goEstates": "Estates & setup",
     "goHarvestPlans": "Harvest plans",
@@ -1608,7 +1633,45 @@
       "estates": "Estate approval",
       "products": "Product catalog",
       "harvestPlans": "Harvest plans",
+      "growerControl": "Grower control",
       "haccp": "HACCP monitoring"
+    },
+    "growerControl": {
+      "title": "Grower control",
+      "intro": "Approve transport after compliance checks, reject progress photos, and remove plantings. Notifications link here.",
+      "tabTransport": "Transport (awaiting)",
+      "tabGrowth": "Progress photos",
+      "tabPlantings": "Plantings",
+      "tabPlans": "Harvest plans",
+      "loading": "Loading…",
+      "emptyTransport": "No transport awaiting approval.",
+      "emptyGrowth": "No new photos to review.",
+      "emptyPlantings": "No active plantings.",
+      "emptyPlans": "No plans pending review.",
+      "approveTransport": "Approve transport",
+      "rejectTransport": "Reject transport",
+      "rejectPhoto": "Reject photo",
+      "deletePhoto": "Delete",
+      "deletePlanting": "Remove planting",
+      "confirmPlan": "Confirm plan",
+      "rejectPlan": "Reject plan",
+      "reasonOptional": "Reason (optional)",
+      "reasonRequired": "Reason (required for rejection)",
+      "openMissions": "Missions & driver assign",
+      "openHarvestPlans": "All harvest plans",
+      "grower": "Grower",
+      "estate": "Estate",
+      "crop": "Crop",
+      "gps": "GPS",
+      "notes": "Notes",
+      "mission": "Mission",
+      "destination": "Destination",
+      "created": "Created",
+      "confirmDeletePlanting": "Remove this planting? The grower will be notified.",
+      "confirmDeletePhoto": "Permanently delete this photo?",
+      "confirmRejectTransport": "Reject this transport request?",
+      "transportApprovedHint": "After approval the mission becomes PENDING — assign a driver in Missions or logistics claims the run.",
+      "planPendingHint": "Confirm harvest plans before transport when the API requires it."
     },
     "financeOverview": {
       "heading": "Platform finance snapshot",
@@ -1655,6 +1718,8 @@
       "approveParcels": "Approve parcels",
       "estatesFields": "Estates / fields",
       "harvestPlans": "Harvest plans",
+      "growerControl": "Grower control",
+      "growerControlBadge": "{{count}} pending",
       "setupBadge": "{{count}} setup",
       "live": "Live",
       "liveSubtitle": "Pending parcels and latest batches",
@@ -1862,6 +1927,7 @@
       "errLoadPartners": "Could not load logistics partners",
       "errAssign": "Assign failed",
       "statuses": {
+        "AWAITING_APPROVAL": "Awaiting approval (admin)",
         "PENDING": "Pending",
         "ASSIGNED": "Assigned",
         "ACCEPTED": "Accepted",
@@ -2652,8 +2718,11 @@
     "labelUnit": "Unit *",
     "labelHarvestDate": "Harvest date *",
     "creating": "Creating…",
-    "batchesDescription": "Lots (batches in the system) are packed harvest units for traceability and passports. Add them under My parcels on an approved parcel (Create batch), not from this list alone.",
-    "batchesLeadOneLine": "Packed goods = a lot with QR code; then packing photos and transport request.",
+    "batchesDescription": "Lots are packed harvest units for traceability and passports (public BATCH-ID and system ID). Add them under My parcels on an approved parcel (Create lot), not from this list alone.",
+    "batchesLeadOneLine": "Each lot has a public BATCH-ID and system ID; then packing photos and transport request.",
+    "lotLabel": "Lot",
+    "lotSystemBatchId": "Batch ID (system)",
+    "lotsGroupedByEstate": "{{estate}}",
     "filterHere": "With me",
     "filterMoving": "In transit",
     "filterDone": "Delivered",

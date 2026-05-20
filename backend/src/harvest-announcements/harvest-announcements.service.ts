@@ -522,12 +522,37 @@ export class HarvestAnnouncementsService {
       include: {
         parcel: { include: { estates: { include: { users: true } } } },
         user: true,
+        mission: { select: { id: true, missionNumber: true, status: true } },
       },
     });
     if (!a) {
       throw new NotFoundException('Announcement not found');
     }
     return a;
+  }
+
+  async adminDeletePlanting(adminId: string, announcementId: string, reason?: string) {
+    const row = await this.findOneAdmin(announcementId);
+    if (row.announcementType !== 'PLANTING') {
+      throw new BadRequestException('Only planting plans (zasadi) can be removed here. Use status REJECTED for harvest plans.');
+    }
+    if (row.mission) {
+      throw new BadRequestException('Cannot delete: a transport mission is linked to this plan.');
+    }
+
+    await this.prisma.harvest_announcements.delete({ where: { id: announcementId } });
+
+    try {
+      await this.notificationsService.notifyGrowerPlantingRemoved({
+        growerId: row.userId,
+        cropType: row.cropType,
+        reason,
+      });
+    } catch (e) {
+      this.logger.warn(`notifyGrowerPlantingRemoved: ${e instanceof Error ? e.message : e}`);
+    }
+
+    return { ok: true, id: announcementId, deletedBy: adminId };
   }
 
   async adminUpdate(announcementId: string, dto: AdminUpdateHarvestAnnouncementDto) {
@@ -590,7 +615,7 @@ export class HarvestAnnouncementsService {
           type: 'ACTION_REQUIRED',
           title: `New ${typeLabel.toLowerCase()}: ${estateName}`,
           message: `${farmerName}: ${announcement.cropType} — ${new Date(announcement.estimatedDate).toLocaleDateString()}${announcement.estimatedQuantity ? ` (~${announcement.estimatedQuantity} kg)` : ''}${ch}. Review in Harvest plans.`,
-          actionUrl: `/admin/harvest-plans?id=${announcement.id}`,
+          actionUrl: `/admin/grower-control?tab=plans&id=${announcement.id}`,
         });
       } catch (e) {
         this.logger.warn(`notifyAdmins: failed for user ${admin.id}`, e);

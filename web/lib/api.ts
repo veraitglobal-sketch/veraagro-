@@ -243,6 +243,19 @@ export const missionsAPI = {
     const response = await api.get('/missions/admin/logistics-partners');
     return response.data;
   },
+  approveTransportAdmin: async (missionId: string) => {
+    const response = await api.patch(
+      `/missions/admin/${encodeURIComponent(missionId)}/approve-transport`,
+    );
+    return response.data;
+  },
+  rejectTransportAdmin: async (missionId: string, reason?: string) => {
+    const response = await api.patch(
+      `/missions/admin/${encodeURIComponent(missionId)}/reject-transport`,
+      { reason },
+    );
+    return response.data;
+  },
   assignMissionAdmin: async (
     missionId: string,
     body: { logisticsPartnerId: string; vehicleId?: string },
@@ -491,6 +504,12 @@ export const harvestAnnouncementsAPI = {
     const response = await api.put(`/harvest-announcements/${id}/status`, { status });
     return response.data;
   },
+  deletePlanting: async (id: string, reason?: string) => {
+    const response = await api.delete(`/harvest-announcements/admin/${encodeURIComponent(id)}/planting`, {
+      data: { reason },
+    });
+    return response.data;
+  },
   /** Grower: list planting & harvest plans on parcels belonging to estates you own */
   getMine: async () => {
     const response = await api.get('/harvest-announcements/my-announcements');
@@ -524,6 +543,18 @@ export const growthLogsAPI = {
   listByParcel: async (parcelId: string) => {
     const response = await api.get(`/growth-logs/parcel/${encodeURIComponent(parcelId)}`);
     return response.data || [];
+  },
+  adminList: async (params?: { moderationStatus?: string; limit?: number }) => {
+    const response = await api.get('/growth-logs/admin/list', { params });
+    return response.data || [];
+  },
+  adminReject: async (id: string, reason?: string) => {
+    const response = await api.patch(`/growth-logs/admin/${encodeURIComponent(id)}/reject`, { reason });
+    return response.data;
+  },
+  adminDelete: async (id: string) => {
+    const response = await api.delete(`/growth-logs/admin/${encodeURIComponent(id)}`);
+    return response.data;
   },
 };
 

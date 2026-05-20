@@ -1,21 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { estatesAPI, harvestAnnouncementsAPI, parcelsAPI, type Estate, type Parcel } from '../../../lib/api';
+import { harvestAnnouncementsAPI } from '../../../lib/api';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
+import { loadGrowerParcelRows, type GrowerParcelRow } from '../../../lib/load-grower-parcels';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { apiErrorMessage, axiosLikeMessage, axiosResponseStatus, isLikelyNetworkError } from '../../../lib/api-error';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 
-export type EstateRow = { id: string; name: string };
-export type ParcelAug = {
-  id: string;
-  cropType?: string | null;
-  approvedAt?: string | null;
-  status?: string | null;
-  estateId: string;
-  calculatedArea?: number;
-  estateName: string;
-};
+export type ParcelAug = GrowerParcelRow;
 
 export type HaRow = {
   id: string;
@@ -66,8 +58,7 @@ function normalizeServerRow(r: Record<string, unknown>): HaRow {
     status: String(r.status ?? ''),
     notes: (r.notes as string | null) ?? null,
     createdAt: isoString(r.createdAt) || undefined,
-    estimatedQuantity:
-      typeof r.estimatedQuantity === 'number' ? r.estimatedQuantity : null,
+    estimatedQuantity: typeof r.estimatedQuantity === 'number' ? r.estimatedQuantity : null,
     plantingProgress: (r.plantingProgress as HaRow['plantingProgress']) ?? null,
     parcel: parcelRaw
       ? {
@@ -135,43 +126,6 @@ export function usePlantingsData() {
   const [announcements, setAnnouncements] = useState<HaRow[]>([]);
   const [parcelList, setParcelList] = useState<ParcelAug[]>([]);
 
-  const loadParcels = useCallback(async (): Promise<ParcelAug[]> => {
-    let estates: EstateRow[] = [];
-    try {
-      estates = (await estatesAPI.getAll()) as EstateRow[];
-      if (estates.length) await growerOfflineCache.saveEstates(estates as Estate[]);
-    } catch {
-      estates = ((await growerOfflineCache.loadEstates()) ?? []) as EstateRow[];
-    }
-
-    const rows: ParcelAug[] = [];
-    for (const e of estates || []) {
-      let parcels: Array<ParcelAug & { calculatedArea?: number }> = [];
-      try {
-        parcels = (await parcelsAPI.getByEstate(e.id)) as Array<
-          ParcelAug & { calculatedArea?: number }
-        >;
-        if (parcels.length) await growerOfflineCache.saveParcels(e.id, parcels as Parcel[]);
-      } catch {
-        parcels = ((await growerOfflineCache.loadParcels(e.id)) ?? []) as Array<
-          ParcelAug & { calculatedArea?: number }
-        >;
-      }
-      for (const par of parcels || []) {
-        rows.push({
-          id: par.id,
-          cropType: par.cropType,
-          approvedAt: par.approvedAt,
-          status: par.status,
-          estateId: par.estateId ?? e.id,
-          calculatedArea: typeof par.calculatedArea === 'number' ? par.calculatedArea : undefined,
-          estateName: e.name,
-        });
-      }
-    }
-    return rows;
-  }, []);
-
   const loadAnnouncements = useCallback(async (): Promise<{
     rows: HaRow[];
     warn: string | null;
@@ -190,11 +144,16 @@ export function usePlantingsData() {
         console.warn('[usePlantingsData] getMy failed:', axiosLikeMessage(e) || e);
       }
       const cached = await growerOfflineCache.loadHarvestAnnouncements();
-      const cachedRows = (cached ?? []).map((r) => normalizeServerRow(r as unknown as Record<string, unknown>));
+      const cachedRows = (cached ?? []).map((r) =>
+        normalizeServerRow(r as unknown as Record<string, unknown>),
+      );
       const rows = cachedRows.length > 0 ? [...local, ...cachedRows] : local;
       return {
         rows,
-        warn: rows.length > 0 ? t('producer.plantings.announcementsLoadWarnOffline') : t('producer.plantings.announcementsLoadWarn'),
+        warn:
+          rows.length > 0
+            ? t('producer.plantings.announcementsLoadWarnOffline')
+            : t('producer.plantings.announcementsLoadWarn'),
         warnDetail: explainLoadFailure(e, t),
       };
     }
@@ -205,14 +164,14 @@ export function usePlantingsData() {
     setAnnouncementsWarn(null);
     setAnnouncementsWarnDetail(null);
     try {
-      const [parcelRows, ann] = await Promise.all([loadParcels(), loadAnnouncements()]);
+      const [parcelRows, ann] = await Promise.all([
+        loadGrowerParcelRows({ t }),
+        loadAnnouncements(),
+      ]);
       setParcelList(parcelRows);
       setAnnouncements(ann.rows);
       setAnnouncementsWarn(ann.warn);
       setAnnouncementsWarnDetail(ann.warnDetail);
-      if (parcelRows.length === 0 && ann.rows.length === 0 && !ann.warn) {
-        setErr(null);
-      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : t('producer.plantings.loadError'));
       const local = await localPlantingRows();
@@ -221,7 +180,7 @@ export function usePlantingsData() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [loadParcels, loadAnnouncements, t]);
+  }, [loadAnnouncements, t]);
 
   useEffect(() => {
     void load();

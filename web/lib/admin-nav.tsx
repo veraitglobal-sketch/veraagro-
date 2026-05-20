@@ -11,6 +11,7 @@ import {
   MessageCircle,
   ClipboardCheck,
   CalendarRange,
+  ShieldCheck,
   Store,
   Inbox,
   Layers,
@@ -92,6 +93,11 @@ export type AdminDashStats = {
   parcels?: { total?: number; pendingApproval?: number };
   estates?: { total?: number; pendingSetup?: number };
   batches?: { total?: number };
+  growerModeration?: {
+    transportAwaitingApproval?: number;
+    recentGrowthPhotos?: number;
+    activePlantings?: number;
+  };
 };
 
 /**
@@ -101,9 +107,18 @@ export function buildAdminGrowerOpsGroup(t: TFunction, stats: AdminDashStats | n
   const pa = stats?.parcels?.pendingApproval;
   const es = stats?.estates?.pendingSetup;
   const batchTotal = stats?.batches?.total;
+  const gm = stats?.growerModeration;
+  const moderationQueue =
+    (gm?.transportAwaitingApproval ?? 0) + (gm?.recentGrowthPhotos ?? 0);
   return {
     title: t('adminNav.growerOps'),
     items: [
+      {
+        href: '/admin/grower-control',
+        label: t('adminNav.goGrowerControl'),
+        icon: <ShieldCheck className="w-5 h-5 flex-shrink-0" />,
+        badge: moderationQueue > 0 ? moderationQueue : undefined,
+      },
       {
         href: '/admin/parcels-pending',
         label: t('adminNav.goParcelsPending'),

@@ -15,9 +15,10 @@ export type LotFilter = 'all' | 'here' | 'moving' | 'done';
 
 export function lotStatusBucket(status: string | null | undefined): LotFilter {
   const s = String(status ?? '').toUpperCase();
-  if (s === 'DELIVERED') return 'done';
+  if (s === 'DELIVERED' || s === 'SOLD') return 'done';
   if (s === 'IN_HUB' || s === 'IN_TRANSIT') return 'moving';
   if (s === 'PACKED' || s === 'QUALITY_VERIFIED' || s === 'HARVESTED') return 'here';
+  if (s === 'RETURNED' || s === 'EXPIRED') return 'done';
   return 'here';
 }
 

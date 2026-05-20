@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, ExternalLink, X } from 'lucide-react-native';
 import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { enterpriseUi } from '../../../lib/enterprise-ui';
 import type { GrowthLog } from '../../../lib/api';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
@@ -49,14 +50,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
     <>
       <Pressable
         onPress={() => setDetailOpen(true)}
-        style={({ pressed }) => ({
-          backgroundColor: colors.background,
-          borderRadius: theme.borderRadius.md,
-          padding: theme.spacing.md,
-          borderWidth: 0.5,
-          borderColor: colors.border,
-          opacity: pressed ? 0.92 : 1,
-        })}
+        style={({ pressed }) => [enterpriseUi.inAppPanel, { padding: 16, opacity: pressed ? 0.92 : 1 }]}
       >
         {canShowImage ? (
           <Image

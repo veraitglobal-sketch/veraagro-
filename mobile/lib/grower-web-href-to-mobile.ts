@@ -26,6 +26,8 @@ const GROWER_EXACT_ROUTES: Record<string, string> = {
   '/grower/quality-entry': '/(producer)/quality-entry',
   '/grower/compliance-photos': '/(producer)/compliance-photos',
   '/grower/education': '/(producer)/education',
+  '/grower/app-guide': '/(producer)/app-guide',
+  '/grower/mobile-app-guide': '/(producer)/app-guide',
   '/grower/missions/create': '/(producer)/missions-create',
   '/grower/portal': '/(producer)/missions',
   '/grower/profile': '/(producer)/(tabs)/profile',

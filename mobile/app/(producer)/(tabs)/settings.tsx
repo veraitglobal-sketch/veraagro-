@@ -18,6 +18,11 @@ import { growerUi } from '../../../lib/grower-ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../../lib/api-url';
 import { syncService } from '../../../lib/sync-service';
+import { notificationsAPI } from '../../../lib/api';
+import { ensureForegroundLocationPermission } from '../../../lib/grower-permissions';
+import { requestNotificationPermissionIfNeeded } from '../../../lib/post-login-permissions';
+import { registerPushTokenWithBackend, unregisterPushTokenFromBackend } from '../../../lib/push-service';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const SETTINGS_KEYS = {
   NOTIFICATIONS: 'settings_notifications',
@@ -32,6 +37,7 @@ const SETTINGS_KEYS = {
  */
 export default function SettingsScreen() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const p = useBioVeraScreenPadding();
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
@@ -39,6 +45,7 @@ export default function SettingsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [connectionChecking, setConnectionChecking] = useState(false);
   const [syncRetryBusy, setSyncRetryBusy] = useState(false);
+  const [pushTestBusy, setPushTestBusy] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   const loadSettings = useCallback(async () => {
@@ -77,9 +84,22 @@ export default function SettingsScreen() {
     }
   }, []);
 
-  const handleNotificationsToggle = (value: boolean) => {
-    setNotifications(value);
-    saveSetting(SETTINGS_KEYS.NOTIFICATIONS, value);
+  const handleNotificationsToggle = async (value: boolean) => {
+    try {
+      if (value) {
+        const granted = await requestNotificationPermissionIfNeeded({ rationale: true });
+        if (!granted) return;
+        const roles = Array.isArray(user?.roles) ? user.roles : user?.role ? [user.role] : undefined;
+        await registerPushTokenWithBackend(roles);
+      } else {
+        await unregisterPushTokenFromBackend();
+      }
+      setNotifications(value);
+      void saveSetting(SETTINGS_KEYS.NOTIFICATIONS, value);
+    } catch (e) {
+      console.warn('[settings] notifications toggle:', e instanceof Error ? e.message : e);
+      Alert.alert(t('error'), t('producer.settings.notificationsRegisterFailed'));
+    }
   };
 
   const handleAutoSyncToggle = (value: boolean) => {
@@ -87,9 +107,32 @@ export default function SettingsScreen() {
     saveSetting(SETTINGS_KEYS.AUTO_SYNC, value);
   };
 
-  const handleGpsToggle = (value: boolean) => {
+  const sendTestPush = useCallback(async () => {
+    setPushTestBusy(true);
+    try {
+      const result = await notificationsAPI.sendTestPush();
+      if (!result.pushEnabled) {
+        Alert.alert(t('producer.settings.pushTestTitle'), t('producer.settings.pushTestServerOff'));
+        return;
+      }
+      Alert.alert(
+        t('producer.settings.pushTestTitle'),
+        t('producer.settings.pushTestSent', { count: result.devices }),
+      );
+    } catch {
+      Alert.alert(t('error'), t('producer.settings.pushTestFail'));
+    } finally {
+      setPushTestBusy(false);
+    }
+  }, [t]);
+
+  const handleGpsToggle = async (value: boolean) => {
+    if (value) {
+      const granted = await ensureForegroundLocationPermission(t, { rationale: true });
+      if (!granted) return;
+    }
     setGpsAlways(value);
-    saveSetting(SETTINGS_KEYS.GPS_ALWAYS, value);
+    void saveSetting(SETTINGS_KEYS.GPS_ALWAYS, value);
   };
 
   const testApiConnection = useCallback(async () => {
@@ -226,6 +269,14 @@ export default function SettingsScreen() {
             value={notifications}
             onValueChange={handleNotificationsToggle}
           />
+          {notifications ? (
+            <EnterpriseSettingsButton
+              label={t('producer.settings.pushTestButton')}
+              variant="outline"
+              onPress={() => void sendTestPush()}
+              disabled={pushTestBusy}
+            />
+          ) : null}
         </EnterpriseSettingsGroup>
 
         <EnterpriseSettingsGroup>

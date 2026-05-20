@@ -6,6 +6,7 @@ import { AuthGuard } from '../../components/AuthGuard';
 import { NetworkProvider } from '../../contexts/NetworkContext';
 import { ProducerOfflineStrip } from '../../components/ProducerOfflineStrip';
 import { GrowerReconnectAutoSync } from '../../components/GrowerReconnectAutoSync';
+import { PostLoginPermissions } from '../../components/PostLoginPermissions';
 import { GrowerDashboardProvider } from '../../contexts/GrowerDashboardContext';
 
 /**
@@ -19,6 +20,7 @@ export default function ProducerLayout() {
       <GrowerDashboardProvider>
       <View style={{ flex: 1 }}>
         <GrowerReconnectAutoSync />
+        <PostLoginPermissions />
         <ProducerOfflineStrip />
       <View style={{ flex: 1 }}>
       <Stack screenOptions={bioVeraStackScreenOptions({ headerShown: false })}>
@@ -53,6 +55,7 @@ export default function ProducerLayout() {
             headerBackTitle: i18n.t('common.back'),
           }}
         />
+        <Stack.Screen name="app-guide" options={{ headerShown: false }} />
         <Stack.Screen name="quality-entry" />
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />

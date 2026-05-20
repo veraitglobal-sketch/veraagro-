@@ -54,6 +54,11 @@ interface Statistics {
     total: number;
     pendingApproval: number;
   };
+  growerModeration?: {
+    transportAwaitingApproval: number;
+    recentGrowthPhotos: number;
+    activePlantings: number;
+  };
 }
 
 export default function AdminDashboard() {
@@ -115,6 +120,9 @@ export default function AdminDashboard() {
 
   const pendingParcelApprovalCount = statistics?.parcels?.pendingApproval ?? 0;
   const pendingEstateSetupCount = statistics?.estates?.pendingSetup ?? 0;
+  const growerModerationCount =
+    (statistics?.growerModeration?.transportAwaitingApproval ?? 0) +
+    (statistics?.growerModeration?.recentGrowthPhotos ?? 0);
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
@@ -328,6 +336,21 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-[#2D5A27]" />
                   <span className="text-sm font-medium text-gray-900">{t('adminPages.dashboard.harvestPlans')}</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Link>
+              <Link
+                href="/admin/grower-control"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Activity className="w-5 h-5 text-[#2D5A27]" />
+                  <span className="text-sm font-medium text-gray-900">{t('adminPages.dashboard.growerControl')}</span>
+                  {growerModerationCount > 0 && (
+                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+                      {t('adminPages.dashboard.growerControlBadge', { count: growerModerationCount })}
+                    </span>
+                  )}
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </Link>

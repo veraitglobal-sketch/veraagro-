@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { useTranslation } from 'react-i18next';
 import { Camera, MapPin, Check, ScanLine, Sprout } from 'lucide-react-native';
@@ -123,6 +124,39 @@ export default function FieldLogWizard() {
   const selectedParcelOpt = data.approvedParcelOptions.find((o) => o.parcel.id === data.selectedParcelId);
   const selectedPlan = data.parcelPlans.find((p) => p.id === data.selectedHarvestPlanId);
 
+  const parcelSelectOptions = useMemo(
+    () =>
+      data.approvedParcelOptions.map(({ parcel, estate }) => ({
+        id: parcel.id,
+        label:
+          parcel.cropType || t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) }),
+        subtitle: estate.name,
+      })),
+    [data.approvedParcelOptions, t],
+  );
+
+  const planSelectOptions = useMemo(
+    () =>
+      data.parcelPlans.map((plan) => ({
+        id: plan.id,
+        label: plan.cropType || plan.label,
+        subtitle:
+          plan.announcementType === 'PLANTING'
+            ? t('producer.fieldLogForm.farmerCropKindPlanting')
+            : t('producer.fieldLogForm.farmerCropKindHarvest'),
+      })),
+    [data.parcelPlans, t],
+  );
+
+  const activitySelectOptions = useMemo(
+    () =>
+      ACTIVITY_TYPES.map((type) => ({
+        id: type.value,
+        label: t(`producer.fieldLog.${activityLabelKey[type.value]}`),
+      })),
+    [t],
+  );
+
   const strictPlanting =
     selectedPlan?.announcementType === 'PLANTING' && data.activityType === 'PLANTING';
   const growthStageReady = strictPlanting
@@ -227,31 +261,26 @@ export default function FieldLogWizard() {
             <>
               <StepPanel step={1} title={t('producer.fieldLogForm.farmerStepParcel')} />
               {data.approvedParcelOptions.length === 0 ? (
-                <SelectCard
-                  selected={false}
+                <TouchableOpacity
                   onPress={() => data.router.push('/(producer)/estates' as never)}
-                  title={t('producer.fieldLogForm.setupEstatesCta')}
-                  icon={MapPin}
-                />
+                  style={enterpriseUi.authBtnPrimary}
+                  activeOpacity={0.88}
+                >
+                  <Text style={enterpriseUi.authBtnPrimaryText}>
+                    {t('producer.fieldLogForm.setupEstatesCta')}
+                  </Text>
+                </TouchableOpacity>
               ) : (
-                data.approvedParcelOptions.map(({ parcel, estate }) => {
-                  const sel = data.selectedParcelId === parcel.id;
-                  const title =
-                    parcel.cropType || t('producer.growthJournal.parcelShort', { id: parcel.id.slice(0, 4) });
-                  return (
-                    <SelectCard
-                      key={parcel.id}
-                      selected={sel}
-                      onPress={() => {
-                        data.setSelectedParcelId(parcel.id);
-                        data.setSelectedHarvestPlanId('');
-                      }}
-                      title={title}
-                      subtitle={estate.name}
-                      icon={MapPin}
-                    />
-                  );
-                })
+                <GrowerSelectField
+                  label={t('producer.fieldLogForm.farmerStepParcel')}
+                  placeholder={t('producer.select.parcel')}
+                  valueId={data.selectedParcelId}
+                  options={parcelSelectOptions}
+                  onSelect={(id) => {
+                    data.setSelectedParcelId(id);
+                    data.setSelectedHarvestPlanId('');
+                  }}
+                />
               )}
             </>
           ) : null}
@@ -274,23 +303,13 @@ export default function FieldLogWizard() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                data.parcelPlans.map((plan) => {
-                  const sel = data.selectedHarvestPlanId === plan.id;
-                  return (
-                    <SelectCard
-                      key={plan.id}
-                      selected={sel}
-                      onPress={() => data.setSelectedHarvestPlanId(plan.id)}
-                      title={plan.cropType || plan.label}
-                      subtitle={
-                        plan.announcementType === 'PLANTING'
-                          ? t('producer.fieldLogForm.farmerCropKindPlanting')
-                          : t('producer.fieldLogForm.farmerCropKindHarvest')
-                      }
-                      icon={Sprout}
-                    />
-                  );
-                })
+                <GrowerSelectField
+                  label={t('producer.fieldLogForm.farmerStepCrop')}
+                  placeholder={t('producer.select.planting')}
+                  valueId={data.selectedHarvestPlanId}
+                  options={planSelectOptions}
+                  onSelect={data.setSelectedHarvestPlanId}
+                />
               )}
               {data.parcelPlans.length > 0 ? (
                 <TouchableOpacity onPress={goAddPlanting} style={styles.linkAdd}>
@@ -308,20 +327,13 @@ export default function FieldLogWizard() {
                 <Text style={styles.gpsWarn}>{t('producer.fieldLogForm.gpsWarnShort')}</Text>
               ) : null}
 
-              {ACTIVITY_TYPES.map((type) => {
-                const sel = data.activityType === type.value;
-                return (
-                  <TouchableOpacity
-                    key={type.value}
-                    onPress={() => data.setActivityType(type.value)}
-                    style={[growerUi.filterChip, styles.workChip, sel && growerUi.filterChipOn]}
-                  >
-                    <Text style={[growerUi.filterChipText, sel && growerUi.filterChipTextOn]}>
-                      {t(`producer.fieldLog.${activityLabelKey[type.value]}`)}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+              <GrowerSelectField
+                label={t('producer.fieldLogForm.farmerStepWork')}
+                placeholder={t('producer.select.work')}
+                valueId={data.activityType}
+                options={activitySelectOptions}
+                onSelect={(id) => data.setActivityType(id as ActivityType)}
+              />
 
               {data.activityType ? (
                 <>

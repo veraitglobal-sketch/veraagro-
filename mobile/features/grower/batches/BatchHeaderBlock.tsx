@@ -5,6 +5,7 @@ import { theme } from '../../../lib/theme';
 import { colors } from '../../../lib/colors';
 import { getBatchStatusLabel } from './batch-status-i18n';
 import { getBatchStatusColor } from './useBatchDetailData';
+import LotIdsBlock from './LotIdsBlock';
 
 export default function BatchHeaderBlock({ batch }: { batch: any }) {
   const { t } = useTranslation();
@@ -20,11 +21,9 @@ export default function BatchHeaderBlock({ batch }: { batch: any }) {
         borderColor: colors.border,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-        <QrCode size={18} color={colors.text.primary} strokeWidth={1} />
-        <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
-          {batch.batchId || batch.id}
-        </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm, gap: 8 }}>
+        <QrCode size={18} color={colors.text.primary} strokeWidth={1} style={{ marginTop: 2 }} />
+        <LotIdsBlock lot={batch} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{t('producer.missions.statusFieldLabel')}</Text>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
-import * as Location from 'expo-location';
+import { getCurrentGrowerPosition } from '../../../lib/grower-permissions';
 import {
   estatesAPI,
   harvestAnnouncementsAPI,
@@ -209,12 +209,6 @@ export function useHarvestData(
   ]);
 
   useEffect(() => {
-    Location.requestForegroundPermissionsAsync().then(({ status }) => {
-      if (status !== 'granted') Alert.alert(t('producer.estates.permissionsTitle'), t('producer.estates.locationPermissionRequired'));
-    });
-  }, [t]);
-
-  useEffect(() => {
     if (planMode !== 'HARVEST') {
       setSelectedPlantingId(null);
       return;
@@ -247,12 +241,10 @@ export function useHarvestData(
 
   /** GPS optional for harvest *plan*. */
   const getCurrentLocation = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
-    } catch (_error) {
-      Alert.alert(t('error'), t('producer.harvest.locationFailed'));
+      const pos = await getCurrentGrowerPosition(t);
+      if (pos) setLocation({ lat: pos.lat, lng: pos.lng });
     } finally {
       setLoading(false);
     }

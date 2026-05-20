@@ -24,6 +24,7 @@ import * as crypto from 'crypto';
 import { AuditTrailService } from '../audit-trail/audit-trail.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
+import { BatchesService } from '../batches/batches.service';
 
 @Injectable()
 export class MissionsService {
@@ -38,6 +39,7 @@ export class MissionsService {
     @Inject(forwardRef(() => NotificationsGateway))
     private notificationsGateway: NotificationsGateway,
     private notificationsService: NotificationsService,
+    private batchesService: BatchesService,
   ) {}
 
   /**
@@ -128,6 +130,11 @@ export class MissionsService {
   /** When false (default), new transport requests stay PENDING until an admin assigns a driver. */
   private shouldAutoAssignLogistics(): boolean {
     return process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER === 'true';
+  }
+
+  /** Grower transport must pass ops compliance review before logistics (default on). */
+  requireAdminTransportApproval(): boolean {
+    return process.env.MISSIONS_SKIP_ADMIN_APPROVAL !== 'true';
   }
 
   /**
@@ -477,7 +484,8 @@ export class MissionsService {
 
     let mission;
     try {
-      const autoAssign = this.shouldAutoAssignLogistics();
+      const needsApproval = this.requireAdminTransportApproval();
+      const autoAssign = !needsApproval && this.shouldAutoAssignLogistics();
       const logisticsPartner = autoAssign
         ? await this.findNearestLogisticsPartner(pickupLocation.lat, pickupLocation.lng)
         : null;
@@ -513,12 +521,16 @@ export class MissionsService {
           destinationAddress: dto.destinationAddress?.trim() || null,
           destinationCity: dto.destinationCity?.trim() || null,
           loadInstructions: dto.loadInstructions?.trim() || null,
-          logisticsPartnerId: logisticsPartner?.id ?? null,
-          vehicleId: logisticsPartner?.vehicleId ?? null,
           optimalRoute: routeWithDest,
           estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
-          status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
-          assignedAt: logisticsPartner ? new Date() : null,
+          status: needsApproval
+            ? 'AWAITING_APPROVAL'
+            : logisticsPartner
+              ? 'ASSIGNED'
+              : 'PENDING',
+          assignedAt: !needsApproval && logisticsPartner ? new Date() : null,
+          logisticsPartnerId: needsApproval ? null : logisticsPartner?.id ?? null,
+          vehicleId: needsApproval ? null : logisticsPartner?.vehicleId ?? null,
           updatedAt: new Date(),
         },
         include: {
@@ -644,7 +656,10 @@ export class MissionsService {
       console.error('Error sending real-time notification:', error);
     }
 
-    if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+    if (
+      mission.status === 'AWAITING_APPROVAL' ||
+      (mission.status === 'PENDING' && !mission.logisticsPartnerId)
+    ) {
       try {
         const g = mission.users_missions_growerIdTousers;
         const growerLabel = g
@@ -655,6 +670,7 @@ export class MissionsService {
           growerLabel,
           destinationCity: mission.destinationCity,
           missionId: mission.id,
+          awaitingApproval: mission.status === 'AWAITING_APPROVAL',
         });
       } catch (e) {
         this.logger.warn(
@@ -1410,6 +1426,18 @@ export class MissionsService {
       );
     }
 
+    if (step === 'COMPLETE_DELIVERY' && updated.batchId && updated.batches?.batchId) {
+      try {
+        await this.batchesService.markDelivered(updated.batches.batchId);
+      } catch (e) {
+        this.logger.warn(
+          `markDelivered after mission complete failed (mission=${missionId}, batch=${updated.batches.batchId}): ${
+            e instanceof Error ? e.message : String(e)
+          }`,
+        );
+      }
+    }
+
     return updated;
   }
 
@@ -1714,6 +1742,113 @@ export class MissionsService {
       },
       orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
     });
+  }
+
+  /**
+   * Operations approves grower transport after compliance check → PENDING (ready for driver assign / logistics pool).
+   */
+  async adminApproveTransport(adminId: string, missionId: string) {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: missionId },
+      include: { users_missions_growerIdTousers: true, batches: true },
+    });
+    if (!mission) throw new NotFoundException('Mission not found');
+    if (mission.status !== 'AWAITING_APPROVAL') {
+      throw new BadRequestException('Only missions awaiting approval can be approved here');
+    }
+
+    let logisticsPartner: { id: string; vehicleId: string | null } | null = null;
+    if (this.shouldAutoAssignLogistics()) {
+      const pickup = MissionsService.parseJsonLatLng(mission.pickupLocation);
+      if (pickup) {
+        logisticsPartner = await this.findNearestLogisticsPartner(pickup.lat, pickup.lng);
+      }
+    }
+
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      data: {
+        status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
+        logisticsPartnerId: logisticsPartner?.id ?? null,
+        vehicleId: logisticsPartner?.vehicleId ?? null,
+        assignedAt: logisticsPartner ? new Date() : null,
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        users_missions_logisticsPartnerIdTousers: true,
+        vehicles: true,
+        batches: true,
+      },
+    });
+
+    try {
+      await this.notificationsService.notifyGrowerTransportDecision({
+        growerId: mission.growerId,
+        missionNumber: mission.missionNumber,
+        approved: true,
+        missionId: mission.id,
+      });
+    } catch (e) {
+      this.logger.warn(`notifyGrowerTransportDecision approve: ${e instanceof Error ? e.message : e}`);
+    }
+
+    if (updated.status === 'PENDING' && !updated.logisticsPartnerId) {
+      try {
+        const g = updated.users_missions_growerIdTousers;
+        const growerLabel = g
+          ? `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Grower'
+          : 'Grower';
+        await this.notificationsService.notifyAdminsForNewTransportRequest({
+          missionNumber: updated.missionNumber,
+          growerLabel,
+          destinationCity: updated.destinationCity,
+          missionId: updated.id,
+          awaitingApproval: false,
+        });
+      } catch (e) {
+        this.logger.warn(`notifyAdmins after transport approve: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return MissionsService.missionCreateHttpPayload(updated as unknown as Record<string, unknown>);
+  }
+
+  async adminRejectTransport(adminId: string, missionId: string, reason?: string) {
+    const mission = await this.prisma.missions.findUnique({
+      where: { id: missionId },
+      include: { users_missions_growerIdTousers: true },
+    });
+    if (!mission) throw new NotFoundException('Mission not found');
+    if (mission.status !== 'AWAITING_APPROVAL') {
+      throw new BadRequestException('Only missions awaiting approval can be rejected here');
+    }
+
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      data: {
+        status: 'CANCELLED',
+        updatedAt: new Date(),
+      },
+      include: {
+        users_missions_growerIdTousers: true,
+        batches: true,
+      },
+    });
+
+    try {
+      await this.notificationsService.notifyGrowerTransportDecision({
+        growerId: mission.growerId,
+        missionNumber: mission.missionNumber,
+        approved: false,
+        reason,
+        missionId: mission.id,
+      });
+    } catch (e) {
+      this.logger.warn(`notifyGrowerTransportDecision reject: ${e instanceof Error ? e.message : e}`);
+    }
+
+    return MissionsService.missionCreateHttpPayload(updated as unknown as Record<string, unknown>);
   }
 
   /**

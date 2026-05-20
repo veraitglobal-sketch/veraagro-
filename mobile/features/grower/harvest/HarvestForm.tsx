@@ -16,6 +16,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
+import { GrowerDateField } from '../../../components/grower/GrowerDateField';
 import { colors } from '../../../lib/colors';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
@@ -81,6 +83,35 @@ export default function HarvestForm() {
   const tabBarPad = 58 + Math.max(insets.bottom, 6);
   const selectedParcel = h.approvedParcels.find((p) => p.id === h.parcelId);
   const progressPct = step / STEPS;
+
+  const parcelSelectOptions = useMemo(
+    () =>
+      h.approvedParcels.map((p) => ({
+        id: p.id,
+        label: p.label,
+        subtitle: p.harvestPlanEligible
+          ? undefined
+          : t('producer.harvest.parcelPendingHarvestOnly'),
+      })),
+    [h.approvedParcels, t],
+  );
+
+  const plantingSelectOptions = useMemo(
+    () =>
+      h.plantingsForParcel.map((pl) => ({
+        id: pl.id,
+        label: pl.cropType,
+        subtitle: `${formatPlanDate(pl.estimatedDate)}${
+          pl.id.startsWith('local:') ? ` · ${t('producer.harvest.plantingPendingSync')}` : ''
+        }`,
+      })),
+    [h.plantingsForParcel, t],
+  );
+
+  const cropSelectOptions = useMemo(
+    () => CROP_TYPES.map((type) => ({ id: type, label: type })),
+    [],
+  );
 
   const step1Ok =
     Boolean(h.parcelId) && (h.planMode === 'PLANTING' || h.selectedParcelHarvestEligible);
@@ -163,56 +194,19 @@ export default function HarvestForm() {
               {t('producer.harvest.selectParcel')} <Text style={{ color: colors.error }}>*</Text>
             </Text>
             {h.parcelsLoading ? (
-              <ActivityIndicator size="small" color={colors.accent} />
+              <ActivityIndicator size="small" color={enterpriseColors.primary} />
             ) : h.approvedParcels.length === 0 ? (
-              <Text style={{ fontSize: 14, color: colors.error }}>{t('producer.harvest.noApprovedParcels')}</Text>
-            ) : h.parcelId && selectedParcel ? (
-              <View>
-                <View
-                  style={{
-                    paddingHorizontal: 14,
-                    paddingVertical: 12,
-                    borderRadius: 8,
-                    borderWidth: 0.5,
-                    borderColor: colors.accent,
-                    backgroundColor: colors.accent,
-                  }}
-                >
-                  <Text style={{ fontSize: 13, fontWeight: '600', color: colors.background }} numberOfLines={2}>
-                    {selectedParcel.label}
-                  </Text>
-                </View>
-                <TouchableOpacity onPress={() => h.setParcelId('')} style={{ marginTop: 10, minHeight: 44, justifyContent: 'center' }}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.accent }}>{t('producer.harvest.changeParcel')}</Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={{ fontSize: 14, color: enterpriseColors.destructive }}>
+                {t('producer.harvest.noApprovedParcels')}
+              </Text>
             ) : (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                {h.approvedParcels.map((p) => (
-                  <TouchableOpacity
-                    key={p.id}
-                    onPress={() => h.setParcelId(p.id)}
-                    style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 10,
-                      borderRadius: 8,
-                      borderWidth: 0.5,
-                      backgroundColor: colors.background,
-                      borderColor: colors.border,
-                      maxWidth: '100%',
-                    }}
-                  >
-                    <Text style={{ fontSize: 12, color: colors.text.primary }} numberOfLines={2}>
-                      {p.label}
-                    </Text>
-                    {!p.harvestPlanEligible ? (
-                      <Text style={{ fontSize: 10, marginTop: 4, color: colors.text.secondary, lineHeight: 14 }} numberOfLines={2}>
-                        {t('producer.harvest.parcelPendingHarvestOnly')}
-                      </Text>
-                    ) : null}
-                  </TouchableOpacity>
-                ))}
-              </View>
+              <GrowerSelectField
+                label={t('producer.harvest.stepParcel')}
+                placeholder={t('producer.select.parcel')}
+                valueId={h.parcelId}
+                options={parcelSelectOptions}
+                onSelect={h.setParcelId}
+              />
             )}
             {!h.parcelsLoading && h.planMode === 'HARVEST' && h.parcelId && !h.selectedParcelHarvestEligible ? (
               <Text style={{ fontSize: 13, color: colors.error, marginTop: 12, lineHeight: 18 }}>
@@ -247,64 +241,13 @@ export default function HarvestForm() {
                 </Text>
               </View>
             ) : (
-              <>
-                <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 10, lineHeight: 18 }}>
-                  {t('producer.harvest.selectPlantingLead')}
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                  {h.plantingsForParcel.map((pl) => {
-                    const sel = h.selectedPlantingId === pl.id;
-                    return (
-                      <TouchableOpacity
-                        key={pl.id}
-                        onPress={() => h.setSelectedPlantingId(pl.id)}
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 10,
-                          borderRadius: 8,
-                          borderWidth: 0.5,
-                          backgroundColor: sel ? colors.accent : colors.background,
-                          borderColor: sel ? colors.accent : colors.border,
-                          maxWidth: '100%',
-                          minWidth: '44%',
-                          flexGrow: 1,
-                        }}
-                      >
-                        <Text style={{ fontSize: 13, fontWeight: '700', color: sel ? colors.background : colors.text.primary }}>
-                          {pl.cropType}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 11,
-                            marginTop: 4,
-                            color: sel ? colors.background : colors.text.secondary,
-                            opacity: sel ? 0.95 : 1,
-                          }}
-                        >
-                          {formatPlanDate(pl.estimatedDate)}
-                        </Text>
-                        {pl.id.startsWith('local:') ? (
-                          <Text
-                            style={{
-                              fontSize: 10,
-                              marginTop: 4,
-                              color: sel ? colors.background : colors.text.tertiary,
-                              fontStyle: 'italic',
-                            }}
-                          >
-                            {t('producer.harvest.plantingPendingSync')}
-                          </Text>
-                        ) : null}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-                {!h.selectedPlantingId ? (
-                  <Text style={{ fontSize: 13, color: colors.text.secondary, marginTop: 10, lineHeight: 18 }}>
-                    {t('producer.harvest.selectPlantingBeforeDetails')}
-                  </Text>
-                ) : null}
-              </>
+              <GrowerSelectField
+                label={t('producer.harvest.stepPlanting')}
+                placeholder={t('producer.select.planting')}
+                valueId={h.selectedPlantingId ?? ''}
+                options={plantingSelectOptions}
+                onSelect={(id) => h.setSelectedPlantingId(id)}
+              />
             )}
           </View>
         ) : null}
@@ -317,25 +260,13 @@ export default function HarvestForm() {
             <Text style={{ fontSize: 13, color: colors.text.secondary, marginBottom: 12, lineHeight: 18 }}>
               {t('producer.harvest.cropType')} <Text style={{ color: colors.error }}>*</Text>
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {CROP_TYPES.map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  onPress={() => h.setCropType(type)}
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                    borderRadius: 8,
-                    borderWidth: 0.5,
-                    backgroundColor: h.cropType === type ? colors.accent : colors.background,
-                    borderColor: h.cropType === type ? colors.accent : colors.border,
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Text style={{ fontSize: 13, color: h.cropType === type ? colors.background : colors.text.primary }}>{type}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <GrowerSelectField
+              label={t('producer.harvest.cropType')}
+              placeholder={t('producer.select.crop')}
+              valueId={h.cropType}
+              options={cropSelectOptions}
+              onSelect={h.setCropType}
+            />
           </View>
         ) : null}
 
@@ -361,20 +292,7 @@ export default function HarvestForm() {
               <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: 8, lineHeight: 17 }}>
                 {h.planMode === 'HARVEST' ? t('producer.harvest.plannedHarvestDateHint') : null}
               </Text>
-              <TextInput
-                value={h.harvestDate}
-                onChangeText={h.setHarvestDate}
-                placeholder="YYYY-MM-DD"
-                style={{
-                  fontSize: 14,
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderWidth: 0.5,
-                  borderColor: colors.border,
-                  borderRadius: 8,
-                  backgroundColor: colors.background,
-                }}
-              />
+              <GrowerDateField value={h.harvestDate} onChange={h.setHarvestDate} />
             </View>
 
             {h.planMode === 'HARVEST' ? (
@@ -422,20 +340,7 @@ export default function HarvestForm() {
                   <Text style={{ fontSize: 16, fontWeight: '300', color: colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
                     {t('producer.harvest.plannedLoadDate')}
                   </Text>
-                  <TextInput
-                    value={h.plannedLoadDate}
-                    onChangeText={h.setPlannedLoadDate}
-                    placeholder="YYYY-MM-DD"
-                    style={{
-                      fontSize: 14,
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      borderWidth: 0.5,
-                      borderColor: colors.border,
-                      borderRadius: 8,
-                      backgroundColor: colors.background,
-                    }}
-                  />
+                  <GrowerDateField value={h.plannedLoadDate} onChange={h.setPlannedLoadDate} />
                 </View>
 
                 <View style={{ marginBottom: 16 }}>
