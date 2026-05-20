@@ -45,6 +45,7 @@ Sve migracije **posle** squash-a su **małe, imenovane** i vidi se tačno šta s
 | `20260704120000_align_logistics_handover_status_column` | Usklađivanje kolone statusa handover-a |
 | `20260705120000_deliveries_buyer_pickup_confirmed_at` | Dostave — potvrda pickup-a kupca |
 | `20260718120000_ensure_harvest_announcements_table` | Idempotentno kreira `harvest_announcements` + missions FK ako nedostaju |
+| `20260720120000_ensure_bio_white_list_columns` | `bio_white_list`: `phiDays`, `mrlLimit`, `materialType` (legacy/Railway drift) |
 
 ## Kako proveriti šta je zaista primenjeno na serveru
 

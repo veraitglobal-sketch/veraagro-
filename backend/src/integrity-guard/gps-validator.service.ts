@@ -88,11 +88,6 @@ export class GpsValidatorService {
         };
       }
 
-      // GPS is within farm boundaries
-      this.logger.log(
-        `GPS coordinates (${lat}, ${lng}) validated for farm ${farmId}`,
-      );
-
       return {
         valid: true,
       };

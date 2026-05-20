@@ -11,6 +11,13 @@ import Link from 'next/link';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
+import {
+  PremiumAccentPanel,
+  PremiumButton,
+  PremiumButtonLink,
+  PremiumCard,
+  PremiumStatCard,
+} from '@/components/ui/Premium';
 import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBanner';
 import GrowerDashboardHomeWorkflow from '@/components/grower/GrowerDashboardHomeWorkflow';
 import GrowerJourneyProgress from '@/components/grower/GrowerJourneyProgress';
@@ -169,16 +176,13 @@ export default function GrowerDashboardPage() {
       <SidebarLayout title={t('grower.nav.dashboard')} navItems={navItems}>
         <GrowerPageShell className="space-y-8">
           <GrowerPageHeader
+            eyebrow={t('grower.dashboard.eyebrow')}
             title={t('grower.nav.dashboard')}
             description={t('grower.dashboard.description')}
             right={
-              <button
-                type="button"
-                onClick={loadData}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              >
+              <PremiumButton variant="secondary" onClick={loadData} className="text-sm min-h-[44px] px-4">
                 {t('grower.dashboard.refresh')}
-              </button>
+              </PremiumButton>
             }
           />
 
@@ -190,65 +194,60 @@ export default function GrowerDashboardPage() {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalEstates')}</h3>
-                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <PremiumStatCard
+              label={t('grower.dashboard.totalEstates')}
+              value={estates.length}
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-              </div>
-              <p className="text-3xl font-light text-gray-900">{estates.length}</p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.totalParcels')}</h3>
-                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              }
+            />
+            <PremiumStatCard
+              label={t('grower.dashboard.totalParcels')}
+              value={totalParcels}
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
-              </div>
-              <p className="text-3xl font-light text-gray-900">{totalParcels}</p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-medium text-gray-700">{t('grower.dashboard.certifiedEstates')}</h3>
-                <svg className="w-5 h-5 text-[#2D5A27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              }
+            />
+            <PremiumStatCard
+              label={t('grower.dashboard.certifiedEstates')}
+              value={certifiedEstates}
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </div>
-              <p className="text-3xl font-light text-gray-900">{certifiedEstates}</p>
-              </div>
+              }
+            />
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <PremiumCard>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold text-gray-900">{t('grower.dashboard.fieldDiaryCardTitle')}</h2>
+                <h2 className="text-lg font-medium tracking-tight text-gray-900">{t('grower.dashboard.fieldDiaryCardTitle')}</h2>
                 <p className="text-base text-gray-700 font-light mt-1">
                   {journalEntryCount === null ? '—' : t('grower.dashboard.fieldDiaryCardCount', { count: journalEntryCount })}
                 </p>
                 <p className="text-base text-gray-600 font-light mt-2 max-w-xl leading-relaxed">{t('grower.dashboard.fieldDiaryCardHint')}</p>
               </div>
-              <Link
-                href={loc('/grower/field-diary')}
-                className="shrink-0 inline-flex items-center justify-center min-h-[48px] px-5 py-3 rounded-lg bg-[#2D5A27] text-white text-base font-medium hover:bg-[#254a21] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/50 focus-visible:ring-offset-2"
-              >
+              <PremiumButtonLink href={loc('/grower/field-diary')} className="shrink-0">
                 {t('grower.dashboard.fieldDiaryCardCta')}
-              </Link>
+              </PremiumButtonLink>
             </div>
-          </div>
+          </PremiumCard>
 
-          <div className="bg-[#2D5A27]/5 border border-[#2D5A27]/20 rounded-lg p-5">
-            <h2 className="text-lg font-medium text-gray-900 mb-1">{t('grower.dashboard.stepsBlockTitle')}</h2>
-            <p className="text-base text-gray-600 font-light mb-3 leading-relaxed">{t('grower.dashboard.stepsBlockDescription')}</p>
+          <PremiumAccentPanel>
+            <h2 className="text-lg font-medium tracking-tight text-gray-900 mb-1">{t('grower.dashboard.stepsBlockTitle')}</h2>
+            <p className="text-base text-gray-600 font-light mb-4 leading-relaxed">{t('grower.dashboard.stepsBlockDescription')}</p>
             <Link
               href={loc('/grower/season')}
-              className="inline-flex min-h-[44px] items-center text-base font-medium text-[#2D5A27] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2 rounded"
+              className="inline-flex min-h-[44px] items-center text-base font-medium text-[#2D5A27] hover:text-[#23471f] transition-colors"
             >
               {t('grower.dashboard.stepsOpen')}
             </Link>
-          </div>
+          </PremiumAccentPanel>
 
           {/* Your QR Code – visible in dashboard */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">

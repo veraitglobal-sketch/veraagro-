@@ -109,9 +109,6 @@ export class ComplianceService {
       };
     }
 
-    // Compliance check passed
-    this.logger.log(`Compliance check passed: Barcode ${barcode} is on Bio-White-List`);
-
     return {
       compliant: true,
       blocked: false,

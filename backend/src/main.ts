@@ -56,8 +56,17 @@ async function bootstrap() {
     }
   }
 
+  const isProd = process.env.NODE_ENV === 'production';
+  const logLevels =
+    process.env.LOG_LEVEL === 'debug'
+      ? (['log', 'error', 'warn', 'debug', 'verbose'] as const)
+      : isProd
+        ? (['error', 'warn'] as const)
+        : (['log', 'error', 'warn', 'debug'] as const);
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: false,
+    logger: [...logLevels],
   });
   /** Logistics handover sends multiple base64 images in one JSON body — keep above typical mobile photo totals. */
   app.use(json({ limit: '50mb' }));

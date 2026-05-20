@@ -1,7 +1,7 @@
 /** Intl.PluralRules is incomplete on some JSC/Hermes builds — required for i18next JSON v4 plurals. */
-import '@formatjs/intl-pluralrules/polyfill';
-import '@formatjs/intl-pluralrules/locale-data/en';
-import '@formatjs/intl-pluralrules/locale-data/sr';
+import '@formatjs/intl-pluralrules/polyfill.js';
+import '@formatjs/intl-pluralrules/locale-data/en.js';
+import '@formatjs/intl-pluralrules/locale-data/sr.js';
 
 import * as Localization from 'expo-localization';
 import deepmerge from 'deepmerge';

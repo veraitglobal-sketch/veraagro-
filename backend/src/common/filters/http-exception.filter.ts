@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { shouldLogThrottled } from '../utils/log-throttle';
 
 /**
  * Global exception filter for consistent error responses
@@ -22,10 +23,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (!(exception instanceof HttpException)) {
       const err = exception as Error;
-      this.logger.error(
-        `${request.method} ${request.url} — ${err?.name || 'Error'}: ${err?.message || String(exception)}`,
-        err?.stack,
-      );
+      const msg = err?.message || String(exception);
+      const throttleKey = `${err?.name || 'Error'}:${msg.slice(0, 120)}`;
+      if (shouldLogThrottled(throttleKey)) {
+        const isProd = process.env.NODE_ENV === 'production';
+        const line = `${request.method} ${request.url} — ${err?.name || 'Error'}: ${msg}`;
+        if (isProd) {
+          this.logger.error(line);
+        } else {
+          this.logger.error(line, err?.stack);
+        }
+      }
     }
 
     const status =

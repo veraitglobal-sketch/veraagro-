@@ -1,10 +1,10 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { PremiumPageTitle } from '@/components/ui/Premium';
 
 /**
- * Shared grower main area — same shell as the original My Batches page:
- * full width of the content column, `p-6`, gray-50 (not a narrow “boxed” max width).
+ * Shared grower main area — premium warm surface, full content column width.
  */
 export function GrowerPageShell({
   children,
@@ -14,8 +14,8 @@ export function GrowerPageShell({
   className?: string;
 }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className={`w-full p-6 ${className ?? ''}`.trim()}>{children}</div>
+    <div className="premium-page-bg -m-4 md:-mx-8 md:-my-6 md:min-h-[calc(100vh-4rem)]">
+      <div className={`w-full p-4 md:p-6 ${className ?? ''}`.trim()}>{children}</div>
     </div>
   );
 }
@@ -24,20 +24,20 @@ export function GrowerPageHeader({
   title,
   description,
   right,
+  eyebrow,
 }: {
   title: string;
   description?: ReactNode;
   right?: ReactNode;
+  /** Optional small label above title (e.g. "Bio Vera") */
+  eyebrow?: string;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        <h1 className="text-3xl font-light tracking-tight text-gray-900">{title}</h1>
-        {description != null && description !== '' && (
-          <p className="mt-1 max-w-3xl text-base leading-relaxed text-gray-700">{description}</p>
-        )}
-      </div>
-      {right ? <div className="shrink-0">{right}</div> : null}
-    </div>
+    <PremiumPageTitle
+      title={title}
+      description={description}
+      eyebrow={eyebrow}
+      right={right}
+    />
   );
 }

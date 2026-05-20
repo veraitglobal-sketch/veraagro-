@@ -814,9 +814,17 @@ export const batchesAPI = {
     }
   },
   getAll: async (estateId?: string): Promise<any[]> => {
-    const params = estateId ? { estateId } : {};
-    const response = await api.get('/batches', { params });
-    return response.data || [];
+    try {
+      const params = estateId ? { estateId } : {};
+      const response = await api.get('/batches', { params });
+      return response.data || [];
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, returning empty batches list');
+        return [];
+      }
+      throw error;
+    }
   },
   getOne: async (batchId: string): Promise<any> => {
     const response = await api.get(`/batches/${batchId}/traceability`);

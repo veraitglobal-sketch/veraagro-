@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, Logger } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
+import { shouldLogThrottled } from '../common/utils/log-throttle';
 
 /**
  * Real-time Notifications Gateway
@@ -42,7 +43,9 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
       const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
       
       if (!token) {
-        this.logger.warn(`Client ${client.id} connected without token`);
+        if (shouldLogThrottled('ws:no-token', 30_000)) {
+          this.logger.warn('WebSocket client connected without token (disconnecting)');
+        }
         client.disconnect();
         return;
       }
@@ -52,7 +55,9 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
       const userId = payload.sub || payload.id;
 
       if (!userId) {
-        this.logger.warn(`Client ${client.id} connected with invalid token`);
+        if (shouldLogThrottled('ws:invalid-token', 30_000)) {
+          this.logger.warn('WebSocket client connected with invalid token (disconnecting)');
+        }
         client.disconnect();
         return;
       }
@@ -63,8 +68,6 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
 
       // Join user-specific room
       client.join(`user:${userId}`);
-
-      this.logger.log(`User ${userId} connected (socket: ${client.id})`);
 
       // Send pending notifications
       const pendingNotifications = await this.notificationsService.findAllByUser(userId);
@@ -82,7 +85,6 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
     const userId = client.data?.userId;
     if (userId) {
       this.connectedUsers.delete(userId);
-      this.logger.log(`User ${userId} disconnected (socket: ${client.id})`);
     }
   }
 
@@ -93,9 +95,8 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
     const socketId = this.connectedUsers.get(userId);
     if (socketId) {
       this.server.to(`user:${userId}`).emit('notification', notification);
-      this.logger.log(`Notification sent to user ${userId}`);
-    } else {
-      this.logger.warn(`User ${userId} not connected, notification will be delivered on next connection`);
+    } else if (shouldLogThrottled(`ws:not-connected:${userId}`, 120_000)) {
+      this.logger.debug(`User ${userId} not connected; notification queued for next session`);
     }
   }
 
@@ -113,7 +114,6 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
    */
   broadcastNotification(notification: any) {
     this.server.emit('notification', notification);
-    this.logger.log('Broadcast notification sent to all users');
   }
 
   /**

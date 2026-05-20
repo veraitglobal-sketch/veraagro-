@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { shouldLogThrottled } from '../common/utils/log-throttle';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -41,7 +42,11 @@ export class HealthService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      this.logger.error('Health check failed:', error);
+      if (shouldLogThrottled('health:basic')) {
+        this.logger.error(
+          `Health check failed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
@@ -91,7 +96,11 @@ export class HealthService {
         responseTime,
       };
     } catch (error: unknown) {
-      this.logger.error('Database health check failed:', error);
+      if (shouldLogThrottled('health:database')) {
+        this.logger.error(
+          `Database health check failed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
       return {
         status: 'down',
         error: error instanceof Error ? error.message : 'Database connection failed',

@@ -6,6 +6,12 @@
   /* Bio Vera brand green (widget green) – used site-wide */
   --color-vera: #2D5A27;
   --color-vera-hover: #23471f;
+  /* Premium grower/supplier surfaces */
+  --premium-page: #f6f5f1;
+  --premium-surface: #ffffff;
+  --premium-border: #e5e2db;
+  --premium-muted: #6b7280;
+  --premium-accent: #c9a962;
 }
 
 @theme inline {
@@ -128,11 +134,40 @@ span[style*="logo"], span img[src*="logo"] {
   transition-duration: 150ms;
 }
 
-/* Better focus states */
+/* Better focus states — brand green */
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid rgb(34 197 94);
+  outline: 2px solid var(--color-vera);
   outline-offset: 2px;
+}
+
+/* Premium app shell (grower, supplier, admin sidebars) */
+.premium-page-bg {
+  min-height: 100vh;
+  background-color: var(--premium-page);
+  background-image: radial-gradient(
+    ellipse 120% 80% at 50% -20%,
+    rgba(45, 90, 39, 0.07),
+    transparent 55%
+  );
+}
+
+.premium-sidebar {
+  background: linear-gradient(180deg, #ffffff 0%, #faf9f6 100%);
+  border-color: var(--premium-border);
+}
+
+.premium-nav-active {
+  background: linear-gradient(90deg, rgba(45, 90, 39, 0.12) 0%, rgba(45, 90, 39, 0.04) 100%);
+  color: var(--color-vera);
+  border: 1px solid rgba(45, 90, 39, 0.22);
+  box-shadow: inset 3px 0 0 0 var(--color-vera);
+}
+
+.premium-header-bar {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-color: var(--premium-border);
 }
 
 /* App guide phone screenshots — smooth downscale, no transition blur. */

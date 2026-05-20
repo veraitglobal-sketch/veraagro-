@@ -10,9 +10,14 @@ import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
 import { theme } from '../lib/theme';
 import { syncService } from '../lib/sync-service';
+import { API_URL } from '../lib/api-url';
 
 // RN 0.81+ deprecates built-in SafeAreaView; some deps still trigger this until they migrate.
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
+
+if (__DEV__) {
+  console.log(`[BioVera] API_URL = ${API_URL}`);
+}
 
 /**
  * Expo Router’s Stack `screenOptions` types only allow a subset of header styles

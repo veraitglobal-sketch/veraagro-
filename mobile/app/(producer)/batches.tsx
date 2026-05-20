@@ -8,6 +8,7 @@ import { onBatchListRefreshRequest } from '../../lib/batch-refresh';
 import { Package, Plus, ChevronRight } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { batchesAPI } from '../../lib/api';
+import { isLikelyNetworkError } from '../../lib/api-error';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 import { BioVeraSubpageHeader } from '../../components/BioVeraSubpageHeader';
@@ -47,7 +48,11 @@ export default function BatchesScreen() {
       setBatches(Array.isArray(data) ? data : []);
       hasCacheRef.current = true;
     } catch (error) {
-      console.error('Error loading batches:', error);
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, batches list empty');
+      } else {
+        console.error('Error loading batches:', error);
+      }
       if (!hasCacheRef.current) setBatches([]);
     } finally {
       if (!silent) setLoading(false);

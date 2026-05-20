@@ -96,8 +96,8 @@
   "metadata": {
     "siteName": "Bio Vera",
     "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf",
-    "siteDescription": "Bio Vera sells branded fresh produce through a chain we operate end to end — contracted cultivation, quality assurance, packing and refrigerated delivery with Batch_ID traceability from parcel to checkout. Estates meeting our standards can apply to the grower programme regardless of country.",
-    "ldJsonDescription": "Vertically integrated agrifood company: Bio Vera sells branded fresh produce through an end-to-end operated chain with Batch_ID traceability from parcel to checkout. Grower programme open regardless of country.",
+    "siteDescription": "An operating system that connects production, quality control, logistics and distribution of fresh produce in a single certified chain. Every batch tracked from parcel to final point. Every participant verified. Every step documented.",
+    "ldJsonDescription": "Certified agrifood operating system for production, quality, logistics and distribution — every batch tracked from parcel to final point, every participant verified, every step documented.",
     "keywords": [
       "Bio Vera",
       "Integrated food supply chain",
@@ -1295,6 +1295,7 @@
       "loadFailed": "Failed to load dashboard data",
       "retry": "Retry",
       "description": "Parcels, estates, and transport at a glance",
+      "eyebrow": "Producer portal",
       "refresh": "Refresh",
       "totalEstates": "Total estates",
       "totalParcels": "Total parcels",
@@ -3268,7 +3269,7 @@
     "hero": {
       "title1": "Vertically Integrated",
       "title2": "Agrifood Company",
-      "subtitle": "Bio Vera sells branded fresh produce through a chain we operate end to end — contracted cultivation, quality assurance, packing and refrigerated delivery with Batch_ID traceability from parcel to checkout. Estates meeting our standards can apply to the grower programme regardless of country.",
+      "subtitle": "An operating system that connects production, quality control, logistics and distribution of fresh produce in a single certified chain. Every batch tracked from parcel to final point. Every participant verified. Every step documented.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for 2026 is open",

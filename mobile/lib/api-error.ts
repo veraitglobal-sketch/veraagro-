@@ -241,8 +241,14 @@ export function apiErrorMessage(err: unknown, fallback: string): string {
   return axiosLikeMessage(err) ?? fallback;
 }
 
-/** Axios / fetch-style transport errors (offline, refused, DNS, etc.). */
+/** HTTP statuses when a reverse proxy cannot reach the Nest API (treat like offline for UI). */
+export function isApiGatewayUnavailableStatus(status: number | undefined): boolean {
+  return status === 502 || status === 503 || status === 504;
+}
+
+/** Axios / fetch-style transport errors (offline, refused, DNS, gateway down, etc.). */
 export function isLikelyNetworkError(err: unknown): boolean {
+  if (isApiGatewayUnavailableStatus(axiosResponseStatus(err))) return true;
   if (err && typeof err === 'object' && 'code' in err) {
     const c = (err as { code?: unknown }).code;
     if (c === 'ECONNREFUSED' || c === 'ERR_NETWORK' || c === 'ENOTFOUND') return true;

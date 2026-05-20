@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../../lib/api-url';
+import { isLikelyNetworkError } from '../../../lib/api-error';
 import { fetchGrowerOrdersFinancial, type OrdersFinancialSnapshot } from '../dashboard/fetchGrowerOrdersFinancial';
 
 export interface WalletData {
@@ -51,7 +52,11 @@ export function useWalletData() {
       setOrdersFinancial(ordersFin);
       hasLoadedRef.current = true;
     } catch (error) {
-      console.error('Error loading wallet:', error);
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, wallet data skipped');
+      } else {
+        console.error('Error loading wallet:', error);
+      }
     } finally {
       if (!background) setLoading(false);
     }

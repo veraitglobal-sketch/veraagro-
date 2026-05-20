@@ -3,7 +3,8 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 
 /** Public production API; used when EAS/Expo has no EXPO_PUBLIC_API_URL (release builds). */
-export const PRODUCTION_API_URL = 'https://api.biovera.app';
+/** Railway public API; keep in sync with mobile/.env and Vercel NEXT_PUBLIC_API_URL. */
+export const PRODUCTION_API_URL = 'https://biovera-production.up.railway.app';
 
 /**
  * Local backend port when EXPO_PUBLIC_API_URL is not set.

@@ -69,10 +69,10 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
             key={item.href}
             href={item.href}
             onClick={() => setMobileMenuOpen(false)}
-            className={`flex items-center justify-between gap-2 px-3 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center justify-between gap-2 px-3 min-h-[44px] rounded-xl text-sm font-medium transition-colors ${
               isActive(item.href)
-                ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
-                : 'text-gray-700 hover:bg-gray-50'
+                ? 'premium-nav-active'
+                : 'text-gray-700 hover:bg-[#2D5A27]/[0.04]'
             }`}
           >
             <span className="flex items-center gap-3 min-w-0">
@@ -100,10 +100,10 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
                       key={item.href + item.label}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between gap-2 px-3 min-h-[40px] rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex items-center justify-between gap-2 px-3 min-h-[40px] rounded-xl text-sm font-medium transition-colors ${
                         isActive(item.href)
-                          ? 'bg-[#2D5A27]/10 text-[#2D5A27] border border-[#2D5A27]/30'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'premium-nav-active'
+                          : 'text-gray-700 hover:bg-[#2D5A27]/[0.04]'
                       }`}
                     >
                       <span className="flex items-center gap-3 min-w-0">
@@ -145,7 +145,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen premium-page-bg">
       {/* Mobile: overlay when drawer open */}
       {mobileMenuOpen && (
         <button
@@ -159,7 +159,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
       {/* Sidebar: drawer on mobile (slide in), always visible on desktop */}
       <aside
         className={`
-          fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50
+          fixed inset-y-0 left-0 w-64 premium-sidebar border-r flex flex-col z-50 shadow-[4px_0_24px_-12px_rgba(26,32,24,0.08)]
           transition-transform duration-200 ease-out
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
@@ -170,7 +170,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
       {/* Main Content */}
       <div className="md:pl-64 min-h-screen flex flex-col">
         {/* Top Bar - menu button on mobile */}
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-16 flex items-center gap-4 px-4 md:px-6">
+        <header className="sticky top-0 z-30 premium-header-bar border-b h-16 flex items-center gap-4 px-4 md:px-6">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -181,7 +181,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-lg md:text-xl font-semibold text-gray-900 truncate flex-1">{title}</h1>
+          <h1 className="text-lg md:text-xl font-light tracking-tight text-gray-900 truncate flex-1">{title}</h1>
           {user?.id ? <NotificationCenter userId={user.id} /> : null}
         </header>
 

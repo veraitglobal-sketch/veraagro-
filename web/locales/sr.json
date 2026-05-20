@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Bio Vera prodaje brendirano sveže voće i povrće kroz lanac kojim upravljamo od početka do kraja — ugovorena proizvodnja, kontrola kvaliteta, pakovanje i hladjeni transport sa Batch_ID sledljivošću od parcele do kase. Imanja koja ispunjavaju naše standarde mogu se prijaviti za program proizvođača bez obzira na zemlju.",
-    "ldJsonDescription": "Vertikalno integrisana agrifood kompanija: Bio Vera prodaje brendirano sveže voće i povrće kroz lanac kojim upravljamo od početka do kraja, sa Batch_ID sledljivošću od parcele do kase. Program proizvođača otvoren bez obzira na zemlju.",
+    "siteDescription": "Operativni sistem koji povezuje proizvodnju, kontrolu kvaliteta, logistiku i distribuciju svežih proizvoda u jedinstven, sertifikovan lanac. Svaka serija praćena od parcele do krajnje tačke. Svaki učesnik verifikovan. Svaki korak dokumentovan.",
+    "ldJsonDescription": "Operativni sistem za proizvodnju, kvalitet, logistiku i distribuciju svežih proizvoda — sertifikovan lanac od parcele do krajnje tačke, verifikovani učesnici, dokumentovan svaki korak.",
     "keywords": [
       "Bio Vera",
       "Integrisani lanac snabdevanja",
@@ -1295,6 +1295,7 @@
       "loadFailed": "Učitavanje kontrolne table nije uspelo",
       "retry": "Pokušaj ponovo",
       "description": "Parcele, gazdinstva i transport u jednom pogledu",
+      "eyebrow": "Portal proizvođača",
       "refresh": "Osveži",
       "totalEstates": "Ukupno gazdinstava",
       "totalParcels": "Ukupno parcela",
@@ -3269,7 +3270,7 @@
     "hero": {
       "title1": "Vertikalno Integrisana",
       "title2": "Agrifood Kompanija",
-      "subtitle": "Bio Vera prodaje brendirano sveže voće i povrće kroz lanac kojim upravljamo od početka do kraja — ugovorena proizvodnja, kontrola kvaliteta, pakovanje i hladjeni transport sa Batch_ID sledljivošću od parcele do kase. Imanja koja ispunjavaju naše standarde mogu se prijaviti za program proizvođača bez obzira na zemlju.",
+      "subtitle": "Operativni sistem koji povezuje proizvodnju, kontrolu kvaliteta, logistiku i distribuciju svežih proizvoda u jedinstven, sertifikovan lanac. Svaka serija praćena od parcele do krajnje tačke. Svaki učesnik verifikovan. Svaki korak dokumentovan.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postanite Vera proizvođač",
       "preOrder": "Pretporudžbina za 2026. je otvorena",
