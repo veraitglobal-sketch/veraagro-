@@ -268,6 +268,7 @@ export default function GrowersPageClient() {
       <MarketingHero
         eyebrow={t('growersPage.heroEyebrow', { defaultValue: '' }) || undefined}
         title={t('growersPage.title')}
+        subtitle={t('growersPage.heroSubtitle', { defaultValue: '' }) || undefined}
         lead={t('growersPage.heroLead')}
         sectionClassName="pb-20"
       >

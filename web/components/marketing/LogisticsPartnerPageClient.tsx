@@ -230,8 +230,9 @@ export default function LogisticsPartnerPageClient() {
       <MarketingHero
         eyebrow={t('logisticsPartnerPage.heroEyebrow', { defaultValue: '' }) || undefined}
         title={t('logisticsPartnerPage.title')}
+        subtitle={t('logisticsPartnerPage.heroSubtitle', { defaultValue: '' }) || undefined}
         lead={t('logisticsPartnerPage.heroLead')}
-        leadClassName="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto mb-8 whitespace-pre-line"
+        leadClassName="text-lg text-gray-600 font-light leading-relaxed max-w-2xl mx-auto mb-8 whitespace-pre-line"
         sectionClassName="pb-20"
       >
         <button

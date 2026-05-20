@@ -170,6 +170,7 @@ export default function SuppliersPageClient() {
       <MarketingHero
         eyebrow={t('suppliersPage.hero.eyebrow', { defaultValue: '' }) || undefined}
         title={t('suppliersPage.hero.title')}
+        subtitle={t('suppliersPage.hero.tagline', { defaultValue: '' }) || undefined}
         lead={t('suppliersPage.hero.subtitle')}
         sectionClassName="pb-20"
       >

@@ -2091,7 +2091,8 @@
     "formReadHowWeOperate": "Citiți cum funcționăm",
     "formSubmit": "Trimiteți",
     "formSending": "Se trimite…",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Trasabilitate completă de la fermă la depozitul dvs."
   },
   "growersPage": {
     "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
@@ -2278,7 +2279,8 @@
         "label": "Coacăze"
       }
     ],
-    "heroEyebrow": "Bio Vera · Producători"
+    "heroEyebrow": "Bio Vera · Producători",
+    "heroSubtitle": "Condiții garantate, acces la piața UE"
   },
   "logisticsPartnerPage": {
     "title": "Program pentru logistică",
@@ -2419,7 +2421,8 @@
     "submitApplication": "Trimiteți cererea",
     "submitting": "Se trimite…",
     "submitError": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app",
-    "heroEyebrow": "Bio Vera · Logistică"
+    "heroEyebrow": "Bio Vera · Logistică",
+    "heroSubtitle": "Curse regulate de la fermă la retail în UE"
   },
   "productsPage": {
     "redirecting": "Se redirecționează…"

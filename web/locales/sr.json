@@ -3492,7 +3492,8 @@
     "formReadHowWeOperate": "Pročitaj kako radimo",
     "formSubmit": "Pošalji",
     "formSending": "Slanje…",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Puna sledljivost od njive do vašeg skladišta"
   },
   "growersPage": {
     "title": "Program za proizvođače",
@@ -3668,7 +3669,8 @@
     ],
     "metaTitle": "Program za Proizvođače | Bio Vera — Sertifikacija, Garantovani Uslovi, EU Tržišni Pristup",
     "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za uzgajivače u EU i na Zapadnom Balkanu.",
-    "heroEyebrow": "Bio Vera · Proizvođači"
+    "heroEyebrow": "Bio Vera · Proizvođači",
+    "heroSubtitle": "Garantovani uslovi, pristup EU tržištu"
   },
   "logisticsPartnerPage": {
     "title": "Partner za hladni lanac",
@@ -3801,7 +3803,8 @@
     "submitError": "Slanje nije uspelo. Pokušajte ponovo ili pišite na info@biovera.app",
     "metaTitle": "Hladnjača Transport Srbija EU | Bio Vera — Logistički Partneri",
     "metaDescription": "Postanite Bio Vera prevoznik: redovne ture hladnjacama, optimizovane rute, isplata odmah po isporuci. Mali vozni parkovi, velike kompanije i nezavisni vozači.",
-    "heroEyebrow": "Bio Vera · Logistika"
+    "heroEyebrow": "Bio Vera · Logistika",
+    "heroSubtitle": "Redovne ture od njive do EU maloprodaje"
   },
   "productsPage": {
     "redirecting": "Preusmeravanje…"

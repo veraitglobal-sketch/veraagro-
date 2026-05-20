@@ -2091,7 +2091,8 @@
     "formReadHowWeOperate": "Lea cómo operamos",
     "formSubmit": "Entregar",
     "formSending": "Envío…",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Trazabilidad completa del campo a su almacén"
   },
   "growersPage": {
     "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, acceso al mercado UE",
@@ -2278,7 +2279,8 @@
         "label": "Arándano"
       }
     ],
-    "heroEyebrow": "Bio Vera · Productores"
+    "heroEyebrow": "Bio Vera · Productores",
+    "heroSubtitle": "Condiciones garantizadas, acceso al mercado UE"
   },
   "logisticsPartnerPage": {
     "title": "Programa de logística",
@@ -2419,7 +2421,8 @@
     "submitApplication": "Enviar solicitud",
     "submitting": "Sumisión…",
     "submitError": "No se pudo enviar. Por favor inténtalo de nuevo o contacta con info@biovera.app",
-    "heroEyebrow": "Bio Vera · Logística"
+    "heroEyebrow": "Bio Vera · Logística",
+    "heroSubtitle": "Rutas regulares del campo a la venta en la UE"
   },
   "productsPage": {
     "redirecting": "Redirigiendo…"

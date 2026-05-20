@@ -2091,7 +2091,8 @@
     "formReadHowWeOperate": "Прочетете как работим",
     "formSubmit": "Изпратете",
     "formSending": "Изпращане...",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Пълна проследимост от стопанството до вашия склад"
   },
   "growersPage": {
     "metaTitle": "Програма за производители | Bio Vera — Сертификация, гарантирани условия, достъп до пазара на ЕС",
@@ -2278,7 +2279,8 @@
         "label": "Боровинка"
       }
     ],
-    "heroEyebrow": "Bio Vera · Производители"
+    "heroEyebrow": "Bio Vera · Производители",
+    "heroSubtitle": "Гарантирани условия, достъп до пазара на ЕС"
   },
   "logisticsPartnerPage": {
     "title": "Програма за логистика",
@@ -2419,7 +2421,8 @@
     "submitApplication": "Изпратете заявление",
     "submitting": "Изпраща се...",
     "submitError": "Неуспешно изпращане. Моля, опитайте отново или се свържете с info@biovera.app",
-    "heroEyebrow": "Bio Vera · Логистика"
+    "heroEyebrow": "Bio Vera · Логистика",
+    "heroSubtitle": "Редовни курсове от стопанството до търговията в ЕС"
   },
   "productsPage": {
     "redirecting": "Пренасочва се..."

@@ -251,6 +251,7 @@ export default function BioVeraFreshPageClient({
       <MarketingHero
         eyebrow={t("bioVeraFresh.coverEyebrow")}
         title={t("bioVeraFresh.coverTitle")}
+        subtitle={t("bioVeraFresh.heroSubtitle", { defaultValue: "" }) || undefined}
         lead={t("bioVeraFresh.introNote")}
         sectionClassName="bf-no-print pb-16"
       >

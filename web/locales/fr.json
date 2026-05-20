@@ -2091,7 +2091,8 @@
     "formReadHowWeOperate": "Découvrez comment nous fonctionnons",
     "formSubmit": "Soumettre",
     "formSending": "Envoi…",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Traçabilité complète du champ à votre entrepôt"
   },
   "growersPage": {
     "metaTitle": "Programme producteurs | Bio Vera — Certification, conditions garanties, accès au marché UE",
@@ -2278,7 +2279,8 @@
         "label": "Myrtille"
       }
     ],
-    "heroEyebrow": "Bio Vera · Producteurs"
+    "heroEyebrow": "Bio Vera · Producteurs",
+    "heroSubtitle": "Conditions garanties, accès au marché UE"
   },
   "logisticsPartnerPage": {
     "title": "Programme logistique",
@@ -2419,7 +2421,8 @@
     "submitApplication": "Soumettre la candidature",
     "submitting": "Soumission…",
     "submitError": "Échec de la soumission. Veuillez réessayer ou contacter info@biovera.app",
-    "heroEyebrow": "Bio Vera · Logistique"
+    "heroEyebrow": "Bio Vera · Logistique",
+    "heroSubtitle": "Tournées régulières de la ferme à la distribution UE"
   },
   "productsPage": {
     "redirecting": "Redirection…"

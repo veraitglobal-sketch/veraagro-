@@ -24,7 +24,11 @@ import {
 import HarvestCalendar from '@/components/HarvestCalendar';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
-import { marketingHeroLead, marketingHeroTitle } from '@/lib/marketing-classes';
+import {
+  marketingHeroLead,
+  marketingHeroSubtitle,
+  marketingHeroTitle,
+} from '@/lib/marketing-classes';
 
 type Step = { title: string; body: string };
 type Card = { title: string; desc: string };
@@ -129,6 +133,11 @@ export default function ForBuyersPageClient() {
             <h1 className={marketingHeroTitle}>
               {t('forBuyersPage.title')}
             </h1>
+            {t('forBuyersPage.heroSubtitle', { defaultValue: '' }) ? (
+              <p className={`${marketingHeroSubtitle} max-w-2xl`}>
+                {t('forBuyersPage.heroSubtitle')}
+              </p>
+            ) : null}
             <p className={`${marketingHeroLead} mb-6 max-w-2xl`}>
               {t('forBuyersPage.heroLead')}
             </p>

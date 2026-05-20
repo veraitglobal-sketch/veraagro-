@@ -2056,7 +2056,8 @@
     "formReadHowWeOperate": "Lesen Sie, wie wir arbeiten",
     "formSubmit": "Einreichen",
     "formSending": "Senden…",
-    "required": "*"
+    "required": "*",
+    "heroSubtitle": "Volle Rückverfolgbarkeit vom Feld bis zu Ihrem Lager"
   },
   "growersPage": {
     "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, EU-Marktzugang",
@@ -2232,7 +2233,8 @@
         "label": "Heidelbeere"
       }
     ],
-    "heroEyebrow": "Bio Vera · Erzeuger"
+    "heroEyebrow": "Bio Vera · Erzeuger",
+    "heroSubtitle": "Garantierte Konditionen, Zugang zum EU-Markt"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Obst & Gemüse",
@@ -2365,7 +2367,8 @@
     "submitApplication": "Bewerbung einreichen",
     "submitting": "Wird gesendet …",
     "submitError": "Senden fehlgeschlagen. Bitte erneut versuchen oder info@biovera.app kontaktieren.",
-    "heroEyebrow": "Bio Vera · Logistik"
+    "heroEyebrow": "Bio Vera · Logistik",
+    "heroSubtitle": "Regelmäßige Touren vom Feld bis in den EU-Einzelhandel"
   },
   "productsPage": {
     "redirecting": "Weiterleitung…"
