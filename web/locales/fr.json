@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Un réseau agricole verticalement intégré. Du champ à l'acheteur : lots traçables, certification Bio-Ready et preuve numérique à chaque étape. Ouvert aux producteurs du monde entier.",
-    "ldJsonDescription": "Un réseau agricole verticalement intégré. Du champ à l'acheteur avec des lots traçables, une certification Bio-Ready et une preuve numérique. Ouvert aux producteurs du monde entier.",
+    "siteDescription": "Un système d'exploitation qui relie production, contrôle qualité, logistique et distribution de produits frais dans une chaîne certifiée unique. Chaque lot suivi de la parcelle au point final. Chaque participant vérifié. Chaque étape documentée.",
+    "ldJsonDescription": "Système agrifood certifié pour production, qualité, logistique et distribution — chaque lot suivi de la parcelle au point final, chaque participant vérifié, chaque étape documentée.",
     "keywords": [
       "Bio Vera",
       "Réseau agricole",
@@ -1833,7 +1833,7 @@
     "hero": {
       "title1": "Intégrée verticalement",
       "title2": "Entreprise agrifood",
-      "subtitle": "Bio Vera vend des produits frais de marque via une chaîne que nous exploitons de bout en bout — culture contractuelle, assurance qualité, conditionnement et livraison réfrigérée avec traçabilité Batch_ID de la parcelle à la caisse. Les exploitations conformes à nos standards peuvent postuler au programme producteurs, quel que soit le pays.",
+      "subtitle": "Un système d'exploitation qui relie production, contrôle qualité, logistique et distribution de produits frais dans une chaîne certifiée unique. Chaque lot suivi de la parcelle au point final. Chaque participant vérifié. Chaque étape documentée.",
       "browseProducts": "Parcourir les produits",
       "becomeProducer": "Devenez producteur",
       "preOrder": "Les précommandes pour 2026 sont ouvertes",

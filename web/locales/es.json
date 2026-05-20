@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Una red agrícola integrada verticalmente. Del campo al comprador: lotes rastreables, certificación Bio-Ready y prueba digital en cada paso. Abierto a productores de todo el mundo.",
-    "ldJsonDescription": "Una red agrícola integrada verticalmente. Del campo al comprador con lotes rastreables, certificación Bio-Ready y prueba digital. Abierto a productores de todo el mundo.",
+    "siteDescription": "Un sistema operativo que conecta producción, control de calidad, logística y distribución de productos frescos en una cadena certificada única. Cada lote rastreado de la parcela al punto final. Cada participante verificado. Cada paso documentado.",
+    "ldJsonDescription": "Sistema agrifood certificado para producción, calidad, logística y distribución — cada lote de la parcela al punto final, cada participante verificado, cada paso documentado.",
     "keywords": [
       "Bio Vera",
       "Red agrícola",
@@ -1833,7 +1833,7 @@
     "hero": {
       "title1": "Integrada verticalmente",
       "title2": "Empresa agrifood",
-      "subtitle": "Bio Vera vende productos frescos de marca a través de una cadena que operamos de principio a fin — cultivo contractual, control de calidad, envasado y entrega refrigerada con trazabilidad Batch_ID del parcela a caja. Las fincas que cumplen nuestros estándares pueden solicitar el programa de productores independientemente del país.",
+      "subtitle": "Un sistema operativo que conecta producción, control de calidad, logística y distribución de productos frescos en una cadena certificada única. Cada lote rastreado de la parcela al punto final. Cada participante verificado. Cada paso documentado.",
       "browseProducts": "Explorar productos",
       "becomeProducer": "Conviértete en productor",
       "preOrder": "El pedido anticipado para 2026 está abierto",

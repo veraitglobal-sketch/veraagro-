@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "O rețea agricolă integrată vertical. De la câmp la cumpărător: loturi urmăribile, certificare Bio-Ready și dovadă digitală la fiecare pas. Deschis producătorilor din întreaga lume.",
-    "ldJsonDescription": "O rețea agricolă integrată vertical. De la câmp la cumpărător cu loturi urmăribile, certificare Bio-Ready și dovadă digitală. Deschis producătorilor din întreaga lume.",
+    "siteDescription": "Un sistem operațional care conectează producția, controlul calității, logistica și distribuția produselor proaspete într-un lanț certificat unic. Fiecare lot urmărit de la parcelă la punctul final. Fiecare participant verificat. Fiecare pas documentat.",
+    "ldJsonDescription": "Sistem agrifood certificat pentru producție, calitate, logistică și distribuție — fiecare lot de la parcelă la punctul final, fiecare participant verificat, fiecare pas documentat.",
     "keywords": [
       "Bio Vera",
       "Rețeaua agricolă",
@@ -1833,7 +1833,7 @@
     "hero": {
       "title1": "Integrat vertical",
       "title2": "Companie agrifood",
-      "subtitle": "Bio Vera vinde produse proaspete de marcă printr-un lanț pe care îl operăm cap-coadă — cultivare contractuală, asigurarea calității, ambalare și livrare refrigerată cu trasabilitate Batch_ID de la parcelă până la casă. Fermele care îndeplinesc standardele noastre se pot înscrie în programul pentru producători, indiferent de țară.",
+      "subtitle": "Un sistem operațional care conectează producția, controlul calității, logistica și distribuția produselor proaspete într-un lanț certificat unic. Fiecare lot urmărit de la parcelă la punctul final. Fiecare participant verificat. Fiecare pas documentat.",
       "browseProducts": "Răsfoiți produse",
       "becomeProducer": "Deveniți producător",
       "preOrder": "Precomenzile pentru 2026 sunt deschise",

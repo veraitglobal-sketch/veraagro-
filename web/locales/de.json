@@ -95,8 +95,8 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Bio Vera verkauft markenfrisches Obst und Gemüse über eine Kette, die wir end-to-end betreiben — vertraglicher Anbau, Qualitätssicherung, Verpackung und gekühlte Lieferung mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Betriebe, die unsere Standards erfüllen, können sich unabhängig vom Land für das Erzeugerprogramm bewerben.",
-    "ldJsonDescription": "Vertikal integriertes Agrifood-Unternehmen: Bio Vera verkauft markenfrisches Obst und Gemüse über eine end-to-end betriebene Kette mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Erzeugerprogramm unabhängig vom Land geöffnet.",
+    "siteDescription": "Ein Betriebssystem, das Produktion, Qualitätskontrolle, Logistik und Distribution frischer Produkte in einer einheitlichen, zertifizierten Kette verbindet. Jede Charge vom Parzell bis zum Endpunkt nachverfolgbar. Jeder Teilnehmer verifiziert. Jeder Schritt dokumentiert.",
+    "ldJsonDescription": "Zertifiziertes Agrifood-Betriebssystem für Produktion, Qualität, Logistik und Distribution — jede Charge vom Parzell bis zum Endpunkt, jeder Teilnehmer verifiziert, jeder Schritt dokumentiert.",
     "keywords": [
       "Bio Vera",
       "Landwirtschaftliches Netzwerk",
@@ -1834,7 +1834,7 @@
     "hero": {
       "title1": "Vertikal integriertes",
       "title2": "Agrifood-Unternehmen",
-      "subtitle": "Bio Vera verkauft markenfrisches Obst und Gemüse über eine Kette, die wir end-to-end betreiben — vertraglicher Anbau, Qualitätssicherung, Verpackung und gekühlte Lieferung mit Batch_ID-Rückverfolgbarkeit vom Parzell bis zur Kasse. Betriebe, die unsere Standards erfüllen, können sich unabhängig vom Land für das Erzeugerprogramm bewerben.",
+      "subtitle": "Ein Betriebssystem, das Produktion, Qualitätskontrolle, Logistik und Distribution frischer Produkte in einer einheitlichen, zertifizierten Kette verbindet. Jede Charge vom Parzell bis zum Endpunkt nachverfolgbar. Jeder Teilnehmer verifiziert. Jeder Schritt dokumentiert.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
