@@ -1,0 +1,25 @@
+# EAS reads .easignore from git repo root (not mobile/). No ".." path segments.
+# @see https://docs.expo.dev/build-reference/easignore/
+
+.git/
+.DS_Store
+*.log
+.env
+.env.*
+
+# Monorepo — build only mobile (+ shared); skip heavy siblings
+backend/
+web/
+blockchain/
+filedump/
+node_modules/
+
+# Mobile native dirs (EAS prebuild / cloud build)
+mobile/ios/
+mobile/android/
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+
+# Accidental junk filenames
+...
