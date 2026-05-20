@@ -3498,10 +3498,10 @@
     "required": "*"
   },
   "growersPage": {
-    "metaTitle": "Grower Programme | Bio Vera — Join From 30+ Countries",
-    "metaDescription": "Become a Vera grower: fixed pricing, logistics priority, group GlobalG.A.P. IFA v6 certification, secured settlement. Open to estates following Bio Vera standards worldwide.",
-    "title": "For Growers",
-    "heroLead": "Become a Vera grower: farm to Bio Vera protocols and we organise pickup, paperwork and settlement as part of the loads we merchandise to retailers. Screening is deliberate — capacity, geography and conformity to our standards determine acceptance.",
+    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, EU Market Access",
+    "metaDescription": "Grower programme: guaranteed terms, free GlobalG.A.P. IFA v6 group certification, 48-hour payout, coordinated logistics and EU market access. Open to growers in the EU and Western Balkans.",
+    "title": "Grower Programme — Guaranteed Terms, EU Market Access",
+    "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "whoCanApplyTitle": "Who Can Apply",
@@ -3511,16 +3511,20 @@
     "valuePropositionLead": "",
     "valueItems": [
       {
-        "title": "Fixed Pricing",
-        "body": "Seasonal price stability. No middleman, no daily fluctuations. Predictable revenue throughout the season."
+        "title": "Guaranteed pricing",
+        "body": "Fixed seasonal price agreed in advance. No daily swings, no buyers changing the price after harvest. You know your revenue before you plant."
       },
       {
-        "title": "Logistics Priority",
-        "body": "Our refrigerated fleet picks up at the scheduled time. Your harvest gets priority treatment from field to market."
+        "title": "Free GlobalG.A.P. certification",
+        "body": "Vera Agrar holds the group GlobalG.A.P. IFA v6 certification. Bio Vera covers all documentation and audit costs — save EUR 950–2,000 per estate annually."
       },
       {
-        "title": "Automated Payments",
-        "body": "Funds are reserved upon field verification and released within 48 hours of hub arrival."
+        "title": "Payout within 48 hours",
+        "body": "Funds are reserved after field verification. Payout within 48 hours of arrival at the hub. No 60–90 day waits."
+      },
+      {
+        "title": "Coordinated logistics",
+        "body": "Coordinated logistics through Bio Vera's refrigerated transport network. Pickup on a pre-defined schedule — no arranging your own haulage, no waiting."
       }
     ],
     "protocolTitle": "The Bio Vera Protocol",
@@ -3535,8 +3539,8 @@
         "body": "Field coordinators approve or reject batches on-site based on Bio Vera visual and chemical standards."
       },
       {
-        "title": "Smart Packaging",
-        "body": "Bio Vera reusable crates with integrated QR codes only. No manual repacking."
+        "title": "Packaging",
+        "body": "Standardised Bio Vera reusable packaging with integrated QR traceability. No manual repacking — every batch is packed to SOP."
       },
       {
         "title": "Full Transparency",
@@ -3572,7 +3576,7 @@
       {
         "id": "prospect",
         "title": "Grower prospect",
-        "description": "Everything about supplying Bio Vera as a contracted grower—in a chain where we own retail placement—benefits, QA rules and how to apply.",
+        "description": "Full documentation on joining the Bio Vera grower programme — standards, application process, obligations and benefits.",
         "type": "PDF",
         "size": "~2 MB"
       },

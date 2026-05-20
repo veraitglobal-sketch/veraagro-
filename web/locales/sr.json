@@ -3495,8 +3495,8 @@
     "required": "*"
   },
   "growersPage": {
-    "title": "Otkup Voća i Povrća — Stabilne Cene, Direktan Plasman u EU",
-    "heroLead": "Proizvodite po Bio Vera standardima — mi organizujemo otkup, preuzimanje, dokumentaciju i plasman u evropske maloprodajne lance. Fiksne sezonske cene dogovorene pre berbe. Bez posrednika, bez neizvesnosti.",
+    "title": "Program za Proizvođače — Garantovani Uslovi, Pristup EU Tržištu",
+    "heroLead": "Pridružite se mreži sertifikovanih proizvođača. Bio Vera osigurava standarde kvaliteta, GlobalG.A.P. grupnu sertifikaciju, logističku koordinaciju i pristup evropskim kupcima — bez troškova sertifikacije za proizvođača.",
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "whoCanApplyTitle": "Ko može da se prijavi",
@@ -3518,8 +3518,8 @@
         "body": "Sredstva se rezervišu po terenskoj verifikaciji. Isplata u roku od 48 sati po prispeću robe u hub. Nema čekanja 60–90 dana."
       },
       {
-        "title": "Organizovana logistika",
-        "body": "Naša hladnjena flota preuzima robu po rasporedu. Bez čekanja, bez organizovanja sopstvenog prevoza."
+        "title": "Koordinisana logistika",
+        "body": "Koordinisana logistika kroz Bio Vera mrežu hlađenog transporta. Preuzimanje po unapred definisanom rasporedu — bez organizovanja sopstvenog prevoza, bez čekanja."
       }
     ],
     "protocolTitle": "Bio Vera protokol",
@@ -3535,7 +3535,7 @@
       },
       {
         "title": "Pakovanje",
-        "body": "Bio Vera gajbe za višekratnu upotrebu sa QR kodovima. Ručno prepakivanje nije dozvoljeno."
+        "body": "Standardizovana Bio Vera ambalaža za višekratnu upotrebu sa integrisanim QR kodom za sledljivost. Ručno prepakivanje nije dozvoljeno — svaka serija se pakuje po SOP protokolu."
       },
       {
         "title": "Digitalna evidencija",
@@ -3558,7 +3558,7 @@
       {
         "id": "prospect",
         "title": "Prospekt za proizvođače",
-        "description": "Sve o učešću kao Vera proizvođač u lancu gde Bio Vera prodaje krajnjem kupcu: prednosti, uslovi, prijava.",
+        "description": "Kompletna dokumentacija o uslovima učešća u Bio Vera proizvođačkom programu — standardi, proces prijave, obaveze i benefiti.",
         "type": "PDF",
         "size": "~2 MB"
       },
@@ -3666,8 +3666,8 @@
         "label": "Borovnica"
       }
     ],
-    "metaTitle": "Otkup Voća i Povrća | Bio Vera — Garantovane Cene i Besplatna Sertifikacija",
-    "metaDescription": "Prijavite se za Bio Vera program: fiksne sezonske cene, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, organizovano preuzimanje hladnjacama. Otvoren za imanja iz 30+ zemalja."
+    "metaTitle": "Program za Proizvođače | Bio Vera — Sertifikacija, Garantovani Uslovi, EU Tržišni Pristup",
+    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za uzgajivače u EU i na Zapadnom Balkanu."
   },
   "logisticsPartnerPage": {
     "title": "Hladnjača transport — redovne ture od njive do EU maloprodaje",
