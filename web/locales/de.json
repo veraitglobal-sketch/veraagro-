@@ -2059,14 +2059,14 @@
     "required": "*"
   },
   "growersPage": {
-    "metaTitle": "Erzeuger-Programm | Bio Vera — Vertragsanbau mit Abnahmegarantie",
-    "metaDescription": "Werden Sie Bio Vera Vertragserzeuger: feste Saisonpreise, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung innerhalb 48h, organisierte Kühltransporte. 30+ Länder.",
-    "title": "Vertragsanbau für den deutschen Einzelhandel — Feste Preise, Organisierte Abnahme",
-    "heroLead": "Produzieren Sie nach Bio Vera Protokoll — wir organisieren Abholung, Dokumentation und Absatz an europäische Einzelhandelsketten. Feste Saisonpreise vor der Ernte vereinbart. Ohne Zwischenhändler, ohne Preisrisiko.",
+    "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, EU-Marktzugang",
+    "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in der EU und dem Westlichen Balkan.",
+    "title": "Programm für Erzeuger — Garantierte Konditionen, Zugang zum EU-Markt",
+    "heroLead": "Werden Sie Teil eines Netzwerks zertifizierter Erzeuger. Bio Vera sichert Qualitätsstandards, Gruppenzertifizierung GlobalG.A.P., Logistikkoordination und Zugang zu europäischen Abnehmern — ohne Zertifizierungskosten für den Erzeuger.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "whoCanApplyTitle": "Wer kann sich bewerben",
-    "whoCanApplyLead": "Das Programm steht Betrieben in 30+ Ländern offen. Gleiche Standards, gleicher Zertifizierungsrahmen. Aktueller Zertifizierungsstatus ist keine Voraussetzung — Bereitschaft, Bio Vera Standards zu befolgen, genügt.",
+    "whoCanApplyLead": "Das Programm steht Erzeugern jeder Größe offen — von kleinen Familienbetrieben bis zu großen kommerziellen Anlagen. Bewerbungen aus allen EU-Ländern und dem Westlichen Balkan, einschließlich Serbien, Bosnien und Herzegowina, Montenegro, Nordmazedonien, Kroatien und Albanien. Voraussetzung ist die Bereitschaft, die Bio-Vera-Produktionsstandards einzuhalten — der aktuelle Zertifizierungsstatus ist kein Hindernis.",
     "countriesLine": "",
     "valuePropositionTitle": "Ihre Vorteile",
     "valuePropositionLead": "",
@@ -2084,8 +2084,8 @@
         "body": "Mittel werden bei Feldverifizierung reserviert. Auszahlung innerhalb von 48 Stunden nach Ankunft im Hub."
       },
       {
-        "title": "Organisierte Logistik",
-        "body": "Unsere Kühlflotte holt nach Zeitplan ab. Kein Warten, kein eigener Transport nötig."
+        "title": "Koordinierte Logistik",
+        "body": "Koordinierte Logistik über das Bio-Vera-Netzwerk für Kühltransport. Abholung nach festem Zeitplan — ohne eigenen Transport, ohne Wartezeiten."
       }
     ],
     "protocolTitle": "Das Bio Vera Protokoll",
@@ -2101,7 +2101,7 @@
       },
       {
         "title": "Verpackung",
-        "body": "Ausschließlich Bio Vera Mehrwegkisten mit integrierten QR-Codes. Kein manuelles Umpacken."
+        "body": "Standardisierte Bio-Vera-Mehrwegverpackung mit integriertem QR-Code zur Rückverfolgung. Kein manuelles Umpacken — jede Charge wird nach SOP verpackt."
       },
       {
         "title": "Digitale Dokumentation",
@@ -2124,7 +2124,7 @@
       {
         "id": "prospect",
         "title": "Erzeuger-Prospekt",
-        "description": "Alles über die Zusammenarbeit als Vera-Erzeuger: Vorteile, Anforderungen und Bewerbung.",
+        "description": "Vollständige Dokumentation zu den Bedingungen der Teilnahme am Bio-Vera-Erzeugerprogramm — Standards, Bewerbungsprozess, Pflichten und Vorteile.",
         "type": "PDF",
         "size": "~2 MB"
       },

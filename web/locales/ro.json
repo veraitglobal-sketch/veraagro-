@@ -2094,27 +2094,33 @@
     "required": "*"
   },
   "growersPage": {
-    "title": "Pentru cultivatori",
-    "heroLead": "Alăturați-vă unei rețele de cultivatori cu preluări convenite și logistică organizată - creșteți la Protocolul Bio Vera și aliniem ridicarea, documentele și plata. Deschis producătorilor din întreaga lume.",
+    "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
+    "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Balcanii de Vest.",
+    "title": "Program pentru producători — Condiții garantate, acces la piața UE",
+    "heroLead": "Alăturați-vă unei rețele de producători certificați. Bio Vera asigură standarde de calitate, certificare de grup GlobalG.A.P., coordonare logistică și acces la cumpărători europeni — fără costuri de certificare pentru producător.",
     "downloadProspectCta": "Descărcați PDF prospect",
     "downloadProspectError": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou.",
     "whoCanApplyTitle": "Cine poate aplica",
-    "whoCanApplyLead": "Producătorii din aceste țări se pot alătura. Același protocol, aceeași certificare.",
-    "countriesLine": "Austria, Belgia, Bosnia și Herțegovina, Bulgaria, Croația, Cipru, Republica Cehă, Danemarca, Estonia, Finlanda, Franța, Germania, Grecia, Ungaria, Irlanda, Italia, Letonia, Lituania, Luxemburg, Malta, Muntenegru, Țările de Jos, Macedonia de Nord, Polonia, Portugalia, România, Serbia, Slovacia, Slovenia, Spania, Suedia",
+    "whoCanApplyLead": "Programul este deschis producătorilor de toate dimensiunile — de la mici ferme de familie la exploatații comerciale mari. Acceptăm candidaturi din toate țările Uniunii Europene și Balcanii de Vest, inclusiv Serbia, Bosnia și Herțegovina, Muntenegru, Macedonia de Nord, Croația și Albania. Singura condiție: disponibilitatea de a respecta standardele de producție Bio Vera — statutul actual de certificare nu este un obstacol.",
+    "countriesLine": "",
     "valuePropositionTitle": "Propunerea de valoare",
     "valuePropositionLead": "Ceea ce oferim",
     "valueItems": [
       {
-        "title": "Preț fix",
-        "body": "Stabilitatea sezonieră a prețurilor. Fără intermediar, fără fluctuații zilnice de preț. Asigurați-vă veniturile cu prețuri previzibile pe tot parcursul sezonului."
+        "title": "Prețuri garantate",
+        "body": "Preț sezonier fix convenit dinainte. Fără oscilații zilnice, fără cumpărători care schimbă prețul după recoltă. Știți veniturile înainte de a planta."
       },
       {
-        "title": "Prioritate logistica",
-        "body": "Flota noastră frigorifică vă preia mărfurile exact în minutul programat. Timp de așteptare zero. Recolta dumneavoastră primește un tratament prioritar de la câmp la piață."
+        "title": "Certificare GlobalG.A.P. gratuită",
+        "body": "Vera Agrar deține certificarea de grup GlobalG.A.P. IFA v6. Bio Vera acoperă toate costurile de documentație și audit — economisiți 950–2.000 EUR anual per exploatație."
       },
       {
-        "title": "Plăți automate",
-        "body": "Fondurile sunt rezervate la verificarea pe teren și eliberate în 48 de ore de la sosirea Hub. Fără întârzieri de plată, fără griji privind fluxul de numerar."
+        "title": "Plată în 48 de ore",
+        "body": "Fondurile sunt rezervate după verificarea pe teren. Plată în 48 de ore de la sosirea la hub. Fără așteptări de 60–90 de zile."
+      },
+      {
+        "title": "Logistică coordonată",
+        "body": "Logistică coordonată prin rețeaua Bio Vera de transport frigorific. Ridicare conform unui program prestabilit — fără organizarea propriului transport, fără așteptare."
       }
     ],
     "protocolTitle": "Protocolul Bio Vera",
@@ -2129,8 +2135,8 @@
         "body": "Coordonatorii noștri de teren au autoritatea finală de a aproba sau respinge loturi la fața locului, pe baza standardelor vizuale și chimice ale Bio Vera."
       },
       {
-        "title": "Ambalare inteligentă",
-        "body": "Folosiți numai lăzi reutilizabile Bio Vera cu coduri QR integrate. Nu este permisă reambalarea manuală."
+        "title": "Ambalare",
+        "body": "Ambalaj Bio Vera reutilizabil standardizat cu cod QR integrat pentru trasabilitate. Fără reambalare manuală — fiecare lot este ambalat conform SOP."
       },
       {
         "title": "Transparență deplină",
@@ -2166,7 +2172,7 @@
       {
         "id": "perspectivă",
         "title": "Perspectivă de cultivator",
-        "description": "Informații complete despre cum să deveniți cultivator Bio Vera, inclusiv beneficii, cerințe și procesul de aplicare.",
+        "description": "Documentație completă privind condițiile de participare la programul de producători Bio Vera — standarde, proces de aplicare, obligații și beneficii.",
         "type": "PDF",
         "size": "~2 MB"
       },

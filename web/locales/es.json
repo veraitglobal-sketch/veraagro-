@@ -2094,27 +2094,33 @@
     "required": "*"
   },
   "growersPage": {
-    "title": "Para productores",
-    "heroLead": "Únase a una red de productores con compras acordadas y logística organizada: crezca según el Protocolo Bio Vera y alinearemos la recolección, los documentos y el pago. Abierto a productores de todo el mundo.",
+    "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, acceso al mercado UE",
+    "metaDescription": "Programa para productores: condiciones garantizadas, certificación grupal GlobalG.A.P. IFA v6 gratuita, pago en 48 h, logística coordinada y acceso al mercado UE. Abierto a productores de la UE y los Balcanes Occidentales.",
+    "title": "Programa para productores — Condiciones garantizadas, acceso al mercado UE",
+    "heroLead": "Únase a una red de productores certificados. Bio Vera garantiza estándares de calidad, certificación grupal GlobalG.A.P., coordinación logística y acceso a compradores europeos — sin coste de certificación para el productor.",
     "downloadProspectCta": "Descargar prospecto PDF",
     "downloadProspectError": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
     "whoCanApplyTitle": "¿Quién puede aplicar?",
-    "whoCanApplyLead": "Pueden sumarse productores de estos países. Mismo protocolo, misma certificación.",
-    "countriesLine": "Austria, Bélgica, Bosnia y Herzegovina, Bulgaria, Croacia, Chipre, República Checa, Dinamarca, Estonia, Finlandia, Francia, Alemania, Grecia, Hungría, Irlanda, Italia, Letonia, Lituania, Luxemburgo, Malta, Montenegro, Países Bajos, Macedonia del Norte, Polonia, Portugal, Rumania, Serbia, Eslovaquia, Eslovenia, España, Suecia",
+    "whoCanApplyLead": "El programa está abierto a productores de todos los tamaños — desde pequeñas explotaciones familiares hasta grandes fincas comerciales. Aceptamos solicitudes de todos los países de la Unión Europea y los Balcanes Occidentales, incluidos Serbia, Bosnia y Herzegovina, Montenegro, Macedonia del Norte, Croacia y Albania. Único requisito: estar dispuesto a seguir los estándares de producción Bio Vera — el estado de certificación actual no es un obstáculo.",
+    "countriesLine": "",
     "valuePropositionTitle": "La propuesta de valor",
     "valuePropositionLead": "que ofrecemos",
     "valueItems": [
       {
-        "title": "Precio fijo",
-        "body": "Estabilidad estacional de precios. Sin intermediarios, sin fluctuaciones diarias de precios. Asegure sus ingresos con precios predecibles durante toda la temporada."
+        "title": "Precios garantizados",
+        "body": "Precio estacional fijo acordado por adelantado. Sin oscilaciones diarias, sin compradores que cambien el precio tras la cosecha. Conoce sus ingresos antes de plantar."
       },
       {
-        "title": "Prioridad logística",
-        "body": "Nuestra flota refrigerada recoge su mercancía en el minuto exacto programado. Tiempo de espera cero. Su cosecha recibe un tratamiento prioritario desde el campo hasta el mercado."
+        "title": "Certificación GlobalG.A.P. gratuita",
+        "body": "Vera Agrar ostenta la certificación grupal GlobalG.A.P. IFA v6. Bio Vera cubre todos los costes de documentación y auditoría — ahorre 950–2.000 EUR al año por explotación."
       },
       {
-        "title": "Pagos automatizados",
-        "body": "Los fondos se reservan tras la verificación de campo y se liberan dentro de las 48 horas posteriores a la llegada del Hub. Sin retrasos en los pagos ni preocupaciones sobre el flujo de caja."
+        "title": "Pago en 48 horas",
+        "body": "Los fondos se reservan tras la verificación en campo. Pago en 48 horas tras la llegada al hub. Sin esperas de 60–90 días."
+      },
+      {
+        "title": "Logística coordinada",
+        "body": "Logística coordinada a través de la red Bio Vera de transporte refrigerado. Recogida según calendario predefinido — sin organizar su propio transporte, sin esperas."
       }
     ],
     "protocolTitle": "El Protocolo de Bio Vera",
@@ -2129,8 +2135,8 @@
         "body": "Nuestros coordinadores de campo tienen la autoridad final para aprobar o rechazar lotes en el sitio según los estándares visuales y químicos de Bio Vera."
       },
       {
-        "title": "Embalaje inteligente",
-        "body": "Utilice únicamente cajas reutilizables Bio Vera con códigos QR integrados. No se permite el reembalaje manual."
+        "title": "Embalaje",
+        "body": "Embalaje Bio Vera reutilizable estandarizado con código QR integrado para trazabilidad. Sin reembalaje manual — cada lote se embala según el SOP."
       },
       {
         "title": "Transparencia total",
@@ -2166,7 +2172,7 @@
       {
         "id": "prospecto",
         "title": "Perspectiva de productor",
-        "description": "Información completa sobre cómo convertirse en productor de Bio Vera, incluidos los beneficios, los requisitos y el proceso de solicitud.",
+        "description": "Documentación completa sobre las condiciones de participación en el programa de productores Bio Vera — estándares, proceso de solicitud, obligaciones y beneficios.",
         "type": "PDF",
         "size": "~2MB"
       },
