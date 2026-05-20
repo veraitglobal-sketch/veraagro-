@@ -15,20 +15,15 @@ function MetricValue({ row }: { row: HubMetricRow }) {
 
   if (row.type === 'count') {
     return (
-      <AnimatedCountText
-        value={row.count}
-        style={growerStyles.metricValue}
-        animate={row.animate !== false}
-      />
+      <AnimatedCountText value={row.count} style={growerStyles.metricValue} />
     );
   }
 
-  const animate = row.animate !== false;
   return (
     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-      <AnimatedCountText value={row.approved} style={growerStyles.metricValue} animate={animate} />
+      <AnimatedCountText value={row.approved} style={growerStyles.metricValue} />
       <Text style={growerStyles.metricValue}>/</Text>
-      <AnimatedCountText value={row.total} style={growerStyles.metricValue} animate={animate} />
+      <AnimatedCountText value={row.total} style={growerStyles.metricValue} />
     </View>
   );
 }

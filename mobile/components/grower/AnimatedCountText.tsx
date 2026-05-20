@@ -1,14 +1,19 @@
 import { Text, type TextStyle, type StyleProp } from 'react-native';
-import { useAnimatedCount } from '../../hooks/useAnimatedCount';
 
 type Props = {
   value: number;
   style?: StyleProp<TextStyle>;
+  /** @deprecated Animation disabled — value shown immediately */
   stepMs?: number;
+  /** @deprecated Animation disabled — value shown immediately */
   animate?: boolean;
 };
 
-export function AnimatedCountText({ value, style, stepMs, animate }: Props) {
-  const display = useAnimatedCount(value, { stepMs, animate });
-  return <Text style={style}>{display}</Text>;
+function formatCount(value: number): number {
+  return Math.max(0, Math.round(Number.isFinite(value) ? value : 0));
+}
+
+/** KPI number — static display (no 0→1→2 counting). */
+export function AnimatedCountText({ value, style }: Props) {
+  return <Text style={style}>{formatCount(value)}</Text>;
 }

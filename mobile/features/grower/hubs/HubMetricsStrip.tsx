@@ -23,11 +23,7 @@ function StripValue({ row }: { row: HubMetricRow }) {
   }
   if (row.type === 'count') {
     return (
-      <AnimatedCountText
-        value={row.count}
-        style={valueStyle(row)}
-        animate={row.animate !== false}
-      />
+      <AnimatedCountText value={row.count} style={valueStyle(row)} />
     );
   }
   const approvedStyle =
@@ -35,9 +31,9 @@ function StripValue({ row }: { row: HubMetricRow }) {
 
   return (
     <View style={styles.ratioRow}>
-      <AnimatedCountText value={row.approved} style={approvedStyle} animate={row.animate !== false} />
+      <AnimatedCountText value={row.approved} style={approvedStyle} />
       <Text style={[enterpriseUi.kpiValue, styles.ratioSlash]}>/</Text>
-      <AnimatedCountText value={row.total} style={enterpriseUi.kpiValue} animate={row.animate !== false} />
+      <AnimatedCountText value={row.total} style={enterpriseUi.kpiValue} />
     </View>
   );
 }
