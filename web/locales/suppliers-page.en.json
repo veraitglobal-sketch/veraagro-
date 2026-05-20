@@ -1,20 +1,20 @@
 {
   "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
-  "metaDescription": "Distribute Bio Vera products and packaging to our grower network. Guaranteed offtake, stable pricing, integrated return logistics. Apply for national coverage.",
+  "metaDescription": "Supplier partnership programme: distribute certified inputs through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure, integrated logistics.",
   "hero": {
-    "title": "For Our Suppliers",
-    "subtitle": "Become a Bio Vera supplier: sell our products and packaging to growers in your country. You get guaranteed offtake from our producer network and support them with on-site training and advice.",
+    "title": "Supplier Partnership Programme — Integrated Supply Chain, Guaranteed Demand",
+    "subtitle": "Distribute certified inputs — seeds, fertilizers and packaging — through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure and integrated logistics.",
     "downloadPdf": "Download Prospect PDF",
     "downloadFail": "Failed to download prospect. Please try again."
   },
   "whoApply": {
     "title": "Who Should Apply",
-    "intro": "We prefer partners already working in agriculture with strong national presence. You sell Bio Vera products and Bio Vera packaging in your country.",
+    "intro": "Established companies in the agri sector — distributors, agricultural retailers or operators with warehouse infrastructure and an existing network in the region. We seek partners who can provide field-level support and distribution under Bio Vera standards.",
     "bullets": []
   },
   "yourRole": {
     "title": "Your Role",
-    "intro": "As our supplier you advise and train growers on the ground. You are the local point of contact, procure packaging for our users, and maintain inventory tracked through the Vera Admin Dashboard.",
+    "intro": "Regional operations partner within the Bio Vera network. You manage distribution of certified inputs, provide field-level support to growers and uphold quality standards locally. Coordination with the central team through the Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
@@ -31,7 +31,7 @@
       },
       {
         "title": "Integrated Logistics",
-        "description": "Seeds and fertilizers delivered on return trips from our logistics network. Fewer empty kilometres, lower costs."
+        "description": "Inputs are distributed through Bio Vera's integrated logistics network — refrigerated return haulage. No additional logistics costs for the partner."
       },
       {
         "title": "National Coverage",
@@ -39,7 +39,7 @@
       },
       {
         "title": "Exclusive Market Access",
-        "description": "Direct access to our producer network and to European retail through our vertically integrated chain."
+        "description": "Access to Bio Vera's network of certified growers and European buyers through vertically integrated infrastructure."
       }
     ]
   },

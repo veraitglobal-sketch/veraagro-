@@ -1,20 +1,20 @@
 {
   "metaTitle": "Distributer Semena i Đubriva | Bio Vera — Partnerstvo za Dobavljače",
-  "metaDescription": "Postanite Bio Vera dobavljač: distribuirajte seme, đubriva i pakovanje našoj mreži proizvođača. Garantovan otkup, stabilne cene, povratna logistika. Prijavite se za nacionalnu pokrivenost.",
+  "metaDescription": "Partnerski program za dobavljače: distribuirajte sertifikovane inpute kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura, integrisana logistika.",
   "hero": {
-    "title": "Postanite Bio Vera dobavljač u vašoj zemlji",
-    "subtitle": "Prodajte Bio Vera proizvode — seme, đubriva i pakovanje — proizvođačima u vašoj zemlji. Garantovan otkup od naše mreže, stabilna potražnja, predvidiv prihod.",
+    "title": "Partnerski Program za Dobavljače — Integrisani Supply Chain, Garantovana Potražnja",
+    "subtitle": "Distribuirajte sertifikovane inpute — semena, đubriva i ambalažu — kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura i integrisana logistika.",
     "downloadPdf": "Preuzmite PDF prospekt",
     "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo."
   },
   "whoApply": {
     "title": "Koga tražimo",
-    "intro": "Partnere koji već rade u poljoprivredi sa jakom prisutnošću u svojoj zemlji. Idealno distributer ili veleprodaja koja poznaje lokalne proizvođače i može da pokrije teritoriju.",
+    "intro": "Ustanovljene kompanije u agro sektoru — distributeri, agro apoteke ili operateri sa skladišnom infrastrukturom i postojećom mrežom u regionu. Tražimo partnere koji mogu pružiti terensku podršku i distribuciju u okviru Bio Vera standarda.",
     "bullets": []
   },
   "yourRole": {
     "title": "Vaša uloga",
-    "intro": "Vi ste lokalna kontakt tačka za Bio Vera proizvođače. Savetujete i obučavate ih na terenu, nabavljate pakovanje, održavate zalihe. Svaka transakcija praćena kroz Vera Admin Panel.",
+    "intro": "Regionalni operativni partner u Bio Vera mreži. Upravljate distribucijom sertifikovanih inputa, pružate terensku podršku proizvođačima i održavate standarde kvaliteta na lokalnom nivou. Koordinacija sa centralnim timom kroz Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
@@ -31,11 +31,11 @@
       },
       {
         "title": "Besplatna dostava inputa",
-        "description": "Seme i đubriva se dostavljaju na povratnim turama naše logističke mreže. Vi ne plaćate transport."
+        "description": "Inputi se distribuiraju kroz integrisanu logističku mrežu Bio Vera — povratne ture hlađenog transporta. Bez dodatnih troškova logistike za partnera."
       },
       {
         "title": "Pristup EU tržištu",
-        "description": "Direktan pristup našoj mreži proizvođača i evropskoj maloprodaji kroz vertikalno integrisani lanac."
+        "description": "Pristup Bio Vera mreži sertifikovanih proizvođača i evropskih kupaca kroz vertikalno integrisanu infrastrukturu."
       }
     ]
   },

@@ -1,13 +1,13 @@
 {
   "hero": {
-    "title": "Para nuestros proveedores",
-    "subtitle": "Conviértete en proveedor de Bio Vera: vende nuestros productos y nuestros envases a productores de tu país. Obtendrá un suministro garantizado de nuestros productores y los apoyará con asesoramiento y formación in situ.",
+    "title": "Programa de socios proveedores — Cadena de suministro integrada, demanda garantizada",
+    "subtitle": "Distribuya insumos certificados — semillas, fertilizantes y envases — a través de la red de productores Bio Vera en su región. Demanda garantizada, estructura de precios fija y logística integrada.",
     "downloadPdf": "Descargar prospecto PDF",
     "downloadFail": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo."
   },
   "whoApply": {
     "title": "¿Quién debería aplicar?",
-    "intro": "Nuestros proveedores comercializan productos Bio Vera y envases Bio Vera en su país. Preferimos socios que ya trabajan en la agricultura y tienen una fuerte presencia en todo el país.",
+    "intro": "Empresas consolidadas del sector agrícola — distribuidores, tiendas agrícolas u operadores con infraestructura de almacén y red existente en la región. Buscamos socios que puedan ofrecer soporte en campo y distribución conforme a los estándares Bio Vera.",
     "bullets": [
       "Vendes nuestros productos (semillas, insumos) a los productores.",
       "Vendes nuestros envases a los productores.",
@@ -17,7 +17,7 @@
   },
   "yourRole": {
     "title": "Tu papel",
-    "intro": "Como nuestro proveedor, usted asesora y forma a los usuarios sobre el terreno. Usted es el punto de contacto local para los productores y los apoya con orientación in situ. También adquiere embalaje para nuestros usuarios, incluidas cajas para envasar productos, para que tengan lo que necesitan localmente.",
+    "intro": "Socio operativo regional en la red Bio Vera. Gestiona la distribución de insumos certificados, brinda soporte en campo a los productores y mantiene los estándares de calidad a nivel local. Coordinación con el equipo central a través del Vera Admin Panel.",
     "bullets": [
       "Asesoramiento y formación in situ de usuarios.",
       "Adquirir embalajes para nuestros usuarios (por ejemplo, cajas para embalaje)",
@@ -43,7 +43,7 @@
       },
       {
         "title": "Logística integrada",
-        "description": "Reciba semillas y fertilizantes en viajes de regreso desde nuestra red logística. Menos kilómetros en vacío, menores costes."
+        "description": "Los insumos se distribuyen a través de la red logística integrada de Bio Vera — viajes de retorno en transporte refrigerado. Sin costes logísticos adicionales para el socio."
       },
       {
         "title": "Cobertura nacional preferida",
@@ -51,7 +51,7 @@
       },
       {
         "title": "Acceso exclusivo al mercado",
-        "description": "Acceso directo a nuestra red de productores y al mercado alemán a través de nuestra cadena integrada verticalmente."
+        "description": "Acceso a la red Bio Vera de productores certificados y compradores europeos mediante infraestructura integrada verticalmente."
       }
     ]
   },

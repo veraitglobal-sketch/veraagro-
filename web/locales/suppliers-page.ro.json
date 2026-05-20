@@ -1,13 +1,13 @@
 {
   "hero": {
-    "title": "Pentru furnizorii noștri",
-    "subtitle": "Deveniți furnizor Bio Vera: vindeți produsele și ambalajele noastre cultivatorilor din țara dumneavoastră. Veți primi garantat de la producătorii noștri și îi sprijiniți cu consiliere și instruire la fața locului.",
+    "title": "Program parteneri furnizori — Lanț de aprovizionare integrat, cerere garantată",
+    "subtitle": "Distribuiți inputuri certificate — semințe, îngrășăminte și ambalaje — prin rețeaua de producători Bio Vera din regiunea dumneavoastră. Cerere garantată, structură de preț fixă și logistică integrată.",
     "downloadPdf": "Descărcați Prospect PDF",
     "downloadFail": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou."
   },
   "whoApply": {
     "title": "Cine ar trebui să aplice",
-    "intro": "Furnizorii noștri vând produse Bio Vera și ambalaje Bio Vera în țara lor. Preferăm parteneri care lucrează deja în agricultură și au o prezență puternică în toată țara.",
+    "intro": "Companii consacrate din sectorul agricol — distribuitori, magazine agricole sau operatori cu infrastructură de depozitare și rețea existentă în regiune. Căutăm parteneri care pot oferi suport la fața locului și distribuție conform standardelor Bio Vera.",
     "bullets": [
       "Vindeți produsele noastre (semințe, intrări) cultivatorilor",
       "Vindeți ambalajele noastre producătorilor",
@@ -17,7 +17,7 @@
   },
   "yourRole": {
     "title": "Rolul tău",
-    "intro": "În calitate de furnizor, consiliați și instruiți utilizatorii pe teren. Sunteți punctul local de contact pentru producători și îi sprijiniți cu îndrumări la fața locului. De asemenea, procurați ambalaje pentru utilizatorii noștri – inclusiv cutii pentru ambalarea produselor – astfel încât aceștia să aibă ceea ce au nevoie la nivel local.",
+    "intro": "Partener operațional regional în rețeaua Bio Vera. Gestionați distribuția inputurilor certificate, oferiți suport pe teren producătorilor și mențineți standardele de calitate la nivel local. Coordonare cu echipa centrală prin Vera Admin Panel.",
     "bullets": [
       "Consiliere la fața locului și instruire a utilizatorilor",
       "Achiziționați ambalaje pentru utilizatorii noștri (de exemplu, cutii pentru ambalare)",

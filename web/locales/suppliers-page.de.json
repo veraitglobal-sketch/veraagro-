@@ -1,20 +1,20 @@
 {
   "metaTitle": "Lieferanten-Partnerschaft | Bio Vera — Saatgut, Düngemittel & Verpackung",
-  "metaDescription": "Werden Sie Bio Vera Lieferant: vertreiben Sie Saatgut, Düngemittel und Verpackung an unser Erzeugernetzwerk. Garantierte Abnahme, stabile Preise, Rücktransport-Logistik.",
+  "metaDescription": "Lieferanten-Partnerprogramm: zertifizierte Inputs über das Bio-Vera-Erzeugernetzwerk in Ihrer Region. Garantierte Nachfrage, feste Preisstruktur, integrierte Logistik.",
   "hero": {
-    "title": "Bio Vera Lieferant werden — Inputs für unser Erzeugernetzwerk",
-    "subtitle": "Vertreiben Sie Bio Vera Produkte — Saatgut, Düngemittel und Verpackung — an Erzeuger in Ihrem Land. Garantierte Abnahme, stabile Nachfrage, planbare Erlöse.",
+    "title": "Partnerprogramm für Lieferanten — Integrierte Lieferkette, garantierte Nachfrage",
+    "subtitle": "Vertreiben Sie zertifizierte Inputs — Saatgut, Düngemittel und Verpackung — über das Bio-Vera-Erzeugernetzwerk in Ihrer Region. Garantierte Nachfrage, feste Preisstruktur und integrierte Logistik.",
     "downloadPdf": "Prospekt-PDF herunterladen",
     "downloadFail": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
   },
   "whoApply": {
     "title": "Wen wir suchen",
-    "intro": "Partner mit Erfahrung im Agrarbereich und starker nationaler Präsenz. Idealerweise Distributoren oder Großhändler mit direktem Zugang zu lokalen Erzeugern.",
+    "intro": "Etablierte Unternehmen im Agrarsektor — Distributoren, Agrarhandel oder Betreiber mit Lagerinfrastruktur und bestehendem Netzwerk in der Region. Wir suchen Partner, die Vor-Ort-Support und Distribution nach Bio-Vera-Standards leisten können.",
     "bullets": []
   },
   "yourRole": {
     "title": "Ihre Rolle",
-    "intro": "Sie sind der lokale Ansprechpartner für Bio Vera Erzeuger. Beratung und Schulung vor Ort, Verpackungsbeschaffung, Bestandsführung über das Vera Admin Dashboard.",
+    "intro": "Regionaler operativer Partner im Bio-Vera-Netzwerk. Sie steuern die Distribution zertifizierter Inputs, bieten Erzeugern Vor-Ort-Support und sichern Qualitätsstandards auf lokaler Ebene. Abstimmung mit dem Zentralteam über das Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
@@ -31,11 +31,11 @@
       },
       {
         "title": "Kostenlose Zustellung",
-        "description": "Saatgut und Düngemittel werden auf Rücktransporten unseres Logistiknetzwerks geliefert. Keine Transportkosten für Sie."
+        "description": "Inputs werden über das integrierte Bio-Vera-Logistiknetzwerk verteilt — Kühl-Rücktransporte. Keine zusätzlichen Logistikkosten für den Partner."
       },
       {
         "title": "EU-Marktzugang",
-        "description": "Direkter Zugang zu unserem Erzeugernetzwerk und zum europäischen Einzelhandel über unsere vertikal integrierte Kette."
+        "description": "Zugang zum Bio-Vera-Netzwerk zertifizierter Erzeuger und europäischer Abnehmer über vertikal integrierte Infrastruktur."
       }
     ]
   },

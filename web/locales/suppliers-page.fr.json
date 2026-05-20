@@ -1,13 +1,13 @@
 {
   "hero": {
-    "title": "Pour nos fournisseurs",
-    "subtitle": "Devenez fournisseur Bio Vera : vendez nos produits et nos packagings aux producteurs de votre pays. Vous bénéficiez d'un approvisionnement garanti auprès de nos producteurs et vous les accompagnez par des conseils et des formations sur place.",
+    "title": "Programme partenaires fournisseurs — Chaîne d'approvisionnement intégrée, demande garantie",
+    "subtitle": "Distribuez des intrants certifiés — semences, engrais et emballages — via le réseau de producteurs Bio Vera dans votre région. Demande garantie, structure tarifaire fixe et logistique intégrée.",
     "downloadPdf": "Télécharger le PDF Prospectus",
     "downloadFail": "Échec du téléchargement du prospect. Veuillez réessayer."
   },
   "whoApply": {
     "title": "Qui devrait postuler",
-    "intro": "Nos fournisseurs commercialisent les produits Bio Vera et les emballages Bio Vera dans leur pays. Nous privilégions les partenaires qui travaillent déjà en agriculture et qui ont une forte présence à travers le pays.",
+    "intro": "Entreprises établies du secteur agricole — distributeurs, magasins agricoles ou opérateurs disposant d'une infrastructure d'entrepôt et d'un réseau existant dans la région. Nous recherchons des partenaires capables d'assurer un accompagnement sur le terrain et une distribution conforme aux standards Bio Vera.",
     "bullets": [
       "Vous vendez nos produits (semences, intrants) aux producteurs",
       "Vous vendez nos emballages aux producteurs",
@@ -17,7 +17,7 @@
   },
   "yourRole": {
     "title": "Votre rôle",
-    "intro": "En tant que fournisseur, vous conseillez et formez les utilisateurs sur le terrain. Vous êtes l'interlocuteur local des producteurs et les accompagnez en les accompagnant sur place. Vous fournissez également des emballages à nos utilisateurs – y compris des cartons pour emballer les produits – afin qu’ils aient ce dont ils ont besoin localement.",
+    "intro": "Partenaire opérationnel régional au sein du réseau Bio Vera. Vous gérez la distribution d'intrants certifiés, apportez un accompagnement terrain aux producteurs et maintenez les standards qualité au niveau local. Coordination avec l'équipe centrale via le Vera Admin Panel.",
     "bullets": [
       "Conseil et formation sur site des utilisateurs",
       "Procurer des emballages à nos utilisateurs (par exemple des boîtes d'emballage)",
@@ -43,7 +43,7 @@
       },
       {
         "title": "Logistique intégrée",
-        "description": "Recevez des semences et des engrais au retour depuis notre réseau logistique. Moins de kilomètres à vide, moins de coûts."
+        "description": "Les intrants sont distribués via le réseau logistique intégré Bio Vera — retours en transport réfrigéré. Aucun coût logistique supplémentaire pour le partenaire."
       },
       {
         "title": "Couverture nationale préférée",
@@ -51,7 +51,7 @@
       },
       {
         "title": "Accès exclusif au marché",
-        "description": "Accès direct à notre réseau de producteurs et au marché allemand grâce à notre chaîne verticalement intégrée."
+        "description": "Accès au réseau Bio Vera de producteurs certifiés et d'acheteurs européens via une infrastructure verticalement intégrée."
       }
     ]
   },
