@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { harvestAnnouncementsAPI } from '../../../lib/api';
 import { loadGrowerParcelRows, type GrowerParcelRow } from '../../../lib/load-grower-parcels';
 import { offlineStorage, PendingCost, PendingProduct } from '../../../lib/offline-storage';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { syncService } from '../../../lib/sync-service';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 import type { CostPlantingOption } from './CostAllocationPicker';
 
@@ -37,9 +39,16 @@ function normalizePlan(r: Record<string, unknown>): HarvestPlanRow {
   };
 }
 
+async function syncPortalQueuesIfOnline(): Promise<void> {
+  if (!(await isDeviceOnline())) return;
+  await Promise.all([
+    syncService.syncPendingProducts(),
+    syncService.syncPendingCosts(),
+  ]);
+}
+
 export function useCostCalculatorData() {
-  const { t, i18n } = useTranslation();
-  const langSr = !!i18n.language?.startsWith('sr');
+  const { t } = useTranslation();
   const [costs, setCosts] = useState<PendingCost[]>([]);
   const [products, setProducts] = useState<PendingProduct[]>([]);
   const [parcels, setParcels] = useState<GrowerParcelRow[]>([]);
@@ -75,6 +84,7 @@ export function useCostCalculatorData() {
     if (silent) setListRefreshing(true);
     else setLoading(true);
     try {
+      await syncPortalQueuesIfOnline();
       const [costList, productList] = await Promise.all([
         offlineStorage.getPendingCosts(),
         offlineStorage.getPendingProducts(),
@@ -135,6 +145,7 @@ export function useCostCalculatorData() {
   const addCost = useCallback(
     async (entry: Omit<PendingCost, 'id' | 'timestamp' | 'status'>) => {
       await offlineStorage.savePendingCost(entry);
+      await syncPortalQueuesIfOnline();
       await load({ silent: true });
     },
     [load],
@@ -158,6 +169,7 @@ export function useCostCalculatorData() {
         parcelLabel: allocation.parcelLabel,
         plantingLabel: allocation.plantingLabel,
       });
+      await syncPortalQueuesIfOnline();
       await load({ silent: true });
     },
     [load],

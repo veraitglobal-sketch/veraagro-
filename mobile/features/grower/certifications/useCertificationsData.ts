@@ -1,41 +1,37 @@
 import { useState, useCallback, useEffect } from 'react';
 import { growerPortalAPI, type RequiredCertification } from '../../../lib/api';
 import { offlineStorage, PendingCertificatePhoto } from '../../../lib/offline-storage';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { syncService } from '../../../lib/sync-service';
 
 export type CertStatus = 'not_done' | 'pending' | 'done';
 
 export type RequiredCert = RequiredCertification;
 
-/** Used when the API is unreachable or not deployed yet. */
-const FALLBACK_REQUIRED: RequiredCert[] = [
-  { id: 'cert_1', title: 'Training – good agricultural practice', description: 'Completed training' },
-  { id: 'cert_2', title: 'Production certificate', description: 'Proof of production method' },
-  { id: 'cert_3', title: 'GlobalG.A.P. (if applicable)', description: 'Optional' },
-];
-
 export function useCertificationsData() {
-  const [requiredCerts, setRequiredCerts] = useState<RequiredCert[]>(FALLBACK_REQUIRED);
+  const [requiredCerts, setRequiredCerts] = useState<RequiredCert[]>([]);
   const [pendingPhotos, setPendingPhotos] = useState<PendingCertificatePhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [listRefreshing, setListRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const load = useCallback(async (opts?: { silent?: boolean }) => {
     const silent = opts?.silent === true;
     if (silent) setListRefreshing(true);
     else setLoading(true);
     try {
+      if (await isDeviceOnline()) {
+        await syncService.syncPendingCertificatePhotos();
+      }
       const list = await offlineStorage.getPendingCertificatePhotos();
       setPendingPhotos(list);
-      try {
-        const fromApi = await growerPortalAPI.getRequiredCertifications();
-        setRequiredCerts(fromApi);
-      } catch (e) {
-        console.warn('Required certifications (using fallback):', e);
-        setRequiredCerts(FALLBACK_REQUIRED);
-      }
+      const fromApi = await growerPortalAPI.getRequiredCertifications();
+      setRequiredCerts(Array.isArray(fromApi) ? fromApi : []);
+      setLoadError(false);
     } catch (error) {
       console.error('Error loading certifications:', error);
-      setPendingPhotos([]);
+      setRequiredCerts([]);
+      setLoadError(true);
     } finally {
       if (silent) setListRefreshing(false);
       else setLoading(false);
@@ -55,16 +51,28 @@ export function useCertificationsData() {
       }
       return 'not_done';
     },
-    [pendingPhotos]
+    [pendingPhotos],
   );
 
   const addPhoto = useCallback(
     async (entry: Omit<PendingCertificatePhoto, 'id' | 'timestamp' | 'status'>) => {
       await offlineStorage.savePendingCertificatePhoto(entry);
+      if (await isDeviceOnline()) {
+        await syncService.syncPendingCertificatePhotos();
+      }
       await load({ silent: true });
     },
-    [load]
+    [load],
   );
 
-  return { requiredCerts, pendingPhotos, loading, listRefreshing, load, getStatusForCert, addPhoto };
+  return {
+    requiredCerts,
+    pendingPhotos,
+    loading,
+    listRefreshing,
+    loadError,
+    load,
+    getStatusForCert,
+    addPhoto,
+  };
 }

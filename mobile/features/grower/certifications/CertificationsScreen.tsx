@@ -74,7 +74,7 @@ export default function CertificationsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { requiredCerts, pendingPhotos, loading, listRefreshing, load, getStatusForCert, addPhoto } =
+  const { requiredCerts, pendingPhotos, loading, listRefreshing, loadError, load, getStatusForCert, addPhoto } =
     useCertificationsData();
   const [uploadingCert, setUploadingCert] = useState<RequiredCert | null>(null);
 
@@ -129,8 +129,31 @@ export default function CertificationsScreen() {
         style={styles.flex}
         contentContainerStyle={[styles.list, { paddingBottom: listBottomPad }]}
         ListHeaderComponent={
-          loading && !listRefreshing ? (
-            <ActivityIndicator style={{ paddingVertical: 12 }} color={enterpriseColors.primary} />
+          <>
+            {loading && !listRefreshing ? (
+              <ActivityIndicator style={{ paddingVertical: 12 }} color={enterpriseColors.primary} />
+            ) : null}
+            {loadError ? (
+              <View style={[growerUi.emptyCard, styles.errorCard]}>
+                <Text style={enterpriseUi.navRowSubtitle}>{t('producer.certifications.loadError')}</Text>
+                <TouchableOpacity
+                  onPress={() => void load()}
+                  style={styles.retryBtn}
+                  accessibilityRole="button"
+                >
+                  <Text style={[enterpriseUi.navRowTitle, { color: enterpriseColors.primary }]}>
+                    {t('producer.wallet.retry')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+          </>
+        }
+        ListEmptyComponent={
+          !loading && !loadError ? (
+            <View style={growerUi.emptyCard}>
+              <Text style={enterpriseUi.navRowSubtitle}>{t('producer.certifications.empty')}</Text>
+            </View>
           ) : null
         }
         renderItem={({ item }) => (
@@ -184,5 +207,13 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     bottom: 0,
+  },
+  errorCard: {
+    marginBottom: 10,
+  },
+  retryBtn: {
+    marginTop: 12,
+    minHeight: 48,
+    justifyContent: 'center',
   },
 });

@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -10,8 +11,9 @@ import InsightCard from './InsightCard';
 
 export default function VeraInsightsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
-  const { insights, loading, loadInsights } = useVeraInsightsData();
+  const { insights, loading, loadError, loadInsights } = useVeraInsightsData();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
@@ -27,7 +29,7 @@ export default function VeraInsightsScreen() {
     router.push('/(producer)/(tabs)/products');
   };
 
-  if (loading) {
+  if (loading && insights.length === 0) {
     return (
       <View
         style={{
@@ -72,7 +74,7 @@ export default function VeraInsightsScreen() {
             letterSpacing: 0.5,
           }}
         >
-          Vera Insights
+          {t('producer.veraInsights.screenTitle')}
         </Text>
       </View>
 
@@ -105,7 +107,7 @@ export default function VeraInsightsScreen() {
                 letterSpacing: 0.5,
               }}
             >
-              Market Intelligence
+              {t('producer.veraInsights.marketTitle')}
             </Text>
             <Text
               style={{
@@ -116,32 +118,78 @@ export default function VeraInsightsScreen() {
                 letterSpacing: 0.2,
               }}
             >
-              Overview of crop profitability and recommendations for the next season based on EU
-              market analysis.
+              {t('producer.veraInsights.marketLead')}
             </Text>
           </View>
 
-          <ShortagesSection insights={insights} />
+          {loadError ? (
+            <View
+              style={{
+                padding: theme.spacing.md,
+                marginBottom: theme.spacing.lg,
+                borderRadius: 12,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+              }}
+            >
+              <Text style={{ fontSize: 15, color: theme.colors.text.primary, lineHeight: 22 }}>
+                {t('producer.veraInsights.loadError')}
+              </Text>
+              <TouchableOpacity
+                onPress={() => void loadInsights()}
+                style={{ marginTop: 12, minHeight: 48, justifyContent: 'center' }}
+                accessibilityRole="button"
+              >
+                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.primary }}>
+                  {t('producer.wallet.retry')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
 
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '300',
-              color: theme.colors.text.primary,
-              marginBottom: theme.spacing.sm,
-              letterSpacing: 0.5,
-            }}
-          >
-            Crop Profitability
-          </Text>
+          {!loadError && insights.length === 0 ? (
+            <View
+              style={{
+                padding: theme.spacing.md,
+                marginBottom: theme.spacing.lg,
+                borderRadius: 12,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+              }}
+            >
+              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
+                {t('producer.veraInsights.empty')}
+              </Text>
+            </View>
+          ) : null}
 
-          {insights.map((insight) => (
-            <InsightCard
-              key={insight.id}
-              insight={insight}
-              onAcceptRecommendation={handleAcceptRecommendation}
-            />
-          ))}
+          {!loadError && insights.length > 0 ? <ShortagesSection insights={insights} /> : null}
+
+          {!loadError && insights.length > 0 ? (
+            <>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '300',
+                  color: theme.colors.text.primary,
+                  marginBottom: theme.spacing.sm,
+                  letterSpacing: 0.5,
+                }}
+              >
+                {t('producer.veraInsights.cropTitle')}
+              </Text>
+
+              {insights.map((insight) => (
+                <InsightCard
+                  key={insight.id}
+                  insight={insight}
+                  onAcceptRecommendation={handleAcceptRecommendation}
+                />
+              ))}
+            </>
+          ) : null}
         </View>
       </ScrollView>
     </View>

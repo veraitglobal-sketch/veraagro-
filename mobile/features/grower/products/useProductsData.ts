@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { offlineStorage, PendingProduct } from '../../../lib/offline-storage';
+import { isDeviceOnline } from '../../../lib/network-utils';
+import { syncService } from '../../../lib/sync-service';
 
 export function useProductsData() {
   const [products, setProducts] = useState<PendingProduct[]>([]);
@@ -11,6 +13,9 @@ export function useProductsData() {
     if (silent) setListRefreshing(true);
     else setLoading(true);
     try {
+      if (await isDeviceOnline()) {
+        await syncService.syncPendingProducts();
+      }
       const list = await offlineStorage.getPendingProducts();
       setProducts(list);
     } catch (error) {
@@ -29,10 +34,13 @@ export function useProductsData() {
   const addProduct = useCallback(
     async (entry: Omit<PendingProduct, 'id' | 'timestamp' | 'status'>) => {
       const id = await offlineStorage.savePendingProduct(entry);
+      if (await isDeviceOnline()) {
+        await syncService.syncPendingProducts();
+      }
       await load({ silent: true });
       return id;
     },
-    [load]
+    [load],
   );
 
   return { products, loading, listRefreshing, load, addProduct };
