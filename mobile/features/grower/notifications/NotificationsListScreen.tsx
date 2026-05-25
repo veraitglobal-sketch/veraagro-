@@ -119,7 +119,7 @@ export function NotificationsListScreen() {
 
   return (
     <View style={growerUi.canvas}>
-      <GrowerStackHeader title={t('notificationsCenter.title')} subtitle={subtitle} onBack={goBack} />
+      <GrowerStackHeader title={t('producer.liveInfo.notifications')} subtitle={subtitle} onBack={goBack} />
 
       <View style={styles.filterBar}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
@@ -155,7 +155,7 @@ export function NotificationsListScreen() {
         ) : filteredNotifications.length === 0 ? (
           <View style={growerUi.emptyCard}>
             <Bell size={32} color={enterpriseColors.gray600} strokeWidth={1.5} />
-            <Text style={[enterpriseUi.navRowSubtitle, styles.emptyText]}>{t('notificationsCenter.empty')}</Text>
+            <Text style={[enterpriseUi.navRowSubtitle, styles.emptyText]}>{t('producer.notifications.empty')}</Text>
           </View>
         ) : (
           filteredNotifications.map((notification) => {

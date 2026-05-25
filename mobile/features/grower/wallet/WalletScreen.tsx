@@ -56,7 +56,7 @@ export default function WalletScreen() {
     <View style={growerUi.canvas}>
       <GrowerStackHeader
         title={t('producer.tabs.wallet')}
-        subtitle={t('producer.profileScreen.walletSubtitle')}
+        subtitle={t('producer.wallet.subtitle')}
         onBack={goBack}
       />
       <EnterpriseScreen

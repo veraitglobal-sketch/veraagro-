@@ -112,7 +112,7 @@ export default function BatchesScreen() {
       contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
       header={
         <BioVeraSubpageHeader
-          title={t('producer.batches.listScreenTitle')}
+          title={t('producer.tabs.batches')}
           left="back"
           right={
             <TouchableOpacity
@@ -158,12 +158,12 @@ export default function BatchesScreen() {
         ) : null}
 
         {loading ? (
-          <Text style={styles.mutedCenter}>{t('producer.batches.loading')}</Text>
+          <Text style={styles.mutedCenter}>{t('common.loading')}</Text>
         ) : filteredBatches.length === 0 ? (
           <View style={growerUi.emptyCard}>
             <Package size={40} color={enterpriseColors.gray600} strokeWidth={1.25} />
             <Text style={styles.emptyText}>
-              {filter === 'all' ? t('producer.batches.emptyList') : t('producer.batches.emptyFilter')}
+              {filter === 'all' ? t('producer.batches.empty') : t('producer.batches.emptyFilter')}
             </Text>
             <TouchableOpacity
               onPress={() => router.push('/(producer)/batch-new')}

@@ -32,7 +32,10 @@ export function ProfileWalletPreview({ wallet, loading, lastTransaction, onPress
       accessibilityLabel={t('producer.profileScreen.walletA11y')}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>{t('producer.financial.title')}</Text>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>{t('producer.tabs.wallet')}</Text>
+          <Text style={styles.subtitle}>{t('producer.wallet.subtitle')}</Text>
+        </View>
         <Text style={styles.detailText}>{t('producer.profileScreen.viewDetails')}</Text>
       </View>
 
@@ -82,17 +85,27 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  headerText: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 8,
   },
   title: {
     fontSize: 13,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     letterSpacing: -0.1,
-    marginBottom: 0,
-    marginLeft: 0,
+    marginBottom: 2,
+  },
+  subtitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: enterpriseColors.gray600,
+    letterSpacing: -0.05,
   },
   detailText: {
     fontSize: 13,

@@ -124,7 +124,7 @@ export default function ScannerScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <Text style={[styles.text, styles.title, { marginBottom: 16 }]}>
-          {t('producer.scanner.cameraPermissionTitle')}
+          {t('producer.scanner.permissionNeeded')}
         </Text>
         <Text style={[styles.text, { marginBottom: 24, textAlign: 'center', paddingHorizontal: 32 }]}>
           {t('producer.scanner.cameraPermissionBody')}

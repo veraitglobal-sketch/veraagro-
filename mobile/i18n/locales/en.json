@@ -20,6 +20,7 @@
     "empty": "No notifications"
   },
   "marketplace": {
+    "title": "Marketplace",
     "about": {
       "intro": "From seed to shelf—complete traceability, quality assurance, and direct market access for European producers."
     },
@@ -258,7 +259,7 @@
     "damaged": "Damaged",
     "tempCheck": "Temperature (°C)",
     "tempPlaceholder": "4.0",
-    "notes": "Notes (optional)",
+    "notes": "Notes",
     "notesPlaceholder": "Damage location, shortfall, or other remarks…",
     "completeCta": "Complete handover",
     "completing": "Completing handover…",
@@ -304,6 +305,7 @@
       "harvest": "Harvest",
       "wallet": "Wallet",
       "missions": "Transport",
+      "orders": "Orders",
       "field": "Field",
       "fieldHub": "Parcels & records",
       "chain": "Lots",
@@ -392,7 +394,11 @@
     },
     "profile": {
       "offlineQueueLabel": "Pending uploads (device)",
-      "settingsMenuSubtitle": "API setup, offline queue, language."
+      "settingsMenuSubtitle": "API setup, offline queue, language.",
+      "quickAccess": "Quick access",
+      "compliancePhotos": "Compliance photos",
+      "qualityEntry": "Quality entry",
+      "materials": "Material whitelist"
     },
     "packageBadges": {
       "title": "Serial numbers",
@@ -842,6 +848,7 @@
       "successTitle": "Success",
       "barcodeNotOnWhitelist": "Not allowed",
       "checkingPermissions": "Checking permissions…",
+      "permissionNeeded": "Camera permission required",
       "cameraPermissionTitle": "Camera access required",
       "cameraPermissionBody": "We need access to the camera to scan barcodes.",
       "allowCamera": "Allow camera",
@@ -853,7 +860,7 @@
       "estateName": "Field name",
       "estateNamePlaceholder": "e.g. Big field",
       "enterName": "Name your field",
-      "locationOptional": "Place (optional)",
+      "locationOptional": "Location",
       "drawBoundary": "Tap on map to mark your field",
       "createFailed": "Could not save",
       "loadFailed": "Could not load",
@@ -866,7 +873,7 @@
       "area": "Area",
       "started": "Started",
       "daysRemaining": "Days remaining: {{count}}",
-      "optionalLocation": "Location (optional)",
+      "optionalLocation": "Location",
       "clickToAddPoints": "Tap on map",
       "enableDrawing": "Tap to mark your field",
       "enableDrawingBtn": "Start",
@@ -911,6 +918,8 @@
       "countWithMyFieldsLabel": "{{count}} · {{label}}",
       "listEmptyTitle": "No fields yet",
       "listEmptySubtitle": "Add your first field to get started.",
+      "empty": "No estates",
+      "addFirst": "Add your first estate",
       "parcelBadge_one": "{{count}} parcel",
       "parcelBadge_other": "{{count}} parcels",
       "listCertDaysRemaining": "{{count}} days until certification"
@@ -996,6 +1005,10 @@
       "getCurrentLocation": "Get current location"
     },
     "orders": {
+      "title": "Orders",
+      "filterAll": "All",
+      "empty": "No orders",
+      "buyer": "Buyer",
       "paid": "Paid",
       "pending": "Pending",
       "paymentStatus": "Payment status",
@@ -1021,6 +1034,7 @@
       "listEmpty": "No orders yet"
     },
     "wallet": {
+      "subtitle": "Transactions and balance",
       "pending": "Pending",
       "totalEarned": "Total earned",
       "available": "Available",
@@ -1030,6 +1044,9 @@
       "retry": "Try again"
     },
     "veraInsights": {
+      "title": "Vera Insights",
+      "market": "Market intelligence",
+      "profitability": "Crop profitability",
       "screenTitle": "Vera Insights",
       "marketTitle": "Market intelligence",
       "marketLead": "Overview of crop profitability and recommendations for the next season based on EU market analysis.",
@@ -1037,7 +1054,29 @@
       "loadError": "Could not load market insights. Check your connection and try again.",
       "empty": "No market insights are available yet."
     },
+    "insights": {
+      "priceRising": "Price rising",
+      "priceFalling": "Price falling",
+      "stablePrice": "Stable price",
+      "why": "Why?",
+      "acceptPlan": "Accept recommendation and plan planting",
+      "shortages": "Shortages last season",
+      "noShortages": "No data on shortages for last season.",
+      "shortagePercent": "{{percent}}% shortage",
+      "veraScore": "Vera Score: {{score}}",
+      "risk": "Risk: {{label}}",
+      "scoreExcellent": "Excellent",
+      "scoreGood": "Good",
+      "scoreModerate": "Moderate",
+      "scoreLow": "Low",
+      "riskLow": "Low",
+      "riskMedium": "Medium",
+      "riskHigh": "High",
+      "riskUnknown": "Unknown"
+    },
     "plotMapper": {
+      "planTitle": "Parcel plan",
+      "addDivision": "Add division",
       "veraPlanTitle": "Vera parcel plan",
       "dimensionsHeading": "Rectangle size",
       "selectParcelTitle": "Choose a parcel",
@@ -1063,11 +1102,19 @@
       "cropType": "Crop type",
       "plantingDate": "Planting date",
       "saveZone": "Save zone",
-      "length": "Length (m)",
-      "width": "Width (m)",
-      "totalArea": "Total area"
+      "length": "Length in meters",
+      "width": "Width in meters",
+      "totalArea": "Total area",
+      "cropStatus": {
+        "PREPARING_SOIL": "Preparing soil",
+        "YOUNG_SEEDLING": "Young seedling",
+        "IN_FULL_PRODUCTION": "In full production",
+        "HARVESTING": "Harvest",
+        "FALLOW": "Fallow"
+      }
     },
     "qualityEntry": {
+      "title": "Quality entry",
       "screenTitle": "Quality entry",
       "parcelHeading": "Parcel / crop block",
       "allParcels": "All plots",
@@ -1078,9 +1125,9 @@
       "batchHeading": "Batch",
       "selectBatch": "Select a batch",
       "qualityScoreRange": "Quality score must be between 0 and 100",
-      "qualityScore": "Quality score (0-100, optional)",
+      "qualityScore": "Quality score",
       "scorePlaceholder": "e.g. 85",
-      "notes": "Notes (optional)",
+      "notes": "Notes",
       "notesPlaceholder": "Additional notes on quality (optional)",
       "statusLabel": "Status",
       "saved": "Quality saved",
@@ -1099,7 +1146,7 @@
       "title": "Banned substances",
       "subtitle": "What is not allowed – check before use",
       "whatIsBanned": "What is banned",
-      "allowedSubstances": "Allowed substances (whitelist)",
+      "allowedSubstances": "Allowed substances",
       "loading": "Loading…",
       "noCache": "No data in cache. Pull down to refresh when online.",
       "moreItems": "… and {{count}} more. Only approved substances may be used.",
@@ -1142,14 +1189,13 @@
       "noteLabel": "Note",
       "notePlaceholder": "e.g. invoice no., supplier, transport fuel…",
       "amountLabel": "Amount",
-      "productsTransferNote": "Products from \"My products\" can be transferred here as items (in a future version).",
       "addCostAmount": "Add cost amount",
       "costListTitle": "Cost list",
       "savedOnDevice": "Saved on device",
       "syncing": "Syncing…",
       "loading": "Loading…",
       "noCosts": "No costs entered. Add amount or transfer from My products.",
-      "costNamePlaceholder": "Cost name (e.g. Fuel, Fertilizer)",
+      "costNamePlaceholder": "Fuel, fertilizer…",
       "amountPlaceholder": "Amount (EUR)",
       "saving": "Saving…",
       "addCost": "Add cost",
@@ -1293,6 +1339,14 @@
       "footerNoteShort": "For legal wording, rely on formal Bio Vera documents."
     },
     "fieldLog": {
+      "notOnParcel": "Warning: You are not on your parcel!",
+      "activityType": "Activity type",
+      "photo": "Photo",
+      "addPhoto": "Add photo",
+      "photoLoaded": "✓ Photo loaded",
+      "location": "Location",
+      "getLocation": "Get current location",
+      "saveEntry": "Save entry",
       "planting": "Planting",
       "fertilizing": "Fertilizing",
       "spraying": "Spraying",
@@ -1301,6 +1355,10 @@
       "packaging": "Packing goods"
     },
     "batches": {
+      "details": "Batch details",
+      "batch": "Batch",
+      "locationHistory": "Location history",
+      "qualityIssues": "Quality issues",
       "listScreenTitle": "Lots",
       "listLeadOneLine": "Each lot has a public BATCH-ID and system ID; then packing photos and transport request.",
       "listCountLabel": "{{count}} lots",
@@ -1323,6 +1381,7 @@
       "statusExpired": "Expired",
       "statusQualityVerified": "Quality verified",
       "emptyList": "No batches",
+      "empty": "No batches",
       "traceabilityTitle": "Traceability",
       "transportCarrierLabel": "Transport",
       "hubNameFallback": "Hub",
@@ -1382,7 +1441,13 @@
       "settingsSubtitle": "Language, sync, notifications",
       "growthJournal": "Growth journal"
     },
+    "notifications": {
+      "empty": "No notifications"
+    },
     "missions": {
+      "details": "Mission details",
+      "feedback": "Consumer feedback",
+      "journeyMap": "Journey map",
       "detailScreenTitle": "Mission details",
       "missionPrefix": "Mission #{{id}}",
       "status": {
@@ -1399,6 +1464,7 @@
         "DELIVERED": "Delivered"
       },
       "loading": "Loading…",
+      "empty": "No missions",
       "listEmpty": "No missions in this list yet.",
       "notFound": "Mission not found",
       "yourPayout": "Your payout",
@@ -1505,6 +1571,7 @@
       "ok": "OK"
     },
     "materials": {
+      "title": "Material whitelist",
       "screenTitle": "Material whitelist",
       "screenLeadShort": "Approved barcodes for field diary and integrity checks.",
       "mapBannerTitle": "Need seeds, boxes, or packaging? See suppliers on the map.",
@@ -1556,7 +1623,7 @@
       "done": "Done",
       "sendPhoto": "Send certificate photo",
       "subtitle": "Required certificates – send photo, we confirm",
-      "photosPending": "{{count}} photo(s) waiting to be sent. Pull down on dashboard to send.",
+      "photosPending": "{{count}} photos to send",
       "loadError": "Could not load required certificates. Check your connection and try again.",
       "empty": "No required certificates are configured yet.",
       "takePhoto": "Take photo",
@@ -1582,7 +1649,7 @@
       "quantityPlaceholder": "e.g. 500",
       "parcelLabel": "Parcel / field (optional)",
       "parcelPlaceholder": "Where it was produced",
-      "whatProductContains": "What the product contains (composition)",
+      "whatProductContains": "Composition",
       "quantity": "Quantity",
       "saving": "Saving…",
       "saveToDevice": "Save to device",
@@ -1590,6 +1657,7 @@
       "enteredListTitle": "Items you added"
     },
     "growthJournal": {
+      "title": "Growth journal",
       "screenTitle": "Growth journal",
       "screenIntro": "Pick a parcel and planting, then add a photo with GPS. For plantings, log progress regularly (stage and short notes).",
       "plantingLabel": "Planting",
@@ -1628,6 +1696,13 @@
       "logDetail": "Log detail",
       "imageUnavailable": "Image not available (legacy URL or offline)",
       "stageLabel": "Stage",
+      "stagePreset": {
+        "vegetative": "Vegetative",
+        "flowering": "Flowering",
+        "fruitSet": "Fruit set",
+        "ripening": "Ripening",
+        "preHarvest": "Pre-harvest"
+      },
       "tapForDetail": "Tap for full detail and map",
       "logPlanLine": "{{kind}}: {{crop}} · {{date}}",
       "parcelsLoading": "Loading parcels…",
@@ -1642,6 +1717,9 @@
       "hintPickPlanTitle": "No planting",
       "openPlantings": "Add planting",
       "addEntryCta": "Add entry with photo"
+    },
+    "veraBag": {
+      "title": "Vera Digital Bag"
     },
     "settings": {
       "language": "Language",
@@ -1658,6 +1736,9 @@
       "pushTestFail": "Could not send test push. Sign in again and ensure notifications are allowed.",
       "notificationsRegisterFailed": "Notifications are on for this device, but the server does not have the push module yet. Deploy the latest API to Railway and try again.",
       "autoSync": "Auto sync",
+      "gpsAlways": "GPS always on for field entries",
+      "autoGps": "Capture GPS automatically on the entry log screen",
+      "about": "About the app",
       "gpsAlwaysTitle": "GPS always for field entries",
       "gpsAlwaysSubtitle": "When enabled, location is requested automatically on the entry log screen (if permission is granted).",
       "aboutTitle": "About",
@@ -1881,6 +1962,10 @@
       "profile": "Profile"
     },
     "dashboard": {
+      "scanCode": "Scan Bio Vera code",
+      "reserve": "Reserve crates",
+      "soldOut": "Sold out — next harvest",
+      "noProducts": "No products found",
       "marketplaceTitle": "Marketplace",
       "filterAll": "All",
       "filterAvailableNow": "Available now",
@@ -1919,12 +2004,16 @@
       "loading": "Loading products..."
     },
     "cart": {
+      "empty": "Your cart is empty",
+      "total": "Total",
+      "checkout": "Proceed to payment",
       "reservationBadge": " · reservation",
       "priceOnRequest": "Price on request",
       "linePrice": "{{price}} per {{unit}}",
       "priceOnRequestWithUnit": "Price on request · {{unit}}"
     },
     "orders": {
+      "notFound": "Order not found",
       "title": "My Orders",
       "loading": "Loading…",
       "empty": "You have no orders",
@@ -1999,6 +2088,8 @@
       "edit": "Edit",
       "openNotifications": "Notifications",
       "management": "Management",
+      "addLocation": "Add new location",
+      "addPerson": "Add person",
       "managementGeneralDirector": "General Director:",
       "managementFinanceManager": "Finance Manager:",
       "ctaAddLocation": "Add new location",
@@ -2021,6 +2112,12 @@
       "placeholderRole": "Role (e.g., purchasing manager)"
     },
     "checkout": {
+      "street": "Street and number",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "summary": "Order summary",
+      "deliveryAddress": "Delivery address",
       "fillRequired": "Please fill all required fields",
       "cartEmpty": "Cart is empty",
       "orderCreateFailed": "Could not create order",
@@ -2183,7 +2280,9 @@
     "all": "All",
     "delete": "Delete",
     "openSettings": "Open settings",
-    "continue": "Continue"
+    "continue": "Continue",
+    "loading": "Loading…",
+    "status": "Status"
   },
   "navigation": {
     "appName": "Vera",
@@ -2245,7 +2344,7 @@
     "enterHectares": "Enter a valid number of hectares",
     "passwordMin": "Password must be at least 6 characters",
     "successTitle": "Registration sent",
-    "successMessage": "We'll contact you soon. You can now add your fields (step 2).",
+    "successMessage": "We'll contact you soon. You can now add your fields.",
     "checkEmailMessage": "Check your email and click the link to verify your account. Then you can log in and add your fields.",
     "failed": "Registration failed. Try again."
   },
@@ -2327,7 +2426,7 @@
       "subtitle": "Follow these steps before packing crates",
       "item1": "Use clean Bio Vera crates",
       "item2": "Apply Bio Vera labels correctly",
-      "item3": "Pack in correct order (heavy at bottom)",
+      "item3": "Heavy items at the bottom",
       "item4": "Scan Bio Vera QR on each pallet to confirm",
       "confirm": "I have read the instructions"
     },

@@ -94,7 +94,7 @@ export default function MissionsListScreen() {
       header={
         <>
           <GrowerStackHeader
-            title={t('producer.tabs.missions')}
+            title={t('producer.liveInfo.missions')}
             subtitle={t('producer.hubs.chain.missionsDesc')}
           />
           {filterBar}
@@ -117,7 +117,7 @@ export default function MissionsListScreen() {
           </View>
         ) : filteredMissions.length === 0 ? (
           <View style={[growerUi.emptyCard, { marginTop: 20 }]}>
-            <Text style={styles.emptyTitle}>{t('producer.missions.listEmpty')}</Text>
+            <Text style={styles.emptyTitle}>{t('producer.missions.empty')}</Text>
           </View>
         ) : (
           <View style={[enterpriseUi.inAppPanel, styles.list]}>

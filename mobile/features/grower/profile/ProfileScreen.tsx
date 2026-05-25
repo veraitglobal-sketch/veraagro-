@@ -8,7 +8,19 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../../hooks/useAuth';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { Bell, BookOpen, Settings, Wallet } from 'lucide-react-native';
+import {
+  Bell,
+  BookOpen,
+  Camera,
+  ClipboardCheck,
+  MapPin,
+  Package,
+  Settings,
+  ShoppingBag,
+  Sprout,
+  Truck,
+  List,
+} from 'lucide-react-native';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { partnerSignInHref } from '../../../lib/post-login-redirect';
 import { tString } from '../../../lib/i18n-strings';
@@ -45,22 +57,75 @@ export default function ProfileScreen() {
     }
   }, [refreshPending, reloadWallet, refreshing]);
 
-  const menuItems = useMemo(
+  const quickAccessItems = useMemo(
     () => [
       {
-        key: 'wallet',
-        title: t('producer.dashboard.homeFinanceTeaserTitle'),
-        subtitle: t('producer.dashboard.homeFinanceTeaserHint'),
-        icon: Wallet,
-        onPress: () => router.push('/(producer)/(tabs)/wallet'),
+        key: 'estates',
+        title: t('producer.tabs.estates'),
+        icon: MapPin,
+        onPress: () => router.push('/(producer)/estates'),
       },
       {
+        key: 'batches',
+        title: t('producer.tabs.batches'),
+        icon: Package,
+        onPress: () => router.push('/(producer)/batches'),
+      },
+      {
+        key: 'missions',
+        title: t('producer.tabs.missions'),
+        icon: Truck,
+        onPress: () => router.push('/(producer)/missions'),
+      },
+      {
+        key: 'orders',
+        title: t('producer.tabs.orders'),
+        icon: ShoppingBag,
+        onPress: () => router.push('/(producer)/orders'),
+      },
+      {
+        key: 'compliance',
+        title: t('producer.profile.compliancePhotos'),
+        icon: Camera,
+        onPress: () => router.push('/(producer)/compliance-photos'),
+      },
+      {
+        key: 'quality',
+        title: t('producer.profile.qualityEntry'),
+        icon: ClipboardCheck,
+        onPress: () => router.push('/(producer)/quality-entry'),
+      },
+      {
+        key: 'materials',
+        title: t('producer.profile.materials'),
+        icon: List,
+        onPress: () => router.push('/(producer)/materials'),
+      },
+      {
+        key: 'growthJournal',
+        title: t('producer.growthJournal.title'),
+        icon: Sprout,
+        onPress: () => router.push('/(producer)/growth-journal'),
+      },
+      {
+        key: 'settings',
+        title: t('producer.tabs.settings'),
+        icon: Settings,
+        onPress: () => router.push('/(producer)/(tabs)/settings'),
+      },
+    ],
+    [t, router],
+  );
+
+  const moreItems = useMemo(
+    () => [
+      {
         key: 'notifications',
-        title: t('notificationsCenter.title'),
+        title: t('producer.liveInfo.notifications'),
         subtitle:
           pendingCount > 0
             ? tString(t, 'producer.dashboard.syncStrip.pendingLine', { count: pendingCount })
-            : undefined,
+            : t('notificationsCenter.subtitle'),
         icon: Bell,
         onPress: () => router.push('/(producer)/notifications'),
       },
@@ -71,15 +136,8 @@ export default function ProfileScreen() {
         icon: BookOpen,
         onPress: () => router.push('/(producer)/education'),
       },
-      {
-        key: 'settings',
-        title: t('producer.tabs.settings'),
-        subtitle: user?.email ?? undefined,
-        icon: Settings,
-        onPress: () => router.push('/(producer)/(tabs)/settings'),
-      },
     ],
-    [t, router, user?.email, pendingCount],
+    [t, router, pendingCount],
   );
 
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || '—';
@@ -114,11 +172,13 @@ export default function ProfileScreen() {
             wallet={wallet}
             loading={walletLoading}
             lastTransaction={lastTransaction}
-            onPress={() => router.push('/(producer)/(tabs)/wallet')}
+            onPress={() => router.push('/(producer)/wallet')}
           />
         </View>
 
-        <EnterpriseNavSection title={t('producer.dashboard.moreSection')} items={menuItems} />
+        <EnterpriseNavSection title={t('producer.profile.quickAccess')} items={quickAccessItems} />
+
+        <EnterpriseNavSection title={t('producer.dashboard.moreSection')} items={moreItems} />
 
         <TouchableOpacity
           onPress={async () => {

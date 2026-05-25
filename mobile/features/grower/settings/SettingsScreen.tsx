@@ -291,8 +291,8 @@ export default function SettingsScreen() {
 
         <EnterpriseSettingsGroup>
           <EnterpriseSettingsToggleRow
-            title={t('producer.settings.gpsAlwaysTitle')}
-            description={t('producer.settings.gpsAlwaysSubtitle')}
+            title={t('producer.settings.gpsAlways')}
+            description={t('producer.settings.autoGps')}
             icon={<Shield size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
             value={gpsAlways}
             onValueChange={handleGpsToggle}
@@ -301,7 +301,7 @@ export default function SettingsScreen() {
 
         <EnterpriseSettingsGroup>
           <EnterpriseSettingsLinkRow
-            title={t('producer.settings.aboutTitle')}
+            title={t('producer.settings.about')}
             description={t('producer.settings.aboutSubtitle', { version: appVersion })}
             icon={<Info size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
             onPress={() =>
