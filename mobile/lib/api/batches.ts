@@ -1,0 +1,250 @@
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './client';
+import { API_URL } from '../api-url';
+import { apiErrorMessage, axiosResponseStatus, isLikelyNetworkError } from '../api-error';
+import type {
+  Product,
+  Estate,
+  Parcel,
+  Category,
+  AiAssistantResponse,
+  RetailLocation,
+  FieldEntry,
+  GrowthLog,
+  Order,
+  ProductPassport,
+  BatchAvailability,
+  QualityEntry,
+  LogisticsDriverRow,
+  LogisticsVehicleRow,
+  PackageBadgeType,
+  MissionAssignedDriver,
+  MissionVehicleInfo,
+  Mission,
+  FinancialDashboardApiResponse,
+  Notification,
+  RequiredCertification,
+  DigitalHandover,
+  CompliancePhoto,
+  LabelRollRow,
+  ComplianceBatchStatus,
+  Material,
+  TreatmentLog,
+  PlotBlueprintZone,
+  PlotBlueprintPartition,
+  PlotBlueprint,
+  CreateHarvestPlanBody,
+} from './types';
+
+// Batch Availability API (Public)
+export const batchesAPI = {
+  getAvailability: async (batchId: string): Promise<BatchAvailability> => {
+    try {
+      // Public endpoint - no auth token needed
+      const response = await axios.get(`${API_URL}/batches/${batchId}/availability`);
+      return response.data;
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
+        throw new Error('Batch not found.');
+      }
+      throw error;
+    }
+  },
+  getAll: async (estateId?: string): Promise<any[]> => {
+    try {
+      const params = estateId ? { estateId } : {};
+      const response = await api.get('/batches', { params });
+      return response.data || [];
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, returning empty batches list');
+        return [];
+      }
+      throw error;
+    }
+  },
+  getOne: async (batchId: string): Promise<any> => {
+    const response = await api.get(`/batches/${batchId}/traceability`);
+    return response.data;
+  },
+  create: async (data: {
+    estateId: string;
+    parcelId?: string;
+    productName: string;
+    quantity: number;
+    unit: string;
+    harvestDate: string;
+  }): Promise<any> => {
+    const response = await api.post('/batches', data);
+    return response.data;
+  },
+  /** Log packing wizard completion (GPS) — batchRef is internal id or public batchId */
+  recordPackingFlow: async (
+    batchRef: string,
+    body: {
+      latitude: number;
+      longitude: number;
+      completedAt?: string;
+      /** Raw base64 or data-URL; both crate + quality should be sent together */
+      cratePhotoBase64?: string;
+      qualityPhotoBase64?: string;
+    },
+  ): Promise<{ success: boolean; batchId: string; id: string; photosSaved?: boolean }> => {
+    const response = await api.post(`/batches/${encodeURIComponent(batchRef)}/packing-flow`, body);
+    return response.data;
+  },
+};
+
+// Quality Entry API
+export const qualityEntryAPI = {
+  create: async (data: {
+    batchId: string;
+    parcelId?: string;
+    qualityScore?: number;
+    notes?: string;
+  }): Promise<QualityEntry> => {
+    const response = await api.post('/quality-entry', data);
+    return response.data;
+  },
+  getByBatch: async (batchId: string): Promise<QualityEntry | null> => {
+    try {
+      const response = await api.get(`/quality-entry/batch/${batchId}`);
+      return response.data;
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+  canCreateShipment: async (batchId: string): Promise<boolean> => {
+    const response = await api.get(`/quality-entry/can-create-shipment/${batchId}`);
+    return response.data.canCreate || false;
+  },
+  /** After loading handover: receiver name + optional signature (data URL) for PDF audit trail */
+  submitHandoverReceiverProof: async (data: {
+    missionId: string;
+    receiverName: string;
+    receiverSignatureDataUrl?: string;
+  }): Promise<{ success: true; receiverProofPdfHash: string; message: string }> => {
+    const response = await api.post('/quality-entry/handover/receiver-proof', data);
+    return response.data;
+  },
+  /**
+   * PDF only exists after submitHandoverReceiverProof. Returns raw bytes (RN-friendly; wrap in
+   * Blob in environments that support it, or write with expo-file-system).
+   */
+  getHandoverReceiverPdf: async (missionId: string): Promise<ArrayBuffer> => {
+    const response = await api.get(
+      `/quality-entry/handover/mission/${encodeURIComponent(missionId)}/receiver-pdf`,
+      { responseType: 'arraybuffer' },
+    );
+    return response.data;
+  },
+
+  /** Farm loading handover — temperature, pallet & truck photos, badge + driver signature → mission READY_FOR_LOADING */
+  submitLoadingHandover: async (data: {
+    missionId: string;
+    insideTruckTemperature: number;
+    palletPhotos: string[];
+    truckInteriorPhotos: string[];
+    notes?: string;
+    pickupDriverId: string;
+    pickupBadgePhoto: string;
+    pickupDriverSignatureDataUrl: string;
+  }): Promise<unknown> => {
+    const response = await api.post('/quality-entry/handover', data);
+    return response.data;
+  },
+};
+
+export const logisticsVehiclesAPI = {
+  list: async (): Promise<LogisticsVehicleRow[]> => {
+    const response = await api.get('/logistics-partner/vehicles');
+    return Array.isArray(response.data) ? response.data : [];
+  },
+  create: async (body: {
+    licensePlate: string;
+    type: string;
+    make?: string;
+    model?: string;
+    hasFrigo?: boolean;
+    tempRangeMin?: number;
+    tempRangeMax?: number;
+  }): Promise<LogisticsVehicleRow> => {
+    const response = await api.post('/logistics-partner/vehicles', body);
+    return response.data;
+  },
+};
+
+export const logisticsDriversAPI = {
+  list: async (): Promise<LogisticsDriverRow[]> => {
+    const response = await api.get('/logistics-partner/drivers');
+    return Array.isArray(response.data) ? response.data : [];
+  },
+  create: async (body: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  }): Promise<LogisticsDriverRow> => {
+    const response = await api.post('/logistics-partner/drivers', body);
+    return response.data;
+  },
+};
+
+export const packageBadgesAPI = {
+  register: async (data: {
+    parentSerial: string;
+    type: PackageBadgeType;
+    childSerials: string[];
+    ownerUserId?: string;
+    batchId?: string;
+    farmerQrCode?: string;
+    printOrderId?: string;
+  }) => {
+    const response = await api.post('/package-badges/register', data);
+    return response.data;
+  },
+  previewPrintOrder: async (data: { parentCount: number; childrenPerParent: number; serialPrefix?: string }) => {
+    const response = await api.post('/package-badges/print-orders/preview', data);
+    return response.data;
+  },
+  createPrintOrder: async (data: {
+    parentCount: number;
+    childrenPerParent: number;
+    serialPrefix?: string;
+    printerSupplierId?: string;
+    notesToPrinter?: string;
+  }) => {
+    const response = await api.post('/package-badges/print-orders', data);
+    return response.data;
+  },
+  listMyPrintOrders: async () => {
+    const response = await api.get('/package-badges/print-orders/mine');
+    return response.data;
+  },
+  markPrintOrderSent: async (id: string) => {
+    const response = await api.patch(`/package-badges/print-orders/${encodeURIComponent(id)}/sent`, {});
+    return response.data;
+  },
+  returnTreeToSupplier: async (data: { rootSerial: string; supplierUserId: string }) => {
+    const response = await api.post('/package-badges/return-to-supplier', data);
+    return response.data;
+  },
+  /** MATERIAL_SUPPLIER: tree returned from grower — assign to new grower */
+  supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
+    const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
+    return response.data;
+  },
+  scan: async (serial: string) => {
+    const response = await api.get(`/package-badges/scan/${encodeURIComponent(serial)}`);
+    return response.data;
+  },
+  /** Unauthenticated: QR on package resolves to farmer / batch links */
+  publicResolve: async (serial: string) => {
+    const { data } = await axios.get(`${API_URL}/public/badges/${encodeURIComponent(serial)}`);
+    return data;
+  },
+};
