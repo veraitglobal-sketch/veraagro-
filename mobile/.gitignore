@@ -9,3 +9,7 @@ ios/
 node_modules/
 .expo/
 dist/
+
+# Local env backups (may contain LAN IPs / secrets)
+.env.bak
+.env.*
